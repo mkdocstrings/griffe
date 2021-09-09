@@ -1,0 +1,94 @@
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[project]
+name = "griffe"
+version = {use_scm = true}
+description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
+authors = [{name = "Timothée Mazzucotelli", email = "pawamoy@pm.me"}]
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.6"
+keywords = []
+dynamic = ["version", "classifiers"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: ISC License (ISCL)",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://pawamoy.github.io/griffe"
+Documentation = "https://pawamoy.github.io/griffe"
+Changelog = "https://pawamoy.github.io/griffe/changelog"
+Repository = "https://github.com/pawamoy/griffe"
+Issues = "https://github.com/pawamoy/griffe/issues"
+Discussions = "https://github.com/pawamoy/griffe/discussions"
+Gitter = "https://gitter.im/griffe/community"
+Funding = "https://github.com/sponsors/pawamoy"
+
+[project.scripts]
+griffe = "griffe.cli:main"
+
+[tool.pdm]
+package-dir = "src"
+
+[tool.pdm.dev-dependencies]
+duty = ["duty~=0.6"]
+docs = [
+    "mkdocs~=1.1; python_version >= '3.7'",
+    "mkdocs-coverage~=0.2; python_version >= '3.7'",
+    "mkdocs-gen-files~=0.3; python_version >= '3.7'",
+    "mkdocs-literate-nav~=0.4; python_version >= '3.7'",
+    "mkdocs-material~=7.1; python_version >= '3.7'",
+    "mkdocstrings~=0.15; python_version >= '3.7'",
+    "toml~=0.10; python_version >= '3.7'",
+]
+format = [
+    "autoflake~=1.4",
+    "black~=20.8b1",
+    "isort~=5.8",
+]
+maintain = [
+    # TODO: remove this section when git-changelog is more powerful
+    "git-changelog~=0.4",
+]
+quality = [
+    "darglint~=1.7",
+    "flake8-bandit~=2.1",
+    "flake8-black~=0.2",
+    "flake8-bugbear~=21.3",
+    "flake8-builtins~=1.5",
+    "flake8-comprehensions~=3.4",
+    "flake8-docstrings~=1.6",
+    "flake8-pytest-style~=1.4",
+    "flake8-string-format~=0.3",
+    "flake8-tidy-imports~=4.2",
+    "flake8-variables-names~=0.0",
+    "pep8-naming~=0.11",
+    "wps-light~=0.15",
+]
+tests = [
+    "pytest~=6.2",
+    "pytest-cov~=2.11",
+    "pytest-randomly~=3.6",
+    "pytest-sugar~=0.9",
+    "pytest-xdist~=2.2",
+]
+typing = ["mypy~=0.812"]
+
+[tool.black]
+line-length = 120
+exclude = "tests/fixtures"
+
+[tool.isort]
+line_length = 120
+not_skip = "__init__.py"
+multi_line_output = 3
+force_single_line = false
+balanced_wrapping = true
+default_section = "THIRDPARTY"
+known_first_party = "griffe"
+include_trailing_comma = true

@@ -1,0 +1,21 @@
+# Changes here will be overwritten by Copier
+_commit: 0.4.3
+_src_path: gh:pawamoy/copier-pdm
+author_email: pawamoy@pm.me
+author_fullname: "Timoth\xE9e Mazzucotelli"
+author_username: pawamoy
+copyright_date: '2021'
+copyright_holder: "Timoth\xE9e Mazzucotelli"
+copyright_holder_email: pawamoy@pm.me
+copyright_license: ISC License
+project_description: Signatures for entire Python programs. Extract the structure,
+  the frame, the skeleton of your project, to generate API documentation or find breaking
+  changes in your API.
+project_name: griffe
+python_package_command_line_name: griffe
+python_package_distribution_name: griffe
+python_package_import_name: griffe
+repository_name: griffe
+repository_namespace: pawamoy
+repository_provider: github.com
+use_precommit: false

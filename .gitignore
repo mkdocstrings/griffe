@@ -1,0 +1,16 @@
+.idea/
+__pycache__/
+*.py[cod]
+dist/
+*.egg-info/
+build/
+htmlcov/
+.coverage*
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+site/
+pdm.lock
+.pdm.toml
+__pypackages__/
+.venv/
