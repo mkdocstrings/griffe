@@ -5,11 +5,7 @@ build-backend = "pdm.pep517.api"
 [project]
 name = "griffe"
 version = {use_scm = true}
-description = """
-Signatures for entire Python programs.
-Extract the structure, the frame, the skeleton of your project,
-to generate API documentation or find breaking changes in your API.
-"""
+description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 authors = [{name = "Timothée Mazzucotelli", email = "pawamoy@pm.me"}]
 license = {file = "LICENSE"}
 readme = "README.md"
