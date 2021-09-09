@@ -3,7 +3,6 @@
 import os
 import re
 import sys
-from functools import wraps
 from pathlib import Path
 from shutil import which
 from typing import List, Optional, Pattern
@@ -152,32 +151,7 @@ def check_dependencies(ctx):
     )
 
 
-def no_docs_py36(nofail=True):
-    """
-    Decorate a duty that builds docs to warn that it's not possible on Python 3.6.
-
-    Arguments:
-        nofail: Whether to fail or not.
-
-    Returns:
-        The decorated function.
-    """
-
-    def decorator(func):
-        @wraps(func)
-        def wrapper(ctx):
-            if sys.version_info <= (3, 7, 0):
-                ctx.run(["false"], title="Docs can't be built on Python 3.6", nofail=nofail, quiet=True)
-            else:
-                func(ctx)
-
-        return wrapper
-
-    return decorator
-
-
 @duty
-@no_docs_py36()
 def check_docs(ctx):
     """
     Check if the documentation builds correctly.
@@ -187,7 +161,7 @@ def check_docs(ctx):
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
-    ctx.run("mkdocs build -s", title="Building documentation", pty=PTY)
+    ctx.run("mkdocs build -s", title="Building documentation", pty=PTY, nofail=True, quiet=True)
 
 
 @duty
@@ -223,7 +197,6 @@ def clean(ctx):
 
 
 @duty
-@no_docs_py36(nofail=False)
 def docs(ctx):
     """
     Build the documentation locally.
@@ -235,7 +208,6 @@ def docs(ctx):
 
 
 @duty
-@no_docs_py36(nofail=False)
 def docs_serve(ctx, host="127.0.0.1", port=8000):
     """
     Serve the documentation (localhost:8000).
@@ -249,7 +221,6 @@ def docs_serve(ctx, host="127.0.0.1", port=8000):
 
 
 @duty
-@no_docs_py36(nofail=False)
 def docs_deploy(ctx):
     """
     Deploy the documentation on GitHub pages.

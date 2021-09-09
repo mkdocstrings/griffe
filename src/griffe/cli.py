@@ -11,21 +11,29 @@
 
 """Module that contains the command line application."""
 
+from __future__ import annotations
+
 import argparse
-from typing import List, Optional
+import json
+
+from griffe.encoders import Encoder
+from griffe.extensions.base import Extensions
+from griffe.loader import GriffeLoader
 
 
 def get_parser() -> argparse.ArgumentParser:
     """
-    Return the CLI argument parser.
+    Return the program argument parser.
 
     Returns:
-        An argparse parser.
+        The argument parser for the program.
     """
-    return argparse.ArgumentParser(prog="griffe")
+    parser = argparse.ArgumentParser(prog="griffe")
+    parser.add_argument("packages", metavar="PACKAGE", nargs="+", help="Packages to find and parse.")
+    return parser
 
 
-def main(args: Optional[List[str]] = None) -> int:
+def main(args: list[str] | None = None) -> int:
     """
     Run the main program.
 
@@ -38,6 +46,13 @@ def main(args: Optional[List[str]] = None) -> int:
         An exit code.
     """
     parser = get_parser()
-    opts = parser.parse_args(args=args)
-    print(opts)  # noqa: WPS421 (side-effect in main is fine)
+    opts: argparse.Namespace = parser.parse_args(args)  # type: ignore
+
+    extensions = Extensions()
+    loader = GriffeLoader(extensions=extensions)
+    modules = []
+    for package in opts.packages:
+        modules.append(loader.load_module(package))
+    serialized = json.dumps(modules, cls=Encoder, indent=2, full=True)
+    print(serialized)
     return 0

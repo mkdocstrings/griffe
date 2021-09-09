@@ -5,11 +5,15 @@ build-backend = "pdm.pep517.api"
 [project]
 name = "griffe"
 version = {use_scm = true}
-description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
+description = """
+Signatures for entire Python programs.
+Extract the structure, the frame, the skeleton of your project,
+to generate API documentation or find breaking changes in your API.
+"""
 authors = [{name = "Timothée Mazzucotelli", email = "pawamoy@pm.me"}]
 license = {file = "LICENSE"}
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 keywords = []
 dynamic = ["version", "classifiers"]
 classifiers = [
@@ -38,21 +42,23 @@ package-dir = "src"
 [tool.pdm.dev-dependencies]
 duty = ["duty~=0.6"]
 docs = [
-    "mkdocs~=1.1; python_version >= '3.7'",
-    "mkdocs-coverage~=0.2; python_version >= '3.7'",
-    "mkdocs-gen-files~=0.3; python_version >= '3.7'",
-    "mkdocs-literate-nav~=0.4; python_version >= '3.7'",
-    "mkdocs-material~=7.1; python_version >= '3.7'",
-    "mkdocstrings~=0.15; python_version >= '3.7'",
-    "toml~=0.10; python_version >= '3.7'",
+    "mkdocs~=1.1",
+    "mkdocs-coverage~=0.2",
+    "mkdocs-gen-files~=0.3",
+    "mkdocs-literate-nav~=0.4",
+    "mkdocs-material~=7.1",
+    "mkdocstrings~=0.15",
+    "-e ../mkdocstrings",
+    "-e ../pytkdocs",
+    "toml~=0.10",
 ]
 format = [
     "autoflake~=1.4",
     "black~=20.8b1",
     "isort~=5.8",
 ]
+# TODO: remove this section when git-changelog is more powerful
 maintain = [
-    # TODO: remove this section when git-changelog is more powerful
     "git-changelog~=0.4",
 ]
 quality = [

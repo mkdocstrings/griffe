@@ -43,7 +43,7 @@ theme:
       name: Switch to light mode
 
 extra_css:
-- css/material.css
+- css/custom.css
 - css/mkdocstrings.css
 
 markdown_extensions:
@@ -68,6 +68,10 @@ plugins:
     nav_file: SUMMARY.md
 - coverage
 - mkdocstrings:
+    handlers:
+      python:
+        import:
+        - https://docs.python.org/3/objects.inv
     watch:
     - src/griffe
 
