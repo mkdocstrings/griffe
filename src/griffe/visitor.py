@@ -14,7 +14,7 @@ from pathlib import Path
 
 from griffe.collections import lines_collection
 from griffe.dataclasses import Argument, Class, Docstring, Function, Module
-from griffe.extended_ast import LastNodeError, link_tree
+from griffe.extended_ast import link_tree
 from griffe.extensions import Extensions
 
 
@@ -38,17 +38,15 @@ def visit(
     return _Visitor(module_name, filepath, code, extensions or Extensions()).get_module()
 
 
-def _get_expr_constant_value(node: ast.AST) -> Docstring | None:
-    if isinstance(node, ast.Constant) and isinstance(node.value, str):
-        return Docstring(node.value, node.lineno, node.end_lineno)
-    return None
-
-
-def _get_docstring(node: ast.AST) -> Docstring | None:
-    try:
-        return _get_expr_constant_value(node.body[0].first_child)  # type: ignore
-    except (AttributeError, IndexError, LastNodeError):
+def _get_docstring(node):
+    if not (node.body and isinstance(node.body[0], ast.Expr)):
         return None
+    doc = node.body[0].value
+    if isinstance(doc, ast.Constant) and isinstance(doc.value, str):
+        return Docstring(doc.value, doc.lineno, doc.end_lineno)
+    if isinstance(doc, ast.Str):
+        return Docstring(doc.s, doc.lineno, doc.end_lineno)
+    return None
 
 
 class _Visitor(ast.NodeVisitor):
