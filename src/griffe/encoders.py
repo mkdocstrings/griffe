@@ -42,7 +42,7 @@ class Encoder(json.JSONEncoder):
         super().__init__(*args, **kwargs)
         self.full = full
 
-    def default(self, obj: Any) -> Any:
+    def default(self, obj: Any) -> Any:  # noqa: WPS212
         """Return a serializable representation of the given object.
 
         Arguments:
@@ -53,8 +53,8 @@ class Encoder(json.JSONEncoder):
         """
         if hasattr(obj, "as_dict"):
             return obj.as_dict(self.full)
-        if isinstance(obj, ParameterKind):
-            return str(ParameterKind)
+        if isinstance(obj, (Path, ParameterKind)):
+            return str(obj)
         if isinstance(obj, Kind):
             return obj.value
         if isinstance(obj, set):
