@@ -8,29 +8,6 @@ from griffe.loader import GriffeLoader
 griffe = GriffeLoader()
 fastapi = griffe.load_module("fastapi")
 ```
-
-You can pass extensions to the loader to augment its capacities:
-
-```python
-from griffe.loader import GriffeLoader
-from griffe.extensions import Extension, Extensions
-
-# import extensions
-from some.package import TheirExtension
-
-# or define your own
-class ClassStartsAtOddLineNumberExtension(Extension):
-    def visit_ClassDef(self, node) -> None:
-        if node.lineno % 2 == 1:
-            self.visitor.current.labels.add("starts at odd line number")
-
-extensions = Extensions()
-extensions.add_pre_visitor(TheirExtension)
-extensions.add_post_visitor(ClassStartsAtOddLineNumberExtension)
-
-griffe = GriffeLoader(extensions=extensions)
-fastapi = griffe.load_module("fastapi")
-```
 """
 
 from __future__ import annotations
@@ -41,7 +18,7 @@ from typing import Iterator
 
 from griffe.collections import lines_collection
 from griffe.dataclasses import Module
-from griffe.extensions.base import Extensions
+from griffe.extensions import Extensions
 from griffe.logger import get_logger
 from griffe.visitor import visit
 
@@ -63,20 +40,36 @@ class GriffeLoader:
         """
         self.extensions = extensions or Extensions()
 
-    def load_module(self, module_name: str, recursive: bool = True) -> Module:
+    def load_module(
+        self,
+        module: str | Path,
+        recursive: bool = True,
+        search_paths: list[str | Path] | None = None,
+    ) -> Module:
         """Load a module.
 
         Arguments:
-            module_name: The module name.
+            module: The module name or path.
             recursive: Whether to recurse on the submodules.
+            search_paths: The paths to search into.
 
         Returns:
             A module.
         """
-        module_path = find_module(module_name)
+        if isinstance(module, Path):
+            # programatically passed a Path, try only that
+            module_name, module_path = module_name_path(module)
+        else:
+            # passed a string (from CLI or Python code), try both
+            try:
+                module_name, module_path = module_name_path(Path(module))
+            except FileNotFoundError:
+                module_name = module
+                module_path = find_module(module_name, search_paths=search_paths)
         return self._load_module_path(module_name, module_path, recursive=recursive)
 
     def _load_module_path(self, module_name, module_path, recursive=True):
+        logger.debug(f"Loading path {module_path}")
         code = module_path.read_text()
         lines_collection[module_path] = code.splitlines(keepends=False)
         module = visit(
@@ -91,9 +84,8 @@ class GriffeLoader:
                 try:
                     member_parent = module[parent_parts]
                 except KeyError:
-                    logger.info(f"{subpath} is not importable, using folder", file=sys.stderr)
-                    member_parent = Module(subpath.parent.name)
-                    module[parent_parts] = member_parent
+                    logger.debug(f"Skipping (not importable) {subpath}")
+                    continue
                 member_parent[subparts[-1]] = self._load_module_path(subparts[-1], subpath, recursive=False)
         return module
 
@@ -102,25 +94,50 @@ def _module_depth(name_parts_and_path):
     return len(name_parts_and_path[0])
 
 
+def module_name_path(path: Path) -> tuple[str, Path]:
+    """Get the module name and path from a path.
+
+    Arguments:
+        path: A directory or file path. Paths to `__init__.py` files
+            will be resolved to their parent directory.
+
+    Raises:
+        FileNotFoundError: When:
+
+            - the directory has no `__init__.py` file in it
+            - the path does not exist
+
+    Returns:
+        The name of the module (or package) and its path.
+    """
+    if path.is_dir():
+        module_path = path / "__init__.py"
+        if module_path.exists():
+            return path.name, module_path
+        raise FileNotFoundError
+    if path.exists():
+        if path.stem == "__init__":
+            return path.parent.resolve().name, path
+        return path.stem, path
+    raise FileNotFoundError
+
+
 # credits to @NiklasRosenstein and the docspec project
-def find_module(module_name: str, search_paths: list[str] = None) -> Path:
+def find_module(module_name: str, search_paths: list[str | Path] | None = None) -> Path:
     """Find a module in a given list of paths or in `sys.path`.
 
     Arguments:
         module_name: The module name.
-        search_paths: The paths to seach into.
+        search_paths: The paths to search into.
 
     Raises:
-        ImportError: When the module cannot be found.
+        ModuleNotFoundError: When the module cannot be found.
 
     Returns:
         The module file path.
     """
-    if search_paths is None:
-        search_paths = sys.path
-
     # optimization: pre-compute Paths to relieve CPU when joining paths
-    search = [Path(path) for path in search_paths]
+    search = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
     parts = module_name.split(".")
 
     filenames = [
@@ -136,7 +153,7 @@ def find_module(module_name: str, search_paths: list[str] = None) -> Path:
             if abs_path.exists():
                 return abs_path
 
-    raise ImportError(module_name)
+    raise ModuleNotFoundError(module_name)
 
 
 def iter_submodules(path) -> Iterator[tuple[list[str], Path]]:  # noqa: WPS234
