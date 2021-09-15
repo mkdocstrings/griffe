@@ -7,7 +7,89 @@ The different objects are modules, classes, functions, and data
 from __future__ import annotations
 
 import enum
+import inspect
 from pathlib import Path
+from typing import Any
+
+ParameterKind = inspect._ParameterKind  # noqa: WPS437
+
+
+class Docstring:
+    """This class represents docstrings.
+
+    Attributes:
+        value: The actual documentation string, cleaned up.
+        lineno: The starting line number.
+        endlineno: The ending line number.
+    """
+
+    def __init__(self, value: str, lineno: int | None, endlineno: int | None) -> None:
+        """Initialize the docstring.
+
+        Arguments:
+            value: The docstring value.
+            lineno: The starting line number.
+            endlineno: The ending line number.
+        """
+        self.value: str = inspect.cleandoc(value)
+        self.lineno: int | None = lineno
+        self.endlineno: int | None = endlineno
+
+    def as_dict(self, full=False) -> dict[str, Any]:
+        """Return this docstring's data as a dictionary.
+
+        Arguments:
+            full: Whether to return full info, or just base info.
+
+        Returns:
+            A dictionary.
+        """
+        return {
+            "value": self.value,
+            "lineno": self.lineno,
+            "endlineno": self.endlineno,
+        }
+
+
+class Argument:
+    """This class represent a function argument.
+
+    Attributes:
+        name: The argument name.
+        annotation: The argument annotation, if any.
+        kind: The argument kind (see [`inspect.Parameter.kind`][]).
+        default: The argument default, if any.
+    """
+
+    def __init__(self, name: str, annotation: str | None, kind: ParameterKind, default: str | None) -> None:
+        """Initialize the argument.
+
+        Arguments:
+            name: The argument name.
+            annotation: The argument annotation, if any.
+            kind: The argument kind (see [`inspect.Parameter.kind`][]).
+            default: The argument default, if any.
+        """
+        self.name: str = name
+        self.annotation: str | None = annotation
+        self.kind: ParameterKind = kind
+        self.default: str | None = default
+
+    def as_dict(self, full=False) -> dict[str, Any]:
+        """Return this argument's data as a dictionary.
+
+        Arguments:
+            full: Whether to return full info, or just base info.
+
+        Returns:
+            A dictionary.
+        """
+        return {
+            "name": self.name,
+            "annotation": self.annotation,
+            "kind": self.kind,
+            "default": self.default,
+        }
 
 
 class Kind(enum.Enum):
@@ -32,8 +114,9 @@ class Object:
     Attributes:
         kind: The object kind.
         name: The object name.
-        lineno: The object starting line, or None for modules. Lines start at 1..
-        endlineno: The object ending line (inclusive), or None for modules..
+        lineno: The object starting line, or None for modules. Lines start at 1.
+        endlineno: The object ending line (inclusive), or None for modules.
+        docstring: The object docstring.
         parent: The object parent, or None if it is the top module.
         members: The object members.
         labels: The object labels.
@@ -41,17 +124,25 @@ class Object:
 
     kind: Kind
 
-    def __init__(self, name: str, lineno: int | None = None, endlineno: int | None = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        lineno: int | None = None,
+        endlineno: int | None = None,
+        docstring: Docstring | None = None,
+    ) -> None:
         """Initialize the object.
 
         Arguments:
             name: The object name, as declared in the code.
             lineno: The object starting line, or None for modules. Lines start at 1.
             endlineno: The object ending line (inclusive), or None for modules.
+            docstring: The object docstring.
         """
         self.name: str = name
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
+        self.docstring: Docstring | None = docstring
         self.parent: Module | Class | None = None
         self.members: dict[str, Module | Class | Function | Data] = {}
         self.labels: set[str] = set()
@@ -128,7 +219,7 @@ class Object:
             return self.name
         return ".".join((self.parent.path, self.name))
 
-    def as_dict(self, full: bool = False) -> dict:
+    def as_dict(self, full: bool = False) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
         Arguments:
@@ -138,23 +229,28 @@ class Object:
             A dictionary.
         """
         base = {
-            "name": self.name,
-            "members": [member.as_dict(full) for member in self.members.values()],
-            "labels": self.labels,
             "kind": self.kind,
+            "name": self.name,
         }
-        if self.lineno:
-            base["lineno"] = self.lineno
-        if self.endlineno:
-            base["endlineno"] = self.endlineno
 
         if full:
             base.update(
                 {
-                    "filepath": str(self.filepath),
                     "path": self.path,
+                    "filepath": str(self.filepath),
                 }
             )
+
+        if self.lineno:
+            base["lineno"] = self.lineno
+        if self.endlineno:
+            base["endlineno"] = self.endlineno
+        if self.docstring:
+            base["docstring"] = self.docstring
+
+        # doing this last for a prettier JSON dump
+        base["labels"] = self.labels
+        base["members"] = [member.as_dict(full) for member in self.members.values()]
 
         return base
 
@@ -246,7 +342,7 @@ class Module(Object):
             or self.parent.is_namespace_package  # type: ignore  # modules parents are always modules
         )
 
-    def as_dict(self, full: bool = False) -> dict:
+    def as_dict(self, full: bool = False) -> dict[str, Any]:
         """Return this module's data as a dictionary.
 
         Arguments:
@@ -270,6 +366,33 @@ class Function(Object):
     """The class representing a Python function."""
 
     kind = Kind.FUNCTION
+
+    def __init__(self, *args, arguments: list[Argument] | None = None, returns: str | None = None, **kwargs) -> None:
+        """Initialize the module.
+
+        Arguments:
+            *args: See [`griffe.dataclasses.Object`][].
+            arguments: The function arguments.
+            returns: The function return annotation.
+            **kwargs: See [`griffe.dataclasses.Object`][].
+        """
+        super().__init__(*args, **kwargs)
+        self.arguments = arguments or []
+        self.returns = returns
+
+    def as_dict(self, full: bool = False) -> dict[str, Any]:
+        """Return this function's data as a dictionary.
+
+        Arguments:
+            full: Whether to return full info, or just base info.
+
+        Returns:
+            A dictionary.
+        """
+        base = super().as_dict(full=full)
+        base["arguments"] = [arg.as_dict(full=full) for arg in self.arguments]
+        base["returns"] = self.returns
+        return base
 
 
 class Data(Object):

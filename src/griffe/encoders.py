@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from griffe.dataclasses import Class, Data, Function, Kind, Module
+from griffe.dataclasses import Class, Data, Function, Kind, Module, ParameterKind
 
 
 class Encoder(json.JSONEncoder):
@@ -53,6 +53,8 @@ class Encoder(json.JSONEncoder):
         """
         if hasattr(obj, "as_dict"):
             return obj.as_dict(self.full)
+        if isinstance(obj, ParameterKind):
+            return str(ParameterKind)
         if isinstance(obj, Kind):
             return obj.value
         if isinstance(obj, set):
