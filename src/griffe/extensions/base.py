@@ -41,9 +41,13 @@ class Extension(ast.NodeVisitor):
 class Extensions:
     """This class helps iterating on extensions that should run at different times."""
 
-    def __init__(self) -> None:
-        """Initialize the extensions container."""
-        self._classes: list[Type[Extension]] = []
+    def __init__(self, *extensions_classes: Type[Extension]) -> None:
+        """Initialize the extensions container.
+
+        Arguments:
+            *extensions_classes: The extensions to add.
+        """
+        self._classes: list[Type[Extension]] = list(extensions_classes)
         self._instances: dict[When, list[Extension]] = {}
 
     @property
@@ -93,13 +97,13 @@ class Extensions:
         """
         return self._instances[when]
 
-    def add(self, *extensions: Type[Extension]) -> None:
+    def add(self, *extensions_classes: Type[Extension]) -> None:
         """Add visitor extensions to this container.
 
         Arguments:
-            *extensions: The extensions to add.
+            *extensions_classes: The extensions to add.
         """
-        self._classes.extend(extensions)
+        self._classes.extend(extensions_classes)
 
     def instantiate(self, main_visitor: ast.NodeVisitor) -> Extensions:
         """Clear and instantiate the visitor classes.
