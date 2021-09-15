@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
-lines_collection: dict[str, list[str]] = {}
+from pathlib import Path
+
+lines_collection: dict[Path, list[str]] = {}
 """A simple dictionary containing lines of modules.
 It will probably be made more powerful later."""
