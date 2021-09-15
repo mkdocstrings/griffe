@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import enum
 import inspect
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
@@ -178,7 +179,7 @@ class Object:
             return self.members[parts[0]]
         return self.members[parts[0]][parts[1]]
 
-    @property
+    @cached_property
     def module(self) -> Module:
         """Return the parent module of this object.
 
@@ -206,6 +207,7 @@ class Object:
             module = module.parent  # type: ignore
         return module
 
+    @cached_property
     def filepath(self) -> Path | None:
         """Return the file path where this object was defined.
 
@@ -228,6 +230,7 @@ class Object:
         """
         return self.module.filepath.relative_to(self.package.filepath.parent.parent)  # type: ignore
 
+    @cached_property
     def path(self) -> str:
         """Return the dotted path / import path of this object.
 
@@ -256,6 +259,7 @@ class Object:
             base.update(
                 {
                     "path": self.path,
+                    "filepath": self.filepath,
                     "relative_filepath": self.relative_filepath,
                 }
             )
@@ -284,7 +288,7 @@ class Module(Object):
 
         Arguments:
             *args: See [`griffe.dataclasses.Object`][].
-            filepath: The module file path. It can be null for namespace packages or non-importable folders.
+            filepath: The module file path. It can be null for namespace packages.
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
@@ -293,7 +297,7 @@ class Module(Object):
     def __repr__(self) -> str:
         return f"<Module({self._filepath!r})>"
 
-    @property
+    @cached_property
     def filepath(self) -> Path | None:
         """Get the file path of this module.
 
@@ -302,7 +306,7 @@ class Module(Object):
         """
         return self._filepath
 
-    @property
+    @cached_property
     def is_init_module(self) -> bool:
         """Tell if this module is an `__init__.py` module.
 
@@ -311,7 +315,7 @@ class Module(Object):
         """
         return bool(self.filepath) and self.filepath.name == "__init__.py"  # type: ignore
 
-    @property
+    @cached_property
     def is_folder(self) -> bool:
         """Tell if this module is a non-importable folder.
 
@@ -320,7 +324,7 @@ class Module(Object):
         """
         return bool(self.parent) and not self.filepath
 
-    @property
+    @cached_property
     def is_package(self) -> bool:
         """Tell if this module is a package (top module).
 
@@ -329,7 +333,7 @@ class Module(Object):
         """
         return not bool(self.parent) and self.is_init_module
 
-    @property
+    @cached_property
     def is_subpackage(self) -> bool:
         """Tell if this module is a subpackage.
 
@@ -338,7 +342,7 @@ class Module(Object):
         """
         return bool(self.parent) and self.is_init_module
 
-    @property
+    @cached_property
     def is_namespace_package(self) -> bool:
         """Tell if this module is a namespace package (top folder, no `__init__.py`).
 
@@ -347,7 +351,7 @@ class Module(Object):
         """
         return not self.parent and not self.filepath
 
-    @property
+    @cached_property
     def is_namespace_subpackage(self) -> bool:
         """Tell if this module is a namespace subpackage.
 
