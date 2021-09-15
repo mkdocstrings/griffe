@@ -99,14 +99,18 @@ def main(args: list[str] | None = None) -> int:
     extensions = Extensions()
     loader = GriffeLoader(extensions=extensions)
     packages = {}
+    success = True
+
     for package in opts.packages:
         logger.info(f"Loading package {package}")
         try:
             module = loader.load_module(package, search_paths=search)
         except ModuleNotFoundError:
             logger.error(f"Could not find package {package}")
+            success = False
         else:
             packages[module.name] = module
+
     if per_package_output:
         for package_name, data in packages.items():
             serialized = json.dumps(data, cls=Encoder, indent=2, full=True)
@@ -114,4 +118,5 @@ def main(args: list[str] | None = None) -> int:
     else:
         serialized = json.dumps(packages, cls=Encoder, indent=2, full=True)
         _print_data(serialized, output)
-    return 0
+
+    return 0 if success else 1
