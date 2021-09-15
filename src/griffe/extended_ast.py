@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import ast
 import inspect
-from collections import defaultdict
+from ast import AST, iter_child_nodes  # noqa: WPS458
 from functools import cached_property
 
 
@@ -33,6 +33,10 @@ class RootNodeError(Exception):
 
 class _ExtendedAST:
     @cached_property
+    def children(self) -> list[AST]:
+        return list(iter_child_nodes(self))  # type: ignore
+
+    @cached_property
     def position(self) -> int:
         try:
             return self.parent.children.index(self)  # type: ignore
@@ -40,44 +44,44 @@ class _ExtendedAST:
             raise RootNodeError("the root node does not have a parent, nor siblings, nor a position") from error
 
     @cached_property
-    def previous_siblings(self) -> list[ast.AST]:
+    def previous_siblings(self) -> list[AST]:
         if self.position == 0:
             return []
         return self.parent.children[self.position - 1 :: -1]  # type: ignore
 
     @cached_property
-    def next_siblings(self) -> list[ast.AST]:
+    def next_siblings(self) -> list[AST]:
         if self.position == len(self.parent.children) - 1:  # type: ignore
             return []
         return self.parent.children[self.position + 1 :]  # type: ignore
 
     @cached_property
-    def siblings(self) -> list[ast.AST]:
+    def siblings(self) -> list[AST]:
         return reversed(self.previous_siblings) + self.next_siblings  # type: ignore
 
     @cached_property
-    def previous(self) -> ast.AST:
+    def previous(self) -> AST:
         try:
             return self.previous_siblings[0]
         except IndexError as error:
             raise LastNodeError("there is no previous node") from error
 
     @cached_property
-    def next(self) -> ast.AST:  # noqa: A003
+    def next(self) -> AST:  # noqa: A003
         try:
             return self.next_siblings[0]
         except IndexError as error:
             raise LastNodeError("there is no next node") from error
 
     @cached_property
-    def first_child(self) -> ast.AST:
+    def first_child(self) -> AST:
         try:
             return self.children[0]  # type: ignore
         except IndexError as error:
             raise LastNodeError("there are no children node") from error
 
     @cached_property
-    def last_child(self) -> ast.AST:  # noqa: A003
+    def last_child(self) -> AST:  # noqa: A003
         try:
             return self.children[-1]  # type: ignore
         except IndexError as error:
@@ -98,16 +102,12 @@ def extend_ast(force: bool = False) -> None:
         return
     for name, member in inspect.getmembers(ast):
         if name != "AST" and inspect.isclass(member):
-            if ast.AST in member.__bases__:  # noqa: WPS609
+            if AST in member.__bases__:  # noqa: WPS609
                 member.__bases__ = (*member.__bases__, _ExtendedAST)  # noqa: WPS609
     _patched = True  # noqa: WPS122,WPS442
 
 
-def _tree():
-    return defaultdict(_tree)
-
-
-def link_tree(root_node: ast.AST) -> None:
+def link_tree(root_node: AST) -> None:
     """Link nodes between them.
 
     This will set the `parent` and `children` attributes on every node in the tree.
@@ -115,33 +115,21 @@ def link_tree(root_node: ast.AST) -> None:
     Arguments:
         root_node: The root node, to start from.
     """
-    _NodeLinker().link(root_node)
+    root_node.parent = None  # type: ignore
+    _link_tree(root_node)
 
 
-class _NodeLinker(ast.NodeVisitor):
-    def __init__(self) -> None:
-        super().__init__()
-        self._tree = _tree()
-        self._tree_node = self._tree
-        self._node = None
-
-    def visit(self, node):
-        node.parent = self._node
-        parent_tree_node = self._tree_node
-        self._tree_node = self._tree_node[node]
-        parent_node = self._node
-        self._node = node
-        self.generic_visit(node)
-        self._node = parent_node
-        self._tree_node = parent_tree_node
-
-    def link(self, node):
-        self.visit(node)
-        self._link_children()
-
-    def _link_children(self, tree=None):
-        if tree is None:
-            tree = self._tree
-        for parent, children in tree.items():
-            parent.children = list(children.keys())
-            self._link_children(children)
+def _link_tree(node: AST) -> None:  # noqa: WPS231
+    for field_name in node._fields:  # noqa: WPS437
+        try:
+            field = getattr(node, field_name)
+        except AttributeError:
+            continue
+        if isinstance(field, AST):
+            field.parent = node  # type: ignore
+            _link_tree(field)
+        elif isinstance(field, list):
+            for child in field:
+                if isinstance(child, AST):
+                    child.parent = node  # type: ignore
+                    _link_tree(child)
