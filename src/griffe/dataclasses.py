@@ -194,7 +194,18 @@ class Object:
             return self.parent.module
         raise ValueError
 
-    @property
+    @cached_property
+    def package(self) -> Module:
+        """Return the absolute top module (the package) of this object.
+
+        Returns:
+            The parent module.
+        """
+        module = self.module
+        while module.parent:
+            module = module.parent  # type: ignore
+        return module
+
     def filepath(self) -> Path | None:
         """Return the file path where this object was defined.
 
@@ -208,7 +219,15 @@ class Object:
         """
         return self.module.filepath
 
-    @property
+    @cached_property
+    def relative_filepath(self) -> Path | None:
+        """Return the file path where this object was defined, relative to the top module path.
+
+        Returns:
+            A file path.
+        """
+        return self.module.filepath.relative_to(self.package.filepath.parent.parent)  # type: ignore
+
     def path(self) -> str:
         """Return the dotted path / import path of this object.
 
@@ -237,7 +256,7 @@ class Object:
             base.update(
                 {
                     "path": self.path,
-                    "filepath": str(self.filepath),
+                    "relative_filepath": self.relative_filepath,
                 }
             )
 
