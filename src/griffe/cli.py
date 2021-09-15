@@ -48,6 +48,8 @@ def main(args: list[str] | None = None) -> int:
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)  # type: ignore
 
+    extend_ast()
+
     extensions = Extensions()
     loader = GriffeLoader(extensions=extensions)
     modules = []
