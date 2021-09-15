@@ -11,6 +11,7 @@ nav:
   - Changelog: changelog.md
   - Credits: credits.md
   - License: license.md
+- Usage: usage.md
 # defer to gen-files + literate-nav
 - Code Reference: reference/
 - Development:
@@ -54,7 +55,8 @@ markdown_extensions:
     check_paths: true
 - pymdownx.superfences
 - pymdownx.tabbed
-- pymdownx.tasklist
+- pymdownx.tasklist:
+    custom_checkbox: true
 - toc:
     permalink: "¤"
 
