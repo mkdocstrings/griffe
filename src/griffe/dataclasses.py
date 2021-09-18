@@ -15,6 +15,39 @@ from typing import Any
 ParameterKind = inspect._ParameterKind  # noqa: WPS437
 
 
+class Decorator:
+    """This class represents decorators.
+
+    Attributes:
+        lineno: The starting line number.
+        endlineno: The ending line number.
+    """
+
+    def __init__(self, lineno: int | None, endlineno: int | None) -> None:
+        """Initialize the decorator.
+
+        Arguments:
+            lineno: The starting line number.
+            endlineno: The ending line number.
+        """
+        self.lineno: int | None = lineno
+        self.endlineno: int | None = endlineno
+
+    def as_dict(self, full=False) -> dict[str, Any]:
+        """Return this decorator's data as a dictionary.
+
+        Arguments:
+            full: Whether to return full info, or just base info.
+
+        Returns:
+            A dictionary.
+        """
+        return {
+            "lineno": self.lineno,
+            "endlineno": self.endlineno,
+        }
+
+
 class Docstring:
     """This class represents docstrings.
 
@@ -283,7 +316,7 @@ class Module(Object):
 
     kind = Kind.MODULE
 
-    def __init__(self, *args, filepath: Path | None = None, **kwargs) -> None:
+    def __init__(self, *args, filepath: Path, **kwargs) -> None:
         """Initialize the module.
 
         Arguments:
@@ -292,13 +325,13 @@ class Module(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self._filepath = filepath
+        self._filepath: Path = filepath
 
     def __repr__(self) -> str:
         return f"<Module({self._filepath!r})>"
 
-    @cached_property
-    def filepath(self) -> Path | None:
+    @property
+    def filepath(self) -> Path:
         """Get the file path of this module.
 
         Returns:
@@ -313,16 +346,7 @@ class Module(Object):
         Returns:
             True or False.
         """
-        return bool(self.filepath) and self.filepath.name == "__init__.py"  # type: ignore
-
-    @cached_property
-    def is_folder(self) -> bool:
-        """Tell if this module is a non-importable folder.
-
-        Returns:
-            True or False.
-        """
-        return bool(self.parent) and not self.filepath
+        return self.filepath.name == "__init__.py"  # type: ignore
 
     @cached_property
     def is_package(self) -> bool:
@@ -349,7 +373,7 @@ class Module(Object):
         Returns:
             True or False.
         """
-        return not self.parent and not self.filepath
+        return not self.parent and self.filepath.is_dir()
 
     @cached_property
     def is_namespace_subpackage(self) -> bool:
@@ -360,9 +384,9 @@ class Module(Object):
         """
         return (
             self.parent
-            and not self.filepath
-            and self.parent.is_namespace_subpackage  # type: ignore  # modules parents are always modules
-            or self.parent.is_namespace_package  # type: ignore  # modules parents are always modules
+            and self.filepath.is_dir()
+            and self.parent.is_namespace_package  # type: ignore  # modules parents are always modules
+            or self.parent.is_namespace_subpackage  # type: ignore  # modules parents are always modules
         )
 
     def as_dict(self, full: bool = False) -> dict[str, Any]:
@@ -390,18 +414,27 @@ class Function(Object):
 
     kind = Kind.FUNCTION
 
-    def __init__(self, *args, arguments: list[Argument] | None = None, returns: str | None = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *args,
+        arguments: list[Argument] | None = None,
+        returns: str | None = None,
+        decorators: list[Decorator] | None = None,
+        **kwargs,
+    ) -> None:
         """Initialize the module.
 
         Arguments:
             *args: See [`griffe.dataclasses.Object`][].
             arguments: The function arguments.
             returns: The function return annotation.
+            decorators: The function decorators, if any.
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.arguments = arguments or []
         self.returns = returns
+        self.decorators = decorators or []
 
     def as_dict(self, full: bool = False) -> dict[str, Any]:
         """Return this function's data as a dictionary.
@@ -413,6 +446,7 @@ class Function(Object):
             A dictionary.
         """
         base = super().as_dict(full=full)
+        base["decorators"] = [dec.as_dict(full=full) for dec in self.decorators]
         base["arguments"] = [arg.as_dict(full=full) for arg in self.arguments]
         base["returns"] = self.returns
         return base

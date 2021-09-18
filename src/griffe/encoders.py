@@ -76,17 +76,17 @@ def decoder(obj_dict) -> Module | Class | Function | Data:  # noqa: WPS231
     if "kind" in obj_dict:
         kind = Kind(obj_dict["kind"])
         if kind == Kind.MODULE:
-            module = Module(obj_dict["name"], obj_dict["lineno"], obj_dict["endlineno"], Path(obj_dict["filepath"]))
+            module = Module(name=obj_dict["name"], filepath=Path(obj_dict["filepath"]))
             for module_member in obj_dict.get("members", []):
                 module[module_member.name] = module_member
             return module
         elif kind == Kind.CLASS:
-            class_ = Class(obj_dict["name"], obj_dict["lineno"], obj_dict["endlineno"])
+            class_ = Class(name=obj_dict["name"], lineno=obj_dict["lineno"], endlineno=obj_dict["endlineno"])
             for class_member in obj_dict.get("members", []):
                 class_[class_member.name] = class_member
             return class_
         elif kind == Kind.FUNCTION:
-            return Function(obj_dict["name"], obj_dict["lineno"], obj_dict["endlineno"])
+            return Function(name=obj_dict["name"], lineno=obj_dict["lineno"], endlineno=obj_dict["endlineno"])
         elif kind == Kind.DATA:
-            return Data(obj_dict["name"], obj_dict["lineno"], obj_dict["endlineno"])
+            return Data(name=obj_dict["name"], lineno=obj_dict["lineno"], endlineno=obj_dict["endlineno"])
     return obj_dict

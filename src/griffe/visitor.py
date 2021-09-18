@@ -13,8 +13,7 @@ import inspect
 from pathlib import Path
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Argument, Class, Docstring, Function, Module
-from griffe.extended_ast import link_tree
+from griffe.dataclasses import Argument, Class, Decorator, Docstring, Function, Module
 from griffe.extensions import Extensions
 
 
@@ -99,9 +98,15 @@ class _Visitor(ast.NodeVisitor):
         self.current = self.current.parent  # type: ignore
 
     def visit_FunctionDef(self, node) -> None:  # noqa: WPS231
-        # include decorating lines
+        # handle decorators
+        decorators = []
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
+            self.in_decorator = True
+            for decorator_node in node.decorator_list:
+                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))
+                self.visit(decorator_node)
+            self.in_decorator = False
         else:
             lineno = node.lineno
 
@@ -147,6 +152,7 @@ class _Visitor(ast.NodeVisitor):
             endlineno=node.end_lineno,
             arguments=arguments,
             returns=returns,
+            decorators=decorators,
             docstring=_get_docstring(node),
         )
         self.current[node.name] = function
