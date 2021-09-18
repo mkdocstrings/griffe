@@ -19,7 +19,11 @@ classifiers = [
     "License :: OSI Approved :: ISC License (ISCL)",
     "Typing :: Typed",
 ]
-dependencies = []
+
+[project.optional-dependencies]
+async = [
+    "aiofiles~=0.7",
+]
 
 [project.urls]
 Homepage = "https://pawamoy.github.io/griffe"
