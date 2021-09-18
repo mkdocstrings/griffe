@@ -79,13 +79,22 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
 - Design:
     - [x] Navigable trees (nodes and data)
     - [x] Extension system
-    - [x] Initial optimisations (~65KLoC/s)
+    - [x] Performance (loading data, no serialization)
+        - sync: ~60 KLoC/s, ~330 files/s
+        - async: ~100 KLoC/s, ~550 files/s
 - Loader/Visitor:
     - [x] Docstrings
         - [x] Line numbers
+        - [ ] Parsing: see below
+    - [ ] Labels
     - [x] Modules
     - [x] Classes
-        - [ ] `__init__` data merged into parent class
+        - [ ] Bases (parent classes)
+        - [ ] Merging inherited members into class.
+              Needs to be able to post-process classes,
+              and to compute their MRO (C3Linearization, see docspec/pydocspec issues).
+        - [ ] Merging `__init__` method's docstring into class' docstring
+        - [ ] Decorators
     - [x] Functions
         - [x] Arguments
             - [x] Annotation (names, constants, attributes)
@@ -100,6 +109,11 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
             - [ ] Kind
             - [ ] Default
         - [x] Return annotation (names, constants, attributes)
+        - [ ] Decorators
+        - [ ] Support for `typing.overload` decorator.
+              We'll probably need to add an `overloads` attribute to `Function`,
+              to store the list of `@overload`-decorated functions,
+              because currently different members of a same object cannot have the same names.
     - [ ] Data (variables/attributes)
         - [ ] Docstrings
         - [ ] Value
@@ -109,6 +123,9 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
         - [ ] Resolve everything that is an `ast.Name`
         - [ ] Resolve names inside more complex expressions? Calls, exprs, etc.
     - [x] Lines collection (lines for each module)
+- [x] Extension system
+    - [x] Node-visiting extensions
+    - [ ] Post-processing extensions
 - [ ] Docstrings parsers
     - [ ] Structured format
     - [ ] Styles
