@@ -46,8 +46,6 @@ docs = [
     "mkdocs-literate-nav~=0.4",
     "mkdocs-material~=7.1",
     "mkdocstrings~=0.15",
-    "-e ../mkdocstrings",
-    "-e ../pytkdocs",
     "toml~=0.10",
 ]
 format = [
