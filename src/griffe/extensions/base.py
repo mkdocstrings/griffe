@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import ast
 import enum
-from typing import Type
+from typing import TYPE_CHECKING, Type
+
+if TYPE_CHECKING:
+    from griffe.visitor import _MainVisitor as MainVisitor  # noqa: WPS450
 
 
 class When(enum.Enum):
@@ -23,12 +26,39 @@ class When(enum.Enum):
     visit_stops: int = 4
 
 
-class Extension(ast.NodeVisitor):
+class _BaseVisitor:
+    def visit(self, node: ast.AST, parent: ast.AST | None = None) -> None:
+        self._visit(node, parent=parent)
+
+    def generic_visit(self, node: ast.AST) -> None:  # noqa: WPS231
+        # optimisation: got rid of the two generators iter_fields and iter_child_nodes
+        for field_name in node._fields:  # noqa: WPS437
+            try:
+                field = getattr(node, field_name)
+            except AttributeError:
+                continue
+            if isinstance(field, ast.AST):
+                self.visit(field, parent=node)
+            elif isinstance(field, list):
+                for child in field:
+                    if isinstance(child, ast.AST):
+                        self.visit(child, parent=node)
+
+    def _run_specific_or_generic(self, node):
+        # optimisation: no extra variable, f-string instead of concatenation
+        getattr(self, f"visit_{node.__class__.__name__}", self.generic_visit)(node)
+
+    def _visit(self, node: ast.AST, parent: ast.AST | None = None) -> None:
+        return self._run_specific_or_generic(node)
+
+
+class Extension(_BaseVisitor):
     """The node visitor extension base class, to inherit from."""
 
+    need_parents = False
     when: When
 
-    def __init__(self, main_visitor: ast.NodeVisitor) -> None:
+    def __init__(self, main_visitor: MainVisitor) -> None:
         """Initialize the visitor extension.
 
         Arguments:
@@ -49,6 +79,15 @@ class Extensions:
         """
         self._classes: list[Type[Extension]] = list(extensions_classes)
         self._instances: dict[When, list[Extension]] = {}
+
+    @property
+    def need_parents(self):
+        """Tell if any of the contained extensions needs access to the whole parents chain while visiting.
+
+        Returns:
+            True or False.
+        """
+        return any(class_.need_parents for class_ in self._classes)
 
     @property
     def when_visit_starts(self) -> list[Extension]:
@@ -105,7 +144,7 @@ class Extensions:
         """
         self._classes.extend(extensions_classes)
 
-    def instantiate(self, main_visitor: ast.NodeVisitor) -> Extensions:
+    def instantiate(self, main_visitor: MainVisitor) -> Extensions:
         """Clear and instantiate the visitor classes.
 
         Arguments:
