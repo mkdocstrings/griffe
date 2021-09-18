@@ -408,6 +408,39 @@ class Class(Object):
 
     kind = Kind.CLASS
 
+    def __init__(
+        self,
+        *args,
+        bases: list[str] | None = None,
+        decorators: list[Decorator] | None = None,
+        **kwargs,
+    ) -> None:
+        """Initialize the class.
+
+        Arguments:
+            *args: See [`griffe.dataclasses.Object`][].
+            bases: The list of base classes, if any.
+            decorators: The class decorators, if any.
+            **kwargs: See [`griffe.dataclasses.Object`][].
+        """
+        super().__init__(*args, **kwargs)
+        self.bases = bases or []
+        self.decorators = decorators or []
+
+    def as_dict(self, full: bool = False) -> dict[str, Any]:
+        """Return this class' data as a dictionary.
+
+        Arguments:
+            full: Whether to return full info, or just base info.
+
+        Returns:
+            A dictionary.
+        """
+        base = super().as_dict(full=full)
+        base["bases"] = self.bases
+        base["decorators"] = [dec.as_dict(full=full) for dec in self.decorators]
+        return base
+
 
 class Function(Object):
     """The class representing a Python function."""
@@ -422,7 +455,7 @@ class Function(Object):
         decorators: list[Decorator] | None = None,
         **kwargs,
     ) -> None:
-        """Initialize the module.
+        """Initialize the function.
 
         Arguments:
             *args: See [`griffe.dataclasses.Object`][].

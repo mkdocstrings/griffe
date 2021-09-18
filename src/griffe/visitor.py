@@ -49,6 +49,13 @@ def _get_docstring(node):
     return None
 
 
+def _get_base_class_name(node):
+    if isinstance(node, ast.Attribute):
+        return f"{_get_base_class_name(node.value)}.{node.attr}"
+    if isinstance(node, ast.Name):
+        return node.id
+
+
 class _MainVisitor(_BaseVisitor):  # noqa: WPS338
     def __init__(
         self,
@@ -100,7 +107,32 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.generic_visit(node)
 
     def visit_ClassDef(self, node) -> None:
-        class_ = Class(name=node.name, lineno=node.lineno, endlineno=node.end_lineno, docstring=_get_docstring(node))
+        # handle decorators
+        decorators = []
+        if node.decorator_list:
+            lineno = node.decorator_list[0].lineno
+            self.in_decorator = True
+            for decorator_node in node.decorator_list:
+                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))
+                self.visit(decorator_node)
+            self.in_decorator = False
+        else:
+            lineno = node.lineno
+
+        # handle base classes
+        bases = []
+        if node.bases:
+            for base in node.bases:
+                bases.append(_get_base_class_name(base))
+
+        class_ = Class(
+            name=node.name,
+            lineno=lineno,
+            endlineno=node.end_lineno,
+            docstring=_get_docstring(node),
+            decorators=decorators,
+            bases=bases,
+        )
         self.current[node.name] = class_
         self.current = class_
         self.generic_visit(node)
