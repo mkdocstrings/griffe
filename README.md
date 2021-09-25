@@ -89,27 +89,16 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
     - [ ] Labels
     - [x] Modules
     - [x] Classes
-        - [ ] Bases (parent classes)
+        - [x] Bases (parent classes)
         - [ ] Merging inherited members into class.
               Needs to be able to post-process classes,
               and to compute their MRO (C3Linearization, see docspec/pydocspec issues).
         - [ ] Merging `__init__` method's docstring into class' docstring
-        - [ ] Decorators
+        - [x] Decorators
     - [x] Functions
         - [x] Arguments
-            - [x] Annotation (names, constants, attributes)
-            - [x] Kind
-            - [x] Default (constants, names, calls)
-        - [ ] Positional only arguments
-            - [ ] Annotation
-            - [ ] Kind
-            - [ ] Default
-        - [ ] Keyword only arguments
-            - [ ] Annotation
-            - [ ] Kind
-            - [ ] Default
         - [x] Return annotation (names, constants, attributes)
-        - [ ] Decorators
+        - [x] Decorators
         - [ ] Support for `typing.overload` decorator.
               We'll probably need to add an `overloads` attribute to `Function`,
               to store the list of `@overload`-decorated functions,
