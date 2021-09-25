@@ -115,10 +115,10 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
 - [x] Extension system
     - [x] Node-visiting extensions
     - [ ] Post-processing extensions
-- [ ] Docstrings parsers
-    - [ ] Structured format
-    - [ ] Styles
-        - [ ] Google
+- [x] Docstrings parsers
+    - [x] Structured format
+    - [x] Styles
+        - [x] Google
         - [ ] RST
         - [ ] Numpy
         - [ ] New Markdown-based format? For graceful degradation
