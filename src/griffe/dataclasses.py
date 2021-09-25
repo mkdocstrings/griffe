@@ -12,6 +12,9 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any
 
+from griffe.docstrings.dataclasses import DocstringSection
+from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
+
 ParameterKind = inspect._ParameterKind  # noqa: WPS437
 
 
@@ -33,11 +36,11 @@ class Decorator:
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
 
-    def as_dict(self, full=False) -> dict[str, Any]:
+    def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this decorator's data as a dictionary.
 
         Arguments:
-            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
@@ -55,34 +58,69 @@ class Docstring:
         value: The actual documentation string, cleaned up.
         lineno: The starting line number.
         endlineno: The ending line number.
+        parent: The parent object on which this docstring is attached.
     """
 
-    def __init__(self, value: str, lineno: int | None, endlineno: int | None) -> None:
+    def __init__(
+        self,
+        value: str,
+        lineno: int | None,
+        endlineno: int | None,
+        parent: Module | Class | Function | Data | None = None,
+    ) -> None:
         """Initialize the docstring.
 
         Arguments:
             value: The docstring value.
             lineno: The starting line number.
             endlineno: The ending line number.
+            parent: The parent object on which this docstring is attached.
         """
         self.value: str = inspect.cleandoc(value)
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
+        self.parent: Module | Class | Function | Data | None = parent
 
-    def as_dict(self, full=False) -> dict[str, Any]:
+    @cached_property
+    def parsed(self) -> list[DocstringSection]:
+        """Return the docstring, parsed into structured data.
+
+        Returns:
+            The parsed docstring.
+        """
+        return self.parse()
+
+    def parse(self, docstring_parser: Parser = Parser.google, **options) -> list[DocstringSection]:
+        """Parse the docstring into structured data.
+
+        Arguments:
+            docstring_parser: The docstring parser to use.
+            **options: Additional docstring parsing options.
+
+        Returns:
+            The parsed docstring.
+        """
+        return parse(self, docstring_parser, **options)
+
+    def as_dict(self, full: bool = False, docstring_parser: Parser = Parser.google, **kwargs) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Arguments:
             full: Whether to return full info, or just base info.
+            docstring_parser: The docstring docstring_parser to parse the docstring with.
+            **kwargs: Additional serialization or docstring parsing options.
 
         Returns:
             A dictionary.
         """
-        return {
+        base: dict[str, Any] = {
             "value": self.value,
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
+        if full:
+            base["parsed"] = self.parse(docstring_parser, **kwargs)
+        return base
 
 
 class Argument:

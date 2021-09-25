@@ -8,10 +8,12 @@ The available formats are:
 from __future__ import annotations
 
 import json
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
 from griffe.dataclasses import Class, Data, Function, Kind, Module, ParameterKind
+from griffe.docstrings.parsers import Parser
 
 
 class Encoder(json.JSONEncoder):
@@ -26,7 +28,14 @@ class Encoder(json.JSONEncoder):
         >>> json.dumps(..., cls=Encoder, full=True, **kwargs)
     """
 
-    def __init__(self, *args, full=False, **kwargs) -> None:
+    def __init__(
+        self,
+        *args,
+        full: bool = False,
+        docstring_parser: Parser = Parser.google,
+        docstring_options: dict[str, Any] = None,
+        **kwargs
+    ) -> None:
         """Initialize the encoder.
 
         Arguments:
@@ -37,10 +46,14 @@ class Encoder(json.JSONEncoder):
                 you don't need the full data as it can be infered again
                 using the base data. If you want to feed a non-Python
                 tool instead, dump the full data.
+            docstring_parser: The docstring parser to use.
+            docstring_options: Additional docstring parsing options.
             **kwargs: See [`json.JSONEncoder`][].
         """
         super().__init__(*args, **kwargs)
-        self.full = full
+        self.full: bool = full
+        self.docstring_parser: Parser = docstring_parser
+        self.docstring_options: dict[str, Any] = docstring_options or {}
 
     def default(self, obj: Any) -> Any:  # noqa: WPS212
         """Return a serializable representation of the given object.
@@ -52,10 +65,10 @@ class Encoder(json.JSONEncoder):
             A serializable representation.
         """
         if hasattr(obj, "as_dict"):
-            return obj.as_dict(self.full)
+            return obj.as_dict(full=self.full, docstring_parser=self.docstring_parser, **self.docstring_options)
         if isinstance(obj, (Path, ParameterKind)):
             return str(obj)
-        if isinstance(obj, Kind):
+        if isinstance(obj, Enum):
             return obj.value
         if isinstance(obj, set):
             return list(obj)
