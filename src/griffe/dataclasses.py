@@ -147,11 +147,11 @@ class Argument:
         self.kind: ParameterKind = kind
         self.default: str | None = default
 
-    def as_dict(self, full=False) -> dict[str, Any]:
+    def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this argument's data as a dictionary.
 
         Arguments:
-            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
@@ -350,11 +350,12 @@ class Object:
             return self.name
         return ".".join((self.parent.path, self.name))
 
-    def as_dict(self, full: bool = False) -> dict[str, Any]:
+    def as_dict(self, full: bool = False, **kwargs) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
         Arguments:
             full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
@@ -382,7 +383,7 @@ class Object:
 
         # doing this last for a prettier JSON dump
         base["labels"] = self.labels
-        base["members"] = [member.as_dict(full) for member in self.members.values()]
+        base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
 
         return base
 
@@ -465,16 +466,16 @@ class Module(Object):
             or self.parent.is_namespace_subpackage  # type: ignore  # modules parents are always modules
         )
 
-    def as_dict(self, full: bool = False) -> dict[str, Any]:
+    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this module's data as a dictionary.
 
         Arguments:
-            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
-        base = super().as_dict(full=full)
+        base = super().as_dict(**kwargs)
         base["filepath"] = str(self.filepath) if self.filepath else None
         return base
 
@@ -503,18 +504,18 @@ class Class(Object):
         self.bases = bases or []
         self.decorators = decorators or []
 
-    def as_dict(self, full: bool = False) -> dict[str, Any]:
+    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this class' data as a dictionary.
 
         Arguments:
-            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
-        base = super().as_dict(full=full)
+        base = super().as_dict(**kwargs)
         base["bases"] = self.bases
-        base["decorators"] = [dec.as_dict(full=full) for dec in self.decorators]
+        base["decorators"] = [dec.as_dict(**kwargs) for dec in self.decorators]
         return base
 
 
@@ -545,18 +546,18 @@ class Function(Object):
         self.returns = returns
         self.decorators = decorators or []
 
-    def as_dict(self, full: bool = False) -> dict[str, Any]:
+    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
 
         Arguments:
-            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
-        base = super().as_dict(full=full)
-        base["decorators"] = [dec.as_dict(full=full) for dec in self.decorators]
-        base["arguments"] = [arg.as_dict(full=full) for arg in self.arguments]
+        base = super().as_dict(**kwargs)
+        base["decorators"] = [dec.as_dict(**kwargs) for dec in self.decorators]
+        base["arguments"] = [arg.as_dict(**kwargs) for arg in self.arguments]
         base["returns"] = self.returns
         return base
 
