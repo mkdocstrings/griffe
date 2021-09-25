@@ -1,15 +1,15 @@
 """Code parsing and data extraction utilies.
 
 This module exposes a public function, [`visit()`][griffe.visitor.visit],
-which parses the module code using [`ast.parse()`][ast.parse],
+which parses the module code using [`parse()`][parse],
 and returns a new [`Module`][griffe.dataclasses.Module] instance,
 populating its members recursively, by using a custom [`NodeVisitor`][ast.NodeVisitor] class.
 """
 
 from __future__ import annotations
 
-import ast
 import inspect
+from ast import AST, Attribute, BinOp, BitOr, Constant, Expr, Index, Name, PyCF_ONLY_AST, Str, Subscript
 from itertools import zip_longest
 from pathlib import Path
 
@@ -40,19 +40,23 @@ def visit(
 
 
 def _get_docstring(node):
-    if not (node.body and isinstance(node.body[0], ast.Expr)):
+    if not (node.body and isinstance(node.body[0], Expr)):
         return None
     doc = node.body[0].value
-    if isinstance(doc, ast.Constant) and isinstance(doc.value, str):
+    if isinstance(doc, Constant) and isinstance(doc.value, str):
         return Docstring(doc.value, doc.lineno, doc.end_lineno)
-    if isinstance(doc, ast.Str):
+    if isinstance(doc, Str):
         return Docstring(doc.s, doc.lineno, doc.end_lineno)
     return None
 
 
 def _get_base_class_name(node):
-    if isinstance(node, ast.Attribute):
+    if isinstance(node, Name):
+        return node.id
+    if isinstance(node, Attribute):
         return f"{_get_base_class_name(node.value)}.{node.attr}"
+
+
 def _get_annotation(node):
     if node is None:
         return None
@@ -97,32 +101,32 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.code: str = code
         self.extensions: Extensions = extensions.instantiate(self)
         # self.scope = defaultdict(dict)
-        self.root: ast.AST | None = None
-        self.parent: ast.AST | None = None
+        self.root: AST | None = None
+        self.parent: AST | None = None
         self.current: Module | Class | Function = None  # type: ignore
         self.in_decorator: bool = False
         if self.extensions.need_parents:
             self._visit = self._visit_set_parents  # type: ignore
 
-    def _visit_set_parents(self, node: ast.AST, parent: ast.AST | None = None) -> None:
+    def _visit_set_parents(self, node: AST, parent: AST | None = None) -> None:
         node.parent = parent  # type: ignore
         self._run_specific_or_generic(node)
 
     def get_module(self) -> Module:
         # optimisation: equivalent to ast.parse, but with optimize=1 to remove assert statements
         # TODO: with options, could use optimize=2 to remove docstrings
-        top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
+        top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=PyCF_ONLY_AST, optimize=1)
         self.visit(top_node)
         return self.current.module  # type: ignore  # there's always a module after the visit
 
-    def visit(self, node: ast.AST, parent: ast.AST | None = None) -> None:
+    def visit(self, node: AST, parent: AST | None = None) -> None:
         for start_visitor in self.extensions.when_visit_starts:
             start_visitor.visit(node, parent)
         super().visit(node, parent)
         for stop_visitor in self.extensions.when_visit_stops:
             stop_visitor.visit(node, parent)
 
-    def generic_visit(self, node: ast.AST) -> None:  # noqa: WPS231
+    def generic_visit(self, node: AST) -> None:  # noqa: WPS231
         for start_visitor in self.extensions.when_children_visit_starts:
             start_visitor.visit(node)
         super().generic_visit(node)
@@ -226,11 +230,11 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             arguments.add(Argument(f"**{node.args.kwarg.arg}", annotation, inspect.Parameter.VAR_KEYWORD, None))
 
         # handle return annotation
-        if isinstance(node.returns, ast.Constant):
+        if isinstance(node.returns, Constant):
             returns = node.returns.value
-        elif isinstance(node.returns, ast.Name):
+        elif isinstance(node.returns, Name):
             returns = node.returns.id
-        elif isinstance(node.returns, ast.Attribute):
+        elif isinstance(node.returns, Attribute):
             returns = node.returns.attr
         else:
             returns = None
