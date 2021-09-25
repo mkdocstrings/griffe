@@ -10,10 +10,11 @@ from __future__ import annotations
 
 import ast
 import inspect
+from itertools import zip_longest
 from pathlib import Path
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Argument, Class, Decorator, Docstring, Function, Module
+from griffe.dataclasses import Argument, Arguments, Class, Decorator, Docstring, Function, Module
 from griffe.extensions import Extensions
 from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
 
@@ -52,8 +53,34 @@ def _get_docstring(node):
 def _get_base_class_name(node):
     if isinstance(node, ast.Attribute):
         return f"{_get_base_class_name(node.value)}.{node.attr}"
-    if isinstance(node, ast.Name):
+def _get_annotation(node):
+    if node is None:
+        return None
+    if isinstance(node, Name):
         return node.id
+    if isinstance(node, Constant):
+        return node.value
+    if isinstance(node, Attribute):
+        return f"{_get_annotation(node.value)}.{node.attr}"
+    if isinstance(node, BinOp) and isinstance(node.op, BitOr):
+        return f"{_get_annotation(node.left)} | {_get_annotation(node.right)}"
+    if isinstance(node, Subscript):
+        return f"{_get_annotation(node.value)}[{_get_annotation(node.slice)}]"
+    if isinstance(node, Index):  # python 3.8
+        return _get_annotation(node.value)
+    return None
+
+
+def _get_argument_default(node, filepath):
+    if node is None:
+        return None
+    if isinstance(node, Constant):
+        return repr(node.value)
+    if isinstance(node, Name):
+        return node.id
+    if node.lineno == node.end_lineno:
+        return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]
+    # TODO: handle multiple line defaults
 
 
 class _MainVisitor(_BaseVisitor):  # noqa: WPS338
@@ -152,30 +179,51 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             lineno = node.lineno
 
         # handle arguments
-        arguments = []
-        for arg in node.args.args:
-            annotation: str | None
-            kind = inspect.Parameter.POSITIONAL_OR_KEYWORD
-            if isinstance(arg.annotation, ast.Name):
-                annotation = arg.annotation.id
-            elif isinstance(arg.annotation, ast.Constant):
-                annotation = arg.annotation.value
-            elif isinstance(arg.annotation, ast.Attribute):
-                annotation = arg.annotation.attr
-            else:
-                annotation = None
-            arguments.append(Argument(arg.arg, annotation, kind, None))
+        arguments = Arguments()
+        annotation: str | None
 
-        # handle arguments defaults
-        for index, default in enumerate(reversed(node.args.defaults), 1):
-            if isinstance(default, ast.Constant):
-                arguments[-index].default = repr(default.value)
-            elif isinstance(default, ast.Name):
-                arguments[-index].default = default.id
-            elif default.lineno == default.end_lineno:
-                value = lines_collection[self.filepath][default.lineno - 1][default.col_offset : default.end_col_offset]
-                arguments[-index].default = value
-            # TODO: handle multiple line defaults
+        # TODO: probably some optimisations to do here
+        args_kinds_defaults = reversed(
+            (
+                *zip_longest(  # noqa: WPS356
+                    reversed(
+                        (
+                            *zip_longest(node.args.posonlyargs, [], fillvalue=inspect.Parameter.POSITIONAL_ONLY),
+                            *zip_longest(node.args.args, [], fillvalue=inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                        ),
+                    ),
+                    reversed(node.args.defaults),
+                    fillvalue=None,
+                ),
+            )
+        )
+        for (arg, kind), default in args_kinds_defaults:
+            annotation = _get_annotation(arg.annotation)
+            default = _get_argument_default(default, self.filepath)
+            arguments.add(Argument(arg.arg, annotation, kind, default))
+
+        if node.args.vararg:
+            annotation = _get_annotation(node.args.vararg.annotation)
+            arguments.add(Argument(f"*{node.args.vararg.arg}", annotation, inspect.Parameter.VAR_POSITIONAL, None))
+
+        # TODO: probably some optimisations to do here
+        kwargs_defaults = reversed(
+            (
+                *zip_longest(  # noqa: WPS356
+                    reversed(node.args.kwonlyargs),
+                    reversed(node.args.kw_defaults),
+                    fillvalue=None,
+                ),
+            )
+        )
+        for kwarg, default in kwargs_defaults:  # noqa: WPS440
+            annotation = _get_annotation(kwarg.annotation)
+            default = _get_argument_default(default, self.filepath)
+            arguments.add(Argument(kwarg.arg, annotation, inspect.Parameter.KEYWORD_ONLY, default))
+
+        if node.args.kwarg:
+            annotation = _get_annotation(node.args.kwarg.annotation)
+            arguments.add(Argument(f"**{node.args.kwarg.arg}", annotation, inspect.Parameter.VAR_KEYWORD, None))
 
         # handle return annotation
         if isinstance(node.returns, ast.Constant):

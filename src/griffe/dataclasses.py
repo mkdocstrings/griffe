@@ -126,6 +126,44 @@ class Argument:
         }
 
 
+class Arguments:
+    """This class is a container for arguments.
+
+    It allows to get arguments using their position (index) or their name.
+    """
+
+    def __init__(self) -> None:
+        """Initialize the arguments container."""
+        self._arguments_list: list[Argument] = []
+        self._arguments_dict: dict[str, Argument] = {}
+
+    def __getitem__(self, name_or_index: int | str) -> Argument:
+        if isinstance(name_or_index, int):
+            return self._arguments_list[name_or_index]
+        return self._arguments_dict[name_or_index]
+
+    def __len__(self):
+        return len(self._arguments_list)
+
+    def __iter__(self):
+        return iter(self._arguments_list)
+
+    def add(self, argument: Argument) -> None:
+        """Add an argument to the container.
+
+        Arguments:
+            argument: The function argument to add.
+
+        Raises:
+            ValueError: When an argument with the same name is already present.
+        """
+        if argument.name not in self._arguments_dict:
+            self._arguments_dict[argument.name] = argument
+            self._arguments_list.append(argument)
+        else:
+            raise ValueError(f"argument {argument.name} already present")
+
+
 class Kind(enum.Enum):
     """Enumeration of the different objects kinds.
 
@@ -450,7 +488,7 @@ class Function(Object):
     def __init__(
         self,
         *args,
-        arguments: list[Argument] | None = None,
+        arguments: Arguments | None = None,
         returns: str | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs,
@@ -465,7 +503,7 @@ class Function(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.arguments = arguments or []
+        self.arguments = arguments or Arguments()
         self.returns = returns
         self.decorators = decorators or []
 
