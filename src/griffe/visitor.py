@@ -229,22 +229,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             annotation = _get_annotation(node.args.kwarg.annotation)
             arguments.add(Argument(f"**{node.args.kwarg.arg}", annotation, inspect.Parameter.VAR_KEYWORD, None))
 
-        # handle return annotation
-        if isinstance(node.returns, Constant):
-            returns = node.returns.value
-        elif isinstance(node.returns, Name):
-            returns = node.returns.id
-        elif isinstance(node.returns, Attribute):
-            returns = node.returns.attr
-        else:
-            returns = None
-
         function = Function(
             name=node.name,
             lineno=lineno,
             endlineno=node.end_lineno,
             arguments=arguments,
-            returns=returns,
+            returns=_get_annotation(node.returns),
             decorators=decorators,
             docstring=_get_docstring(node),
         )

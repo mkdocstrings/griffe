@@ -82,6 +82,15 @@ class Docstring:
         self.parent: Module | Class | Function | Data | None = parent
 
     @cached_property
+    def lines(self) -> list[str]:
+        """Returns the lines of the docstring.
+
+        Returns:
+            The docstring's lines.
+        """
+        return self.value.split("\n")
+
+    @cached_property
     def parsed(self) -> list[DocstringSection]:
         """Return the docstring, parsed into structured data.
 
@@ -256,6 +265,10 @@ class Object:
         self.parent: Module | Class | None = None
         self.members: dict[str, Module | Class | Function | Data] = {}
         self.labels: set[str] = set()
+
+        # attach the docstring to this object
+        if docstring:
+            docstring.parent = self  # type: ignore
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"

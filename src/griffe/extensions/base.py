@@ -81,7 +81,7 @@ class Extensions:
         self._instances: dict[When, list[Extension]] = {}
 
     @property
-    def need_parents(self):
+    def need_parents(self) -> bool:
         """Tell if any of the contained extensions needs access to the whole parents chain while visiting.
 
         Returns:
