@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, DefaultDict, FrozenSet, Type, TypedDict, cast  # noqa: WPS235
 
-from pytkdocs.parsers.docstrings.base import AnnotatedObject, Attribute, Parameter, Section, empty
+from griffe.docstrings.dataclasses import DocstringElement, DocstringAttribute, DocstringArgument, DocstringSection, DocstringException, DocstringReturn, DocstringSectionKind
 
 from griffe.docstrings.utils import warn
 
@@ -64,16 +64,16 @@ class ParsedValues:
     """Values parsed from the docstring to be used to produce sections."""
 
     description: list[str] = field(default_factory=list)
-    parameters: dict[str, Parameter] = field(default_factory=dict)
+    parameters: dict[str, DocstringArgument] = field(default_factory=dict)
     param_types: dict[str, str] = field(default_factory=dict)
-    attributes: dict[str, Attribute] = field(default_factory=dict)
+    attributes: dict[str, DocstringAttribute] = field(default_factory=dict)
     attribute_types: dict[str, str] = field(default_factory=dict)
-    exceptions: list[AnnotatedObject] = field(default_factory=list)
-    return_value: AnnotatedObject | None = None
+    exceptions: list[DocstringException] = field(default_factory=list)
+    return_value: DocstringReturn | None = None
     return_type: str | None = None
 
 
-def parse_sections(docstring: Docstring) -> list[Section]:  # noqa: D102
+def parse(docstring: Docstring) -> list[DocstringSection]:  # noqa: D102
     parsed_values = ParsedValues()
 
     lines = docstring.lines
@@ -84,7 +84,7 @@ def parse_sections(docstring: Docstring) -> list[Section]:  # noqa: D102
         for field_type in field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
-                curr_line_index = field_type.reader(lines, curr_line_index)  # type: ignore
+                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values)  # type: ignore
                 break
         else:
             parsed_values.description.append(line)
@@ -127,11 +127,11 @@ def _read_parameter(docstring: Docstring, start_index: int, parsed_values: Parse
     annotation = _determine_param_annotation(docstring, name, directive_type, parsed_values)
     default = _determine_param_default(docstring, name)
 
-    parsed_values.parameters[name] = Parameter(
+    parsed_values.parameters[name] = DocstringArgument(
         name=name,
         annotation=annotation,
         description=parsed_directive.value,
-        default=default,
+        value=default,
     )
 
     return parsed_directive.next_index
@@ -198,7 +198,7 @@ def _read_parameter_type(docstring: Docstring, start_index: int, parsed_values: 
     parsed_values.param_types[param_name] = param_type
     param = parsed_values.parameters.get(param_name)
     if param is not None:
-        if param.annotation is empty:
+        if param.annotation is None:
             param.annotation = param_type
         else:
             warn(docstring, 0, f"Duplicate parameter information for '{param_name}'")
@@ -239,7 +239,7 @@ def _read_attribute(docstring: Docstring, start_index: int, parsed_values: Parse
     if name in parsed_values.attributes:
         warn(docstring, 0, f"Duplicate attribute entry for '{name}'")
     else:
-        parsed_values.attributes[name] = Attribute(
+        parsed_values.attributes[name] = DocstringAttribute(
             name=name,
             annotation=annotation,
             description=parsed_directive.value,
@@ -289,7 +289,7 @@ def _read_exception(docstring: Docstring, start_index: int, parsed_values: Parse
         start_index: The line number to start at.
 
     Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
+        A tuple containing a `DocstringSection` (or `None`) and the index at which to continue parsing.
     """
     parsed_directive = _parse_directive(docstring, start_index)
     if parsed_directive.invalid:
@@ -297,7 +297,7 @@ def _read_exception(docstring: Docstring, start_index: int, parsed_values: Parse
 
     if len(parsed_directive.directive_parts) == 2:
         ex_type = parsed_directive.directive_parts[1]
-        parsed_values.exceptions.append(AnnotatedObject(ex_type, parsed_directive.value))
+        parsed_values.exceptions.append(DocstringException(ex_type, parsed_directive.value))
     else:
         warn(docstring, 0, f"Failed to parse exception directive from '{parsed_directive.line}'")
 
@@ -319,15 +319,15 @@ def _read_return(docstring: Docstring, start_index: int, parsed_values: ParsedVa
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
-    annotation = empty
+    annotation = None
     # Annotation precedence:
     # - signature annotation
     # - "rtype" directive type
-    # - empty
+    # - None
     if parsed_values.return_type is not None:
         annotation = parsed_values.return_type
 
-    parsed_values.return_value = AnnotatedObject(annotation, parsed_directive.value)
+    parsed_values.return_value = DocstringReturn(annotation, parsed_directive.value)
 
     return parsed_directive.next_index
 
@@ -351,7 +351,7 @@ def _read_return_type(docstring: Docstring, start_index: int, parsed_values: Par
     parsed_values.return_type = return_type
     return_value = parsed_values.return_value
     if return_value is not None:
-        if return_value.annotation is empty:
+        if return_value.annotation is None:
             return_value.annotation = return_type
         else:
             warn(docstring, 0, "Duplicate type information for return")
@@ -359,19 +359,19 @@ def _read_return_type(docstring: Docstring, start_index: int, parsed_values: Par
     return parsed_directive.next_index
 
 
-def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[Section]:
+def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[DocstringSection]:
     text = "\n".join(_strip_blank_lines(parsed_values.description))
-    result = [Section(Section.Type.MARKDOWN, text)]
+    result = [DocstringSection(DocstringSectionKind.text, text)]
     if parsed_values.parameters:
         param_values = list(parsed_values.parameters.values())
-        result.append(Section(Section.Type.PARAMETERS, param_values))
+        result.append(DocstringSection(DocstringSectionKind.arguments, param_values))
     if parsed_values.attributes:
         attribute_values = list(parsed_values.attributes.values())
-        result.append(Section(Section.Type.ATTRIBUTES, attribute_values))
+        result.append(DocstringSection(DocstringSectionKind.attributes, attribute_values))
     if parsed_values.return_value is not None:
-        result.append(Section(Section.Type.RETURN, parsed_values.return_value))
+        result.append(DocstringSection(DocstringSectionKind.returns, parsed_values.return_value))
     if parsed_values.exceptions:
-        result.append(Section(Section.Type.EXCEPTIONS, parsed_values.exceptions))
+        result.append(DocstringSection(DocstringSectionKind.raises, parsed_values.exceptions))
     return result
 
 
