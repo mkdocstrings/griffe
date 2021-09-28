@@ -14,6 +14,7 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionKind,
     DocstringYield,
 )
+from griffe.docstrings.utils import warn
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
@@ -477,21 +478,6 @@ def is_empty_line(line) -> bool:
         True if the line is empty or composed of blanks only, False otherwise.
     """
     return not line.strip()
-
-
-def warn(docstring: Docstring, offset: int, message: str) -> None:
-    """Log a warning message by prefixing it with the filepath and line number.
-
-    Arguments:
-        docstring: The docstring object.
-        offset: The offset in the docstring lines.
-        message: The message to log.
-    """
-    try:
-        prefix = docstring.parent.filepath  # type: ignore
-    except AttributeError:
-        prefix = "<module>"
-    logger.warning(f"{prefix}:{docstring.lineno+offset}: {message}")  # type: ignore
 
 
 section_reader = {
