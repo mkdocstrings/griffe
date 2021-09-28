@@ -9,12 +9,13 @@ from griffe.docstrings.dataclasses import DocstringSectionKind
 
 # =============================================================================================
 # Helpers
-def parse(docstring, function=None, **parser_opts):
+def parse(docstring: str, function: Function | None = None, **parser_opts):
     """Parse a doctring.
 
     Arguments:
         docstring: The docstring to parse.
-        admonitions: Whether to replace admonitions.
+        function: The docstring's parent function.
+        **parser_opts: Additional options accepted by the parser.
 
     Returns:
         The parsed sections, and warnings.
@@ -399,9 +400,9 @@ def test_parse_args_kwargs_keyword_only():
         assert expected_arguments[argument.name] == argument.description
 
     expected_arguments = {"**kwargs": "kwargs arguments."}
-    for argument in sections[1].value:
-        assert argument.name in expected_arguments
-        assert expected_arguments[argument.name] == argument.description
+    for kwargument in sections[1].value:
+        assert kwargument.name in expected_arguments
+        assert expected_arguments[kwargument.name] == kwargument.description
 
     assert not warnings
 
