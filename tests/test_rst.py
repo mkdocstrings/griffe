@@ -8,7 +8,7 @@ import pytest
 
 from griffe.dataclasses import Argument, Arguments, Class, Data, Docstring, Function, Module
 from griffe.docstrings import rst as parser
-from griffe.docstrings.dataclasses import DocstringArgument, DocstringAttribute, DocstringElement, DocstringSectionKind
+from griffe.docstrings.dataclasses import DocstringArgument, DocstringAttribute, DocstringElement, DocstringReturn, DocstringSectionKind
 
 SOME_NAME = "foo"
 SOME_TEXT = "descriptive test text"
@@ -350,349 +350,335 @@ def test_parse__param_field_annotate_type__param_section_with_type():
     assert not warnings
 
 
-# def test_parse__param_field_no_matching_param__result_from_docstring():
-#     """Parse a simple docstring."""
+def test_parse__param_field_no_matching_param__result_from_docstring():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
 
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
+        :param other: descriptive test text
+    """
 
-#         :param other: descriptive test text
-#         """
+    sections, _ = parse(docstring)
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.arguments
+    assert_argument_equal(
+        sections[1].value[0],
+        DocstringArgument("other", annotation=None, description=SOME_TEXT),
+    )
 
-#     sections, warnings = parse(docstring)
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.arguments
-#     assert_argument_equal(
-#         sections[1].value[0],
-#         DocstringArgument("other", annotation=None, description=SOME_TEXT),
-#     )
-#     assert not warnings
 
+def test_parse__param_field_with_default__result_from_docstring():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
 
-# def test_parse__param_field_with_default__result_from_docstring():
-#     """Parse a simple docstring."""
+        :param foo: descriptive test text
+    """
 
-#     def f(foo=""):
-#         """
-#         Docstring with line continuation.
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation=None, kind=None, default=repr("")))
+    function = Function(name="func", arguments=arguments)
+    sections, warnings = parse(docstring, parent=function)
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.arguments
+    assert_argument_equal(
+        sections[1].value[0],
+        DocstringArgument("foo", annotation=None, description=SOME_TEXT, value=repr("")),
+    )
+    assert not warnings
 
-#         :param foo: descriptive test text
-#         """
 
-#     arguments = Arguments()
-#     arguments.add(Argument("foo", annotation=None, kind=None, default=repr("")))
-#     function = Function(name="func", arguments=arguments)
-#     sections, warnings = parse(docstring, function=function)
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.arguments
-#     assert_argument_equal(
-#         sections[1].value[0],
-#         DocstringArgument("foo", annotation=None, description=SOME_TEXT, default=""),
-#     )
-#     assert not warnings
+def test_parse__param_field_no_matching_param__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
 
+        :param other: descriptive test text
+    """
 
-# def test_parse__param_field_no_matching_param__error_message():
-#     """Parse a simple docstring."""
+    _, warnings = parse(docstring)
+    assert "No matching parameter for 'other'" in warnings[0]
 
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
 
-#         :param other: descriptive test text
-#         """
+def test_parse__invalid_param_field_only_initial_marker__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
 
-#     sections, warnings = parse(docstring)
-#     assert "No matching parameter for 'other'" in warnings[0]
+        :param foo descriptive test text
+    """
 
+    _, warnings = parse(docstring)
+    assert "Failed to get ':directive: value' pair" in warnings[0]
 
-# def test_parse__invalid_param_field_only_initial_marker__error_message():
-#     """Parse a simple docstring."""
 
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
+def test_parse__invalid_param_field_wrong_part_count__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
 
-#         :param foo descriptive test text
-#         """
+        :param: descriptive test text
+    """
 
-#     sections, warnings = parse(docstring)
-#     assert "Failed to get ':directive: value' pair" in warnings[0]
+    _, warnings = parse(docstring)
+    assert "Failed to parse field directive" in warnings[0]
 
 
-# def test_parse__invalid_param_field_wrong_part_count__error_message():
-#     """Parse a simple docstring."""
+def test_parse__param_twice__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
 
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
+        :param foo: descriptive test text
+        :param foo: descriptive test text again
+    """
 
-#         :param: descriptive test text
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Failed to parse field directive" in warnings[0]
-
-
-# def test_parse__param_twice__error_message():
-#     """Parse a simple docstring."""
-
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
-
-#         :param foo: descriptive test text
-#         :param foo: descriptive test text again
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Duplicate parameter entry for 'foo'" in warnings[0]
-
-
-# def test_parse__param_type_twice_doc__error_message():
-#     """Parse a simple docstring."""
-
-#     def f(foo):
-#         """
-#         Docstring with line continuation.
-
-#         :param str foo: descriptive test text
-#         :type foo: str
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Duplicate parameter information for 'foo'" in warnings[0]
-
-
-# def test_parse__param_type_twice_type_directive_first__error_message():
-#     """Parse a simple docstring."""
-
-#     def f(foo):
-#         """
-#         Docstring with line continuation.
-
-#         :type foo: str
-#         :param str foo: descriptive test text
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Duplicate parameter information for 'foo'" in warnings[0]
-
-
-# def test_parse__param_type_twice_annotated__error_message():
-#     """Parse a simple docstring."""
-
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
-
-#         :param str foo: descriptive test text
-#         :type foo: str
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Duplicate parameter information for 'foo'" in warnings[0]
-
-
-# def test_parse__param_type_no_type__error_message():
-#     """Parse a simple docstring."""
-
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
-
-#         :param str foo: descriptive test text
-#         :type str
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Failed to get ':directive: value' pair from" in warnings[0]
-
-
-# def test_parse__param_type_no_name__error_message():
-#     """Parse a simple docstring."""
-
-#     def f(foo: str):
-#         """
-#         Docstring with line continuation.
-
-#         :param str foo: descriptive test text
-#         :type: str
-#         """
-
-#     sections, warnings = parse(docstring)
-#     assert "Failed to get parameter name from" in warnings[0]
-
-
-# @pytest.mark.parametrize(
-#     "docstring",
-#     [
-#         f"""
-#         Docstring with param with continuation, no indent.
-
-#         :var {SOME_NAME}: {SOME_TEXT}
-#         {SOME_EXTRA_TEXT}
-#         """,
-#         f"""
-#         Docstring with param with continuation, with indent.
-
-#         :var {SOME_NAME}: {SOME_TEXT}
-#           {SOME_EXTRA_TEXT}
-#         """,
-#     ],
-# )
-# def test_parse__attribute_field_multi_line__param_section(docstring):
-#     """Parse a simple docstring."""
-#     sections, warnings = parse(docstring)
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.ATTRIBUTES
-#     assert_attribute_equal(
-#         sections[1].value[0],
-#         Attribute(SOME_NAME, annotation=None, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
-#     )
-#     assert not warnings
-
-
-# @pytest.mark.parametrize(
-#     "attribute_directive_name",
-#     [
-#         "var",
-#         "ivar",
-#         "cvar",
-#     ],
-# )
-# def test_parse__all_attribute_names__param_section(attribute_directive_name):
-#     sections, warnings = parse(
-#         f"""
-#         Docstring with one line attribute.
-
-#         :{attribute_directive_name} {SOME_NAME}: {SOME_TEXT}
-#         """
-#     )
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.ATTRIBUTES
-#     assert_attribute_equal(
-#         sections[1].value[0],
-#         Attribute(SOME_NAME, annotation=None, description=SOME_TEXT),
-#     )
-#     assert not warnings
-
-
-# def test_parse__class_attributes__attributes_section():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :var foo: descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.ATTRIBUTES
-#     assert_attribute_equal(
-#         sections[1].value[0],
-#         Attribute(SOME_NAME, annotation=None, description=SOME_TEXT),
-#     )
-
-
-# def test_parse__class_attributes_with_type__annotation_in_attributes_section():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :vartype foo: str
-#         :var foo: descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.ATTRIBUTES
-#     assert_attribute_equal(
-#         sections[1].value[0],
-#         Attribute(SOME_NAME, annotation="str", description=SOME_TEXT),
-#     )
-
-
-# def test_parse__attribute_invalid_directive___error():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :var descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert "Failed to get ':directive: value' pair from" in warnings[0]
-
-
-# def test_parse__attribute_no_name__error():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :var: descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert "Failed to parse field directive from" in warnings[0]
-
-
-# def test_parse__attribute_duplicate__error():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :var foo: descriptive test text
-#         :var foo: descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert "Duplicate attribute entry for 'foo'" in warnings[0]
-
-
-# def test_parse__class_attributes_type_invalid__error():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :vartype str
-#         :var foo: descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert "Failed to get ':directive: value' pair from " in warnings[0]
-
-
-# def test_parse__class_attributes_type_no_name__error():
-#     class Foo:
-#         """
-#         Class docstring with attributes
-
-#         :vartype: str
-#         :var foo: descriptive test text
-#         """
-
-#     sections, warnings = parse(Foo)
-#     assert "Failed to get attribute name from" in warnings[0]
-
-
-# def test_parse__return_directive__return_section_no_type():
-#     def f(foo: str):
-#         """
-#         Function with only return directive
-
-#         :return: descriptive test text
-#         """
-#         return foo
-
-#     sections, warnings = parse(f)
-#     assert len(sections) == 2
-#     assert sections[1].kind is DocstringSectionKind.RETURN
-#     assert_annotated_obj_equal(
-#         sections[1].value,
-#         DocstringElement(annotation=None, description=SOME_TEXT),
-#     )
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation=None, kind=None, default=None))
+    function = Function(name="func", arguments=arguments)
+    _, warnings = parse(docstring, parent=function)
+    assert "Duplicate parameter entry for 'foo'" in warnings[0]
+
+
+def test_parse__param_type_twice_doc__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
+
+        :param str foo: descriptive test text
+        :type foo: str
+    """
+
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation=None, kind=None, default=None))
+    function = Function(name="func", arguments=arguments)
+    _, warnings = parse(docstring, parent=function)
+    assert "Duplicate parameter information for 'foo'" in warnings[0]
+
+
+def test_parse__param_type_twice_type_directive_first__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
+
+        :type foo: str
+        :param str foo: descriptive test text
+    """
+
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation=None, kind=None, default=None))
+    function = Function(name="func", arguments=arguments)
+    _, warnings = parse(docstring, parent=function)
+    assert "Duplicate parameter information for 'foo'" in warnings[0]
+
+
+def test_parse__param_type_twice_annotated__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
+
+        :param str foo: descriptive test text
+        :type foo: str
+    """
+
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
+    function = Function(name="func", arguments=arguments)
+    _, warnings = parse(docstring, parent=function)
+    assert "Duplicate parameter information for 'foo'" in warnings[0]
+
+
+def test_parse__param_type_no_type__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
+
+        :param str foo: descriptive test text
+        :type str
+    """
+
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
+    function = Function(name="func", arguments=arguments)
+    _, warnings = parse(docstring, parent=function)
+    assert "Failed to get ':directive: value' pair from" in warnings[0]
+
+
+def test_parse__param_type_no_name__error_message():
+    """Parse a simple docstring."""
+    docstring = """
+        Docstring with line continuation.
+
+        :param str foo: descriptive test text
+        :type: str
+        """
+
+    arguments = Arguments()
+    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
+    function = Function(name="func", arguments=arguments)
+    _, warnings = parse(docstring, parent=function)
+    assert "Failed to get parameter name from" in warnings[0]
+
+
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        f"""
+        Docstring with param with continuation, no indent.
+
+        :var {SOME_NAME}: {SOME_TEXT}
+        {SOME_EXTRA_TEXT}
+        """,
+        f"""
+        Docstring with param with continuation, with indent.
+
+        :var {SOME_NAME}: {SOME_TEXT}
+          {SOME_EXTRA_TEXT}
+        """,
+    ],
+)
+def test_parse__attribute_field_multi_line__param_section(docstring):
+    """Parse a simple docstring."""
+    sections, warnings = parse(docstring)
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.attributes
+    assert_attribute_equal(
+        sections[1].value[0],
+        DocstringAttribute(SOME_NAME, annotation=None, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
+    )
+    assert not warnings
+
+
+@pytest.mark.parametrize(
+    "attribute_directive_name",
+    [
+        "var",
+        "ivar",
+        "cvar",
+    ],
+)
+def test_parse__all_attribute_names__param_section(attribute_directive_name):
+    sections, warnings = parse(
+        f"""
+        Docstring with one line attribute.
+
+        :{attribute_directive_name} {SOME_NAME}: {SOME_TEXT}
+        """
+    )
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.attributes
+    assert_attribute_equal(
+        sections[1].value[0],
+        DocstringAttribute(SOME_NAME, annotation=None, description=SOME_TEXT),
+    )
+    assert not warnings
+
+
+def test_parse__class_attributes__attributes_section():
+    docstring = """
+        Class docstring with attributes
+
+        :var foo: descriptive test text
+    """
+
+    sections, _ = parse(docstring, parent=Class(name="klass"))
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.attributes
+    assert_attribute_equal(
+        sections[1].value[0],
+        DocstringAttribute(SOME_NAME, annotation=None, description=SOME_TEXT),
+    )
+
+
+def test_parse__class_attributes_with_type__annotation_in_attributes_section():
+    docstring = """
+        Class docstring with attributes
+
+        :vartype foo: str
+        :var foo: descriptive test text
+    """
+
+    sections, _ = parse(docstring, parent=Class(name="klass"))
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.attributes
+    assert_attribute_equal(
+        sections[1].value[0],
+        DocstringAttribute(SOME_NAME, annotation="str", description=SOME_TEXT),
+    )
+
+
+def test_parse__attribute_invalid_directive___error():
+    docstring = """
+        Class docstring with attributes
+
+        :var descriptive test text
+    """
+
+    _, warnings = parse(docstring)
+    assert "Failed to get ':directive: value' pair from" in warnings[0]
+
+
+def test_parse__attribute_no_name__error():
+    docstring = """
+        Class docstring with attributes
+
+        :var: descriptive test text
+    """
+
+    _, warnings = parse(docstring)
+    assert "Failed to parse field directive from" in warnings[0]
+
+
+def test_parse__attribute_duplicate__error():
+    docstring = """
+        Class docstring with attributes
+
+        :var foo: descriptive test text
+        :var foo: descriptive test text
+        """
+
+    _, warnings = parse(docstring)
+    assert "Duplicate attribute entry for 'foo'" in warnings[0]
+
+
+def test_parse__class_attributes_type_invalid__error():
+    docstring = """
+        Class docstring with attributes
+
+        :vartype str
+        :var foo: descriptive test text
+        """
+
+    _, warnings = parse(docstring)
+    assert "Failed to get ':directive: value' pair from " in warnings[0]
+
+
+def test_parse__class_attributes_type_no_name__error():
+    docstring = """
+        Class docstring with attributes
+
+        :vartype: str
+        :var foo: descriptive test text
+        """
+
+    _, warnings = parse(docstring)
+    assert "Failed to get attribute name from" in warnings[0]
+
+
+def test_parse__return_directive__return_section_no_type():
+    docstring = """
+        Function with only return directive
+
+        :return: descriptive test text
+    """
+
+    sections, _ = parse(docstring)
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.returns
+    assert_annotated_obj_equal(
+        sections[1].value,
+        DocstringReturn(annotation=None, description=SOME_TEXT),
+    )
 
 
 # def test_parse__return_directive_rtype__return_section_with_type():
