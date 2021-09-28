@@ -198,7 +198,7 @@ def read_arguments(docstring: Docstring, start_index: int) -> tuple[list[Docstri
             name = name_with_type
             # try to use the annotation from the signature
             try:
-                annotation = docstring.parent.arguments[name]  # type: ignore
+                annotation = docstring.parent.arguments[name].annotation  # type: ignore
             except (AttributeError, KeyError):
                 annotation = None
 
