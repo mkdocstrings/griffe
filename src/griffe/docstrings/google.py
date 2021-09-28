@@ -184,8 +184,6 @@ def read_arguments(docstring: Docstring, start_index: int) -> tuple[list[Docstri
             warn(docstring, index, f"Failed to get 'name: description' pair from '{arg_line}'")
             continue
 
-        # setting defaults
-        default = None
         description = description.lstrip()
 
         # use the type given after the argument name, if any
@@ -201,6 +199,11 @@ def read_arguments(docstring: Docstring, start_index: int) -> tuple[list[Docstri
                 annotation = docstring.parent.arguments[name].annotation  # type: ignore
             except (AttributeError, KeyError):
                 annotation = None
+
+        try:
+            default = docstring.parent.arguments[name].default  # type: ignore
+        except (AttributeError, KeyError):
+            default = None
 
         if annotation is None:
             warn(docstring, index, f"No type or annotation for argument '{name}'")
