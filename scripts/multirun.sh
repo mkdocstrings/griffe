@@ -9,7 +9,7 @@ if [ -n "${PYTHON_VERSIONS}" ]; then
             echo "> pdm run $@ (Python ${python_version})"
             pdm run "$@"
         else
-            echo "> pdm use -f ${python_version}: Python version not available?" >&2
+            echo "> pdm use -f python${python_version}: Python interpreter not available?" >&2
         fi
     done
 else

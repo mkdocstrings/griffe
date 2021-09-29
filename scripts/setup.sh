@@ -20,7 +20,7 @@ if [ -n "${PYTHON_VERSIONS}" ]; then
             echo "> Using Python ${python_version} interpreter"
             pdm install
         else
-            echo "> pdm use -f ${python_version}: Python version not available?" >&2
+            echo "> pdm use -f python${python_version}: Python interpreter not available?" >&2
         fi
     done
 else
