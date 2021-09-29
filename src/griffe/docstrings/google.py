@@ -14,16 +14,14 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionKind,
     DocstringYield,
 )
-from griffe.docstrings.utils import warn
-from griffe.logger import get_logger
+from griffe.docstrings.utils import warning
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
 
-logger = get_logger(__name__)
+_warn = warning(__name__)
 
-
-section_kind = {
+_section_kind = {
     "args:": DocstringSectionKind.arguments,
     "arguments:": DocstringSectionKind.arguments,
     "params:": DocstringSectionKind.arguments,
@@ -42,20 +40,7 @@ RE_GOOGLE_STYLE_ADMONITION: Pattern = re.compile(r"^(?P<indent>\s*)(?P<type>[\w-
 """Regular expressions to match lines starting admonitions, of the form `TYPE: [TITLE]`."""
 
 
-def read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]:  # noqa: WPS231
-    """
-    Parse an indented block as a list of items.
-
-    The first indentation level is used as a reference to determine if the next lines are new items
-    or continuation lines.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing the list of concatenated lines and the index at which to continue parsing.
-    """
+def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]:  # noqa: WPS231
     lines = docstring.lines
     if offset >= len(lines):
         return [], offset
@@ -64,7 +49,7 @@ def read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]
     items: list[str] = []
 
     # skip first empty lines
-    while is_empty_line(lines[index]):
+    while _is_empty_line(lines[index]):
         index += 1
 
     # get initial indent
@@ -90,7 +75,7 @@ def read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]
             # indent between initial and continuation: append but warn
             cont_indent = len(line) - len(line.lstrip())
             current_item.append(line[cont_indent:])
-            warn(
+            _warn(
                 docstring,
                 index,
                 f"Confusing indentation for continuation line {index+1} in docstring, "
@@ -102,7 +87,7 @@ def read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]
             items.append("\n".join(current_item))
             current_item = [line[indent:]]
 
-        elif is_empty_line(line):
+        elif _is_empty_line(line):
             # empty line: preserve it in the current item
             current_item.append("")
 
@@ -118,17 +103,7 @@ def read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]
     return items, index - 1
 
 
-def read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
-    """
-    Parse an indented block.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing the list of lines and the index at which to continue parsing.
-    """
+def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
     lines = docstring.lines
     if offset >= len(lines):
         return "", offset
@@ -137,7 +112,7 @@ def read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
     block: list[str] = []
 
     # skip first empty lines
-    while is_empty_line(lines[index]):
+    while _is_empty_line(lines[index]):
         index += 1
 
     # get initial indent
@@ -152,29 +127,19 @@ def read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
     index += 1
 
     # loop on next lines
-    while index < len(lines) and (lines[index].startswith(indent * " ") or is_empty_line(lines[index])):
+    while index < len(lines) and (lines[index].startswith(indent * " ") or _is_empty_line(lines[index])):
         block.append(lines[index][indent:])
         index += 1
 
     return "\n".join(block).rstrip("\n"), index - 1
 
 
-def read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringArgument], int]:  # noqa: WPS231
-    """
-    Parse an "Arguments" or "Keyword Arguments" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a list of docstring arguments and the index at which to continue parsing.
-    """
+def _read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringArgument], int]:  # noqa: WPS231
     arguments = []
     type_: str
     annotation: str | None
 
-    block, index = read_block_items(docstring, offset)
+    block, index = _read_block_items(docstring, offset)
 
     for arg_line in block:
 
@@ -182,7 +147,7 @@ def read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringArg
         try:
             name_with_type, description = arg_line.split(":", 1)
         except ValueError:
-            warn(docstring, index, f"Failed to get 'name: description' pair from '{arg_line}'")
+            _warn(docstring, index, f"Failed to get 'name: description' pair from '{arg_line}'")
             continue
 
         description = description.lstrip()
@@ -207,73 +172,43 @@ def read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringArg
             default = None
 
         if annotation is None:
-            warn(docstring, index, f"No type or annotation for argument '{name}'")
+            _warn(docstring, index, f"No type or annotation for argument '{name}'")
 
         arguments.append(DocstringArgument(name=name, value=default, annotation=annotation, description=description))
 
     return arguments, index
 
 
-def read_arguments_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    """
-    Parse an "Arguments" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
-    arguments, index = read_arguments(docstring, offset)
+def _read_arguments_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    arguments, index = _read_arguments(docstring, offset)
 
     if arguments:
         return DocstringSection(DocstringSectionKind.arguments, arguments), index
 
-    warn(docstring, index, f"Empty arguments section at line {offset}")
+    _warn(docstring, index, f"Empty arguments section at line {offset}")
     return None, index
 
 
-def read_keyword_arguments_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    """
-    Parse a "Keyword Arguments" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
-    arguments, index = read_arguments(docstring, offset)
+def _read_keyword_arguments_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    arguments, index = _read_arguments(docstring, offset)
 
     if arguments:
         return DocstringSection(DocstringSectionKind.keyword_arguments, arguments), index
 
-    warn(docstring, index, f"Empty keyword arguments section at line {offset}")
+    _warn(docstring, index, f"Empty keyword arguments section at line {offset}")
     return None, index
 
 
-def read_attributes_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    """
-    Parse an "Attributes" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
+def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
     attributes = []
-    block, index = read_block_items(docstring, offset)
+    block, index = _read_block_items(docstring, offset)
 
     annotation: str | None
     for attr_line in block:
         try:
             name_with_type, description = attr_line.split(":", 1)
         except ValueError:
-            warn(docstring, index, f"Failed to get 'name: description' pair from '{attr_line}'")
+            _warn(docstring, index, f"Failed to get 'name: description' pair from '{attr_line}'")
             continue
 
         description = description.lstrip()
@@ -292,55 +227,35 @@ def read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstrin
     if attributes:
         return DocstringSection(DocstringSectionKind.attributes, attributes), index
 
-    warn(docstring, index, f"Empty attributes section at line {offset}")
+    _warn(docstring, index, f"Empty attributes section at line {offset}")
     return None, index
 
 
-def read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    """
-    Parse a "Raises" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
+def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
     exceptions = []
-    block, index = read_block_items(docstring, offset)
+    block, index = _read_block_items(docstring, offset)
 
     for exception_line in block:
         try:
             annotation, description = exception_line.split(": ", 1)
         except ValueError:
-            warn(docstring, index, f"Failed to get 'exception: description' pair from '{exception_line}'")
+            _warn(docstring, index, f"Failed to get 'exception: description' pair from '{exception_line}'")
         else:
             exceptions.append(DocstringException(annotation=annotation, description=description.lstrip(" ")))
 
     if exceptions:
         return DocstringSection(DocstringSectionKind.raises, exceptions), index
 
-    warn(docstring, index, f"Empty exceptions section at line {offset}")
+    _warn(docstring, index, f"Empty exceptions section at line {offset}")
     return None, index
 
 
-def read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    """
-    Parse an "Returns" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
-    text, index = read_block(docstring, offset)
+def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    text, index = _read_block(docstring, offset)
 
     # early exit if there is no text in the return section
     if not text:
-        warn(docstring, index, f"Empty return section at line {offset}")
+        _warn(docstring, index, f"Empty return section at line {offset}")
         return None, index
 
     # check the presence of a name and description, separated by a semi-colon
@@ -359,7 +274,7 @@ def read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
 
     # there was no type in the docstring and no return annotation in the signature
     if annotation is None:
-        warn(docstring, index, "No return type/annotation in docstring/signature")
+        _warn(docstring, index, "No return type/annotation in docstring/signature")
 
     return (
         DocstringSection(DocstringSectionKind.returns, DocstringReturn(annotation=annotation, description=description)),
@@ -367,22 +282,12 @@ def read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     )
 
 
-def read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    """
-    Parse a "Yields" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
-    text, index = read_block(docstring, offset)
+def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    text, index = _read_block(docstring, offset)
 
     # early exit if there is no text in the yield section
     if not text:
-        warn(docstring, index, f"Empty yield section at line {offset}")
+        _warn(docstring, index, f"Empty yield section at line {offset}")
         return None, index
 
     # check the presence of a name and description, separated by a semi-colon
@@ -402,7 +307,7 @@ def read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
 
     # there was no type in the docstring and no return annotation in the signature
     if annotation is None:
-        warn(docstring, index, "No yield type/annotation in docstring/signature")
+        _warn(docstring, index, "No yield type/annotation in docstring/signature")
 
     return (
         DocstringSection(DocstringSectionKind.yields, DocstringYield(annotation=annotation, description=description)),
@@ -410,18 +315,8 @@ def read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
     )
 
 
-def read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
-    """
-    Parse an "examples" section.
-
-    Arguments:
-        docstring: The docstring to parse
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `Section` (or `None`) and the index at which to continue parsing.
-    """
-    text, index = read_block(docstring, offset)
+def _read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
+    text, index = _read_block(docstring, offset)
 
     sub_sections = []
     in_code_example = False
@@ -430,7 +325,7 @@ def read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringS
     current_example: list[str] = []
 
     for line in text.split("\n"):
-        if is_empty_line(line):
+        if _is_empty_line(line):
             if in_code_example:
                 if current_example:
                     sub_sections.append((DocstringSectionKind.examples, "\n".join(current_example)))
@@ -467,31 +362,22 @@ def read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringS
     if sub_sections:
         return DocstringSection(DocstringSectionKind.examples, sub_sections), index
 
-    warn(docstring, index, f"Empty examples section at line {offset}")
+    _warn(docstring, index, f"Empty examples section at line {offset}")
     return None, index
 
 
-def is_empty_line(line) -> bool:
-    """
-    Tell if a line is empty.
-
-    Arguments:
-        line: The line to check.
-
-    Returns:
-        True if the line is empty or composed of blanks only, False otherwise.
-    """
+def _is_empty_line(line) -> bool:
     return not line.strip()
 
 
-section_reader = {
-    DocstringSectionKind.arguments: read_arguments_section,
-    DocstringSectionKind.keyword_arguments: read_keyword_arguments_section,
-    DocstringSectionKind.raises: read_raises_section,
-    DocstringSectionKind.examples: read_examples_section,
-    DocstringSectionKind.attributes: read_attributes_section,
-    DocstringSectionKind.returns: read_returns_section,
-    DocstringSectionKind.yields: read_yields_section,
+_section_reader = {
+    DocstringSectionKind.arguments: _read_arguments_section,
+    DocstringSectionKind.keyword_arguments: _read_keyword_arguments_section,
+    DocstringSectionKind.raises: _read_raises_section,
+    DocstringSectionKind.examples: _read_examples_section,
+    DocstringSectionKind.attributes: _read_attributes_section,
+    DocstringSectionKind.returns: _read_returns_section,
+    DocstringSectionKind.yields: _read_yields_section,
 }
 
 
@@ -530,14 +416,14 @@ def parse(  # noqa: WPS231
                 in_code_block = False
             current_section.append(lines[index])
 
-        elif line_lower in section_kind:
+        elif line_lower in _section_kind:
             if current_section:
                 if any(current_section):
                     sections.append(
                         DocstringSection(DocstringSectionKind.text, "\n".join(current_section).rstrip("\n"))
                     )
                 current_section = []
-            reader = section_reader[section_kind[line_lower]]
+            reader = _section_reader[_section_kind[line_lower]]
             section, index = reader(docstring, index + 1)
             if section:
                 sections.append(section)

@@ -2,33 +2,12 @@
 
 from __future__ import annotations
 
-from griffe.dataclasses import Argument, Arguments, Class, Data, Docstring, Function, Module
-from griffe.docstrings import google as parser
+from griffe.dataclasses import Argument, Arguments, Function
+from griffe.docstrings import google
 from griffe.docstrings.dataclasses import DocstringSectionKind
+from tests.test_docstrings.helpers import parser
 
-
-# =============================================================================================
-# Helpers
-def parse(docstring: str, parent: Module | Class | Function | Data | None = None, **parser_opts):
-    """Parse a doctring.
-
-    Arguments:
-        docstring: The docstring to parse.
-        parent: The docstring's parent object.
-        **parser_opts: Additional options accepted by the parser.
-
-    Returns:
-        The parsed sections, and warnings.
-    """
-    docstring_object = Docstring(docstring, lineno=1, endlineno=None)
-    docstring_object.endlineno = len(docstring_object.lines) + 1
-    if parent:
-        docstring_object.parent = parent
-        parent.docstring = docstring_object
-    warnings = []
-    parser.warn = lambda _docstring, _offset, message: warnings.append(message)
-    sections = parser.parse(docstring_object, **parser_opts)
-    return sections, warnings
+parse = parser(google)
 
 
 # =============================================================================================
