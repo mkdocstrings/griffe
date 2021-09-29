@@ -5,8 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, DefaultDict, FrozenSet, Type, TypedDict, cast  # noqa: WPS235
 
-from griffe.docstrings.dataclasses import DocstringElement, DocstringAttribute, DocstringArgument, DocstringSection, DocstringException, DocstringReturn, DocstringSectionKind
-
+from griffe.docstrings.dataclasses import (
+    DocstringArgument,
+    DocstringAttribute,
+    DocstringException,
+    DocstringReturn,
+    DocstringSection,
+    DocstringSectionKind,
+)
 from griffe.docstrings.utils import warn
 
 if TYPE_CHECKING:
@@ -73,7 +79,16 @@ class ParsedValues:
     return_type: str | None = None
 
 
-def parse(docstring: Docstring) -> list[DocstringSection]:  # noqa: D102
+def parse(docstring: Docstring, **options) -> list[DocstringSection]:
+    """Parse an RST-styled docstring.
+
+    Arguments:
+        docstring: The docstring to parse.
+        **options: Additional parsing options.
+
+    Returns:
+        A list of docstring sections.
+    """
     parsed_values = ParsedValues()
 
     lines = docstring.lines
@@ -319,13 +334,19 @@ def _read_return(docstring: Docstring, start_index: int, parsed_values: ParsedVa
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
-    annotation = None
     # Annotation precedence:
-    # - signature annotation
     # - "rtype" directive type
+    # - signature annotation
     # - None
+    annotation: str | None
     if parsed_values.return_type is not None:
         annotation = parsed_values.return_type
+    else:
+        try:
+            annotation = docstring.parent.returns  # type: ignore
+        except AttributeError:
+            warn(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
+            annotation = None
 
     parsed_values.return_value = DocstringReturn(annotation, parsed_directive.value)
 
@@ -351,10 +372,7 @@ def _read_return_type(docstring: Docstring, start_index: int, parsed_values: Par
     parsed_values.return_type = return_type
     return_value = parsed_values.return_value
     if return_value is not None:
-        if return_value.annotation is None:
-            return_value.annotation = return_type
-        else:
-            warn(docstring, 0, "Duplicate type information for return")
+        return_value.annotation = return_type
 
     return parsed_directive.next_index
 
@@ -413,8 +431,7 @@ def _consolidate_continuation_lines(lines: list[str], start_index: int) -> tuple
 def _consolidate_descriptive_type(descriptive_type: str) -> str:
     """Convert type descriptions with "or" into respective type signature.
 
-    "x or None" or "None or x" -> "Optional[x]"
-    "x or x" or "x or y[ or z [...]]" -> "Union[x, y, ...]"
+    "x or y" -> "x | y"
 
     Arguments:
         descriptive_type: Descriptions of an item's type.
@@ -422,16 +439,7 @@ def _consolidate_descriptive_type(descriptive_type: str) -> str:
     Returns:
         Type signature for descriptive type.
     """
-    types = descriptive_type.split("or")
-    if len(types) == 1:
-        return descriptive_type
-    types = [pt.strip() for pt in types]
-    if len(types) == 2:
-        if types[0] == "None":
-            return f"Optional[{types[1]}]"
-        if types[1] == "None":
-            return f"Optional[{types[0]}]"
-    return f"Union[{','.join(types)}]"
+    return descriptive_type.replace(" or ", " | ")
 
 
 def _strip_blank_lines(lines: list[str]) -> list[str]:
