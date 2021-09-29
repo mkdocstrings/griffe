@@ -492,6 +492,7 @@ section_reader = {
 def parse(  # noqa: WPS231
     docstring: Docstring,
     replace_admonitions: bool = True,
+    **options,
 ) -> list[DocstringSection]:
     """Parse a docstring.
 
@@ -502,9 +503,10 @@ def parse(  # noqa: WPS231
         docstring: The docstring to parse.
         replace_admonitions: Whether to replace unknown-titled sections
             with their Markdown admonition equivalent.
+        **options: Additional parsing options.
 
     Returns:
-        The list of parsed sections.
+        A list of docstring sections.
     """
     sections = []
     current_section = []
