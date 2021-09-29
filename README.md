@@ -119,10 +119,34 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
     - [x] Structured format
     - [x] Styles
         - [x] Google
-        - [ ] RST
+        - [x] RST
         - [ ] Numpy
+        - [ ] epydoc
         - [ ] New Markdown-based format? For graceful degradation
 - Serializer:
     - [x] JSON
         - [x] Nested
         - [ ] Flat
+- API diff:
+    - [ ] Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
+    - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)
+    - [ ] List of things to consider for warnings
+        - [ ] Multiple positional-or-keyword arguments
+        - [ ] Public imports in public modules
+        - [ ] Private things made public through imports/assignments
+        - [ ] Too many public things? Generally annoying. Configuration?
+    - [ ] Ability to compare two APIs to return breaking changes
+    - [ ] List of things to consider for breaking changes
+        - [ ] Changed position of positional only argument
+        - [ ] Changed position of positional or keyword argument
+        - [ ] Changed type of argument
+        - [ ] Changed type of public module attribute
+        - [ ] Changed return type of a public function/method
+        - [ ] Added argument without a default value
+        - [ ] Removed keyword-only argument without a default value, without **kwargs to swallow it
+        - [ ] Removed positional-only argument without a default value, without *args to swallow it
+        - [ ] Removed positional-or_keyword argument without a default value, without *args and **kwargs to swallow it
+        - [ ] Removed public module/class/function/method/attribute
+        - [ ] All of the previous even when parent is private (could be publicly imported or assigned somewhere),
+              and later be smarter: public assign/import makes private things public!
+        - [ ] Inheritance: removed base, or added/changed base that changes MRO
