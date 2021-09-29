@@ -1,9 +1,14 @@
-"""This module defines functions and classes to parse RST-style docstrings into structured data."""
+"""This module defines functions and classes to parse RST-style docstrings into structured data.
+
+Credits to Patrick Lannigan ([@plannigan](https://github.com/plannigan))
+who originally added the parser in the [pytkdocs project](https://github.com/mkdocstrings/pytkdocs).
+See https://github.com/mkdocstrings/pytkdocs/pull/71.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable, DefaultDict, FrozenSet, Type, TypedDict, cast  # noqa: WPS235
+from typing import TYPE_CHECKING, Any, Callable, FrozenSet, TypedDict
 
 from griffe.docstrings.dataclasses import (
     DocstringArgument,
