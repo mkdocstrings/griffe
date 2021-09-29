@@ -204,11 +204,18 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         for (arg, kind), default in args_kinds_defaults:
             annotation = _get_annotation(arg.annotation)
             default = _get_argument_default(default, self.filepath)
-            arguments.add(Argument(arg.arg, annotation, kind, default))
+            arguments.add(Argument(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
             annotation = _get_annotation(node.args.vararg.annotation)
-            arguments.add(Argument(f"*{node.args.vararg.arg}", annotation, inspect.Parameter.VAR_POSITIONAL, None))
+            arguments.add(
+                Argument(
+                    f"*{node.args.vararg.arg}",
+                    annotation=annotation,
+                    kind=inspect.Parameter.VAR_POSITIONAL,
+                    default=None,
+                )
+            )
 
         # TODO: probably some optimisations to do here
         kwargs_defaults = reversed(
@@ -223,11 +230,17 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         for kwarg, default in kwargs_defaults:  # noqa: WPS440
             annotation = _get_annotation(kwarg.annotation)
             default = _get_argument_default(default, self.filepath)
-            arguments.add(Argument(kwarg.arg, annotation, inspect.Parameter.KEYWORD_ONLY, default))
+            arguments.add(
+                Argument(kwarg.arg, annotation=annotation, kind=inspect.Parameter.KEYWORD_ONLY, default=default)
+            )
 
         if node.args.kwarg:
             annotation = _get_annotation(node.args.kwarg.annotation)
-            arguments.add(Argument(f"**{node.args.kwarg.arg}", annotation, inspect.Parameter.VAR_KEYWORD, None))
+            arguments.add(
+                Argument(
+                    f"**{node.args.kwarg.arg}", annotation=annotation, kind=inspect.Parameter.VAR_KEYWORD, default=None
+                )
+            )
 
         function = Function(
             name=node.name,

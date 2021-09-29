@@ -145,6 +145,7 @@ class Argument:
     def __init__(
         self,
         name: str,
+        *,
         annotation: str | None = None,
         kind: ParameterKind | None = None,
         default: str | None = None,

@@ -56,7 +56,7 @@ class DocstringElement:
         description: The element description.
     """
 
-    def __init__(self, description: str, annotation: str | None = None) -> None:
+    def __init__(self, *, description: str, annotation: str | None = None) -> None:
         """Initialize the element.
 
         Arguments:
@@ -101,7 +101,7 @@ class DocstringNamedElement(DocstringElement):
         value: The element value, as a string, if any.
     """
 
-    def __init__(self, name: str, description: str, annotation: str | None = None, value: str | None = None) -> None:
+    def __init__(self, name: str, *, description: str, annotation: str | None = None, value: str | None = None) -> None:
         """Initialize the element.
 
         Arguments:
@@ -110,7 +110,7 @@ class DocstringNamedElement(DocstringElement):
             annotation: The element annotation, if any.
             value: The element value, as a string.
         """
-        super().__init__(description, annotation)
+        super().__init__(description=description, annotation=annotation)
         self.name: str = name
         self.value: str | None = value
 

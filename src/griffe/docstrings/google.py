@@ -316,7 +316,7 @@ def read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
         except ValueError:
             warn(docstring, index, f"Failed to get 'exception: description' pair from '{exception_line}'")
         else:
-            exceptions.append(DocstringException(annotation, description.lstrip(" ")))
+            exceptions.append(DocstringException(annotation=annotation, description=description.lstrip(" ")))
 
     if exceptions:
         return DocstringSection(DocstringSectionKind.raises, exceptions), index
@@ -361,7 +361,10 @@ def read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     if annotation is None:
         warn(docstring, index, "No return type/annotation in docstring/signature")
 
-    return DocstringSection(DocstringSectionKind.returns, DocstringReturn(annotation, description)), index
+    return (
+        DocstringSection(DocstringSectionKind.returns, DocstringReturn(annotation=annotation, description=description)),
+        index,
+    )
 
 
 def read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
@@ -401,7 +404,10 @@ def read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
     if annotation is None:
         warn(docstring, index, "No yield type/annotation in docstring/signature")
 
-    return DocstringSection(DocstringSectionKind.yields, DocstringYield(annotation, description)), index
+    return (
+        DocstringSection(DocstringSectionKind.yields, DocstringYield(annotation=annotation, description=description)),
+        index,
+    )
 
 
 def read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231

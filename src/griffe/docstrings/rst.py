@@ -317,7 +317,7 @@ def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValu
 
     if len(parsed_directive.directive_parts) == 2:
         ex_type = parsed_directive.directive_parts[1]
-        parsed_values.exceptions.append(DocstringException(ex_type, parsed_directive.value))
+        parsed_values.exceptions.append(DocstringException(annotation=ex_type, description=parsed_directive.value))
     else:
         warn(docstring, 0, f"Failed to parse exception directive from '{parsed_directive.line}'")
 
@@ -353,7 +353,7 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
             warn(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
             annotation = None
 
-    parsed_values.return_value = DocstringReturn(annotation, parsed_directive.value)
+    parsed_values.return_value = DocstringReturn(annotation=annotation, description=parsed_directive.value)
 
     return parsed_directive.next_index
 
