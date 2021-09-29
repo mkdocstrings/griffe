@@ -186,12 +186,17 @@ def test_parse_without_annotations():
         Returns:
             Sum X + Y + Z.
     """
-    arguments = Arguments()
-    arguments.add(Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    arguments.add(Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    function = Function("func", arguments=arguments)
 
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            "func",
+            arguments=Arguments(
+                Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+            ),
+        ),
+    )
     assert len(sections) == 3
     assert len(warnings) == 3
     for warning in warnings[:-1]:
@@ -212,12 +217,17 @@ def test_parse_with_annotations():
             Sum X + Y.
     """
 
-    arguments = Arguments()
-    arguments.add(Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    arguments.add(Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default=None))
-    function = Function("func", arguments=arguments, returns="int")
-
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            "func",
+            arguments=Arguments(
+                Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default=None),
+            ),
+            returns="int",
+        ),
+    )
     assert len(sections) == 3
     assert not warnings
 
@@ -292,12 +302,17 @@ def test_parse_examples_sections():
             False
         """
 
-    arguments = Arguments()
-    arguments.add(Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    arguments.add(Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    function = Function("func", arguments=arguments, returns="int")
-
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            "func",
+            arguments=Arguments(
+                Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+            ),
+            returns="int",
+        ),
+    )
     assert len(sections) == 1
     assert len(sections[0].value) == 9
     assert not warnings
@@ -423,12 +438,17 @@ def test_parse_types_in_docstring():
             int: Sum X + Y + Z.
     """
 
-    arguments = Arguments()
-    arguments.add(Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    arguments.add(Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    function = Function("func", arguments=arguments, returns=None)
-
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            "func",
+            arguments=Arguments(
+                Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+            ),
+            returns=None,
+        ),
+    )
     assert len(sections) == 3
     assert not warnings
 
@@ -465,13 +485,18 @@ def test_parse_optional_type_in_docstring():
             z (int, optional): Z value.
     """
 
-    arguments = Arguments()
-    arguments.add(Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default="1"))
-    arguments.add(Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default="None"))
-    arguments.add(Argument(name="z", annotation=None, kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default="None"))
-    function = Function("func", arguments=arguments, returns=None)
-
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            "func",
+            arguments=Arguments(
+                Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default="1"),
+                Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default="None"),
+                Argument(name="z", annotation=None, kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default="None"),
+            ),
+            returns=None,
+        ),
+    )
     assert len(sections) == 2
     assert not warnings
 
@@ -510,12 +535,17 @@ def test_prefer_docstring_types_over_annotations():
             str: Sum X + Y + Z.
     """
 
-    arguments = Arguments()
-    arguments.add(Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    arguments.add(Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None))
-    function = Function("func", arguments=arguments, returns="int")
-
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            "func",
+            arguments=Arguments(
+                Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+            ),
+            returns="int",
+        ),
+    )
     assert len(sections) == 3
     assert not warnings
 

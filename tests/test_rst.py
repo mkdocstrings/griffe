@@ -314,10 +314,10 @@ def test_parse__param_field_annotate_type__param_section_with_type():
         :param foo: {SOME_TEXT}
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    sections, warnings = parse(docstring, parent=function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+    )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.arguments
     assert_argument_equal(
@@ -352,10 +352,12 @@ def test_parse__param_field_with_default__result_from_docstring():
         :param foo: {SOME_TEXT}
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation=None, kind=None, default=repr("")))
-    function = Function(name="func", arguments=arguments)
-    sections, warnings = parse(docstring, parent=function)
+    sections, warnings = parse(
+        docstring,
+        parent=Function(
+            name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=repr("")))
+        ),
+    )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.arguments
     assert_argument_equal(
@@ -410,10 +412,10 @@ def test_parse__param_twice__error_message():
         :param foo: {SOME_TEXT} again
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation=None, kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    _, warnings = parse(docstring, parent=function)
+    _, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=None))),
+    )
     assert "Duplicate parameter entry for 'foo'" in warnings[0]
 
 
@@ -426,10 +428,10 @@ def test_parse__param_type_twice_doc__error_message():
         :type foo: str
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation=None, kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    _, warnings = parse(docstring, parent=function)
+    _, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=None))),
+    )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
@@ -442,10 +444,10 @@ def test_parse__param_type_twice_type_directive_first__error_message():
         :param str foo: {SOME_TEXT}
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation=None, kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    _, warnings = parse(docstring, parent=function)
+    _, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=None))),
+    )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
@@ -458,10 +460,10 @@ def test_parse__param_type_twice_annotated__error_message():
         :type foo: str
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    _, warnings = parse(docstring, parent=function)
+    _, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+    )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
@@ -474,10 +476,10 @@ def test_parse__param_type_no_type__error_message():
         :type str
     """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    _, warnings = parse(docstring, parent=function)
+    _, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+    )
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
 
@@ -490,10 +492,10 @@ def test_parse__param_type_no_name__error_message():
         :type: str
         """
 
-    arguments = Arguments()
-    arguments.add(Argument("foo", annotation="str", kind=None, default=None))
-    function = Function(name="func", arguments=arguments)
-    _, warnings = parse(docstring, parent=function)
+    _, warnings = parse(
+        docstring,
+        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+    )
     assert "Failed to get parameter name from" in warnings[0]
 
 
@@ -719,8 +721,7 @@ def test_parse__return_directive_annotation__return_section_with_type():
         :return: {SOME_TEXT}
     """
 
-    function = Function(name="func", returns="str")
-    sections, _ = parse(docstring, parent=function)
+    sections, _ = parse(docstring, parent=Function(name="func", returns="str"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -738,8 +739,7 @@ def test_parse__return_directive_annotation__prefer_return_directive():
         :rtype: str
     """
 
-    function = Function(name="func", returns="int")
-    sections, _ = parse(docstring, parent=function)
+    sections, _ = parse(docstring, parent=Function(name="func", returns="int"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(

@@ -179,10 +179,12 @@ class Arguments:
     It allows to get arguments using their position (index) or their name.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *arguments: Argument) -> None:
         """Initialize the arguments container."""
         self._arguments_list: list[Argument] = []
         self._arguments_dict: dict[str, Argument] = {}
+        for argument in arguments:
+            self.add(argument)
 
     def __getitem__(self, name_or_index: int | str) -> Argument:
         if isinstance(name_or_index, int):
