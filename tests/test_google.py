@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import inspect
-
 from griffe.dataclasses import Argument, Arguments, Class, Data, Docstring, Function, Module
 from griffe.docstrings import google as parser
 from griffe.docstrings.dataclasses import DocstringSectionKind
@@ -192,8 +190,8 @@ def test_parse_without_annotations():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument("x", kind=inspect.Parameter.POSITIONAL_ONLY),
-                Argument("y", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("x"),
+                Argument("y"),
             ),
         ),
     )
@@ -222,8 +220,8 @@ def test_parse_with_annotations():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument("x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
-                Argument("y", annotation="int", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                Argument("x", annotation="int"),
+                Argument("y", annotation="int"),
             ),
             returns="int",
         ),
@@ -307,8 +305,8 @@ def test_parse_examples_sections():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument("x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
-                Argument("y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("x", annotation="int"),
+                Argument("y", annotation="int"),
             ),
             returns="int",
         ),
@@ -443,10 +441,9 @@ def test_parse_types_in_docstring():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument("x", kind=inspect.Parameter.POSITIONAL_ONLY),
-                Argument("y", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("x"),
+                Argument("y"),
             ),
-            returns=None,
         ),
     )
     assert len(sections) == 3
@@ -490,11 +487,10 @@ def test_parse_optional_type_in_docstring():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument("x", kind=inspect.Parameter.POSITIONAL_ONLY, default="1"),
-                Argument("y", kind=inspect.Parameter.POSITIONAL_ONLY, default="None"),
-                Argument("z", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default="None"),
+                Argument("x", default="1"),
+                Argument("y", default="None"),
+                Argument("z", default="None"),
             ),
-            returns=None,
         ),
     )
     assert len(sections) == 2
@@ -540,8 +536,8 @@ def test_prefer_docstring_types_over_annotations():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument("x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
-                Argument("y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("x", annotation="int"),
+                Argument("y", annotation="int"),
             ),
             returns="int",
         ),
