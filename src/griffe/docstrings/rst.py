@@ -109,18 +109,18 @@ def parse(docstring: Docstring, **options) -> list[DocstringSection]:
     return _parsed_values_to_sections(parsed_values)
 
 
-def _read_parameter(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse a parameter value.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         Index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -188,18 +188,18 @@ def _determine_param_annotation(
     return annotation
 
 
-def _read_parameter_type(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse a parameter type.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         Index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
     param_type = _consolidate_descriptive_type(parsed_directive.value.strip())
@@ -220,18 +220,18 @@ def _read_parameter_type(docstring: Docstring, start_index: int, parsed_values: 
     return parsed_directive.next_index
 
 
-def _read_attribute(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse an attribute value.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         Index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -263,18 +263,18 @@ def _read_attribute(docstring: Docstring, start_index: int, parsed_values: Parse
     return parsed_directive.next_index
 
 
-def _read_attribute_type(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse a parameter type.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         Index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
     attribute_type = _consolidate_descriptive_type(parsed_directive.value.strip())
@@ -295,18 +295,18 @@ def _read_attribute_type(docstring: Docstring, start_index: int, parsed_values: 
     return parsed_directive.next_index
 
 
-def _read_exception(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse an exceptions value.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         A tuple containing a `DocstringSection` (or `None`) and the index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -319,18 +319,18 @@ def _read_exception(docstring: Docstring, start_index: int, parsed_values: Parse
     return parsed_directive.next_index
 
 
-def _read_return(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse an return value.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         Index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -353,18 +353,18 @@ def _read_return(docstring: Docstring, start_index: int, parsed_values: ParsedVa
     return parsed_directive.next_index
 
 
-def _read_return_type(docstring: Docstring, start_index: int, parsed_values: ParsedValues) -> int:
+def _read_return_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
     Parse an return type value.
 
     Arguments:
         docstring: The docstring.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         Index at which to continue parsing.
     """
-    parsed_directive = _parse_directive(docstring, start_index)
+    parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -393,8 +393,8 @@ def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[DocstringSec
     return result
 
 
-def _parse_directive(docstring: Docstring, start_index: int) -> ParsedDirective:
-    line, next_index = _consolidate_continuation_lines(docstring.lines, start_index)
+def _parse_directive(docstring: Docstring, offset: int) -> ParsedDirective:
+    line, next_index = _consolidate_continuation_lines(docstring.lines, offset)
     try:
         _, directive, value = line.split(":", 2)
     except ValueError:
@@ -405,18 +405,18 @@ def _parse_directive(docstring: Docstring, start_index: int) -> ParsedDirective:
     return ParsedDirective(line, next_index, directive.split(" "), value)  # type: ignore
 
 
-def _consolidate_continuation_lines(lines: list[str], start_index: int) -> tuple[str, int]:
+def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str, int]:
     """
     Convert a docstring field into a single line if a line continuation exists.
 
     Arguments:
         lines: The docstring lines.
-        start_index: The line number to start at.
+        offset: The line number to start at.
 
     Returns:
         A tuple containing the continued lines as a single string and the index at which to continue parsing.
     """
-    curr_line_index = start_index
+    curr_line_index = offset
     block = [lines[curr_line_index].lstrip()]
 
     # start processing after first item
