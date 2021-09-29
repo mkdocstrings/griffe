@@ -141,7 +141,7 @@ def test_parse__param_field__param_section():
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(sections[1].value[0], DocstringArgument(SOME_NAME, annotation=None, description=SOME_TEXT))
+    assert_argument_equal(sections[1].value[0], DocstringArgument(SOME_NAME, description=SOME_TEXT))
 
 
 def test_parse__only_param_field__empty_markdown():
@@ -178,7 +178,7 @@ def test_parse__all_param_names__param_section(param_directive_name):
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(sections[1].value[0], DocstringArgument(SOME_NAME, annotation=None, description=SOME_TEXT))
+    assert_argument_equal(sections[1].value[0], DocstringArgument(SOME_NAME, description=SOME_TEXT))
 
 
 @pytest.mark.parametrize(
@@ -209,7 +209,7 @@ def test_parse__param_field_multi_line__param_section(docstring):
     assert sections[1].kind is DocstringSectionKind.arguments
     assert_argument_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation=None, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
+        DocstringArgument(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
     )
 
 
@@ -226,7 +226,7 @@ def test_parse__param_field_for_function__param_section_with_kind():
     assert sections[1].kind is DocstringSectionKind.arguments
     assert_argument_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation=None, description=SOME_TEXT),
+        DocstringArgument(SOME_NAME, description=SOME_TEXT),
     )
 
 
@@ -316,7 +316,7 @@ def test_parse__param_field_annotate_type__param_section_with_type():
 
     sections, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.arguments
@@ -340,7 +340,7 @@ def test_parse__param_field_no_matching_param__result_from_docstring():
     assert sections[1].kind is DocstringSectionKind.arguments
     assert_argument_equal(
         sections[1].value[0],
-        DocstringArgument("other", annotation=None, description=SOME_TEXT),
+        DocstringArgument("other", description=SOME_TEXT),
     )
 
 
@@ -354,15 +354,13 @@ def test_parse__param_field_with_default__result_from_docstring():
 
     sections, warnings = parse(
         docstring,
-        parent=Function(
-            name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=repr("")))
-        ),
+        parent=Function("func", arguments=Arguments(Argument("foo", kind=None, default=repr("")))),
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.arguments
     assert_argument_equal(
         sections[1].value[0],
-        DocstringArgument("foo", annotation=None, description=SOME_TEXT, value=repr("")),
+        DocstringArgument("foo", description=SOME_TEXT, value=repr("")),
     )
     assert not warnings
 
@@ -414,7 +412,7 @@ def test_parse__param_twice__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", kind=None))),
     )
     assert "Duplicate parameter entry for 'foo'" in warnings[0]
 
@@ -430,7 +428,7 @@ def test_parse__param_type_twice_doc__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
@@ -446,7 +444,7 @@ def test_parse__param_type_twice_type_directive_first__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation=None, kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
@@ -462,7 +460,7 @@ def test_parse__param_type_twice_annotated__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
@@ -478,7 +476,7 @@ def test_parse__param_type_no_type__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
     )
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
@@ -494,7 +492,7 @@ def test_parse__param_type_no_name__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function(name="func", arguments=Arguments(Argument("foo", annotation="str", kind=None, default=None))),
+        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
     )
     assert "Failed to get parameter name from" in warnings[0]
 
@@ -527,7 +525,7 @@ def test_parse__attribute_field_multi_line__param_section(docstring):
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
         sections[1].value[0],
-        DocstringAttribute(SOME_NAME, annotation=None, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
+        DocstringAttribute(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
     )
     assert not warnings
 
@@ -557,7 +555,7 @@ def test_parse__all_attribute_names__param_section(attribute_directive_name):
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
         sections[1].value[0],
-        DocstringAttribute(SOME_NAME, annotation=None, description=SOME_TEXT),
+        DocstringAttribute(SOME_NAME, description=SOME_TEXT),
     )
     assert not warnings
 
@@ -570,12 +568,12 @@ def test_parse__class_attributes__attributes_section():
         :var foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring, parent=Class(name="klass"))
+    sections, _ = parse(docstring, parent=Class("klass"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
         sections[1].value[0],
-        DocstringAttribute(SOME_NAME, annotation=None, description=SOME_TEXT),
+        DocstringAttribute(SOME_NAME, description=SOME_TEXT),
     )
 
 
@@ -588,7 +586,7 @@ def test_parse__class_attributes_with_type__annotation_in_attributes_section():
         :var foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring, parent=Class(name="klass"))
+    sections, _ = parse(docstring, parent=Class("klass"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
@@ -721,7 +719,7 @@ def test_parse__return_directive_annotation__return_section_with_type():
         :return: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring, parent=Function(name="func", returns="str"))
+    sections, _ = parse(docstring, parent=Function("func", returns="str"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -739,7 +737,7 @@ def test_parse__return_directive_annotation__prefer_return_directive():
         :rtype: str
     """
 
-    sections, _ = parse(docstring, parent=Function(name="func", returns="int"))
+    sections, _ = parse(docstring, parent=Function("func", returns="int"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -880,7 +878,7 @@ def test_parse__raise_no_name__error():
 #         :vartype E: float
 #     """
 
-#     module = Module(name="mod", filepath=None)
+#     module = Module("mod", filepath=None)
 #     module["A"] = Data("A")  # annotation="int", value="0"
 #     module["B"] = Data("B")  # annotation="str", value=repr("ŧ")
 #     module["C"] = Data("C")  # annotation="bool", value="True"

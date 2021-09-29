@@ -192,8 +192,8 @@ def test_parse_without_annotations():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
-                Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument("x", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("y", kind=inspect.Parameter.POSITIONAL_ONLY),
             ),
         ),
     )
@@ -222,8 +222,8 @@ def test_parse_with_annotations():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
-                Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default=None),
+                Argument("x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("y", annotation="int", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD),
             ),
             returns="int",
         ),
@@ -307,8 +307,8 @@ def test_parse_examples_sections():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
-                Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument("x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
             ),
             returns="int",
         ),
@@ -443,8 +443,8 @@ def test_parse_types_in_docstring():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
-                Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument("x", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("y", kind=inspect.Parameter.POSITIONAL_ONLY),
             ),
             returns=None,
         ),
@@ -490,9 +490,9 @@ def test_parse_optional_type_in_docstring():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument(name="x", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default="1"),
-                Argument(name="y", annotation=None, kind=inspect.Parameter.POSITIONAL_ONLY, default="None"),
-                Argument(name="z", annotation=None, kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default="None"),
+                Argument("x", kind=inspect.Parameter.POSITIONAL_ONLY, default="1"),
+                Argument("y", kind=inspect.Parameter.POSITIONAL_ONLY, default="None"),
+                Argument("z", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD, default="None"),
             ),
             returns=None,
         ),
@@ -540,8 +540,8 @@ def test_prefer_docstring_types_over_annotations():
         parent=Function(
             "func",
             arguments=Arguments(
-                Argument(name="x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
-                Argument(name="y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY, default=None),
+                Argument("x", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
+                Argument("y", annotation="int", kind=inspect.Parameter.POSITIONAL_ONLY),
             ),
             returns="int",
         ),
@@ -633,7 +633,7 @@ def test_parse_yields_section_with_return_annotation():
             Integers.
     """
 
-    function = Function(name="func", returns="Iterator[int]")
+    function = Function("func", returns="Iterator[int]")
     sections, warnings = parse(docstring, function)
     assert len(sections) == 1
     annotated = sections[0].value

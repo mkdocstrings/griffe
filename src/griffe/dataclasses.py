@@ -142,7 +142,13 @@ class Argument:
         default: The argument default, if any.
     """
 
-    def __init__(self, name: str, annotation: str | None, kind: ParameterKind, default: str | None) -> None:
+    def __init__(
+        self,
+        name: str,
+        annotation: str | None = None,
+        kind: ParameterKind | None = None,
+        default: str | None = None,
+    ) -> None:
         """Initialize the argument.
 
         Arguments:
@@ -153,7 +159,7 @@ class Argument:
         """
         self.name: str = name
         self.annotation: str | None = annotation
-        self.kind: ParameterKind = kind
+        self.kind: ParameterKind | None = kind
         self.default: str | None = default
 
     def as_dict(self, **kwargs) -> dict[str, Any]:
@@ -180,7 +186,11 @@ class Arguments:
     """
 
     def __init__(self, *arguments: Argument) -> None:
-        """Initialize the arguments container."""
+        """Initialize the arguments container.
+
+        Arguments:
+            *arguments: The initial arguments to add to the container.
+        """
         self._arguments_list: list[Argument] = []
         self._arguments_dict: dict[str, Argument] = {}
         for argument in arguments:

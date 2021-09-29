@@ -56,15 +56,15 @@ class DocstringElement:
         description: The element description.
     """
 
-    def __init__(self, annotation: str | None, description: str) -> None:
+    def __init__(self, description: str, annotation: str | None = None) -> None:
         """Initialize the element.
 
         Arguments:
             annotation: The element annotation, if any.
             description: The element description.
         """
-        self.annotation: str | None = annotation
         self.description: str = description
+        self.annotation: str | None = annotation
 
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this element's data as a dictionary.
@@ -101,16 +101,16 @@ class DocstringNamedElement(DocstringElement):
         value: The element value, as a string, if any.
     """
 
-    def __init__(self, name: str, annotation: str | None, description: str, value: str | None = None) -> None:
+    def __init__(self, name: str, description: str, annotation: str | None = None, value: str | None = None) -> None:
         """Initialize the element.
 
         Arguments:
             name: The element name.
-            annotation: The element annotation, if any.
             description: The element description.
+            annotation: The element annotation, if any.
             value: The element value, as a string.
         """
-        super().__init__(annotation, description)
+        super().__init__(description, annotation)
         self.name: str = name
         self.value: str | None = value
 
