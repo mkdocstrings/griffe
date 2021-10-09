@@ -11,12 +11,11 @@ from griffe.docstrings import rst
 from griffe.docstrings.dataclasses import (
     DocstringArgument,
     DocstringAttribute,
-    DocstringElement,
     DocstringException,
     DocstringReturn,
     DocstringSectionKind,
 )
-from tests.test_docstrings.helpers import parser
+from tests.test_docstrings.helpers import assert_argument_equal, assert_attribute_equal, assert_element_equal, parser
 
 SOME_NAME = "foo"
 SOME_TEXT = "descriptive test text"
@@ -25,40 +24,6 @@ SOME_EXCEPTION_NAME = "SomeException"
 SOME_OTHER_EXCEPTION_NAME = "SomeOtherException"
 
 parse = parser(rst)
-
-
-def assert_argument_equal(actual: DocstringArgument, expected: DocstringArgument) -> None:
-    """Help assert docstring arguments are equal.
-
-    Arguments:
-        actual: The actual argument.
-        expected: The expected argument.
-    """
-    assert actual.name == expected.name
-    assert_element_equal(actual, expected)
-    assert actual.value == expected.value
-
-
-def assert_attribute_equal(actual: DocstringAttribute, expected: DocstringAttribute) -> None:
-    """Help assert docstring attributes are equal.
-
-    Arguments:
-        actual: The actual attribute.
-        expected: The expected attribute.
-    """
-    assert actual.name == expected.name
-    assert_element_equal(actual, expected)
-
-
-def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -> None:
-    """Help assert docstring elements are equal.
-
-    Arguments:
-        actual: The actual element.
-        expected: The expected element.
-    """
-    assert actual.annotation == expected.annotation
-    assert actual.description == expected.description
 
 
 @pytest.mark.parametrize(

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Callable, List, Tuple, Union
 
 from griffe.dataclasses import Class, Data, Docstring, Function, Module
-from griffe.docstrings.dataclasses import DocstringSection
+from griffe.docstrings.dataclasses import DocstringArgument, DocstringAttribute, DocstringElement, DocstringSection
 
 ParentType = Union[Module, Class, Function, Data, None]
 ParseResultType = Tuple[List[DocstringSection], List[str]]
@@ -43,3 +43,37 @@ def parser(parser_module) -> Callable[[str, ParentType, Any], ParseResultType]:
         return sections, warnings
 
     return parse  # type: ignore
+
+
+def assert_argument_equal(actual: DocstringArgument, expected: DocstringArgument) -> None:
+    """Help assert docstring arguments are equal.
+
+    Arguments:
+        actual: The actual argument.
+        expected: The expected argument.
+    """
+    assert actual.name == expected.name
+    assert_element_equal(actual, expected)
+    assert actual.value == expected.value
+
+
+def assert_attribute_equal(actual: DocstringAttribute, expected: DocstringAttribute) -> None:
+    """Help assert docstring attributes are equal.
+
+    Arguments:
+        actual: The actual attribute.
+        expected: The expected attribute.
+    """
+    assert actual.name == expected.name
+    assert_element_equal(actual, expected)
+
+
+def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -> None:
+    """Help assert docstring elements are equal.
+
+    Arguments:
+        actual: The actual element.
+        expected: The expected element.
+    """
+    assert actual.annotation == expected.annotation
+    assert actual.description == expected.description
