@@ -619,10 +619,10 @@ def test_parse_yields_section_with_return_annotation():
 
 # =============================================================================================
 # Parser special features
-def test_replace_unknown_with_admonitions():
-    """Replace unknown section with their Markdown admonition equivalent."""
+def test_parse_admonitions():
+    """Parse admonitions."""
     docstring = """
-        Note:
+        Important note:
             Hello.
 
         Note: With title.
@@ -633,13 +633,14 @@ def test_replace_unknown_with_admonitions():
     """
 
     sections, warnings = parse(docstring)
-    assert len(sections) == 1
+    assert len(sections) == 3
     assert not warnings
-    assert "!!! note" in sections[0].value
-    assert '!!! note "' in sections[0].value
-    assert "!!! something" in sections[0].value
-
-
-# TODO: allow titles in section!
-def test_replace_titled_unknown_with_admonitions():
-    """Replace unknown section with their Markdown admonition equivalent, keeping their title."""
+    assert sections[0].title is None
+    assert sections[0].value.kind == "important note"
+    assert sections[0].value.contents == "Hello."
+    assert sections[1].title == "With title."
+    assert sections[1].value.kind == "note"
+    assert sections[1].value.contents == "Hello again."
+    assert sections[2].title is None
+    assert sections[2].value.kind == "something"
+    assert sections[2].value.contents == "Something."

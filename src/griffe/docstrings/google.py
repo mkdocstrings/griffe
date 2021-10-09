@@ -1,4 +1,4 @@
-"""This module defines functions and classes to parse Google-style docstrings into structured data."""
+"""This module defines functions to parse Google-style docstrings into structured data."""
 
 from __future__ import annotations
 
@@ -6,12 +6,15 @@ import re
 from typing import TYPE_CHECKING, Pattern
 
 from griffe.docstrings.dataclasses import (
+    DocstringAdmonition,
     DocstringArgument,
     DocstringAttribute,
     DocstringException,
+    DocstringReceive,
     DocstringReturn,
     DocstringSection,
     DocstringSectionKind,
+    DocstringWarn,
     DocstringYield,
 )
 from griffe.docstrings.utils import warning
@@ -22,22 +25,22 @@ if TYPE_CHECKING:
 _warn = warning(__name__)
 
 _section_kind = {
-    "args:": DocstringSectionKind.arguments,
-    "arguments:": DocstringSectionKind.arguments,
-    "params:": DocstringSectionKind.arguments,
-    "parameters:": DocstringSectionKind.arguments,
-    "keyword args:": DocstringSectionKind.keyword_arguments,
-    "keyword arguments:": DocstringSectionKind.keyword_arguments,
-    "raises:": DocstringSectionKind.raises,
-    "exceptions:": DocstringSectionKind.raises,
-    "returns:": DocstringSectionKind.returns,
-    "yields:": DocstringSectionKind.yields,
-    "examples:": DocstringSectionKind.examples,
-    "attributes:": DocstringSectionKind.attributes,
+    "args": DocstringSectionKind.arguments,
+    "arguments": DocstringSectionKind.arguments,
+    "params": DocstringSectionKind.arguments,
+    "parameters": DocstringSectionKind.arguments,
+    "keyword args": DocstringSectionKind.keyword_arguments,
+    "keyword arguments": DocstringSectionKind.keyword_arguments,
+    "raises": DocstringSectionKind.raises,
+    "exceptions": DocstringSectionKind.raises,
+    "returns": DocstringSectionKind.returns,
+    "yields": DocstringSectionKind.yields,
+    "examples": DocstringSectionKind.examples,
+    "attributes": DocstringSectionKind.attributes,
 }
 
-RE_GOOGLE_STYLE_ADMONITION: Pattern = re.compile(r"^(?P<indent>\s*)(?P<type>[\w-]+):((?:\s+)(?P<title>.+))?$")
-"""Regular expressions to match lines starting admonitions, of the form `TYPE: [TITLE]`."""
+_RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w-][\s\w-]*):(\s+(?P<title>.+))?$", re.I)
+"""Regular expression to match admonitions, of the form `TYPE: [TITLE]`."""
 
 
 def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]:  # noqa: WPS231
@@ -250,6 +253,25 @@ def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     return None, index
 
 
+def _read_warns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    warns = []
+    block, index = _read_block_items(docstring, offset)
+
+    for exception_line in block:
+        try:
+            annotation, description = exception_line.split(": ", 1)
+        except ValueError:
+            _warn(docstring, index, f"Failed to get 'warning: description' pair from '{exception_line}'")
+        else:
+            warns.append(DocstringWarn(annotation=annotation, description=description.lstrip(" ")))
+
+    if warns:
+        return DocstringSection(DocstringSectionKind.warns, warns), index
+
+    _warn(docstring, index, f"Empty warns section at line {offset}")
+    return None, index
+
+
 def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
     text, index = _read_block(docstring, offset)
 
@@ -315,6 +337,42 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     )
 
 
+def _read_receives_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    text, index = _read_block(docstring, offset)
+
+    # early exit if there is no text in the receive section
+    if not text:
+        _warn(docstring, index, f"Empty receives section at line {offset}")
+        return None, index
+
+    # check the presence of a name and description, separated by a semi-colon
+    try:
+        type_, text = text.split(":", 1)
+    except ValueError:
+        description = text
+        # try to use the annotation from the signature
+        try:  # noqa: WPS505
+            # TODO: handle Iterator and Generator types
+            annotation = docstring.parent.returns  # type: ignore
+        except AttributeError:
+            annotation = None
+    else:
+        annotation = type_.lstrip()
+        description = text.lstrip()
+
+    # there was no type in the docstring and no return annotation in the signature
+    if annotation is None:
+        _warn(docstring, index, "No receive type/annotation in docstring/signature")
+
+    return (
+        DocstringSection(
+            DocstringSectionKind.receives,
+            DocstringReceive(annotation=annotation, description=description),
+        ),
+        index,
+    )
+
+
 def _read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
     text, index = _read_block(docstring, offset)
 
@@ -366,6 +424,30 @@ def _read_examples_section(docstring: Docstring, offset: int) -> tuple[Docstring
     return None, index
 
 
+def _read_deprecated_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    text, index = _read_block(docstring, offset)
+
+    # early exit if there is no text in the yield section
+    if not text:
+        _warn(docstring, index, f"Empty deprecated section at line {offset}")
+        return None, index
+
+    # check the presence of a name and description, separated by a semi-colon
+    try:
+        version, text = text.split(":", 1)
+    except ValueError:
+        _warn(docstring, index, f"Could not parse version, text at line {offset}")
+        return None, index
+
+    version = version.lstrip()
+    description = text.lstrip()
+
+    return (
+        DocstringSection(DocstringSectionKind.deprecated, (version, description)),
+        index,
+    )
+
+
 def _is_empty_line(line) -> bool:
     return not line.strip()
 
@@ -374,16 +456,18 @@ _section_reader = {
     DocstringSectionKind.arguments: _read_arguments_section,
     DocstringSectionKind.keyword_arguments: _read_keyword_arguments_section,
     DocstringSectionKind.raises: _read_raises_section,
+    DocstringSectionKind.warns: _read_warns_section,
     DocstringSectionKind.examples: _read_examples_section,
     DocstringSectionKind.attributes: _read_attributes_section,
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,
+    DocstringSectionKind.receives: _read_receives_section,
+    DocstringSectionKind.deprecated: _read_deprecated_section,
 }
 
 
 def parse(  # noqa: WPS231
     docstring: Docstring,
-    replace_admonitions: bool = True,
     **options,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -393,8 +477,6 @@ def parse(  # noqa: WPS231
 
     Arguments:
         docstring: The docstring to parse.
-        replace_admonitions: Whether to replace unknown-titled sections
-            with their Markdown admonition equivalent.
         **options: Additional parsing options.
 
     Returns:
@@ -416,31 +498,43 @@ def parse(  # noqa: WPS231
                 in_code_block = False
             current_section.append(lines[index])
 
-        elif line_lower in _section_kind:
-            if current_section:
-                if any(current_section):
-                    sections.append(
-                        DocstringSection(DocstringSectionKind.text, "\n".join(current_section).rstrip("\n"))
-                    )
-                current_section = []
-            reader = _section_reader[_section_kind[line_lower]]
-            section, index = reader(docstring, index + 1)
-            if section:
-                sections.append(section)
-
         elif line_lower.lstrip(" ").startswith("```"):
             in_code_block = True
             current_section.append(lines[index])
 
+        elif match := _RE_ADMONITION.match(lines[index]):  # noqa: WPS332
+            groups = match.groupdict()
+            admonition_type = groups["type"].lower()
+            if admonition_type in _section_kind:
+                if current_section:
+                    if any(current_section):
+                        sections.append(
+                            DocstringSection(
+                                DocstringSectionKind.text,
+                                "\n".join(current_section).rstrip("\n"),
+                                title=groups["title"],
+                            )
+                        )
+                    current_section = []
+                reader = _section_reader[_section_kind[admonition_type]]
+                section, index = reader(docstring, index + 1)
+                if section:
+                    sections.append(section)
+
+            else:
+                contents, index = _read_block(docstring, index + 1)
+                if contents:
+                    sections.append(
+                        DocstringSection(
+                            kind=DocstringSectionKind.admonition,
+                            value=DocstringAdmonition(kind=admonition_type, contents=contents),
+                            title=groups["title"],
+                        )
+                    )
+                else:
+                    index -= 1
+                    current_section.append(lines[index])
         else:
-            if replace_admonitions and not in_code_block and index + 1 < len(lines):
-                if match := RE_GOOGLE_STYLE_ADMONITION.match(lines[index]):  # noqa: WPS332
-                    groups = match.groupdict()
-                    indent = groups["indent"]
-                    if lines[index + 1].startswith(indent + " " * 4):
-                        lines[index] = f"{indent}!!! {groups['type'].lower()}"
-                        if groups["title"]:
-                            lines[index] += f' "{groups["title"]}"'
             current_section.append(lines[index])
 
         index += 1
