@@ -1,4 +1,4 @@
-"""This module defines functions and classes to parse RST-style docstrings into structured data.
+"""This module defines functions to parse RST-style docstrings into structured data.
 
 Credits to Patrick Lannigan ([@plannigan](https://github.com/plannigan))
 who originally added the parser in the [pytkdocs project](https://github.com/mkdocstrings/pytkdocs).
