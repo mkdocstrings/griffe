@@ -290,13 +290,45 @@ def test(ctx, match: str = ""):
         ctx: The context instance (passed automatically).
         match: A pytest expression to filter selected tests.
     """
-    nofail = sys.version_info >= (3, 11, 0)
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
     ctx.run(
         ["pytest", "-c", "config/pytest.ini", "-n", "auto", "-k", match, "tests"],
         title="Running tests",
         pty=PTY,
-        nofail=nofail,
-        quiet=nofail,
     )
+
+
+@duty
+def profile(ctx, browser: bool = False, **opts):
+    """
+    Run the test suite.
+
+    Arguments:
+        ctx: The context instance (passed automatically).
+        browser: Whether to open the SVG file in the browser at the end.
+        **opts: Additional options: async.
+    """
+    async_loader = opts.pop("async", False)
+    griffe_opts = ["-A"] if async_loader else []
+    packages = ctx.run(
+        "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",  # noqa: P103
+        title="Finding packages",
+    ).split("\n")
+    ctx.run(
+        [
+            sys.executable,
+            "-mcProfile",
+            "-oprofile.pstats",
+            "-m",
+            "griffe",
+            "-o/dev/null",
+            *griffe_opts,
+            *packages,
+        ],
+        title=f"Profiling in {'async' if async_loader else 'sync'} mode on {len(packages)} packages",
+        pty=False,
+    )
+    ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
+    if browser:
+        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605

@@ -8,6 +8,7 @@ check_code_quality_args = files
 docs_serve_args = host port
 release_args = version
 test_args = match
+profile_args = async browser
 
 BASIC_DUTIES = \
 	changelog \
@@ -18,7 +19,8 @@ BASIC_DUTIES = \
 	docs-regen \
 	docs-serve \
 	format \
-	release
+	release \
+	profile
 
 QUALITY_DUTIES = \
 	check \
