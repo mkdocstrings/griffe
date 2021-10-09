@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-set -e
+set -evx
 
 PYTHON_VERSIONS="${PYTHON_VERSIONS-3.8 3.9 3.10 3.11}"
+DEPGROUPS="-G async"
 
 install_with_pipx() {
     if ! command -v "$1" &>/dev/null; then
@@ -18,11 +19,11 @@ if [ -n "${PYTHON_VERSIONS}" ]; then
     for python_version in ${PYTHON_VERSIONS}; do
         if pdm use -f "python${python_version}" &>/dev/null; then
             echo "> Using Python ${python_version} interpreter"
-            pdm install
+            pdm install ${DEPGROUPS}
         else
             echo "> pdm use -f python${python_version}: Python interpreter not available?" >&2
         fi
     done
 else
-    pdm install
+    pdm install ${DEPGROUPS}
 fi
