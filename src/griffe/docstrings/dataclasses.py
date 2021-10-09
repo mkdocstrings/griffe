@@ -11,26 +11,32 @@ class DocstringSectionKind(enum.Enum):
 
     text = "text"
     arguments = "arguments"
+    keyword_arguments = "keyword arguments"
     raises = "raises"
+    warns = "warns"
     returns = "returns"
     yields = "yields"
+    receives = "receives"
     examples = "examples"
     attributes = "attributes"
-    keyword_arguments = "keyword arguments"
+    deprecated = "deprecated"
+    admonition = "admonition"
 
 
 class DocstringSection:
     """Placeholder."""
 
-    def __init__(self, kind: DocstringSectionKind, value: Any) -> None:
+    def __init__(self, kind: DocstringSectionKind, value: Any, title: str | None = None) -> None:
         """Initialize the section.
 
         Arguments:
             kind: The section kind.
             value: The section value.
+            title: An optional title.
         """
         self.kind: DocstringSectionKind = kind
         self.value: Any = value
+        self.title: str | None = title
 
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this section's data as a dictionary.
@@ -45,7 +51,43 @@ class DocstringSection:
             serialized_value = self.value.as_dict(**kwargs)
         else:
             serialized_value = self.value
-        return {"kind": self.kind.value, "value": serialized_value}
+        base = {"kind": self.kind.value, "value": serialized_value}
+        if self.title:
+            base["title"] = self.title
+        return base
+
+
+class DocstringAdmonition:
+    """This base class represents admonitions.
+
+    Attributes:
+        kind: The admonition kind.
+        contents: The admonition contents.
+    """
+
+    def __init__(self, *, kind: str, contents: str) -> None:
+        """Initialize the admonition.
+
+        Arguments:
+            kind: The admonition kind.
+            contents: The admonition contents.
+        """
+        self.kind: str = kind
+        self.contents: str = contents
+
+    def as_dict(self, **kwargs) -> dict[str, Any]:
+        """Return this admonition's data as a dictionary.
+
+        Arguments:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        return {
+            "kind": self.kind,
+            "contents": self.contents,
+        }
 
 
 class DocstringElement:
@@ -91,6 +133,18 @@ class DocstringReturn(DocstringElement):
 
 class DocstringYield(DocstringElement):
     """This class represents a documented yield value."""
+
+
+class DocstringReceive(DocstringElement):
+    """This class represents a documented receive value."""
+
+
+class DocstringRaise(DocstringElement):
+    """This class represents a documented raise value."""
+
+
+class DocstringWarn(DocstringElement):
+    """This class represents a documented warn value."""
 
 
 class DocstringNamedElement(DocstringElement):
