@@ -592,3 +592,38 @@ class Data(Object):
     """The class representing a Python module/class/instance attribute."""
 
     kind = Kind.DATA
+
+    def __init__(
+        self,
+        *args,
+        value: str | None = None,
+        annotation: str | None = None,
+        **kwargs,
+    ) -> None:
+        """Initialize the function.
+
+        Arguments:
+            *args: See [`griffe.dataclasses.Object`][].
+            value: The data value, if any.
+            annotation: The data annotation, if any.
+            **kwargs: See [`griffe.dataclasses.Object`][].
+        """
+        super().__init__(*args, **kwargs)
+        self.value: str | None = value
+        self.annotation: str | None = annotation
+
+    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
+        """Return this function's data as a dictionary.
+
+        Arguments:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        base = super().as_dict(**kwargs)
+        if self.value is not None:
+            base["value"] = self.value
+        if self.annotation is not None:
+            base["annotation"] = self.annotation
+        return base

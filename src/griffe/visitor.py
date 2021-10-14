@@ -9,12 +9,34 @@ populating its members recursively, by using a custom [`NodeVisitor`][ast.NodeVi
 from __future__ import annotations
 
 import inspect
-from ast import AST, Attribute, BinOp, BitOr, Constant, Expr, Index, Name, PyCF_ONLY_AST, Str, Subscript
+from ast import (
+    AST,
+    AnnAssign,
+    Assign,
+    Attribute,
+    BinOp,
+    BitOr,
+    Call,
+    Constant,
+    Dict,
+    Expr,
+    FormattedValue,
+    Index,
+    JoinedStr,
+    List,
+    Name,
+    PyCF_ONLY_AST,
+    Str,
+    Subscript,
+    Tuple,
+    keyword,
+)
 from itertools import zip_longest
 from pathlib import Path
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Argument, Arguments, Class, Decorator, Docstring, Function, Module
+from griffe.dataclasses import Argument, Arguments, Class, Data, Decorator, Docstring, Function, Kind, Module
+from griffe.extended_ast import LastNodeError
 from griffe.extensions import Extensions
 from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
 
@@ -113,6 +135,130 @@ def _get_annotation(node):
     return _node_annotation_map.get(type(node), lambda _: None)(node)
 
 
+# ==========================================================
+# values
+def _get_name_value(node):
+    return node.id
+
+
+def _get_constant_value(node):
+    return repr(node.value)
+
+
+def _get_attribute_value(node):
+    return f"{_get_value(node.value)}.{node.attr}"
+
+
+def _get_binop_value(node):
+    if isinstance(node.op, BitOr):
+        return f"{_get_value(node.left)} | {_get_value(node.right)}"
+
+
+def _get_subscript_value(node):
+    return f"{_get_value(node.value)}[{_get_value(node.slice).strip('()')}]"
+
+
+def _get_index_value(node):
+    return _get_value(node.value)
+
+
+def _get_list_value(node):
+    return "[" + ", ".join(_get_value(el) for el in node.elts) + "]"
+
+
+def _get_tuple_value(node):
+    return "(" + ", ".join(_get_value(el) for el in node.elts) + ")"
+
+
+def _get_keyword_value(node):
+    return f"{node.arg}={_get_value(node.value)}"
+
+
+def _get_dict_value(node):
+    pairs = zip(node.keys, node.values)
+    return "{" + ", ".join(f"{_get_value(key)}: {_get_value(value)}" for key, value in pairs) + "}"
+
+
+def _get_ellipsis_value(node):
+    return "..."
+
+
+def _get_formatted_value(node):
+    return f"{{{_get_value(node.value)}}}"
+
+
+def _get_joinedstr_value(node):
+    return "".join(_get_value(value) for value in node.values)
+
+
+def _get_call_value(node):
+    posargs = ", ".join(_get_value(arg) for arg in node.args)
+    kwargs = ", ".join(_get_value(kwarg) for kwarg in node.keywords)
+    if posargs and kwargs:
+        args = f"{posargs}, {kwargs}"
+    elif posargs:
+        args = posargs
+    elif kwargs:
+        args = kwargs
+    else:
+        args = ""
+    return f"{_get_value(node.func)}({args})"
+
+
+_node_value_map = {
+    type(None): lambda _: repr(None),
+    Name: _get_name_value,
+    Constant: _get_constant_value,
+    Attribute: _get_attribute_value,
+    BinOp: _get_binop_value,
+    Subscript: _get_subscript_value,
+    Index: _get_index_value,
+    List: _get_list_value,
+    Tuple: _get_tuple_value,
+    keyword: _get_keyword_value,
+    Dict: _get_dict_value,
+    FormattedValue: _get_formatted_value,
+    JoinedStr: _get_joinedstr_value,
+    Call: _get_call_value,
+}
+
+
+def _get_value(node):
+    return _node_value_map.get(type(node), lambda _: None)(node)
+
+
+# ==========================================================
+# names
+def _get_attribute_name(node):
+    return f"{node.attr}.{_get_names(node.value)}"
+
+
+def _get_name_name(node):
+    return node.id
+
+
+def _get_assign_names(node):
+    return [_get_names(target) for target in node.targets]
+
+
+def _get_annassign_names(node):
+    return [_get_names(node.target)]
+
+
+_node_names_map = {
+    Assign: _get_assign_names,
+    AnnAssign: _get_annassign_names,
+    Name: _get_name_name,
+    Attribute: _get_attribute_name,
+}
+
+
+def _get_names(node):
+    return _node_names_map.get(type(node), lambda _: None)(node)
+
+
+def _get_instance_names(node):
+    return [name.split(".", 1)[1] for name in _get_names(node) if name.startswith("self.")]
 
 def _get_argument_default(node, filepath):
     if node is None:
@@ -314,3 +460,50 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         # for alias in node.names:
         #     self.scope[self.path][alias.asname or alias.name] = f"{node.module}.{alias.name}"
         self.generic_visit(node)
+
+    def handle_data(self, node, annotation: str | None = None):  # noqa: WPS231
+        parent = self.current
+        labels = set()
+
+        if parent.kind is Kind.MODULE:
+            names = _get_names(node)
+            labels.add("module")
+        elif parent.kind is Kind.CLASS:
+            names = _get_names(node)
+            labels.add("class")
+        elif parent.kind is Kind.FUNCTION:
+            if parent.name != "__init__":
+                return
+            names = _get_instance_names(node)
+            parent = parent.parent  # type: ignore
+            labels.add("instance")
+
+        if not names:
+            return
+
+        value = _get_value(node.value)
+
+        try:
+            docstring = _get_docstring(node.next)
+        except (LastNodeError, AttributeError):
+            docstring = None
+
+        # TODO: handle assigns like x.y = z
+        # we need to resolve x.y and add z in its member
+        for name in names:
+            data = Data(
+                name=name,
+                value=value,
+                annotation=annotation,
+                lineno=node.lineno,
+                endlineno=node.end_lineno,
+                docstring=docstring,
+            )
+            data.labels |= labels
+            parent[name] = data  # type: ignore
+
+    def visit_Assign(self, node) -> None:
+        self.handle_data(node)
+
+    def visit_AnnAssign(self, node) -> None:
+        self.handle_data(node, _get_annotation(node))
