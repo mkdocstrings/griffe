@@ -105,10 +105,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.parent: AST | None = None
         self.current: Module | Class | Function = None  # type: ignore
         self.in_decorator: bool = False
-        if self.extensions.need_parents:
-            self._visit = self._visit_set_parents  # type: ignore
 
-    def _visit_set_parents(self, node: AST, parent: AST | None = None) -> None:
+    def _visit(self, node: AST, parent: AST | None = None) -> None:
         node.parent = parent  # type: ignore
         self._run_specific_or_generic(node)
 

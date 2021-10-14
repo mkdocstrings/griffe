@@ -55,7 +55,6 @@ class _BaseVisitor:
 class Extension(_BaseVisitor):
     """The node visitor extension base class, to inherit from."""
 
-    need_parents = False
     when: When
 
     def __init__(self, main_visitor: MainVisitor) -> None:
@@ -79,15 +78,6 @@ class Extensions:
         """
         self._classes: list[Type[Extension]] = list(extensions_classes)
         self._instances: dict[When, list[Extension]] = {}
-
-    @property
-    def need_parents(self) -> bool:
-        """Tell if any of the contained extensions needs access to the whole parents chain while visiting.
-
-        Returns:
-            True or False.
-        """
-        return any(class_.need_parents for class_ in self._classes)
 
     @property
     def when_visit_starts(self) -> list[Extension]:
