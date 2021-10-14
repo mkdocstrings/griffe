@@ -76,17 +76,19 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
 
 ## Todo
 
-- Design:
+- [ ] Design:
     - [x] Navigable trees (nodes and data)
     - [x] Extension system
     - [x] Performance (loading data, no serialization)
-        - sync: ~60 KLoC/s, ~330 files/s
-        - async: ~100 KLoC/s, ~550 files/s
-- Loader/Visitor:
+- [ ] Loader/Visitor:
     - [x] Docstrings
         - [x] Line numbers
-        - [ ] Parsing: see below
+        - [x] Parsing: see below
     - [ ] Labels
+        - [ ] Data: ?
+        - [ ] Function: ?
+        - [ ] Class: ?
+        - [ ] Module: ?
     - [x] Modules
     - [x] Classes
         - [x] Bases (parent classes)
@@ -103,9 +105,9 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
               We'll probably need to add an `overloads` attribute to `Function`,
               to store the list of `@overload`-decorated functions,
               because currently different members of a same object cannot have the same names.
-    - [ ] Data (variables/attributes)
-        - [ ] Docstrings
-        - [ ] Value
+    - [x] Data (variables/attributes)
+        - [x] Docstrings
+        - [x] Value
     - [ ] Name resolution
         - [ ] Per-object scope
         - [ ] Load external packages resursively (inheritance)
@@ -120,14 +122,14 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
     - [x] Styles
         - [x] Google
         - [x] RST
-        - [ ] Numpy
+        - [x] Numpy
         - [ ] epydoc
         - [ ] New Markdown-based format? For graceful degradation
-- Serializer:
+- [ ] Serializer:
     - [x] JSON
         - [x] Nested
         - [ ] Flat
-- API diff:
+- [ ] API diff:
     - [ ] Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
     - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)
     - [ ] List of things to consider for warnings
