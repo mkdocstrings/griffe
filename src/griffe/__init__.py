@@ -6,6 +6,6 @@ Extract the structure, the frame, the skeleton of your project,
 to generate API documentation or find breaking changes in your API.
 """
 
-from typing import List
+from __future__ import annotations
 
-__all__: List[str] = []  # noqa: WPS410 (the only __variable__ we use)
+__all__: list[str] = []  # noqa: WPS410 (the only __variable__ we use)
