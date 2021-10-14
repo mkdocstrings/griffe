@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -evx
+set -e
 
 PYTHON_VERSIONS="${PYTHON_VERSIONS-3.8 3.9 3.10 3.11}"
 DEPGROUPS="-G async"
