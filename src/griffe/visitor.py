@@ -39,10 +39,15 @@ def visit(
     return _MainVisitor(module_name, filepath, code, extensions or Extensions()).get_module()
 
 
+# ==========================================================
+# docstrings
 def _get_docstring(node):
-    if not (node.body and isinstance(node.body[0], Expr)):
+    if isinstance(node, Expr):
+        doc = node.value
+    elif node.body and isinstance(node.body[0], Expr):
+        doc = node.body[0].value
+    else:
         return None
-    doc = node.body[0].value
     if isinstance(doc, Constant) and isinstance(doc.value, str):
         return Docstring(doc.value, doc.lineno, doc.end_lineno)
     if isinstance(doc, Str):
