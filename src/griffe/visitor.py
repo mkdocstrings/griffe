@@ -169,7 +169,9 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.generic_visit(node)
         self.current = self.current.parent  # type: ignore
 
-    def visit_FunctionDef(self, node) -> None:  # noqa: WPS231
+    def handle_function(self, node, labels: set | None = None):  # noqa: WPS231
+        labels = labels or set()
+
         # handle decorators
         decorators = []
         if node.decorator_list:
@@ -252,6 +254,19 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             docstring=_get_docstring(node),
         )
         self.current[node.name] = function
+
+        function.labels |= labels
+
+        if self.current.kind is Kind.CLASS and function.name == "__init__":
+            self.current = function
+            self.generic_visit(node)
+            self.current = self.current.parent  # type: ignore
+
+    def visit_FunctionDef(self, node) -> None:
+        self.handle_function(node)
+
+    def visit_AsyncFunctionDef(self, node) -> None:
+        self.handle_function(node, labels={"async"})
 
     def visit_Import(self, node) -> None:
         # for alias in node.names:
