@@ -62,22 +62,56 @@ def _get_base_class_name(node):
         return f"{_get_base_class_name(node.value)}.{node.attr}"
 
 
-def _get_annotation(node):
-    if node is None:
-        return None
-    if isinstance(node, Name):
-        return node.id
-    if isinstance(node, Constant):
-        return node.value
-    if isinstance(node, Attribute):
-        return f"{_get_annotation(node.value)}.{node.attr}"
-    if isinstance(node, BinOp) and isinstance(node.op, BitOr):
+# ==========================================================
+# annotations
+def _get_name_annotation(node):
+    return node.id
+
+
+def _get_constant_annotation(node):
+    return repr(node.value)
+
+
+def _get_attribute_annotation(node):
+    return f"{_get_annotation(node.value)}.{node.attr}"
+
+
+def _get_binop_annotation(node):
+    if isinstance(node.op, BitOr):
         return f"{_get_annotation(node.left)} | {_get_annotation(node.right)}"
-    if isinstance(node, Subscript):
-        return f"{_get_annotation(node.value)}[{_get_annotation(node.slice)}]"
-    if isinstance(node, Index):  # python 3.8
-        return _get_annotation(node.value)
-    return None
+
+
+def _get_subscript_annotation(node):
+    return f"{_get_annotation(node.value)}[{_get_annotation(node.slice)}]"
+
+
+def _get_index_annotation(node):
+    return _get_annotation(node.value)
+
+
+def _get_tuple_annotation(node):
+    return ", ".join(_get_annotation(el) for el in node.elts)
+
+
+def _get_list_annotation(node):
+    return ", ".join(_get_annotation(el) for el in node.elts)
+
+
+_node_annotation_map = {
+    Name: _get_name_annotation,
+    Constant: _get_constant_annotation,
+    Attribute: _get_attribute_annotation,
+    BinOp: _get_binop_annotation,
+    Subscript: _get_subscript_annotation,
+    Index: _get_index_annotation,
+    Tuple: _get_tuple_annotation,
+    List: _get_list_annotation,
+}
+
+
+def _get_annotation(node):
+    return _node_annotation_map.get(type(node), lambda _: None)(node)
+
 
 
 def _get_argument_default(node, filepath):
