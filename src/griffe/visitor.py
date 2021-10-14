@@ -77,6 +77,8 @@ def _get_docstring(node):
     return None
 
 
+# ==========================================================
+# base classes
 def _get_base_class_name(node):
     if isinstance(node, Name):
         return node.id
@@ -260,6 +262,9 @@ def _get_names(node):
 def _get_instance_names(node):
     return [name.split(".", 1)[1] for name in _get_names(node) if name.startswith("self.")]
 
+
+# ==========================================================
+# arguments
 def _get_argument_default(node, filepath):
     if node is None:
         return None
@@ -272,6 +277,8 @@ def _get_argument_default(node, filepath):
     # TODO: handle multiple line defaults
 
 
+# ==========================================================
+# visitor
 class _MainVisitor(_BaseVisitor):  # noqa: WPS338
     def __init__(
         self,
