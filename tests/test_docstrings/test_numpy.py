@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from griffe.dataclasses import Argument, Arguments, Function
+from griffe.dataclasses import Function, Parameter, Parameters
 from griffe.docstrings import numpy
 from griffe.docstrings.dataclasses import (
-    DocstringArgument,
     DocstringAttribute,
+    DocstringParameter,
     DocstringRaise,
     DocstringReceive,
     DocstringReturn,
@@ -14,7 +14,7 @@ from griffe.docstrings.dataclasses import (
     DocstringWarn,
     DocstringYield,
 )
-from tests.test_docstrings.helpers import assert_argument_equal, assert_attribute_equal, assert_element_equal, parser
+from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal, parser
 
 parse = parser(numpy)
 
@@ -129,9 +129,9 @@ def test_retrieve_annotation_from_parent():
         a
     """
 
-    sections, _ = parse(docstring, parent=Function("func", arguments=Arguments(Argument("a", annotation="str"))))
+    sections, _ = parse(docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))))
     assert len(sections) == 1
-    assert_argument_equal(sections[0].value[0], DocstringArgument("a", description="", annotation="str"))
+    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="str"))
 
 
 def test_prefer_docstring_type_over_annotation():
@@ -142,9 +142,9 @@ def test_prefer_docstring_type_over_annotation():
         a : int
     """
 
-    sections, _ = parse(docstring, parent=Function("func", arguments=Arguments(Argument("a", annotation="str"))))
+    sections, _ = parse(docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))))
     assert len(sections) == 1
-    assert_argument_equal(sections[0].value[0], DocstringArgument("a", description="", annotation="int"))
+    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
 
 
 def test_deprecated_section():

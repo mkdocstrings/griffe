@@ -35,7 +35,7 @@ from itertools import zip_longest
 from pathlib import Path
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Argument, Arguments, Class, Data, Decorator, Docstring, Function, Kind, Module
+from griffe.dataclasses import Class, Data, Decorator, Docstring, Function, Kind, Module, Parameter, Parameters
 from griffe.extended_ast import LastNodeError
 from griffe.extensions import Extensions
 from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
@@ -264,8 +264,8 @@ def _get_instance_names(node):
 
 
 # ==========================================================
-# arguments
-def _get_argument_default(node, filepath):
+# parameters
+def _get_parameter_default(node, filepath):
     if node is None:
         return None
     if isinstance(node, Constant):
@@ -374,8 +374,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         else:
             lineno = node.lineno
 
-        # handle arguments
-        arguments = Arguments()
+        # handle parameters
+        parameters = Parameters()
         annotation: str | None
 
         # TODO: probably some optimisations to do here
@@ -395,17 +395,17 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         )
         for (arg, kind), default in args_kinds_defaults:
             annotation = _get_annotation(arg.annotation)
-            default = _get_argument_default(default, self.filepath)
-            arguments.add(Argument(arg.arg, annotation=annotation, kind=kind, default=default))
+            default = _get_parameter_default(default, self.filepath)
+            parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
             annotation = _get_annotation(node.args.vararg.annotation)
-            arguments.add(
-                Argument(
+            parameters.add(
+                Parameter(
                     f"*{node.args.vararg.arg}",
                     annotation=annotation,
                     kind=inspect.Parameter.VAR_POSITIONAL,
-                    default=None,
+                    default="()",
                 )
             )
 
@@ -421,16 +421,19 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         )
         for kwarg, default in kwargs_defaults:  # noqa: WPS440
             annotation = _get_annotation(kwarg.annotation)
-            default = _get_argument_default(default, self.filepath)
-            arguments.add(
-                Argument(kwarg.arg, annotation=annotation, kind=inspect.Parameter.KEYWORD_ONLY, default=default)
+            default = _get_parameter_default(default, self.filepath)
+            parameters.add(
+                Parameter(kwarg.arg, annotation=annotation, kind=inspect.Parameter.KEYWORD_ONLY, default=default)
             )
 
         if node.args.kwarg:
             annotation = _get_annotation(node.args.kwarg.annotation)
-            arguments.add(
-                Argument(
-                    f"**{node.args.kwarg.arg}", annotation=annotation, kind=inspect.Parameter.VAR_KEYWORD, default=None
+            parameters.add(
+                Parameter(
+                    f"**{node.args.kwarg.arg}",
+                    annotation=annotation,
+                    kind=inspect.Parameter.VAR_KEYWORD,
+                    default="{}",
                 )
             )
 
@@ -438,7 +441,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             name=node.name,
             lineno=lineno,
             endlineno=node.end_lineno,
-            arguments=arguments,
+            parameters=parameters,
             returns=_get_annotation(node.returns),
             decorators=decorators,
             docstring=_get_docstring(node),

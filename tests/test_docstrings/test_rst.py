@@ -6,16 +6,16 @@ import inspect
 
 import pytest
 
-from griffe.dataclasses import Argument, Arguments, Class, Function
+from griffe.dataclasses import Class, Function, Parameter, Parameters
 from griffe.docstrings import rst
 from griffe.docstrings.dataclasses import (
-    DocstringArgument,
     DocstringAttribute,
     DocstringException,
+    DocstringParameter,
     DocstringReturn,
     DocstringSectionKind,
 )
-from tests.test_docstrings.helpers import assert_argument_equal, assert_attribute_equal, assert_element_equal, parser
+from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal, parser
 
 SOME_NAME = "foo"
 SOME_TEXT = "descriptive test text"
@@ -40,7 +40,7 @@ parse = parser(rst)
 def test_parse__description_only_docstring__single_markdown_section(docstring):
     """Parse a single or multiline docstring.
 
-    Arguments:
+    Parameters:
         docstring: A parametrized docstring.
     """
     sections, warnings = parse(docstring)
@@ -86,8 +86,8 @@ def test_parse__param_field__param_section():
         """
     )
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(sections[1].value[0], DocstringArgument(SOME_NAME, description=SOME_TEXT))
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(sections[1].value[0], DocstringParameter(SOME_NAME, description=SOME_TEXT))
 
 
 def test_parse__only_param_field__empty_markdown():
@@ -104,7 +104,7 @@ def test_parse__only_param_field__empty_markdown():
         "param",
         "parameter",
         "arg",
-        "argument",
+        "parameter",
         "key",
         "keyword",
     ],
@@ -112,7 +112,7 @@ def test_parse__only_param_field__empty_markdown():
 def test_parse__all_param_names__param_section(param_directive_name):
     """Parse all parameters directives.
 
-    Arguments:
+    Parameters:
         param_directive_name: A parametrized directive name.
     """
     sections, _ = parse(
@@ -123,8 +123,8 @@ def test_parse__all_param_names__param_section(param_directive_name):
         """
     )
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(sections[1].value[0], DocstringArgument(SOME_NAME, description=SOME_TEXT))
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(sections[1].value[0], DocstringParameter(SOME_NAME, description=SOME_TEXT))
 
 
 @pytest.mark.parametrize(
@@ -147,15 +147,15 @@ def test_parse__all_param_names__param_section(param_directive_name):
 def test_parse__param_field_multi_line__param_section(docstring):
     """Parse multiline directives.
 
-    Arguments:
+    Parameters:
         docstring: A parametrized docstring.
     """
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
+        DocstringParameter(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
     )
 
 
@@ -169,10 +169,10 @@ def test_parse__param_field_for_function__param_section_with_kind():
 
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, description=SOME_TEXT),
+        DocstringParameter(SOME_NAME, description=SOME_TEXT),
     )
 
 
@@ -186,10 +186,10 @@ def test_parse__param_field_docs_type__param_section_with_type():
 
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation="str", description=SOME_TEXT),
+        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
     )
 
 
@@ -204,10 +204,10 @@ def test_parse__param_field_type_field__param_section_with_type():
 
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation="str", description=SOME_TEXT),
+        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
     )
 
 
@@ -222,10 +222,10 @@ def test_parse__param_field_type_field_first__param_section_with_type():
 
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation="str", description=SOME_TEXT),
+        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
     )
 
 
@@ -233,7 +233,7 @@ def test_parse__param_field_type_field_first__param_section_with_type():
 def test_parse__param_field_type_field_or_none__param_section_with_optional(union):
     """Parse parameters with separated union types.
 
-    Arguments:
+    Parameters:
         union: A parametrized union type.
     """
     docstring = f"""
@@ -245,10 +245,10 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional(unio
 
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation=union.replace(" or ", " | "), description=SOME_TEXT),
+        DocstringParameter(SOME_NAME, annotation=union.replace(" or ", " | "), description=SOME_TEXT),
     )
 
 
@@ -262,13 +262,13 @@ def test_parse__param_field_annotate_type__param_section_with_type():
 
     sections, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument(SOME_NAME, annotation="str", description=SOME_TEXT),
+        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
     )
     assert not warnings
 
@@ -283,10 +283,10 @@ def test_parse__param_field_no_matching_param__result_from_docstring():
 
     sections, _ = parse(docstring)
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument("other", description=SOME_TEXT),
+        DocstringParameter("other", description=SOME_TEXT),
     )
 
 
@@ -300,13 +300,13 @@ def test_parse__param_field_with_default__result_from_docstring():
 
     sections, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", kind=None, default=repr("")))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", kind=None, default=repr("")))),
     )
     assert len(sections) == 2
-    assert sections[1].kind is DocstringSectionKind.arguments
-    assert_argument_equal(
+    assert sections[1].kind is DocstringSectionKind.parameters
+    assert_parameter_equal(
         sections[1].value[0],
-        DocstringArgument("foo", description=SOME_TEXT, value=repr("")),
+        DocstringParameter("foo", description=SOME_TEXT, value=repr("")),
     )
     assert not warnings
 
@@ -358,7 +358,7 @@ def test_parse__param_twice__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", kind=None))),
     )
     assert "Duplicate parameter entry for 'foo'" in warnings[0]
 
@@ -374,7 +374,7 @@ def test_parse__param_type_twice_doc__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
@@ -390,7 +390,7 @@ def test_parse__param_type_twice_type_directive_first__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
@@ -406,7 +406,7 @@ def test_parse__param_type_twice_annotated__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
@@ -422,7 +422,7 @@ def test_parse__param_type_no_type__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
@@ -438,7 +438,7 @@ def test_parse__param_type_no_name__error_message():
 
     _, warnings = parse(
         docstring,
-        parent=Function("func", arguments=Arguments(Argument("foo", annotation="str", kind=None))),
+        parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
     assert "Failed to get parameter name from" in warnings[0]
 
@@ -463,7 +463,7 @@ def test_parse__param_type_no_name__error_message():
 def test_parse__attribute_field_multi_line__param_section(docstring):
     """Parse multiline attributes.
 
-    Arguments:
+    Parameters:
         docstring: A parametrized docstring.
     """
     sections, warnings = parse(docstring)
@@ -487,7 +487,7 @@ def test_parse__attribute_field_multi_line__param_section(docstring):
 def test_parse__all_attribute_names__param_section(attribute_directive_name):
     """Parse all attributes directives.
 
-    Arguments:
+    Parameters:
         attribute_directive_name: A parametrized directive name.
     """
     sections, warnings = parse(
@@ -767,7 +767,7 @@ def test_parse__multiple_raises_directive__exception_section_with_two():
 def test_parse__all_exception_names__param_section(raise_directive_name):
     """Parse all raise directives.
 
-    Arguments:
+    Parameters:
         raise_directive_name: A parametrized directive name.
     """
     sections, _ = parse(

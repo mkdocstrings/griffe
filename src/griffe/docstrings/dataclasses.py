@@ -10,8 +10,8 @@ class DocstringSectionKind(enum.Enum):
     """The possible section kinds."""
 
     text = "text"
-    arguments = "arguments"
-    keyword_arguments = "keyword arguments"
+    parameters = "parameters"
+    other_parameters = "other parameters"
     raises = "raises"
     warns = "warns"
     returns = "returns"
@@ -183,8 +183,8 @@ class DocstringNamedElement(DocstringElement):
         return base
 
 
-class DocstringArgument(DocstringNamedElement):
-    """This class represent a documented function argument."""
+class DocstringParameter(DocstringNamedElement):
+    """This class represent a documented function parameter."""
 
 
 class DocstringAttribute(DocstringNamedElement):

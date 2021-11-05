@@ -8,156 +8,156 @@ from tests import FIXTURES_DIR
 loader = GriffeLoader()
 
 
-def test_loading_functions_arguments():  # noqa: WPS218
-    """Test functions arguments loading."""
-    module = loader.load_module(FIXTURES_DIR / "functions" / "arguments.py")
+def test_loading_functions_parameters():  # noqa: WPS218
+    """Test functions parameters loading."""
+    module = loader.load_module(FIXTURES_DIR / "functions" / "parameters.py")
     assert module.members
     assert len(module.members) == 11  # noqa: WPS432
 
     function = module["f_posonly"]
-    assert len(function.arguments) == 1
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default is None
+    assert len(function.parameters) == 1
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default is None
 
     function = module["f_posonly_default"]
-    assert len(function.arguments) == 1
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default == "0"
+    assert len(function.parameters) == 1
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default == "0"
 
     function = module["f_posonly_poskw"]
-    assert len(function.arguments) == 2
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default is None
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default is None
+    assert len(function.parameters) == 2
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default is None
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default is None
 
     function = module["f_posonly_poskw_default"]
-    assert len(function.arguments) == 2
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default is None
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default == "0"
+    assert len(function.parameters) == 2
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default is None
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default == "0"
 
     function = module["f_posonly_default_poskw_default"]
-    assert len(function.arguments) == 2
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default == "0"
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default == "1"
+    assert len(function.parameters) == 2
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default == "0"
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default == "1"
 
     function = module["f_posonly_poskw_kwonly"]
-    assert len(function.arguments) == 3
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default is None
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default is None
-    arg = function.arguments[2]
-    assert arg is function.arguments["kwonly"]
-    assert arg.name == "kwonly"
-    assert arg.kind is inspect.Parameter.KEYWORD_ONLY
-    assert arg.default is None
+    assert len(function.parameters) == 3
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default is None
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default is None
+    param = function.parameters[2]
+    assert param is function.parameters["kwonly"]
+    assert param.name == "kwonly"
+    assert param.kind is inspect.Parameter.KEYWORD_ONLY
+    assert param.default is None
 
     function = module["f_posonly_poskw_kwonly_default"]
-    assert len(function.arguments) == 3
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default is None
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default is None
-    arg = function.arguments[2]
-    assert arg is function.arguments["kwonly"]
-    assert arg.name == "kwonly"
-    assert arg.kind is inspect.Parameter.KEYWORD_ONLY
-    assert arg.default == "0"
+    assert len(function.parameters) == 3
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default is None
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default is None
+    param = function.parameters[2]
+    assert param is function.parameters["kwonly"]
+    assert param.name == "kwonly"
+    assert param.kind is inspect.Parameter.KEYWORD_ONLY
+    assert param.default == "0"
 
     function = module["f_posonly_poskw_default_kwonly_default"]
-    assert len(function.arguments) == 3
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default is None
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default == "0"
-    arg = function.arguments[2]
-    assert arg is function.arguments["kwonly"]
-    assert arg.name == "kwonly"
-    assert arg.kind is inspect.Parameter.KEYWORD_ONLY
-    assert arg.default == "1"
+    assert len(function.parameters) == 3
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default is None
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default == "0"
+    param = function.parameters[2]
+    assert param is function.parameters["kwonly"]
+    assert param.name == "kwonly"
+    assert param.kind is inspect.Parameter.KEYWORD_ONLY
+    assert param.default == "1"
 
     function = module["f_posonly_default_poskw_default_kwonly_default"]
-    arg = function.arguments[0]
-    assert arg is function.arguments["posonly"]
-    assert arg.name == "posonly"
-    assert arg.kind is inspect.Parameter.POSITIONAL_ONLY
-    assert arg.default == "0"
-    arg = function.arguments[1]
-    assert arg is function.arguments["poskw"]
-    assert arg.name == "poskw"
-    assert arg.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
-    assert arg.default == "1"
-    arg = function.arguments[2]
-    assert arg is function.arguments["kwonly"]
-    assert arg.name == "kwonly"
-    assert arg.kind is inspect.Parameter.KEYWORD_ONLY
-    assert arg.default == "2"
+    param = function.parameters[0]
+    assert param is function.parameters["posonly"]
+    assert param.name == "posonly"
+    assert param.kind is inspect.Parameter.POSITIONAL_ONLY
+    assert param.default == "0"
+    param = function.parameters[1]
+    assert param is function.parameters["poskw"]
+    assert param.name == "poskw"
+    assert param.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert param.default == "1"
+    param = function.parameters[2]
+    assert param is function.parameters["kwonly"]
+    assert param.name == "kwonly"
+    assert param.kind is inspect.Parameter.KEYWORD_ONLY
+    assert param.default == "2"
 
     function = module["f_var"]
-    assert len(function.arguments) == 3
-    arg = function.arguments[0]
-    assert arg.name == "*args"
-    assert arg.annotation == "str"
-    arg = function.arguments[1]
-    assert arg.annotation is None
-    arg = function.arguments[2]
-    assert arg.name == "**kwargs"
-    assert arg.annotation == "int"
+    assert len(function.parameters) == 3
+    param = function.parameters[0]
+    assert param.name == "*args"
+    assert param.annotation == "str"
+    param = function.parameters[1]
+    assert param.annotation is None
+    param = function.parameters[2]
+    assert param.name == "**kwargs"
+    assert param.annotation == "int"
 
     function = module["f_annorations"]
-    assert len(function.arguments) == 4
-    arg = function.arguments[0]
-    assert arg.annotation == "str"
-    arg = function.arguments[1]
-    assert arg.annotation == "Any"
-    arg = function.arguments[2]
-    assert arg.annotation == "typing.Optional[typing.List[int]]"
-    arg = function.arguments[3]
-    assert arg.annotation == "float | None"
+    assert len(function.parameters) == 4
+    param = function.parameters[0]
+    assert param.annotation == "str"
+    param = function.parameters[1]
+    assert param.annotation == "Any"
+    param = function.parameters[2]
+    assert param.annotation == "typing.Optional[typing.List[int]]"
+    param = function.parameters[3]
+    assert param.annotation == "float | None"

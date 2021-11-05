@@ -29,7 +29,7 @@ The following sections are supported:
 - Returns: obviously.
 - Yields: obviously.
 - Receives: less used than Yields, but very natural/Pythonic as well.
-- Other parameters: used here as documentation for keyword arguments.
+- Other parameters: used here as documentation for keyword parameters.
 - Raises: obviously.
 - Warns: less used than Raises, but very natural/Pythonic as well.
 - Examples: obviously. Special handling for non-code-blocks `>>>`.
@@ -43,8 +43,8 @@ from textwrap import dedent
 from typing import TYPE_CHECKING, Pattern
 
 from griffe.docstrings.dataclasses import (
-    DocstringArgument,
     DocstringAttribute,
+    DocstringParameter,
     DocstringRaise,
     DocstringReceive,
     DocstringReturn,
@@ -62,8 +62,8 @@ _warn = warning(__name__)
 
 _section_kind = {
     "deprecated": DocstringSectionKind.deprecated,
-    "parameters": DocstringSectionKind.arguments,
-    "other parameters": DocstringSectionKind.keyword_arguments,
+    "parameters": DocstringSectionKind.parameters,
+    "other parameters": DocstringSectionKind.other_parameters,
     "returns": DocstringSectionKind.returns,
     "yields": DocstringSectionKind.yields,
     "receives": DocstringSectionKind.receives,
@@ -190,8 +190,8 @@ _RE_PARAMETER: Pattern = re.compile(
 )
 
 
-def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringArgument], int]:  # noqa: WPS231
-    arguments = []
+def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
+    parameters = []
     annotation: str | None
 
     items, index = _read_block_items(docstring, offset)
@@ -220,7 +220,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringA
             # try to use the annotation from the signature
             for name in names:
                 try:
-                    annotation = docstring.parent.arguments[name].annotation  # type: ignore
+                    annotation = docstring.parent.parameters[name].annotation  # type: ignore
                     break
                 except (AttributeError, KeyError):
                     pass
@@ -230,32 +230,32 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringA
         if default is None:
             for name in names:
                 try:
-                    default = docstring.parent.arguments[name].default  # type: ignore
+                    default = docstring.parent.parameters[name].default  # type: ignore
                     break
                 except (AttributeError, KeyError):
                     pass
 
         for name in names:
-            arguments.append(DocstringArgument(name, value=default, annotation=annotation, description=description))
+            parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))
 
-    return arguments, index
+    return parameters, index
 
 
 def _read_parameters_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    arguments, index = _read_parameters(docstring, offset)
+    parameters, index = _read_parameters(docstring, offset)
 
-    if arguments:
-        return DocstringSection(DocstringSectionKind.arguments, arguments), index
+    if parameters:
+        return DocstringSection(DocstringSectionKind.parameters, parameters), index
 
     _warn(docstring, index, f"Empty parameters section at line {offset}")
     return None, index
 
 
 def _read_other_parameters_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    arguments, index = _read_parameters(docstring, offset)
+    parameters, index = _read_parameters(docstring, offset)
 
-    if arguments:
-        return DocstringSection(DocstringSectionKind.keyword_arguments, arguments), index
+    if parameters:
+        return DocstringSection(DocstringSectionKind.other_parameters, parameters), index
 
     _warn(docstring, index, f"Empty other parameters section at line {offset}")
     return None, index
@@ -464,8 +464,8 @@ def _read_examples_section(docstring: Docstring, offset: int) -> tuple[Docstring
 
 
 _section_reader = {
-    DocstringSectionKind.arguments: _read_parameters_section,
-    DocstringSectionKind.keyword_arguments: _read_other_parameters_section,
+    DocstringSectionKind.parameters: _read_parameters_section,
+    DocstringSectionKind.other_parameters: _read_other_parameters_section,
     DocstringSectionKind.deprecated: _read_deprecated_section,
     DocstringSectionKind.raises: _read_raises_section,
     DocstringSectionKind.warns: _read_warns_section,

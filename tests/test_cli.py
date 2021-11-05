@@ -14,7 +14,7 @@ def test_show_help(capsys):
     """
     Show help.
 
-    Arguments:
+    Parameters:
         capsys: Pytest fixture to capture output.
     """
     with pytest.raises(SystemExit):

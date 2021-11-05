@@ -11,9 +11,9 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, FrozenSet, TypedDict
 
 from griffe.docstrings.dataclasses import (
-    DocstringArgument,
     DocstringAttribute,
     DocstringException,
+    DocstringParameter,
     DocstringReturn,
     DocstringSection,
     DocstringSectionKind,
@@ -77,7 +77,7 @@ class ParsedValues:
     """Values parsed from the docstring to be used to produce sections."""
 
     description: list[str] = field(default_factory=list)
-    parameters: dict[str, DocstringArgument] = field(default_factory=dict)
+    parameters: dict[str, DocstringParameter] = field(default_factory=dict)
     param_types: dict[str, str] = field(default_factory=dict)
     attributes: dict[str, DocstringAttribute] = field(default_factory=dict)
     attribute_types: dict[str, str] = field(default_factory=dict)
@@ -149,7 +149,7 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
     annotation = _determine_param_annotation(docstring, name, directive_type, parsed_values)
     default = _determine_param_default(docstring, name)
 
-    parsed_values.parameters[name] = DocstringArgument(
+    parsed_values.parameters[name] = DocstringParameter(
         name=name,
         annotation=annotation,
         description=parsed_directive.value,
@@ -161,7 +161,7 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
 
 def _determine_param_default(docstring: Docstring, name: str) -> str | None:
     try:
-        return docstring.parent.arguments[name.lstrip()].default  # type: ignore
+        return docstring.parent.parameters[name.lstrip()].default  # type: ignore
     except (AttributeError, KeyError):
         return None
 
@@ -188,7 +188,7 @@ def _determine_param_annotation(
 
     if annotation is None:
         try:
-            annotation = docstring.parent.arguments[name.lstrip()].annotation  # type: ignore
+            annotation = docstring.parent.parameters[name.lstrip()].annotation  # type: ignore
         except (AttributeError, KeyError):
             _warn(docstring, 0, f"No matching parameter for '{name}'")
 
@@ -389,7 +389,7 @@ def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[DocstringSec
     result = [DocstringSection(DocstringSectionKind.text, text)]
     if parsed_values.parameters:
         param_values = list(parsed_values.parameters.values())
-        result.append(DocstringSection(DocstringSectionKind.arguments, param_values))
+        result.append(DocstringSection(DocstringSectionKind.parameters, param_values))
     if parsed_values.attributes:
         attribute_values = list(parsed_values.attributes.values())
         result.append(DocstringSection(DocstringSectionKind.attributes, attribute_values))

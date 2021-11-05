@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, Pattern
 
 from griffe.docstrings.dataclasses import (
     DocstringAdmonition,
-    DocstringArgument,
     DocstringAttribute,
     DocstringException,
+    DocstringParameter,
     DocstringReceive,
     DocstringReturn,
     DocstringSection,
@@ -25,12 +25,14 @@ if TYPE_CHECKING:
 _warn = warning(__name__)
 
 _section_kind = {
-    "args": DocstringSectionKind.arguments,
-    "arguments": DocstringSectionKind.arguments,
-    "params": DocstringSectionKind.arguments,
-    "parameters": DocstringSectionKind.arguments,
-    "keyword args": DocstringSectionKind.keyword_arguments,
-    "keyword arguments": DocstringSectionKind.keyword_arguments,
+    "args": DocstringSectionKind.parameters,
+    "arguments": DocstringSectionKind.parameters,
+    "params": DocstringSectionKind.parameters,
+    "parameters": DocstringSectionKind.parameters,
+    "keyword args": DocstringSectionKind.other_parameters,
+    "keyword parameters": DocstringSectionKind.other_parameters,
+    "other args": DocstringSectionKind.other_parameters,
+    "other parameters": DocstringSectionKind.other_parameters,
     "raises": DocstringSectionKind.raises,
     "exceptions": DocstringSectionKind.raises,
     "returns": DocstringSectionKind.returns,
@@ -137,8 +139,8 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
     return "\n".join(block).rstrip("\n"), index - 1
 
 
-def _read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringArgument], int]:  # noqa: WPS231
-    arguments = []
+def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
+    parameters = []
     type_: str
     annotation: str | None
 
@@ -155,7 +157,7 @@ def _read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringAr
 
         description = description.lstrip()
 
-        # use the type given after the argument name, if any
+        # use the type given after the parameter name, if any
         if " " in name_with_type:
             name, type_ = name_with_type.split(" ", 1)
             annotation = type_.strip("()")
@@ -165,40 +167,40 @@ def _read_arguments(docstring: Docstring, offset: int) -> tuple[list[DocstringAr
             name = name_with_type
             # try to use the annotation from the signature
             try:
-                annotation = docstring.parent.arguments[name].annotation  # type: ignore
+                annotation = docstring.parent.parameters[name].annotation  # type: ignore
             except (AttributeError, KeyError):
                 annotation = None
 
         try:
-            default = docstring.parent.arguments[name].default  # type: ignore
+            default = docstring.parent.parameters[name].default  # type: ignore
         except (AttributeError, KeyError):
             default = None
 
         if annotation is None:
-            _warn(docstring, index, f"No type or annotation for argument '{name}'")
+            _warn(docstring, index, f"No type or annotation for parameter '{name}'")
 
-        arguments.append(DocstringArgument(name=name, value=default, annotation=annotation, description=description))
+        parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))
 
-    return arguments, index
+    return parameters, index
 
 
-def _read_arguments_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    arguments, index = _read_arguments(docstring, offset)
+def _read_parameters_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    parameters, index = _read_parameters(docstring, offset)
 
-    if arguments:
-        return DocstringSection(DocstringSectionKind.arguments, arguments), index
+    if parameters:
+        return DocstringSection(DocstringSectionKind.parameters, parameters), index
 
-    _warn(docstring, index, f"Empty arguments section at line {offset}")
+    _warn(docstring, index, f"Empty parameters section at line {offset}")
     return None, index
 
 
-def _read_keyword_arguments_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    arguments, index = _read_arguments(docstring, offset)
+def _read_other_parameters_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+    parameters, index = _read_parameters(docstring, offset)
 
-    if arguments:
-        return DocstringSection(DocstringSectionKind.keyword_arguments, arguments), index
+    if parameters:
+        return DocstringSection(DocstringSectionKind.other_parameters, parameters), index
 
-    _warn(docstring, index, f"Empty keyword arguments section at line {offset}")
+    _warn(docstring, index, f"Empty keyword parameters section at line {offset}")
     return None, index
 
 
@@ -453,8 +455,8 @@ def _is_empty_line(line) -> bool:
 
 
 _section_reader = {
-    DocstringSectionKind.arguments: _read_arguments_section,
-    DocstringSectionKind.keyword_arguments: _read_keyword_arguments_section,
+    DocstringSectionKind.parameters: _read_parameters_section,
+    DocstringSectionKind.other_parameters: _read_other_parameters_section,
     DocstringSectionKind.raises: _read_raises_section,
     DocstringSectionKind.warns: _read_warns_section,
     DocstringSectionKind.examples: _read_examples_section,

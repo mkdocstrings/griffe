@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from griffe.dataclasses import Argument, Arguments, Function
+from griffe.dataclasses import Function, Parameter, Parameters
 from griffe.docstrings import google
 from griffe.docstrings.dataclasses import DocstringSectionKind
 from tests.test_docstrings.helpers import parser
@@ -35,8 +35,8 @@ def test_multiline_docstring():
 def test_multiple_lines_in_sections_items():
     """Parse multi-line item description."""
     docstring = """
-        Arguments:
-            p (int): This argument
+        Parameters:
+            p (int): This parameter
                has a description
               spawning on multiple lines.
 
@@ -145,9 +145,9 @@ def test_parse_without_parent():
     )
 
     assert len(sections) == 4
-    assert len(warnings) == 6  # missing annotations for arguments and return
+    assert len(warnings) == 6  # missing annotations for parameters and return
     for warning in warnings[:-1]:
-        assert "argument" in warning
+        assert "parameter" in warning
     assert "return" in warnings[-1]
 
 
@@ -168,16 +168,16 @@ def test_parse_without_annotations():
         docstring,
         parent=Function(
             "func",
-            arguments=Arguments(
-                Argument("x"),
-                Argument("y"),
+            parameters=Parameters(
+                Parameter("x"),
+                Parameter("y"),
             ),
         ),
     )
     assert len(sections) == 3
     assert len(warnings) == 3
     for warning in warnings[:-1]:
-        assert "argument" in warning
+        assert "parameter" in warning
     assert "return" in warnings[-1]
 
 
@@ -187,7 +187,7 @@ def test_parse_with_annotations():
         Parameters:
             x: X value.
 
-        Keyword Arguments:
+        Keyword Parameters:
             y: Y value.
 
         Returns:
@@ -198,9 +198,9 @@ def test_parse_with_annotations():
         docstring,
         parent=Function(
             "func",
-            arguments=Arguments(
-                Argument("x", annotation="int"),
-                Argument("y", annotation="int"),
+            parameters=Parameters(
+                Parameter("x", annotation="int"),
+                Parameter("y", annotation="int"),
             ),
             returns="int",
         ),
@@ -283,9 +283,9 @@ def test_parse_examples_sections():
         docstring,
         parent=Function(
             "func",
-            arguments=Arguments(
-                Argument("x", annotation="int"),
-                Argument("y", annotation="int"),
+            parameters=Parameters(
+                Parameter("x", annotation="int"),
+                Parameter("y", annotation="int"),
             ),
             returns="int",
         ),
@@ -357,47 +357,47 @@ def test_close_sections():
 
 
 # =============================================================================================
-# Arguments sections
+# Parameters sections
 def test_parse_args_and_kwargs():
     """Parse args and kwargs."""
     docstring = """
-        Arguments:
-            a (str): an argument.
-            *args (str): args arguments.
-            **kwargs (str): kwargs arguments.
+        Parameters:
+            a (str): a parameter.
+            *args (str): args parameters.
+            **kwargs (str): kwargs parameters.
     """
 
     sections, warnings = parse(docstring)
     assert len(sections) == 1
-    expected_arguments = {"a": "an argument.", "*args": "args arguments.", "**kwargs": "kwargs arguments."}
-    for argument in sections[0].value:
-        assert argument.name in expected_arguments
-        assert expected_arguments[argument.name] == argument.description
+    expected_parameters = {"a": "a parameter.", "*args": "args parameters.", "**kwargs": "kwargs parameters."}
+    for parameter in sections[0].value:
+        assert parameter.name in expected_parameters
+        assert expected_parameters[parameter.name] == parameter.description
     assert not warnings
 
 
 def test_parse_args_kwargs_keyword_only():
     """Parse args and kwargs."""
     docstring = """
-        Arguments:
-            a (str): an argument.
-            *args (str): args arguments.
+        Parameters:
+            a (str): a parameter.
+            *args (str): args parameters.
 
         Keyword Args:
-            **kwargs (str): kwargs arguments.
+            **kwargs (str): kwargs parameters.
     """
 
     sections, warnings = parse(docstring)
     assert len(sections) == 2
-    expected_arguments = {"a": "an argument.", "*args": "args arguments."}
-    for argument in sections[0].value:
-        assert argument.name in expected_arguments
-        assert expected_arguments[argument.name] == argument.description
+    expected_parameters = {"a": "a parameter.", "*args": "args parameters."}
+    for parameter in sections[0].value:
+        assert parameter.name in expected_parameters
+        assert expected_parameters[parameter.name] == parameter.description
 
-    expected_arguments = {"**kwargs": "kwargs arguments."}
-    for kwargument in sections[1].value:
-        assert kwargument.name in expected_arguments
-        assert expected_arguments[kwargument.name] == kwargument.description
+    expected_parameters = {"**kwargs": "kwargs parameters."}
+    for kwarg in sections[1].value:
+        assert kwarg.name in expected_parameters
+        assert expected_parameters[kwarg.name] == kwarg.description
 
     assert not warnings
 
@@ -419,17 +419,17 @@ def test_parse_types_in_docstring():
         docstring,
         parent=Function(
             "func",
-            arguments=Arguments(
-                Argument("x"),
-                Argument("y"),
+            parameters=Parameters(
+                Parameter("x"),
+                Parameter("y"),
             ),
         ),
     )
     assert len(sections) == 3
     assert not warnings
 
-    assert sections[0].kind is DocstringSectionKind.arguments
-    assert sections[1].kind is DocstringSectionKind.keyword_arguments
+    assert sections[0].kind is DocstringSectionKind.parameters
+    assert sections[1].kind is DocstringSectionKind.other_parameters
     assert sections[2].kind is DocstringSectionKind.returns
 
     (argx,) = sections[0].value  # noqa: WPS460
@@ -465,18 +465,18 @@ def test_parse_optional_type_in_docstring():
         docstring,
         parent=Function(
             "func",
-            arguments=Arguments(
-                Argument("x", default="1"),
-                Argument("y", default="None"),
-                Argument("z", default="None"),
+            parameters=Parameters(
+                Parameter("x", default="1"),
+                Parameter("y", default="None"),
+                Parameter("z", default="None"),
             ),
         ),
     )
     assert len(sections) == 2
     assert not warnings
 
-    assert sections[0].kind is DocstringSectionKind.arguments
-    assert sections[1].kind is DocstringSectionKind.keyword_arguments
+    assert sections[0].kind is DocstringSectionKind.parameters
+    assert sections[1].kind is DocstringSectionKind.other_parameters
 
     argx, argy = sections[0].value
     (argz,) = sections[1].value  # noqa: WPS460
@@ -514,9 +514,9 @@ def test_prefer_docstring_types_over_annotations():
         docstring,
         parent=Function(
             "func",
-            arguments=Arguments(
-                Argument("x", annotation="int"),
-                Argument("y", annotation="int"),
+            parameters=Parameters(
+                Parameter("x", annotation="int"),
+                Parameter("y", annotation="int"),
             ),
             returns="int",
         ),
@@ -524,8 +524,8 @@ def test_prefer_docstring_types_over_annotations():
     assert len(sections) == 3
     assert not warnings
 
-    assert sections[0].kind is DocstringSectionKind.arguments
-    assert sections[1].kind is DocstringSectionKind.keyword_arguments
+    assert sections[0].kind is DocstringSectionKind.parameters
+    assert sections[1].kind is DocstringSectionKind.other_parameters
     assert sections[2].kind is DocstringSectionKind.returns
 
     (argx,) = sections[0].value  # noqa: WPS460
@@ -544,7 +544,7 @@ def test_prefer_docstring_types_over_annotations():
     assert returns.description == "Sum X + Y + Z."
 
 
-def test_argument_line_without_colon():
+def test_parameter_line_without_colon():
     """Warn when missing colon."""
     docstring = """
         Parameters:
@@ -558,7 +558,7 @@ def test_argument_line_without_colon():
     assert "Empty" in warnings[1]
 
 
-def test_argument_line_without_colon_keyword_only():
+def test_parameter_line_without_colon_keyword_only():
     """Warn when missing colon."""
     docstring = """
         Keyword Args:
@@ -573,8 +573,8 @@ def test_argument_line_without_colon_keyword_only():
 
 
 # TODO: possible feature
-# def test_extra_argument():
-#     """Warn on extra argument in docstring."""
+# def test_extra_parameter():
+#     """Warn on extra parameter in docstring."""
 #     docstring = """
 #         Parameters:
 #             x: Integer.
@@ -587,8 +587,8 @@ def test_argument_line_without_colon_keyword_only():
 
 
 # TODO: possible feature
-# def test_missing_argument():
-#     """Warn on missing argument in docstring."""
+# def test_missing_parameter():
+#     """Warn on missing parameter in docstring."""
 #     docstring = """
 #         Parameters:
 #             x: Integer.

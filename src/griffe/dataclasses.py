@@ -131,14 +131,14 @@ class Docstring:
         return base
 
 
-class Argument:
-    """This class represent a function argument.
+class Parameter:
+    """This class represent a function parameter.
 
     Attributes:
-        name: The argument name.
-        annotation: The argument annotation, if any.
-        kind: The argument kind (see [`inspect.Parameter.kind`][]).
-        default: The argument default, if any.
+        name: The parameter name.
+        annotation: The parameter annotation, if any.
+        kind: The parameter kind (see [`inspect.Parameter.kind`][]).
+        default: The parameter default, if any.
     """
 
     def __init__(
@@ -149,17 +149,20 @@ class Argument:
         kind: ParameterKind | None = None,
         default: str | None = None,
     ) -> None:
-        """Initialize the argument.
+        """Initialize the parameter.
 
         Parameters:
+            name: The parameter name.
+            annotation: The parameter annotation, if any.
+            kind: The parameter kind (see [`inspect.Parameter.kind`][]).
+            default: The parameter default, if any.
         """
         self.name: str = name
         self.annotation: str | None = annotation
         self.kind: ParameterKind | None = kind
         self.default: str | None = default
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:
-        """Return this argument's data as a dictionary.
+        """Return this parameter's data as a dictionary.
 
         Parameters:
             **kwargs: Additional serialization options.
@@ -175,46 +178,48 @@ class Argument:
         }
 
 
-class Arguments:
-    """This class is a container for arguments.
+class Parameters:
+    """This class is a container for parameters.
 
-    It allows to get arguments using their position (index) or their name.
+    It allows to get parameters using their position (index) or their name.
     """
 
-    def __init__(self, *arguments: Argument) -> None:
-        """Initialize the arguments container.
+    def __init__(self, *parameters: Parameter) -> None:
+        """Initialize the parameters container.
 
         Parameters:
+            *parameters: The initial parameters to add to the container.
         """
-        self._arguments_list: list[Argument] = []
-        self._arguments_dict: dict[str, Argument] = {}
-        for argument in arguments:
-            self.add(argument)
+        self._parameters_list: list[Parameter] = []
+        self._parameters_dict: dict[str, Parameter] = {}
+        for parameter in parameters:
+            self.add(parameter)
 
-    def __getitem__(self, name_or_index: int | str) -> Argument:
+    def __getitem__(self, name_or_index: int | str) -> Parameter:
         if isinstance(name_or_index, int):
-            return self._arguments_list[name_or_index]
-        return self._arguments_dict[name_or_index]
+            return self._parameters_list[name_or_index]
+        return self._parameters_dict[name_or_index]
 
     def __len__(self):
-        return len(self._arguments_list)
+        return len(self._parameters_list)
 
     def __iter__(self):
-        return iter(self._arguments_list)
+        return iter(self._parameters_list)
 
-    def add(self, argument: Argument) -> None:
-        """Add an argument to the container.
+    def add(self, parameter: Parameter) -> None:
+        """Add a parameter to the container.
 
         Parameters:
+            parameter: The function parameter to add.
 
         Raises:
-            ValueError: When an argument with the same name is already present.
+            ValueError: When a parameter with the same name is already present.
         """
-        if argument.name not in self._arguments_dict:
-            self._arguments_dict[argument.name] = argument
-            self._arguments_list.append(argument)
+        if parameter.name not in self._parameters_dict:
+            self._parameters_dict[parameter.name] = parameter
+            self._parameters_list.append(parameter)
         else:
-            raise ValueError(f"argument {argument.name} already present")
+            raise ValueError(f"parameter {parameter.name} already present")
 
 
 class Kind(enum.Enum):
@@ -545,8 +550,7 @@ class Function(Object):
 
     def __init__(
         self,
-        *args,
-        arguments: Arguments | None = None,
+        parameters: Parameters | None = None,
         returns: str | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs,
@@ -555,13 +559,13 @@ class Function(Object):
 
         Parameters:
             *args: See [`griffe.dataclasses.Object`][].
-            arguments: The function arguments.
+            parameters: The function parameters.
             returns: The function return annotation.
             decorators: The function decorators, if any.
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.arguments = arguments or Arguments()
+        self.parameters = parameters or Parameters()
         self.returns = returns
         self.decorators = decorators or []
 
@@ -576,7 +580,7 @@ class Function(Object):
         """
         base = super().as_dict(**kwargs)
         base["decorators"] = [dec.as_dict(**kwargs) for dec in self.decorators]
-        base["arguments"] = [arg.as_dict(**kwargs) for arg in self.arguments]
+        base["parameters"] = [param.as_dict(**kwargs) for param in self.parameters]
         base["returns"] = self.returns
         return base
 
