@@ -100,7 +100,13 @@ class GriffeLoader(_BaseGriffeLoader):
         module_name, module_path = self._module_name_and_path(module, search_paths)
         return self._load_module_path(module_name, module_path, submodules=submodules)
 
-    def _load_module_path(self, module_name: str, module_path: Path, submodules: bool = True) -> Module:
+    def _load_module_path(
+        self,
+        module_name: str,
+        module_path: Path,
+        submodules: bool = True,
+        parent: Module | None = None,
+    ) -> Module:
         logger.debug(f"Loading path {module_path}")
         code = module_path.read_text()
         lines_collection[module_path] = code.splitlines(keepends=False)
@@ -109,6 +115,7 @@ class GriffeLoader(_BaseGriffeLoader):
             filepath=module_path,
             code=code,
             extensions=self.extensions,
+            parent=parent,
         )
         if submodules:
             self._load_submodules(module)
@@ -125,7 +132,9 @@ class GriffeLoader(_BaseGriffeLoader):
         except KeyError:
             logger.debug(f"Skipping (not importable) {subpath}")
         else:
-            member_parent[subparts[-1]] = self._load_module_path(subparts[-1], subpath, submodules=False)
+            member_parent[subparts[-1]] = self._load_module_path(
+                subparts[-1], subpath, submodules=False, parent=member_parent
+            )
 
 
 class AsyncGriffeLoader(_BaseGriffeLoader):

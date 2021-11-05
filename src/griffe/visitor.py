@@ -46,6 +46,7 @@ def visit(
     filepath: Path,
     code: str,
     extensions: Extensions | None = None,
+    parent: Module | None = None,
 ) -> Module:
     """Parse and visit a module file.
 
@@ -54,11 +55,12 @@ def visit(
         filepath: The module file path.
         code: The module contents.
         extensions: The extensions to use when visiting the AST.
+        parent: The optional parent of this module.
 
     Returns:
         The module, with its members populated.
     """
-    return _MainVisitor(module_name, filepath, code, extensions or Extensions()).get_module()
+    return _MainVisitor(module_name, filepath, code, extensions or Extensions(), parent).get_module()
 
 
 # ==========================================================
@@ -286,6 +288,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         filepath: Path,
         code: str,
         extensions: Extensions,
+        parent: Module | None = None,
     ) -> None:
         super().__init__()
         self.module_name: str = module_name
@@ -293,8 +296,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.code: str = code
         self.extensions: Extensions = extensions.instantiate(self)
         # self.scope = defaultdict(dict)
-        self.root: AST | None = None
-        self.parent: AST | None = None
+        self.parent: Module | None = parent
         self.current: Module | Class | Function = None  # type: ignore
         self.in_decorator: bool = False
 
@@ -325,6 +327,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
 
     def visit_Module(self, node) -> None:
         self.current = Module(name=self.module_name, filepath=self.filepath, docstring=_get_docstring(node))
+        if self.parent is not None:
+            self.current.parent = self.parent
         self.generic_visit(node)
 
     def visit_ClassDef(self, node) -> None:

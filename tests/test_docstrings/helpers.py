@@ -34,7 +34,7 @@ def parser(parser_module) -> Callable[[str, ParentType, Any], ParseResultType]:
         """
         docstring_object = Docstring(docstring, lineno=1, endlineno=None)
         docstring_object.endlineno = len(docstring_object.lines) + 1
-        if parent:
+        if parent is not None:
             docstring_object.parent = parent
             parent.docstring = docstring_object
         warnings = []

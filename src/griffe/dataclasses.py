@@ -260,6 +260,7 @@ class Object:
         lineno: int | None = None,
         endlineno: int | None = None,
         docstring: Docstring | None = None,
+        parent: Module | Class | None = None,
     ) -> None:
         """Initialize the object.
 
@@ -268,12 +269,13 @@ class Object:
             lineno: The object starting line, or None for modules. Lines start at 1.
             endlineno: The object ending line (inclusive), or None for modules.
             docstring: The object docstring.
+            parent: The object parent.
         """
         self.name: str = name
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
         self.docstring: Docstring | None = docstring
-        self.parent: Module | Class | None = None
+        self.parent: Module | Class | None = parent
         self.members: dict[str, Module | Class | Function | Attribute] = {}
         self.labels: set[str] = set()
 
@@ -324,7 +326,7 @@ class Object:
         """
         if isinstance(self, Module):
             return self
-        if self.parent:
+        if self.parent is not None:
             return self.parent.module
         raise ValueError
 
