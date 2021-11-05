@@ -87,6 +87,9 @@ class Docstring:
         self.parser: Parser | None = parser
         self.parser_options: dict[str, Any] = parser_options or {}
 
+    def __bool__(self):
+        return bool(self.value)
+
     @cached_property
     def lines(self) -> list[str]:
         """Returns the lines of the docstring.
@@ -322,6 +325,9 @@ class Object:
         if len(parts) == 1:
             return self.members[parts[0]]
         return self.members[parts[0]][parts[1]]
+
+    def __bool__(self):
+        return bool(self.docstring) or any(self.members.values())
 
     @cached_property
     def module(self) -> Module:
