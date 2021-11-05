@@ -10,8 +10,10 @@ import enum
 import inspect
 from functools import cached_property
 from pathlib import Path
+from textwrap import dedent
 from typing import Any
 
+from griffe.collections import lines_collection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
 
@@ -390,6 +392,31 @@ class Object:
         if not self.parent:
             return self.name
         return ".".join((self.parent.path, self.name))
+
+    @cached_property
+    def source(self) -> str:
+        """Return the source code of this object.
+
+        Returns:
+            The source code.
+        """
+        return dedent("\n".join(lines_collection[self.filepath][self.lineno - 1 : self.endlineno]))
+
+    @property
+    def modules(self):
+        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}
+
+    @property
+    def classes(self):
+        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}
+
+    @property
+    def functions(self):
+        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}
+
+    @property
+    def attributes(self):
+        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}
 
     def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
