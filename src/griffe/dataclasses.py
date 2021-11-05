@@ -1,6 +1,6 @@
 """This module contains the data classes that represent Python objects.
 
-The different objects are modules, classes, functions, and data
+The different objects are modules, classes, functions, and attribute
 (variables like module/class/instance attributes).
 """
 
@@ -229,13 +229,13 @@ class Kind(enum.Enum):
         MODULE: The module kind.
         CLASS: The class kind.
         FUNCTION: The function kind.
-        DATA: The data kind.
+        ATTRIBUTE: The attribute kind.
     """
 
     MODULE: str = "module"
     CLASS: str = "class"
     FUNCTION: str = "function"
-    DATA: str = "data"
+    ATTRIBUTE: str = "attribute"
 
 
 class Object:
@@ -274,7 +274,7 @@ class Object:
         self.endlineno: int | None = endlineno
         self.docstring: Docstring | None = docstring
         self.parent: Module | Class | None = None
-        self.members: dict[str, Module | Class | Function | Data] = {}
+        self.members: dict[str, Module | Class | Function | Attribute] = {}
         self.labels: set[str] = set()
 
         # attach the docstring to this object
@@ -585,10 +585,10 @@ class Function(Object):
         return base
 
 
-class Data(Object):
+class Attribute(Object):
     """The class representing a Python module/class/instance attribute."""
 
-    kind = Kind.DATA
+    kind = Kind.ATTRIBUTE
 
     def __init__(
         self,
@@ -601,8 +601,8 @@ class Data(Object):
 
         Parameters:
             *args: See [`griffe.dataclasses.Object`][].
-            value: The data value, if any.
-            annotation: The data annotation, if any.
+            value: The attribute value, if any.
+            annotation: The attribute annotation, if any.
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)

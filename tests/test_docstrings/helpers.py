@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Callable, List, Tuple, Union
 
+from griffe.dataclasses import Attribute, Class, Docstring, Function, Module
 from griffe.docstrings.dataclasses import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
 
-ParentType = Union[Module, Class, Function, Data, None]
+ParentType = Union[Module, Class, Function, Attribute, None]
 ParseResultType = Tuple[List[DocstringSection], List[str]]
 
 

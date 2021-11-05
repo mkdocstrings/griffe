@@ -12,7 +12,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from griffe.dataclasses import Class, Data, Function, Kind, Module, ParameterKind
+from griffe.dataclasses import Attribute, Class, Function, Kind, Module, ParameterKind
 from griffe.docstrings.parsers import Parser
 
 
@@ -75,7 +75,7 @@ class Encoder(json.JSONEncoder):
         return super().default(obj)
 
 
-def decoder(obj_dict) -> Module | Class | Function | Data:  # noqa: WPS231
+def decoder(obj_dict: dict[str, Any]) -> Module | Class | Function | Attribute:  # noqa: WPS231
     """Decode dictionaries as data classes.
 
     The [`json.loads`] method walks the tree from bottom to top.
@@ -100,6 +100,6 @@ def decoder(obj_dict) -> Module | Class | Function | Data:  # noqa: WPS231
             return class_
         elif kind == Kind.FUNCTION:
             return Function(name=obj_dict["name"], lineno=obj_dict["lineno"], endlineno=obj_dict["endlineno"])
-        elif kind == Kind.DATA:
-            return Data(name=obj_dict["name"], lineno=obj_dict["lineno"], endlineno=obj_dict["endlineno"])
+        elif kind == Kind.ATTRIBUTE:
+            return Attribute(name=obj_dict["name"], lineno=obj_dict["lineno"], endlineno=obj_dict["endlineno"])
     return obj_dict

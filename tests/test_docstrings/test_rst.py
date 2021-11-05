@@ -809,7 +809,7 @@ def test_parse__raise_no_name__error():
     assert "Failed to parse exception directive from" in warnings[0]
 
 
-# TODO: uncomment once Data is used
+# TODO: uncomment once Attribute is used
 # def test_parse_module_attributes_section__expected_attributes_section():
 #     """Parse attributes section in modules."""
 #     docstring = """
@@ -825,11 +825,11 @@ def test_parse__raise_no_name__error():
 #     """
 
 #     module = Module("mod", filepath=None)
-#     module["A"] = Data("A")  # annotation="int", value="0"
-#     module["B"] = Data("B")  # annotation="str", value=repr("ŧ")
-#     module["C"] = Data("C")  # annotation="bool", value="True"
-#     module["D"] = Data("D")  # annotation=None, value="3.0"
-#     module["E"] = Data("E")  # annotation=None, value="None"
+#     module["A"] = Attribute("A")  # annotation="int", value="0"
+#     module["B"] = Attribute("B")  # annotation="str", value=repr("ŧ")
+#     module["C"] = Attribute("C")  # annotation="bool", value="True"
+#     module["D"] = Attribute("D")  # annotation=None, value="3.0"
+#     module["E"] = Attribute("E")  # annotation=None, value="None"
 #     sections, warnings = parse(docstring)
 
 #     attr_section = sections[1]

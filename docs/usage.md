@@ -118,7 +118,7 @@ class MyExtension(Extension):
 
 See the data classes ([Module][griffe.dataclasses.Module],
 [Class][griffe.dataclasses.Class], [Function][griffe.dataclasses.Function]
-and [Data][griffe.dataclasses.Data])
+and [Attribute][griffe.dataclasses.Attribute])
 for a complete description of their methods and attributes.
 
 Extensions are run at certain moments while walking the Abstract Syntax Tree (AST):

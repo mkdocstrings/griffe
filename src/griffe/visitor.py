@@ -35,7 +35,7 @@ from itertools import zip_longest
 from pathlib import Path
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Class, Data, Decorator, Docstring, Function, Kind, Module, Parameter, Parameters
+from griffe.dataclasses import Attribute, Class, Decorator, Docstring, Function, Kind, Module, Parameter, Parameters
 from griffe.extended_ast import LastNodeError
 from griffe.extensions import Extensions
 from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
@@ -500,8 +500,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
 
         # TODO: handle assigns like x.y = z
         # we need to resolve x.y and add z in its member
-        for name in names:
-            data = Data(
+            attribute = Attribute(
                 name=name,
                 value=value,
                 annotation=annotation,
@@ -509,8 +508,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                 endlineno=node.end_lineno,
                 docstring=docstring,
             )
-            data.labels |= labels
-            parent[name] = data  # type: ignore
+            attribute.labels |= labels
+            parent[name] = attribute  # type: ignore
 
     def visit_Assign(self, node) -> None:
         self.handle_data(node)
