@@ -1,7 +1,7 @@
 """Code parsing and data extraction utilies.
 
 This module exposes a public function, [`visit()`][griffe.visitor.visit],
-which parses the module code using [`parse()`][parse],
+which parses the module code using [`parse()`][ast.parse],
 and returns a new [`Module`][griffe.dataclasses.Module] instance,
 populating its members recursively, by using a custom [`NodeVisitor`][ast.NodeVisitor] class.
 """
