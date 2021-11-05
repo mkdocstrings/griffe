@@ -66,7 +66,9 @@ class Docstring:
         value: str,
         lineno: int | None,
         endlineno: int | None,
-        parent: Module | Class | Function | Data | None = None,
+        parent: Module | Class | Function | Attribute | None = None,
+        parser: Parser | None = None,
+        parser_options: dict[str, Any] | None = None,
     ) -> None:
         """Initialize the docstring.
 
@@ -75,11 +77,15 @@ class Docstring:
             lineno: The starting line number.
             endlineno: The ending line number.
             parent: The parent object on which this docstring is attached.
+            parser: The docstring parser to use. By default, no parsing is done.
+            parser_options: Additional docstring parsing options.
         """
         self.value: str = inspect.cleandoc(value)
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
-        self.parent: Module | Class | Function | Data | None = parent
+        self.parent: Module | Class | Function | Attribute | None = parent
+        self.parser: Parser | None = parser
+        self.parser_options: dict[str, Any] = parser_options or {}
 
     @cached_property
     def lines(self) -> list[str]:
@@ -95,27 +101,29 @@ class Docstring:
         """Return the docstring, parsed into structured data.
 
         Returns:
-            The parsed docstring.
+            The parsed docstring as a list of sections.
         """
         return self.parse()
 
-    def parse(self, docstring_parser: Parser = Parser.google, **options) -> list[DocstringSection]:
+    def parse(self, parser: Parser | None = None, **options: Any) -> list[DocstringSection]:
         """Parse the docstring into structured data.
 
         Parameters:
+            parser: The docstring parser to use.
+                In order: use the given parser, or the self parser, or no parser (return a single text section).
             **options: Additional docstring parsing options.
 
         Returns:
-            The parsed docstring.
+            The parsed docstring as a list of sections.
         """
-        return parse(self, docstring_parser, **options)
+        return parse(self, parser or self.parser, **(options or self.parser_options))
 
-    def as_dict(self, full: bool = False, docstring_parser: Parser = Parser.google, **kwargs) -> dict[str, Any]:
+    def as_dict(self, full: bool = False, docstring_parser: Parser | None = None, **kwargs: Any) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Parameters:
             full: Whether to return full info, or just base info.
-            docstring_parser: The docstring docstring_parser to parse the docstring with.
+            docstring_parser: The docstring parser to parse the docstring with. By default, no parsing is done.
             **kwargs: Additional serialization or docstring parsing options.
 
         Returns:
@@ -126,7 +134,7 @@ class Docstring:
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
-        if full:
+        if full and docstring_parser:
             base["parsed"] = self.parse(docstring_parser, **kwargs)
         return base
 
