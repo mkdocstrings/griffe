@@ -47,6 +47,10 @@ else:
     read_async = _read_async
 
 
+class UnhandledPthFileError(Exception):
+    """Exception for unhandled .path files, when searching modules."""
+
+
 class _BaseGriffeLoader:
     def __init__(self, extensions: Extensions | None = None) -> None:
         """Initialize the loader.
@@ -251,6 +255,7 @@ def find_module(module_name: str, search_paths: list[str | Path] | None = None) 
     filenames = [
         Path(*parts, "__init__.py"),
         Path(*parts[:-1], f"{parts[-1]}.py"),
+        Path(*parts[:-1], f"{parts[-1]}.pth"),
     ]
 
     for path in search:
@@ -259,9 +264,32 @@ def find_module(module_name: str, search_paths: list[str | Path] | None = None) 
             # optimization: just check if the file exists,
             # not if it's an actual file
             if abs_path.exists():
+                if abs_path.name.endswith(".pth"):
+                    try:
+                        return _handle_pth_file(abs_path)
+                    except UnhandledPthFile as error:
+                        raise ModuleNotFoundError(module_name) from error
                 return abs_path
 
     raise ModuleNotFoundError(module_name)
+
+
+def _handle_pth_file(path):
+    instructions = path.read_text().split(";")
+    # support for .pth files pointing to a directory
+    new_path = Path(instructions[0]) / "__init__.py"
+    if new_path.exists():
+        return new_path
+    # support for .pth files written by PDM, using editables
+    module_name = path.stem
+    if instructions[0] == f"import _{module_name}":
+        editables_lines = path.with_name(f"_{module_name}.py").read_text().splitlines(keepends=False)
+        # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
+        # TODO: write something more robust
+        new_path = Path(editables_lines[-1].split("'")[3])
+        if new_path.exists():
+            return new_path
+    raise UnhandledPthFileError(path)
 
 
 def iter_submodules(path: Path) -> Iterator[NamePartsAndPathType]:  # noqa: WPS234
