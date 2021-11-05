@@ -50,6 +50,7 @@ docs = [
     "mkdocs-gen-files~=0.3",
     "mkdocs-literate-nav~=0.4",
     "mkdocs-material~=7.1",
+    "mkdocs-section-index~=0.3",
     "mkdocstrings~=0.15",
     "toml~=0.10",
 ]
