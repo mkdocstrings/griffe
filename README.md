@@ -85,7 +85,7 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
         - [x] Line numbers
         - [x] Parsing: see below
     - [ ] Labels
-        - [ ] Data: ?
+        - [ ] Attribute: ?
         - [ ] Function: ?
         - [ ] Class: ?
         - [ ] Module: ?
@@ -98,14 +98,14 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
         - [ ] Merging `__init__` method's docstring into class' docstring
         - [x] Decorators
     - [x] Functions
-        - [x] Arguments
+        - [x] Parameters
         - [x] Return annotation (names, constants, attributes)
         - [x] Decorators
         - [ ] Support for `typing.overload` decorator.
               We'll probably need to add an `overloads` attribute to `Function`,
               to store the list of `@overload`-decorated functions,
               because currently different members of a same object cannot have the same names.
-    - [x] Data (variables/attributes)
+    - [x] Attributes (variables/constants)
         - [x] Docstrings
         - [x] Value
     - [ ] Name resolution
@@ -133,20 +133,20 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
     - [ ] Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
     - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)
     - [ ] List of things to consider for warnings
-        - [ ] Multiple positional-or-keyword arguments
+        - [ ] Multiple positional-or-keyword parameters
         - [ ] Public imports in public modules
         - [ ] Private things made public through imports/assignments
         - [ ] Too many public things? Generally annoying. Configuration?
     - [ ] Ability to compare two APIs to return breaking changes
     - [ ] List of things to consider for breaking changes
-        - [ ] Changed position of positional only argument
-        - [ ] Changed position of positional or keyword argument
-        - [ ] Changed type of argument
+        - [ ] Changed position of positional only parameter
+        - [ ] Changed position of positional or keyword parameter
+        - [ ] Changed type of parameter
         - [ ] Changed type of public module attribute
         - [ ] Changed return type of a public function/method
-        - [ ] Added argument without a default value
-        - [ ] Removed keyword-only argument without a default value, without **kwargs to swallow it
-        - [ ] Removed positional-only argument without a default value, without *args to swallow it
+        - [ ] Added parameter without a default value
+        - [ ] Removed keyword-only parameter without a default value, without **kwargs to swallow it
+        - [ ] Removed positional-only parameter without a default value, without *args to swallow it
         - [ ] Removed positional-or_keyword argument without a default value, without *args and **kwargs to swallow it
         - [ ] Removed public module/class/function/method/attribute
         - [ ] All of the previous even when parent is private (could be publicly imported or assigned somewhere),
