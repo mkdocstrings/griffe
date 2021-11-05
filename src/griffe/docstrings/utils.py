@@ -30,7 +30,7 @@ def warning(name: str) -> Callable[[Docstring, int, str], None]:
             message: The message to log.
         """
         try:
-            prefix = docstring.parent.filepath  # type: ignore
+            prefix = docstring.parent.relative_filepath  # type: ignore
         except AttributeError:
             prefix = "<module>"
         logger.warning(f"{prefix}:{docstring.lineno+offset}: {message}")  # type: ignore
