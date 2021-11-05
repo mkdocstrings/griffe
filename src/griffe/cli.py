@@ -116,7 +116,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
 
     This function is executed when you type `griffe` or `python -m griffe`.
 
-    Arguments:
+    Parameters:
         args: Arguments passed from the command line.
 
     Returns:

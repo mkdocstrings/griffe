@@ -51,7 +51,7 @@ class _BaseGriffeLoader:
     def __init__(self, extensions: Extensions | None = None) -> None:
         """Initialize the loader.
 
-        Arguments:
+        Parameters:
             extensions: The extensions to use.
         """
         self.extensions = extensions or Extensions()
@@ -89,7 +89,7 @@ class GriffeLoader(_BaseGriffeLoader):
     ) -> Module:
         """Load a module.
 
-        Arguments:
+        Parameters:
             module: The module name or path.
             submodules: Whether to recurse on the submodules.
             search_paths: The paths to search into.
@@ -143,7 +143,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
     ) -> Module:
         """Load a module.
 
-        Arguments:
+        Parameters:
             module: The module name or path.
             submodules: Whether to recurse on the submodules.
             search_paths: The paths to search into.
@@ -193,7 +193,7 @@ def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
 def module_name_path(path: Path) -> tuple[str, Path]:
     """Get the module name and path from a path.
 
-    Arguments:
+    Parameters:
         path: A directory or file path. Paths to `__init__.py` files
             will be resolved to their parent directory.
 
@@ -225,7 +225,7 @@ def module_name_path(path: Path) -> tuple[str, Path]:
 def find_module(module_name: str, search_paths: list[str | Path] | None = None) -> Path:
     """Find a module in a given list of paths or in `sys.path`.
 
-    Arguments:
+    Parameters:
         module_name: The module name.
         search_paths: The paths to search into.
 
@@ -258,7 +258,7 @@ def find_module(module_name: str, search_paths: list[str | Path] | None = None) 
 def iter_submodules(path: Path) -> Iterator[NamePartsAndPathType]:  # noqa: WPS234
     """Iterate on a module's submodules, if any.
 
-    Arguments:
+    Parameters:
         path: The module path.
 
     Yields:

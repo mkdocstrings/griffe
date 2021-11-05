@@ -486,7 +486,7 @@ def parse(  # noqa: WPS231
     This function iterates on lines of a docstring to build sections.
     It then returns this list of sections.
 
-    Arguments:
+    Parameters:
         docstring: The docstring to parse.
         **options: Additional parsing options.
 

@@ -45,7 +45,7 @@ class FieldType:
     def matches(self, line: str) -> bool:
         """Check if a line matches the field type.
 
-        Arguments:
+        Parameters:
             line: Line to check against
 
         Returns:
@@ -89,7 +89,7 @@ class ParsedValues:
 def parse(docstring: Docstring, **options) -> list[DocstringSection]:
     """Parse an RST-styled docstring.
 
-    Arguments:
+    Parameters:
         docstring: The docstring to parse.
         **options: Additional parsing options.
 
@@ -120,7 +120,7 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
     """
     Parse a parameter value.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -199,7 +199,7 @@ def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: Parse
     """
     Parse a parameter type.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -231,7 +231,7 @@ def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValu
     """
     Parse an attribute value.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -274,7 +274,7 @@ def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: Parse
     """
     Parse a parameter type.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -306,7 +306,7 @@ def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValu
     """
     Parse an exceptions value.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -330,7 +330,7 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
     """
     Parse an return value.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -364,7 +364,7 @@ def _read_return_type(docstring: Docstring, offset: int, parsed_values: ParsedVa
     """
     Parse an return type value.
 
-    Arguments:
+    Parameters:
         docstring: The docstring.
         offset: The line number to start at.
 
@@ -416,7 +416,7 @@ def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str,
     """
     Convert a docstring field into a single line if a line continuation exists.
 
-    Arguments:
+    Parameters:
         lines: The docstring lines.
         offset: The line number to start at.
 
@@ -440,7 +440,7 @@ def _consolidate_descriptive_type(descriptive_type: str) -> str:
 
     "x or y" -> "x | y"
 
-    Arguments:
+    Parameters:
         descriptive_type: Descriptions of an item's type.
 
     Returns:
@@ -452,7 +452,7 @@ def _consolidate_descriptive_type(descriptive_type: str) -> str:
 def _strip_blank_lines(lines: list[str]) -> list[str]:
     """Remove lines with no text or only whitespace characters from the start and end of the list.
 
-    Arguments:
+    Parameters:
         lines: Lines to be stripped.
 
     Returns:

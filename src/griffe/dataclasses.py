@@ -29,7 +29,7 @@ class Decorator:
     def __init__(self, lineno: int | None, endlineno: int | None) -> None:
         """Initialize the decorator.
 
-        Arguments:
+        Parameters:
             lineno: The starting line number.
             endlineno: The ending line number.
         """
@@ -39,7 +39,7 @@ class Decorator:
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this decorator's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -70,7 +70,7 @@ class Docstring:
     ) -> None:
         """Initialize the docstring.
 
-        Arguments:
+        Parameters:
             value: The docstring value.
             lineno: The starting line number.
             endlineno: The ending line number.
@@ -102,8 +102,7 @@ class Docstring:
     def parse(self, docstring_parser: Parser = Parser.google, **options) -> list[DocstringSection]:
         """Parse the docstring into structured data.
 
-        Arguments:
-            docstring_parser: The docstring parser to use.
+        Parameters:
             **options: Additional docstring parsing options.
 
         Returns:
@@ -114,7 +113,7 @@ class Docstring:
     def as_dict(self, full: bool = False, docstring_parser: Parser = Parser.google, **kwargs) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
-        Arguments:
+        Parameters:
             full: Whether to return full info, or just base info.
             docstring_parser: The docstring docstring_parser to parse the docstring with.
             **kwargs: Additional serialization or docstring parsing options.
@@ -152,11 +151,7 @@ class Argument:
     ) -> None:
         """Initialize the argument.
 
-        Arguments:
-            name: The argument name.
-            annotation: The argument annotation, if any.
-            kind: The argument kind (see [`inspect.Parameter.kind`][]).
-            default: The argument default, if any.
+        Parameters:
         """
         self.name: str = name
         self.annotation: str | None = annotation
@@ -166,7 +161,7 @@ class Argument:
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this argument's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -189,8 +184,7 @@ class Arguments:
     def __init__(self, *arguments: Argument) -> None:
         """Initialize the arguments container.
 
-        Arguments:
-            *arguments: The initial arguments to add to the container.
+        Parameters:
         """
         self._arguments_list: list[Argument] = []
         self._arguments_dict: dict[str, Argument] = {}
@@ -211,8 +205,7 @@ class Arguments:
     def add(self, argument: Argument) -> None:
         """Add an argument to the container.
 
-        Arguments:
-            argument: The function argument to add.
+        Parameters:
 
         Raises:
             ValueError: When an argument with the same name is already present.
@@ -265,7 +258,7 @@ class Object:
     ) -> None:
         """Initialize the object.
 
-        Arguments:
+        Parameters:
             name: The object name, as declared in the code.
             lineno: The object starting line, or None for modules. Lines start at 1.
             endlineno: The object ending line (inclusive), or None for modules.
@@ -379,7 +372,7 @@ class Object:
     def as_dict(self, full: bool = False, **kwargs) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
-        Arguments:
+        Parameters:
             full: Whether to return full info, or just base info.
             **kwargs: Additional serialization options.
 
@@ -422,7 +415,7 @@ class Module(Object):
     def __init__(self, *args, filepath: Path, **kwargs) -> None:
         """Initialize the module.
 
-        Arguments:
+        Parameters:
             *args: See [`griffe.dataclasses.Object`][].
             filepath: The module file path. It can be null for namespace packages.
             **kwargs: See [`griffe.dataclasses.Object`][].
@@ -495,7 +488,7 @@ class Module(Object):
     def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this module's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -520,7 +513,7 @@ class Class(Object):
     ) -> None:
         """Initialize the class.
 
-        Arguments:
+        Parameters:
             *args: See [`griffe.dataclasses.Object`][].
             bases: The list of base classes, if any.
             decorators: The class decorators, if any.
@@ -533,7 +526,7 @@ class Class(Object):
     def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this class' data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -560,7 +553,7 @@ class Function(Object):
     ) -> None:
         """Initialize the function.
 
-        Arguments:
+        Parameters:
             *args: See [`griffe.dataclasses.Object`][].
             arguments: The function arguments.
             returns: The function return annotation.
@@ -575,7 +568,7 @@ class Function(Object):
     def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -602,7 +595,7 @@ class Data(Object):
     ) -> None:
         """Initialize the function.
 
-        Arguments:
+        Parameters:
             *args: See [`griffe.dataclasses.Object`][].
             value: The data value, if any.
             annotation: The data annotation, if any.
@@ -615,7 +608,7 @@ class Data(Object):
     def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:

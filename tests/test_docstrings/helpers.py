@@ -14,7 +14,7 @@ ParseResultType = Tuple[List[DocstringSection], List[str]]
 def parser(parser_module) -> Callable[[str, ParentType, Any], ParseResultType]:
     """Wrap a parser to help testing.
 
-    Arguments:
+    Parameters:
         parser_module: The parser module containing a `parse` function.
 
     Returns:
@@ -24,7 +24,7 @@ def parser(parser_module) -> Callable[[str, ParentType, Any], ParseResultType]:
     def parse(docstring: str, parent: ParentType = None, **parser_opts: Any) -> ParseResultType:  # noqa: WPS430
         """Parse a doctring.
 
-        Arguments:
+        Parameters:
             docstring: The docstring to parse.
             parent: The docstring's parent object.
             **parser_opts: Additional options accepted by the parser.
@@ -48,9 +48,7 @@ def parser(parser_module) -> Callable[[str, ParentType, Any], ParseResultType]:
 def assert_argument_equal(actual: DocstringArgument, expected: DocstringArgument) -> None:
     """Help assert docstring arguments are equal.
 
-    Arguments:
-        actual: The actual argument.
-        expected: The expected argument.
+    Parameters:
     """
     assert actual.name == expected.name
     assert_element_equal(actual, expected)
@@ -60,7 +58,7 @@ def assert_argument_equal(actual: DocstringArgument, expected: DocstringArgument
 def assert_attribute_equal(actual: DocstringAttribute, expected: DocstringAttribute) -> None:
     """Help assert docstring attributes are equal.
 
-    Arguments:
+    Parameters:
         actual: The actual attribute.
         expected: The expected attribute.
     """
@@ -71,7 +69,7 @@ def assert_attribute_equal(actual: DocstringAttribute, expected: DocstringAttrib
 def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -> None:
     """Help assert docstring elements are equal.
 
-    Arguments:
+    Parameters:
         actual: The actual element.
         expected: The expected element.
     """

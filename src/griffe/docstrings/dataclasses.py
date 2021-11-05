@@ -29,7 +29,7 @@ class DocstringSection:
     def __init__(self, kind: DocstringSectionKind, value: Any, title: str | None = None) -> None:
         """Initialize the section.
 
-        Arguments:
+        Parameters:
             kind: The section kind.
             value: The section value.
             title: An optional title.
@@ -41,7 +41,7 @@ class DocstringSection:
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this section's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -68,7 +68,7 @@ class DocstringAdmonition:
     def __init__(self, *, kind: str, contents: str) -> None:
         """Initialize the admonition.
 
-        Arguments:
+        Parameters:
             kind: The admonition kind.
             contents: The admonition contents.
         """
@@ -78,7 +78,7 @@ class DocstringAdmonition:
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this admonition's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -101,7 +101,7 @@ class DocstringElement:
     def __init__(self, *, description: str, annotation: str | None = None) -> None:
         """Initialize the element.
 
-        Arguments:
+        Parameters:
             annotation: The element annotation, if any.
             description: The element description.
         """
@@ -111,7 +111,7 @@ class DocstringElement:
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this element's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:
@@ -158,7 +158,7 @@ class DocstringNamedElement(DocstringElement):
     def __init__(self, name: str, *, description: str, annotation: str | None = None, value: str | None = None) -> None:
         """Initialize the element.
 
-        Arguments:
+        Parameters:
             name: The element name.
             description: The element description.
             annotation: The element annotation, if any.
@@ -171,7 +171,7 @@ class DocstringNamedElement(DocstringElement):
     def as_dict(self, **kwargs) -> dict[str, Any]:
         """Return this element's data as a dictionary.
 
-        Arguments:
+        Parameters:
             **kwargs: Additional serialization options.
 
         Returns:

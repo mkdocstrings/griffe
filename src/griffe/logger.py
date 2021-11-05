@@ -33,7 +33,7 @@ import logging
 def get_logger(name: str) -> logging.Logger:
     """Create and return a new logger instance.
 
-    Arguments:
+    Parameters:
         name: The logger name.
 
     Returns:

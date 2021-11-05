@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 def warning(name: str) -> Callable[[Docstring, int, str], None]:
     """Create and return a warn function.
 
-    Arguments:
+    Parameters:
         name: The logger name.
 
     Returns:
@@ -24,7 +24,7 @@ def warning(name: str) -> Callable[[Docstring, int, str], None]:
     def warn(docstring: Docstring, offset: int, message: str) -> None:  # noqa: WPS430
         """Log a warning message by prefixing it with the filepath and line number.
 
-        Arguments:
+        Parameters:
             docstring: The docstring object.
             offset: The offset in the docstring lines.
             message: The message to log.

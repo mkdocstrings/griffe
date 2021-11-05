@@ -38,7 +38,7 @@ class Encoder(json.JSONEncoder):
     ) -> None:
         """Initialize the encoder.
 
-        Arguments:
+        Parameters:
             *args: See [`json.JSONEncoder`][].
             full: Whether to dump full data or base data.
                 If you plan to reload the data in Python memory
@@ -58,7 +58,7 @@ class Encoder(json.JSONEncoder):
     def default(self, obj: Any) -> Any:  # noqa: WPS212
         """Return a serializable representation of the given object.
 
-        Arguments:
+        Parameters:
             obj: The object to serialize.
 
         Returns:
@@ -80,7 +80,7 @@ def decoder(obj_dict) -> Module | Class | Function | Data:  # noqa: WPS231
 
     The [`json.loads`] method walks the tree from bottom to top.
 
-    Arguments:
+    Parameters:
         obj_dict: The dictionary to decode.
 
     Returns:

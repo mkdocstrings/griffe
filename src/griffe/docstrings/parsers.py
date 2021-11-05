@@ -26,7 +26,7 @@ parsers = {
 def parse(docstring: Docstring, docstring_parser: Parser, **options) -> list[DocstringSection]:
     """Parse the docstring.
 
-    Arguments:
+    Parameters:
         docstring: The docstring to parse.
         docstring_parser: The parsing docstring_parser to use.
         **options: The options accepted by the parser.

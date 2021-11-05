@@ -49,7 +49,7 @@ def visit(
 ) -> Module:
     """Parse and visit a module file.
 
-    Arguments:
+    Parameters:
         module_name: The module name (as when importing [from] it).
         filepath: The module file path.
         code: The module contents.

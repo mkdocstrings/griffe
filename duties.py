@@ -44,7 +44,7 @@ def update_changelog(
     """
     Update the given changelog file in place.
 
-    Arguments:
+    Parameters:
         inplace_file: The file to update in-place.
         marker: The line after which to insert new contents.
         version_regex: A regular expression to find currently documented versions in the file.
@@ -85,7 +85,7 @@ def changelog(ctx):
     """
     Update the changelog in-place with latest commits.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     commit = "166758a98d5e544aaa94fda698128e00733497f4"
@@ -109,7 +109,7 @@ def check(ctx):
     """
     Check it all!
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
 
@@ -119,7 +119,7 @@ def check_code_quality(ctx, files=PY_SRC):
     """
     Check the code quality.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
         files: The files to check.
     """
@@ -131,7 +131,7 @@ def check_dependencies(ctx):
     """
     Check for vulnerabilities in dependencies.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     nofail = False
@@ -156,12 +156,12 @@ def check_docs(ctx):
     """
     Check if the documentation builds correctly.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
-    ctx.run("mkdocs build -s", title="Building documentation", pty=PTY, nofail=True, quiet=True)
+    ctx.run("mkdocs build -s", title="Building documentation", pty=PTY)
 
 
 @duty
@@ -169,7 +169,7 @@ def check_types(ctx):
     """
     Check that the code is correctly typed.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     ctx.run(f"mypy --config-file config/mypy.ini {PY_SRC}", title="Type-checking", pty=PTY)
@@ -180,7 +180,7 @@ def clean(ctx):
     """
     Delete temporary files.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     ctx.run("rm -rf .coverage*")
@@ -201,7 +201,7 @@ def docs(ctx):
     """
     Build the documentation locally.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     ctx.run("mkdocs build", title="Building documentation")
@@ -212,7 +212,7 @@ def docs_serve(ctx, host="127.0.0.1", port=8000):
     """
     Serve the documentation (localhost:8000).
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
         host: The host to serve the docs from.
         port: The port to serve the docs on.
@@ -225,7 +225,7 @@ def docs_deploy(ctx):
     """
     Deploy the documentation on GitHub pages.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     ctx.run("mkdocs gh-deploy", title="Deploying documentation")
@@ -236,7 +236,7 @@ def format(ctx):
     """
     Run formatting tools on the code.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     ctx.run(
@@ -253,7 +253,7 @@ def release(ctx, version):
     """
     Release a new Python package.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
         version: The new version number to use.
     """
@@ -273,7 +273,7 @@ def coverage(ctx):
     """
     Report coverage as text and HTML.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
     """
     ctx.run("coverage combine", nofail=True)
@@ -286,7 +286,7 @@ def test(ctx, match: str = ""):
     """
     Run the test suite.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
         match: A pytest expression to filter selected tests.
     """
@@ -304,7 +304,7 @@ def profile(ctx, browser: bool = False, **opts):
     """
     Run the test suite.
 
-    Arguments:
+    Parameters:
         ctx: The context instance (passed automatically).
         browser: Whether to open the SVG file in the browser at the end.
         **opts: Additional options: async.

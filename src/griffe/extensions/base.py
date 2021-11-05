@@ -60,7 +60,7 @@ class Extension(_BaseVisitor):
     def __init__(self, main_visitor: MainVisitor) -> None:
         """Initialize the visitor extension.
 
-        Arguments:
+        Parameters:
             main_visitor: The main visitor.
         """
         super().__init__()
@@ -73,7 +73,7 @@ class Extensions:
     def __init__(self, *extensions_classes: Type[Extension]) -> None:
         """Initialize the extensions container.
 
-        Arguments:
+        Parameters:
             *extensions_classes: The extensions to add.
         """
         self._classes: list[Type[Extension]] = list(extensions_classes)
@@ -118,7 +118,7 @@ class Extensions:
     def when(self, when: When) -> list[Extension]:
         """Return the visitors that run at the given time.
 
-        Arguments:
+        Parameters:
             when: The selected time.
 
         Returns:
@@ -129,7 +129,7 @@ class Extensions:
     def add(self, *extensions_classes: Type[Extension]) -> None:
         """Add visitor extensions to this container.
 
-        Arguments:
+        Parameters:
             *extensions_classes: The extensions to add.
         """
         self._classes.extend(extensions_classes)
@@ -137,7 +137,7 @@ class Extensions:
     def instantiate(self, main_visitor: MainVisitor) -> Extensions:
         """Clear and instantiate the visitor classes.
 
-        Arguments:
+        Parameters:
             main_visitor: The main visitor, leading the visit.
 
         Returns:
