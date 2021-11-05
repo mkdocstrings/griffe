@@ -472,7 +472,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         bases = []
         if node.bases:
             for base in node.bases:
-                bases.append(_get_base_class_name(base))
+                bases.append(f"{self.current.path}.{_get_base_class_name(base)}")
 
         class_ = Class(
             name=node.name,
