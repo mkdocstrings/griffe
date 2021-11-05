@@ -38,7 +38,7 @@ class DocstringSection:
         self.value: Any = value
         self.title: str | None = title
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this section's data as a dictionary.
 
         Parameters:
@@ -75,7 +75,7 @@ class DocstringAdmonition:
         self.kind: str = kind
         self.contents: str = contents
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this admonition's data as a dictionary.
 
         Parameters:
@@ -108,7 +108,7 @@ class DocstringElement:
         self.description: str = description
         self.annotation: str | None = annotation
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this element's data as a dictionary.
 
         Parameters:
@@ -168,7 +168,7 @@ class DocstringNamedElement(DocstringElement):
         self.name: str = name
         self.value: str | None = value
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this element's data as a dictionary.
 
         Parameters:

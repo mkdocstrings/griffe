@@ -36,7 +36,7 @@ class Decorator:
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this decorator's data as a dictionary.
 
         Parameters:
@@ -162,6 +162,7 @@ class Parameter:
         self.kind: ParameterKind | None = kind
         self.default: str | None = default
 
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this parameter's data as a dictionary.
 
         Parameters:
@@ -376,7 +377,7 @@ class Object:
             return self.name
         return ".".join((self.parent.path, self.name))
 
-    def as_dict(self, full: bool = False, **kwargs) -> dict[str, Any]:
+    def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
         Parameters:
@@ -419,7 +420,7 @@ class Module(Object):
 
     kind = Kind.MODULE
 
-    def __init__(self, *args, filepath: Path, **kwargs) -> None:
+    def __init__(self, *args: Any, filepath: Path, **kwargs: Any) -> None:
         """Initialize the module.
 
         Parameters:
@@ -492,7 +493,7 @@ class Module(Object):
             or self.parent.is_namespace_subpackage  # type: ignore  # modules parents are always modules
         )
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this module's data as a dictionary.
 
         Parameters:
@@ -513,10 +514,10 @@ class Class(Object):
 
     def __init__(
         self,
-        *args,
+        *args: Any,
         bases: list[str] | None = None,
         decorators: list[Decorator] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize the class.
 
@@ -530,7 +531,7 @@ class Class(Object):
         self.bases = bases or []
         self.decorators = decorators or []
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this class' data as a dictionary.
 
         Parameters:
@@ -552,10 +553,11 @@ class Function(Object):
 
     def __init__(
         self,
+        *args: Any,
         parameters: Parameters | None = None,
         returns: str | None = None,
         decorators: list[Decorator] | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize the function.
 
@@ -571,7 +573,7 @@ class Function(Object):
         self.returns = returns
         self.decorators = decorators or []
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
 
         Parameters:
@@ -594,10 +596,10 @@ class Attribute(Object):
 
     def __init__(
         self,
-        *args,
+        *args: Any,
         value: str | None = None,
         annotation: str | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize the function.
 
@@ -611,7 +613,7 @@ class Attribute(Object):
         self.value: str | None = value
         self.annotation: str | None = annotation
 
-    def as_dict(self, **kwargs) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
 
         Parameters:

@@ -8,7 +8,7 @@ See https://github.com/mkdocstrings/pytkdocs/pull/71.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable, FrozenSet, TypedDict
+from typing import TYPE_CHECKING, Any, Callable, FrozenSet
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
@@ -54,13 +54,6 @@ class FieldType:
         return any(line.startswith(f":{name}") for name in self.names)
 
 
-class AttributesDict(TypedDict):
-    """Attribute details."""
-
-    docstring: str
-    annotation: str | None
-
-
 @dataclass
 class ParsedDirective:
     """Directive information that has been parsed from a docstring."""
@@ -86,7 +79,7 @@ class ParsedValues:
     return_type: str | None = None
 
 
-def parse(docstring: Docstring, **options) -> list[DocstringSection]:
+def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:
     """Parse an RST-styled docstring.
 
     Parameters:

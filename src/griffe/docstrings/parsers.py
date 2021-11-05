@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.google import parse as parse_google
@@ -23,7 +23,7 @@ parsers = {
 }
 
 
-def parse(docstring: Docstring, docstring_parser: Parser, **options) -> list[DocstringSection]:
+def parse(docstring: Docstring, parser: Parser, **options: Any) -> list[DocstringSection]:
     """Parse the docstring.
 
     Parameters:

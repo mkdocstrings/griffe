@@ -30,11 +30,11 @@ class Encoder(json.JSONEncoder):
 
     def __init__(
         self,
-        *args,
+        *args: Any,
         full: bool = False,
-        docstring_parser: Parser = Parser.google,
-        docstring_options: dict[str, Any] = None,
-        **kwargs
+        docstring_parser: Parser | None = Parser.google,
+        docstring_options: dict[str, Any] | None = None,
+        **kwargs: Any
     ) -> None:
         """Initialize the encoder.
 
@@ -46,13 +46,13 @@ class Encoder(json.JSONEncoder):
                 you don't need the full data as it can be infered again
                 using the base data. If you want to feed a non-Python
                 tool instead, dump the full data.
-            docstring_parser: The docstring parser to use.
+            docstring_parser: The docstring parser to use. By default, no parsing is done.
             docstring_options: Additional docstring parsing options.
             **kwargs: See [`json.JSONEncoder`][].
         """
         super().__init__(*args, **kwargs)
         self.full: bool = full
-        self.docstring_parser: Parser = docstring_parser
+        self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
 
     def default(self, obj: Any) -> Any:  # noqa: WPS212

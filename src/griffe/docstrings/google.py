@@ -470,7 +470,7 @@ _section_reader = {
 
 def parse(  # noqa: WPS231
     docstring: Docstring,
-    **options,
+    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
 
