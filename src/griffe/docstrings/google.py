@@ -41,7 +41,7 @@ _section_kind = {
     "attributes": DocstringSectionKind.attributes,
 }
 
-_RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w-][\s\w-]*):(\s+(?P<title>.+))?$", re.I)
+_RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>.+))?$", re.I)
 """Regular expression to match admonitions, of the form `TYPE: [TITLE]`."""
 
 
