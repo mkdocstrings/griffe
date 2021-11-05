@@ -626,8 +626,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         except (LastNodeError, AttributeError):
             docstring = None
 
-        # TODO: handle assigns like x.y = z
-        # we need to resolve x.y and add z in its member
+        for name in names:
+            # TODO: handle assigns like x.y = z
+            # we need to resolve x.y and add z in its member
+            if "." in name:
+                continue
+
             attribute = Attribute(
                 name=name,
                 value=value,
