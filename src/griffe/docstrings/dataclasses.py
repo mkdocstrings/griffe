@@ -186,6 +186,14 @@ class DocstringNamedElement(DocstringElement):
 class DocstringParameter(DocstringNamedElement):
     """This class represent a documented function parameter."""
 
+    @property
+    def default(self):
+        return self.value
+
+    @default.setter
+    def default(self, value):
+        self.value = value
+
 
 class DocstringAttribute(DocstringNamedElement):
     """This class represents a documented module/class attribute."""
