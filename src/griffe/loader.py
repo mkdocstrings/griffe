@@ -20,6 +20,7 @@ from typing import Iterator, Tuple
 from griffe.collections import lines_collection
 from griffe.dataclasses import Module
 from griffe.docstrings.parsers import Parser
+from griffe.extended_ast import extend_ast
 from griffe.extensions import Extensions
 from griffe.logger import get_logger
 from griffe.visitor import visit
@@ -69,6 +70,7 @@ class _BaseGriffeLoader:
         self.extensions: Extensions = extensions or Extensions()
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        extend_ast()
 
     def _module_name_and_path(
         self,

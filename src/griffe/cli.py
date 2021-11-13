@@ -23,7 +23,6 @@ from typing import Any, Sequence
 
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import Encoder
-from griffe.extended_ast import extend_ast
 from griffe.extensions import Extensions
 from griffe.loader import AsyncGriffeLoader, GriffeLoader
 from griffe.logger import get_logger
@@ -181,7 +180,6 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     if opts.append_sys_path:
         search.extend(sys.path)
 
-    extend_ast()
     extensions = Extensions()
 
     if opts.async_loader:
