@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from griffe.dataclasses import Expression, Name
 
 
 class DocstringSectionKind(enum.Enum):
@@ -98,7 +101,7 @@ class DocstringElement:
         description: The element description.
     """
 
-    def __init__(self, *, description: str, annotation: str | None = None) -> None:
+    def __init__(self, *, description: str, annotation: str | Name | Expression | None = None) -> None:
         """Initialize the element.
 
         Parameters:
@@ -106,7 +109,7 @@ class DocstringElement:
             description: The element description.
         """
         self.description: str = description
-        self.annotation: str | None = annotation
+        self.annotation: str | Name | Expression | None = annotation
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this element's data as a dictionary.
@@ -155,7 +158,14 @@ class DocstringNamedElement(DocstringElement):
         value: The element value, as a string, if any.
     """
 
-    def __init__(self, name: str, *, description: str, annotation: str | None = None, value: str | None = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        annotation: str | Name | Expression | None = None,
+        value: str | None = None
+    ) -> None:
         """Initialize the element.
 
         Parameters:

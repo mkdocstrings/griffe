@@ -11,11 +11,15 @@ import inspect
 from functools import cached_property
 from pathlib import Path
 from textwrap import dedent
-from typing import Any
+from typing import Any, Callable
 
 from griffe.collections import lines_collection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
+
+
+class ResolutionError(Exception):
+    """Exception for names that cannot be resolved in a object scope."""
 
 
 class ParameterKind(enum.Enum):
@@ -175,7 +179,7 @@ class Parameter:
         self,
         name: str,
         *,
-        annotation: str | None = None,
+        annotation: str | Name | Expression | None = None,
         kind: ParameterKind | None = None,
         default: str | None = None,
     ) -> None:
@@ -188,7 +192,7 @@ class Parameter:
             default: The parameter default, if any.
         """
         self.name: str = name
-        self.annotation: str | None = annotation
+        self.annotation: str | Name | Expression | None = annotation
         self.kind: ParameterKind | None = kind
         self.default: str | None = default
 
@@ -310,6 +314,7 @@ class Object:
         self.parent: Module | Class | None = parent
         self.members: dict[str, Module | Class | Function | Attribute] = {}
         self.labels: set[str] = set()
+        self.imports: dict[str, str] = {}
 
         # attach the docstring to this object
         if docstring:
@@ -466,6 +471,29 @@ class Object:
             A dictionary of attributes.
         """
         return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}
+
+    def resolve(self, name: str) -> str:
+        """Resolve a name within this object's and parents' scope.
+
+        Parameters:
+            name: The name to resolve.
+
+        Raises:
+            ResolutionError: When the name could not be resolved.
+
+        Returns:
+            The resolved name.
+        """
+        if name in self.members:
+            return self.members[name].path
+        if name in self.imports:
+            return self.imports[name]
+        if self.parent is None:
+            # could be a built-in
+            raise ResolutionError(f"{name} could not be resolved in the scope of {self.path}")
+        if name == self.parent.name:
+            return self.parent.path
+        return self.parent.resolve(name)
 
     def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
@@ -645,7 +673,7 @@ class Function(Object):
         self,
         *args: Any,
         parameters: Parameters | None = None,
-        returns: str | None = None,
+        returns: str | Name | Expression | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -660,7 +688,7 @@ class Function(Object):
         """
         super().__init__(*args, **kwargs)
         self.parameters: Parameters = parameters or Parameters()
-        self.returns = returns
+        self.returns: str | Name | Expression | None = returns
         self.decorators: list[Decorator] = decorators or []
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
@@ -688,7 +716,7 @@ class Attribute(Object):
         self,
         *args: Any,
         value: str | None = None,
-        annotation: str | None = None,
+        annotation: str | Name | Expression | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the function.
@@ -701,7 +729,7 @@ class Attribute(Object):
         """
         super().__init__(*args, **kwargs)
         self.value: str | None = value
-        self.annotation: str | None = annotation
+        self.annotation: str | Name | Expression | None = annotation
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
@@ -718,3 +746,87 @@ class Attribute(Object):
         if self.annotation is not None:
             base["annotation"] = self.annotation
         return base
+
+
+class Name:
+    """This class represents a Python object identified by a name in a given scope.
+
+    Attributes:
+        source: The name as written in the source code.
+    """
+
+    def __init__(self, source: str, full: str | Callable) -> None:
+        """Initialize the name.
+
+        Parameters:
+            source: The name as written in the source code.
+            full: The full, resolved name in the given scope, or a callable to resolve it later.
+        """
+        self.source: str = source
+        if isinstance(full, str):
+            self._full: str = full
+            self._resolver: Callable = lambda: None
+        else:
+            self._full = ""
+            self._resolver = full
+
+    def __repr__(self) -> str:
+        return f"AnnotationName(source={self.source!r}, full={self.full!r})"
+
+    def __str__(self) -> str:
+        return self.source
+
+    @property
+    def full(self) -> str:
+        """Return the full, resolved name.
+
+        If it was given when creating the name, return that.
+        If a callable was given, call it and return its result.
+        It the name cannot be resolved, return the source.
+
+        Returns:
+            The resolved name or the source.
+        """
+        if not self._full:
+            try:
+                self._full = self._resolver() or self.source
+            except ResolutionError:
+                # probably a built-in
+                self._full = self.source
+        return self._full
+
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+        """Return this name's data as a dictionary.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        return {"source": self.source, "full": self.full}
+
+
+class Expression(list):  # noqa: WPS600
+    """This class represents a Python expression.
+
+    For example, it can represents complex annotations such as:
+
+    - `Optional[Dict[str, Tuple[int, bool]]]`
+    - `str | Callable | list[int]`
+
+    Expressions are simple lists containing strings, names or expressions.
+    Each name in the expression can be resolved to its full name within its scope.
+    """
+
+    def __init__(self, *values: str | Expression | Name) -> None:
+        """Initialize the expression.
+
+        Parameters:
+            *values: The initial values of the expression.
+        """
+        super().__init__()
+        self.extend(values)
+
+    def __str__(self):
+        return "".join(str(element) for element in self)

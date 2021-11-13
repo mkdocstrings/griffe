@@ -136,49 +136,82 @@ def _get_docstring(
 
 # ==========================================================
 # base classes
-def _get_base_class_name(node):
+def _get_base_class(node: Node, parent: Module | Class):
+    # TODO: possible optimization using a map {type: func}
     if isinstance(node, NodeName):
-        return node.id
+        return Name(node.id, partial(parent.resolve, node.id))
     if isinstance(node, NodeAttribute):
-        return f"{_get_base_class_name(node.value)}.{node.attr}"
-    # TODO: resolve subscript
+        left = _get_base_class(node.value, parent)
+
+        def resolver():  # noqa: WPS430
+            return f"{left.full}.{node.attr}"
+
+        right = Name(node.attr, resolver)
+        return Expression(left, ".", right)
     if isinstance(node, NodeSubscript):
-        return f"{_get_base_class_name(node.value)}[{_get_base_class_name(node.slice)}]"
+        # return f"{_get_base_class(node.value)}[{_get_base_class(node.slice)}]"
+        left = _get_base_class(node.value, parent)
+        subscript = _get_base_class(node.slice, parent)
+        return Expression(left, "[", subscript, "]")
 
 
 # ==========================================================
 # annotations
-def _get_name_annotation(node):
-    return node.id
+def _join(sequence, item):
+    if not sequence:
+        return []
+    new_sequence = [sequence[0]]
+    for element in sequence[1:]:
+        new_sequence.extend((item, element))
+    return new_sequence
 
 
-def _get_constant_annotation(node):
+def _get_name_annotation(node: NodeName, parent: Class | Module) -> Name:
+    return Name(node.id, partial(parent.resolve, node.id))
+
+
+def _get_constant_annotation(node: NodeConstant, parent: Class | Module) -> str:
     return repr(node.value)
 
 
-def _get_attribute_annotation(node):
-    return f"{_get_annotation(node.value)}.{node.attr}"
+def _get_attribute_annotation(node: NodeAttribute, parent: Class | Module) -> Expression:
+    left = _get_annotation(node.value, parent)
+
+    def resolver():  # noqa: WPS430
+        return f"{left.full}.{node.attr}"
+
+    right = Name(node.attr, resolver)
+    return Expression(left, ".", right)
 
 
-def _get_binop_annotation(node):
+def _get_binop_annotation(node: NodeBinOp, parent: Class | Module) -> Expression:
+    left = _get_annotation(node.left, parent)
+    right = _get_annotation(node.right, parent)
+
+    # TODO: possible optimization using a map {type: func}
     if isinstance(node.op, NodeBitOr):
-        return f"{_get_annotation(node.left)} | {_get_annotation(node.right)}"
+        return Expression(left, " | ", right)
+    if isinstance(node.op, NodeBitAnd):
+        return Expression(left, " & ", right)
+    return None
 
 
-def _get_subscript_annotation(node):
-    return f"{_get_annotation(node.value)}[{_get_annotation(node.slice)}]"
+def _get_subscript_annotation(node: NodeSubscript, parent: Class | Module) -> Expression:
+    left = _get_annotation(node.value, parent)
+    subscript = _get_annotation(node.slice, parent)
+    return Expression(left, "[", subscript, "]")
 
 
-def _get_index_annotation(node):
-    return _get_annotation(node.value)
+def _get_index_annotation(node: NodeIndex, parent: Class | Module) -> str | Name | Expression:
+    return _get_annotation(node.value, parent)
 
 
-def _get_tuple_annotation(node):
-    return ", ".join(_get_annotation(el) for el in node.elts)
+def _get_tuple_annotation(node: NodeTuple, parent: Class | Module) -> Expression:
+    return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
 
 
-def _get_list_annotation(node):
-    return ", ".join(_get_annotation(el) for el in node.elts)
+def _get_list_annotation(node: NodeList, parent: Class | Module) -> Expression:
+    return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
 
 
 _node_annotation_map = {
@@ -193,8 +226,8 @@ _node_annotation_map = {
 }
 
 
-def _get_annotation(node):
-    return _node_annotation_map.get(type(node), lambda _: None)(node)
+def _get_annotation(node: Node, parent: Class | Module) -> str | Name | Expression:
+    return _node_annotation_map.get(type(node), lambda node, parent: None)(node, parent)
 
 
 # ==========================================================
@@ -460,7 +493,6 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.filepath: Path = filepath
         self.code: str = code
         self.extensions: Extensions = extensions.instantiate(self)
-        # self.scope = defaultdict(dict)
         self.root: Node | None = None
         self.parent: Module | None = parent
         self.current: Module | Class | Function = None  # type: ignore
@@ -523,7 +555,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         bases = []
         if node.bases:
             for base in node.bases:
-                bases.append(f"{self.current.path}.{_get_base_class_name(base)}")
+                bases.append(_get_base_class(base, self.current))
 
         class_ = Class(
             name=node.name,
@@ -559,7 +591,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
 
         # handle parameters
         parameters = Parameters()
-        annotation: str | None
+        annotation: str | Name | Expression | None
 
         # TODO: probably some optimisations to do here
         args_kinds_defaults = reversed(
@@ -577,12 +609,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
         )
         for (arg, kind), default in args_kinds_defaults:
-            annotation = _get_annotation(arg.annotation)
+            annotation = _get_annotation(arg.annotation, parent=self.current)
             default = _get_parameter_default(default, self.filepath)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
-            annotation = _get_annotation(node.args.vararg.annotation)
+            annotation = _get_annotation(node.args.vararg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"*{node.args.vararg.arg}",
@@ -603,14 +635,14 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
         )
         for kwarg, default in kwargs_defaults:  # noqa: WPS440
-            annotation = _get_annotation(kwarg.annotation)
+            annotation = _get_annotation(kwarg.annotation, parent=self.current)
             default = _get_parameter_default(default, self.filepath)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
 
         if node.args.kwarg:
-            annotation = _get_annotation(node.args.kwarg.annotation)
+            annotation = _get_annotation(node.args.kwarg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"**{node.args.kwarg.arg}",
@@ -625,7 +657,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             lineno=lineno,
             endlineno=node.end_lineno,
             parameters=parameters,
-            returns=_get_annotation(node.returns),
+            returns=_get_annotation(node.returns, parent=self.current),
             decorators=decorators,
             docstring=_get_docstring(
                 node,
@@ -649,13 +681,13 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.handle_function(node, labels={"async"})
 
     def visit_Import(self, node) -> None:
-        # for alias in node.names:
-        #     self.scope[self.path][alias.asname or alias.name] = alias.name
+        for alias in node.names:
+            self.current.imports[alias.asname or alias.name] = alias.name
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node) -> None:
-        # for alias in node.names:
-        #     self.scope[self.path][alias.asname or alias.name] = f"{node.module}.{alias.name}"
+        for alias in node.names:
+            self.current.imports[alias.asname or alias.name] = f"{node.module}.{alias.name}"
         self.generic_visit(node)
 
     def handle_attribute(self, node, annotation: str | Name | Expression | None = None):  # noqa: WPS231
