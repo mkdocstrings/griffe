@@ -201,10 +201,11 @@ def get_docstring(
     Returns:
         A docstring.
     """
+    # TODO: possible optimization using a type map
     if isinstance(node, NodeExpr):
         doc = node.value
-    elif node.body and isinstance(node.body[0], NodeExpr) and not strict:
-        doc = node.body[0].value
+    elif node.body and isinstance(node.body[0], NodeExpr) and not strict:  # type: ignore
+        doc = node.body[0].value  # type: ignore
     else:
         return None
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
