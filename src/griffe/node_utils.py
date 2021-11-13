@@ -44,12 +44,13 @@ from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
 from functools import partial
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Class, Docstring, Module
-from griffe.docstrings.parsers import Parser
 from griffe.expressions import Expression, Name
+
+if TYPE_CHECKING:
+    from griffe.dataclasses import Class, Module
 
 
 def _join(sequence, item):
@@ -186,20 +187,16 @@ def get_annotation(node: Node, parent: Class | Module) -> str | Name | Expressio
 # docstrings
 def get_docstring(
     node: Node,
-    parser: Parser | None = None,
-    parser_options: dict[str, Any] | None = None,
     strict: bool = False,
-) -> Docstring | None:
+) -> tuple[str | None, int | None, int | None]:
     """Extract a docstring.
 
     Parameters:
         node: The node to extract the docstring from.
-        parser: The docstring parser to set on the docstring.
-        parser_options: The docstring parsing options to set on the docstring.
         strict: Whether to skip searching the body (functions).
 
     Returns:
-        A docstring.
+        A tuple with the value and line numbers of the docstring.
     """
     # TODO: possible optimization using a type map
     if isinstance(node, NodeExpr):
@@ -207,16 +204,12 @@ def get_docstring(
     elif node.body and isinstance(node.body[0], NodeExpr) and not strict:  # type: ignore
         doc = node.body[0].value  # type: ignore
     else:
-        return None
+        return None, None, None
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
-        return Docstring(
-            doc.value, lineno=doc.lineno, endlineno=doc.end_lineno, parser=parser, parser_options=parser_options
-        )
+        return doc.value, doc.lineno, doc.end_lineno
     if isinstance(doc, NodeStr):
-        return Docstring(
-            doc.s, lineno=doc.lineno, endlineno=doc.end_lineno, parser=parser, parser_options=parser_options
-        )
-    return None
+        return doc.s, doc.lineno, doc.end_lineno
+    return None, None, None
 
 
 # ==========================================================

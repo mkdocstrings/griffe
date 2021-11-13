@@ -14,7 +14,18 @@ from itertools import zip_longest
 from pathlib import Path
 from typing import Any
 
-from griffe.dataclasses import Attribute, Class, Decorator, Function, Kind, Module, Parameter, ParameterKind, Parameters
+from griffe.dataclasses import (
+    Attribute,
+    Class,
+    Decorator,
+    Docstring,
+    Function,
+    Kind,
+    Module,
+    Parameter,
+    ParameterKind,
+    Parameters,
+)
 from griffe.docstrings.parsers import Parser
 from griffe.expressions import Expression, Name
 from griffe.extended_ast import LastNodeError
@@ -92,6 +103,18 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         node.parent = parent  # type: ignore
         self._run_specific_or_generic(node)
 
+    def _get_docstring(self, node: Node, strict: bool = False) -> Docstring | None:
+        value, lineno, endlineno = get_docstring(node, strict=strict)
+        if value is None:
+            return None
+        return Docstring(
+            value,
+            lineno=lineno,
+            endlineno=endlineno,
+            parser=self.docstring_parser,
+            parser_options=self.docstring_options,
+        )
+
     def get_module(self) -> Module:
         # optimization: equivalent to ast.parse, but with optimize=1 to remove assert statements
         # TODO: with options, could use optimize=2 to remove docstrings
@@ -118,11 +141,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             name=self.module_name,
             filepath=self.filepath,
             parent=self.parent,
-            docstring=get_docstring(
-                node,
-                parser=self.docstring_parser,
-                parser_options=self.docstring_options,
-            ),
+            docstring=self._get_docstring(node),
         )
         self.generic_visit(node)
 
@@ -149,11 +168,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             name=node.name,
             lineno=lineno,
             endlineno=node.end_lineno,
-            docstring=get_docstring(
-                node,
-                parser=self.docstring_parser,
-                parser_options=self.docstring_options,
-            ),
+            docstring=self._get_docstring(node),
             decorators=decorators,
             bases=bases,
         )
@@ -247,11 +262,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             parameters=parameters,
             returns=get_annotation(node.returns, parent=self.current),
             decorators=decorators,
-            docstring=get_docstring(
-                node,
-                parser=self.docstring_parser,
-                parser_options=self.docstring_options,
-            ),
+            docstring=self._get_docstring(node),
         )
         self.current[node.name] = function
 
@@ -301,12 +312,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         value = get_value(node.value)
 
         try:
-            docstring = get_docstring(
-                node.next,
-                parser=self.docstring_parser,
-                parser_options=self.docstring_options,
-                strict=True,
-            )
+            docstring = self._get_docstring(node.next, strict=True)
         except (LastNodeError, AttributeError):
             docstring = None
 
