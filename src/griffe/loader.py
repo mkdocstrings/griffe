@@ -283,7 +283,7 @@ def find_module(module_name: str, search_paths: list[str | Path] | None = None) 
                 if abs_path.name.endswith(".pth"):
                     try:
                         return _handle_pth_file(abs_path)
-                    except UnhandledPthFile as error:
+                    except UnhandledPthFileError as error:
                         raise ModuleNotFoundError(module_name) from error
                 return abs_path
 
