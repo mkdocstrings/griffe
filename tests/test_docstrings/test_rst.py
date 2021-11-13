@@ -104,7 +104,7 @@ def test_parse__only_param_field__empty_markdown():
         "param",
         "parameter",
         "arg",
-        "parameter",
+        "arguments",
         "key",
         "keyword",
     ],
