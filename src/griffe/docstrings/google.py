@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, Pattern
+from typing import TYPE_CHECKING, Any, List, Pattern, Tuple
 
 from griffe.docstrings.dataclasses import (
     DocstringAdmonition,
@@ -41,16 +41,21 @@ _section_kind = {
     "attributes": DocstringSectionKind.attributes,
 }
 
+BlockItem = Tuple[int, List[str]]
+BlockItems = List[BlockItem]
+ItemsBlock = Tuple[BlockItems, int]
+
 _RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>.+))?$", re.I)
 """Regular expression to match admonitions, of the form `TYPE: [TITLE]`."""
 
 
-def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int]:  # noqa: WPS231
+def _read_block_items(docstring: Docstring, offset: int) -> ItemsBlock:  # noqa: WPS231
     lines = docstring.lines
     if offset >= len(lines):
         return [], offset
 
     new_offset = offset
+    items: BlockItems = []
 
     # skip first empty lines
     while _is_empty_line(lines[new_offset]):
@@ -64,6 +69,7 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int
         return [], new_offset - 1
 
     # start processing first item
+    current_item = (new_offset, [lines[new_offset][indent:]])
     new_offset += 1
 
     # loop on next lines
@@ -72,12 +78,12 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int
 
         if line.startswith(indent * 2 * " "):
             # continuation line
-            current_item.append(line[indent * 2 :])
+            current_item[1].append(line[indent * 2 :])
 
         elif line.startswith((indent + 1) * " "):
             # indent between initial and continuation: append but warn
             cont_indent = len(line) - len(line.lstrip())
-            current_item.append(line[cont_indent:])
+            current_item[1].append(line[cont_indent:])
             _warn(
                 docstring,
                 new_offset,
@@ -87,12 +93,12 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int
 
         elif line.startswith(indent * " "):
             # indent equal to initial one: new item
-            items.append("\n".join(current_item))
-            current_item = [line[indent:]]
+            items.append(current_item)
+            current_item = (new_offset, [line[indent:]])
 
         elif _is_empty_line(line):
             # empty line: preserve it in the current item
-            current_item.append("")
+            current_item[1].append("")
 
         else:
             # indent lower than initial one: end of section
@@ -101,7 +107,7 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[str], int
         new_offset += 1
 
     if current_item:
-        items.append("\n".join(current_item).rstrip("\n"))
+        items.append(current_item)
 
     return items, new_offset - 1
 
@@ -144,16 +150,16 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
 
     block, new_offset = _read_block_items(docstring, offset)
 
-    for arg_line in block:
+    for line_number, param_lines in block:
 
         # check the presence of a name and description, separated by a semi-colon
         try:
-            name_with_type, description = arg_line.split(":", 1)
+            name_with_type, description = param_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, new_offset, f"Failed to get 'name: description' pair from '{param_line}'")
+            _warn(docstring, line_number, f"Failed to get 'name: description' pair from '{param_lines[0]}'")
             continue
 
-        description = description.lstrip()
+        description = "\n".join([description.lstrip(), *param_lines[1:]]).rstrip("\n")
 
         # use the type given after the parameter name, if any
         if " " in name_with_type:
@@ -175,7 +181,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
             default = None
 
         if annotation is None:
-            _warn(docstring, new_offset, f"No type or annotation for parameter '{name}'")
+            _warn(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
         parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))
 
@@ -207,14 +213,14 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
     block, new_offset = _read_block_items(docstring, offset)
 
     annotation: str | None
-    for attr_line in block:
+    for line_number, attr_lines in block:
         try:
-            name_with_type, description = attr_line.split(":", 1)
+            name_with_type, description = attr_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, new_offset, f"Failed to get 'name: description' pair from '{attr_line}'")
+            _warn(docstring, line_number, f"Failed to get 'name: description' pair from '{attr_lines[0]}'")
             continue
 
-        description = description.lstrip()
+        description = "\n".join([description.lstrip(), *attr_lines[1:]]).rstrip("\n")
 
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
@@ -241,13 +247,14 @@ def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     exceptions = []
     block, new_offset = _read_block_items(docstring, offset)
 
-    for exception_line in block:
+    for line_number, exception_lines in block:
         try:
-            annotation, description = exception_line.split(": ", 1)
+            annotation, description = exception_lines[0].split(": ", 1)
         except ValueError:
-            _warn(docstring, new_offset, f"Failed to get 'exception: description' pair from '{exception_line}'")
+            _warn(docstring, line_number, f"Failed to get 'exception: description' pair from '{exception_lines[0]}'")
         else:
-            exceptions.append(DocstringException(annotation=annotation, description=description.lstrip(" ")))
+            description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
+            exceptions.append(DocstringException(annotation=annotation, description=description))
 
     if exceptions:
         return DocstringSection(DocstringSectionKind.raises, exceptions), new_offset
@@ -260,13 +267,14 @@ def _read_warns_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
     warns = []
     block, new_offset = _read_block_items(docstring, offset)
 
-    for exception_line in block:
+    for line_number, warning_lines in block:
         try:
-            annotation, description = exception_line.split(": ", 1)
+            annotation, description = warning_lines[0].split(": ", 1)
         except ValueError:
-            _warn(docstring, new_offset, f"Failed to get 'warning: description' pair from '{exception_line}'")
+            _warn(docstring, line_number, f"Failed to get 'warning: description' pair from '{warning_lines[0]}'")
         else:
-            warns.append(DocstringWarn(annotation=annotation, description=description.lstrip(" ")))
+            description = "\n".join([description.lstrip(), *warning_lines[1:]]).rstrip("\n")
+            warns.append(DocstringWarn(annotation=annotation, description=description))
 
     if warns:
         return DocstringSection(DocstringSectionKind.warns, warns), new_offset
