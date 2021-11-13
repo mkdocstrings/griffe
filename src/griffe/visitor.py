@@ -512,8 +512,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                 *zip_longest(  # noqa: WPS356
                     reversed(
                         (
-                            *zip_longest(node.args.posonlyargs, [], fillvalue=inspect.Parameter.POSITIONAL_ONLY),
-                            *zip_longest(node.args.args, [], fillvalue=inspect.Parameter.POSITIONAL_OR_KEYWORD),
+                            *zip_longest(node.args.posonlyargs, [], fillvalue=ParameterKind.positional_only),
+                            *zip_longest(node.args.args, [], fillvalue=ParameterKind.positional_or_keyword),
                         ),
                     ),
                     reversed(node.args.defaults),
@@ -532,7 +532,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                 Parameter(
                     f"*{node.args.vararg.arg}",
                     annotation=annotation,
-                    kind=inspect.Parameter.VAR_POSITIONAL,
+                    kind=ParameterKind.var_positional,
                     default="()",
                 )
             )
@@ -551,7 +551,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             annotation = _get_annotation(kwarg.annotation)
             default = _get_parameter_default(default, self.filepath)
             parameters.add(
-                Parameter(kwarg.arg, annotation=annotation, kind=inspect.Parameter.KEYWORD_ONLY, default=default)
+                Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
 
         if node.args.kwarg:
@@ -560,8 +560,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                 Parameter(
                     f"**{node.args.kwarg.arg}",
                     annotation=annotation,
-                    kind=inspect.Parameter.VAR_KEYWORD,
-                    default="{}",
+                    kind=ParameterKind.var_keyword,
                 )
             )
 

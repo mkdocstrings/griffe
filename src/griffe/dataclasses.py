@@ -17,7 +17,23 @@ from griffe.collections import lines_collection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
 
-ParameterKind = inspect._ParameterKind  # noqa: WPS437
+
+class ParameterKind(enum.Enum):
+    """Enumeration of the different parameter kinds.
+
+    Attributes:
+        positional_only: Positional-only parameter.
+        positional_or_keyword: Positional or keyword parameter.
+        var_positional: Variadic positional parameter.
+        keyword_only: Keyword-only parameter.
+        var_keyword: Variadic keyword parameter.
+    """
+
+    positional_only: str = "positional-only"
+    positional_or_keyword: str = "positional or keyword"
+    var_positional: str = "variadic positional"
+    keyword_only: str = "keyword-only"
+    var_keyword: str = "variadic keyword"
 
 
 class Decorator:
@@ -150,7 +166,7 @@ class Parameter:
     Attributes:
         name: The parameter name.
         annotation: The parameter annotation, if any.
-        kind: The parameter kind (see [`inspect.Parameter.kind`][]).
+        kind: The parameter kind.
         default: The parameter default, if any.
     """
 
@@ -167,7 +183,7 @@ class Parameter:
         Parameters:
             name: The parameter name.
             annotation: The parameter annotation, if any.
-            kind: The parameter kind (see [`inspect.Parameter.kind`][]).
+            kind: The parameter kind.
             default: The parameter default, if any.
         """
         self.name: str = name
