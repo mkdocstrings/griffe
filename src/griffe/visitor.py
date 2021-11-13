@@ -8,13 +8,13 @@ populating its members recursively, by using a custom [`NodeVisitor`][ast.NodeVi
 
 from __future__ import annotations
 
-import inspect
 from ast import AST as Node
 from ast import And as NodeAnd
 from ast import AnnAssign as NodeAnnAssign
 from ast import Assign as NodeAssign
 from ast import Attribute as NodeAttribute
 from ast import BinOp as NodeBinOp
+from ast import BitAnd as NodeBitAnd
 from ast import BitOr as NodeBitOr
 from ast import BoolOp as NodeBoolOp
 from ast import Call as NodeCall
@@ -22,6 +22,7 @@ from ast import Compare as NodeCompare
 from ast import Constant as NodeConstant
 from ast import Dict as NodeDict
 from ast import DictComp as NodeDictComp
+from ast import Ellipsis as NodeEllipsis
 from ast import Expr as NodeExpr
 from ast import FormattedValue as NodeFormattedValue
 from ast import GeneratorExp as NodeGeneratorExp
@@ -48,11 +49,26 @@ from ast import UnaryOp as NodeUnaryOp
 from ast import USub as NodeUSub
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
+from functools import partial
 from itertools import zip_longest
 from pathlib import Path
+from typing import Any
 
 from griffe.collections import lines_collection
-from griffe.dataclasses import Attribute, Class, Decorator, Docstring, Function, Kind, Module, Parameter, Parameters
+from griffe.dataclasses import (
+    Attribute,
+    Class,
+    Decorator,
+    Docstring,
+    Expression,
+    Function,
+    Kind,
+    Module,
+    Name,
+    Parameter,
+    ParameterKind,
+    Parameters,
+)
 from griffe.extended_ast import LastNodeError
 from griffe.extensions import Extensions
 from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
@@ -161,31 +177,31 @@ def _get_annotation(node):
 
 # ==========================================================
 # values
-def _get_name_value(node):
+def _get_name_value(node: NodeName):
     return node.id
 
 
-def _get_constant_value(node):
+def _get_constant_value(node: NodeConstant):
     return repr(node.value)
 
 
-def _get_attribute_value(node):
+def _get_attribute_value(node: NodeAttribute):
     return f"{_get_value(node.value)}.{node.attr}"
 
 
-def _get_binop_value(node):
+def _get_binop_value(node: NodeBinOp):
     return f"{_get_value(node.left)} {_get_value(node.op)} {_get_value(node.right)}"
 
 
-def _get_bitor_value(node):
+def _get_bitor_value(node: NodeBitOr):
     return "|"
 
 
-def _get_mult_value(node):
+def _get_mult_value(node: NodeMult):
     return "*"
 
 
-def _get_unaryop_value(node):
+def _get_unaryop_value(node: NodeUnaryOp):
     if isinstance(node.op, NodeUSub):
         return f"-{_get_value(node.operand)}"
     if isinstance(node.op, NodeUAdd):
@@ -194,100 +210,100 @@ def _get_unaryop_value(node):
         return f"not {_get_value(node.operand)}"
 
 
-def _get_slice_value(node):
+def _get_slice_value(node: NodeSlice):
     value = f"{_get_value(node.lower) if node.lower else ''}:{_get_value(node.upper) if node.upper else ''}"
     if node.step:
         value = f"{value}:{_get_value(node.step)}"
     return value
 
 
-def _get_subscript_value(node):
+def _get_subscript_value(node: NodeSubscript):
     return f"{_get_value(node.value)}[{_get_value(node.slice).strip('()')}]"
 
 
-def _get_index_value(node):
+def _get_index_value(node: NodeIndex):
     return _get_value(node.value)
 
 
-def _get_lambda_value(node):
+def _get_lambda_value(node: NodeLambda):
     return f"lambda {_get_value(node.args)}: {_get_value(node.body)}"
 
 
-def _get_list_value(node):
+def _get_list_value(node: NodeList):
     return "[" + ", ".join(_get_value(el) for el in node.elts) + "]"
 
 
-def _get_tuple_value(node):
+def _get_tuple_value(node: NodeTuple):
     return "(" + ", ".join(_get_value(el) for el in node.elts) + ")"
 
 
-def _get_keyword_value(node):
+def _get_keyword_value(node: NodeKeyword):
     return f"{node.arg}={_get_value(node.value)}"
 
 
-def _get_dict_value(node):
+def _get_dict_value(node: NodeDict):
     pairs = zip(node.keys, node.values)
     return "{" + ", ".join(f"{_get_value(key)}: {_get_value(value)}" for key, value in pairs) + "}"
 
 
-def _get_set_value(node):
+def _get_set_value(node: NodeSet):
     return "{" + ", ".join(_get_value(el) for el in node.elts) + "}"
 
 
-def _get_ellipsis_value(node):
+def _get_ellipsis_value(node: NodeEllipsis):
     return "..."
 
 
-def _get_starred_value(node):
+def _get_starred_value(node: NodeStarred):
     return _get_value(node.value)
 
 
-def _get_formatted_value(node):
+def _get_formatted_value(node: NodeFormattedValue):
     return f"{{{_get_value(node.value)}}}"
 
 
-def _get_joinedstr_value(node):
+def _get_joinedstr_value(node: NodeJoinedStr):
     return "".join(_get_value(value) for value in node.values)
 
 
-def _get_boolop_value(node):
+def _get_boolop_value(node: NodeBoolOp):
     if isinstance(node.op, NodeOr):
         return " or ".join(_get_value(value) for value in node.values)
     if isinstance(node.op, NodeAnd):
         return " and ".join(_get_value(value) for value in node.values)
 
 
-def _get_compare_value(node):
+def _get_compare_value(node: NodeCompare):
     left = _get_value(node.left)
     ops = [_get_value(op) for op in node.ops]
     comparators = [_get_value(comparator) for comparator in node.comparators]
     return f"{left} " + " ".join(f"{op} {comp}" for op, comp in zip(ops, comparators))
 
 
-def _get_noteq_value(node):
+def _get_noteq_value(node: NodeNotEq):
     return "!="
 
 
-def _get_generatorexp_value(node):
+def _get_generatorexp_value(node: NodeGeneratorExp):
     element = _get_value(node.elt)
     generators = [_get_value(gen) for gen in node.generators]
     return f"{element} " + " ".join(generators)
 
 
-def _get_listcomp_value(node):
+def _get_listcomp_value(node: NodeListComp):
     element = _get_value(node.elt)
     generators = [_get_value(gen) for gen in node.generators]
     return f"[{element} " + " ".join(generators) + "]"
 
 
-def _get_dictcomp_value(node):
+def _get_dictcomp_value(node: NodeDictComp):
     key = _get_value(node.key)
     value = _get_value(node.value)
     generators = [_get_value(gen) for gen in node.generators]
     return f"{{{key}: {value} " + " ".join(generators) + "}"
 
 
-def _get_comprehension_value(node):
+def _get_comprehension_value(node: NodeComprehension):
     target = _get_value(node.target)
     iterable = _get_value(node.iter)
     conditions = [_get_value(condition) for condition in node.ifs]
@@ -299,11 +315,11 @@ def _get_comprehension_value(node):
     return value
 
 
-def _get_ifexp_value(node):
+def _get_ifexp_value(node: NodeIfExp):
     return f"{_get_value(node.body)} if {_get_value(node.test)} else {_get_value(node.orelse)}"
 
 
-def _get_call_value(node):
+def _get_call_value(node: NodeCall):
     posargs = ", ".join(_get_value(arg) for arg in node.args)
     kwargs = ", ".join(_get_value(kwarg) for kwarg in node.keywords)
     if posargs and kwargs:
@@ -350,26 +366,24 @@ _node_value_map = {
 }
 
 
-def _get_value(node):
+def _get_value(node: Node):
     return _node_value_map.get(type(node), lambda _: None)(node)
 
 
 # ==========================================================
 # names
-def _get_attribute_name(node):
+def _get_attribute_name(node: NodeAttribute):
     return f"{_get_names(node.value)}.{node.attr}"
 
 
-def _get_name_name(node):
+def _get_name_name(node: NodeName):
     return node.id
 
 
-def _get_assign_names(node):
-    return [name for name in [_get_names(target) for target in node.targets] if name]
+def _get_assign_names(node: NodeAssign):
 
 
-def _get_annassign_names(node):
-    return [name for name in _get_names(node.target) if name]
+def _get_annassign_names(node: NodeAnnAssign):
 
 
 _node_names_map = {
@@ -380,11 +394,11 @@ _node_names_map = {
 }
 
 
-def _get_names(node):
+def _get_names(node: Node):
     return _node_names_map.get(type(node), lambda _: None)(node)
 
 
-def _get_instance_names(node):
+def _get_instance_names(node: Node):
     return [name.split(".", 1)[1] for name in _get_names(node) if name.startswith("self.")]
 
 
