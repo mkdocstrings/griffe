@@ -8,12 +8,23 @@ The available formats are:
 from __future__ import annotations
 
 import json
-from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Type
 
 from griffe.dataclasses import Attribute, Class, Function, Kind, Module, ParameterKind
 from griffe.docstrings.parsers import Parser
+
+
+def _enum_value(obj):
+    return obj.value
+
+
+_type_map: dict[Type, Callable[[Any], Any]] = {
+    Path: str,
+    ParameterKind: _enum_value,
+    Kind: _enum_value,
+    set: list,
+}
 
 
 class Encoder(json.JSONEncoder):
@@ -64,15 +75,10 @@ class Encoder(json.JSONEncoder):
         Returns:
             A serializable representation.
         """
-        if hasattr(obj, "as_dict"):
+        try:
             return obj.as_dict(full=self.full, docstring_parser=self.docstring_parser, **self.docstring_options)
-        if isinstance(obj, (Path, ParameterKind)):
-            return str(obj)
-        if isinstance(obj, Enum):
-            return obj.value
-        if isinstance(obj, set):
-            return list(obj)
-        return super().default(obj)
+        except AttributeError:
+            return _type_map.get(type(obj), super().default)(obj)
 
 
 def decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Module | Class | Function | Attribute:  # noqa: WPS231
