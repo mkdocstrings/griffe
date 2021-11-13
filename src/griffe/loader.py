@@ -15,7 +15,7 @@ from __future__ import annotations
 import asyncio
 import sys
 from pathlib import Path
-from typing import Iterator, Tuple
+from typing import Any, Iterator, Sequence, Tuple
 
 from griffe.collections import lines_collection
 from griffe.dataclasses import Module
@@ -75,7 +75,7 @@ class _BaseGriffeLoader:
     def _module_name_and_path(
         self,
         module: str | Path,
-        search_paths: list[str | Path] | None = None,
+        search_paths: Sequence[str | Path] | None = None,
     ) -> tuple[str, Path]:
         if isinstance(module, Path):
             # programatically passed a Path, try only that
@@ -101,7 +101,7 @@ class GriffeLoader(_BaseGriffeLoader):
         self,
         module: str | Path,
         submodules: bool = True,
-        search_paths: list[str | Path] | None = None,
+        search_paths: Sequence[str | Path] | None = None,
     ) -> Module:
         """Load a module.
 
@@ -166,7 +166,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         self,
         module: str | Path,
         submodules: bool = True,
-        search_paths: list[str | Path] | None = None,
+        search_paths: Sequence[str | Path] | None = None,
     ) -> Module:
         """Load a module.
 
@@ -260,7 +260,7 @@ def module_name_path(path: Path) -> tuple[str, Path]:
 
 # credits to @NiklasRosenstein and the docspec project
 # TODO: possible optimization by caching elements of search directories
-def find_module(module_name: str, search_paths: list[str | Path] | None = None) -> Path:
+def find_module(module_name: str, search_paths: Sequence[str | Path] | None = None) -> Path:  # noqa: WPS231
     """Find a module in a given list of paths or in `sys.path`.
 
     Parameters:

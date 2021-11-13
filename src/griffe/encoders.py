@@ -75,7 +75,7 @@ class Encoder(json.JSONEncoder):
         return super().default(obj)
 
 
-def decoder(obj_dict: dict[str, Any]) -> Module | Class | Function | Attribute:  # noqa: WPS231
+def decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Module | Class | Function | Attribute:  # noqa: WPS231
     """Decode dictionaries as data classes.
 
     The [`json.loads`] method walks the tree from bottom to top.
