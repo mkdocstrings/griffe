@@ -32,7 +32,7 @@ class Encoder(json.JSONEncoder):
         self,
         *args: Any,
         full: bool = False,
-        docstring_parser: Parser | None = Parser.google,
+        docstring_parser: Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
         **kwargs: Any
     ) -> None:
