@@ -56,7 +56,7 @@ docs = [
 ]
 format = [
     "autoflake~=1.4",
-    "black~=21.9b0",
+    "black~=21.10b0",
     "isort~=5.8",
 ]
 # TODO: remove this section when git-changelog is more powerful
