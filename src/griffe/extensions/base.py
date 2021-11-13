@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import ast
 import enum
-from typing import TYPE_CHECKING, Type
+from types import ModuleType
+from typing import TYPE_CHECKING, Any, Sequence, Type
 
 if TYPE_CHECKING:
     from griffe.visitor import _MainVisitor as MainVisitor  # noqa: WPS450
@@ -150,3 +151,43 @@ class Extensions:
         for visitor_class in self._classes:
             self._instances[visitor_class.when].append(visitor_class(main_visitor))
         return self
+
+
+builtin_extensions: dict[str, ModuleType] = {}
+
+
+def load_extensions(exts: Sequence[str | dict[str, Any] | Type[Extension]]) -> Extensions:  # noqa: WPS231
+    """Load configured extensions.
+
+    Parameters:
+        exts: A sequence of extension, with potential configuration options.
+
+    Returns:
+        An extensions container.
+    """
+    extensions = Extensions()
+
+    for extension_item in exts:
+        if issubclass(extension_item, Extension):
+            extensions.add(extension_item)
+            continue
+
+        if isinstance(extension_item, str):
+            if extension_item in builtin_extensions:
+                ext_module = builtin_extensions[extension_item]
+            else:
+                ext_module = __import__(extension_item)
+            options = {}
+        elif isinstance(extension_item, dict):
+            import_path = next(extension_item.keys())
+            if import_path in builtin_extensions:
+                ext_module = builtin_extensions[import_path]
+            else:
+                ext_module = __import__(import_path)
+            options = next(extension_item.values())
+
+        # TODO: handle AttributeError
+        extension = ext_module.get_extension(**options)  # type: ignore
+        extensions.add(extension)
+
+    return extensions
