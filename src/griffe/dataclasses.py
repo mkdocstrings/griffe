@@ -412,13 +412,24 @@ class Object:
         return ".".join((self.parent.path, self.name))
 
     @cached_property
+    def lines(self) -> list[str]:
+        """Return the lines containing the source of this object.
+
+        Returns:
+            A list of lines.
+        """
+        if self.lineno is None or self.endlineno is None:
+            return lines_collection[self.filepath]
+        return lines_collection[self.filepath][self.lineno - 1 : self.endlineno]
+
+    @cached_property
     def source(self) -> str:
         """Return the source code of this object.
 
         Returns:
             The source code.
         """
-        return dedent("\n".join(lines_collection[self.filepath][self.lineno - 1 : self.endlineno]))
+        return dedent("\n".join(self.lines))
 
     @property
     def modules(self) -> dict[str, Module]:
