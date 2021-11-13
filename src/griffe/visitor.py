@@ -403,9 +403,13 @@ def _get_name_name(node: NodeName):
 
 
 def _get_assign_names(node: NodeAssign):
+    names = (_get_names(target) for target in node.targets)
+    return [name for name in names if name]
 
 
 def _get_annassign_names(node: NodeAnnAssign):
+    name = _get_names(node.target)
+    return [name] if name else []
 
 
 _node_names_map = {
