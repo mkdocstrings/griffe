@@ -75,6 +75,13 @@ plugins:
       python:
         import:
         - https://docs.python.org/3/objects.inv
+        selection:
+          docstring_style: google
+        rendering:
+          show_submodules: no
+          docstring_section_style: list
+          members_order: alphabetical
+          show_category_heading: no
     watch:
     - src/griffe
 
