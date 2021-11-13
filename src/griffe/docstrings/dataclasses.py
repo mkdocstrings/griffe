@@ -188,6 +188,11 @@ class DocstringParameter(DocstringNamedElement):
 
     @property
     def default(self):
+        """Return the default value of this parameter.
+
+        Returns:
+            The parameter's default.
+        """
         return self.value
 
     @default.setter
