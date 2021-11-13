@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Any
 
 from griffe.docstrings.dataclasses import DocstringSection, DocstringSectionKind
 from griffe.docstrings.google import parse as parse_google
-from griffe.docstrings.rst import parse as parse_rst
 from griffe.docstrings.numpy import parse as parse_numpy
+from griffe.docstrings.rst import parse as parse_rst
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
@@ -29,7 +29,7 @@ parsers = {
 }
 
 
-def parse(docstring: Docstring, parser: Parser, **options: Any) -> list[DocstringSection]:
+def parse(docstring: Docstring, parser: Parser | None, **options: Any) -> list[DocstringSection]:
     """Parse the docstring.
 
     Parameters:

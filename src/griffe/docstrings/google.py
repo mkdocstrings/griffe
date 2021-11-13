@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Pattern
+from typing import TYPE_CHECKING, Any, Pattern
 
 from griffe.docstrings.dataclasses import (
     DocstringAdmonition,

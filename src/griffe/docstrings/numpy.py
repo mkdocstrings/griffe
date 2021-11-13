@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import re
 from textwrap import dedent
-from typing import TYPE_CHECKING, Pattern
+from typing import TYPE_CHECKING, Any, Pattern
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
