@@ -612,7 +612,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         #     self.scope[self.path][alias.asname or alias.name] = f"{node.module}.{alias.name}"
         self.generic_visit(node)
 
-    def handle_data(self, node, annotation: str | None = None):  # noqa: WPS231
+    def handle_attribute(self, node, annotation: str | Name | Expression | None = None):  # noqa: WPS231
         parent = self.current
         labels = set()
 
@@ -657,7 +657,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             parent[name] = attribute  # type: ignore
 
     def visit_Assign(self, node) -> None:
-        self.handle_data(node)
+        self.handle_attribute(node)
 
     def visit_AnnAssign(self, node) -> None:
-        self.handle_data(node, _get_annotation(node))
+        self.handle_attribute(node, _get_annotation(node.annotation, parent=self.current))
