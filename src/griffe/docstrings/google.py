@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import re
+from ast import PyCF_ONLY_AST
+from contextlib import suppress
 from typing import TYPE_CHECKING, Any, List, Pattern, Tuple
 
 from griffe.docstrings.dataclasses import (
@@ -18,6 +20,8 @@ from griffe.docstrings.dataclasses import (
     DocstringYield,
 )
 from griffe.docstrings.utils import warning
+from griffe.expressions import Expression, Name
+from griffe.node_utils import get_annotation
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
@@ -145,8 +149,7 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
 
 def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
     parameters = []
-    type_: str
-    annotation: str | None
+    annotation: str | Name | Expression | None
 
     block, new_offset = _read_block_items(docstring, offset)
 
@@ -163,10 +166,14 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
 
         # use the type given after the parameter name, if any
         if " " in name_with_type:
-            name, type_ = name_with_type.split(" ", 1)
-            annotation = type_.strip("()")
+            name, annotation = name_with_type.split(" ", 1)
+            annotation = annotation.strip("()")
             if annotation.endswith(", optional"):  # type: ignore
                 annotation = annotation[:-10]  # type: ignore
+            # try to compile the annotation to transform it into an expression
+            with suppress(SyntaxError):
+                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
+                annotation = get_annotation(code.body, parent=docstring.parent)  # type: ignore
         else:
             name = name_with_type
             # try to use the annotation from the signature
@@ -212,7 +219,7 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
     attributes = []
     block, new_offset = _read_block_items(docstring, offset)
 
-    annotation: str | None
+    annotation: str | Name | Expression | None
     for line_number, attr_lines in block:
         try:
             name_with_type, description = attr_lines[0].split(":", 1)
@@ -227,6 +234,10 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
             annotation = annotation.strip("()")
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
+            # try to compile the annotation to transform it into an expression
+            with suppress(SyntaxError):
+                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
+                annotation = get_annotation(code.body, parent=docstring.parent)  # type: ignore
         else:
             name = name_with_type
             try:
