@@ -441,7 +441,7 @@ class Object:
         Returns:
             A dictionary of modules.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}
+        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}  # type: ignore
 
     @property
     def classes(self) -> dict[str, Class]:
@@ -450,7 +450,7 @@ class Object:
         Returns:
             A dictionary of classes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}
+        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}  # type: ignore
 
     @property
     def functions(self) -> dict[str, Function]:
@@ -459,7 +459,7 @@ class Object:
         Returns:
             A dictionary of functions.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}
+        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}  # type: ignore
 
     @property
     def attributes(self) -> dict[str, Attribute]:
@@ -468,7 +468,7 @@ class Object:
         Returns:
             A dictionary of attributes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}
+        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore
 
     def resolve(self, name: str) -> str:
         """Resolve a name within this object's and parents' scope.
@@ -631,7 +631,7 @@ class Class(Object):
     def __init__(
         self,
         *args: Any,
-        bases: list[str] | None = None,
+        bases: list[Name | Expression] | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -644,8 +644,8 @@ class Class(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.bases = bases or []
-        self.decorators = decorators or []
+        self.bases: list[Name | Expression] = bases or []
+        self.decorators: list[Decorator] = decorators or []
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this class' data as a dictionary.

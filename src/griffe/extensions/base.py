@@ -168,8 +168,8 @@ def load_extensions(exts: Sequence[str | dict[str, Any] | Type[Extension]]) -> E
     extensions = Extensions()
 
     for extension_item in exts:
-        if issubclass(extension_item, Extension):
-            extensions.add(extension_item)
+        if issubclass(extension_item, Extension):  # type: ignore
+            extensions.add(extension_item)  # type: ignore
             continue
 
         if isinstance(extension_item, str):
@@ -179,12 +179,12 @@ def load_extensions(exts: Sequence[str | dict[str, Any] | Type[Extension]]) -> E
                 ext_module = __import__(extension_item)
             options = {}
         elif isinstance(extension_item, dict):
-            import_path = next(extension_item.keys())
+            import_path = next(extension_item.keys())  # type: ignore
             if import_path in builtin_extensions:
                 ext_module = builtin_extensions[import_path]
             else:
                 ext_module = __import__(import_path)
-            options = next(extension_item.values())
+            options = next(extension_item.values())  # type: ignore
 
         # TODO: handle AttributeError
         extension = ext_module.get_extension(**options)  # type: ignore

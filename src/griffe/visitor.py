@@ -83,7 +83,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.extensions: Extensions = extensions.instantiate(self)
         self.root: Node | None = None
         self.parent: Module | None = parent
-        self.current: Module | Class | Function = None  # type: ignore
+        self.current: Module | Class = None  # type: ignore
         self.in_decorator: bool = False
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
@@ -258,7 +258,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         function.labels |= labels
 
         if self.current.kind is Kind.CLASS and function.name == "__init__":
-            self.current = function
+            self.current = function  # type: ignore
             self.generic_visit(node)
             self.current = self.current.parent  # type: ignore
 

@@ -43,6 +43,7 @@ from ast import USub as NodeUSub
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
 from functools import partial
+from pathlib import Path
 from typing import Any
 
 from griffe.collections import lines_collection
@@ -89,7 +90,16 @@ _node_baseclass_map = {
 }
 
 
-def get_baseclass(node: Node, parent: Class | Module) -> str | Name | Expression:
+def get_baseclass(node: Node, parent: Class | Module) -> Name | Expression:
+    """Extract a resolvable name for a given base class.
+
+    Parameters:
+        node: The base class node.
+        parent: The parent used to resolve the name.
+
+    Returns:
+        A resovable name or expression.
+    """
     return _node_baseclass_map.get(type(node), lambda node, parent: None)(node, parent)  # type: ignore
 
 
@@ -160,17 +170,37 @@ _node_annotation_map = {
 
 
 def get_annotation(node: Node, parent: Class | Module) -> str | Name | Expression:
+    """Extract a resolvable annotation.
+
+    Parameters:
+        node: The annotation node.
+        parent: The parent used to resolve the name.
+
+    Returns:
+        A string or resovable name or expression.
+    """
     return _node_annotation_map.get(type(node), lambda node, parent: None)(node, parent)  # type: ignore
 
 
 # ==========================================================
 # docstrings
 def get_docstring(
-    node,
+    node: Node,
     parser: Parser | None = None,
     parser_options: dict[str, Any] | None = None,
     strict: bool = False,
 ) -> Docstring | None:
+    """Extract a docstring.
+
+    Parameters:
+        node: The node to extract the docstring from.
+        parser: The docstring parser to set on the docstring.
+        parser_options: The docstring parsing options to set on the docstring.
+        strict: Whether to skip searching the body (functions).
+
+    Returns:
+        A docstring.
+    """
     if isinstance(node, NodeExpr):
         doc = node.value
     elif node.body and isinstance(node.body[0], NodeExpr) and not strict:
@@ -256,7 +286,7 @@ def _get_keyword_value(node: NodeKeyword):
 
 def _get_dict_value(node: NodeDict):
     pairs = zip(node.keys, node.values)
-    return "{" + ", ".join(f"{get_value(key)}: {get_value(value)}" for key, value in pairs) + "}"
+    return "{" + ", ".join(f"{get_value(key)}: {get_value(value)}" for key, value in pairs) + "}"  # type: ignore
 
 
 def _get_set_value(node: NodeSet):
@@ -380,7 +410,15 @@ _node_value_map = {
 }
 
 
-def get_value(node: Node):
+def get_value(node: Node) -> str:
+    """Extract a complex value as a string.
+
+    Parameters:
+        node: The node to extract the value from.
+
+    Returns:
+        The unparsed code of the node.
+    """
     return _node_value_map.get(type(node), lambda _: None)(node)  # type: ignore
 
 
@@ -412,17 +450,43 @@ _node_names_map = {
 }
 
 
-def get_names(node: Node):
+def get_names(node: Node) -> list[str]:
+    """Extract names from an assignment node.
+
+    Parameters:
+        node: The node to extract names from.
+
+    Returns:
+        A list of names.
+    """
     return _node_names_map.get(type(node), lambda _: None)(node)  # type: ignore
 
 
-def get_instance_names(node: Node):
+def get_instance_names(node: Node) -> list[str]:
+    """Extract names from an assignment node, only for instance attributes.
+
+    Parameters:
+        node: The node to extract names from.
+
+    Returns:
+        A list of names.
+    """
     return [name.split(".", 1)[1] for name in get_names(node) if name.startswith("self.")]
 
 
 # ==========================================================
 # parameters
-def get_parameter_default(node, filepath):
+def get_parameter_default(node: Node, filepath: Path) -> str | None:
+    """Extract the default value of a function parameter.
+
+    Parameters:
+        node: The node to extract the default value from.
+        filepath: The filepath in which the parameter is written.
+            It allows to retrieve the actual code directly from the lines collection.
+
+    Returns:
+        The default value as a string.
+    """
     if node is None:
         return None
     if isinstance(node, NodeConstant):
@@ -432,3 +496,4 @@ def get_parameter_default(node, filepath):
     if node.lineno == node.end_lineno:
         return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]
     # TODO: handle multiple line defaults
+    return None
