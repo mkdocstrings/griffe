@@ -82,6 +82,7 @@ class Docstring:
     def __init__(
         self,
         value: str,
+        *,
         lineno: int | None,
         endlineno: int | None,
         parent: Module | Class | Function | Attribute | None = None,
@@ -287,6 +288,7 @@ class Object:
     def __init__(
         self,
         name: str,
+        *,
         lineno: int | None = None,
         endlineno: int | None = None,
         docstring: Docstring | None = None,
