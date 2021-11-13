@@ -20,6 +20,7 @@ from typing import Any, Iterator, Sequence, Tuple
 from griffe.collections import lines_collection
 from griffe.dataclasses import Module
 from griffe.docstrings.parsers import Parser
+from griffe.exceptions import UnhandledPthFileError
 from griffe.extended_ast import extend_ast
 from griffe.extensions import Extensions
 from griffe.logger import get_logger
@@ -47,10 +48,6 @@ except ModuleNotFoundError:
     read_async = _fallback_read_async
 else:
     read_async = _read_async
-
-
-class UnhandledPthFileError(Exception):
-    """Exception for unhandled .path files, when searching modules."""
 
 
 class _BaseGriffeLoader:
