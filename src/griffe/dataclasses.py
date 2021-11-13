@@ -378,7 +378,7 @@ class Object:
         return module
 
     @cached_property
-    def filepath(self) -> Path | None:
+    def filepath(self) -> Path:
         """Return the file path where this object was defined.
 
         It should never return None for non-module objects,
@@ -392,7 +392,7 @@ class Object:
         return self.module.filepath
 
     @cached_property
-    def relative_filepath(self) -> Path | None:
+    def relative_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the top module path.
 
         Returns:
@@ -421,19 +421,19 @@ class Object:
         return dedent("\n".join(lines_collection[self.filepath][self.lineno - 1 : self.endlineno]))
 
     @property
-    def modules(self):
+    def modules(self) -> dict[str, Module]:
         return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}
 
     @property
-    def classes(self):
+    def classes(self) -> dict[str, Class]:
         return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}
 
     @property
-    def functions(self):
+    def functions(self) -> dict[str, Function]:
         return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}
 
     @property
-    def attributes(self):
+    def attributes(self) -> dict[str, Attribute]:
         return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}
 
     def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
@@ -628,9 +628,9 @@ class Function(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.parameters = parameters or Parameters()
+        self.parameters: Parameters = parameters or Parameters()
         self.returns = returns
-        self.decorators = decorators or []
+        self.decorators: list[Decorator] = decorators or []
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
         """Return this function's data as a dictionary.
