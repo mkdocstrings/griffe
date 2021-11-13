@@ -153,7 +153,7 @@ def _get_tuple_annotation(node: NodeTuple, parent: Class | Module) -> Expression
 
 
 def _get_list_annotation(node: NodeList, parent: Class | Module) -> Expression:
-    return Expression(*_join([get_annotation(el, parent) for el in node.elts], ", "))
+    return Expression("[", *_join([get_annotation(el, parent) for el in node.elts], ", "), "]")
 
 
 _node_annotation_map = {
