@@ -204,7 +204,7 @@ def _read_other_parameters_section(docstring: Docstring, offset: int) -> tuple[D
     return None, index
 
 
-def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
     attributes = []
     block, index = _read_block_items(docstring, offset)
 
@@ -225,7 +225,10 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
                 annotation = annotation[:-10]
         else:
             name = name_with_type
-            annotation = None
+            try:
+                annotation = docstring.parent.attributes[name].annotation  # type: ignore
+            except (AttributeError, KeyError):
+                annotation = None
 
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=description))
 
