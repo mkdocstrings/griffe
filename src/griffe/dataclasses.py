@@ -422,18 +422,38 @@ class Object:
 
     @property
     def modules(self) -> dict[str, Module]:
+        """Return the module members.
+
+        Returns:
+            A dictionary of modules.
+        """
         return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}
 
     @property
     def classes(self) -> dict[str, Class]:
+        """Return the class members.
+
+        Returns:
+            A dictionary of classes.
+        """
         return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}
 
     @property
     def functions(self) -> dict[str, Function]:
+        """Return the function members.
+
+        Returns:
+            A dictionary of functions.
+        """
         return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}
 
     @property
     def attributes(self) -> dict[str, Attribute]:
+        """Return the attribute members.
+
+        Returns:
+            A dictionary of attributes.
+        """
         return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}
 
     def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
