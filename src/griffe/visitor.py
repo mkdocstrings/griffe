@@ -575,6 +575,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                     f"**{node.args.kwarg.arg}",
                     annotation=annotation,
                     kind=ParameterKind.var_keyword,
+                    default="{}",  # noqa: P103
                 )
             )
 
