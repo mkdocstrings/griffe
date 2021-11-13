@@ -32,7 +32,7 @@ class _BaseVisitor:
         self._visit(node, parent=parent)
 
     def generic_visit(self, node: ast.AST) -> None:  # noqa: WPS231
-        # optimisation: got rid of the two generators iter_fields and iter_child_nodes
+        # optimization: got rid of the two generators iter_fields and iter_child_nodes
         for field_name in node._fields:  # noqa: WPS437
             try:
                 field = getattr(node, field_name)
@@ -46,7 +46,7 @@ class _BaseVisitor:
                         self.visit(child, parent=node)
 
     def _run_specific_or_generic(self, node):
-        # optimisation: no extra variable, f-string instead of concatenation
+        # optimization: no extra variable, f-string instead of concatenation
         getattr(self, f"visit_{node.__class__.__name__}", self.generic_visit)(node)
 
     def _visit(self, node: ast.AST, parent: ast.AST | None = None) -> None:

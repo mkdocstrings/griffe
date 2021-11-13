@@ -93,7 +93,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self._run_specific_or_generic(node)
 
     def get_module(self) -> Module:
-        # optimisation: equivalent to ast.parse, but with optimize=1 to remove assert statements
+        # optimization: equivalent to ast.parse, but with optimize=1 to remove assert statements
         # TODO: with options, could use optimize=2 to remove docstrings
         top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=PyCF_ONLY_AST, optimize=1)
         self.visit(top_node)
@@ -181,7 +181,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         parameters = Parameters()
         annotation: str | Name | Expression | None
 
-        # TODO: probably some optimisations to do here
+        # TODO: probably some optimizations to do here
         args_kinds_defaults = reversed(
             (
                 *zip_longest(  # noqa: WPS356
@@ -212,7 +212,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                 )
             )
 
-        # TODO: probably some optimisations to do here
+        # TODO: probably some optimizations to do here
         kwargs_defaults = reversed(
             (
                 *zip_longest(  # noqa: WPS356
