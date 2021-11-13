@@ -19,7 +19,9 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any, Sequence
 
+from griffe.docstrings.parsers import Parser
 from griffe.encoders import Encoder
 from griffe.extended_ast import extend_ast
 from griffe.extensions import Extensions
@@ -37,8 +39,18 @@ def _print_data(data, output_file):
             print(data, file=fd)
 
 
-async def _load_packages_async(packages, extensions, search_paths):
-    loader = AsyncGriffeLoader(extensions=extensions)
+async def _load_packages_async(
+    packages: Sequence[str],
+    extensions: Extensions | None,
+    search_paths: Sequence[str],
+    docstring_parser: Parser | None,
+    docstring_options: dict[str, Any],
+):
+    loader = AsyncGriffeLoader(
+        extensions=extensions,
+        docstring_parser=docstring_parser,
+        docstring_options=docstring_options,
+    )
     loaded = {}
     for package in packages:
         logger.info(f"Loading package {package}")
@@ -51,8 +63,18 @@ async def _load_packages_async(packages, extensions, search_paths):
     return loaded
 
 
-def _load_packages(packages, extensions, search_paths):
-    loader = GriffeLoader(extensions=extensions)
+def _load_packages(
+    packages: Sequence[str],
+    extensions: Extensions | None,
+    search_paths: Sequence[str],
+    docstring_parser: Parser | None,
+    docstring_options: dict[str, Any],
+):
+    loader = GriffeLoader(
+        extensions=extensions,
+        docstring_parser=docstring_parser,
+        docstring_options=docstring_options,
+    )
     loaded = {}
     for package in packages:
         logger.info(f"Loading package {package}")
@@ -88,6 +110,13 @@ def get_parser() -> argparse.ArgumentParser:
         help="Whether to append sys.path to search paths specified with -s.",
     )
     parser.add_argument(
+        "-f",
+        "--full",
+        action="store_true",
+        default=False,
+        help="Whether to dump full data in JSON.",
+    )
+    parser.add_argument(
         "-h",
         "--help",
         action="help",
@@ -100,12 +129,27 @@ def get_parser() -> argparse.ArgumentParser:
         help="Output file. Supports templating to output each package in its own file, with {{package}}.",
     )
     parser.add_argument(
+        "-d",
+        "--docstyle",
+        default=None,
+        type=Parser,
+        help="The docstring style to parse.",
+    )
+    parser.add_argument(
+        "-D",
+        "--docopts",
+        default={},
+        type=json.loads,
+        help="The options for the docstring parser.",
+    )
+    parser.add_argument(
         "-s",
         "--search",
         action="append",
         type=Path,
         help="Paths to search packages into.",
     )
+
     parser.add_argument("packages", metavar="PACKAGE", nargs="+", help="Packages to find and parse.")
     return parser
 
@@ -142,17 +186,17 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
 
     if opts.async_loader:
         loop = asyncio.get_event_loop()
-        coroutine = _load_packages_async(opts.packages, extensions=extensions, search_paths=search)
+        coroutine = _load_packages_async(opts.packages, extensions, search, opts.docstyle, opts.docopts)
         packages = loop.run_until_complete(coroutine)
     else:
-        packages = _load_packages(opts.packages, extensions=extensions, search_paths=search)
+        packages = _load_packages(opts.packages, extensions, search, opts.docstyle, opts.docopts)
 
     if per_package_output:
         for package_name, data in packages.items():
-            serialized = json.dumps(data, cls=Encoder, indent=2, full=True)
+            serialized = json.dumps(data, cls=Encoder, indent=2, full=opts.full)
             _print_data(serialized, output.format(package=package_name))
     else:
-        serialized = json.dumps(packages, cls=Encoder, indent=2, full=True)
+        serialized = json.dumps(packages, cls=Encoder, indent=2, full=opts.full)
         _print_data(serialized, output)
 
     return 0 if len(packages) == len(opts.packages) else 1

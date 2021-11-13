@@ -69,6 +69,7 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
+from griffe.docstrings.parsers import Parser
 from griffe.extended_ast import LastNodeError
 from griffe.extensions import Extensions
 from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
@@ -80,6 +81,8 @@ def visit(
     code: str,
     extensions: Extensions | None = None,
     parent: Module | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
 ) -> Module:
     """Parse and visit a module file.
 
@@ -89,26 +92,45 @@ def visit(
         code: The module contents.
         extensions: The extensions to use when visiting the AST.
         parent: The optional parent of this module.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
 
     Returns:
         The module, with its members populated.
     """
-    return _MainVisitor(module_name, filepath, code, extensions or Extensions(), parent).get_module()
+    return _MainVisitor(
+        module_name,
+        filepath,
+        code,
+        extensions or Extensions(),
+        parent,
+        docstring_parser=docstring_parser,
+        docstring_options=docstring_options,
+    ).get_module()
 
 
 # ==========================================================
 # docstrings
-def _get_docstring(node):
+def _get_docstring(
+    node,
+    parser: Parser | None = None,
+    parser_options: dict[str, Any] | None = None,
+    strict: bool = False,
+) -> Docstring | None:
     if isinstance(node, NodeExpr):
         doc = node.value
-    elif node.body and isinstance(node.body[0], NodeExpr):
+    elif node.body and isinstance(node.body[0], NodeExpr) and not strict:
         doc = node.body[0].value
     else:
         return None
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
-        return Docstring(doc.value, doc.lineno, doc.end_lineno)
+        return Docstring(
+            doc.value, lineno=doc.lineno, endlineno=doc.end_lineno, parser=parser, parser_options=parser_options
+        )
     if isinstance(doc, NodeStr):
-        return Docstring(doc.s, doc.lineno, doc.end_lineno)
+        return Docstring(
+            doc.s, lineno=doc.lineno, endlineno=doc.end_lineno, parser=parser, parser_options=parser_options
+        )
     return None
 
 
@@ -426,6 +448,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         code: str,
         extensions: Extensions,
         parent: Module | None = None,
+        docstring_parser: Parser | None = None,
+        docstring_options: dict[str, Any] | None = None,
     ) -> None:
         super().__init__()
         self.module_name: str = module_name
@@ -437,6 +461,8 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.parent: Module | None = parent
         self.current: Module | Class | Function = None  # type: ignore
         self.in_decorator: bool = False
+        self.docstring_parser: Parser | None = docstring_parser
+        self.docstring_options: dict[str, Any] = docstring_options or {}
 
     def _visit(self, node: Node, parent: Node | None = None) -> None:
         node.parent = parent  # type: ignore
@@ -464,9 +490,16 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             stop_visitor.visit(node)
 
     def visit_Module(self, node) -> None:
-        self.current = Module(name=self.module_name, filepath=self.filepath, docstring=_get_docstring(node))
-        if self.parent is not None:
-            self.current.parent = self.parent
+        self.current = Module(
+            name=self.module_name,
+            filepath=self.filepath,
+            parent=self.parent,
+            docstring=_get_docstring(
+                node,
+                parser=self.docstring_parser,
+                parser_options=self.docstring_options,
+            ),
+        )
         self.generic_visit(node)
 
     def visit_ClassDef(self, node) -> None:
@@ -492,7 +525,11 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             name=node.name,
             lineno=lineno,
             endlineno=node.end_lineno,
-            docstring=_get_docstring(node),
+            docstring=_get_docstring(
+                node,
+                parser=self.docstring_parser,
+                parser_options=self.docstring_options,
+            ),
             decorators=decorators,
             bases=bases,
         )
@@ -586,7 +623,11 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             parameters=parameters,
             returns=_get_annotation(node.returns),
             decorators=decorators,
-            docstring=_get_docstring(node),
+            docstring=_get_docstring(
+                node,
+                parser=self.docstring_parser,
+                parser_options=self.docstring_options,
+            ),
         )
         self.current[node.name] = function
 
@@ -636,7 +677,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         value = _get_value(node.value)
 
         try:
-            docstring = _get_docstring(node.next)
+            docstring = _get_docstring(
+                node.next,
+                parser=self.docstring_parser,
+                parser_options=self.docstring_options,
+                strict=True,
+            )
         except (LastNodeError, AttributeError):
             docstring = None
 

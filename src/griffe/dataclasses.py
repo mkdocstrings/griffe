@@ -155,7 +155,7 @@ class Docstring:
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
-        if full and docstring_parser:
+        if full:
             base["parsed"] = self.parse(docstring_parser, **kwargs)
         return base
 

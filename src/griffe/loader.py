@@ -19,6 +19,7 @@ from typing import Iterator, Tuple
 
 from griffe.collections import lines_collection
 from griffe.dataclasses import Module
+from griffe.docstrings.parsers import Parser
 from griffe.extensions import Extensions
 from griffe.logger import get_logger
 from griffe.visitor import visit
@@ -52,13 +53,22 @@ class UnhandledPthFileError(Exception):
 
 
 class _BaseGriffeLoader:
-    def __init__(self, extensions: Extensions | None = None) -> None:
+    def __init__(
+        self,
+        extensions: Extensions | None = None,
+        docstring_parser: Parser | None = None,
+        docstring_options: dict[str, Any] | None = None,
+    ) -> None:
         """Initialize the loader.
 
         Parameters:
             extensions: The extensions to use.
+            docstring_parser: The docstring parser to use. By default, no parsing is done.
+            docstring_options: Additional docstring parsing options.
         """
-        self.extensions = extensions or Extensions()
+        self.extensions: Extensions = extensions or Extensions()
+        self.docstring_parser: Parser | None = docstring_parser
+        self.docstring_options: dict[str, Any] = docstring_options or {}
 
     def _module_name_and_path(
         self,
@@ -120,6 +130,8 @@ class GriffeLoader(_BaseGriffeLoader):
             code=code,
             extensions=self.extensions,
             parent=parent,
+            docstring_parser=self.docstring_parser,
+            docstring_options=self.docstring_options,
         )
         if submodules:
             self._load_submodules(module)
@@ -176,6 +188,8 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
             filepath=module_path,
             code=code,
             extensions=self.extensions,
+            docstring_parser=self.docstring_parser,
+            docstring_options=self.docstring_options,
         )
         if submodules:
             await self._load_submodules(module)
