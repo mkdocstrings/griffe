@@ -514,13 +514,13 @@ def parse(  # noqa: WPS231
                             DocstringSection(
                                 DocstringSectionKind.text,
                                 "\n".join(current_section).rstrip("\n"),
-                                title=groups["title"],
                             )
                         )
                     current_section = []
                 reader = _section_reader[_section_kind[admonition_type]]
                 section, index = reader(docstring, index + 1)
                 if section:
+                    section.title = groups["title"]
                     sections.append(section)
 
             else:
