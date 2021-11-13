@@ -200,7 +200,7 @@ def _read_other_parameters_section(docstring: Docstring, offset: int) -> tuple[D
     if parameters:
         return DocstringSection(DocstringSectionKind.other_parameters, parameters), index
 
-    _warn(docstring, index, f"Empty keyword parameters section at line {offset}")
+    _warn(docstring, index, f"Empty other parameters section at line {offset}")
     return None, index
 
 
