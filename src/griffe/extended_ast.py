@@ -22,13 +22,7 @@ import inspect
 from ast import AST  # noqa: WPS458
 from functools import cached_property
 
-
-class LastNodeError(Exception):
-    """Exception raised when trying to access a next or previous node."""
-
-
-class RootNodeError(Exception):
-    """Exception raised when trying to use siblings properties on a root node."""
+from griffe.exceptions import LastNodeError, RootNodeError
 
 
 class _ExtendedAST:

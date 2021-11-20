@@ -16,7 +16,7 @@ from typing import Any
 from griffe.collections import lines_collection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
-from griffe.exceptions import ResolutionError
+from griffe.exceptions import NameResolutionError
 from griffe.expressions import Expression, Name
 
 
@@ -477,7 +477,7 @@ class Object:
             name: The name to resolve.
 
         Raises:
-            ResolutionError: When the name could not be resolved.
+            NameResolutionError: When the name could not be resolved.
 
         Returns:
             The resolved name.
@@ -488,7 +488,7 @@ class Object:
             return self.imports[name]
         if self.parent is None:
             # could be a built-in
-            raise ResolutionError(f"{name} could not be resolved in the scope of {self.path}")
+            raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
         if name == self.parent.name:
             return self.parent.path
         return self.parent.resolve(name)

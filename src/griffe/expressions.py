@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from griffe.exceptions import ResolutionError
+from griffe.exceptions import NameResolutionError
 
 
 class Name:
@@ -49,7 +49,7 @@ class Name:
         if not self._full:
             try:
                 self._full = self._resolver() or self.source
-            except ResolutionError:
+            except NameResolutionError:
                 # probably a built-in
                 self._full = self.source
         return self._full
