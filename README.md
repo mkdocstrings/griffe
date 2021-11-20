@@ -79,7 +79,7 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
 - [ ] Design:
     - [x] Navigable trees (nodes and data)
     - [x] Extension system
-    - [x] Performance (loading data, no serialization)
+    - [x] Performance
 - [ ] Loader/Visitor:
     - [x] Docstrings
         - [x] Line numbers
@@ -108,11 +108,11 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
     - [x] Attributes (variables/constants)
         - [x] Docstrings
         - [x] Value
-    - [ ] Name resolution
-        - [ ] Per-object scope
-        - [ ] Load external packages resursively (inheritance)
-        - [ ] Resolve everything that is an `ast.Name`
-        - [ ] Resolve names inside more complex expressions? Calls, exprs, etc.
+    - [x] Name resolution
+        - [x] Per-object scope
+        - [x] Load external packages resursively (indirections/aliases)
+        - [x] Resolve everything that is an `ast.Name`
+        - [x] Resolve names inside more complex expressions? Calls, exprs, etc.
     - [x] Lines collection (lines for each module)
 - [x] Extension system
     - [x] Node-visiting extensions
