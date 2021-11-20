@@ -6,14 +6,20 @@ import mkdocs_gen_files
 
 nav = mkdocs_gen_files.Nav()
 
+exclude = {"src/griffe/extensions/base.py"}
+
 for path in sorted(Path("src").glob("**/*.py")):
+    if str(path) in exclude:
+        continue
     module_path = path.relative_to("src").with_suffix("")
-    doc_path = path.relative_to("src", "griffe").with_suffix(".md")
+    doc_path = path.relative_to("src").with_suffix(".md")
     full_doc_path = Path("reference", doc_path)
 
     parts = list(module_path.parts)
     if parts[-1] == "__init__":
         parts = parts[:-1]
+        doc_path = doc_path.with_name("index.md")
+        full_doc_path = full_doc_path.with_name("index.md")
     elif parts[-1] == "__main__":
         continue
     nav_parts = list(parts)
