@@ -46,7 +46,7 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from griffe.collections import lines_collection
+from griffe.collections import LinesCollection
 from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
@@ -470,13 +470,14 @@ def get_instance_names(node: Node) -> list[str]:
 
 # ==========================================================
 # parameters
-def get_parameter_default(node: Node, filepath: Path) -> str | None:
+def get_parameter_default(node: Node, filepath: Path, lines_collection: LinesCollection) -> str | None:
     """Extract the default value of a function parameter.
 
     Parameters:
         node: The node to extract the default value from.
         filepath: The filepath in which the parameter is written.
             It allows to retrieve the actual code directly from the lines collection.
+        lines_collection: A collection of source code lines.
 
     Returns:
         The default value as a string.

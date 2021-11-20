@@ -11,13 +11,14 @@ import inspect
 from functools import cached_property
 from pathlib import Path
 from textwrap import dedent
-from typing import Any
+from typing import Any, Callable
 
-from griffe.collections import lines_collection
+from griffe.collections import LinesCollection, ModulesCollection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
-from griffe.exceptions import NameResolutionError
+from griffe.exceptions import AliasResolutionError, NameResolutionError
 from griffe.expressions import Expression, Name
+from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin
 
 
 class ParameterKind(enum.Enum):
@@ -269,9 +270,10 @@ class Kind(enum.Enum):
     CLASS: str = "class"
     FUNCTION: str = "function"
     ATTRIBUTE: str = "attribute"
+    ALIAS: str = "alias"
 
 
-class Object:
+class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
     """An abstract class representing a Python object.
 
     Attributes:
@@ -286,6 +288,7 @@ class Object:
     """
 
     kind: Kind
+    is_alias: bool = False
 
     def __init__(
         self,
@@ -295,6 +298,8 @@ class Object:
         endlineno: int | None = None,
         docstring: Docstring | None = None,
         parent: Module | Class | None = None,
+        lines_collection: LinesCollection | None = None,
+        modules_collection: ModulesCollection | None = None,
     ) -> None:
         """Initialize the object.
 
@@ -304,15 +309,20 @@ class Object:
             endlineno: The object ending line (inclusive), or None for modules.
             docstring: The object docstring.
             parent: The object parent.
+            lines_collection: A collection of source code lines.
+            modules_collection: A collection of modules.
         """
         self.name: str = name
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
         self.docstring: Docstring | None = docstring
         self.parent: Module | Class | None = parent
-        self.members: dict[str, Module | Class | Function | Attribute] = {}
+        self.members: dict[str, Object | Alias] = {}
         self.labels: set[str] = set()
         self.imports: dict[str, str] = {}
+        self.exports: set[str] | None = None
+        self._lines_collection: LinesCollection | None = lines_collection
+        self._modules_collection: ModulesCollection | None = modules_collection
 
         # attach the docstring to this object
         if docstring:
@@ -321,118 +331,74 @@ class Object:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"
 
-    def __setitem__(self, key, value):
-        if isinstance(key, str):
-            if not key:
-                raise ValueError("cannot set self (empty key)")
-            parts = key.split(".", 1)
-        else:
-            parts = key
-        if not parts:
-            raise ValueError("cannot set self (empty parts)")
-        if len(parts) == 1:
-            self.members[parts[0]] = value
-            value.parent = self
-        else:
-            self.members[parts[0]][parts[1]] = value
-
-    def __getitem__(self, key):
-        if isinstance(key, str):
-            if not key:
-                return self
-            parts = key.split(".", 1)
-        else:
-            parts = key
-        if not parts:
-            return self
-        if len(parts) == 1:
-            return self.members[parts[0]]
-        return self.members[parts[0]][parts[1]]
-
     def __bool__(self):
         return bool(self.docstring) or any(self.members.values())
 
-    @cached_property
-    def module(self) -> Module:
-        """Return the parent module of this object.
+    def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:
+        """Tell if a member of this object is "exported".
+
+        By exported, we mean that the object is included in the `__all__` attribute
+        of its parent module or class. When `_all__` is not defined,
+        we consider the member to be *implicitely* exported.
+
+        Parameters:
+            member: The member to verify.
+            explicitely: Whether to only return True when `__all__` is defined.
+
+        Returns:
+            True or False.
+        """
+        if self.exports is None:
+            return not explicitely
+        return member.name in self.exports
+
+    def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
+        """Tell if this object is of the given kind.
+
+        Parameters:
+            kind: An instance or set of kinds (strings or enumerations).
 
         Raises:
-            ValueError: When the object is not a module and does not have a parent.
+            ValueError: When an empty set is given as argument.
 
         Returns:
-            The parent module.
+            True or False.
         """
-        if isinstance(self, Module):
-            return self
-        if self.parent is not None:
-            return self.parent.module
-        raise ValueError
+        if isinstance(kind, set):
+            if not kind:
+                raise ValueError("kind must not be an empty set")
+            return self.kind in (knd if isinstance(knd, Kind) else Kind(knd) for knd in kind)  # noqa: WPS509,WPS510
+        if isinstance(kind, str):
+            kind = Kind(kind)
+        return self.kind is kind
 
-    @cached_property
-    def package(self) -> Module:
-        """Return the absolute top module (the package) of this object.
+    def has_labels(self, labels: set[str]) -> bool:
+        """Tell if this object has all the given labels.
+
+        Parameters:
+            labels: A set of labels.
 
         Returns:
-            The parent module.
+            True or False.
         """
-        module = self.module
-        while module.parent:
-            module = module.parent  # type: ignore
-        return module
+        return all(label in self.labels for label in labels)
 
-    @cached_property
-    def filepath(self) -> Path:
-        """Return the file path where this object was defined.
+    def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
+        """Filter and return members based on predicates.
 
-        It should never return None for non-module objects,
-        as they should always have a parent module.
-        If not, `self.module` would trigger a `ValueError` anyway.
-        If it _does_ return None, it means the tree was not built correctly.
+        Parameters:
+            *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.
 
         Returns:
-            A file path.
+            A dictionary of members.
         """
-        return self.module.filepath
-
-    @cached_property
-    def relative_filepath(self) -> Path:
-        """Return the file path where this object was defined, relative to the top module path.
-
-        Returns:
-            A file path.
-        """
-        return self.module.filepath.relative_to(self.package.filepath.parent.parent)  # type: ignore
-
-    @cached_property
-    def path(self) -> str:
-        """Return the dotted path / import path of this object.
-
-        Returns:
-            A dotted path.
-        """
-        if not self.parent:
-            return self.name
-        return ".".join((self.parent.path, self.name))
-
-    @cached_property
-    def lines(self) -> list[str]:
-        """Return the lines containing the source of this object.
-
-        Returns:
-            A list of lines.
-        """
-        if self.lineno is None or self.endlineno is None:
-            return lines_collection[self.filepath]
-        return lines_collection[self.filepath][self.lineno - 1 : self.endlineno]
-
-    @cached_property
-    def source(self) -> str:
-        """Return the source code of this object.
-
-        Returns:
-            The source code.
-        """
-        return dedent("\n".join(self.lines))
+        if not predicates:
+            return self.members
+        members: dict[str, Object | Alias] = {}
+        for name, member in self.members.items():
+            if all(predicate(member) for predicate in predicates):
+                members[name] = member
+        return members
 
     @property
     def modules(self) -> dict[str, Module]:
@@ -470,6 +436,134 @@ class Object:
         """
         return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore
 
+    @cached_property
+    def module(self) -> Module:
+        """Return the parent module of this object.
+
+        Raises:
+            ValueError: When the object is not a module and does not have a parent.
+
+        Returns:
+            The parent module.
+        """
+        if isinstance(self, Module):
+            return self
+        if self.parent is not None:
+            return self.parent.module
+        raise ValueError
+
+    # TODO: rename to top_module (for packages collection and package property)
+    @cached_property
+    def package(self) -> Module:
+        """Return the absolute top module (the package) of this object.
+
+        Returns:
+            The parent module.
+        """
+        module = self.module
+        while module.parent:
+            module = module.parent  # type: ignore
+        return module
+
+    @cached_property
+    def filepath(self) -> Path:
+        """Return the file path where this object was defined.
+
+        It should never return None for non-module objects,
+        as they should always have a parent module.
+        If not, `self.module` would trigger a `ValueError` anyway.
+        If it _does_ return None, it means the tree was not built correctly.
+
+        Returns:
+            A file path.
+        """
+        return self.module.filepath
+
+    @cached_property
+    def relative_filepath(self) -> Path:
+        """Return the file path where this object was defined, relative to the top module path.
+
+        Returns:
+            A file path.
+        """
+        return self.module.filepath.relative_to(self.package.filepath.parent.parent)  # type: ignore
+
+    @cached_property
+    def path(self) -> str:
+        """Return the dotted path of this object.
+
+        On regular objects (not aliases), the path is the canonical path.
+
+        Returns:
+            A dotted path.
+        """
+        return self.canonical_path
+
+    @cached_property
+    def canonical_path(self) -> str:
+        """Return the full dotted path of this object.
+
+        The canonical path is the path where the object was defined (not imported).
+
+        Returns:
+            A dotted path.
+        """
+        if not self.parent:
+            return self.name
+        return ".".join((self.parent.path, self.name))
+
+    @cached_property
+    def modules_collection(self) -> ModulesCollection:
+        """Return the modules collection attached to this object or its parents.
+
+        Raises:
+            ValueError: When no modules collection can be found in the object or its parents.
+
+        Returns:
+            A modules collection.
+        """
+        if self._modules_collection is not None:
+            return self._modules_collection
+        if self.parent is None:
+            raise ValueError("no modules collection in this object or its parents")
+        return self.parent.modules_collection
+
+    @cached_property
+    def lines_collection(self) -> LinesCollection:
+        """Return the lines collection attached to this object or its parents.
+
+        Raises:
+            ValueError: When no modules collection can be found in the object or its parents.
+
+        Returns:
+            A lines collection.
+        """
+        if self._lines_collection is not None:
+            return self._lines_collection
+        if self.parent is None:
+            raise ValueError("no lines collection in this object or its parents")
+        return self.parent.lines_collection
+
+    @cached_property
+    def lines(self) -> list[str]:
+        """Return the lines containing the source of this object.
+
+        Returns:
+            A list of lines.
+        """
+        if self.lineno is None or self.endlineno is None:
+            return self.lines_collection[self.filepath]
+        return self.lines_collection[self.filepath][self.lineno - 1 : self.endlineno]
+
+    @cached_property
+    def source(self) -> str:
+        """Return the source code of this object.
+
+        Returns:
+            The source code.
+        """
+        return dedent("\n".join(self.lines))
+
     def resolve(self, name: str) -> str:
         """Resolve a name within this object's and parents' scope.
 
@@ -482,7 +576,7 @@ class Object:
         Returns:
             The resolved name.
         """
-        if name in self.members:
+        if name in self.members and not self.members[name].is_alias:
             return self.members[name].path
         if name in self.imports:
             return self.imports[name]
@@ -527,6 +621,168 @@ class Object:
         # doing this last for a prettier JSON dump
         base["labels"] = self.labels
         base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
+
+        return base
+
+
+class Alias(ObjectAliasMixin):
+    """This class represents an alias, or indirection, to an object declared in another module.
+
+    Aliases represent objects that are in the scope of a module or class,
+    but were imported from another module.
+
+    They behave almost exactly like regular objects, to a few exceptions:
+
+    - line numbers are those of the alias, not the target
+    - the path is the alias path, not the canonical one
+    - the name can be different from the target's
+    - if the target can be resolved, the kind is the target's kind
+    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.dataclasses.Kind]
+
+    Attributes:
+        name: The alias name.
+        lineno: The alias starting line number.
+        endlineno: The alias ending line number.
+        parent: The alias parent.
+    """
+
+    is_alias: bool = True
+
+    def __init__(
+        self,
+        name: str,
+        target: str | Object | Alias,
+        *,
+        lineno: int | None = None,
+        endlineno: int | None = None,
+        parent: Module | Class | None = None,
+    ) -> None:
+        """Initialize the alias.
+
+        Parameters:
+            name: The alias name.
+            target: If it's a string, the target resolution is delayed until accessing the target property.
+                If it's an object, or even another alias, the target is immediately set.
+            lineno: The alias starting line number.
+            endlineno: The alias ending line number.
+            parent: The alias parent.
+        """
+        self.name: str = name
+        if isinstance(target, str):
+            self._target: Object | Alias | None = None
+            self._target_path: str = target
+        else:
+            self._target = target
+            self._target_path = target.path
+        self.lineno: int | None = lineno
+        self.endlineno: int | None = endlineno
+        self.parent: Module | Class | None = parent
+
+    def __getattr__(self, name: str) -> Any:
+        # forward everything to the target
+        return getattr(self.target, name)
+
+    def __getitem__(self, key):
+        # not handled by __getattr__
+        return self.target[key]
+
+    def __setitem__(self, key, value):
+        # not handled by __getattr__
+        self.target[key] = value
+
+    @property
+    def kind(self) -> Kind:
+        """Return the target's kind, or Kind.ALIAS if the target cannot be resolved.
+
+        Returns:
+            A kind.
+        """
+        # custom behavior to avoid raising exceptions
+        try:
+            return self.target.kind
+        except AliasResolutionError:
+            return Kind.ALIAS
+
+    @cached_property
+    def path(self) -> str:
+        """Return the dotted path / import path of this object.
+
+        Returns:
+            A dotted path.
+        """
+        return ".".join((self.parent.path, self.name))  # type: ignore  # we assume there's always a parent
+
+    @cached_property
+    def modules_collection(self) -> ModulesCollection:
+        """Return the modules collection attached to the alias parents.
+
+        Returns:
+            A modules collection.
+        """
+        # no need to forward to the target
+        return self.parent.modules_collection  # type: ignore  # we assume there's always a parent
+
+    @property
+    def target(self) -> Object | Alias:
+        """Resolve and return the target, if possible.
+
+        Upon accessing this property, if the target is not already resolved,
+        a lookup is done using the modules collection to find the target.
+
+        Returns:
+            The resolved target.
+        """
+        if not self.resolved:
+            self.resolve_target()
+        return self._target  # type: ignore  # cannot return None, exception is raised
+
+    def resolve_target(self) -> None:
+        """Resolve the target.
+
+        Raises:
+            AliasResolutionError: When the target cannot be resolved.
+                It happens when the target does not exist,
+                or could not be loaded (unhandled dynamic object?),
+                or when the target is from a module that was not loaded
+                and added to the collection.
+        """
+        try:
+            self._target = self.modules_collection[self._target_path]
+        except KeyError as error:
+            raise AliasResolutionError(self._target_path) from error
+
+    @property
+    def resolved(self) -> bool:
+        """Tell whether this alias' target is resolved.
+
+        Returns:
+            True or False.
+        """
+        return self._target is not None
+
+    def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
+        """Return this alias' data as a dictionary.
+
+        Parameters:
+            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        base = {
+            "kind": Kind.ALIAS,
+            "name": self.name,
+            "target_path": self._target_path,
+        }
+
+        if full:
+            base["path"] = self.path
+
+        if self.lineno:
+            base["lineno"] = self.lineno
+        if self.endlineno:
+            base["endlineno"] = self.endlineno
 
         return base
 

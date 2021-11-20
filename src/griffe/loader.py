@@ -14,13 +14,14 @@ from __future__ import annotations
 
 import asyncio
 import sys
+from contextlib import suppress
 from pathlib import Path
 from typing import Any, Iterator, Sequence, Tuple
 
-from griffe.collections import lines_collection
-from griffe.dataclasses import Module
+from griffe.collections import LinesCollection, ModulesCollection
+from griffe.dataclasses import Module, Object
 from griffe.docstrings.parsers import Parser
-from griffe.exceptions import UnhandledPthFileError
+from griffe.exceptions import AliasResolutionError, UnhandledPthFileError
 from griffe.extended_ast import extend_ast
 from griffe.extensions import Extensions
 from griffe.logger import get_logger
@@ -56,6 +57,8 @@ class _BaseGriffeLoader:
         extensions: Extensions | None = None,
         docstring_parser: Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
+        lines_collection: LinesCollection | None = None,
+        modules_collection: ModulesCollection | None = None,
     ) -> None:
         """Initialize the loader.
 
@@ -63,10 +66,14 @@ class _BaseGriffeLoader:
             extensions: The extensions to use.
             docstring_parser: The docstring parser to use. By default, no parsing is done.
             docstring_options: Additional docstring parsing options.
+            lines_collection: A collection of source code lines.
+            modules_collection: A collection of modules.
         """
         self.extensions: Extensions = extensions or Extensions()
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         extend_ast()
 
     def _module_name_and_path(
@@ -111,7 +118,36 @@ class GriffeLoader(_BaseGriffeLoader):
             A module.
         """
         module_name, module_path = self._module_name_and_path(module, search_paths)
-        return self._load_module_path(module_name, module_path, submodules=submodules)
+        module_object = self._load_module_path(module_name, module_path, submodules=submodules)
+        self.modules_collection[module_object.path] = module_object
+        return module_object
+
+    def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
+        """Follow aliases: try to recursively resolve all found aliases.
+
+        Parameters:
+            obj: The object and its members to recurse on.
+            only_exported: Only try to resolve an alias if it is explicitely exported.
+
+        Returns:
+            True if everything was resolved, False otherwise.
+        """
+        success = True
+        for member in obj.members.values():
+            if member.is_alias:
+                if only_exported and not obj.member_is_exported(member, explicitely=True):
+                    continue
+                try:
+                    member.resolve_target()  # type: ignore  # we know it's an alias
+                except AliasResolutionError as error:
+                    success = False
+                    package = error.target_path.split(".", 1)[0]
+                    if obj.package.path != package and package not in self.modules_collection:
+                        with suppress(ModuleNotFoundError):
+                            self.load_module(package)
+            else:
+                success &= self.follow_aliases(member)  # type: ignore  # we know it's an object
+        return success
 
     def _load_module_path(
         self,
@@ -122,7 +158,7 @@ class GriffeLoader(_BaseGriffeLoader):
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
         code = module_path.read_text()
-        lines_collection[module_path] = code.splitlines(keepends=False)
+        self.lines_collection[module_path] = code.splitlines(keepends=False)
         module = visit(
             module_name,
             filepath=module_path,
@@ -131,6 +167,7 @@ class GriffeLoader(_BaseGriffeLoader):
             parent=parent,
             docstring_parser=self.docstring_parser,
             docstring_options=self.docstring_options,
+            lines_collection=self.lines_collection,
         )
         if submodules:
             self._load_submodules(module)
@@ -176,7 +213,36 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
             A module.
         """
         module_name, module_path = self._module_name_and_path(module, search_paths)
-        return await self._load_module_path(module_name, module_path, submodules=submodules)
+        module_object = await self._load_module_path(module_name, module_path, submodules=submodules)
+        self.modules_collection[module_object.path] = module_object
+        return module_object
+
+    async def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
+        """Follow aliases: try to recursively resolve all found aliases.
+
+        Parameters:
+            obj: The object and its members to recurse on.
+            only_exported: Only try to resolve an alias if it is explicitely exported.
+
+        Returns:
+            True if everything was resolved, False otherwise.
+        """
+        success = True
+        for member in obj.members.values():
+            if member.is_alias:
+                if only_exported and not obj.member_is_exported(member, explicitely=True):
+                    continue
+                try:
+                    member.resolve_target()  # type: ignore  # we know it's an alias
+                except AliasResolutionError as error:
+                    success = False
+                    package = error.target_path.split(".", 1)[0]
+                    if obj.package.path != package and package not in self.modules_collection:
+                        with suppress(ModuleNotFoundError):
+                            await self.load_module(package)
+            else:
+                success &= self.follow_aliases(member)  # type: ignore  # we know it's an object
+        return success
 
     async def _load_module_path(
         self,
@@ -187,7 +253,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
         code = await read_async(module_path)
-        lines_collection[module_path] = code.splitlines(keepends=False)
+        self.lines_collection[module_path] = code.splitlines(keepends=False)
         module = visit(
             module_name,
             filepath=module_path,
@@ -196,6 +262,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
             parent=parent,
             docstring_parser=self.docstring_parser,
             docstring_options=self.docstring_options,
+            lines_collection=self.lines_collection,
         )
         if submodules:
             await self._load_submodules(module)

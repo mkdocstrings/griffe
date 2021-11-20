@@ -10,11 +10,14 @@ from __future__ import annotations
 
 from ast import AST as Node
 from ast import PyCF_ONLY_AST
+from contextlib import suppress
 from itertools import zip_longest
 from pathlib import Path
 from typing import Any
 
+from griffe.collections import LinesCollection
 from griffe.dataclasses import (
+    Alias,
     Attribute,
     Class,
     Decorator,
@@ -50,6 +53,7 @@ def visit(
     parent: Module | None = None,
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
 ) -> Module:
     """Parse and visit a module file.
 
@@ -61,6 +65,7 @@ def visit(
         parent: The optional parent of this module.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
         docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
 
     Returns:
         The module, with its members populated.
@@ -73,6 +78,7 @@ def visit(
         parent,
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
+        lines_collection=lines_collection,
     ).get_module()
 
 
@@ -86,6 +92,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         parent: Module | None = None,
         docstring_parser: Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
+        lines_collection: LinesCollection | None = None,
     ) -> None:
         super().__init__()
         self.module_name: str = module_name
@@ -98,6 +105,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.in_decorator: bool = False
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        self.lines_collection: LinesCollection = lines_collection or LinesCollection()
 
     def _visit(self, node: Node, parent: Node | None = None) -> None:
         node.parent = parent  # type: ignore
@@ -142,6 +150,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             filepath=self.filepath,
             parent=self.parent,
             docstring=self._get_docstring(node),
+            lines_collection=self.lines_collection,
         )
         self.generic_visit(node)
 
@@ -213,7 +222,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         )
         for (arg, kind), default in args_kinds_defaults:
             annotation = get_annotation(arg.annotation, parent=self.current)
-            default = get_parameter_default(default, self.filepath)
+            default = get_parameter_default(default, self.filepath, self.lines_collection)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
@@ -239,7 +248,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         )
         for kwarg, default in kwargs_defaults:  # noqa: WPS440
             annotation = get_annotation(kwarg.annotation, parent=self.current)
-            default = get_parameter_default(default, self.filepath)
+            default = get_parameter_default(default, self.filepath, self.lines_collection)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
@@ -280,13 +289,19 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.handle_function(node, labels={"async"})
 
     def visit_Import(self, node) -> None:
-        for alias in node.names:
-            self.current.imports[alias.asname or alias.name] = alias.name
+        for name in node.names:
+            alias_path = name.name.split(".", 1)[0]
+            alias_name = name.asname or alias_path
+            self.current.imports[alias_name] = alias_path
+            self.current[alias_name] = Alias(alias_name, alias_path, lineno=node.lineno, endlineno=node.end_lineno)
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node) -> None:
-        for alias in node.names:
-            self.current.imports[alias.asname or alias.name] = f"{node.module}.{alias.name}"
+        for name in node.names:
+            alias_name = name.asname or name.name
+            alias_path = f"{node.module}.{name.name}"
+            self.current.imports[name.asname or name.name] = alias_path
+            self.current[alias_name] = Alias(alias_name, alias_path, lineno=node.lineno, endlineno=node.end_lineno)
         self.generic_visit(node)
 
     def handle_attribute(self, node, annotation: str | Name | Expression | None = None):  # noqa: WPS231
@@ -332,6 +347,10 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
             attribute.labels |= labels
             parent[name] = attribute  # type: ignore
+
+            if name == "__all__":
+                with suppress(AttributeError):
+                    parent.exports = {elt.value for elt in node.value.elts}
 
     def visit_Assign(self, node) -> None:
         self.handle_attribute(node)
