@@ -437,12 +437,14 @@ def test_parse_types_in_docstring():
     returns = sections[2].value
 
     assert argx.name == "x"
-    assert argx.annotation == "int"
+    assert argx.annotation.source == "int"
+    assert argx.annotation.full == "int"
     assert argx.description == "X value."
     assert argx.value is None
 
     assert argy.name == "y"
-    assert argy.annotation == "int"
+    assert argy.annotation.source == "int"
+    assert argy.annotation.full == "int"
     assert argy.description == "Y value."
     assert argy.value is None
 
@@ -482,17 +484,20 @@ def test_parse_optional_type_in_docstring():
     (argz,) = sections[1].value  # noqa: WPS460
 
     assert argx.name == "x"
-    assert argx.annotation == "int"
+    assert argx.annotation.source == "int"
+    assert argx.annotation.full == "int"
     assert argx.description == "X value."
     assert argx.value == "1"
 
     assert argy.name == "y"
-    assert argy.annotation == "int"
+    assert argy.annotation.source == "int"
+    assert argy.annotation.full == "int"
     assert argy.description == "Y value."
     assert argy.value == "None"
 
     assert argz.name == "z"
-    assert argz.annotation == "int"
+    assert argz.annotation.source == "int"
+    assert argz.annotation.full == "int"
     assert argz.description == "Z value."
     assert argz.value == "None"
 
@@ -533,11 +538,13 @@ def test_prefer_docstring_types_over_annotations():
     returns = sections[2].value
 
     assert argx.name == "x"
-    assert argx.annotation == "str"
+    assert argx.annotation.source == "str"
+    assert argx.annotation.full == "str"
     assert argx.description == "X value."
 
     assert argy.name == "y"
-    assert argy.annotation == "str"
+    assert argy.annotation.source == "str"
+    assert argy.annotation.full == "str"
     assert argy.description == "Y value."
 
     assert returns.annotation == "str"

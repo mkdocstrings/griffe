@@ -171,7 +171,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
             if annotation.endswith(", optional"):  # type: ignore
                 annotation = annotation[:-10]  # type: ignore
             # try to compile the annotation to transform it into an expression
-            with suppress(SyntaxError):
+            with suppress(SyntaxError, AttributeError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = get_annotation(code.body, parent=docstring.parent)  # type: ignore
         else:

@@ -11,7 +11,7 @@ def test_loading_functions_parameters():  # noqa: WPS218
     """Test functions parameters loading."""
     module = loader.load_module(FIXTURES_DIR / "functions" / "parameters.py")
     assert module.members
-    assert len(module.members) == 11  # noqa: WPS432
+    assert len(module.members) == 14  # 3 imports  # noqa: WPS432
 
     function = module["f_posonly"]
     assert len(function.parameters) == 1
