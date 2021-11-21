@@ -50,15 +50,13 @@ jobs:
       run: pdm lock
 
     - name: Install dependencies
-      run: |
-        pdm install -G duty -G docs -G quality -G typing
-        pip install safety
+      run: pdm install -G duty -G docs -G quality -G typing -G security
 
     - name: Check if the documentation builds correctly
       run: pdm run duty check-docs
 
     - name: Check the code quality
-      run: pdm run duty check-code-quality
+      run: pdm run duty check-quality
 
     - name: Check if the code is correctly typed
       run: pdm run duty check-types
