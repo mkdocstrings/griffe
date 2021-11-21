@@ -29,25 +29,25 @@ class _ExtendedAST:
     @cached_property
     def children(self) -> list[AST]:  # noqa: WPS231
         children = []
-        for field_name in self._fields:  # type: ignore  # noqa: WPS437
+        for field_name in self._fields:  # type: ignore[attr-defined]  # noqa: WPS437
             try:
                 field = getattr(self, field_name)
             except AttributeError:
                 continue
             if isinstance(field, AST):
-                field.parent = self  # type: ignore
+                field.parent = self  # type: ignore[attr-defined]
                 children.append(field)
             elif isinstance(field, list):
                 for child in field:
                     if isinstance(child, AST):
-                        child.parent = self  # type: ignore
+                        child.parent = self  # type: ignore[attr-defined]
                         children.append(child)
         return children
 
     @cached_property
     def position(self) -> int:
         try:
-            return self.parent.children.index(self)  # type: ignore
+            return self.parent.children.index(self)  # type: ignore[attr-defined]
         except AttributeError as error:
             raise RootNodeError("the root node does not have a parent, nor siblings, nor a position") from error
 
@@ -55,17 +55,17 @@ class _ExtendedAST:
     def previous_siblings(self) -> list[AST]:
         if self.position == 0:
             return []
-        return self.parent.children[self.position - 1 :: -1]  # type: ignore
+        return self.parent.children[self.position - 1 :: -1]  # type: ignore[attr-defined]
 
     @cached_property
     def next_siblings(self) -> list[AST]:
-        if self.position == len(self.parent.children) - 1:  # type: ignore
+        if self.position == len(self.parent.children) - 1:  # type: ignore[attr-defined]
             return []
-        return self.parent.children[self.position + 1 :]  # type: ignore
+        return self.parent.children[self.position + 1 :]  # type: ignore[attr-defined]
 
     @cached_property
     def siblings(self) -> list[AST]:
-        return [*reversed(self.previous_siblings), *self.next_siblings]  # type: ignore
+        return [*reversed(self.previous_siblings), *self.next_siblings]
 
     @cached_property
     def previous(self) -> AST:
@@ -84,14 +84,14 @@ class _ExtendedAST:
     @cached_property
     def first_child(self) -> AST:
         try:
-            return self.children[0]  # type: ignore
+            return self.children[0]
         except IndexError as error:
             raise LastNodeError("there are no children node") from error
 
     @cached_property
     def last_child(self) -> AST:  # noqa: A003
         try:
-            return self.children[-1]  # type: ignore
+            return self.children[-1]
         except IndexError as error:
             raise LastNodeError("there are no children node") from error
 

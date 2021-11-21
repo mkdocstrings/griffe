@@ -19,6 +19,7 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionKind,
 )
 from griffe.docstrings.utils import warning
+from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
@@ -40,7 +41,7 @@ class FieldType:
     """Maps directive names to parser functions."""
 
     names: FrozenSet[str]
-    reader: Callable[[list[str], int], int]
+    reader: Callable[[Docstring, int, ParsedValues], int]
 
     def matches(self, line: str) -> bool:
         """Check if a line matches the field type.
@@ -99,7 +100,7 @@ def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:
         for field_type in field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
-                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values)  # type: ignore
+                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values)  # type: ignore[misc,operator]
                 break
         else:
             parsed_values.description.append(line)
@@ -154,7 +155,7 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
 
 def _determine_param_default(docstring: Docstring, name: str) -> str | None:
     try:
-        return docstring.parent.parameters[name.lstrip()].default  # type: ignore
+        return docstring.parent.parameters[name.lstrip()].default  # type: ignore[union-attr]
     except (AttributeError, KeyError):
         return None
 
@@ -167,7 +168,7 @@ def _determine_param_annotation(
     # - "type" directive type
     # - signature annotation
     # - none
-    annotation = None
+    annotation: str | Name | Expression | None = None
 
     parsed_param_type = parsed_values.param_types.get(name)
     if parsed_param_type is not None:
@@ -181,7 +182,7 @@ def _determine_param_annotation(
 
     if annotation is None:
         try:
-            annotation = docstring.parent.parameters[name.lstrip()].annotation  # type: ignore
+            annotation = docstring.parent.parameters[name.lstrip()].annotation  # type: ignore[union-attr]
         except (AttributeError, KeyError):
             _warn(docstring, 0, f"No matching parameter for '{name}'")
 
@@ -338,12 +339,12 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
     # - "rtype" directive type
     # - signature annotation
     # - None
-    annotation: str | None
+    annotation: str | Name | Expression | None
     if parsed_values.return_type is not None:
         annotation = parsed_values.return_type
     else:
         try:
-            annotation = docstring.parent.returns  # type: ignore
+            annotation = docstring.parent.returns  # type: ignore[union-attr]
         except AttributeError:
             _warn(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
             annotation = None
@@ -399,10 +400,10 @@ def _parse_directive(docstring: Docstring, offset: int) -> ParsedDirective:
         _, directive, value = line.split(":", 2)
     except ValueError:
         _warn(docstring, 0, f"Failed to get ':directive: value' pair from '{line}'")
-        return ParsedDirective(line, next_index, [], "", invalid=True)  # type: ignore
+        return ParsedDirective(line, next_index, [], "", invalid=True)
 
     value = value.strip()
-    return ParsedDirective(line, next_index, directive.split(" "), value)  # type: ignore
+    return ParsedDirective(line, next_index, directive.split(" "), value)
 
 
 def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str, int]:
@@ -469,11 +470,11 @@ def _strip_blank_lines(lines: list[str]) -> list[str]:
 
 
 field_types = [
-    FieldType(PARAM_TYPE_NAMES, _read_parameter_type),  # type: ignore
-    FieldType(PARAM_NAMES, _read_parameter),  # type: ignore
-    FieldType(ATTRIBUTE_TYPE_NAMES, _read_attribute_type),  # type: ignore
-    FieldType(ATTRIBUTE_NAMES, _read_attribute),  # type: ignore
-    FieldType(EXCEPTION_NAMES, _read_exception),  # type: ignore
-    FieldType(RETURN_NAMES, _read_return),  # type: ignore
-    FieldType(RETURN_TYPE_NAMES, _read_return_type),  # type: ignore
+    FieldType(PARAM_TYPE_NAMES, _read_parameter_type),
+    FieldType(PARAM_NAMES, _read_parameter),
+    FieldType(ATTRIBUTE_TYPE_NAMES, _read_attribute_type),
+    FieldType(ATTRIBUTE_NAMES, _read_attribute),
+    FieldType(EXCEPTION_NAMES, _read_exception),
+    FieldType(RETURN_NAMES, _read_return),
+    FieldType(RETURN_TYPE_NAMES, _read_return_type),
 ]

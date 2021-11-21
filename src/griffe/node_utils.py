@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from ast import AST as Node
 from ast import And as NodeAnd
 from ast import AnnAssign as NodeAnnAssign
@@ -21,7 +22,6 @@ from ast import Expr as NodeExpr
 from ast import FormattedValue as NodeFormattedValue
 from ast import GeneratorExp as NodeGeneratorExp
 from ast import IfExp as NodeIfExp
-from ast import Index as NodeIndex
 from ast import JoinedStr as NodeJoinedStr
 from ast import Lambda as NodeLambda
 from ast import List as NodeList
@@ -40,15 +40,18 @@ from ast import Tuple as NodeTuple
 from ast import UAdd as NodeUAdd
 from ast import UnaryOp as NodeUnaryOp
 from ast import USub as NodeUSub
+from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
 from functools import partial
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Type
 
 from griffe.collections import LinesCollection
 from griffe.expressions import Expression, Name
 
+if sys.version_info < (3, 9):
+    from ast import Index as NodeIndex
 if TYPE_CHECKING:
     from griffe.dataclasses import Class, Module
 
@@ -84,14 +87,14 @@ def _get_baseclass_subscript(node: NodeSubscript, parent: Module | Class) -> Exp
     return Expression(left, "[", subscript, "]")
 
 
-_node_baseclass_map = {
+_node_baseclass_map: dict[Type, Callable[[Any, Module | Class], Name | Expression]] = {
     NodeName: _get_baseclass_name,
     NodeAttribute: _get_baseclass_attribute,
     NodeSubscript: _get_baseclass_subscript,
 }
 
 
-def get_baseclass(node: Node, parent: Class | Module) -> Name | Expression:
+def get_baseclass(node: Node, parent: Module | Class) -> Name | Expression:
     """Extract a resolvable name for a given base class.
 
     Parameters:
@@ -101,20 +104,20 @@ def get_baseclass(node: Node, parent: Class | Module) -> Name | Expression:
     Returns:
         A resovable name or expression.
     """
-    return _node_baseclass_map.get(type(node), lambda node, parent: None)(node, parent)  # type: ignore
+    return _node_baseclass_map[type(node)](node, parent)
 
 
 # ==========================================================
 # annotations
-def _get_name_annotation(node: NodeName, parent: Class | Module) -> Name:
+def _get_name_annotation(node: NodeName, parent: Module | Class) -> Name:
     return Name(node.id, partial(parent.resolve, node.id))
 
 
-def _get_constant_annotation(node: NodeConstant, parent: Class | Module) -> str:
+def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str:
     return repr(node.value)
 
 
-def _get_attribute_annotation(node: NodeAttribute, parent: Class | Module) -> Expression:
+def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Expression:
     left = get_annotation(node.value, parent)
 
     def resolver():  # noqa: WPS430
@@ -124,39 +127,41 @@ def _get_attribute_annotation(node: NodeAttribute, parent: Class | Module) -> Ex
     return Expression(left, ".", right)
 
 
-def _get_binop_annotation(node: NodeBinOp, parent: Class | Module) -> Expression:
+def _get_binop_annotation(node: NodeBinOp, parent: Module | Class) -> Expression:
     left = get_annotation(node.left, parent)
     right = get_annotation(node.right, parent)
     return Expression(left, get_annotation(node.op, parent), right)
 
 
-def _get_bitor_annotation(node: NodeBitOr, parent: Class | Module) -> str:
+def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
     return " | "
 
 
-def _get_bitand_annotation(node: NodeBitOr, parent: Class | Module) -> str:
+def _get_bitand_annotation(node: NodeBitOr, parent: Module | Class) -> str:
     return " & "
 
 
-def _get_subscript_annotation(node: NodeSubscript, parent: Class | Module) -> Expression:
+def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Expression:
     left = get_annotation(node.value, parent)
     subscript = get_annotation(node.slice, parent)
     return Expression(left, "[", subscript, "]")
 
 
-def _get_index_annotation(node: NodeIndex, parent: Class | Module) -> str | Name | Expression:
-    return get_annotation(node.value, parent)  # type: ignore
+if sys.version_info < (3, 9):
+
+    def _get_index_annotation(node: NodeIndex, parent: Module | Class) -> str | Name | Expression:
+        return get_annotation(node.value, parent)
 
 
-def _get_tuple_annotation(node: NodeTuple, parent: Class | Module) -> Expression:
+def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression:
     return Expression(*_join([get_annotation(el, parent) for el in node.elts], ", "))
 
 
-def _get_list_annotation(node: NodeList, parent: Class | Module) -> Expression:
+def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
     return Expression("[", *_join([get_annotation(el, parent) for el in node.elts], ", "), "]")
 
 
-_node_annotation_map = {
+_node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
     NodeName: _get_name_annotation,
     NodeConstant: _get_constant_annotation,
     NodeAttribute: _get_attribute_annotation,
@@ -164,13 +169,15 @@ _node_annotation_map = {
     NodeBitOr: _get_bitor_annotation,
     NodeBitAnd: _get_bitand_annotation,
     NodeSubscript: _get_subscript_annotation,
-    NodeIndex: _get_index_annotation,
     NodeTuple: _get_tuple_annotation,
     NodeList: _get_list_annotation,
 }
 
+if sys.version_info < (3, 9):
+    _node_annotation_map[NodeIndex] = _get_index_annotation
 
-def get_annotation(node: Node, parent: Class | Module) -> str | Name | Expression:
+
+def get_annotation(node: Node, parent: Module | Class) -> str | Name | Expression:
     """Extract a resolvable annotation.
 
     Parameters:
@@ -180,7 +187,7 @@ def get_annotation(node: Node, parent: Class | Module) -> str | Name | Expressio
     Returns:
         A string or resovable name or expression.
     """
-    return _node_annotation_map.get(type(node), lambda node, parent: None)(node, parent)  # type: ignore
+    return _node_annotation_map[type(node)](node, parent)
 
 
 # ==========================================================
@@ -201,8 +208,8 @@ def get_docstring(
     # TODO: possible optimization using a type map
     if isinstance(node, NodeExpr):
         doc = node.value
-    elif node.body and isinstance(node.body[0], NodeExpr) and not strict:  # type: ignore
-        doc = node.body[0].value  # type: ignore
+    elif node.body and isinstance(node.body[0], NodeExpr) and not strict:  # type: ignore[attr-defined]
+        doc = node.body[0].value  # type: ignore[attr-defined]
     else:
         return None, None, None
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
@@ -214,133 +221,152 @@ def get_docstring(
 
 # ==========================================================
 # values
-def _get_name_value(node: NodeName):
+def _get_name_value(node: NodeName) -> str:
     return node.id
 
 
-def _get_constant_value(node: NodeConstant):
+def _get_constant_value(node: NodeConstant) -> str:
     return repr(node.value)
 
 
-def _get_attribute_value(node: NodeAttribute):
+def _get_attribute_value(node: NodeAttribute) -> str:
     return f"{get_value(node.value)}.{node.attr}"
 
 
-def _get_binop_value(node: NodeBinOp):
+def _get_binop_value(node: NodeBinOp) -> str:
     return f"{get_value(node.left)} {get_value(node.op)} {get_value(node.right)}"
 
 
-def _get_bitor_value(node: NodeBitOr):
+def _get_bitor_value(node: NodeBitOr) -> str:
     return "|"
 
 
-def _get_mult_value(node: NodeMult):
+def _get_mult_value(node: NodeMult) -> str:
     return "*"
 
 
-def _get_unaryop_value(node: NodeUnaryOp):
-    if isinstance(node.op, NodeUSub):
-        return f"-{get_value(node.operand)}"
-    if isinstance(node.op, NodeUAdd):
-        return f"+{get_value(node.operand)}"
-    if isinstance(node.op, NodeNot):
-        return f"not {get_value(node.operand)}"
+def _get_unaryop_value(node: NodeUnaryOp) -> str:
+    return f"{get_value(node.op)}{get_value(node.operand)}"
 
 
-def _get_slice_value(node: NodeSlice):
+def _get_usub_value(node: NodeUSub) -> str:
+    return "-"
+
+
+def _get_uadd_value(node: NodeUAdd) -> str:
+    return "+"
+
+
+def _get_not_value(node: NodeNot) -> str:
+    return "not "
+
+
+def _get_slice_value(node: NodeSlice) -> str:
     value = f"{get_value(node.lower) if node.lower else ''}:{get_value(node.upper) if node.upper else ''}"
     if node.step:
         value = f"{value}:{get_value(node.step)}"
     return value
 
 
-def _get_subscript_value(node: NodeSubscript):
+def _get_subscript_value(node: NodeSubscript) -> str:
     return f"{get_value(node.value)}[{get_value(node.slice).strip('()')}]"
 
 
-def _get_index_value(node: NodeIndex):
-    return get_value(node.value)  # type: ignore
+if sys.version_info < (3, 9):
+
+    def _get_index_value(node: NodeIndex) -> str:
+        return get_value(node.value)
 
 
-def _get_lambda_value(node: NodeLambda):
+def _get_lambda_value(node: NodeLambda) -> str:
     return f"lambda {get_value(node.args)}: {get_value(node.body)}"
 
 
-def _get_list_value(node: NodeList):
+def _get_arguments_value(node: NodeArguments) -> str:
+    return ", ".join(arg.arg for arg in node.args)
+
+
+def _get_list_value(node: NodeList) -> str:
     return "[" + ", ".join(get_value(el) for el in node.elts) + "]"
 
 
-def _get_tuple_value(node: NodeTuple):
+def _get_tuple_value(node: NodeTuple) -> str:
     return "(" + ", ".join(get_value(el) for el in node.elts) + ")"
 
 
-def _get_keyword_value(node: NodeKeyword):
+def _get_keyword_value(node: NodeKeyword) -> str:
     return f"{node.arg}={get_value(node.value)}"
 
 
-def _get_dict_value(node: NodeDict):
+def _get_dict_value(node: NodeDict) -> str:
     pairs = zip(node.keys, node.values)
-    return "{" + ", ".join(f"{get_value(key)}: {get_value(value)}" for key, value in pairs) + "}"  # type: ignore
+    gen = (f"{'None' if key is None else get_value(key)}: {get_value(value)}" for key, value in pairs)  # noqa: WPS509
+    return "{" + ", ".join(gen) + "}"
 
 
-def _get_set_value(node: NodeSet):
+def _get_set_value(node: NodeSet) -> str:
     return "{" + ", ".join(get_value(el) for el in node.elts) + "}"
 
 
-def _get_ellipsis_value(node: NodeEllipsis):
+def _get_ellipsis_value(node: NodeEllipsis) -> str:
     return "..."
 
 
-def _get_starred_value(node: NodeStarred):
+def _get_starred_value(node: NodeStarred) -> str:
     return get_value(node.value)
 
 
-def _get_formatted_value(node: NodeFormattedValue):
+def _get_formatted_value(node: NodeFormattedValue) -> str:
     return f"{{{get_value(node.value)}}}"
 
 
-def _get_joinedstr_value(node: NodeJoinedStr):
+def _get_joinedstr_value(node: NodeJoinedStr) -> str:
     return "".join(get_value(value) for value in node.values)
 
 
-def _get_boolop_value(node: NodeBoolOp):
-    if isinstance(node.op, NodeOr):
-        return " or ".join(get_value(value) for value in node.values)
-    if isinstance(node.op, NodeAnd):
-        return " and ".join(get_value(value) for value in node.values)
+def _get_boolop_value(node: NodeBoolOp) -> str:
+    return get_value(node.op).join(get_value(value) for value in node.values)
 
 
-def _get_compare_value(node: NodeCompare):
+def _get_or_value(node: NodeOr) -> str:
+    return " or "
+
+
+def _get_and_value(node: NodeAnd) -> str:
+    return " and "
+
+
+def _get_compare_value(node: NodeCompare) -> str:
     left = get_value(node.left)
     ops = [get_value(op) for op in node.ops]
     comparators = [get_value(comparator) for comparator in node.comparators]
     return f"{left} " + " ".join(f"{op} {comp}" for op, comp in zip(ops, comparators))
 
 
-def _get_noteq_value(node: NodeNotEq):
+def _get_noteq_value(node: NodeNotEq) -> str:
     return "!="
 
 
-def _get_generatorexp_value(node: NodeGeneratorExp):
+def _get_generatorexp_value(node: NodeGeneratorExp) -> str:
     element = get_value(node.elt)
     generators = [get_value(gen) for gen in node.generators]
     return f"{element} " + " ".join(generators)
 
 
-def _get_listcomp_value(node: NodeListComp):
+def _get_listcomp_value(node: NodeListComp) -> str:
     element = get_value(node.elt)
     generators = [get_value(gen) for gen in node.generators]
     return f"[{element} " + " ".join(generators) + "]"
 
 
-def _get_dictcomp_value(node: NodeDictComp):
+def _get_dictcomp_value(node: NodeDictComp) -> str:
     key = get_value(node.key)
     value = get_value(node.value)
     generators = [get_value(gen) for gen in node.generators]
     return f"{{{key}: {value} " + " ".join(generators) + "}"
 
 
-def _get_comprehension_value(node: NodeComprehension):
+def _get_comprehension_value(node: NodeComprehension) -> str:
     target = get_value(node.target)
     iterable = get_value(node.iter)
     conditions = [get_value(condition) for condition in node.ifs]
@@ -352,11 +378,11 @@ def _get_comprehension_value(node: NodeComprehension):
     return value
 
 
-def _get_ifexp_value(node: NodeIfExp):
+def _get_ifexp_value(node: NodeIfExp) -> str:
     return f"{get_value(node.body)} if {get_value(node.test)} else {get_value(node.orelse)}"
 
 
-def _get_call_value(node: NodeCall):
+def _get_call_value(node: NodeCall) -> str:
     posargs = ", ".join(get_value(arg) for arg in node.args)
     kwargs = ", ".join(get_value(kwarg) for kwarg in node.keywords)
     if posargs and kwargs:
@@ -370,7 +396,7 @@ def _get_call_value(node: NodeCall):
     return f"{get_value(node.func)}({args})"
 
 
-_node_value_map = {
+_node_value_map: dict[Type, Callable[[Any], str]] = {
     type(None): lambda _: repr(None),
     NodeName: _get_name_value,
     NodeConstant: _get_constant_value,
@@ -379,7 +405,6 @@ _node_value_map = {
     NodeUnaryOp: _get_unaryop_value,
     NodeEllipsis: _get_ellipsis_value,
     NodeSubscript: _get_subscript_value,
-    NodeIndex: _get_index_value,
     NodeList: _get_list_value,
     NodeTuple: _get_tuple_value,
     NodeKeyword: _get_keyword_value,
@@ -401,7 +426,16 @@ _node_value_map = {
     NodeDictComp: _get_dictcomp_value,
     NodeStarred: _get_starred_value,
     NodeIfExp: _get_ifexp_value,
+    NodeOr: _get_or_value,
+    NodeAnd: _get_and_value,
+    NodeUSub: _get_usub_value,
+    NodeUAdd: _get_uadd_value,
+    NodeNot: _get_not_value,
+    NodeArguments: _get_arguments_value,
 }
+
+if sys.version_info < (3, 9):
+    _node_value_map[NodeIndex] = _get_index_value
 
 
 def get_value(node: Node) -> str:
@@ -413,34 +447,50 @@ def get_value(node: Node) -> str:
     Returns:
         The unparsed code of the node.
     """
-    return _node_value_map.get(type(node), lambda _: None)(node)  # type: ignore
+    return _node_value_map[type(node)](node)
 
 
 # ==========================================================
 # names
-def _get_attribute_name(node: NodeAttribute):
-    return f"{get_names(node.value)}.{node.attr}"
+def _get_attribute_name(node: NodeAttribute) -> str:
+    return f"{get_name(node.value)}.{node.attr}"
 
 
-def _get_name_name(node: NodeName):
+def _get_name_name(node: NodeName) -> str:
     return node.id
 
 
-def _get_assign_names(node: NodeAssign):
-    names = (get_names(target) for target in node.targets)
+_node_name_map: dict[Type, Callable[[Any], str]] = {
+    NodeName: _get_name_name,
+    NodeAttribute: _get_attribute_name,
+}
+
+
+def get_name(node: Node) -> str:
+    """Extract name from an assignment node.
+
+    Parameters:
+        node: The node to extract names from.
+
+    Returns:
+        A list of names.
+    """
+    return _node_name_map[type(node)](node)
+
+
+def _get_assign_names(node: NodeAssign) -> list[str]:
+    names = (get_name(target) for target in node.targets)
     return [name for name in names if name]
 
 
-def _get_annassign_names(node: NodeAnnAssign):
-    name = get_names(node.target)
+def _get_annassign_names(node: NodeAnnAssign) -> list[str]:
+    name = get_name(node.target)
     return [name] if name else []
 
 
-_node_names_map = {
+_node_names_map: dict[Type, Callable[[Any], list[str]]] = {  # noqa: WPS234
     NodeAssign: _get_assign_names,
     NodeAnnAssign: _get_annassign_names,
-    NodeName: _get_name_name,
-    NodeAttribute: _get_attribute_name,
 }
 
 
@@ -453,7 +503,7 @@ def get_names(node: Node) -> list[str]:
     Returns:
         A list of names.
     """
-    return _node_names_map.get(type(node), lambda _: None)(node)  # type: ignore
+    return _node_names_map[type(node)](node)
 
 
 def get_instance_names(node: Node) -> list[str]:

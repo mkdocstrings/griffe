@@ -44,7 +44,7 @@ async def _fallback_read_async(path):
 
 
 try:
-    from aiofiles import open as aopen  # type: ignore
+    from aiofiles import open as aopen
 except ModuleNotFoundError:
     read_async = _fallback_read_async
 else:
@@ -138,7 +138,7 @@ class GriffeLoader(_BaseGriffeLoader):
                 if only_exported and not obj.member_is_exported(member, explicitely=True):
                     continue
                 try:
-                    member.resolve_target()  # type: ignore  # we know it's an alias
+                    member.resolve_target()  # type: ignore[union-attr]  # we know it's an alias
                 except AliasResolutionError as error:
                     success = False
                     package = error.target_path.split(".", 1)[0]
@@ -146,7 +146,7 @@ class GriffeLoader(_BaseGriffeLoader):
                         with suppress(ModuleNotFoundError):
                             self.load_module(package)
             else:
-                success &= self.follow_aliases(member)  # type: ignore  # we know it's an object
+                success &= self.follow_aliases(member)  # type: ignore[arg-type]  # we know it's an object
         return success
 
     def _load_module_path(
@@ -233,7 +233,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
                 if only_exported and not obj.member_is_exported(member, explicitely=True):
                     continue
                 try:
-                    member.resolve_target()  # type: ignore  # we know it's an alias
+                    member.resolve_target()  # type: ignore[union-attr]  # we know it's an alias
                 except AliasResolutionError as error:
                     success = False
                     package = error.target_path.split(".", 1)[0]
@@ -241,7 +241,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
                         with suppress(ModuleNotFoundError):
                             await self.load_module(package)
             else:
-                success &= self.follow_aliases(member)  # type: ignore  # we know it's an object
+                success &= await self.follow_aliases(member)  # type: ignore[arg-type]  # we know it's an object
         return success
 
     async def _load_module_path(

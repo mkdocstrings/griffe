@@ -168,22 +168,22 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
-            if annotation.endswith(", optional"):  # type: ignore
-                annotation = annotation[:-10]  # type: ignore
+            if annotation.endswith(", optional"):
+                annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
             with suppress(SyntaxError, AttributeError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = get_annotation(code.body, parent=docstring.parent)  # type: ignore
+                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         else:
             name = name_with_type
             # try to use the annotation from the signature
             try:
-                annotation = docstring.parent.parameters[name].annotation  # type: ignore
+                annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
             except (AttributeError, KeyError):
                 annotation = None
 
         try:
-            default = docstring.parent.parameters[name].default  # type: ignore
+            default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
         except (AttributeError, KeyError):
             default = None
 
@@ -237,11 +237,11 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
             # try to compile the annotation to transform it into an expression
             with suppress(SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = get_annotation(code.body, parent=docstring.parent)  # type: ignore
+                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         else:
             name = name_with_type
             try:
-                annotation = docstring.parent.attributes[name].annotation  # type: ignore
+                annotation = docstring.parent.attributes[name].annotation  # type: ignore[union-attr]
             except (AttributeError, KeyError):
                 annotation = None
 
@@ -309,7 +309,7 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
         description = text
         # try to use the annotation from the signature
         try:  # noqa: WPS505
-            annotation = docstring.parent.returns  # type: ignore
+            annotation = docstring.parent.returns  # type: ignore[union-attr]
         except AttributeError:
             annotation = None
     else:
@@ -342,7 +342,7 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
         # try to use the annotation from the signature
         try:  # noqa: WPS505
             # TODO: handle Iterator and Generator types
-            annotation = docstring.parent.returns  # type: ignore
+            annotation = docstring.parent.returns  # type: ignore[union-attr]
         except AttributeError:
             annotation = None
     else:
@@ -375,7 +375,7 @@ def _read_receives_section(docstring: Docstring, offset: int) -> tuple[Docstring
         # try to use the annotation from the signature
         try:  # noqa: WPS505
             # TODO: handle Iterator and Generator types
-            annotation = docstring.parent.returns  # type: ignore
+            annotation = docstring.parent.returns  # type: ignore[union-attr]
         except AttributeError:
             annotation = None
     else:

@@ -22,8 +22,8 @@ class GetMembersMixin:
         if not parts:
             return self
         if len(parts) == 1:
-            return self.members[parts[0]]  # type: ignore
-        return self.members[parts[0]][parts[1]]  # type: ignore
+            return self.members[parts[0]]  # type: ignore[attr-defined]
+        return self.members[parts[0]][parts[1]]  # type: ignore[attr-defined]
 
 
 class SetMembersMixin:
@@ -44,10 +44,10 @@ class SetMembersMixin:
         if not parts:
             raise ValueError("cannot set self (empty parts)")
         if len(parts) == 1:
-            self.members[parts[0]] = value  # type: ignore
+            self.members[parts[0]] = value  # type: ignore[attr-defined]
             value.parent = self
         else:
-            self.members[parts[0]][parts[1]] = value  # type: ignore
+            self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
 
 
 class SetCollectionMembersMixin:
@@ -68,10 +68,10 @@ class SetCollectionMembersMixin:
         if not parts:
             raise ValueError("cannot set self (empty parts)")
         if len(parts) == 1:
-            self.members[parts[0]] = value  # type: ignore
+            self.members[parts[0]] = value  # type: ignore[attr-defined]
             value._modules_collection = self  # noqa: WPS437
         else:
-            self.members[parts[0]][parts[1]] = value  # type: ignore
+            self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
 
 
 class ObjectAliasMixin:
@@ -86,7 +86,7 @@ class ObjectAliasMixin:
         Returns:
             True or False.
         """
-        return self.parent.member_is_exported(self, explicitely=explicitely)  # type: ignore
+        return self.parent.member_is_exported(self, explicitely=explicitely)  # type: ignore[attr-defined]
 
     @property
     def is_explicitely_exported(self) -> bool:
@@ -104,4 +104,4 @@ class ObjectAliasMixin:
         Returns:
             True or False.
         """
-        return self.parent.exports is None  # type: ignore
+        return self.parent.exports is None  # type: ignore[attr-defined]

@@ -39,6 +39,7 @@ The following sections are supported:
 from __future__ import annotations
 
 import re
+from contextlib import suppress
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Pattern
 
@@ -54,6 +55,7 @@ from griffe.docstrings.dataclasses import (
     DocstringYield,
 )
 from griffe.docstrings.utils import warning
+from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
@@ -192,7 +194,7 @@ _RE_PARAMETER: Pattern = re.compile(
 
 def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
     parameters = []
-    annotation: str | None
+    annotation: str | Name | Expression | None
 
     items, index = _read_block_items(docstring, offset)
 
@@ -219,18 +221,16 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
         if annotation is None:
             # try to use the annotation from the signature
             for name in names:
-                try:
-                    annotation = docstring.parent.parameters[name].annotation  # type: ignore
+                with suppress(AttributeError, KeyError):
+                    annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
                     break
-                except (AttributeError, KeyError):
-                    pass
             else:
                 _warn(docstring, index, f"No types or annotations for parameters {names}")
 
         if default is None:
             for name in names:
                 try:
-                    default = docstring.parent.parameters[name].default  # type: ignore
+                    default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
                     break
                 except (AttributeError, KeyError):
                     pass

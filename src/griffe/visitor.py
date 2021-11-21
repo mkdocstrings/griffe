@@ -101,14 +101,14 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.extensions: Extensions = extensions.instantiate(self)
         self.root: Node | None = None
         self.parent: Module | None = parent
-        self.current: Module | Class = None  # type: ignore
+        self.current: Module | Class = None  # type: ignore[assignment]
         self.in_decorator: bool = False
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
 
     def _visit(self, node: Node, parent: Node | None = None) -> None:
-        node.parent = parent  # type: ignore
+        node.parent = parent  # type: ignore[attr-defined]  # extended node
         self._run_specific_or_generic(node)
 
     def _get_docstring(self, node: Node, strict: bool = False) -> Docstring | None:
@@ -128,7 +128,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         # TODO: with options, could use optimize=2 to remove docstrings
         top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=PyCF_ONLY_AST, optimize=1)
         self.visit(top_node)
-        return self.current.module  # type: ignore  # there's always a module after the visit
+        return self.current.module
 
     def visit(self, node: Node, parent: Node | None = None) -> None:
         for start_visitor in self.extensions.when_visit_starts:
@@ -184,7 +184,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.current[node.name] = class_
         self.current = class_
         self.generic_visit(node)
-        self.current = self.current.parent  # type: ignore
+        self.current = self.current.parent  # type: ignore[assignment]
 
     def handle_function(self, node, labels: set | None = None):  # noqa: WPS231
         labels = labels or set()
@@ -221,12 +221,14 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
         )
         for (arg, kind), default in args_kinds_defaults:
-            annotation = get_annotation(arg.annotation, parent=self.current)
+            annotation = arg.annotation and get_annotation(arg.annotation, parent=self.current)
             default = get_parameter_default(default, self.filepath, self.lines_collection)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
-            annotation = get_annotation(node.args.vararg.annotation, parent=self.current)
+            annotation = node.args.vararg.annotation and get_annotation(
+                node.args.vararg.annotation, parent=self.current
+            )
             parameters.add(
                 Parameter(
                     f"*{node.args.vararg.arg}",
@@ -247,14 +249,14 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
         )
         for kwarg, default in kwargs_defaults:  # noqa: WPS440
-            annotation = get_annotation(kwarg.annotation, parent=self.current)
+            annotation = kwarg.annotation and get_annotation(kwarg.annotation, parent=self.current)
             default = get_parameter_default(default, self.filepath, self.lines_collection)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
 
         if node.args.kwarg:
-            annotation = get_annotation(node.args.kwarg.annotation, parent=self.current)
+            annotation = node.args.kwarg.annotation and get_annotation(node.args.kwarg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"**{node.args.kwarg.arg}",
@@ -269,7 +271,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             lineno=lineno,
             endlineno=node.end_lineno,
             parameters=parameters,
-            returns=get_annotation(node.returns, parent=self.current),
+            returns=node.returns and get_annotation(node.returns, parent=self.current),
             decorators=decorators,
             docstring=self._get_docstring(node),
         )
@@ -278,9 +280,9 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         function.labels |= labels
 
         if self.current.kind is Kind.CLASS and function.name == "__init__":
-            self.current = function  # type: ignore
+            self.current = function  # type: ignore[assignment]  # temporary assign a function
             self.generic_visit(node)
-            self.current = self.current.parent  # type: ignore
+            self.current = self.current.parent  # type: ignore[assignment]
 
     def visit_FunctionDef(self, node) -> None:
         self.handle_function(node)
@@ -309,16 +311,25 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         labels = set()
 
         if parent.kind is Kind.MODULE:
-            names = get_names(node)
+            try:
+                names = get_names(node)
+            except KeyError:  # unsupported nodes, like subscript
+                return
             labels.add("module")
         elif parent.kind is Kind.CLASS:
-            names = get_names(node)
+            try:
+                names = get_names(node)
+            except KeyError:  # unsupported nodes, like subscript
+                return
             labels.add("class")
         elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
-            names = get_instance_names(node)
-            parent = parent.parent  # type: ignore
+            try:
+                names = get_instance_names(node)
+            except KeyError:  # unsupported nodes, like subscript
+                return
+            parent = parent.parent  # type: ignore[assignment]
             labels.add("instance")
 
         if not names:
@@ -346,7 +357,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
                 docstring=docstring,
             )
             attribute.labels |= labels
-            parent[name] = attribute  # type: ignore
+            parent[name] = attribute
 
             if name == "__all__":
                 with suppress(AttributeError):
@@ -356,4 +367,4 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.handle_attribute(node)
 
     def visit_AnnAssign(self, node) -> None:
-        self.handle_attribute(node, get_annotation(node.annotation, parent=self.current))
+        self.handle_attribute(node, node.annotation and get_annotation(node.annotation, parent=self.current))

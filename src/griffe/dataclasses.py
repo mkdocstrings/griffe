@@ -11,7 +11,7 @@ import inspect
 from functools import cached_property
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.docstrings.dataclasses import DocstringSection
@@ -88,7 +88,7 @@ class Docstring:
         *,
         lineno: int | None,
         endlineno: int | None,
-        parent: Module | Class | Function | Attribute | None = None,
+        parent: Object | None = None,
         parser: Parser | None = None,
         parser_options: dict[str, Any] | None = None,
     ) -> None:
@@ -105,7 +105,7 @@ class Docstring:
         self.value: str = inspect.cleandoc(value)
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
-        self.parent: Module | Class | Function | Attribute | None = parent
+        self.parent: Object | None = parent
         self.parser: Parser | None = parser
         self.parser_options: dict[str, Any] = parser_options or {}
 
@@ -326,7 +326,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
 
         # attach the docstring to this object
         if docstring:
-            docstring.parent = self  # type: ignore
+            docstring.parent = self
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"
@@ -407,7 +407,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A dictionary of modules.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}  # type: ignore
+        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
 
     @property
     def classes(self) -> dict[str, Class]:
@@ -416,7 +416,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A dictionary of classes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}  # type: ignore
+        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
 
     @property
     def functions(self) -> dict[str, Function]:
@@ -425,7 +425,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A dictionary of functions.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}  # type: ignore
+        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
 
     @property
     def attributes(self) -> dict[str, Attribute]:
@@ -434,7 +434,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A dictionary of attributes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore
+        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
     @cached_property
     def module(self) -> Module:
@@ -462,7 +462,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         """
         module = self.module
         while module.parent:
-            module = module.parent  # type: ignore
+            module = module.parent  # type: ignore[assignment]  # always a module
         return module
 
     @cached_property
@@ -486,7 +486,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A file path.
         """
-        return self.module.filepath.relative_to(self.package.filepath.parent.parent)  # type: ignore
+        return self.module.filepath.relative_to(self.package.filepath.parent.parent)
 
     @cached_property
     def path(self) -> str:
@@ -710,7 +710,7 @@ class Alias(ObjectAliasMixin):
         Returns:
             A dotted path.
         """
-        return ".".join((self.parent.path, self.name))  # type: ignore  # we assume there's always a parent
+        return ".".join((self.parent.path, self.name))  # type: ignore[union-attr]  # we assume there's always a parent
 
     @cached_property
     def modules_collection(self) -> ModulesCollection:
@@ -720,7 +720,7 @@ class Alias(ObjectAliasMixin):
             A modules collection.
         """
         # no need to forward to the target
-        return self.parent.modules_collection  # type: ignore  # we assume there's always a parent
+        return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
 
     @property
     def target(self) -> Object | Alias:
@@ -734,7 +734,7 @@ class Alias(ObjectAliasMixin):
         """
         if not self.resolved:
             self.resolve_target()
-        return self._target  # type: ignore  # cannot return None, exception is raised
+        return self._target  # type: ignore[return-value]  # cannot return None, exception is raised
 
     def resolve_target(self) -> None:
         """Resolve the target.
@@ -822,7 +822,7 @@ class Module(Object):
         Returns:
             True or False.
         """
-        return self.filepath.name == "__init__.py"  # type: ignore
+        return self.filepath.name == "__init__.py"
 
     @cached_property
     def is_package(self) -> bool:
@@ -861,11 +861,11 @@ class Module(Object):
         return (
             self.parent
             and self.filepath.is_dir()
-            and self.parent.is_namespace_package  # type: ignore  # modules parents are always modules
-            or self.parent.is_namespace_subpackage  # type: ignore  # modules parents are always modules
+            and cast(Module, self.parent).is_namespace_package
+            or cast(Module, self.parent).is_namespace_subpackage
         )
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this module's data as a dictionary.
 
         Parameters:
@@ -903,7 +903,7 @@ class Class(Object):
         self.bases: list[Name | Expression] = bases or []
         self.decorators: list[Decorator] = decorators or []
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this class' data as a dictionary.
 
         Parameters:
@@ -945,7 +945,7 @@ class Function(Object):
         self.returns: str | Name | Expression | None = returns
         self.decorators: list[Decorator] = decorators or []
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this function's data as a dictionary.
 
         Parameters:
@@ -985,7 +985,7 @@ class Attribute(Object):
         self.value: str | None = value
         self.annotation: str | Name | Expression | None = annotation
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this function's data as a dictionary.
 
         Parameters:

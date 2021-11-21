@@ -166,7 +166,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         An exit code.
     """
     parser = get_parser()
-    opts: argparse.Namespace = parser.parse_args(args)  # type: ignore
+    opts: argparse.Namespace = parser.parse_args(args)
 
     logging.basicConfig(format="%(levelname)-10s %(message)s", level=logging.WARNING)  # noqa: WPS323
 

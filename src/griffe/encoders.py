@@ -11,7 +11,7 @@ import json
 from pathlib import Path, PosixPath
 from typing import Any, Callable, Type
 
-from griffe.dataclasses import Attribute, Class, Function, Kind, Module, ParameterKind
+from griffe.dataclasses import Attribute, Class, Function, Kind, Module, Object, ParameterKind
 from griffe.docstrings.parsers import Parser
 
 
@@ -82,7 +82,7 @@ class Encoder(json.JSONEncoder):
             return _type_map.get(type(obj), super().default)(obj)
 
 
-def decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Module | Class | Function | Attribute:  # noqa: WPS231
+def decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object:  # noqa: WPS231
     """Decode dictionaries as data classes.
 
     The [`json.loads`][] method walks the tree from bottom to top.

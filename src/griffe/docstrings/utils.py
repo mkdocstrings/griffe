@@ -30,9 +30,9 @@ def warning(name: str) -> Callable[[Docstring, int, str], None]:
 
     def warn(docstring: Docstring, offset: int, message: str) -> None:  # noqa: WPS430
         try:
-            prefix = docstring.parent.relative_filepath  # type: ignore
+            prefix = docstring.parent.relative_filepath  # type: ignore[union-attr]
         except AttributeError:
             prefix = "<module>"
-        logger.warning(f"{prefix}:{docstring.lineno+offset}: {message}")  # type: ignore
+        logger.warning(f"{prefix}:{(docstring.lineno or 0)+offset}: {message}")
 
     return warn

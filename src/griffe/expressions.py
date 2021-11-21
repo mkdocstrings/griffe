@@ -54,7 +54,7 @@ class Name:
                 self._full = self.source
         return self._full
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this name's data as a dictionary.
 
         Parameters:
