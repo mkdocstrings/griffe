@@ -17,6 +17,7 @@ from ast import Compare as NodeCompare
 from ast import Constant as NodeConstant
 from ast import Dict as NodeDict
 from ast import DictComp as NodeDictComp
+from ast import Div as NodeDiv
 from ast import Ellipsis as NodeEllipsis
 from ast import Expr as NodeExpr
 from ast import FormattedValue as NodeFormattedValue
@@ -245,6 +246,10 @@ def _get_mult_value(node: NodeMult) -> str:
     return "*"
 
 
+def _get_div_value(node: NodeDiv) -> str:
+    return "/"
+
+
 def _get_unaryop_value(node: NodeUnaryOp) -> str:
     return f"{get_value(node.op)}{get_value(node.operand)}"
 
@@ -432,6 +437,7 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeUAdd: _get_uadd_value,
     NodeNot: _get_not_value,
     NodeArguments: _get_arguments_value,
+    NodeDiv: _get_div_value,
 }
 
 if sys.version_info < (3, 9):
