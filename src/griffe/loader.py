@@ -118,9 +118,14 @@ class GriffeLoader(_BaseGriffeLoader):
             A module.
         """
         module_name, module_path = self._module_name_and_path(module, search_paths)
-        module_object = self._load_module_path(module_name, module_path, submodules=submodules)
-        self.modules_collection[module_object.path] = module_object
-        return module_object
+        module_parts = module_name.split(".")
+        top_module_name = module_parts[0]
+        top_module_path = module_path
+        for _ in range(len(module_parts) - 1):
+            top_module_path = top_module_path.parent
+        top_module = self._load_module_path(top_module_name, top_module_path, submodules=submodules)
+        self.modules_collection[top_module.path] = top_module
+        return self.modules_collection[module_name]
 
     def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
         """Follow aliases: try to recursively resolve all found aliases.
@@ -157,18 +162,27 @@ class GriffeLoader(_BaseGriffeLoader):
         parent: Module | None = None,
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
-        code = module_path.read_text()
-        self.lines_collection[module_path] = code.splitlines(keepends=False)
-        module = visit(
-            module_name,
-            filepath=module_path,
-            code=code,
-            extensions=self.extensions,
-            parent=parent,
-            docstring_parser=self.docstring_parser,
-            docstring_options=self.docstring_options,
-            lines_collection=self.lines_collection,
-        )
+        try:
+            code = module_path.read_text()
+        except OSError:
+            module = Module(
+                module_name,
+                filepath=module_path,
+                lines_collection=self.lines_collection,
+                modules_collection=self.modules_collection,
+            )
+        else:
+            self.lines_collection[module_path] = code.splitlines(keepends=False)
+            module = visit(
+                module_name,
+                filepath=module_path,
+                code=code,
+                extensions=self.extensions,
+                parent=parent,
+                docstring_parser=self.docstring_parser,
+                docstring_options=self.docstring_options,
+                lines_collection=self.lines_collection,
+            )
         if submodules:
             self._load_submodules(module)
         return module
@@ -182,11 +196,20 @@ class GriffeLoader(_BaseGriffeLoader):
         try:
             member_parent = module[parent_parts]
         except KeyError:
-            logger.debug(f"Skipping (not importable) {subpath}")
-        else:
-            member_parent[subparts[-1]] = self._load_module_path(
-                subparts[-1], subpath, submodules=False, parent=member_parent
-            )
+            if module.is_namespace_package or module.is_namespace_subpackage:
+                member_parent = Module(
+                    subparts[0],
+                    filepath=subpath.parent,
+                    lines_collection=self.lines_collection,
+                    modules_collection=self.modules_collection,
+                )
+                module[parent_parts] = member_parent
+            else:
+                logger.debug(f"Skipping (not importable) {subpath}")
+                return
+        member_parent[subparts[-1]] = self._load_module_path(
+            subparts[-1], subpath, submodules=False, parent=member_parent
+        )
 
 
 class AsyncGriffeLoader(_BaseGriffeLoader):
@@ -341,14 +364,27 @@ def find_module(module_name: str, search_paths: Sequence[str | Path] | None = No
     search = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
     parts = module_name.split(".")
 
-    filenames = [
+    filepaths = [
         Path(*parts, "__init__.py"),
         Path(*parts[:-1], f"{parts[-1]}.py"),
         Path(*parts[:-1], f"{parts[-1]}.pth"),
+        Path(*parts),  # namespace packages, try last
     ]
 
+    # always search a .pth file first using the first part
     for path in search:
-        for choice in filenames:
+        top_pth = Path(f"{parts[0]}.pth")
+        abs_top_pth = path / top_pth
+        if abs_top_pth.exists():
+            with suppress(UnhandledPthFileError):
+                location = _handle_pth_file(abs_top_pth)
+                if location.suffix == ".py":
+                    location = location.parent
+                search = [location.parent]
+                break
+
+    for path in search:
+        for choice in filepaths:
             abs_path = path / choice
             # optimization: just check if the file exists,
             # not if it's an actual file
@@ -364,11 +400,16 @@ def find_module(module_name: str, search_paths: Sequence[str | Path] | None = No
 
 
 def _handle_pth_file(path):
-    instructions = path.read_text().split(";")
+    instructions = path.read_text().strip("\n").split(";")
     # support for .pth files pointing to a directory
-    new_path = Path(instructions[0]) / "__init__.py"
-    if new_path.exists():
-        return new_path
+
+    filepaths = [
+        Path(instructions[0], path.stem, "__init__.py"),
+        Path(instructions[0], path.stem),
+    ]
+    for choice in filepaths:
+        if choice.exists():
+            return choice
     # support for .pth files written by PDM, using editables
     module_name = path.stem
     if instructions[0] == f"import _{module_name}":

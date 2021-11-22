@@ -797,7 +797,7 @@ class Module(Object):
 
         Parameters:
             *args: See [`griffe.dataclasses.Object`][].
-            filepath: The module file path. It can be null for namespace packages.
+            filepath: The module file path (directory for namespace [sub]packages).
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
@@ -859,10 +859,9 @@ class Module(Object):
             True or False.
         """
         return (
-            self.parent
+            self.parent is not None
             and self.filepath.is_dir()
-            and cast(Module, self.parent).is_namespace_package
-            or cast(Module, self.parent).is_namespace_subpackage
+            and (cast(Module, self.parent).is_namespace_package or cast(Module, self.parent).is_namespace_subpackage)
         )
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
