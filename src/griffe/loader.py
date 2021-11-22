@@ -21,7 +21,7 @@ from typing import Any, Iterator, Sequence, Tuple
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Module, Object
 from griffe.docstrings.parsers import Parser
-from griffe.exceptions import AliasResolutionError, UnhandledPthFileError
+from griffe.exceptions import AliasResolutionError, UnhandledPthFileError, UnimportableModuleError
 from griffe.extended_ast import extend_ast
 from griffe.extensions import Extensions
 from griffe.logger import get_logger
@@ -38,15 +38,15 @@ async def _read_async(path):
         return await fd.read()
 
 
-async def _fallback_read_async(path):
-    logger.warning("aiofiles is not installed, fallback to blocking read")
+async def _read_sync(path):
     return path.read_text()
 
 
 try:
     from aiofiles import open as aopen
 except ModuleNotFoundError:
-    read_async = _fallback_read_async
+    logger.warning("aiofiles is not installed, fallback to blocking read")
+    read_async = _read_sync
 else:
     read_async = _read_async
 
@@ -76,22 +76,42 @@ class _BaseGriffeLoader:
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         extend_ast()
 
-    def _module_name_and_path(
-        self,
-        module: str | Path,
-        search_paths: Sequence[str | Path] | None = None,
-    ) -> tuple[str, Path]:
-        if isinstance(module, Path):
-            # programatically passed a Path, try only that
-            module_name, module_path = module_name_path(module)
-        else:
-            # passed a string (from CLI or Python code), try both
-            try:
-                module_name, module_path = module_name_path(Path(module))
-            except FileNotFoundError:
-                module_name = module
-                module_path = find_module(module_name, search_paths=search_paths)
-        return module_name, module_path
+    def _create_module(self, module_name: str, module_path: Path) -> Module:
+        return Module(
+            module_name,
+            filepath=module_path,
+            lines_collection=self.lines_collection,
+            modules_collection=self.modules_collection,
+        )
+
+    def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
+        self.lines_collection[module_path] = code.splitlines(keepends=False)
+        return visit(
+            module_name,
+            filepath=module_path,
+            code=code,
+            extensions=self.extensions,
+            parent=parent,
+            docstring_parser=self.docstring_parser,
+            docstring_options=self.docstring_options,
+            lines_collection=self.lines_collection,
+        )
+
+    def _member_parent(self, module: Module, subparts: NamePartsType, subpath: Path) -> Module:
+        parent_parts = subparts[:-1]
+        try:
+            return module[parent_parts]
+        except KeyError:
+            if module.is_namespace_package or module.is_namespace_subpackage:
+                member_parent = Module(
+                    subparts[0],
+                    filepath=subpath.parent,
+                    lines_collection=self.lines_collection,
+                    modules_collection=self.modules_collection,
+                )
+                module[parent_parts] = member_parent
+                return member_parent
+        raise UnimportableModuleError(f"{subpath} is not importable")
 
 
 class GriffeLoader(_BaseGriffeLoader):
@@ -117,12 +137,7 @@ class GriffeLoader(_BaseGriffeLoader):
         Returns:
             A module.
         """
-        module_name, module_path = self._module_name_and_path(module, search_paths)
-        module_parts = module_name.split(".")
-        top_module_name = module_parts[0]
-        top_module_path = module_path
-        for _ in range(len(module_parts) - 1):
-            top_module_path = top_module_path.parent
+        module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
         top_module = self._load_module_path(top_module_name, top_module_path, submodules=submodules)
         self.modules_collection[top_module.path] = top_module
         return self.modules_collection[module_name]
@@ -165,24 +180,9 @@ class GriffeLoader(_BaseGriffeLoader):
         try:
             code = module_path.read_text()
         except OSError:
-            module = Module(
-                module_name,
-                filepath=module_path,
-                lines_collection=self.lines_collection,
-                modules_collection=self.modules_collection,
-            )
+            module = self._create_module(module_name, module_path)
         else:
-            self.lines_collection[module_path] = code.splitlines(keepends=False)
-            module = visit(
-                module_name,
-                filepath=module_path,
-                code=code,
-                extensions=self.extensions,
-                parent=parent,
-                docstring_parser=self.docstring_parser,
-                docstring_options=self.docstring_options,
-                lines_collection=self.lines_collection,
-            )
+            module = self._visit_module(code, module_name, module_path, parent)
         if submodules:
             self._load_submodules(module)
         return module
@@ -192,24 +192,14 @@ class GriffeLoader(_BaseGriffeLoader):
             self._load_submodule(module, subparts, subpath)
 
     def _load_submodule(self, module: Module, subparts: NamePartsType, subpath: Path) -> None:
-        parent_parts = subparts[:-1]
         try:
-            member_parent = module[parent_parts]
-        except KeyError:
-            if module.is_namespace_package or module.is_namespace_subpackage:
-                member_parent = Module(
-                    subparts[0],
-                    filepath=subpath.parent,
-                    lines_collection=self.lines_collection,
-                    modules_collection=self.modules_collection,
-                )
-                module[parent_parts] = member_parent
-            else:
-                logger.debug(f"Skipping (not importable) {subpath}")
-                return
-        member_parent[subparts[-1]] = self._load_module_path(
-            subparts[-1], subpath, submodules=False, parent=member_parent
-        )
+            member_parent = self._member_parent(module, subparts, subpath)
+        except UnimportableModuleError as error:
+            logger.debug(str(error))
+        else:
+            member_parent[subparts[-1]] = self._load_module_path(
+                subparts[-1], subpath, submodules=False, parent=member_parent
+            )
 
 
 class AsyncGriffeLoader(_BaseGriffeLoader):
@@ -235,10 +225,10 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         Returns:
             A module.
         """
-        module_name, module_path = self._module_name_and_path(module, search_paths)
-        module_object = await self._load_module_path(module_name, module_path, submodules=submodules)
-        self.modules_collection[module_object.path] = module_object
-        return module_object
+        module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
+        top_module = await self._load_module_path(top_module_name, top_module_path, submodules=submodules)
+        self.modules_collection[top_module.path] = top_module
+        return self.modules_collection[module_name]
 
     async def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
         """Follow aliases: try to recursively resolve all found aliases.
@@ -275,18 +265,12 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         parent: Module | None = None,
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
-        code = await read_async(module_path)
-        self.lines_collection[module_path] = code.splitlines(keepends=False)
-        module = visit(
-            module_name,
-            filepath=module_path,
-            code=code,
-            extensions=self.extensions,
-            parent=parent,
-            docstring_parser=self.docstring_parser,
-            docstring_options=self.docstring_options,
-            lines_collection=self.lines_collection,
-        )
+        try:
+            code = await read_async(module_path)
+        except OSError:
+            module = self._create_module(module_name, module_path)
+        else:
+            module = self._visit_module(code, module_name, module_path, parent)
         if submodules:
             await self._load_submodules(module)
         return module
@@ -300,37 +284,74 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         )
 
     async def _load_submodule(self, module: Module, subparts: NamePartsType, subpath: Path) -> None:
-        parent_parts = subparts[:-1]
         try:
-            member_parent = module[parent_parts]
-        except KeyError:
-            logger.debug(f"Skipping (not importable) {subpath}")
+            member_parent = self._member_parent(module, subparts, subpath)
+        except UnimportableModuleError as error:
+            logger.debug(str(error))
         else:
             member_parent[subparts[-1]] = await self._load_module_path(
                 subparts[-1], subpath, submodules=False, parent=member_parent
             )
 
 
-def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
-    return len(name_parts_and_path[0])
+def _top_name_and_path(
+    module: str | Path,
+    search_paths: Sequence[str | Path] | None = None,
+) -> tuple[str, str, Path]:
+    module_name, module_path = find_module_or_path(module, search_paths)
+    module_parts = module_name.split(".")
+    top_module_name = module_parts[0]
+    top_module_path = module_path
+    for _ in range(len(module_parts) - 1):
+        top_module_path = top_module_path.parent
+    return module_name, top_module_name, top_module_path
 
 
-def module_name_path(path: Path) -> tuple[str, Path]:
-    """Get the module name and path from a path.
+def find_module_or_path(
+    module: str | Path,
+    search_paths: Sequence[str | Path] | None = None,
+) -> tuple[str, Path]:
+    """Find the name and path of a module.
+
+    If a Path is passed, only try to find the module as a file path.
+    If a string is passed, first try to find the module as a file path,
+    then look into the search paths.
 
     Parameters:
-        path: A directory or file path. Paths to `__init__.py` files
-            will be resolved to their parent directory.
+        module: The module name or path.
+        search_paths: The paths to search into.
 
     Raises:
-        FileNotFoundError: When:
+        FileNotFoundError: When a Path was passed and the module could not be found:
 
             - the directory has no `__init__.py` file in it
             - the path does not exist
 
+        ModuleNotFoundError: When a string was passed and the module could not be found:
+
+            - no `module/__init__.py`
+            - no `module.py`
+            - no `module.pth`
+            - no `module` directory (namespace packages)
+            - or unsupported .pth file
+
     Returns:
         The name of the module (or package) and its path.
     """
+    if isinstance(module, Path):
+        # programatically passed a Path, try only that
+        module_name, module_path = _module_name_path(module)
+    else:
+        # passed a string (from CLI or Python code), try both
+        try:
+            module_name, module_path = _module_name_path(Path(module))
+        except FileNotFoundError:
+            module_name = module
+            module_path = find_module(module_name, search_paths=search_paths)
+    return module_name, module_path
+
+
+def _module_name_path(path: Path) -> tuple[str, Path]:
     if path.is_dir():
         module_path = path / "__init__.py"
         if module_path.exists():
@@ -364,13 +385,6 @@ def find_module(module_name: str, search_paths: Sequence[str | Path] | None = No
     search = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
     parts = module_name.split(".")
 
-    filepaths = [
-        Path(*parts, "__init__.py"),
-        Path(*parts[:-1], f"{parts[-1]}.py"),
-        Path(*parts[:-1], f"{parts[-1]}.pth"),
-        Path(*parts),  # namespace packages, try last
-    ]
-
     # always search a .pth file first using the first part
     for path in search:
         top_pth = Path(f"{parts[0]}.pth")
@@ -381,9 +395,19 @@ def find_module(module_name: str, search_paths: Sequence[str | Path] | None = No
                 if location.suffix == ".py":
                     location = location.parent
                 search = [location.parent]
+                # TODO: possible optimization
+                # always break if exists?
                 break
 
-    for path in search:
+    # resume regular search
+    filepaths = [
+        Path(*parts, "__init__.py"),
+        Path(*parts[:-1], f"{parts[-1]}.py"),
+        Path(*parts[:-1], f"{parts[-1]}.pth"),
+        Path(*parts),  # namespace packages, try last
+    ]
+
+    for path in search:  # noqa: WPS440
         for choice in filepaths:
             abs_path = path / choice
             # optimization: just check if the file exists,
@@ -400,16 +424,18 @@ def find_module(module_name: str, search_paths: Sequence[str | Path] | None = No
 
 
 def _handle_pth_file(path):
-    instructions = path.read_text().strip("\n").split(";")
     # support for .pth files pointing to a directory
+    instructions = path.read_text().strip("\n").split(";")
 
     filepaths = [
         Path(instructions[0], path.stem, "__init__.py"),
-        Path(instructions[0], path.stem),
+        Path(instructions[0], path.stem),  # namespace packages, try last
     ]
+
     for choice in filepaths:
         if choice.exists():
             return choice
+
     # support for .pth files written by PDM, using editables
     module_name = path.stem
     if instructions[0] == f"import _{module_name}":
@@ -419,6 +445,7 @@ def _handle_pth_file(path):
         new_path = Path(editables_lines[-1].split("'")[3])
         if new_path.exists():
             return new_path
+
     raise UnhandledPthFileError(path)
 
 
@@ -452,3 +479,7 @@ def iter_submodules(path: Path) -> Iterator[NamePartsAndPathType]:  # noqa: WPS2
             yield rel_subpath.parts[:-1], subpath
         else:
             yield rel_subpath.with_suffix("").parts, subpath
+
+
+def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
+    return len(name_parts_and_path[0])

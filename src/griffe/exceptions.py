@@ -13,6 +13,10 @@ class UnhandledPthFileError(GriffeError):
     """Exception for unhandled .path files, when searching modules."""
 
 
+class UnimportableModuleError(GriffeError):
+    """Exception for modules that cannot be imported."""
+
+
 class AliasResolutionError(GriffeError):
     """Exception for alias that cannot be resolved."""
 
