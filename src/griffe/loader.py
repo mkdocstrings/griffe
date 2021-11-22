@@ -115,11 +115,7 @@ class _BaseGriffeLoader:
 
 
 class GriffeLoader(_BaseGriffeLoader):
-    """The Griffe loader, allowing to load data from modules.
-
-    Attributes:
-        extensions: The extensions to use.
-    """
+    """The Griffe loader, allowing to load data from modules."""
 
     def load_module(
         self,
@@ -203,11 +199,7 @@ class GriffeLoader(_BaseGriffeLoader):
 
 
 class AsyncGriffeLoader(_BaseGriffeLoader):
-    """The asynchronous Griffe loader, allowing to load data from modules.
-
-    Attributes:
-        extensions: The extensions to use.
-    """
+    """The asynchronous Griffe loader, allowing to load data from modules."""
 
     async def load_module(
         self,
