@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any, List, Pattern, Tuple
 from griffe.docstrings.dataclasses import (
     DocstringAdmonition,
     DocstringAttribute,
-    DocstringException,
     DocstringParameter,
+    DocstringRaise,
     DocstringReceive,
     DocstringReturn,
     DocstringSection,
@@ -265,7 +265,7 @@ def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
             _warn(docstring, line_number, f"Failed to get 'exception: description' pair from '{exception_lines[0]}'")
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
-            exceptions.append(DocstringException(annotation=annotation, description=description))
+            exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
     if exceptions:
         return DocstringSection(DocstringSectionKind.raises, exceptions), new_offset

@@ -12,8 +12,8 @@ from typing import TYPE_CHECKING, Any, Callable, FrozenSet
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
-    DocstringException,
     DocstringParameter,
+    DocstringRaise,
     DocstringReturn,
     DocstringSection,
     DocstringSectionKind,
@@ -75,7 +75,7 @@ class ParsedValues:
     param_types: dict[str, str] = field(default_factory=dict)
     attributes: dict[str, DocstringAttribute] = field(default_factory=dict)
     attribute_types: dict[str, str] = field(default_factory=dict)
-    exceptions: list[DocstringException] = field(default_factory=list)
+    exceptions: list[DocstringRaise] = field(default_factory=list)
     return_value: DocstringReturn | None = None
     return_type: str | None = None
 
@@ -298,7 +298,7 @@ def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: Parse
 
 def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
     """
-    Parse an exceptions value.
+    Parse an exception value.
 
     Parameters:
         docstring: The docstring.
@@ -313,7 +313,7 @@ def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValu
 
     if len(parsed_directive.directive_parts) == 2:
         ex_type = parsed_directive.directive_parts[1]
-        parsed_values.exceptions.append(DocstringException(annotation=ex_type, description=parsed_directive.value))
+        parsed_values.exceptions.append(DocstringRaise(annotation=ex_type, description=parsed_directive.value))
     else:
         _warn(docstring, 0, f"Failed to parse exception directive from '{parsed_directive.line}'")
 

@@ -126,30 +126,6 @@ class DocstringElement:
         }
 
 
-class DocstringException(DocstringElement):
-    """This class represents a documented exception."""
-
-
-class DocstringReturn(DocstringElement):
-    """This class represents a documented return value."""
-
-
-class DocstringYield(DocstringElement):
-    """This class represents a documented yield value."""
-
-
-class DocstringReceive(DocstringElement):
-    """This class represents a documented receive value."""
-
-
-class DocstringRaise(DocstringElement):
-    """This class represents a documented raise value."""
-
-
-class DocstringWarn(DocstringElement):
-    """This class represents a documented warn value."""
-
-
 class DocstringNamedElement(DocstringElement):
     """This base class represents annotated, named elements.
 
@@ -191,6 +167,26 @@ class DocstringNamedElement(DocstringElement):
         if self.value is not None:
             base["value"] = self.value
         return base
+
+
+class DocstringRaise(DocstringElement):
+    """This class represents a documented raise value."""
+
+
+class DocstringWarn(DocstringElement):
+    """This class represents a documented warn value."""
+
+
+class DocstringReturn(DocstringElement):
+    """This class represents a documented return value."""
+
+
+class DocstringYield(DocstringElement):
+    """This class represents a documented yield value."""
+
+
+class DocstringReceive(DocstringElement):
+    """This class represents a documented receive value."""
 
 
 class DocstringParameter(DocstringNamedElement):

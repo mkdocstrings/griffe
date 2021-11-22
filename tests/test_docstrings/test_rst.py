@@ -10,8 +10,8 @@ from griffe.dataclasses import Class, Function, Parameter, Parameters
 from griffe.docstrings import rst
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
-    DocstringException,
     DocstringParameter,
+    DocstringRaise,
     DocstringReturn,
     DocstringSectionKind,
 )
@@ -729,7 +729,7 @@ def test_parse__raises_directive__exception_section():
     assert sections[1].kind is DocstringSectionKind.raises
     assert_element_equal(
         sections[1].value[0],
-        DocstringException(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
+        DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
     )
 
 
@@ -747,11 +747,11 @@ def test_parse__multiple_raises_directive__exception_section_with_two():
     assert sections[1].kind is DocstringSectionKind.raises
     assert_element_equal(
         sections[1].value[0],
-        DocstringException(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
+        DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
     )
     assert_element_equal(
         sections[1].value[1],
-        DocstringException(annotation=SOME_OTHER_EXCEPTION_NAME, description=SOME_TEXT),
+        DocstringRaise(annotation=SOME_OTHER_EXCEPTION_NAME, description=SOME_TEXT),
     )
 
 
@@ -781,7 +781,7 @@ def test_parse__all_exception_names__param_section(raise_directive_name):
     assert sections[1].kind is DocstringSectionKind.raises
     assert_element_equal(
         sections[1].value[0],
-        DocstringException(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
+        DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
     )
 
 
