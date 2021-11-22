@@ -52,6 +52,9 @@ ItemsBlock = Tuple[BlockItems, int]
 _RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>.+))?$", re.I)
 """Regular expression to match admonitions, of the form `TYPE: [TITLE]`."""
 
+_RE_NAME_ANNOTATION_DESCRIPTION: Pattern = re.compile(r"^(?:(?P<name>\w+)?\s*(?:\((?P<type>.+)\))?:\s*)?(?P<desc>.*)$")
+"""Regular expression to match `name (type): Description` in docstrings sections items."""
+
 
 def _read_block_items(docstring: Docstring, offset: int) -> ItemsBlock:  # noqa: WPS231
     lines = docstring.lines
@@ -295,104 +298,110 @@ def _read_warns_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
 
 
 def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    text, new_offset = _read_block(docstring, offset)
+    returns = []
+    block, new_offset = _read_block_items(docstring, offset)
 
-    # early exit if there is no text in the return section
-    if not text:
-        _warn(docstring, new_offset, f"Empty return section at line {offset}")
-        return None, new_offset
+    for index, (line_number, return_lines) in enumerate(block):
+        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(return_lines[0])
+        if not match:
+            _warn(docstring, line_number, f"Failed to get name, annotation or description from '{return_lines[0]}'")
+            continue
 
-    # check the presence of a name and description, separated by a semi-colon
-    try:
-        type_, text = text.split(":", 1)
-    except ValueError:
-        description = text
-        # try to use the annotation from the signature
-        try:  # noqa: WPS505
-            annotation = docstring.parent.returns  # type: ignore[union-attr]
-        except AttributeError:
-            annotation = None
-    else:
-        annotation = type_.lstrip()
-        description = text.lstrip()
+        name, annotation, description = match.groups()
+        description = "\n".join([description.lstrip(), *return_lines[1:]]).rstrip("\n")
 
-    # there was no type in the docstring and no return annotation in the signature
-    if annotation is None:
-        _warn(docstring, new_offset, "No return type/annotation in docstring/signature")
+        if annotation:
+            # try to compile the annotation to transform it into an expression
+            with suppress(SyntaxError):
+                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
+                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+        else:
+            # try to retrieve the annotation from the docstring parent
+            with suppress(AttributeError, KeyError):
+                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                if len(block) > 1:
+                    if annotation.is_tuple:
+                        annotation = annotation.tuple_item(index)
 
-    return (
-        DocstringSection(DocstringSectionKind.returns, DocstringReturn(annotation=annotation, description=description)),
-        new_offset,
-    )
+        returns.append(DocstringReturn(name=name or "", annotation=annotation, description=description))
+
+    if returns:
+        return DocstringSection(DocstringSectionKind.returns, returns), new_offset
+
+    _warn(docstring, new_offset, f"Empty returns section at line {offset}")
+    return None, new_offset
 
 
 def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    text, new_offset = _read_block(docstring, offset)
+    yields = []
+    block, new_offset = _read_block_items(docstring, offset)
 
-    # early exit if there is no text in the yield section
-    if not text:
-        _warn(docstring, new_offset, f"Empty yield section at line {offset}")
-        return None, new_offset
+    for index, (line_number, yield_lines) in enumerate(block):
+        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(yield_lines[0])
+        if not match:
+            _warn(docstring, line_number, f"Failed to get name, annotation or description from '{yield_lines[0]}'")
+            continue
 
-    # check the presence of a name and description, separated by a semi-colon
-    try:
-        type_, text = text.split(":", 1)
-    except ValueError:
-        description = text
-        # try to use the annotation from the signature
-        try:  # noqa: WPS505
-            # TODO: handle Iterator and Generator types
-            annotation = docstring.parent.returns  # type: ignore[union-attr]
-        except AttributeError:
-            annotation = None
-    else:
-        annotation = type_.lstrip()
-        description = text.lstrip()
+        name, annotation, description = match.groups()
+        description = "\n".join([description.lstrip(), *yield_lines[1:]]).rstrip("\n")
 
-    # there was no type in the docstring and no return annotation in the signature
-    if annotation is None:
-        _warn(docstring, new_offset, "No yield type/annotation in docstring/signature")
+        if annotation:
+            # try to compile the annotation to transform it into an expression
+            with suppress(SyntaxError):
+                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
+                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+        else:
+            # try to retrieve the annotation from the docstring parent
+            with suppress(AttributeError, KeyError):
+                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                # TODO: support getting yield part and exploding tuple (in a generator/iterator)
+                # if len(block) > 1:
+                #     if annotation.is_tuple:
+                #         annotation = annotation.tuple_item(index)
 
-    return (
-        DocstringSection(DocstringSectionKind.yields, DocstringYield(annotation=annotation, description=description)),
-        new_offset,
-    )
+        yields.append(DocstringYield(name=name or "", annotation=annotation, description=description))
+
+    if yields:
+        return DocstringSection(DocstringSectionKind.yields, yields), new_offset
+
+    _warn(docstring, new_offset, f"Empty yields section at line {offset}")
+    return None, new_offset
 
 
 def _read_receives_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
-    text, new_offset = _read_block(docstring, offset)
+    receives = []
+    block, new_offset = _read_block_items(docstring, offset)
 
-    # early exit if there is no text in the receive section
-    if not text:
-        _warn(docstring, new_offset, f"Empty receives section at line {offset}")
-        return None, new_offset
+    for index, (line_number, receive_lines) in enumerate(block):
+        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(receive_lines[0])
+        if not match:
+            _warn(docstring, line_number, f"Failed to get name, annotation or description from '{receive_lines[0]}'")
+            continue
 
-    # check the presence of a name and description, separated by a semi-colon
-    try:
-        type_, text = text.split(":", 1)
-    except ValueError:
-        description = text
-        # try to use the annotation from the signature
-        try:  # noqa: WPS505
-            # TODO: handle Iterator and Generator types
-            annotation = docstring.parent.returns  # type: ignore[union-attr]
-        except AttributeError:
-            annotation = None
-    else:
-        annotation = type_.lstrip()
-        description = text.lstrip()
+        name, annotation, description = match.groups()
+        description = "\n".join([description.lstrip(), *receive_lines[1:]]).rstrip("\n")
 
-    # there was no type in the docstring and no return annotation in the signature
-    if annotation is None:
-        _warn(docstring, new_offset, "No receive type/annotation in docstring/signature")
+        if annotation:
+            # try to compile the annotation to transform it into an expression
+            with suppress(SyntaxError):
+                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
+                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+        # else:
+            # try to retrieve the annotation from the docstring parent
+            # TODO: support getting receive part and exploding tuple (in a generator/iterator)
+            # with suppress(AttributeError, KeyError):
+            #     annotation = docstring.parent.returns  # type: ignore[union-attr]
+            #     if len(block) > 1:
+            #         if annotation.is_tuple:
+            #             annotation = annotation.tuple_item(index)
 
-    return (
-        DocstringSection(
-            DocstringSectionKind.receives,
-            DocstringReceive(annotation=annotation, description=description),
-        ),
-        new_offset,
-    )
+        receives.append(DocstringReceive(name=name or "", annotation=annotation, description=description))
+
+    if receives:
+        return DocstringSection(DocstringSectionKind.receives, receives), new_offset
+
+    _warn(docstring, new_offset, f"Empty receives section at line {offset}")
+    return None, new_offset
 
 
 def _read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231

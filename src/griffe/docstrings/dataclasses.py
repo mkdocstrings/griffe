@@ -177,15 +177,15 @@ class DocstringWarn(DocstringElement):
     """This class represents a documented warn value."""
 
 
-class DocstringReturn(DocstringElement):
+class DocstringReturn(DocstringNamedElement):
     """This class represents a documented return value."""
 
 
-class DocstringYield(DocstringElement):
+class DocstringYield(DocstringNamedElement):
     """This class represents a documented yield value."""
 
 
-class DocstringReceive(DocstringElement):
+class DocstringReceive(DocstringNamedElement):
     """This class represents a documented receive value."""
 
 

@@ -1,6 +1,8 @@
 """This module contains the data classes that represent resolvable names and expressions."""
 
 from __future__ import annotations
+from ast import Index
+from contextlib import suppress
 
 from typing import Any, Callable
 
@@ -30,7 +32,7 @@ class Name:
             self._resolver = full
 
     def __repr__(self) -> str:
-        return f"AnnotationName(source={self.source!r}, full={self.full!r})"
+        return f"Name(source={self.source!r}, full={self.full!r})"
 
     def __str__(self) -> str:
         return self.source
@@ -53,6 +55,10 @@ class Name:
                 # probably a built-in
                 self._full = self.source
         return self._full
+
+    @property
+    def brief(self):
+        return self.source.rsplit(".", 1)[-1]
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this name's data as a dictionary.
@@ -86,6 +92,22 @@ class Expression(list):  # noqa: WPS600
         """
         super().__init__()
         self.extend(values)
+        # for value in values:
+        #     if isinstance(value, Expression):
+        #         self.extend(value)
+        #     else:
+        #         self.append(value)
 
     def __str__(self):
         return "".join(str(element) for element in self)
+
+    @property
+    def is_tuple(self):
+        return str(self).split("[", 1)[0].rsplit(".", 1)[-1].lower() == "tuple"
+
+    def tuple_item(self, n):
+        #  0  1     2     3
+        # N|E [     E     ]
+        #       N , N , N
+        #       0 1 2 3 4
+        return self[2][2 * n]
