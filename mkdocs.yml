@@ -49,6 +49,8 @@ extra_css:
 
 markdown_extensions:
 - admonition
+- callouts
+- footnotes
 - pymdownx.emoji
 - pymdownx.magiclink
 - pymdownx.snippets:

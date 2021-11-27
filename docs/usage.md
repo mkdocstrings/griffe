@@ -123,145 +123,165 @@ for a complete description of their methods and attributes.
 
 Extensions are run at certain moments while walking the Abstract Syntax Tree (AST):
 
-- before the visit starts: `When.visit_starts`.
+- before the visit/inspection: `When.before_all`.
   The current node has been grafted to its parent.
-  If this node represents a data object, the object (`self.visitor.current`) **is not** yet instantiated.
-- before the children visit starts: `When.children_visit_starts`.
-  If this node represents a data object, the object (`self.visitor.current`) **is** now instantiated.
-  Children **have not** yet been visited.
-- after the children visit stops: `When.children_visit_stops`.
-  Children **have** now been visited.
-- after the visit stops: `When.visit_stops`
+  If this node represents a data object, the object (`self.visitor.current`/`self.inspector.current`) **is not** yet instantiated.
+- before the children visit/inspection: `When.before_children`.
+  If this node represents a data object, the object (`self.visitor.current`/`self.inspector.current`) **is** now instantiated.
+  Children **have not** yet been visited/inspected.
+- after the children visit/inspection: `When.after_children`.
+  Children **have** now been visited/inspected.
+- after the visit/inspection: `When.after_all`
 
-See [the `When` enumeration][griffe.extensions.When].
+See [the `When` enumeration][griffe.agents.extensions.When].
 
 To tell the main visitor to run your extension at a certain time,
 set its `when` attribute:
 
 ```python
 class MyExtension(Extension):
-    when = When.children_visit_stops
+    when = When.after_children
 ```
 
-By default, it will run it when the visit for the node stops:
-that's when all the data for this node and its children is loaded.
+By default, it will run the extension after the visit/inspection of the node:
+that's when the full data for this node and its children is loaded.
 
 ---
 
-??? Nodes
+> NOTE: **Nodes**
+>
+> <table style="border: none; background-color: unset;"><tbody><tr><td>
+>
+> - [`Add`][ast.Add]
+> - [`alias`][ast.alias]
+> - [`And`][ast.And]
+> - [`AnnAssign`][ast.AnnAssign]
+> - [`arg`][ast.arg]
+> - [`arguments`][ast.arguments]
+> - [`Assert`][ast.Assert]
+> - [`Assign`][ast.Assign]
+> - [`AsyncFor`][ast.AsyncFor]
+> - [`AsyncFunctionDef`][ast.AsyncFunctionDef]
+> - [`AsyncWith`][ast.AsyncWith]
+> - [`Attribute`][ast.Attribute]
+> - [`AugAssign`][ast.AugAssign]
+> - [`Await`][ast.Await]
+> - [`BinOp`][ast.BinOp]
+> - [`BitAnd`][ast.BitAnd]
+> - [`BitOr`][ast.BitOr]
+> - [`BitXor`][ast.BitXor]
+> - [`BoolOp`][ast.BoolOp]
+> - [`Break`][ast.Break]
+> - `Bytes`[^1]
+> - [`Call`][ast.Call]
+> - [`ClassDef`][ast.ClassDef]
+> - [`Compare`][ast.Compare]
+> - [`comprehension`][ast.comprehension]
+> - [`Constant`][ast.Constant]
+> - [`Continue`][ast.Continue]
+> - [`Del`][ast.Del]
+> - [`Delete`][ast.Delete]
+>
+> </td><td>
+>
+> - [`Dict`][ast.Dict]
+> - [`DictComp`][ast.DictComp]
+> - [`Div`][ast.Div]
+> - `Ellipsis`[^1]
+> - [`Eq`][ast.Eq]
+> - [`ExceptHandler`][ast.ExceptHandler]
+> - [`Expr`][ast.Expr]
+> - `Expression`[^1]
+> - `ExtSlice`[^2]
+> - [`FloorDiv`][ast.FloorDiv]
+> - [`For`][ast.For]
+> - [`FormattedValue`][ast.FormattedValue]
+> - [`FunctionDef`][ast.FunctionDef]
+> - [`GeneratorExp`][ast.GeneratorExp]
+> - [`Global`][ast.Global]
+> - [`Gt`][ast.Gt]
+> - [`GtE`][ast.GtE]
+> - [`If`][ast.If]
+> - [`IfExp`][ast.IfExp]
+> - [`Import`][ast.Import]
+> - [`ImportFrom`][ast.ImportFrom]
+> - [`In`][ast.In]
+> - `Index`[^2]
+> - `Interactive`[^3]
+> - [`Invert`][ast.Invert]
+> - [`Is`][ast.Is]
+> - [`IsNot`][ast.IsNot]
+> - [`JoinedStr`][ast.JoinedStr]
+> - [`keyword`][ast.keyword]
+>
+> </td><td>
+>
+> - [`Lambda`][ast.Lambda]
+> - [`List`][ast.List]
+> - [`ListComp`][ast.ListComp]
+> - [`Load`][ast.Load]
+> - [`LShift`][ast.LShift]
+> - [`Lt`][ast.Lt]
+> - [`LtE`][ast.LtE]
+> - [`Match`][ast.Match]
+> - [`MatchAs`][ast.MatchAs]
+> - [`match_case`][ast.match_case]
+> - [`MatchClass`][ast.MatchClass]
+> - [`MatchMapping`][ast.MatchMapping]
+> - [`MatchOr`][ast.MatchOr]
+> - [`MatchSequence`][ast.MatchSequence]
+> - [`MatchSingleton`][ast.MatchSingleton]
+> - [`MatchStar`][ast.MatchStar]
+> - [`MatchValue`][ast.MatchValue]
+> - [`MatMult`][ast.MatMult]
+> - [`Mod`][ast.Mod]
+> - `Module`[^3]
+> - [`Mult`][ast.Mult]
+> - [`Name`][ast.Name]
+> - `NameConstant`[^1]
+> - [`NamedExpr`][ast.NamedExpr]
+> - [`Nonlocal`][ast.Nonlocal]
+> - [`Not`][ast.Not]
+> - [`NotEq`][ast.NotEq]
+> - [`NotIn`][ast.NotIn]
+> - `Num`[^1]
+>
+> </td><td>
+>
+> - [`Or`][ast.Or]
+> - [`Pass`][ast.Pass]
+> - `pattern`[^3]
+> - [`Pow`][ast.Pow]
+> - `Print`[^4]
+> - [`Raise`][ast.Raise]
+> - [`Return`][ast.Return]
+> - [`RShift`][ast.RShift]
+> - [`Set`][ast.Set]
+> - [`SetComp`][ast.SetComp]
+> - [`Slice`][ast.Slice]
+> - [`Starred`][ast.Starred]
+> - [`Store`][ast.Store]
+> - `Str`[^1]
+> - [`Sub`][ast.Sub]
+> - [`Subscript`][ast.Subscript]
+> - [`Try`][ast.Try]
+> - `TryExcept`[^5]
+> - `TryFinally`[^6]
+> - [`Tuple`][ast.Tuple]
+> - [`UAdd`][ast.UAdd]
+> - [`UnaryOp`][ast.UnaryOp]
+> - [`USub`][ast.USub]
+> - [`While`][ast.While]
+> - [`With`][ast.With]
+> - [`withitem`][ast.withitem]
+> - [`Yield`][ast.Yield]
+> - [`YieldFrom`][ast.YieldFrom]
+> 
+> </td></tr></tbody></table>
 
-    - `Constant`
-    - `Num`
-    - `Str`
-    - `FormattedValue`
-    - `JoinedStr`
-    - `Bytes`
-    - `List`
-    - `Tuple`
-    - `Set`
-    - `Dict`
-    - `Ellipsis`
-    - `NameConstant`
-    - `Name`
-    - `Load`
-    - `Store`
-    - `Del`
-    - `Starred`
-    - `Expr`
-    - `NamedExpr`
-    - `UnaryOp`
-    - `UAdd`
-    - `USub`
-    - `Not`
-    - `Invert`
-    - `BinOp`
-    - `Add`
-    - `Sub`
-    - `Mult`
-    - `Div`
-    - `FloorDiv`
-    - `Mod`
-    - `Pow`
-    - `LShift`
-    - `RShift`
-    - `BitOr`
-    - `BitXor`
-    - `BitAnd`
-    - `MatMult`
-    - `BoolOp`
-    - `And`
-    - `Or`
-    - `Compare`
-    - `Eq`
-    - `NotEq`
-    - `Lt`
-    - `LtE`
-    - `Gt`
-    - `GtE`
-    - `Is`
-    - `IsNot`
-    - `In`
-    - `NotIn`
-    - `Call`
-    - `keyword`
-    - `IfExp`
-    - `Attribute`
-    - `Subscript`
-    - `Index`
-    - `Slice`
-    - `ExtSlice`
-    - `ListComp`
-    - `SetComp`
-    - `GeneratorExp`
-    - `DictComp`
-    - `comprehension`
-    - `Assign`
-    - `AnnAssign`
-    - `AugAssign`
-    - `Print`
-    - `Raise`
-    - `Assert`
-    - `Delete`
-    - `Pass`
-    - `Import`
-    - `ImportFrom`
-    - `alias`
-    - `If`
-    - `For`
-    - `While`
-    - `Break`
-    - `Continue`
-    - `Try`
-    - `TryFinally`
-    - `TryExcept`
-    - `ExceptHandler`
-    - `With`
-    - `withitem`
-    - `Lambda`
-    - `arguments`
-    - `arg`
-    - `Return`
-    - `Yield`
-    - `YieldFrom`
-    - `Global`
-    - `NonLocal`
-    - `AsyncFunctionDef`
-    - `Await`
-    - `AsyncFor`
-    - `AsyncWith`
-    - `Module`
-    - `Interactive`
-    - `Expression`
-    - `ClassDef`
-    - `FunctionDef`
-    - `MatchOr`
-    - `MatchAs`
-    - `MatchClass`
-    - `MatchMapping`
-    - `MatchStar`
-    - `MatchSequence`
-    - `MatchSingleton`
-    - `MatchValue`
-    - `match_case`
-    - `pattern`
-    - `Match`
+[^1]: Deprecated since Python 3.8.
+[^2]: Deprecated since Python 3.9.
+[^3]: Not documented.
+[^4]: `print` became a builtin (instead of a keyword) in Python 3.
+[^5]: Now `ExceptHandler`, in the `handlers` attribute of `Try` nodes.
+[^6]: Now a list of expressions in the `finalbody` attribute of `Try` nodes.
