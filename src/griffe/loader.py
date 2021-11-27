@@ -209,7 +209,7 @@ class GriffeLoader(_BaseGriffeLoader):
         try:
             member_parent = self._member_parent(module, subparts, subpath)
         except UnimportableModuleError as error:
-            logger.debug(str(error))
+            logger.warning(f"{error}. Missing __init__ module?")
         else:
             member_parent[subparts[-1]] = self._load_module_path(
                 subparts[-1], subpath, submodules=False, parent=member_parent
