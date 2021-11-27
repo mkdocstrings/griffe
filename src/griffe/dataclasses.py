@@ -321,6 +321,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         self.labels: set[str] = set()
         self.imports: dict[str, str] = {}
         self.exports: set[str] | None = None
+        self.aliases: dict[str, Alias] = {}
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
@@ -678,9 +679,11 @@ class Alias(ObjectAliasMixin):
         else:
             self._target = target
             self._target_path = target.path
+            if self.parent is not None:
+                target.aliases[self.path] = self
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
-        self.parent: Module | Class | None = parent
+        self._parent: Module | Class | None = parent
 
     def __getattr__(self, name: str) -> Any:
         # forward everything to the target
@@ -706,6 +709,21 @@ class Alias(ObjectAliasMixin):
             return self.target.kind
         except AliasResolutionError:
             return Kind.ALIAS
+
+    @property
+    def parent(self) -> Module | Class | None:
+        """Return the parent of this alias.
+
+        Returns:
+            The parent.
+        """
+        return self._parent
+
+    @parent.setter
+    def parent(self, value: Module | Class) -> None:
+        self._parent = value
+        if self.resolved:
+            self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just checked the target is not None
 
     @cached_property
     def path(self) -> str:
@@ -754,6 +772,8 @@ class Alias(ObjectAliasMixin):
             self._target = self.modules_collection[self._target_path]
         except KeyError as error:
             raise AliasResolutionError(self._target_path) from error
+        if self.parent is not None:
+            self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
 
     @property
     def resolved(self) -> bool:
