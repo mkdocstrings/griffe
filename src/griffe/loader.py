@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, Iterator, Sequence, Tuple
 
 from griffe.agents.extensions import Extensions
+from griffe.agents.inspector import inspect
 from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Module, Object
@@ -48,6 +49,9 @@ except ModuleNotFoundError:
     read_async = _read_sync
 else:
     read_async = _read_async
+
+
+_builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
 class _BaseGriffeLoader:
@@ -96,6 +100,17 @@ class _BaseGriffeLoader:
             lines_collection=self.lines_collection,
         )
 
+    def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
+        return inspect(
+            module_name,
+            filepath=filepath,
+            extensions=self.extensions,
+            parent=parent,
+            docstring_parser=self.docstring_parser,
+            docstring_options=self.docstring_options,
+            lines_collection=self.lines_collection,
+        )
+
     def _member_parent(self, module: Module, subparts: NamePartsType, subpath: Path) -> Module:
         parent_parts = subparts[:-1]
         try:
@@ -132,10 +147,14 @@ class GriffeLoader(_BaseGriffeLoader):
         Returns:
             A module.
         """
-        module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
-        top_module = self._load_module_path(top_module_name, top_module_path, submodules=submodules)
+        if module in _builtin_modules:
+            module_name = module
+            top_module = self._inspect_module(module)  # type: ignore[arg-type]
+        else:
+            module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
+            top_module = self._load_module_path(top_module_name, top_module_path, submodules=submodules)
         self.modules_collection[top_module.path] = top_module
-        return self.modules_collection[module_name]
+        return self.modules_collection[module_name]  # type: ignore[index]
 
     def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
         """Follow aliases: try to recursively resolve all found aliases.

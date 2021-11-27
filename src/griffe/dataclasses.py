@@ -16,7 +16,7 @@ from typing import Any, Callable, cast
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
-from griffe.exceptions import AliasResolutionError, NameResolutionError
+from griffe.exceptions import AliasResolutionError, BuiltinModuleError, NameResolutionError
 from griffe.expressions import Expression, Name
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin
 
@@ -86,8 +86,8 @@ class Docstring:
         self,
         value: str,
         *,
-        lineno: int | None,
-        endlineno: int | None,
+        lineno: int | None = None,
+        endlineno: int | None = None,
         parent: Object | None = None,
         parser: Parser | None = None,
         parser_options: dict[str, Any] | None = None,
@@ -551,9 +551,13 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A list of lines.
         """
+        try:
+            filepath = self.filepath
+        except BuiltinModuleError:
+            return []
         if self.lineno is None or self.endlineno is None:
-            return self.lines_collection[self.filepath]
-        return self.lines_collection[self.filepath][self.lineno - 1 : self.endlineno]
+            return self.lines_collection[filepath]
+        return self.lines_collection[filepath][self.lineno - 1 : self.endlineno]
 
     @cached_property
     def source(self) -> str:
@@ -792,27 +796,35 @@ class Module(Object):
 
     kind = Kind.MODULE
 
-    def __init__(self, *args: Any, filepath: Path, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, filepath: Path | None = None, **kwargs: Any) -> None:
         """Initialize the module.
 
         Parameters:
             *args: See [`griffe.dataclasses.Object`][].
-            filepath: The module file path (directory for namespace [sub]packages).
+            filepath: The module file path (directory for namespace [sub]packages, none for builtin modules).
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self._filepath: Path = filepath
+        self._filepath: Path | None = filepath
 
     def __repr__(self) -> str:
-        return f"<Module({self._filepath!r})>"
+        try:
+            return f"<Module({self.filepath!r})>"
+        except BuiltinModuleError:
+            return f"<Module({self.name!r})>"
 
     @property
     def filepath(self) -> Path:
         """Get the file path of this module.
 
+        Raises:
+            BuiltinModuleError: When the instance filepath is None.
+
         Returns:
             The module's file path.
         """
+        if self._filepath is None:
+            raise BuiltinModuleError(self.name)
         return self._filepath
 
     @cached_property
@@ -822,7 +834,10 @@ class Module(Object):
         Returns:
             True or False.
         """
-        return self.filepath.name == "__init__.py"
+        try:
+            return self.filepath.name == "__init__.py"
+        except BuiltinModuleError:
+            return False
 
     @cached_property
     def is_package(self) -> bool:
@@ -849,7 +864,10 @@ class Module(Object):
         Returns:
             True or False.
         """
-        return not self.parent and self.filepath.is_dir()
+        try:
+            return not self.parent and self.filepath.is_dir()
+        except BuiltinModuleError:
+            return False
 
     @cached_property
     def is_namespace_subpackage(self) -> bool:
@@ -858,11 +876,16 @@ class Module(Object):
         Returns:
             True or False.
         """
-        return (
-            self.parent is not None
-            and self.filepath.is_dir()
-            and (cast(Module, self.parent).is_namespace_package or cast(Module, self.parent).is_namespace_subpackage)
-        )
+        try:
+            return (
+                self.parent is not None
+                and self.filepath.is_dir()
+                and (
+                    cast(Module, self.parent).is_namespace_package or cast(Module, self.parent).is_namespace_subpackage
+                )
+            )
+        except BuiltinModuleError:
+            return False
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this module's data as a dictionary.
@@ -874,7 +897,7 @@ class Module(Object):
             A dictionary.
         """
         base = super().as_dict(**kwargs)
-        base["filepath"] = str(self.filepath) if self.filepath else None
+        base["filepath"] = str(self._filepath) if self._filepath else None
         return base
 
 

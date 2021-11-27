@@ -8,10 +8,13 @@ from inspect import isclass
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Sequence, Type, Union
 
-from griffe.agents.base import BaseVisitor
+from griffe.agents.base import BaseInspector, BaseVisitor
 
 if TYPE_CHECKING:
+    from griffe.agents.inspector import Inspector
     from griffe.agents.visitor import Visitor
+
+
 class When(enum.Enum):
     """This enumeration contains the different times at which an extension is used.
 
@@ -47,7 +50,26 @@ class VisitorExtension(BaseVisitor):
         self.visitor = visitor
 
 
-Extension = Union[VisitorExtension]
+class InspectorExtension(BaseInspector):
+    """The object inspector extension base class, to inherit from."""
+
+    when: When
+
+    def __init__(self) -> None:
+        """Initialize the inspector extension."""
+        super().__init__()
+        self.inspector: Inspector = None  # type: ignore[assignment]
+
+    def attach(self, inspector: Inspector) -> None:
+        """Attach the parent inspector to this extension.
+
+        Parameters:
+            inspector: The parent inspector.
+        """
+        self.inspector = inspector
+
+
+Extension = Union[VisitorExtension, InspectorExtension]
 
 
 class Extensions:
@@ -60,6 +82,7 @@ class Extensions:
             *extensions: The extensions to add.
         """
         self._visitors: dict[When, list[VisitorExtension]] = defaultdict(list)
+        self._inspectors: dict[When, list[InspectorExtension]] = defaultdict(list)
         self.add(*extensions)
 
     def add(self, *extensions: Extension) -> None:
@@ -71,6 +94,8 @@ class Extensions:
         for extension in extensions:
             if isinstance(extension, VisitorExtension):
                 self._visitors[extension.when].append(extension)
+            else:
+                self._inspectors[extension.when].append(extension)
 
     def attach_visitor(self, parent_visitor: Visitor) -> Extensions:
         """Attach a parent visitor to the visitor extensions.
@@ -84,6 +109,20 @@ class Extensions:
         for when in self._visitors.keys():
             for visitor in self._visitors[when]:
                 visitor.attach(parent_visitor)
+        return self
+
+    def attach_inspector(self, parent_inspector: Inspector) -> Extensions:
+        """Attach a parent inspector to the inspector extensions.
+
+        Parameters:
+            parent_inspector: The parent inspector, leading the inspection.
+
+        Returns:
+            Self, conveniently.
+        """
+        for when in self._inspectors.keys():
+            for inspector in self._inspectors[when]:
+                inspector.attach(parent_inspector)
         return self
 
     @property
@@ -122,6 +161,43 @@ class Extensions:
         """
         return self._visitors[When.after_all]
 
+    @property
+    def before_inspection(self) -> list[InspectorExtension]:
+        """Return the inspectors that run before the inspection.
+
+        Returns:
+            Inspectors.
+        """
+        return self._inspectors[When.before_all]
+
+    @property
+    def before_children_inspection(self) -> list[InspectorExtension]:
+        """Return the inspectors that run before the children inspection.
+
+        Returns:
+            Inspectors.
+        """
+        return self._inspectors[When.before_children]
+
+    @property
+    def after_children_inspection(self) -> list[InspectorExtension]:
+        """Return the inspectors that run after the children inspection.
+
+        Returns:
+            Inspectors.
+        """
+        return self._inspectors[When.after_children]
+
+    @property
+    def after_inspection(self) -> list[InspectorExtension]:
+        """Return the inspectors that run after the inspection.
+
+        Returns:
+            Inspectors.
+        """
+        return self._inspectors[When.after_all]
+
+
 builtin_extensions: dict[str, ModuleType] = {}
 
 
@@ -155,10 +231,10 @@ def load_extensions(exts: Sequence[str | dict[str, Any] | Extension | Type[Exten
             # TODO: handle AttributeError
             extensions.add(ext_module.Extension(**options))  # type: ignore[attr-defined]
 
-        elif isinstance(extension, (VisitorExtension,)):
+        elif isinstance(extension, (VisitorExtension, InspectorExtension)):
             extensions.add(extension)
 
-        elif isclass(extension) and issubclass(extension, (VisitorExtension,)):
+        elif isclass(extension) and issubclass(extension, (VisitorExtension, InspectorExtension)):
             extensions.add(extension())
 
     return extensions

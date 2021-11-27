@@ -36,3 +36,7 @@ class LastNodeError(GriffeError):
 
 class RootNodeError(GriffeError):
     """Exception raised when trying to use siblings properties on a root node."""
+
+
+class BuiltinModuleError(GriffeError):
+    """Exception raised when trying to access the filepath of a builtin module."""

@@ -27,3 +27,23 @@ class BaseVisitor:
         for child in node.children:  # type: ignore[attr-defined]  # noqa: WPS437
             self.visit(child)
 
+
+class BaseInspector:
+    """The base class for inspectors."""
+
+    def inspect(self, node: ObjectNode) -> None:
+        """Inspect a node.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        getattr(self, f"inspect_{node.kind}", self.generic_inspect)(node)
+
+    def generic_inspect(self, node: ObjectNode) -> None:  # noqa: WPS231
+        """Inspect the children of a node.
+
+        Parameters:
+            node: The node to inspect (its children).
+        """
+        for child in node.children:
+            self.inspect(child)

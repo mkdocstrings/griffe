@@ -204,6 +204,233 @@ class ASTNode:
             raise LastNodeError("there are no children node") from error
 
 
+class ObjectKind(enum.Enum):
+    """Enumeration for the different kinds of objects."""
+
+    MODULE: str = "module"
+    CLASS: str = "class"
+    STATICMETHOD: str = "staticmethod"
+    CLASSMETHOD: str = "classmethod"
+    METHOD_DESCRIPTOR: str = "method_descriptor"
+    METHOD: str = "method"
+    COROUTINE: str = "coroutine"
+    FUNCTION: str = "function"
+    CACHED_PROPERTY: str = "cached_property"
+    PROPERTY: str = "property"
+    ATTRIBUTE: str = "attribute"
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class ObjectNode:
+    """Helper class to represent an object tree.
+
+    It's not really a tree but more a backward-linked list:
+    each node has a reference to its parent, but not to its child (for simplicity purposes and to avoid bugs).
+
+    Each node stores an object, its name, and a reference to its parent node.
+
+    Attributes:
+        obj: The actual Python object.
+        name: The Python object's name.
+        parent: The parent node.
+    """
+
+    def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
+        """
+        Initialize the object.
+
+        Arguments:
+            obj: A Python object.
+            name: The object's name.
+            parent: The object's parent node.
+        """
+        try:
+            obj = inspect.unwrap(obj)
+        except Exception:  # noqa: S110,W0703 (we purposely catch every possible exception)
+            # inspect.unwrap at some point runs hasattr(obj, "__wrapped__"),
+            # which triggers the __getattr__ method of the object, which in
+            # turn can raise various exceptions. Probably not just __getattr__.
+            # See https://github.com/pawamoy/pytkdocs/issues/45
+            pass  # noqa: WPS420 (no other way than passing)
+
+        self.obj: Any = obj
+        self.name: str = name
+        self.parent: ObjectNode | None = parent
+
+    @cached_property
+    def kind(self) -> ObjectKind:
+        """Return the kind of this node.
+
+        Returns:
+            The node kind.
+        """
+        if self.is_module:
+            return ObjectKind.MODULE
+        if self.is_class:
+            return ObjectKind.CLASS
+        if self.is_staticmethod:
+            return ObjectKind.STATICMETHOD
+        if self.is_classmethod:
+            return ObjectKind.CLASSMETHOD
+        if self.is_method_descriptor:
+            return ObjectKind.METHOD_DESCRIPTOR
+        if self.is_method:
+            return ObjectKind.METHOD
+        if self.is_coroutine:
+            return ObjectKind.COROUTINE
+        if self.is_function:
+            return ObjectKind.FUNCTION
+        if self.is_cached_property:
+            return ObjectKind.CACHED_PROPERTY
+        if self.is_property:
+            return ObjectKind.PROPERTY
+        return ObjectKind.ATTRIBUTE
+
+    @cached_property
+    def children(self) -> Sequence[ObjectNode]:  # noqa: WPS231
+        """Build and return the children of this node.
+
+        Returns:
+            A list of children.
+        """
+        children = []
+        for name, member in inspect.getmembers(self.obj):
+            if self._pick_member(member):
+                children.append(ObjectNode(member, name, parent=self))
+        return children
+
+    @cached_property
+    def is_module(self) -> bool:
+        """
+        Tell if this node's object is a module.
+
+        Returns:
+            The root of the tree.
+        """
+        return inspect.ismodule(self.obj)
+
+    @cached_property
+    def is_class(self) -> bool:
+        """
+        Tell if this node's object is a class.
+
+        Returns:
+            If this node's object is a class.
+        """
+        return inspect.isclass(self.obj)
+
+    @cached_property
+    def is_function(self) -> bool:
+        """
+        Tell if this node's object is a function.
+
+        Returns:
+            If this node's object is a function.
+        """
+        return inspect.isfunction(self.obj)
+
+    @cached_property
+    def is_coroutine(self) -> bool:
+        """
+        Tell if this node's object is a coroutine.
+
+        Returns:
+            If this node's object is a coroutine.
+        """
+        return inspect.iscoroutinefunction(self.obj)
+
+    @cached_property
+    def is_property(self) -> bool:
+        """
+        Tell if this node's object is a property.
+
+        Returns:
+            If this node's object is a property.
+        """
+        return isinstance(self.obj, property) or self.is_cached_property
+
+    @cached_property
+    def is_cached_property(self) -> bool:
+        """
+        Tell if this node's object is a cached property.
+
+        Returns:
+            If this node's object is a cached property.
+        """
+        return isinstance(self.obj, cached_property)
+
+    @cached_property
+    def parent_is_class(self) -> bool:
+        """
+        Tell if the object of this node's parent is a class.
+
+        Returns:
+            If the object of this node's parent is a class.
+        """
+        return bool(self.parent and self.parent.is_class)
+
+    @cached_property
+    def is_method(self) -> bool:
+        """
+        Tell if this node's object is a method.
+
+        Returns:
+            If this node's object is a method.
+        """
+        function_type = type(lambda: None)
+        return self.parent_is_class and isinstance(self.obj, function_type)
+
+    @cached_property
+    def is_method_descriptor(self) -> bool:
+        """
+        Tell if this node's object is a method descriptor.
+
+        Built-in methods (e.g. those implemented in C/Rust) are often
+        method descriptors, rather than normal methods.
+
+        Returns:
+            If this node's object is a method descriptor.
+        """
+        return inspect.ismethoddescriptor(self.obj)
+
+    @cached_property
+    def is_staticmethod(self) -> bool:
+        """
+        Tell if this node's object is a staticmethod.
+
+        Returns:
+            If this node's object is a staticmethod.
+        """
+        if not self.parent:
+            return False
+        self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+        return self.parent_is_class and isinstance(self_from_parent, staticmethod)
+
+    @cached_property
+    def is_classmethod(self) -> bool:
+        """
+        Tell if this node's object is a classmethod.
+
+        Returns:
+            If this node's object is a classmethod.
+        """
+        if not self.parent:
+            return False
+        self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+        return self.parent_is_class and isinstance(self_from_parent, classmethod)
+
+    def _pick_member(self, member: Any) -> bool:
+        return member is not type and member is not object and not self._seen(member)
+
+    def _seen(self, member: Any) -> bool:
+        if member is self.obj:
+            return True
+        if self.parent is None:
+            return False
+        return self.parent._seen(member)  # noqa: WPS437
+
 
 def _join(sequence, item):
     if not sequence:
