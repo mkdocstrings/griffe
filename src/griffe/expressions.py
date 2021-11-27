@@ -1,8 +1,6 @@
 """This module contains the data classes that represent resolvable names and expressions."""
 
 from __future__ import annotations
-from ast import Index
-from contextlib import suppress
 
 from typing import Any, Callable
 
@@ -57,7 +55,12 @@ class Name:
         return self._full
 
     @property
-    def brief(self):
+    def brief(self) -> str:
+        """Return the brief source name.
+
+        Returns:
+            The last part of the source name.
+        """
         return self.source.rsplit(".", 1)[-1]
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -102,12 +105,25 @@ class Expression(list):  # noqa: WPS600
         return "".join(str(element) for element in self)
 
     @property
-    def is_tuple(self):
+    def is_tuple(self) -> bool:
+        """Tell whether this expression represents a tuple.
+
+        Returns:
+            True or False.
+        """
         return str(self).split("[", 1)[0].rsplit(".", 1)[-1].lower() == "tuple"
 
-    def tuple_item(self, n):
+    def tuple_item(self, nth: int) -> str | Name:
+        """Return the n-th item of this tuple expression.
+
+        Parameters:
+            nth: The item number.
+
+        Returns:
+            A string or name.
+        """
         #  0  1     2     3
         # N|E [     E     ]
         #       N , N , N
         #       0 1 2 3 4
-        return self[2][2 * n]
+        return self[2][2 * nth]

@@ -297,7 +297,7 @@ def _read_warns_section(docstring: Docstring, offset: int) -> tuple[DocstringSec
     return None, new_offset
 
 
-def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
     returns = []
     block, new_offset = _read_block_items(docstring, offset)
 
@@ -310,7 +310,7 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
         name, annotation, description = match.groups()
         description = "\n".join([description.lstrip(), *return_lines[1:]]).rstrip("\n")
 
-        if annotation:
+        if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
             with suppress(SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
@@ -323,6 +323,10 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
                     if annotation.is_tuple:
                         annotation = annotation.tuple_item(index)
 
+            if annotation is None:
+                returned_value = repr(name) or index
+                _warn(docstring, line_number, f"No type or annotation for returned value {returned_value}")
+
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=description))
 
     if returns:
@@ -332,11 +336,11 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
     return None, new_offset
 
 
-def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
     yields = []
     block, new_offset = _read_block_items(docstring, offset)
 
-    for index, (line_number, yield_lines) in enumerate(block):
+    for index, (line_number, yield_lines) in enumerate(block):  # noqa: B007 (will be used later)
         match = _RE_NAME_ANNOTATION_DESCRIPTION.match(yield_lines[0])
         if not match:
             _warn(docstring, line_number, f"Failed to get name, annotation or description from '{yield_lines[0]}'")
@@ -345,7 +349,7 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
         name, annotation, description = match.groups()
         description = "\n".join([description.lstrip(), *yield_lines[1:]]).rstrip("\n")
 
-        if annotation:
+        if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
             with suppress(SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
@@ -359,6 +363,10 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
                 #     if annotation.is_tuple:
                 #         annotation = annotation.tuple_item(index)
 
+            if annotation is None:
+                yielded_value = repr(name) or index
+                _warn(docstring, line_number, f"No type or annotation for yielded value {yielded_value}")
+
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=description))
 
     if yields:
@@ -368,11 +376,11 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     return None, new_offset
 
 
-def _read_receives_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+def _read_receives_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
     receives = []
     block, new_offset = _read_block_items(docstring, offset)
 
-    for index, (line_number, receive_lines) in enumerate(block):
+    for index, (line_number, receive_lines) in enumerate(block):  # noqa: B007 (will be used later)
         match = _RE_NAME_ANNOTATION_DESCRIPTION.match(receive_lines[0])
         if not match:
             _warn(docstring, line_number, f"Failed to get name, annotation or description from '{receive_lines[0]}'")
@@ -381,19 +389,23 @@ def _read_receives_section(docstring: Docstring, offset: int) -> tuple[Docstring
         name, annotation, description = match.groups()
         description = "\n".join([description.lstrip(), *receive_lines[1:]]).rstrip("\n")
 
-        if annotation:
+        if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
             with suppress(SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         # else:
-            # try to retrieve the annotation from the docstring parent
-            # TODO: support getting receive part and exploding tuple (in a generator/iterator)
-            # with suppress(AttributeError, KeyError):
-            #     annotation = docstring.parent.returns  # type: ignore[union-attr]
-            #     if len(block) > 1:
-            #         if annotation.is_tuple:
-            #             annotation = annotation.tuple_item(index)
+        # try to retrieve the annotation from the docstring parent
+        # TODO: support getting receive part and exploding tuple (in a generator/iterator)
+        # with suppress(AttributeError, KeyError):
+        #     annotation = docstring.parent.returns  # type: ignore[union-attr]
+        #     if len(block) > 1:
+        #         if annotation.is_tuple:
+        #             annotation = annotation.tuple_item(index)
+
+        if annotation is None:
+            received_value = repr(name) or index
+            _warn(docstring, line_number, f"No type or annotation for received value {received_value}")
 
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=description))
 
@@ -563,8 +575,8 @@ def parse(  # noqa: WPS231
                         )
                     )
                 else:
-                    offset -= 1
-                    current_section.append(lines[offset])
+                    with suppress(IndexError):
+                        current_section.append(lines[offset])
         else:
             current_section.append(lines[offset])
 

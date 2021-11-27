@@ -178,9 +178,11 @@ def test_returns_section():
     sections, _ = parse(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringReturn(annotation="list of int", description="A list of integers.")
+        sections[0].value[0], DocstringReturn(name="", annotation="list of int", description="A list of integers.")
     )
-    assert_element_equal(sections[0].value[1], DocstringReturn(annotation="bool", description="Some kind\nof flag."))
+    assert_element_equal(
+        sections[0].value[1], DocstringReturn(name="", annotation="bool", description="Some kind\nof flag.")
+    )
 
 
 def test_yields_section():
@@ -198,9 +200,11 @@ def test_yields_section():
     sections, _ = parse(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringYield(annotation="list of int", description="A list of integers.")
+        sections[0].value[0], DocstringYield(name="", annotation="list of int", description="A list of integers.")
     )
-    assert_element_equal(sections[0].value[1], DocstringYield(annotation="bool", description="Some kind\nof flag."))
+    assert_element_equal(
+        sections[0].value[1], DocstringYield(name="", annotation="bool", description="Some kind\nof flag.")
+    )
 
 
 def test_receives_section():
@@ -218,9 +222,11 @@ def test_receives_section():
     sections, _ = parse(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringReceive(annotation="list of int", description="A list of integers.")
+        sections[0].value[0], DocstringReceive(name="", annotation="list of int", description="A list of integers.")
     )
-    assert_element_equal(sections[0].value[1], DocstringReceive(annotation="bool", description="Some kind\nof flag."))
+    assert_element_equal(
+        sections[0].value[1], DocstringReceive(name="", annotation="bool", description="Some kind\nof flag.")
+    )
 
 
 def test_raises_section():

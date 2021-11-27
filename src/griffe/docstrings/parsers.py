@@ -14,6 +14,13 @@ if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
 
 
+# TODO: assert common denominator / feature parity in all parsers
+# - named return, yield, receive
+# - exploding return tuple
+# - picking yield and receive parts in generator
+# - exploding tuple of generator yield part
+# - sections titles
+# - resolving annotations
 class Parser(enum.Enum):
     """Enumeration for the different docstring parsers."""
 

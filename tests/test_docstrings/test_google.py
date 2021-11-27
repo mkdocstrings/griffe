@@ -299,15 +299,27 @@ def test_parse_yields_section():
     """Parse Yields section."""
     docstring = """
         Yields:
-            int: Integers.
+            x: Floats.
+            (int): Integers.
+            y (int): Same.
     """
 
     sections, warnings = parse(docstring)
     assert len(sections) == 1
-    annotated = sections[0].value
+    annotated = sections[0].value[0]
+    assert annotated.name == "x"
+    assert annotated.annotation is None
+    assert annotated.description == "Floats."
+    annotated = sections[0].value[1]
+    assert annotated.name == ""
     assert annotated.annotation == "int"
     assert annotated.description == "Integers."
-    assert not warnings
+    annotated = sections[0].value[2]
+    assert annotated.name == "y"
+    assert annotated.annotation == "int"
+    assert annotated.description == "Same."
+    assert len(warnings) == 1
+    assert "'x'" in warnings[0]
 
 
 def test_invalid_sections():
@@ -327,7 +339,7 @@ def test_invalid_sections():
     assert len(sections) == 1
     for warning in warnings[:3]:
         assert "Empty" in warning
-    assert "Empty return section at line" in warnings[3]
+    assert "Empty returns section at line" in warnings[3]
     assert "Empty" in warnings[-1]
 
 
@@ -412,7 +424,7 @@ def test_parse_types_in_docstring():
             y (int): Y value.
 
         Returns:
-            int: Sum X + Y + Z.
+            s (int): Sum X + Y + Z.
     """
 
     sections, warnings = parse(
@@ -434,7 +446,7 @@ def test_parse_types_in_docstring():
 
     (argx,) = sections[0].value  # noqa: WPS460
     (argy,) = sections[1].value  # noqa: WPS460
-    returns = sections[2].value
+    (returns,) = sections[2].value  # noqa: WPS460
 
     assert argx.name == "x"
     assert argx.annotation.source == "int"
@@ -448,7 +460,8 @@ def test_parse_types_in_docstring():
     assert argy.description == "Y value."
     assert argy.value is None
 
-    assert returns.annotation == "int"
+    assert returns.annotation.source == "int"
+    assert returns.annotation.full == "int"
     assert returns.description == "Sum X + Y + Z."
 
 
@@ -512,7 +525,7 @@ def test_prefer_docstring_types_over_annotations():
             y (str): Y value.
 
         Returns:
-            str: Sum X + Y + Z.
+            (str): Sum X + Y + Z.
     """
 
     sections, warnings = parse(
@@ -535,7 +548,7 @@ def test_prefer_docstring_types_over_annotations():
 
     (argx,) = sections[0].value  # noqa: WPS460
     (argy,) = sections[1].value  # noqa: WPS460
-    returns = sections[2].value
+    (returns,) = sections[2].value  # noqa: WPS460
 
     assert argx.name == "x"
     assert argx.annotation.source == "str"
@@ -547,7 +560,8 @@ def test_prefer_docstring_types_over_annotations():
     assert argy.annotation.full == "str"
     assert argy.description == "Y value."
 
-    assert returns.annotation == "str"
+    assert returns.annotation.source == "str"
+    assert returns.annotation.full == "str"
     assert returns.description == "Sum X + Y + Z."
 
 
@@ -618,7 +632,7 @@ def test_parse_yields_section_with_return_annotation():
     function = Function("func", returns="Iterator[int]")
     sections, warnings = parse(docstring, function)
     assert len(sections) == 1
-    annotated = sections[0].value
+    annotated = sections[0].value[0]
     assert annotated.annotation == "Iterator[int]"
     assert annotated.description == "Integers."
     assert not warnings

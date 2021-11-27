@@ -349,7 +349,8 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
             _warn(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
             annotation = None
 
-    parsed_values.return_value = DocstringReturn(annotation=annotation, description=parsed_directive.value)
+    # TODO: maybe support names
+    parsed_values.return_value = DocstringReturn(name="", annotation=annotation, description=parsed_directive.value)
 
     return parsed_directive.next_index
 

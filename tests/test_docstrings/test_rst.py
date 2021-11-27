@@ -617,7 +617,7 @@ def test_parse__return_directive__return_section_no_type():
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
         sections[1].value,
-        DocstringReturn(annotation=None, description=SOME_TEXT),
+        DocstringReturn(name="", annotation=None, description=SOME_TEXT),
     )
 
 
@@ -635,7 +635,7 @@ def test_parse__return_directive_rtype__return_section_with_type():
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
         sections[1].value,
-        DocstringReturn(annotation="str", description=SOME_TEXT),
+        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
     )
 
 
@@ -653,7 +653,7 @@ def test_parse__return_directive_rtype_first__return_section_with_type():
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
         sections[1].value,
-        DocstringReturn(annotation="str", description=SOME_TEXT),
+        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
     )
 
 
@@ -670,7 +670,7 @@ def test_parse__return_directive_annotation__return_section_with_type():
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
         sections[1].value,
-        DocstringReturn(annotation="str", description=SOME_TEXT),
+        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
     )
 
 
@@ -688,7 +688,7 @@ def test_parse__return_directive_annotation__prefer_return_directive():
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
         sections[1].value,
-        DocstringReturn(annotation="str", description=SOME_TEXT),
+        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
     )
 
 

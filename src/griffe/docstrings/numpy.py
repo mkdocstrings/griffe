@@ -297,10 +297,9 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
             _warn(docstring, index, f"Could not parse line '{item[0]}'")
             continue
 
-        # name = match.group("name")
-        annotation = match.group("type")
+        name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
-        returns.append(DocstringReturn(annotation=annotation, description=text))
+        returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
     return DocstringSection(DocstringSectionKind.returns, returns), index
 
 
@@ -321,10 +320,9 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
             _warn(docstring, index, f"Could not parse line '{item[0]}'")
             continue
 
-        # name = match.group("name")
-        annotation = match.group("type")
+        name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
-        yields.append(DocstringYield(annotation=annotation, description=text))
+        yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
     return DocstringSection(DocstringSectionKind.yields, yields), index
 
 
@@ -345,10 +343,9 @@ def _read_receives_section(docstring: Docstring, offset: int) -> tuple[Docstring
             _warn(docstring, index, f"Could not parse line '{item[0]}'")
             continue
 
-        # name = match.group("name")
-        annotation = match.group("type")
+        name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
-        receives.append(DocstringReceive(annotation=annotation, description=text))
+        receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
     return DocstringSection(DocstringSectionKind.receives, receives), index
 
 
