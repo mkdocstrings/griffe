@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import enum
+import inspect
 import sys
-from ast import AST as Node
+from ast import AST
 from ast import And as NodeAnd
 from ast import AnnAssign as NodeAnnAssign
 from ast import Assign as NodeAssign
@@ -44,17 +46,163 @@ from ast import USub as NodeUSub
 from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
-from functools import partial
+from functools import cached_property, partial
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Type
+from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
 
 from griffe.collections import LinesCollection
+from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
 
 if sys.version_info < (3, 9):
     from ast import Index as NodeIndex
 if TYPE_CHECKING:
     from griffe.dataclasses import Class, Module
+
+
+class ASTNode:
+    """This class is dynamically added to the bases of each AST node class."""
+
+    parent: ASTNode
+
+    @cached_property
+    def kind(self) -> str:
+        """Return the kind of this node.
+
+        Returns:
+            The node kind.
+        """
+        return self.__class__.__name__.lower()
+
+    @cached_property
+    def children(self) -> Sequence[ASTNode]:  # noqa: WPS231
+        """Build and return the children of this node.
+
+        Returns:
+            A list of children.
+        """
+        children = []
+        for field_name in self._fields:  # type: ignore[attr-defined]  # noqa: WPS437
+            try:
+                field = getattr(self, field_name)
+            except AttributeError:
+                continue
+            if isinstance(field, ASTNode):
+                field.parent = self
+                children.append(field)
+            elif isinstance(field, list):
+                for child in field:
+                    if isinstance(child, ASTNode):
+                        child.parent = self
+                        children.append(child)
+        return children
+
+    @cached_property
+    def position(self) -> int:
+        """Tell the position of this node amongst its siblings.
+
+        Raises:
+            RootNodeError: When the node doesn't have a parent.
+
+        Returns:
+            The node position amongst its siblings.
+        """
+        try:
+            return self.parent.children.index(self)
+        except AttributeError as error:
+            raise RootNodeError("the root node does not have a parent, nor siblings, nor a position") from error
+
+    @cached_property
+    def previous_siblings(self) -> Sequence[ASTNode]:
+        """Return the previous siblings of this node, starting from the closest.
+
+        Returns:
+            The previous siblings.
+        """
+        if self.position == 0:
+            return []
+        return self.parent.children[self.position - 1 :: -1]
+
+    @cached_property
+    def next_siblings(self) -> Sequence[ASTNode]:
+        """Return the next siblings of this node, starting from the closest.
+
+        Returns:
+            The next siblings.
+        """
+        if self.position == len(self.parent.children) - 1:
+            return []
+        return self.parent.children[self.position + 1 :]
+
+    @cached_property
+    def siblings(self) -> Sequence[ASTNode]:
+        """Return the siblings of this node.
+
+        Returns:
+            The siblings.
+        """
+        return [*reversed(self.previous_siblings), *self.next_siblings]
+
+    @cached_property
+    def previous(self) -> ASTNode:
+        """Return the previous sibling of this node.
+
+        Raises:
+            LastNodeError: When the node does not have previous siblings.
+
+        Returns:
+            The sibling.
+        """
+        try:
+            return self.previous_siblings[0]
+        except IndexError as error:
+            raise LastNodeError("there is no previous node") from error
+
+    @cached_property
+    def next(self) -> ASTNode:  # noqa: A003
+        """Return the next sibling of this node.
+
+        Raises:
+            LastNodeError: When the node does not have next siblings.
+
+        Returns:
+            The sibling.
+        """
+        try:
+            return self.next_siblings[0]
+        except IndexError as error:
+            raise LastNodeError("there is no next node") from error
+
+    @cached_property
+    def first_child(self) -> ASTNode:
+        """Return the first child of this node.
+
+        Raises:
+            LastNodeError: When the node does not have children.
+
+        Returns:
+            The child.
+        """
+        try:
+            return self.children[0]
+        except IndexError as error:
+            raise LastNodeError("there are no children node") from error
+
+    @cached_property
+    def last_child(self) -> ASTNode:  # noqa: A003
+        """Return the lasts child of this node.
+
+        Raises:
+            LastNodeError: When the node does not have children.
+
+        Returns:
+            The child.
+        """
+        try:
+            return self.children[-1]
+        except IndexError as error:
+            raise LastNodeError("there are no children node") from error
+
 
 
 def _join(sequence, item):
@@ -95,7 +243,7 @@ _node_baseclass_map: dict[Type, Callable[[Any, Module | Class], Name | Expressio
 }
 
 
-def get_baseclass(node: Node, parent: Module | Class) -> Name | Expression:
+def get_baseclass(node: AST, parent: Module | Class) -> Name | Expression:
     """Extract a resolvable name for a given base class.
 
     Parameters:
@@ -119,7 +267,7 @@ def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str:
 
 
 def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Expression:
-    left = get_annotation(node.value, parent)
+    left = _get_annotation(node.value, parent)
 
     def resolver():  # noqa: WPS430
         return f"{left.full}.{node.attr}"
@@ -129,9 +277,9 @@ def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Ex
 
 
 def _get_binop_annotation(node: NodeBinOp, parent: Module | Class) -> Expression:
-    left = get_annotation(node.left, parent)
-    right = get_annotation(node.right, parent)
-    return Expression(left, get_annotation(node.op, parent), right)
+    left = _get_annotation(node.left, parent)
+    right = _get_annotation(node.right, parent)
+    return Expression(left, _get_annotation(node.op, parent), right)
 
 
 def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
@@ -143,23 +291,23 @@ def _get_bitand_annotation(node: NodeBitOr, parent: Module | Class) -> str:
 
 
 def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Expression:
-    left = get_annotation(node.value, parent)
-    subscript = get_annotation(node.slice, parent)
+    left = _get_annotation(node.value, parent)
+    subscript = _get_annotation(node.slice, parent)
     return Expression(left, "[", subscript, "]")
 
 
 if sys.version_info < (3, 9):
 
     def _get_index_annotation(node: NodeIndex, parent: Module | Class) -> str | Name | Expression:
-        return get_annotation(node.value, parent)
+        return _get_annotation(node.value, parent)
 
 
 def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression:
-    return Expression(*_join([get_annotation(el, parent) for el in node.elts], ", "))
+    return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
 
 
 def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
-    return Expression("[", *_join([get_annotation(el, parent) for el in node.elts], ", "), "]")
+    return Expression("[", *_join([_get_annotation(el, parent) for el in node.elts], ", "), "]")
 
 
 _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
@@ -178,7 +326,11 @@ if sys.version_info < (3, 9):
     _node_annotation_map[NodeIndex] = _get_index_annotation
 
 
-def get_annotation(node: Node, parent: Module | Class) -> str | Name | Expression:
+def _get_annotation(node: AST, parent: Module | Class) -> str | Name | Expression:
+    return _node_annotation_map[type(node)](node, parent)
+
+
+def get_annotation(node: AST | None, parent: Module | Class) -> str | Name | Expression | None:
     """Extract a resolvable annotation.
 
     Parameters:
@@ -188,13 +340,15 @@ def get_annotation(node: Node, parent: Module | Class) -> str | Name | Expressio
     Returns:
         A string or resovable name or expression.
     """
-    return _node_annotation_map[type(node)](node, parent)
+    if node is None:
+        return None
+    return _get_annotation(node, parent)
 
 
 # ==========================================================
 # docstrings
 def get_docstring(
-    node: Node,
+    node: AST,
     strict: bool = False,
 ) -> tuple[str | None, int | None, int | None]:
     """Extract a docstring.
@@ -444,7 +598,7 @@ if sys.version_info < (3, 9):
     _node_value_map[NodeIndex] = _get_index_value
 
 
-def get_value(node: Node) -> str:
+def get_value(node: AST) -> str:
     """Extract a complex value as a string.
 
     Parameters:
@@ -472,7 +626,7 @@ _node_name_map: dict[Type, Callable[[Any], str]] = {
 }
 
 
-def get_name(node: Node) -> str:
+def get_name(node: AST) -> str:
     """Extract name from an assignment node.
 
     Parameters:
@@ -500,7 +654,7 @@ _node_names_map: dict[Type, Callable[[Any], list[str]]] = {  # noqa: WPS234
 }
 
 
-def get_names(node: Node) -> list[str]:
+def get_names(node: AST) -> list[str]:
     """Extract names from an assignment node.
 
     Parameters:
@@ -512,7 +666,7 @@ def get_names(node: Node) -> list[str]:
     return _node_names_map[type(node)](node)
 
 
-def get_instance_names(node: Node) -> list[str]:
+def get_instance_names(node: AST) -> list[str]:
     """Extract names from an assignment node, only for instance attributes.
 
     Parameters:
@@ -526,7 +680,7 @@ def get_instance_names(node: Node) -> list[str]:
 
 # ==========================================================
 # parameters
-def get_parameter_default(node: Node, filepath: Path, lines_collection: LinesCollection) -> str | None:
+def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesCollection) -> str | None:
     """Extract the default value of a function parameter.
 
     Parameters:

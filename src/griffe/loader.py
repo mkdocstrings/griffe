@@ -18,14 +18,13 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Any, Iterator, Sequence, Tuple
 
+from griffe.agents.extensions import Extensions
+from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, UnhandledPthFileError, UnimportableModuleError
-from griffe.extended_ast import extend_ast
-from griffe.extensions import Extensions
 from griffe.logger import get_logger
-from griffe.visitor import visit
 
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
@@ -74,7 +73,7 @@ class _BaseGriffeLoader:
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
-        extend_ast()
+        patch_ast()
 
     def _create_module(self, module_name: str, module_path: Path) -> Module:
         return Module(

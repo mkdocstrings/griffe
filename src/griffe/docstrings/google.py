@@ -7,6 +7,7 @@ from ast import PyCF_ONLY_AST
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, List, Pattern, Tuple
 
+from griffe.agents.nodes import get_annotation
 from griffe.docstrings.dataclasses import (
     DocstringAdmonition,
     DocstringAttribute,
@@ -21,7 +22,6 @@ from griffe.docstrings.dataclasses import (
 )
 from griffe.docstrings.utils import warning
 from griffe.expressions import Expression, Name
-from griffe.node_utils import get_annotation
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring

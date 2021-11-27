@@ -21,9 +21,9 @@ import sys
 from pathlib import Path
 from typing import Any, Sequence
 
+from griffe.agents.extensions import Extensions
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import Encoder
-from griffe.extensions import Extensions
 from griffe.loader import AsyncGriffeLoader, GriffeLoader
 from griffe.logger import get_logger
 

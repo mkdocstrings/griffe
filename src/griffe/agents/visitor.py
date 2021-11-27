@@ -1,20 +1,32 @@
 """Code parsing and data extraction utilies.
 
-This module exposes a public function, [`visit()`][griffe.visitor.visit],
+This module exposes a public function, [`visit()`][griffe.agents.visitor.visit],
 which parses the module code using [`parse()`][ast.parse],
 and returns a new [`Module`][griffe.dataclasses.Module] instance,
-populating its members recursively, by using a custom [`NodeVisitor`][ast.NodeVisitor] class.
+populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
 """
 
 from __future__ import annotations
 
-from ast import AST as Node
-from ast import PyCF_ONLY_AST
+import ast
+import inspect
 from contextlib import suppress
 from itertools import zip_longest
 from pathlib import Path
 from typing import Any
 
+from griffe.agents.base import BaseVisitor
+from griffe.agents.extensions import Extensions
+from griffe.agents.nodes import (
+    ASTNode,
+    get_annotation,
+    get_baseclass,
+    get_docstring,
+    get_instance_names,
+    get_names,
+    get_parameter_default,
+    get_value,
+)
 from griffe.collections import LinesCollection
 from griffe.dataclasses import (
     Alias,
@@ -30,25 +42,15 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.docstrings.parsers import Parser
+from griffe.exceptions import LastNodeError
 from griffe.expressions import Expression, Name
-from griffe.extended_ast import LastNodeError
-from griffe.extensions import Extensions
-from griffe.extensions.base import _BaseVisitor  # noqa: WPS450
-from griffe.node_utils import (
-    get_annotation,
-    get_baseclass,
-    get_docstring,
-    get_instance_names,
-    get_names,
-    get_parameter_default,
-    get_value,
-)
 
 
 def visit(
     module_name: str,
     filepath: Path,
     code: str,
+    *,
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: Parser | None = None,
@@ -70,7 +72,7 @@ def visit(
     Returns:
         The module, with its members populated.
     """
-    return _MainVisitor(
+    return Visitor(
         module_name,
         filepath,
         code,
@@ -82,7 +84,12 @@ def visit(
     ).get_module()
 
 
-class _MainVisitor(_BaseVisitor):  # noqa: WPS338
+class Visitor(BaseVisitor):  # noqa: WPS338
+    """This class is used to instantiate a visitor.
+
+    Visitors iterate on AST nodes to extract data from them.
+    """
+
     def __init__(
         self,
         module_name: str,
@@ -94,12 +101,23 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
     ) -> None:
+        """Initialize the visitor.
+
+        Parameters:
+            module_name: The module name.
+            filepath: The module filepath.
+            code: The module source code.
+            extensions: The extensions to use when visiting.
+            parent: An optional parent for the final module object.
+            docstring_parser: The docstring parser to use.
+            docstring_options: The docstring parsing options.
+            lines_collection: A collection of source code lines.
+        """
         super().__init__()
         self.module_name: str = module_name
         self.filepath: Path = filepath
         self.code: str = code
-        self.extensions: Extensions = extensions.instantiate(self)
-        self.root: Node | None = None
+        self.extensions: Extensions = extensions.attach_visitor(self)
         self.parent: Module | None = parent
         self.current: Module | Class = None  # type: ignore[assignment]
         self.in_decorator: bool = False
@@ -107,11 +125,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
 
-    def _visit(self, node: Node, parent: Node | None = None) -> None:
-        node.parent = parent  # type: ignore[attr-defined]  # extended node
-        self._run_specific_or_generic(node)
-
-    def _get_docstring(self, node: Node, strict: bool = False) -> Docstring | None:
+    def _get_docstring(self, node: ast.AST, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
         if value is None:
             return None
@@ -124,27 +138,49 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         )
 
     def get_module(self) -> Module:
+        """Build and return the object representing the module attached to this visitor.
+
+        This method triggers a complete visit of the module nodes.
+
+        Returns:
+            A module instance.
+        """
         # optimization: equivalent to ast.parse, but with optimize=1 to remove assert statements
         # TODO: with options, could use optimize=2 to remove docstrings
-        top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=PyCF_ONLY_AST, optimize=1)
+        top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
         self.visit(top_node)
         return self.current.module
 
-    def visit(self, node: Node, parent: Node | None = None) -> None:
-        for start_visitor in self.extensions.when_visit_starts:
-            start_visitor.visit(node, parent)
-        super().visit(node, parent)
-        for stop_visitor in self.extensions.when_visit_stops:
-            stop_visitor.visit(node, parent)
+    def visit(self, node: ast.AST) -> None:
+        """Extend the base visit with extensions.
 
-    def generic_visit(self, node: Node) -> None:  # noqa: WPS231
-        for start_visitor in self.extensions.when_children_visit_starts:
-            start_visitor.visit(node)
+        Parameters:
+            node: The node to visit.
+        """
+        for before_visitor in self.extensions.before_visit:
+            before_visitor.visit(node)
+        super().visit(node)
+        for after_visitor in self.extensions.after_visit:
+            after_visitor.visit(node)
+
+    def generic_visit(self, node: ast.AST) -> None:  # noqa: WPS231
+        """Extend the base generic visit with extensions.
+
+        Parameters:
+            node: The node to visit.
+        """
+        for before_visitor in self.extensions.before_children_visit:
+            before_visitor.visit(node)
         super().generic_visit(node)
-        for stop_visitor in self.extensions.when_children_visit_stops:
-            stop_visitor.visit(node)
+        for after_visitor in self.extensions.after_children_visit:
+            after_visitor.visit(node)
 
-    def visit_Module(self, node) -> None:
+    def visit_module(self, node: ast.Module) -> None:
+        """Visit a module node.
+
+        Parameters:
+            node: The node to visit.
+        """
         self.current = Module(
             name=self.module_name,
             filepath=self.filepath,
@@ -154,7 +190,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         )
         self.generic_visit(node)
 
-    def visit_ClassDef(self, node) -> None:
+    def visit_classdef(self, node: ast.ClassDef) -> None:
+        """Visit a class definition node.
+
+        Parameters:
+            node: The node to visit.
+        """
         # handle decorators
         decorators = []
         if node.decorator_list:
@@ -186,7 +227,13 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         self.generic_visit(node)
         self.current = self.current.parent  # type: ignore[assignment]
 
-    def handle_function(self, node, labels: set | None = None):  # noqa: WPS231
+    def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None):  # noqa: WPS231
+        """Handle a function definition node.
+
+        Parameters:
+            node: The node to visit.
+            labels: Labels to add to the data object.
+        """
         labels = labels or set()
 
         # handle decorators
@@ -221,14 +268,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
         )
         for (arg, kind), default in args_kinds_defaults:
-            annotation = arg.annotation and get_annotation(arg.annotation, parent=self.current)
+            annotation = get_annotation(arg.annotation, parent=self.current)
             default = get_parameter_default(default, self.filepath, self.lines_collection)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
-            annotation = node.args.vararg.annotation and get_annotation(
-                node.args.vararg.annotation, parent=self.current
-            )
+            annotation = get_annotation(node.args.vararg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"*{node.args.vararg.arg}",
@@ -249,14 +294,14 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             )
         )
         for kwarg, default in kwargs_defaults:  # noqa: WPS440
-            annotation = kwarg.annotation and get_annotation(kwarg.annotation, parent=self.current)
+            annotation = get_annotation(kwarg.annotation, parent=self.current)
             default = get_parameter_default(default, self.filepath, self.lines_collection)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
 
         if node.args.kwarg:
-            annotation = node.args.kwarg.annotation and get_annotation(node.args.kwarg.annotation, parent=self.current)
+            annotation = get_annotation(node.args.kwarg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"**{node.args.kwarg.arg}",
@@ -271,7 +316,7 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             lineno=lineno,
             endlineno=node.end_lineno,
             parameters=parameters,
-            returns=node.returns and get_annotation(node.returns, parent=self.current),
+            returns=get_annotation(node.returns, parent=self.current),
             decorators=decorators,
             docstring=self._get_docstring(node),
         )
@@ -284,13 +329,28 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             self.generic_visit(node)
             self.current = self.current.parent  # type: ignore[assignment]
 
-    def visit_FunctionDef(self, node) -> None:
+    def visit_functiondef(self, node: ast.FunctionDef) -> None:
+        """Visit a function definition node.
+
+        Parameters:
+            node: The node to visit.
+        """
         self.handle_function(node)
 
-    def visit_AsyncFunctionDef(self, node) -> None:
+    def visit_asyncfunctiondef(self, node: ast.AsyncFunctionDef) -> None:
+        """Visit an async function definition node.
+
+        Parameters:
+            node: The node to visit.
+        """
         self.handle_function(node, labels={"async"})
 
-    def visit_Import(self, node) -> None:
+    def visit_import(self, node: ast.Import) -> None:
+        """Visit an import node.
+
+        Parameters:
+            node: The node to visit.
+        """
         for name in node.names:
             alias_path = name.name.split(".", 1)[0]
             alias_name = name.asname or alias_path
@@ -298,7 +358,12 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             self.current[alias_name] = Alias(alias_name, alias_path, lineno=node.lineno, endlineno=node.end_lineno)
         self.generic_visit(node)
 
-    def visit_ImportFrom(self, node) -> None:
+    def visit_importfrom(self, node: ast.ImportFrom) -> None:
+        """Visit an "import from" node.
+
+        Parameters:
+            node: The node to visit.
+        """
         for name in node.names:
             alias_name = name.asname or name.name
             alias_path = f"{node.module}.{name.name}"
@@ -306,7 +371,17 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
             self.current[alias_name] = Alias(alias_name, alias_path, lineno=node.lineno, endlineno=node.end_lineno)
         self.generic_visit(node)
 
-    def handle_attribute(self, node, annotation: str | Name | Expression | None = None):  # noqa: WPS231
+    def handle_attribute(  # noqa: WPS231
+        self,
+        node: ast.Assign | ast.AnnAssign,
+        annotation: str | Name | Expression | None = None,
+    ):
+        """Handle an attribute (assignment) node.
+
+        Parameters:
+            node: The node to visit.
+            annotation: A potential annotation.
+        """
         parent = self.current
         labels = set()
 
@@ -335,10 +410,10 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
         if not names:
             return
 
-        value = get_value(node.value)
+        value = get_value(node.value)  # type: ignore[arg-type]
 
         try:
-            docstring = self._get_docstring(node.next, strict=True)
+            docstring = self._get_docstring(node.next, strict=True)  # type: ignore[union-attr]
         except (LastNodeError, AttributeError):
             docstring = None
 
@@ -361,10 +436,35 @@ class _MainVisitor(_BaseVisitor):  # noqa: WPS338
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = {elt.value for elt in node.value.elts}
+                    parent.exports = {elt.value for elt in node.value.elts}  # type: ignore[union-attr]
 
-    def visit_Assign(self, node) -> None:
+    def visit_assign(self, node: ast.Assign) -> None:
+        """Visit an assignment node.
+
+        Parameters:
+            node: The node to visit.
+        """
         self.handle_attribute(node)
 
-    def visit_AnnAssign(self, node) -> None:
-        self.handle_attribute(node, node.annotation and get_annotation(node.annotation, parent=self.current))
+    def visit_annassign(self, node: ast.AnnAssign) -> None:
+        """Visit an annotated assignment node.
+
+        Parameters:
+            node: The node to visit.
+        """
+        self.handle_attribute(node, get_annotation(node.annotation, parent=self.current))
+
+
+_patched = False
+
+
+def patch_ast() -> None:
+    """Extend the base `ast.AST` class to provide more functionality."""
+    global _patched  # noqa: WPS420
+    if _patched:
+        return
+    for name, member in inspect.getmembers(ast):
+        if name != "AST" and inspect.isclass(member):
+            if ast.AST in member.__bases__:  # noqa: WPS609
+                member.__bases__ = (*member.__bases__, ASTNode)  # noqa: WPS609
+    _patched = True  # noqa: WPS122,WPS442
