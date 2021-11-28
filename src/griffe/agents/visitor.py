@@ -27,7 +27,7 @@ from griffe.agents.nodes import (
     get_parameter_default,
     get_value,
 )
-from griffe.collections import LinesCollection
+from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
     Alias,
     Attribute,
@@ -56,6 +56,7 @@ def visit(
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
 ) -> Module:
     """Parse and visit a module file.
 
@@ -68,6 +69,7 @@ def visit(
         docstring_parser: The docstring parser to use. By default, no parsing is done.
         docstring_options: Additional docstring parsing options.
         lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
 
     Returns:
         The module, with its members populated.
@@ -81,6 +83,7 @@ def visit(
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
         lines_collection=lines_collection,
+        modules_collection=modules_collection,
     ).get_module()
 
 
@@ -100,6 +103,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         docstring_parser: Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
+        modules_collection: ModulesCollection | None = None,
     ) -> None:
         """Initialize the visitor.
 
@@ -112,6 +116,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             docstring_parser: The docstring parser to use.
             docstring_options: The docstring parsing options.
             lines_collection: A collection of source code lines.
+            modules_collection: A collection of modules.
         """
         super().__init__()
         self.module_name: str = module_name
@@ -124,6 +129,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
 
     def _get_docstring(self, node: ast.AST, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
@@ -187,6 +193,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             parent=self.parent,
             docstring=self._get_docstring(node),
             lines_collection=self.lines_collection,
+            modules_collection=self.modules_collection,
         )
         self.generic_visit(node)
 

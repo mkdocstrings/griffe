@@ -98,6 +98,7 @@ class _BaseGriffeLoader:
             docstring_parser=self.docstring_parser,
             docstring_options=self.docstring_options,
             lines_collection=self.lines_collection,
+            modules_collection=self.modules_collection,
         )
 
     def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
