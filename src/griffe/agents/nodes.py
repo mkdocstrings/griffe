@@ -259,6 +259,9 @@ class ObjectNode:
         self.name: str = name
         self.parent: ObjectNode | None = parent
 
+    def __repr__(self) -> str:
+        return f"ObjectNode(name={self.name!r})"
+
     @cached_property
     def kind(self) -> ObjectKind:
         """Return the kind of this node.
