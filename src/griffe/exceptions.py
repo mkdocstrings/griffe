@@ -40,3 +40,7 @@ class RootNodeError(GriffeError):
 
 class BuiltinModuleError(GriffeError):
     """Exception raised when trying to access the filepath of a builtin module."""
+
+
+class ExtensionError(GriffeError):
+    """Base class for errors raised by extensions."""
