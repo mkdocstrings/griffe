@@ -405,7 +405,10 @@ class ObjectNode:
         """
         if not self.parent:
             return False
-        self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+        try:
+            self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+        except AttributeError:
+            return False
         return self.parent_is_class and isinstance(self_from_parent, staticmethod)
 
     @cached_property
@@ -418,18 +421,20 @@ class ObjectNode:
         """
         if not self.parent:
             return False
-        self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+        try:
+            self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+        except AttributeError:
+            return False
         return self.parent_is_class and isinstance(self_from_parent, classmethod)
 
-    def _pick_member(self, member: Any) -> bool:
-        return member is not type and member is not object and not self._seen(member)
-
-    def _seen(self, member: Any) -> bool:
-        if member is self.obj:
-            return True
+    @cached_property
+    def _ids(self) -> set[int]:
         if self.parent is None:
-            return False
-        return self.parent._seen(member)  # noqa: WPS437
+            return {id(self)}
+        return {id(self)} | self.parent._ids  # noqa: WPS437
+
+    def _pick_member(self, member: Any) -> bool:
+        return member is not type and member is not object and id(member) not in self._ids
 
 
 def _join(sequence, item):
