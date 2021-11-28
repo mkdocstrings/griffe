@@ -49,6 +49,14 @@ class VisitorExtension(BaseVisitor):
         """
         self.visitor = visitor
 
+    def visit(self, node: ast.AST) -> None:
+        """Visit a node.
+
+        Parameters:
+            node: The node to visit.
+        """
+        getattr(self, f"visit_{node.kind}", lambda _: None)(node)  # type: ignore[attr-defined]
+
 
 class InspectorExtension(BaseInspector):
     """The object inspector extension base class, to inherit from."""
@@ -67,6 +75,14 @@ class InspectorExtension(BaseInspector):
             inspector: The parent inspector.
         """
         self.inspector = inspector
+
+    def inspect(self, node: ObjectNode) -> None:
+        """Inspect a node.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        getattr(self, f"inspect_{node.kind}", lambda _: None)(node)
 
 
 Extension = Union[VisitorExtension, InspectorExtension]
