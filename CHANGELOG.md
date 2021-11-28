@@ -5,6 +5,38 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.4.0](https://github.com/pawamoy/griffe/releases/tag/0.4.0) - 2021-11-28
+
+<small>[Compare with 0.3.0](https://github.com/pawamoy/griffe/compare/0.3.0...0.4.0)</small>
+
+### Features
+- Add a prototype 'hybrid' extension ([8cb3c16](https://github.com/pawamoy/griffe/commit/8cb3c1661223378a2511fd42a0693d0fbfe924d8) by Timothée Mazzucotelli).
+- Allow passing extensions config as JSON on the CLI ([9a7fa8b](https://github.com/pawamoy/griffe/commit/9a7fa8bd88752ca1a074179db3a4c7fc41b68028) by Timothée Mazzucotelli).
+- Support names for returns, yields and receives sections items ([1c5a4c9](https://github.com/pawamoy/griffe/commit/1c5a4c95738615ea9bb6a816c61d078e6133100a) by Timothée Mazzucotelli).
+- Store aliases on each object ([91ba643](https://github.com/pawamoy/griffe/commit/91ba643b3e8e9a8f56f3280f699a18b1e654ccd7) by Timothée Mazzucotelli).
+- Support in[tro]spection ([3a0587d](https://github.com/pawamoy/griffe/commit/3a0587dbf26f288722c7d27e781d0887c5cdf641) by Timothée Mazzucotelli).
+- Support multiple return, yield and receive items ([0fc70cb](https://github.com/pawamoy/griffe/commit/0fc70cbcc07c63ecf1026e4bef30bd0ff3f73958) by Timothée Mazzucotelli).
+- Support namespace packages ([2414c8e](https://github.com/pawamoy/griffe/commit/2414c8e24b7ba7ee986d95b301662fd06ef350fe) by Timothée Mazzucotelli).
+
+### Bug Fixes
+- Fix extensions loader ([78fb70b](https://github.com/pawamoy/griffe/commit/78fb70b77076b68fa30592caa5e92a91f0ce2caa) by Timothée Mazzucotelli).
+- Avoid visiting/inspecting multiple times ([75a8a8b](https://github.com/pawamoy/griffe/commit/75a8a8b7145e1872cbecf93f8e33749b51b5b77b) by Timothée Mazzucotelli).
+- Set modules collection attribute earlier ([592c0bd](https://github.com/pawamoy/griffe/commit/592c0bde6b6959615bc56030758098c8e45119a2) by Timothée Mazzucotelli).
+- Support inequality nodes ([b0ed247](https://github.com/pawamoy/griffe/commit/b0ed247c9fe42a324a4e8e4a972676afbaa26976) by Timothée Mazzucotelli).
+- Handle Div nodes for values ([272e4d6](https://github.com/pawamoy/griffe/commit/272e4d64b5ca557732af903d35aefbe405bd3ac0) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Set log level to INFO ([718e73e](https://github.com/pawamoy/griffe/commit/718e73ebb6767c0b10c03482d6f92cf135778ec7) by Timothée Mazzucotelli).
+- Add target setter ([7f0064c](https://github.com/pawamoy/griffe/commit/7f0064c154459b4f4da7fc25bc49f8dd1e4fd2c0) by Timothée Mazzucotelli).
+- Reorganize conditions ([15ab876](https://github.com/pawamoy/griffe/commit/15ab8763acc92d9160b847dc878f8bdad7f0b705) by Timothée Mazzucotelli).
+- Avoid recursion loops ([ea6acec](https://github.com/pawamoy/griffe/commit/ea6acec10c0a805a9ae4e03ae0b92fb2a54cf79b) by Timothée Mazzucotelli).
+- Update aliases when replacing a member ([99a0f8b](https://github.com/pawamoy/griffe/commit/99a0f8b9a425251ddcde853f2ad9ee95504b2127) by Timothée Mazzucotelli).
+- Reorganize code ([31fcdb1](https://github.com/pawamoy/griffe/commit/31fcdb1cbe0eceedc59cc7c1c692dc4ef210ef53) by Timothée Mazzucotelli).
+- Replace DocstringException with DocstringRaise ([d5ed87a](https://github.com/pawamoy/griffe/commit/d5ed87a478411aeb8248e948dbb6c228b80f5fbe) by Timothée Mazzucotelli).
+- Refactor loaders ([d9b94bb](https://github.com/pawamoy/griffe/commit/d9b94bbcb55c29268ab1e077420e2b0d5297638c) by Timothée Mazzucotelli).
+- Improve typing ([e08bcfa](https://github.com/pawamoy/griffe/commit/e08bcfac68aa22dc4bc58914b3340c1743f87ee7) by Timothée Mazzucotelli).
+
+
 ## [0.3.0](https://github.com/pawamoy/griffe/releases/tag/0.3.0) - 2021-11-21
 
 <small>[Compare with 0.2.0](https://github.com/pawamoy/griffe/compare/0.2.0...0.3.0)</small>
