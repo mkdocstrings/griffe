@@ -26,6 +26,18 @@ class GetMembersMixin:
         return self.members[parts[0]][parts[1]]  # type: ignore[attr-defined]
 
 
+def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
+    if isinstance(key, str):
+        if not key:
+            raise ValueError("cannot set self (empty key)")
+        parts = key.split(".", 1)
+    else:
+        parts = list(key)
+    if not parts:
+        raise ValueError("cannot set self (empty parts)")
+    return parts
+
+
 class SetMembersMixin:
     """This mixin adds a `__setitem__` method to a class.
 
@@ -35,16 +47,13 @@ class SetMembersMixin:
     """
 
     def __setitem__(self, key: str | Sequence[str], value):
-        if isinstance(key, str):
-            if not key:
-                raise ValueError("cannot set self (empty key)")
-            parts = key.split(".", 1)
-        else:
-            parts = list(key)
-        if not parts:
-            raise ValueError("cannot set self (empty parts)")
+        parts = _get_parts(key)
         if len(parts) == 1:
-            self.members[parts[0]] = value  # type: ignore[attr-defined]
+            name = parts[0]
+            if name in self.members:  # type: ignore[attr-defined]
+                for alias in self.members[name].aliases.values():  # type: ignore[attr-defined]
+                    alias.target = value
+            self.members[name] = value  # type: ignore[attr-defined]
             value.parent = self
         else:
             self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
@@ -59,16 +68,13 @@ class SetCollectionMembersMixin:
     """
 
     def __setitem__(self, key: str | Sequence[str], value):
-        if isinstance(key, str):
-            if not key:
-                raise ValueError("cannot set self (empty key)")
-            parts = key.split(".", 1)
-        else:
-            parts = list(key)
-        if not parts:
-            raise ValueError("cannot set self (empty parts)")
+        parts = _get_parts(key)
         if len(parts) == 1:
-            self.members[parts[0]] = value  # type: ignore[attr-defined]
+            name = parts[0]
+            if name in self.members:  # type: ignore[attr-defined]
+                for alias in self.members[name].aliases.values():  # type: ignore[attr-defined]
+                    alias.target = value
+            self.members[name] = value  # type: ignore[attr-defined]
             value._modules_collection = self  # noqa: WPS437
         else:
             self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
