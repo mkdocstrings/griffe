@@ -758,6 +758,12 @@ class Alias(ObjectAliasMixin):
             self.resolve_target()
         return self._target  # type: ignore[return-value]  # cannot return None, exception is raised
 
+    @target.setter
+    def target(self, value: Object | Alias) -> None:
+        self._target = value
+        if self.parent is not None:
+            self._target.aliases[self.path] = self
+
     def resolve_target(self) -> None:
         """Resolve the target.
 
