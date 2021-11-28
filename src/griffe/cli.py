@@ -176,7 +176,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)
 
-    logging.basicConfig(format="%(levelname)-10s %(message)s", level=logging.WARNING)  # noqa: WPS323
+    logging.basicConfig(format="%(levelname)-10s %(message)s", level=logging.INFO)  # noqa: WPS323
 
     output = opts.output
 
