@@ -24,11 +24,15 @@ from ast import Ellipsis as NodeEllipsis
 from ast import Expr as NodeExpr
 from ast import FormattedValue as NodeFormattedValue
 from ast import GeneratorExp as NodeGeneratorExp
+from ast import Gt as NodeGt
+from ast import GtE as NodeGtE
 from ast import IfExp as NodeIfExp
 from ast import JoinedStr as NodeJoinedStr
 from ast import Lambda as NodeLambda
 from ast import List as NodeList
 from ast import ListComp as NodeListComp
+from ast import Lt as NodeLt
+from ast import LtE as NodeLtE
 from ast import Mult as NodeMult
 from ast import Name as NodeName
 from ast import Not as NodeNot
@@ -735,6 +739,22 @@ def _get_noteq_value(node: NodeNotEq) -> str:
     return "!="
 
 
+def _get_gte_value(node: NodeNotEq) -> str:
+    return ">="
+
+
+def _get_gt_value(node: NodeNotEq) -> str:
+    return ">"
+
+
+def _get_lte_value(node: NodeNotEq) -> str:
+    return "<="
+
+
+def _get_lt_value(node: NodeNotEq) -> str:
+    return "<"
+
+
 def _get_generatorexp_value(node: NodeGeneratorExp) -> str:
     element = get_value(node.elt)
     generators = [get_value(gen) for gen in node.generators]
@@ -807,6 +827,10 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeComprehension: _get_comprehension_value,
     NodeCompare: _get_compare_value,
     NodeNotEq: _get_noteq_value,
+    NodeGtE: _get_gte_value,
+    NodeGt: _get_gt_value,
+    NodeLtE: _get_lte_value,
+    NodeLt: _get_lt_value,
     NodeBitOr: _get_bitor_value,
     NodeMult: _get_mult_value,
     NodeListComp: _get_listcomp_value,
