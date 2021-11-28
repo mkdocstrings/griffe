@@ -467,8 +467,8 @@ def iter_submodules(path: Path) -> Iterator[NamePartsAndPathType]:  # noqa: WPS2
         path: The module path.
 
     Yields:
-        This generator yields tuples containing the parts
-        of the submodule name as well as its filepath.
+        name_parts: The parts of a submodule name.
+        filepath: A submodule filepath.
     """
     if path.name == "__init__.py":
         path = path.parent
