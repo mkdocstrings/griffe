@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from griffe.agents.extensions import Extensions
+from griffe.agents.extensions.base import load_extensions
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import Encoder
 from griffe.loader import AsyncGriffeLoader, GriffeLoader
@@ -109,6 +110,13 @@ def get_parser() -> argparse.ArgumentParser:
         help="Whether to append sys.path to search paths specified with -s.",
     )
     parser.add_argument(
+        "-e",
+        "--extensions",
+        default={},
+        type=json.loads,
+        help="A list of extensions to use.",
+    )
+    parser.add_argument(
         "-f",
         "--full",
         action="store_true",
@@ -180,7 +188,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     if opts.append_sys_path:
         search.extend(sys.path)
 
-    extensions = Extensions()
+    extensions = load_extensions(opts.extensions)
 
     if opts.async_loader:
         loop = asyncio.get_event_loop()
