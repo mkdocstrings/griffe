@@ -666,12 +666,6 @@ def _get_subscript_value(node: NodeSubscript) -> str:
     return f"{get_value(node.value)}[{get_value(node.slice).strip('()')}]"
 
 
-if sys.version_info < (3, 9):
-
-    def _get_index_value(node: NodeIndex) -> str:
-        return get_value(node.value)
-
-
 def _get_lambda_value(node: NodeLambda) -> str:
     return f"lambda {get_value(node.args)}: {get_value(node.body)}"
 
@@ -830,6 +824,10 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
 }
 
 if sys.version_info < (3, 9):
+
+    def _get_index_value(node: NodeIndex) -> str:
+        return get_value(node.value)
+
     _node_value_map[NodeIndex] = _get_index_value
 
 
