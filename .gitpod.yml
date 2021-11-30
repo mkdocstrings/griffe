@@ -10,4 +10,4 @@ ports:
   onOpen: notify
 
 tasks:
-- init: pdm install
+- init: make setup
