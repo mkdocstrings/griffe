@@ -205,7 +205,7 @@ def check_types(ctx):  # noqa: WPS231
     # handle .pth files
     for pth in pkgs_dir.glob("*.pth"):
         with suppress(OSError):
-            for package in Path(Path(pth).read_text().splitlines()[0]).glob("*"):  # noqa: WPS440
+            for package in Path(pth.read_text().splitlines()[0]).glob("*"):  # noqa: WPS440
                 if package.suffix != ".dist-info":
                     packages[package.name] = package
 

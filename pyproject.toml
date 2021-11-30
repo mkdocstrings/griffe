@@ -4,7 +4,6 @@ build-backend = "pdm.pep517.api"
 
 [project]
 name = "griffe"
-version = {use_scm = true}
 description = """Signatures for entire Python programs. \
 Extract the structure, the frame, the skeleton of your project, \
 to generate API documentation or find breaking changes in your API."""
@@ -13,10 +12,24 @@ license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = []
-dynamic = ["version", "classifiers"]
+dynamic = ["version"]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: ISC License (ISCL)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Documentation",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Utilities",
     "Typing :: Typed",
 ]
 dependencies = []
@@ -40,6 +53,7 @@ Funding = "https://github.com/sponsors/pawamoy"
 griffe = "griffe.cli:main"
 
 [tool.pdm]
+version = {use_scm = true}
 package-dir = "src"
 
 [tool.pdm.dev-dependencies]
