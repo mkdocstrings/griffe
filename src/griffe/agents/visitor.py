@@ -430,6 +430,12 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             if "." in name:
                 continue
 
+            if name in parent.members:
+                # assigning multiple times: check for try/excepts
+                # TODO: might be better to inspect
+                if isinstance(node.parent, ast.ExceptHandler):  # type: ignore[union-attr]
+                    continue  # prefer "no-exception" case
+
             attribute = Attribute(
                 name=name,
                 value=value,
