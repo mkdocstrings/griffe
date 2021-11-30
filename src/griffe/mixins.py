@@ -51,8 +51,10 @@ class SetMembersMixin:
         if len(parts) == 1:
             name = parts[0]
             if name in self.members:  # type: ignore[attr-defined]
-                for alias in self.members[name].aliases.values():  # type: ignore[attr-defined]
-                    alias.target = value
+                member = self.members[name]  # type: ignore[attr-defined]
+                if not member.is_alias:
+                    for alias in member.aliases.values():
+                        alias.target = value
             self.members[name] = value  # type: ignore[attr-defined]
             value.parent = self
         else:
