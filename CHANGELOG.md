@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.5.0](https://github.com/pawamoy/griffe/releases/tag/0.5.0) - 2021-12-20
+
+<small>[Compare with 0.4.0](https://github.com/pawamoy/griffe/compare/0.4.0...0.5.0)</small>
+
+### Features
+- Add support for Python 3.7 ([4535adc](https://github.com/pawamoy/griffe/commit/4535adce19edbe7e9cde90f3b1075a8245a6ebc8) by Timothée Mazzucotelli).
+
+### Bug Fixes
+- Don't propagate aliases of an alias ([8af48f8](https://github.com/pawamoy/griffe/commit/8af48f87e2e6bb0f2cf1531fa10287a069f67289) by Timothée Mazzucotelli).
+- Don't reassign members defined in except clauses ([d918b4e](https://github.com/pawamoy/griffe/commit/d918b4efcedcedbec6db214ade8cde921d7e97b2) by Timothée Mazzucotelli).
+
+
 ## [0.4.0](https://github.com/pawamoy/griffe/releases/tag/0.4.0) - 2021-11-28
 
 <small>[Compare with 0.3.0](https://github.com/pawamoy/griffe/compare/0.3.0...0.4.0)</small>
