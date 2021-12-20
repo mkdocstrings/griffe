@@ -209,7 +209,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             lineno = node.decorator_list[0].lineno
             self.in_decorator = True
             for decorator_node in node.decorator_list:
-                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))
+                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))  # type: ignore[attr-defined]
                 self.visit(decorator_node)
             self.in_decorator = False
         else:
@@ -224,7 +224,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         class_ = Class(
             name=node.name,
             lineno=lineno,
-            endlineno=node.end_lineno,
+            endlineno=node.end_lineno,  # type: ignore[attr-defined]
             docstring=self._get_docstring(node),
             decorators=decorators,
             bases=bases,
@@ -249,7 +249,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             lineno = node.decorator_list[0].lineno
             self.in_decorator = True
             for decorator_node in node.decorator_list:
-                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))
+                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))  # type: ignore[attr-defined]
                 self.visit(decorator_node)
             self.in_decorator = False
         else:
@@ -259,13 +259,23 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         parameters = Parameters()
         annotation: str | Name | Expression | None
 
+        # TODO: remove once Python 3.7 support is dropped
+        try:
+            posonlyargs = node.args.posonlyargs  # type: ignore[attr-defined]
+        except AttributeError:
+            posonlyargs = []
+
         # TODO: probably some optimizations to do here
         args_kinds_defaults = reversed(
             (
                 *zip_longest(  # noqa: WPS356
                     reversed(
                         (
-                            *zip_longest(node.args.posonlyargs, [], fillvalue=ParameterKind.positional_only),
+                            *zip_longest(
+                                posonlyargs,  # type: ignore[attr-defined]
+                                [],
+                                fillvalue=ParameterKind.positional_only,
+                            ),
                             *zip_longest(node.args.args, [], fillvalue=ParameterKind.positional_or_keyword),
                         ),
                     ),
@@ -321,7 +331,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         function = Function(
             name=node.name,
             lineno=lineno,
-            endlineno=node.end_lineno,
+            endlineno=node.end_lineno,  # type: ignore[union-attr]
             parameters=parameters,
             returns=get_annotation(node.returns, parent=self.current),
             decorators=decorators,
@@ -362,7 +372,12 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             alias_path = name.name.split(".", 1)[0]
             alias_name = name.asname or alias_path
             self.current.imports[alias_name] = alias_path
-            self.current[alias_name] = Alias(alias_name, alias_path, lineno=node.lineno, endlineno=node.end_lineno)
+            self.current[alias_name] = Alias(
+                alias_name,
+                alias_path,
+                lineno=node.lineno,
+                endlineno=node.end_lineno,  # type: ignore[attr-defined]
+            )
         self.generic_visit(node)
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:
@@ -375,7 +390,12 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             alias_name = name.asname or name.name
             alias_path = f"{node.module}.{name.name}"
             self.current.imports[name.asname or name.name] = alias_path
-            self.current[alias_name] = Alias(alias_name, alias_path, lineno=node.lineno, endlineno=node.end_lineno)
+            self.current[alias_name] = Alias(
+                alias_name,
+                alias_path,
+                lineno=node.lineno,
+                endlineno=node.end_lineno,  # type: ignore[attr-defined]
+            )
         self.generic_visit(node)
 
     def handle_attribute(  # noqa: WPS231
@@ -441,7 +461,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 value=value,
                 annotation=annotation,
                 lineno=node.lineno,
-                endlineno=node.end_lineno,
+                endlineno=node.end_lineno,  # type: ignore[union-attr]
                 docstring=docstring,
             )
             attribute.labels |= labels

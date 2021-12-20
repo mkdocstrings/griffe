@@ -1,5 +1,9 @@
 """Test functions loading."""
 
+import sys
+
+import pytest
+
 from griffe.dataclasses import ParameterKind
 from griffe.loader import GriffeLoader
 from tests import FIXTURES_DIR
@@ -7,6 +11,7 @@ from tests import FIXTURES_DIR
 loader = GriffeLoader()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_loading_functions_parameters():  # noqa: WPS218
     """Test functions parameters loading."""
     module = loader.load_module(FIXTURES_DIR / "functions" / "parameters.py")

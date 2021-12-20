@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import enum
 import inspect
-from functools import cached_property
+import sys
+from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
 from typing import Any, Callable, cast
@@ -19,6 +20,12 @@ from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, NameResolutionError
 from griffe.expressions import Expression, Name
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin
+
+# TODO: remove once Python 3.7 support is dropped
+if sys.version_info < (3, 8):
+    from cached_property import cached_property
+else:
+    from functools import cached_property  # noqa: WPS440
 
 
 class ParameterKind(enum.Enum):
@@ -556,6 +563,11 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
             filepath = self.filepath
         except BuiltinModuleError:
             return []
+
+        # TODO: remove once Python 3.7 support is dropped
+        if self.lineno and self.endlineno is None and sys.version_info < (3, 8):
+            self.endlineno = self._endlineno
+
         if self.lineno is None or self.endlineno is None:
             return self.lines_collection[filepath]
         return self.lines_collection[filepath][self.lineno - 1 : self.endlineno]
@@ -628,6 +640,19 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
 
         return base
+
+    # TODO: remove once Python 3.7 support is dropped
+    @property
+    def _endlineno(self) -> int:
+        if self.kind is Kind.MODULE:
+            return len(self.lines_collection[self.filepath])
+        tokens, tokens_by_line = self.lines_collection.tokens(self.filepath)
+        first_token_index = tokens_by_line[self.lineno][0]
+        blockfinder = inspect.BlockFinder()
+        with suppress(inspect.EndOfBlock, IndentationError):
+            for token in tokens[first_token_index:]:
+                blockfinder.tokeneater(*token)
+        return blockfinder.last
 
 
 class Alias(ObjectAliasMixin):

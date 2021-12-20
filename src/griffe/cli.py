@@ -88,8 +88,7 @@ def _load_packages(
 
 
 def get_parser() -> argparse.ArgumentParser:
-    """
-    Return the program argument parser.
+    """Return the program argument parser.
 
     Returns:
         The argument parser for the program.
@@ -162,8 +161,7 @@ def get_parser() -> argparse.ArgumentParser:
 
 
 def main(args: list[str] | None = None) -> int:  # noqa: WPS231
-    """
-    Run the main program.
+    """Run the main program.
 
     This function is executed when you type `griffe` or `python -m griffe`.
 

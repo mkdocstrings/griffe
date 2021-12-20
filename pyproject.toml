@@ -10,7 +10,7 @@ to generate API documentation or find breaking changes in your API."""
 authors = [{name = "Timothée Mazzucotelli", email = "pawamoy@pm.me"}]
 license = {file = "LICENSE"}
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.7"
 keywords = []
 dynamic = ["version"]
 classifiers = [
@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -30,7 +31,9 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+    "cached_property; python_version < '3.8'",
+]
 
 [project.optional-dependencies]
 async = [

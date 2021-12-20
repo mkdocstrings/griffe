@@ -37,6 +37,7 @@ from ast import Mult as NodeMult
 from ast import Name as NodeName
 from ast import Not as NodeNot
 from ast import NotEq as NodeNotEq
+from ast import Num as NodeNum
 from ast import Or as NodeOr
 from ast import Set as NodeSet
 from ast import Slice as NodeSlice
@@ -50,7 +51,7 @@ from ast import USub as NodeUSub
 from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
-from functools import cached_property, partial
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
 
@@ -58,8 +59,18 @@ from griffe.collections import LinesCollection
 from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
 
+# TODO: remove once Python 3.7 support is dropped
+if sys.version_info < (3, 8):
+    from ast import NameConstant as NodeNameConstant
+
+    from cached_property import cached_property
+else:
+    from functools import cached_property  # noqa: WPS440
+
+# TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
     from ast import Index as NodeIndex
+
 if TYPE_CHECKING:
     from griffe.dataclasses import Class, Module
 
@@ -68,6 +79,10 @@ class ASTNode:
     """This class is dynamically added to the bases of each AST node class."""
 
     parent: ASTNode
+
+    # TODO: remove once Python 3.7 support is dropped
+    if sys.version_info < (3, 8):  # noqa: WPS604
+        end_lineno = property(lambda node: None)
 
     @cached_property
     def kind(self) -> str:
@@ -78,7 +93,7 @@ class ASTNode:
         """
         return self.__class__.__name__.lower()
 
-    @cached_property
+    @cached_property  # noqa: WPS231
     def children(self) -> Sequence[ASTNode]:  # noqa: WPS231
         """Build and return the children of this node.
 
@@ -162,7 +177,7 @@ class ASTNode:
         except IndexError as error:
             raise LastNodeError("there is no previous node") from error
 
-    @cached_property
+    @cached_property  # noqa: A003
     def next(self) -> ASTNode:  # noqa: A003
         """Return the next sibling of this node.
 
@@ -535,12 +550,6 @@ def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Ex
     return Expression(left, "[", subscript, "]")
 
 
-if sys.version_info < (3, 9):
-
-    def _get_index_annotation(node: NodeIndex, parent: Module | Class) -> str | Name | Expression:
-        return _get_annotation(node.value, parent)
-
-
 def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression:
     return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
 
@@ -561,8 +570,23 @@ _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Ex
     NodeList: _get_list_annotation,
 }
 
+# TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
+
+    def _get_index_annotation(node: NodeIndex, parent: Module | Class) -> str | Name | Expression:
+        return _get_annotation(node.value, parent)
+
     _node_annotation_map[NodeIndex] = _get_index_annotation
+
+# TODO: remove once Python 3.7 support is dropped
+if sys.version_info < (3, 8):
+
+    def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str | Name | Expression:
+        if node.value is None:
+            return repr(None)
+        return _get_annotation(node.value, parent)
+
+    _node_annotation_map[NodeNameConstant] = _get_nameconstant_annotation
 
 
 def _get_annotation(node: AST, parent: Module | Class) -> str | Name | Expression:
@@ -607,9 +631,9 @@ def get_docstring(
     else:
         return None, None, None
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
-        return doc.value, doc.lineno, doc.end_lineno
+        return doc.value, doc.lineno, doc.end_lineno  # type: ignore[attr-defined]
     if isinstance(doc, NodeStr):
-        return doc.s, doc.lineno, doc.end_lineno
+        return doc.s, doc.lineno, doc.end_lineno  # type: ignore[attr-defined]
     return None, None, None
 
 
@@ -847,12 +871,30 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeDiv: _get_div_value,
 }
 
+# TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
 
     def _get_index_value(node: NodeIndex) -> str:
         return get_value(node.value)
 
     _node_value_map[NodeIndex] = _get_index_value
+
+
+# TODO: remove once Python 3.7 support is dropped
+if sys.version_info < (3, 8):
+
+    def _get_str_value(node: NodeStr) -> str:
+        return repr(node.s)
+
+    def _get_nameconstant_value(node: NodeNameConstant) -> str:
+        return repr(node.value)
+
+    def _get_num_value(node: NodeNum) -> str:
+        return repr(node.n)
+
+    _node_value_map[NodeStr] = _get_str_value
+    _node_value_map[NodeNameConstant] = _get_nameconstant_value
+    _node_value_map[NodeNum] = _get_num_value
 
 
 def get_value(node: AST) -> str:
@@ -955,7 +997,7 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
         return repr(node.value)
     if isinstance(node, NodeName):
         return node.id
-    if node.lineno == node.end_lineno:
-        return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]
+    if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
+        return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
     # TODO: handle multiple line defaults
     return None

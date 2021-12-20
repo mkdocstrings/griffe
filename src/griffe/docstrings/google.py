@@ -545,40 +545,43 @@ def parse(  # noqa: WPS231
             in_code_block = True
             current_section.append(lines[offset])
 
-        elif match := _RE_ADMONITION.match(lines[offset]):  # noqa: WPS332
-            groups = match.groupdict()
-            admonition_type = groups["type"].lower()
-            if admonition_type in _section_kind:
-                if current_section:
-                    if any(current_section):
+        else:
+            # TODO: once Python 3.7 is dropped, use walrus operator
+            match = _RE_ADMONITION.match(lines[offset])
+            if match:
+                groups = match.groupdict()
+                admonition_type = groups["type"].lower()
+                if admonition_type in _section_kind:
+                    if current_section:
+                        if any(current_section):
+                            sections.append(
+                                DocstringSection(
+                                    DocstringSectionKind.text,
+                                    "\n".join(current_section).rstrip("\n"),
+                                )
+                            )
+                        current_section = []
+                    reader = _section_reader[_section_kind[admonition_type]]
+                    section, offset = reader(docstring, offset + 1)
+                    if section:
+                        section.title = groups["title"]
+                        sections.append(section)
+
+                else:
+                    contents, offset = _read_block(docstring, offset + 1)
+                    if contents:
                         sections.append(
                             DocstringSection(
-                                DocstringSectionKind.text,
-                                "\n".join(current_section).rstrip("\n"),
+                                kind=DocstringSectionKind.admonition,
+                                value=DocstringAdmonition(kind=admonition_type, contents=contents),
+                                title=groups["title"],
                             )
                         )
-                    current_section = []
-                reader = _section_reader[_section_kind[admonition_type]]
-                section, offset = reader(docstring, offset + 1)
-                if section:
-                    section.title = groups["title"]
-                    sections.append(section)
-
+                    else:
+                        with suppress(IndexError):
+                            current_section.append(lines[offset])
             else:
-                contents, offset = _read_block(docstring, offset + 1)
-                if contents:
-                    sections.append(
-                        DocstringSection(
-                            kind=DocstringSectionKind.admonition,
-                            value=DocstringAdmonition(kind=admonition_type, contents=contents),
-                            title=groups["title"],
-                        )
-                    )
-                else:
-                    with suppress(IndexError):
-                        current_section.append(lines[offset])
-        else:
-            current_section.append(lines[offset])
+                current_section.append(lines[offset])
 
         offset += 1
 
