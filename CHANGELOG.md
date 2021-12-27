@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.6.0](https://github.com/pawamoy/griffe/releases/tag/0.6.0) - 2021-12-27
+
+<small>[Compare with 0.5.0](https://github.com/pawamoy/griffe/compare/0.5.0...0.6.0)</small>
+
+### Features
+- Support more AST nodes ([cd1b305](https://github.com/pawamoy/griffe/commit/cd1b305932832ad5347ce829a48a311e3c44d542) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Use annotation getter for base classes ([8b1a7ed](https://github.com/pawamoy/griffe/commit/8b1a7edc11a72f679689fa9ba9e632907f9304f8) by Timothée Mazzucotelli).
+
+
 ## [0.5.0](https://github.com/pawamoy/griffe/releases/tag/0.5.0) - 2021-12-20
 
 <small>[Compare with 0.4.0](https://github.com/pawamoy/griffe/compare/0.4.0...0.5.0)</small>
