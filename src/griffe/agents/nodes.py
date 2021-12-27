@@ -6,6 +6,7 @@ import enum
 import inspect
 import sys
 from ast import AST
+from ast import Add as NodeAdd
 from ast import And as NodeAnd
 from ast import AnnAssign as NodeAnnAssign
 from ast import Assign as NodeAssign
@@ -13,6 +14,7 @@ from ast import Attribute as NodeAttribute
 from ast import BinOp as NodeBinOp
 from ast import BitAnd as NodeBitAnd
 from ast import BitOr as NodeBitOr
+from ast import BitXor as NodeBitXor
 from ast import BoolOp as NodeBoolOp
 from ast import Call as NodeCall
 from ast import Compare as NodeCompare
@@ -21,28 +23,41 @@ from ast import Dict as NodeDict
 from ast import DictComp as NodeDictComp
 from ast import Div as NodeDiv
 from ast import Ellipsis as NodeEllipsis
+from ast import Eq as NodeEq
 from ast import Expr as NodeExpr
+from ast import FloorDiv as NodeFloorDiv
 from ast import FormattedValue as NodeFormattedValue
 from ast import GeneratorExp as NodeGeneratorExp
 from ast import Gt as NodeGt
 from ast import GtE as NodeGtE
 from ast import IfExp as NodeIfExp
+from ast import In as NodeIn
+from ast import Invert as NodeInvert
+from ast import Is as NodeIs
+from ast import IsNot as NodeIsNot
 from ast import JoinedStr as NodeJoinedStr
 from ast import Lambda as NodeLambda
 from ast import List as NodeList
 from ast import ListComp as NodeListComp
+from ast import LShift as NodeLShift
 from ast import Lt as NodeLt
 from ast import LtE as NodeLtE
+from ast import Mod as NodeMod
 from ast import Mult as NodeMult
 from ast import Name as NodeName
 from ast import Not as NodeNot
 from ast import NotEq as NodeNotEq
+from ast import NotIn as NodeNotIn
 from ast import Num as NodeNum
 from ast import Or as NodeOr
+from ast import Pow as NodePow
+from ast import RShift as NodeRShift
 from ast import Set as NodeSet
+from ast import SetComp as NodeSetComp
 from ast import Slice as NodeSlice
 from ast import Starred as NodeStarred
 from ast import Str as NodeStr
+from ast import Sub as NodeSub
 from ast import Subscript as NodeSubscript
 from ast import Tuple as NodeTuple
 from ast import UAdd as NodeUAdd
@@ -469,48 +484,6 @@ def _join(sequence, item):
 
 
 # ==========================================================
-# base classes
-def _get_baseclass_name(node: NodeName, parent: Module | Class) -> Name:
-    return Name(node.id, partial(parent.resolve, node.id))
-
-
-def _get_baseclass_attribute(node: NodeAttribute, parent: Module | Class) -> Expression:
-    left = get_baseclass(node.value, parent)
-
-    def resolver():  # noqa: WPS430
-        return f"{left.full}.{node.attr}"
-
-    right = Name(node.attr, resolver)
-    return Expression(left, ".", right)
-
-
-def _get_baseclass_subscript(node: NodeSubscript, parent: Module | Class) -> Expression:
-    left = get_baseclass(node.value, parent)
-    subscript = get_baseclass(node.slice, parent)
-    return Expression(left, "[", subscript, "]")
-
-
-_node_baseclass_map: dict[Type, Callable[[Any, Module | Class], Name | Expression]] = {
-    NodeName: _get_baseclass_name,
-    NodeAttribute: _get_baseclass_attribute,
-    NodeSubscript: _get_baseclass_subscript,
-}
-
-
-def get_baseclass(node: AST, parent: Module | Class) -> Name | Expression:
-    """Extract a resolvable name for a given base class.
-
-    Parameters:
-        node: The base class node.
-        parent: The parent used to resolve the name.
-
-    Returns:
-        A resovable name or expression.
-    """
-    return _node_baseclass_map[type(node)](node, parent)
-
-
-# ==========================================================
 # annotations
 def _get_name_annotation(node: NodeName, parent: Module | Class) -> Name:
     return Name(node.id, partial(parent.resolve, node.id))
@@ -530,6 +503,21 @@ def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Ex
     return Expression(left, ".", right)
 
 
+def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
+    posargs = Expression(*[_get_annotation(arg, parent) for arg in node.args])
+    kwargs = Expression(*[_get_annotation(kwarg, parent) for kwarg in node.keywords])
+    args: Expression | str
+    if posargs and kwargs:
+        args = Expression(posargs, ", ", kwargs)
+    elif posargs:
+        args = posargs
+    elif kwargs:
+        args = kwargs
+    else:
+        args = ""
+    return Expression(_get_annotation(node.func, parent), "(", args, ")")
+
+
 def _get_binop_annotation(node: NodeBinOp, parent: Module | Class) -> Expression:
     left = _get_annotation(node.left, parent)
     right = _get_annotation(node.right, parent)
@@ -540,7 +528,7 @@ def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
     return " | "
 
 
-def _get_bitand_annotation(node: NodeBitOr, parent: Module | Class) -> str:
+def _get_bitand_annotation(node: NodeBitAnd, parent: Module | Class) -> str:
     return " & "
 
 
@@ -558,6 +546,20 @@ def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
     return Expression("[", *_join([_get_annotation(el, parent) for el in node.elts], ", "), "]")
 
 
+def _get_ellipsis_annotation(node: NodeEllipsis, parent: Module | Class) -> str:
+    return "..."
+
+
+def _get_ifexp_annotation(node: NodeIfExp, parent: Module | Class) -> Expression:
+    return Expression(
+        _get_annotation(node.body, parent),
+        " if ",
+        _get_annotation(node.test, parent),
+        " else",
+        _get_annotation(node.orelse, parent),
+    )
+
+
 _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
     NodeName: _get_name_annotation,
     NodeConstant: _get_constant_annotation,
@@ -568,6 +570,9 @@ _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Ex
     NodeSubscript: _get_subscript_annotation,
     NodeTuple: _get_tuple_annotation,
     NodeList: _get_list_annotation,
+    NodeCall: _get_call_annotation,
+    NodeEllipsis: _get_ellipsis_annotation,
+    NodeIfExp: _get_ifexp_annotation,
 }
 
 # TODO: remove once Python 3.8 support is dropped
@@ -659,12 +664,64 @@ def _get_bitor_value(node: NodeBitOr) -> str:
     return "|"
 
 
+def _get_bitand_value(node: NodeBitAnd) -> str:
+    return "&"
+
+
+def _get_bitxor_value(node: NodeBitXor) -> str:
+    return "^"
+
+
+def _get_invert_value(node: NodeInvert) -> str:
+    return "~"
+
+
+def _get_in_value(node: NodeIn) -> str:
+    return "in"
+
+
+def _get_notin_value(node: NodeNotIn) -> str:
+    return "not in"
+
+
+def _get_eq_value(node: NodeEq) -> str:
+    return "=="
+
+
+def _get_add_value(node: NodeAdd) -> str:
+    return "+"
+
+
+def _get_sub_value(node: NodeSub) -> str:
+    return "-"
+
+
 def _get_mult_value(node: NodeMult) -> str:
     return "*"
 
 
 def _get_div_value(node: NodeDiv) -> str:
     return "/"
+
+
+def _get_floordiv_value(node: NodeFloorDiv) -> str:
+    return "//"
+
+
+def _get_pow_value(node: NodePow) -> str:
+    return "**"
+
+
+def _get_mod_value(node: NodeMod) -> str:
+    return "%"
+
+
+def _get_lshift_value(node: NodeLShift) -> str:
+    return "<<"
+
+
+def _get_rshift_value(node: NodeRShift) -> str:
+    return ">>"
 
 
 def _get_unaryop_value(node: NodeUnaryOp) -> str:
@@ -791,6 +848,12 @@ def _get_listcomp_value(node: NodeListComp) -> str:
     return f"[{element} " + " ".join(generators) + "]"
 
 
+def _get_setcomp_value(node: NodeSetComp) -> str:
+    element = get_value(node.elt)
+    generators = [get_value(gen) for gen in node.generators]
+    return f"{{{element} " + " ".join(generators) + "}"
+
+
 def _get_dictcomp_value(node: NodeDictComp) -> str:
     key = get_value(node.key)
     value = get_value(node.value)
@@ -828,6 +891,14 @@ def _get_call_value(node: NodeCall) -> str:
     return f"{get_value(node.func)}({args})"
 
 
+def _get_isnot_value(node: NodeIsNot) -> str:
+    return "is not"
+
+
+def _get_is_value(node: NodeIs) -> str:
+    return "is"
+
+
 _node_value_map: dict[Type, Callable[[Any], str]] = {
     type(None): lambda _: repr(None),
     NodeName: _get_name_value,
@@ -858,6 +929,7 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeBitOr: _get_bitor_value,
     NodeMult: _get_mult_value,
     NodeListComp: _get_listcomp_value,
+    NodeSetComp: _get_setcomp_value,
     NodeLambda: _get_lambda_value,
     NodeDictComp: _get_dictcomp_value,
     NodeStarred: _get_starred_value,
@@ -869,6 +941,21 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeNot: _get_not_value,
     NodeArguments: _get_arguments_value,
     NodeDiv: _get_div_value,
+    NodeIsNot: _get_isnot_value,
+    NodeIs: _get_is_value,
+    NodeAdd: _get_add_value,
+    NodeSub: _get_sub_value,
+    NodeEq: _get_eq_value,
+    NodePow: _get_pow_value,
+    NodeMod: _get_mod_value,
+    NodeLShift: _get_lshift_value,
+    NodeRShift: _get_rshift_value,
+    NodeIn: _get_in_value,
+    NodeBitAnd: _get_bitand_value,
+    NodeFloorDiv: _get_floordiv_value,
+    NodeNotIn: _get_notin_value,
+    NodeInvert: _get_invert_value,
+    NodeBitXor: _get_bitxor_value,
 }
 
 # TODO: remove once Python 3.8 support is dropped

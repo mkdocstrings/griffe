@@ -105,6 +105,17 @@ class Expression(list):  # noqa: WPS600
         return "".join(str(element) for element in self)
 
     @property
+    def full(self) -> str:
+        """Return self as a string.
+
+        This property is only useful to the AST utils.
+
+        Returns:
+            Self as a string.
+        """
+        return str(self)
+
+    @property
     def is_tuple(self) -> bool:
         """Tell whether this expression represents a tuple.
 
