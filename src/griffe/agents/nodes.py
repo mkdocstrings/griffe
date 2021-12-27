@@ -485,14 +485,6 @@ def _join(sequence, item):
 
 # ==========================================================
 # annotations
-def _get_name_annotation(node: NodeName, parent: Module | Class) -> Name:
-    return Name(node.id, partial(parent.resolve, node.id))
-
-
-def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str:
-    return repr(node.value)
-
-
 def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Expression:
     left = _get_annotation(node.value, parent)
 
@@ -501,6 +493,20 @@ def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Ex
 
     right = Name(node.attr, resolver)
     return Expression(left, ".", right)
+
+
+def _get_binop_annotation(node: NodeBinOp, parent: Module | Class) -> Expression:
+    left = _get_annotation(node.left, parent)
+    right = _get_annotation(node.right, parent)
+    return Expression(left, _get_annotation(node.op, parent), right)
+
+
+def _get_bitand_annotation(node: NodeBitAnd, parent: Module | Class) -> str:
+    return " & "
+
+
+def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
+    return " | "
 
 
 def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
@@ -518,32 +524,8 @@ def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
     return Expression(_get_annotation(node.func, parent), "(", args, ")")
 
 
-def _get_binop_annotation(node: NodeBinOp, parent: Module | Class) -> Expression:
-    left = _get_annotation(node.left, parent)
-    right = _get_annotation(node.right, parent)
-    return Expression(left, _get_annotation(node.op, parent), right)
-
-
-def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
-    return " | "
-
-
-def _get_bitand_annotation(node: NodeBitAnd, parent: Module | Class) -> str:
-    return " & "
-
-
-def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Expression:
-    left = _get_annotation(node.value, parent)
-    subscript = _get_annotation(node.slice, parent)
-    return Expression(left, "[", subscript, "]")
-
-
-def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression:
-    return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
-
-
-def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
-    return Expression("[", *_join([_get_annotation(el, parent) for el in node.elts], ", "), "]")
+def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str:
+    return repr(node.value)
 
 
 def _get_ellipsis_annotation(node: NodeEllipsis, parent: Module | Class) -> str:
@@ -558,6 +540,24 @@ def _get_ifexp_annotation(node: NodeIfExp, parent: Module | Class) -> Expression
         " else",
         _get_annotation(node.orelse, parent),
     )
+
+
+def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
+    return Expression("[", *_join([_get_annotation(el, parent) for el in node.elts], ", "), "]")
+
+
+def _get_name_annotation(node: NodeName, parent: Module | Class) -> Name:
+    return Name(node.id, partial(parent.resolve, node.id))
+
+
+def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Expression:
+    left = _get_annotation(node.value, parent)
+    subscript = _get_annotation(node.slice, parent)
+    return Expression(left, "[", subscript, "]")
+
+
+def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression:
+    return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
 
 
 _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
@@ -644,12 +644,18 @@ def get_docstring(
 
 # ==========================================================
 # values
-def _get_name_value(node: NodeName) -> str:
-    return node.id
 
 
-def _get_constant_value(node: NodeConstant) -> str:
-    return repr(node.value)
+def _get_add_value(node: NodeAdd) -> str:
+    return "+"
+
+
+def _get_and_value(node: NodeAnd) -> str:
+    return " and "
+
+
+def _get_arguments_value(node: NodeArguments) -> str:
+    return ", ".join(arg.arg for arg in node.args)
 
 
 def _get_attribute_value(node: NodeAttribute) -> str:
@@ -672,209 +678,8 @@ def _get_bitxor_value(node: NodeBitXor) -> str:
     return "^"
 
 
-def _get_invert_value(node: NodeInvert) -> str:
-    return "~"
-
-
-def _get_in_value(node: NodeIn) -> str:
-    return "in"
-
-
-def _get_notin_value(node: NodeNotIn) -> str:
-    return "not in"
-
-
-def _get_eq_value(node: NodeEq) -> str:
-    return "=="
-
-
-def _get_add_value(node: NodeAdd) -> str:
-    return "+"
-
-
-def _get_sub_value(node: NodeSub) -> str:
-    return "-"
-
-
-def _get_mult_value(node: NodeMult) -> str:
-    return "*"
-
-
-def _get_div_value(node: NodeDiv) -> str:
-    return "/"
-
-
-def _get_floordiv_value(node: NodeFloorDiv) -> str:
-    return "//"
-
-
-def _get_pow_value(node: NodePow) -> str:
-    return "**"
-
-
-def _get_mod_value(node: NodeMod) -> str:
-    return "%"
-
-
-def _get_lshift_value(node: NodeLShift) -> str:
-    return "<<"
-
-
-def _get_rshift_value(node: NodeRShift) -> str:
-    return ">>"
-
-
-def _get_unaryop_value(node: NodeUnaryOp) -> str:
-    return f"{get_value(node.op)}{get_value(node.operand)}"
-
-
-def _get_usub_value(node: NodeUSub) -> str:
-    return "-"
-
-
-def _get_uadd_value(node: NodeUAdd) -> str:
-    return "+"
-
-
-def _get_not_value(node: NodeNot) -> str:
-    return "not "
-
-
-def _get_slice_value(node: NodeSlice) -> str:
-    value = f"{get_value(node.lower) if node.lower else ''}:{get_value(node.upper) if node.upper else ''}"
-    if node.step:
-        value = f"{value}:{get_value(node.step)}"
-    return value
-
-
-def _get_subscript_value(node: NodeSubscript) -> str:
-    return f"{get_value(node.value)}[{get_value(node.slice).strip('()')}]"
-
-
-def _get_lambda_value(node: NodeLambda) -> str:
-    return f"lambda {get_value(node.args)}: {get_value(node.body)}"
-
-
-def _get_arguments_value(node: NodeArguments) -> str:
-    return ", ".join(arg.arg for arg in node.args)
-
-
-def _get_list_value(node: NodeList) -> str:
-    return "[" + ", ".join(get_value(el) for el in node.elts) + "]"
-
-
-def _get_tuple_value(node: NodeTuple) -> str:
-    return "(" + ", ".join(get_value(el) for el in node.elts) + ")"
-
-
-def _get_keyword_value(node: NodeKeyword) -> str:
-    return f"{node.arg}={get_value(node.value)}"
-
-
-def _get_dict_value(node: NodeDict) -> str:
-    pairs = zip(node.keys, node.values)
-    gen = (f"{'None' if key is None else get_value(key)}: {get_value(value)}" for key, value in pairs)  # noqa: WPS509
-    return "{" + ", ".join(gen) + "}"
-
-
-def _get_set_value(node: NodeSet) -> str:
-    return "{" + ", ".join(get_value(el) for el in node.elts) + "}"
-
-
-def _get_ellipsis_value(node: NodeEllipsis) -> str:
-    return "..."
-
-
-def _get_starred_value(node: NodeStarred) -> str:
-    return get_value(node.value)
-
-
-def _get_formatted_value(node: NodeFormattedValue) -> str:
-    return f"{{{get_value(node.value)}}}"
-
-
-def _get_joinedstr_value(node: NodeJoinedStr) -> str:
-    return "".join(get_value(value) for value in node.values)
-
-
 def _get_boolop_value(node: NodeBoolOp) -> str:
     return get_value(node.op).join(get_value(value) for value in node.values)
-
-
-def _get_or_value(node: NodeOr) -> str:
-    return " or "
-
-
-def _get_and_value(node: NodeAnd) -> str:
-    return " and "
-
-
-def _get_compare_value(node: NodeCompare) -> str:
-    left = get_value(node.left)
-    ops = [get_value(op) for op in node.ops]
-    comparators = [get_value(comparator) for comparator in node.comparators]
-    return f"{left} " + " ".join(f"{op} {comp}" for op, comp in zip(ops, comparators))
-
-
-def _get_noteq_value(node: NodeNotEq) -> str:
-    return "!="
-
-
-def _get_gte_value(node: NodeNotEq) -> str:
-    return ">="
-
-
-def _get_gt_value(node: NodeNotEq) -> str:
-    return ">"
-
-
-def _get_lte_value(node: NodeNotEq) -> str:
-    return "<="
-
-
-def _get_lt_value(node: NodeNotEq) -> str:
-    return "<"
-
-
-def _get_generatorexp_value(node: NodeGeneratorExp) -> str:
-    element = get_value(node.elt)
-    generators = [get_value(gen) for gen in node.generators]
-    return f"{element} " + " ".join(generators)
-
-
-def _get_listcomp_value(node: NodeListComp) -> str:
-    element = get_value(node.elt)
-    generators = [get_value(gen) for gen in node.generators]
-    return f"[{element} " + " ".join(generators) + "]"
-
-
-def _get_setcomp_value(node: NodeSetComp) -> str:
-    element = get_value(node.elt)
-    generators = [get_value(gen) for gen in node.generators]
-    return f"{{{element} " + " ".join(generators) + "}"
-
-
-def _get_dictcomp_value(node: NodeDictComp) -> str:
-    key = get_value(node.key)
-    value = get_value(node.value)
-    generators = [get_value(gen) for gen in node.generators]
-    return f"{{{key}: {value} " + " ".join(generators) + "}"
-
-
-def _get_comprehension_value(node: NodeComprehension) -> str:
-    target = get_value(node.target)
-    iterable = get_value(node.iter)
-    conditions = [get_value(condition) for condition in node.ifs]
-    value = f"for {target} in {iterable}"
-    if conditions:
-        value = f"{value} if " + " if ".join(conditions)
-    if node.is_async:
-        value = f"async {value}"
-    return value
-
-
-def _get_ifexp_value(node: NodeIfExp) -> str:
-    return f"{get_value(node.body)} if {get_value(node.test)} else {get_value(node.orelse)}"
 
 
 def _get_call_value(node: NodeCall) -> str:
@@ -891,71 +696,268 @@ def _get_call_value(node: NodeCall) -> str:
     return f"{get_value(node.func)}({args})"
 
 
-def _get_isnot_value(node: NodeIsNot) -> str:
-    return "is not"
+def _get_compare_value(node: NodeCompare) -> str:
+    left = get_value(node.left)
+    ops = [get_value(op) for op in node.ops]
+    comparators = [get_value(comparator) for comparator in node.comparators]
+    return f"{left} " + " ".join(f"{op} {comp}" for op, comp in zip(ops, comparators))
+
+
+def _get_comprehension_value(node: NodeComprehension) -> str:
+    target = get_value(node.target)
+    iterable = get_value(node.iter)
+    conditions = [get_value(condition) for condition in node.ifs]
+    value = f"for {target} in {iterable}"
+    if conditions:
+        value = f"{value} if " + " if ".join(conditions)
+    if node.is_async:
+        value = f"async {value}"
+    return value
+
+
+def _get_constant_value(node: NodeConstant) -> str:
+    return repr(node.value)
+
+
+def _get_dict_value(node: NodeDict) -> str:
+    pairs = zip(node.keys, node.values)
+    gen = (f"{'None' if key is None else get_value(key)}: {get_value(value)}" for key, value in pairs)  # noqa: WPS509
+    return "{" + ", ".join(gen) + "}"
+
+
+def _get_dictcomp_value(node: NodeDictComp) -> str:
+    key = get_value(node.key)
+    value = get_value(node.value)
+    generators = [get_value(gen) for gen in node.generators]
+    return f"{{{key}: {value} " + " ".join(generators) + "}"
+
+
+def _get_div_value(node: NodeDiv) -> str:
+    return "/"
+
+
+def _get_ellipsis_value(node: NodeEllipsis) -> str:
+    return "..."
+
+
+def _get_eq_value(node: NodeEq) -> str:
+    return "=="
+
+
+def _get_floordiv_value(node: NodeFloorDiv) -> str:
+    return "//"
+
+
+def _get_formatted_value(node: NodeFormattedValue) -> str:
+    return f"{{{get_value(node.value)}}}"
+
+
+def _get_generatorexp_value(node: NodeGeneratorExp) -> str:
+    element = get_value(node.elt)
+    generators = [get_value(gen) for gen in node.generators]
+    return f"{element} " + " ".join(generators)
+
+
+def _get_gte_value(node: NodeNotEq) -> str:
+    return ">="
+
+
+def _get_gt_value(node: NodeNotEq) -> str:
+    return ">"
+
+
+def _get_ifexp_value(node: NodeIfExp) -> str:
+    return f"{get_value(node.body)} if {get_value(node.test)} else {get_value(node.orelse)}"
+
+
+def _get_invert_value(node: NodeInvert) -> str:
+    return "~"
+
+
+def _get_in_value(node: NodeIn) -> str:
+    return "in"
 
 
 def _get_is_value(node: NodeIs) -> str:
     return "is"
 
 
+def _get_isnot_value(node: NodeIsNot) -> str:
+    return "is not"
+
+
+def _get_joinedstr_value(node: NodeJoinedStr) -> str:
+    return "".join(get_value(value) for value in node.values)
+
+
+def _get_keyword_value(node: NodeKeyword) -> str:
+    return f"{node.arg}={get_value(node.value)}"
+
+
+def _get_lambda_value(node: NodeLambda) -> str:
+    return f"lambda {get_value(node.args)}: {get_value(node.body)}"
+
+
+def _get_list_value(node: NodeList) -> str:
+    return "[" + ", ".join(get_value(el) for el in node.elts) + "]"
+
+
+def _get_listcomp_value(node: NodeListComp) -> str:
+    element = get_value(node.elt)
+    generators = [get_value(gen) for gen in node.generators]
+    return f"[{element} " + " ".join(generators) + "]"
+
+
+def _get_lshift_value(node: NodeLShift) -> str:
+    return "<<"
+
+
+def _get_lte_value(node: NodeNotEq) -> str:
+    return "<="
+
+
+def _get_lt_value(node: NodeNotEq) -> str:
+    return "<"
+
+
+def _get_mod_value(node: NodeMod) -> str:
+    return "%"
+
+
+def _get_mult_value(node: NodeMult) -> str:
+    return "*"
+
+
+def _get_name_value(node: NodeName) -> str:
+    return node.id
+
+
+def _get_not_value(node: NodeNot) -> str:
+    return "not "
+
+
+def _get_noteq_value(node: NodeNotEq) -> str:
+    return "!="
+
+
+def _get_notin_value(node: NodeNotIn) -> str:
+    return "not in"
+
+
+def _get_or_value(node: NodeOr) -> str:
+    return " or "
+
+
+def _get_pow_value(node: NodePow) -> str:
+    return "**"
+
+
+def _get_rshift_value(node: NodeRShift) -> str:
+    return ">>"
+
+
+def _get_set_value(node: NodeSet) -> str:
+    return "{" + ", ".join(get_value(el) for el in node.elts) + "}"
+
+
+def _get_setcomp_value(node: NodeSetComp) -> str:
+    element = get_value(node.elt)
+    generators = [get_value(gen) for gen in node.generators]
+    return f"{{{element} " + " ".join(generators) + "}"
+
+
+def _get_slice_value(node: NodeSlice) -> str:
+    value = f"{get_value(node.lower) if node.lower else ''}:{get_value(node.upper) if node.upper else ''}"
+    if node.step:
+        value = f"{value}:{get_value(node.step)}"
+    return value
+
+
+def _get_starred_value(node: NodeStarred) -> str:
+    return get_value(node.value)
+
+
+def _get_sub_value(node: NodeSub) -> str:
+    return "-"
+
+
+def _get_subscript_value(node: NodeSubscript) -> str:
+    return f"{get_value(node.value)}[{get_value(node.slice).strip('()')}]"
+
+
+def _get_tuple_value(node: NodeTuple) -> str:
+    return "(" + ", ".join(get_value(el) for el in node.elts) + ")"
+
+
+def _get_uadd_value(node: NodeUAdd) -> str:
+    return "+"
+
+
+def _get_unaryop_value(node: NodeUnaryOp) -> str:
+    return f"{get_value(node.op)}{get_value(node.operand)}"
+
+
+def _get_usub_value(node: NodeUSub) -> str:
+    return "-"
+
+
 _node_value_map: dict[Type, Callable[[Any], str]] = {
     type(None): lambda _: repr(None),
-    NodeName: _get_name_value,
-    NodeConstant: _get_constant_value,
+    NodeAdd: _get_add_value,
+    NodeAnd: _get_and_value,
+    NodeArguments: _get_arguments_value,
     NodeAttribute: _get_attribute_value,
     NodeBinOp: _get_binop_value,
-    NodeUnaryOp: _get_unaryop_value,
-    NodeEllipsis: _get_ellipsis_value,
-    NodeSubscript: _get_subscript_value,
-    NodeList: _get_list_value,
-    NodeTuple: _get_tuple_value,
-    NodeKeyword: _get_keyword_value,
-    NodeDict: _get_dict_value,
-    NodeSet: _get_set_value,
-    NodeFormattedValue: _get_formatted_value,
-    NodeJoinedStr: _get_joinedstr_value,
-    NodeCall: _get_call_value,
-    NodeSlice: _get_slice_value,
+    NodeBitAnd: _get_bitand_value,
+    NodeBitOr: _get_bitor_value,
+    NodeBitXor: _get_bitxor_value,
     NodeBoolOp: _get_boolop_value,
-    NodeGeneratorExp: _get_generatorexp_value,
-    NodeComprehension: _get_comprehension_value,
+    NodeCall: _get_call_value,
     NodeCompare: _get_compare_value,
-    NodeNotEq: _get_noteq_value,
+    NodeComprehension: _get_comprehension_value,
+    NodeConstant: _get_constant_value,
+    NodeDictComp: _get_dictcomp_value,
+    NodeDict: _get_dict_value,
+    NodeDiv: _get_div_value,
+    NodeEllipsis: _get_ellipsis_value,
+    NodeEq: _get_eq_value,
+    NodeFloorDiv: _get_floordiv_value,
+    NodeFormattedValue: _get_formatted_value,
+    NodeGeneratorExp: _get_generatorexp_value,
     NodeGtE: _get_gte_value,
     NodeGt: _get_gt_value,
+    NodeIfExp: _get_ifexp_value,
+    NodeIn: _get_in_value,
+    NodeInvert: _get_invert_value,
+    NodeIs: _get_is_value,
+    NodeIsNot: _get_isnot_value,
+    NodeJoinedStr: _get_joinedstr_value,
+    NodeKeyword: _get_keyword_value,
+    NodeLambda: _get_lambda_value,
+    NodeListComp: _get_listcomp_value,
+    NodeList: _get_list_value,
+    NodeLShift: _get_lshift_value,
     NodeLtE: _get_lte_value,
     NodeLt: _get_lt_value,
-    NodeBitOr: _get_bitor_value,
-    NodeMult: _get_mult_value,
-    NodeListComp: _get_listcomp_value,
-    NodeSetComp: _get_setcomp_value,
-    NodeLambda: _get_lambda_value,
-    NodeDictComp: _get_dictcomp_value,
-    NodeStarred: _get_starred_value,
-    NodeIfExp: _get_ifexp_value,
-    NodeOr: _get_or_value,
-    NodeAnd: _get_and_value,
-    NodeUSub: _get_usub_value,
-    NodeUAdd: _get_uadd_value,
-    NodeNot: _get_not_value,
-    NodeArguments: _get_arguments_value,
-    NodeDiv: _get_div_value,
-    NodeIsNot: _get_isnot_value,
-    NodeIs: _get_is_value,
-    NodeAdd: _get_add_value,
-    NodeSub: _get_sub_value,
-    NodeEq: _get_eq_value,
-    NodePow: _get_pow_value,
     NodeMod: _get_mod_value,
-    NodeLShift: _get_lshift_value,
-    NodeRShift: _get_rshift_value,
-    NodeIn: _get_in_value,
-    NodeBitAnd: _get_bitand_value,
-    NodeFloorDiv: _get_floordiv_value,
+    NodeMult: _get_mult_value,
+    NodeName: _get_name_value,
+    NodeNotEq: _get_noteq_value,
+    NodeNot: _get_not_value,
     NodeNotIn: _get_notin_value,
-    NodeInvert: _get_invert_value,
-    NodeBitXor: _get_bitxor_value,
+    NodeOr: _get_or_value,
+    NodePow: _get_pow_value,
+    NodeRShift: _get_rshift_value,
+    NodeSetComp: _get_setcomp_value,
+    NodeSet: _get_set_value,
+    NodeSlice: _get_slice_value,
+    NodeStarred: _get_starred_value,
+    NodeSub: _get_sub_value,
+    NodeSubscript: _get_subscript_value,
+    NodeTuple: _get_tuple_value,
+    NodeUAdd: _get_uadd_value,
+    NodeUnaryOp: _get_unaryop_value,
+    NodeUSub: _get_usub_value,
 }
 
 # TODO: remove once Python 3.8 support is dropped
