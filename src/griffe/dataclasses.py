@@ -960,7 +960,7 @@ class Class(Object):
     def __init__(
         self,
         *args: Any,
-        bases: list[Name | Expression] | None = None,
+        bases: list[Name | Expression | str] | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -973,7 +973,7 @@ class Class(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.bases: list[Name | Expression] = bases or []
+        self.bases: list[Name | Expression | str] = bases or []
         self.decorators: list[Decorator] = decorators or []
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]

@@ -20,7 +20,6 @@ from griffe.agents.extensions import Extensions
 from griffe.agents.nodes import (
     ASTNode,
     get_annotation,
-    get_baseclass,
     get_docstring,
     get_instance_names,
     get_names,
@@ -219,7 +218,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         bases = []
         if node.bases:
             for base in node.bases:
-                bases.append(get_baseclass(base, self.current))
+                bases.append(get_annotation(base, self.current))
 
         class_ = Class(
             name=node.name,
@@ -227,7 +226,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             endlineno=node.end_lineno,  # type: ignore[attr-defined]
             docstring=self._get_docstring(node),
             decorators=decorators,
-            bases=bases,
+            bases=bases,  # type: ignore[arg-type]
         )
         self.current[node.name] = class_
         self.current = class_
