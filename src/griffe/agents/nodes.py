@@ -76,6 +76,7 @@ from griffe.expressions import Expression, Name
 
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
+    from ast import Bytes as NodeBytes
     from ast import NameConstant as NodeNameConstant
 
     from cached_property import cached_property
@@ -561,18 +562,18 @@ def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression
 
 
 _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
-    NodeName: _get_name_annotation,
-    NodeConstant: _get_constant_annotation,
     NodeAttribute: _get_attribute_annotation,
     NodeBinOp: _get_binop_annotation,
-    NodeBitOr: _get_bitor_annotation,
     NodeBitAnd: _get_bitand_annotation,
-    NodeSubscript: _get_subscript_annotation,
-    NodeTuple: _get_tuple_annotation,
-    NodeList: _get_list_annotation,
+    NodeBitOr: _get_bitor_annotation,
     NodeCall: _get_call_annotation,
+    NodeConstant: _get_constant_annotation,
     NodeEllipsis: _get_ellipsis_annotation,
     NodeIfExp: _get_ifexp_annotation,
+    NodeList: _get_list_annotation,
+    NodeName: _get_name_annotation,
+    NodeSubscript: _get_subscript_annotation,
+    NodeTuple: _get_tuple_annotation,
 }
 
 # TODO: remove once Python 3.8 support is dropped
@@ -587,11 +588,13 @@ if sys.version_info < (3, 9):
 if sys.version_info < (3, 8):
 
     def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str | Name | Expression:
-        if node.value is None:
-            return repr(None)
-        return _get_annotation(node.value, parent)
+        return repr(node.value)
+
+    def _get_str_annotation(node: NodeStr, parent: Module | Class) -> str:
+        return node.s
 
     _node_annotation_map[NodeNameConstant] = _get_nameconstant_annotation
+    _node_annotation_map[NodeStr] = _get_str_annotation
 
 
 def _get_annotation(node: AST, parent: Module | Class) -> str | Name | Expression:
@@ -972,7 +975,7 @@ if sys.version_info < (3, 9):
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
 
-    def _get_str_value(node: NodeStr) -> str:
+    def _get_bytes_value(node: NodeBytes) -> str:
         return repr(node.s)
 
     def _get_nameconstant_value(node: NodeNameConstant) -> str:
@@ -981,9 +984,13 @@ if sys.version_info < (3, 8):
     def _get_num_value(node: NodeNum) -> str:
         return repr(node.n)
 
-    _node_value_map[NodeStr] = _get_str_value
+    def _get_str_value(node: NodeStr) -> str:
+        return repr(node.s)
+
+    _node_value_map[NodeBytes] = _get_bytes_value
     _node_value_map[NodeNameConstant] = _get_nameconstant_value
     _node_value_map[NodeNum] = _get_num_value
+    _node_value_map[NodeStr] = _get_str_value
 
 
 def get_value(node: AST) -> str:
