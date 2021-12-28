@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import sys
+import traceback
 from contextlib import suppress
 from pathlib import Path
 from typing import Any, Iterator, Sequence, Tuple
@@ -211,10 +212,14 @@ class GriffeLoader(_BaseGriffeLoader):
             member_parent = self._member_parent(module, subparts, subpath)
         except UnimportableModuleError as error:
             logger.warning(f"{error}. Missing __init__ module?")
-        else:
+            return
+        try:
             member_parent[subparts[-1]] = self._load_module_path(
                 subparts[-1], subpath, submodules=False, parent=member_parent
             )
+        except SyntaxError:
+            message = traceback.format_exc(limit=0).replace("SyntaxError: invalid syntax", "").strip()
+            logger.error(f"Syntax error: {message}")
 
 
 class AsyncGriffeLoader(_BaseGriffeLoader):
