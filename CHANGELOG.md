@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.7.1](https://github.com/pawamoy/griffe/releases/tag/0.7.1) - 2021-12-28
+
+<small>[Compare with 0.7.0](https://github.com/pawamoy/griffe/compare/0.7.0...0.7.1)</small>
+
+### Code Refactoring
+- Only log warning if async mode is used ([356e848](https://github.com/pawamoy/griffe/commit/356e848c8e233334401461b02a0188731b71a8cf) by Timothée Mazzucotelli).
+
+
 ## [0.7.0](https://github.com/pawamoy/griffe/releases/tag/0.7.0) - 2021-12-28
 
 <small>[Compare with 0.6.0](https://github.com/pawamoy/griffe/compare/0.6.0...0.7.0)</small>
