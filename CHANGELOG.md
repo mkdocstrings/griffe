@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.7.0](https://github.com/pawamoy/griffe/releases/tag/0.7.0) - 2021-12-28
+
+<small>[Compare with 0.6.0](https://github.com/pawamoy/griffe/compare/0.6.0...0.7.0)</small>
+
+### Features
+- Support more nodes on Python 3.7 ([7f2c4ec](https://github.com/pawamoy/griffe/commit/7f2c4ec3bf610ade7305e19ab220a4b447bed41d) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Don't crash on syntax errors and log an error ([10bb6b1](https://github.com/pawamoy/griffe/commit/10bb6b15bb9b132626c525b81f3ee33c3bb5746f) by Timothée Mazzucotelli).
+
+
 ## [0.6.0](https://github.com/pawamoy/griffe/releases/tag/0.6.0) - 2021-12-27
 
 <small>[Compare with 0.5.0](https://github.com/pawamoy/griffe/compare/0.5.0...0.6.0)</small>
