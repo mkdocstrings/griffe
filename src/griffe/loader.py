@@ -16,6 +16,7 @@ import asyncio
 import sys
 import traceback
 from contextlib import suppress
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterator, Sequence, Tuple
 
@@ -34,22 +35,23 @@ NamePartsAndPathType = Tuple[NamePartsType, Path]
 logger = get_logger(__name__)
 
 
-async def _read_async(path):
-    async with aopen(path) as fd:
-        return await fd.read()
+@lru_cache(maxsize=1)
+def _get_async_reader():
+    try:  # noqa: WPS503 (false-positive)
+        from aiofiles import open as aopen
+    except ModuleNotFoundError:
+        logger.warning("aiofiles is not installed, fallback to blocking read")
 
+        async def _read_async(path):  # noqa: WPS430
+            return path.read_text()
 
-async def _read_sync(path):
-    return path.read_text()
+    else:
 
+        async def _read_async(path):  # noqa: WPS430,WPS440
+            async with aopen(path) as fd:
+                return await fd.read()
 
-try:
-    from aiofiles import open as aopen
-except ModuleNotFoundError:
-    logger.warning("aiofiles is not installed, fallback to blocking read")
-    read_async = _read_sync
-else:
-    read_async = _read_async
+    return _read_async
 
 
 _builtin_modules: set[str] = set(sys.builtin_module_names)
@@ -282,7 +284,7 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
         try:
-            code = await read_async(module_path)
+            code = await _get_async_reader()(module_path)
         except OSError:
             module = self._create_module(module_name, module_path)
         else:
