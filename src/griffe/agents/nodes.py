@@ -248,8 +248,10 @@ class ObjectKind(enum.Enum):
     CLASSMETHOD: str = "classmethod"
     METHOD_DESCRIPTOR: str = "method_descriptor"
     METHOD: str = "method"
+    BUILTIN_METHOD: str = "builtin_method"
     COROUTINE: str = "coroutine"
     FUNCTION: str = "function"
+    BUILTIN_FUNCTION: str = "builtin_function"
     CACHED_PROPERTY: str = "cached_property"
     PROPERTY: str = "property"
     ATTRIBUTE: str = "attribute"
@@ -316,10 +318,14 @@ class ObjectNode:
             return ObjectKind.METHOD_DESCRIPTOR
         if self.is_method:
             return ObjectKind.METHOD
+        if self.is_builtin_method:
+            return ObjectKind.BUILTIN_METHOD
         if self.is_coroutine:
             return ObjectKind.COROUTINE
         if self.is_function:
             return ObjectKind.FUNCTION
+        if self.is_builtin_function:
+            return ObjectKind.BUILTIN_FUNCTION
         if self.is_cached_property:
             return ObjectKind.CACHED_PROPERTY
         if self.is_property:
@@ -368,6 +374,16 @@ class ObjectNode:
             If this node's object is a function.
         """
         return inspect.isfunction(self.obj)
+
+    @cached_property
+    def is_builtin_function(self) -> bool:
+        """
+        Tell if this node's object is a builtin function.
+
+        Returns:
+            If this node's object is a builtin function.
+        """
+        return inspect.isbuiltin(self.obj)
 
     @cached_property
     def is_coroutine(self) -> bool:
@@ -432,6 +448,16 @@ class ObjectNode:
             If this node's object is a method descriptor.
         """
         return inspect.ismethoddescriptor(self.obj)
+
+    @cached_property
+    def is_builtin_method(self) -> bool:
+        """
+        Tell if this node's object is a builtin method.
+
+        Returns:
+            If this node's object is a builtin method.
+        """
+        return self.is_builtin_function and self.parent_is_class
 
     @cached_property
     def is_staticmethod(self) -> bool:

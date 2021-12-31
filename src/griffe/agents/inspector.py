@@ -26,6 +26,7 @@ from inspect import Parameter as SignatureParameter
 from inspect import Signature, getdoc
 from inspect import signature as getsignature
 from pathlib import Path
+from tokenize import TokenError
 from typing import Any
 
 from griffe.agents.base import BaseInspector
@@ -219,6 +220,14 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         self.handle_function(node, {"method descriptor"})
 
+    def inspect_builtin_method(self, node: ObjectNode) -> None:
+        """Inspect a builtin method.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        self.handle_function(node, {"builtin"})
+
     def inspect_method(self, node: ObjectNode) -> None:
         """Inspect a method.
 
@@ -234,6 +243,14 @@ class Inspector(BaseInspector):  # noqa: WPS338
             node: The node to inspect.
         """
         self.handle_function(node, {"async"})
+
+    def inspect_builtin_function(self, node: ObjectNode) -> None:
+        """Inspect a builtin function.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        self.handle_function(node, {"builtin"})
 
     def inspect_function(self, node: ObjectNode) -> None:
         """Inspect a function.
@@ -268,7 +285,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         try:
             signature = getsignature(node.obj)
-        except ValueError:
+        except (ValueError, TokenError):
             parameters = None
             returns = None
         else:
