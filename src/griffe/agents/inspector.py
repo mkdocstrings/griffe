@@ -35,6 +35,7 @@ from griffe.collections import LinesCollection
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, ParameterKind, Parameters
 from griffe.docstrings.parsers import Parser
 from griffe.expressions import Expression, Name
+from griffe.importer import dynamic_import
 
 empty = Signature.empty
 
@@ -129,7 +130,11 @@ class Inspector(BaseInspector):  # noqa: WPS338
         Returns:
             A module instance.
         """
-        top_node = ObjectNode(__import__(self.module_name), self.module_name)
+        import_path = self.module_name
+        if self.parent is not None:
+            import_path = f"{self.parent.path}.{import_path}"
+        value = dynamic_import(import_path)
+        top_node = ObjectNode(value, self.module_name)
         self.inspect(top_node)
         return self.current.module
 

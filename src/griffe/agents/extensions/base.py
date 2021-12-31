@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Sequence, Type, Union
 
 from griffe.agents.base import BaseInspector, BaseVisitor
 from griffe.agents.nodes import ObjectNode
+from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:
     from griffe.agents.inspector import Inspector
@@ -245,11 +246,8 @@ def load_extension(extension: str | dict[str, Any] | Extension | Type[Extension]
     if import_path in builtin_extensions:
         import_path = f"griffe.agents.extensions.{import_path}"
 
-    module = __import__(import_path, level=0)
-    ext_path = import_path.split(".")[1:]
-    ext_module = module
-    for part in ext_path:
-        ext_module = getattr(ext_module, part)
+    # TODO: handle AttributeError
+    ext_module = dynamic_import(import_path)
 
     # TODO: handle AttributeError
     return ext_module.Extension(**options)

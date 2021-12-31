@@ -9,6 +9,7 @@ from griffe.agents.extensions.base import InspectorExtension, VisitorExtension, 
 from griffe.agents.nodes import ObjectNode
 from griffe.agents.visitor import Visitor
 from griffe.exceptions import ExtensionError
+from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 
 logger = get_logger(__name__)
@@ -58,17 +59,12 @@ class HybridExtension(VisitorExtension):
             return
         if just_visited.is_alias:
             return
-        module_path = just_visited.module.path
-        module = __import__(module_path)
-        value = module
-        for part in just_visited.path.split(".")[1:]:
-            try:
-                value = getattr(value, part)
-            except AttributeError:
-                # can happen when an object is defined conditionally,
-                # for example based on the Python version
-                return
-
+        try:
+            value = dynamic_import(just_visited.path)
+        except AttributeError:
+            # can happen when an object is defined conditionally,
+            # for example based on the Python version
+            return
         object_node = ObjectNode(value, name=node.name)  # type: ignore[attr-defined]
         self._extension.inspect(object_node)
 
