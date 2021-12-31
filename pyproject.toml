@@ -58,56 +58,56 @@ version = {use_scm = true}
 package-dir = "src"
 
 [tool.pdm.dev-dependencies]
-duty = ["duty~=0.7"]
+duty = ["duty>=0.7"]
 docs = [
-    "markdown-callouts~=0.2",
-    "mkdocs~=1.2; python_version >= '3.7'",
-    "mkdocs-coverage~=0.2; python_version >= '3.7'",
-    "mkdocs-gen-files~=0.3; python_version >= '3.7'",
-    "mkdocs-literate-nav~=0.4; python_version >= '3.7'",
-    "mkdocs-material~=7.3; python_version >= '3.7'",
-    "mkdocs-section-index~=0.3",
-    "mkdocstrings~=0.16; python_version >= '3.7'",
-    "toml~=0.10; python_version >= '3.7'",
+    "markdown-callouts>=0.2",
+    "mkdocs>=1.2",
+    "mkdocs-coverage>=0.2",
+    "mkdocs-gen-files>=0.3",
+    "mkdocs-literate-nav>=0.4",
+    "mkdocs-material>=7.3",
+    "mkdocs-section-index>=0.3",
+    "mkdocstrings>=0.17",
+    "toml>=0.10",
 ]
 format = [
-    "autoflake~=1.4",
-    "black~=21.10b0",
-    "isort~=5.10",
+    "autoflake>=1.4",
+    "black>=21.10b0",
+    "isort>=5.10",
 ]
-# TODO: remove this section when git-changelog is more powerful
 maintain = [
-    "git-changelog~=0.4",
+    # TODO: remove this section when git-changelog is more powerful
+    "git-changelog>=0.4",
 ]
 quality = [
-    "darglint~=1.8",
-    "flake8-bandit~=2.1",
-    "flake8-black~=0.2",
-    "flake8-bugbear~=21.9",
-    "flake8-builtins~=1.5",
-    "flake8-comprehensions~=3.7",
-    "flake8-docstrings~=1.6",
-    "flake8-pytest-style~=1.5",
-    "flake8-string-format~=0.3",
-    "flake8-tidy-imports~=4.5",
-    "flake8-variables-names~=0.0",
-    "pep8-naming~=0.12",
-    "wps-light~=0.15",
+    "darglint>=1.8",
+    "flake8-bandit>=2.1",
+    "flake8-black>=0.2",
+    "flake8-bugbear>=21.9",
+    "flake8-builtins>=1.5",
+    "flake8-comprehensions>=3.7",
+    "flake8-docstrings>=1.6",
+    "flake8-pytest-style>=1.5",
+    "flake8-string-format>=0.3",
+    "flake8-tidy-imports>=4.5",
+    "flake8-variables-names>=0.0",
+    "pep8-naming>=0.12",
+    "wps-light>=0.15",
 ]
 tests = [
-    "pytest~=6.2",
-    "pytest-cov~=3.0",
-    "pytest-randomly~=3.10",
-    "pytest-sugar~=0.9",
-    "pytest-xdist~=2.4",
+    "pytest>=6.2",
+    "pytest-cov>=3.0",
+    "pytest-randomly>=3.10",
+    "pytest-sugar>=0.9",
+    "pytest-xdist>=2.4",
 ]
 typing = [
-    "mypy~=0.910",
-    "types-markdown~=3.3",
-    "types-toml~=0.10",
+    "mypy>=0.910",
     "types-aiofiles~=0.7",
+    "types-markdown>=3.3",
+    "types-toml>=0.10",
 ]
-security = ["safety~=1.10"]
+security = ["safety>=1.10"]
 
 [tool.black]
 line-length = 120
