@@ -815,6 +815,17 @@ class Alias(ObjectAliasMixin):
         """
         return self._target is not None
 
+    @cached_property
+    def wildcard(self) -> str | None:
+        """Return the module on which the wildcard import is performed (if any).
+
+        Returns:
+            The wildcard imported module, or None.
+        """
+        if self.name.endswith("/*"):
+            return self._target_path
+        return None
+
     def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this alias' data as a dictionary.
 

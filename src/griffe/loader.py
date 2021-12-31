@@ -25,7 +25,7 @@ from griffe.agents.extensions import Extensions
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import Module, Object
+from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, UnhandledPthFileError, UnimportableModuleError
 from griffe.logger import get_logger
@@ -143,6 +143,15 @@ class _BaseGriffeLoader:
                 return member_parent
         raise UnimportableModuleError(f"{subpath} is not importable")
 
+    def _expand_wildcard(self, wildcard_obj: Alias) -> dict[str, Object | Alias]:
+        module = self.modules_collection[wildcard_obj.wildcard]  # type: ignore[index]  # we know it's a wildcard
+        explicitely = "__all__" in module.members
+        return {
+            name: imported_member
+            for name, imported_member in module.members.items()
+            if imported_member.is_exported(explicitely=explicitely)
+        }
+
 
 class GriffeLoader(_BaseGriffeLoader):
     """The Griffe loader, allowing to load data from modules."""
@@ -168,6 +177,8 @@ class GriffeLoader(_BaseGriffeLoader):
             module_name = module
             top_module = self._inspect_module(module)  # type: ignore[arg-type]
         else:
+            # TODO: maybe don't try each time to find a relative path,
+            # to improve recursion when following aliases / expanding wildcards
             try:
                 module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
             except ModuleNotFoundError:
@@ -191,20 +202,45 @@ class GriffeLoader(_BaseGriffeLoader):
             True if everything was resolved, False otherwise.
         """
         success = True
+        expanded = {}
+        to_remove = []
+
+        # iterate a first time to expand wildcards
         for member in obj.members.values():
-            if member.is_alias:
-                if only_exported and not obj.member_is_exported(member, explicitely=True):
+            if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
+                package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
+                if obj.package.path != package and package not in self.modules_collection:
+                    try:
+                        self.load_module(package)
+                    except ImportError as error:
+                        logger.warning(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                    else:
+                        expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
+                        to_remove.append(member.name)
+
+        for name in to_remove:
+            del obj[name]  # noqa: WPS420
+        for new_member in expanded.values():
+            obj[new_member.name] = Alias(new_member.name, new_member)
+
+        # iterate a second time to resolve aliases and recurse
+        for member in obj.members.values():  # noqa: WPS440
+            if member.is_alias and not member.wildcard:  # type: ignore[union-attr]
+                if only_exported and not member.is_explicitely_exported:
                     continue
                 try:
-                    member.resolve_target()  # type: ignore[union-attr]  # we know it's an alias
-                except AliasResolutionError as error:
+                    member.resolve_target()  # type: ignore[union-attr]
+                except AliasResolutionError as error:  # noqa: WPS440
                     success = False
                     package = error.target_path.split(".", 1)[0]
                     if obj.package.path != package and package not in self.modules_collection:
-                        with suppress(ModuleNotFoundError):
+                        try:  # noqa: WPS505
                             self.load_module(package)
-            else:
+                        except ImportError as error:  # noqa: WPS440
+                            logger.warning(f"Could not follow alias {member.path}: {error}")
+            elif member.kind in {Kind.MODULE, Kind.CLASS}:
                 success &= self.follow_aliases(member)  # type: ignore[arg-type]  # we know it's an object
+
         return success
 
     def _load_module_path(
@@ -292,20 +328,45 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
             True if everything was resolved, False otherwise.
         """
         success = True
+        expanded = {}
+        to_remove = []
+
+        # iterate a first time to expand wildcards
         for member in obj.members.values():
-            if member.is_alias:
-                if only_exported and not obj.member_is_exported(member, explicitely=True):
+            if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
+                package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
+                if obj.package.path != package and package not in self.modules_collection:
+                    try:
+                        await self.load_module(package)
+                    except ImportError as error:
+                        logger.warning(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                    else:
+                        expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
+                        to_remove.append(member.name)
+
+        for name in to_remove:
+            del obj[name]  # noqa: WPS420
+        for new_member in expanded.values():
+            obj[new_member.name] = Alias(new_member.name, new_member)
+
+        # iterate a second time to resolve aliases and recurse
+        for member in obj.members.values():  # noqa: WPS440
+            if member.is_alias and not member.wildcard:  # type: ignore[union-attr]
+                if only_exported and not member.is_explicitely_exported:
                     continue
                 try:
-                    member.resolve_target()  # type: ignore[union-attr]  # we know it's an alias
-                except AliasResolutionError as error:
+                    member.resolve_target()  # type: ignore[union-attr]
+                except AliasResolutionError as error:  # noqa: WPS440
                     success = False
                     package = error.target_path.split(".", 1)[0]
                     if obj.package.path != package and package not in self.modules_collection:
-                        with suppress(ModuleNotFoundError):
+                        try:  # noqa: WPS505
                             await self.load_module(package)
-            else:
+                        except ImportError as error:  # noqa: WPS440
+                            logger.warning(f"Could not follow alias {member.path}: {error}")
+            elif member.kind in {Kind.MODULE, Kind.CLASS}:
                 success &= await self.follow_aliases(member)  # type: ignore[arg-type]  # we know it's an object
+
         return success
 
     async def _load_module_path(

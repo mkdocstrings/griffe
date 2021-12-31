@@ -38,7 +38,19 @@ def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
     return parts
 
 
-class SetMembersMixin:
+class DelMembersMixin:
+    """This mixin adds a `__delitem__` method to a class."""
+
+    def __delitem__(self, key: str | Sequence[str]) -> None:  # noqa: WPS603
+        parts = _get_parts(key)
+        if len(parts) == 1:
+            name = parts[0]
+            del self.members[name]  # type: ignore[attr-defined]  # noqa: WPS420
+        else:
+            del self.members[parts[0]][parts[1]]  # type: ignore[attr-defined]  # noqa: WPS420
+
+
+class SetMembersMixin(DelMembersMixin):
     """This mixin adds a `__setitem__` method to a class.
 
     It makes it easier to set members of an object.
@@ -46,7 +58,7 @@ class SetMembersMixin:
     Each time a member is set, its `parent` attribute is set as well.
     """
 
-    def __setitem__(self, key: str | Sequence[str], value):
+    def __setitem__(self, key: str | Sequence[str], value) -> None:
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
@@ -61,7 +73,7 @@ class SetMembersMixin:
             self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
 
 
-class SetCollectionMembersMixin:
+class SetCollectionMembersMixin(DelMembersMixin):
     """This mixin adds a `__setitem__` method to a class.
 
     It makes it easier to set members of an object.

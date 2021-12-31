@@ -25,6 +25,7 @@ from griffe.agents.nodes import (
     get_names,
     get_parameter_default,
     get_value,
+    parse__all__,
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -385,13 +386,18 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         Parameters:
             node: The node to visit.
         """
+        # TODO: does this handle relative imports?
         for name in node.names:
             alias_name = name.asname or name.name
-            alias_path = f"{node.module}.{name.name}"
-            self.current.imports[name.asname or name.name] = alias_path
+            if alias_name == "*":
+                alias_name = node.module.replace(".", "/") + "/*"  # type: ignore[union-attr]
+                alias_path = node.module
+            else:
+                alias_path = f"{node.module}.{name.name}"
+                self.current.imports[alias_name] = alias_path
             self.current[alias_name] = Alias(
                 alias_name,
-                alias_path,
+                alias_path,  # type: ignore[arg-type]
                 lineno=node.lineno,
                 endlineno=node.end_lineno,  # type: ignore[attr-defined]
             )
@@ -468,7 +474,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = {elt.value for elt in node.value.elts}  # type: ignore[union-attr]
+                    parent.exports = parse__all__(node)  # type: ignore[arg-type]
 
     def visit_assign(self, node: ast.Assign) -> None:
         """Visit an assignment node.

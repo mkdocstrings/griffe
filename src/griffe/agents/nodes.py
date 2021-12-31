@@ -510,6 +510,33 @@ def _join(sequence, item):
     return new_sequence
 
 
+if sys.version_info < (3, 8):
+
+    def parse__all__(node: NodeAssign) -> set[str]:  # noqa: WPS116,WPS120
+        """Get the values declared in `__all__`.
+
+        Parameters:
+            node: The assignment node.
+
+        Returns:
+            A set of names.
+        """
+        return {elt.s for elt in node.value.elts}  # type: ignore[attr-defined]
+
+else:
+
+    def parse__all__(node: NodeAssign) -> set[str]:  # noqa: WPS116,WPS120,WPS440
+        """Get the values declared in `__all__`.
+
+        Parameters:
+            node: The assignment node.
+
+        Returns:
+            A set of names.
+        """
+        return {elt.value for elt in node.value.elts}  # type: ignore[attr-defined]
+
+
 # ==========================================================
 # annotations
 def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Expression:

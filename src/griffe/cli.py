@@ -63,6 +63,9 @@ async def _load_packages_async(
             logger.error(f"Tried but could not import package {package}")
         else:
             loaded[module.name] = module
+    for obj in loaded.values():
+        if not await loader.follow_aliases(obj):
+            logger.info("Not all aliases were resolved")
     return loaded
 
 
@@ -89,6 +92,9 @@ def _load_packages(
             logger.error(f"Tried but could not import package {package}")
         else:
             loaded[module.name] = module
+    for obj in loaded.values():
+        if not loader.follow_aliases(obj):
+            logger.info("Not all aliases were resolved")
     return loaded
 
 
