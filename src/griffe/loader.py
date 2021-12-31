@@ -13,6 +13,7 @@ fastapi = griffe.load_module("fastapi")
 from __future__ import annotations
 
 import asyncio
+import os
 import sys
 import traceback
 from contextlib import suppress
@@ -33,6 +34,17 @@ NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
 
 logger = get_logger(__name__)
+
+_accepted_py_module_extensions = [".py", ".pyc", ".pyo", ".pyd", ".so"]
+_extensions_set = set(_accepted_py_module_extensions)
+
+# TODO: namespace packages can span multiple locations! we must support it.
+# ideally: find all locations, sort them, then reverse-merge their file lists
+# (sure about sorting? yes: https://github.com/python/cpython/blob/3.10/Lib/pkgutil.py#L155,
+# and we could say "but it's locale-dependent!", but it's not an issue since our process
+# will use the same locale anyway, so the behavior will be as expected)
+# when iterating on multiple locations, if one has an __init__ module,
+# just return this one, as it takes precedence as a regular package
 
 
 @lru_cache(maxsize=1)
@@ -152,11 +164,19 @@ class GriffeLoader(_BaseGriffeLoader):
             A module.
         """
         if module in _builtin_modules:
+            logger.debug(f"{module} is a builtin module: inspecting")
             module_name = module
             top_module = self._inspect_module(module)  # type: ignore[arg-type]
         else:
-            module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
-            top_module = self._load_module_path(top_module_name, top_module_path, submodules=submodules)
+            try:
+                module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
+            except ModuleNotFoundError:
+                logger.debug(f"Could not find {module}: trying inspection")
+                module_name = module
+                top_module = self._inspect_module(module)  # type: ignore[arg-type]
+            else:
+                logger.debug(f"Found {module}: visiting")
+                top_module = self._load_module_path(top_module_name, top_module_path, submodules=submodules)
         self.modules_collection[top_module.path] = top_module
         return self.modules_collection[module_name]  # type: ignore[index]
 
@@ -195,12 +215,13 @@ class GriffeLoader(_BaseGriffeLoader):
         parent: Module | None = None,
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
-        try:
-            code = module_path.read_text()
-        except OSError:
+        if module_path.is_dir():
             module = self._create_module(module_name, module_path)
-        else:
+        elif module_path.suffix == ".py":
+            code = module_path.read_text()
             module = self._visit_module(code, module_name, module_path, parent)
+        else:
+            module = self._inspect_module(module_name, module_path, parent)
         if submodules:
             self._load_submodules(module)
         return module
@@ -243,10 +264,22 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         Returns:
             A module.
         """
-        module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
-        top_module = await self._load_module_path(top_module_name, top_module_path, submodules=submodules)
+        if module in _builtin_modules:
+            logger.debug(f"{module} is a builtin module: inspecting")
+            module_name = module
+            top_module = self._inspect_module(module)  # type: ignore[arg-type]
+        else:
+            try:
+                module_name, top_module_name, top_module_path = _top_name_and_path(module, search_paths)
+            except ModuleNotFoundError:
+                logger.debug(f"Could not find {module}: trying inspection")
+                module_name = module
+                top_module = self._inspect_module(module)  # type: ignore[arg-type]
+            else:
+                logger.debug(f"Found {module}: visiting")
+                top_module = await self._load_module_path(top_module_name, top_module_path, submodules=submodules)
         self.modules_collection[top_module.path] = top_module
-        return self.modules_collection[module_name]
+        return self.modules_collection[module_name]  # type: ignore[index]
 
     async def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
         """Follow aliases: try to recursively resolve all found aliases.
@@ -283,12 +316,13 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         parent: Module | None = None,
     ) -> Module:
         logger.debug(f"Loading path {module_path}")
-        try:
-            code = await _get_async_reader()(module_path)
-        except OSError:
+        if module_path.is_dir():
             module = self._create_module(module_name, module_path)
-        else:
+        elif module_path.suffix == ".py":
+            code = await _get_async_reader()(module_path)
             module = self._visit_module(code, module_name, module_path, parent)
+        else:
+            module = self._inspect_module(module_name, module_path, parent)
         if submodules:
             await self._load_submodules(module)
         return module
@@ -369,11 +403,12 @@ def find_module_or_path(
     return module_name, module_path
 
 
-def _module_name_path(path: Path) -> tuple[str, Path]:
+def _module_name_path(path: Path) -> tuple[str, Path]:  # noqa: WPS231
     if path.is_dir():
-        module_path = path / "__init__.py"
-        if module_path.exists():
-            return path.name, module_path
+        for ext in _accepted_py_module_extensions:
+            module_path = path / f"__init__{ext}"
+            if module_path.exists():
+                return path.name, module_path
         raise FileNotFoundError
     if path.exists():
         if path.stem == "__init__":
@@ -467,36 +502,52 @@ def _handle_pth_file(path):
     raise UnhandledPthFileError(path)
 
 
-def iter_submodules(path: Path) -> Iterator[NamePartsAndPathType]:  # noqa: WPS234
+def _filter_py_modules(path: Path) -> Iterator[Path]:
+    for root, dirs, files in os.walk(path, topdown=True):
+        # optimization: modify dirs in-place to exclude __pycache__ directories
+        dirs[:] = [dir for dir in dirs if dir != "__pycache__"]  # noqa: WPS362
+        for relfile in files:
+            if os.path.splitext(relfile)[1] in _extensions_set:
+                yield Path(root, relfile)
+
+
+def iter_submodules(path: Path) -> Iterator[NamePartsAndPathType]:  # noqa: WPS231,WPS234
     """Iterate on a module's submodules, if any.
 
     Parameters:
         path: The module path.
 
     Yields:
-        name_parts: The parts of a submodule name.
-        filepath: A submodule filepath.
+        name_parts (tuple[str, ...]): The parts of a submodule name.
+        filepath (Path): A submodule filepath.
     """
-    if path.name == "__init__.py":
+    if path.stem == "__init__":
         path = path.parent
     # optimization: just check if the file name ends with .py
     # (to distinguish it from a directory),
     # not if it's an actual file
-    elif path.suffix == ".py":
+    elif path.suffix in _extensions_set:
         return
 
-    for subpath in path.rglob("*.py"):
+    for subpath in _filter_py_modules(path):
         rel_subpath = subpath.relative_to(path)
-        if rel_subpath.name == "__init__.py":
+        py_file = rel_subpath.suffix == ".py"
+        stem = rel_subpath.stem
+        if not py_file:
+            # .py[cod] and .so files look like `name.cpython-38-x86_64-linux-gnu.ext`
+            stem = stem.split(".", 1)[0]
+        if stem == "__init__":
             # optimization: since it's a relative path,
-            # if it has only one part and is named __init__.py,
+            # if it has only one part and is named __init__,
             # it means it's the starting path
             # (no need to compare it against starting path)
             if len(rel_subpath.parts) == 1:
                 continue
             yield rel_subpath.parts[:-1], subpath
-        else:
+        elif py_file:
             yield rel_subpath.with_suffix("").parts, subpath
+        else:
+            yield rel_subpath.with_name(stem).parts, subpath
 
 
 def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:

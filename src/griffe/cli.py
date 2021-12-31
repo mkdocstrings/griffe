@@ -58,6 +58,8 @@ async def _load_packages_async(
             module = await loader.load_module(package, search_paths=search_paths)
         except ModuleNotFoundError:
             logger.error(f"Could not find package {package}")
+        except ImportError:
+            logger.error(f"Tried but could not import package {package}")
         else:
             loaded[module.name] = module
     return loaded
@@ -82,6 +84,8 @@ def _load_packages(
             module = loader.load_module(package, search_paths=search_paths)
         except ModuleNotFoundError:
             logger.error(f"Could not find package {package}")
+        except ImportError:
+            logger.error(f"Tried but could not import package {package}")
         else:
             loaded[module.name] = module
     return loaded
