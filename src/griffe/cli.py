@@ -17,6 +17,7 @@ import argparse
 import asyncio
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Any, Sequence
@@ -91,6 +92,9 @@ def _load_packages(
     return loaded
 
 
+_level_choices = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
 def get_parser() -> argparse.ArgumentParser:
     """Return the program argument parser.
 
@@ -113,6 +117,20 @@ def get_parser() -> argparse.ArgumentParser:
         help="Whether to append sys.path to search paths specified with -s.",
     )
     parser.add_argument(
+        "-d",
+        "--docstyle",
+        default=None,
+        type=Parser,
+        help="The docstring style to parse.",
+    )
+    parser.add_argument(
+        "-D",
+        "--docopts",
+        default={},
+        type=json.loads,
+        help="The options for the docstring parser.",
+    )
+    parser.add_argument(
         "-e",
         "--extensions",
         default={},
@@ -133,24 +151,19 @@ def get_parser() -> argparse.ArgumentParser:
         help="Show this help message and exit.",
     )
     parser.add_argument(
+        "-L",
+        "--log-level",
+        metavar="LEVEL",
+        default=os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper(),
+        choices=_level_choices,
+        type=str.upper,
+        help="Set the log level: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
+    )
+    parser.add_argument(
         "-o",
         "--output",
         default=sys.stdout,
         help="Output file. Supports templating to output each package in its own file, with {{package}}.",
-    )
-    parser.add_argument(
-        "-d",
-        "--docstyle",
-        default=None,
-        type=Parser,
-        help="The docstring style to parse.",
-    )
-    parser.add_argument(
-        "-D",
-        "--docopts",
-        default={},
-        type=json.loads,
-        help="The options for the docstring parser.",
     )
     parser.add_argument(
         "-s",
@@ -178,7 +191,17 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)
 
-    logging.basicConfig(format="%(levelname)-10s %(message)s", level=logging.INFO)  # noqa: WPS323
+    try:
+        level = getattr(logging, opts.log_level)
+    except AttributeError:
+        choices = "', '".join(_level_choices)
+        print(
+            f"griffe: error: env var GRIFFE_LOG_LEVEL: invalid level '{opts.log_level}' (choose from '{choices}')",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)  # noqa: WPS323
 
     output = opts.output
 
