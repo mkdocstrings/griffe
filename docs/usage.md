@@ -49,7 +49,7 @@ fastapi = griffe.load_module("fastapi")
 If you don't want to recurse in the submodules:
 
 ```python
-fastapi = griffe.load_module("fastapi", recursive=False)
+fastapi = griffe.load_module("fastapi", submodules=False)
 ```
 
 ### Extensions
@@ -66,9 +66,9 @@ from some.package import TheirExtension
 
 # or define your own
 class ClassStartsAtOddLineNumberExtension(Extension):
-    when = When.visit_stops
+    when = When.after_all
 
-    def visit_ClassDef(self, node) -> None:
+    def visit_classdef(self, node) -> None:
         if node.lineno % 2 == 1:
             self.visitor.current.labels.add("starts at odd line number")
 
@@ -78,14 +78,14 @@ griffe = GriffeLoader(extensions=extensions)
 fastapi = griffe.load_module("fastapi")
 ```
 
-Extensions are subclasses of [`ast.NodeVisitor`][ast.NodeVisitor].
+Extensions are subclasses of a custom version of [`ast.NodeVisitor`][ast.NodeVisitor].
 Griffe uses a node visitor as well, that we will call the *main visitor*.
 The extensions are instantiated with a reference to this main visitor,
 so they can benefit from its capacities (navigating the nodes, getting the current
 class or module, etc.).
 
 Each time a node is visited, the main visitor will make the extensions visit the node as well.
-Implement the `visit_<NODE_TYPE>` methods to visit nodes of certain types,
+Implement the `visit_<NODE_TYPE_LOWER>` methods to visit nodes of certain types,
 and act on their properties.
 
 !!! warning "Important note"
@@ -102,7 +102,7 @@ and the nodes instances are extended with additional attributes and properties:
 
 ```python
 class MyExtension(Extension):
-    def visit_FunctionDef(self, node) -> None:
+    def visit_functiondef(self, node) -> None:
         node.parent  # the parent node
         node.children  # the list of children nodes
         node.siblings  # all the siblings nodes, from top to bottom
@@ -113,7 +113,7 @@ class MyExtension(Extension):
 
         self.visitor  # the main visitor
         self.visitor.current  # the current data object
-        self.visitor.current.kind  # the kind of object: module, class, function, data 
+        self.visitor.current.kind  # the kind of object: module, class, function, attribute 
 ```
 
 See the data classes ([Module][griffe.dataclasses.Module],
@@ -146,7 +146,7 @@ class MyExtension(Extension):
 By default, it will run the extension after the visit/inspection of the node:
 that's when the full data for this node and its children is loaded.
 
----
+### AST nodes
 
 > NOTE: **Nodes**
 >
