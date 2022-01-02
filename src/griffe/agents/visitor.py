@@ -381,7 +381,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             )
         self.generic_visit(node)
 
-    def visit_importfrom(self, node: ast.ImportFrom) -> None:
+    def visit_importfrom(self, node: ast.ImportFrom) -> None:  # noqa: WPS231
         """Visit an "import from" node.
 
         Parameters:
@@ -392,11 +392,18 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             level = node.level
             module_path = node.module
             if level > 0:
+                if module_path is None:
+                    level -= 1
                 parent: Module = self.current.module
+                if parent.is_package or parent.is_subpackage:
+                    level -= 1
                 while level > 0:
                     parent = parent.parent  # type: ignore[assignment]
                     level -= 1
-                module_path = f"{parent.path}.{module_path}"
+                if module_path:
+                    module_path = f"{parent.path}.{module_path}"
+                else:
+                    module_path = parent.path
             if alias_name == "*":
                 alias_name = module_path.replace(".", "/") + "/*"  # type: ignore[union-attr]
                 alias_path = module_path
