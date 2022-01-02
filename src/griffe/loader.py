@@ -193,12 +193,15 @@ class GriffeLoader(_BaseGriffeLoader):
         self.modules_collection[top_module.path] = top_module
         return self.modules_collection[module_name]  # type: ignore[index]
 
-    def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
+    def follow_aliases(  # noqa: WPS231
+        self, obj: Object, only_exported: bool = True, only_known_modules: bool = True
+    ) -> bool:
         """Follow aliases: try to recursively resolve all found aliases.
 
         Parameters:
             obj: The object and its members to recurse on.
-            only_exported: Only try to resolve an alias if it is explicitely exported.
+            only_exported: When true, only try to resolve an alias if it is explicitely exported.
+            only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
 
         Returns:
             True if everything was resolved, False otherwise.
@@ -235,7 +238,12 @@ class GriffeLoader(_BaseGriffeLoader):
                 except AliasResolutionError as error:  # noqa: WPS440
                     success = False
                     package = error.target_path.split(".", 1)[0]
-                    if obj.package.path != package and package not in self.modules_collection:
+                    load_module = (
+                        not only_known_modules
+                        and obj.package.path != package
+                        and package not in self.modules_collection
+                    )
+                    if load_module:
                         try:  # noqa: WPS505
                             self.load_module(package, try_relative_path=False)
                         except ImportError as error:  # noqa: WPS440
@@ -323,12 +331,15 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         self.modules_collection[top_module.path] = top_module
         return self.modules_collection[module_name]  # type: ignore[index]
 
-    async def follow_aliases(self, obj: Object, only_exported: bool = True) -> bool:  # noqa: WPS231
+    async def follow_aliases(  # noqa: WPS231
+        self, obj: Object, only_exported: bool = True, only_known_modules: bool = True
+    ) -> bool:
         """Follow aliases: try to recursively resolve all found aliases.
 
         Parameters:
             obj: The object and its members to recurse on.
             only_exported: Only try to resolve an alias if it is explicitely exported.
+            only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
 
         Returns:
             True if everything was resolved, False otherwise.
@@ -365,7 +376,12 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
                 except AliasResolutionError as error:  # noqa: WPS440
                     success = False
                     package = error.target_path.split(".", 1)[0]
-                    if obj.package.path != package and package not in self.modules_collection:
+                    load_module = (
+                        not only_known_modules
+                        and obj.package.path != package
+                        and package not in self.modules_collection
+                    )
+                    if load_module:
                         try:  # noqa: WPS505
                             await self.load_module(package, try_relative_path=False)
                         except ImportError as error:  # noqa: WPS440
