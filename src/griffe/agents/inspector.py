@@ -23,7 +23,7 @@ and recursively handle its members.
 from __future__ import annotations
 
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, getdoc
+from inspect import Signature, getdoc, getmodule
 from inspect import signature as getsignature
 from pathlib import Path
 from tokenize import TokenError
@@ -33,7 +33,17 @@ from griffe.agents.base import BaseInspector
 from griffe.agents.extensions import Extensions
 from griffe.agents.nodes import ObjectKind, ObjectNode, get_annotation
 from griffe.collections import LinesCollection
-from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, ParameterKind, Parameters
+from griffe.dataclasses import (
+    Alias,
+    Attribute,
+    Class,
+    Docstring,
+    Function,
+    Module,
+    Parameter,
+    ParameterKind,
+    Parameters,
+)
 from griffe.docstrings.parsers import Parser
 from griffe.expressions import Expression, Name
 from griffe.importer import dynamic_import
@@ -159,7 +169,25 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         for before_inspector in self.extensions.before_children_inspection:
             before_inspector.inspect(node)
-        super().generic_inspect(node)
+
+        for child in node.children:
+            try:
+                child_module = getmodule(child.obj).__name__  # type: ignore[union-attr]
+            except AttributeError:
+                child_module = None
+
+            # special case: ast imports from _ast, while getmodule returns ast for objects in _ast -> cyclic
+            exclude = node.name == "_ast" and child_module == "ast"
+
+            if child_module and child_module != self.current.module.path and not exclude:
+                try:
+                    child_name = child.obj.__name__
+                except AttributeError:
+                    child_name = child.name
+                self.current[child.name] = Alias(child.name, f"{child_module}.{child_name}")
+            else:
+                self.inspect(child)
+
         for after_inspector in self.extensions.after_children_inspection:
             after_inspector.inspect(node)
 
