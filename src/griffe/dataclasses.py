@@ -460,7 +460,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
             return self.parent.module
         raise ValueError
 
-    # TODO: rename to top_module (for packages collection and package property)
     @cached_property
     def package(self) -> Module:
         """Return the absolute top module (the package) of this object.

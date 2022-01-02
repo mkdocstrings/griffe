@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 _warn = warning(__name__)
 
-# TODO: Examples: from the documentation, I'm not sure there is a standard format for examples
+# TODO: Examples: from the documentation, we're not sure there is a standard format for examples
 PARAM_NAMES = frozenset(("param", "parameter", "arg", "argument", "key", "keyword"))
 PARAM_TYPE_NAMES = frozenset(("type",))
 ATTRIBUTE_NAMES = frozenset(("var", "ivar", "cvar"))

@@ -321,7 +321,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
             node: The node to inspect.
             annotation: A potentiel annotation.
         """
-        # TODO
+        # TODO: to improve
         parent = self.current
         labels: set[str] = set()
 
