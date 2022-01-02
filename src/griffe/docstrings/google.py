@@ -49,7 +49,7 @@ BlockItem = Tuple[int, List[str]]
 BlockItems = List[BlockItem]
 ItemsBlock = Tuple[BlockItems, int]
 
-_RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>.+))?$", re.I)
+_RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>[^\s].*))?$", re.I)
 """Regular expression to match admonitions, of the form `TYPE: [TITLE]`."""
 
 _RE_NAME_ANNOTATION_DESCRIPTION: Pattern = re.compile(r"^(?:(?P<name>\w+)?\s*(?:\((?P<type>.+)\))?:\s*)?(?P<desc>.*)$")
@@ -550,8 +550,9 @@ def parse(  # noqa: WPS231
             match = _RE_ADMONITION.match(lines[offset])
             if match:
                 groups = match.groupdict()
-                admonition_type = groups["type"].lower()
-                if admonition_type in _section_kind:
+                title = groups["title"]
+                admonition_type = groups["type"]
+                if admonition_type.lower() in _section_kind:
                     if current_section:
                         if any(current_section):
                             sections.append(
@@ -561,20 +562,23 @@ def parse(  # noqa: WPS231
                                 )
                             )
                         current_section = []
-                    reader = _section_reader[_section_kind[admonition_type]]
+                    reader = _section_reader[_section_kind[admonition_type.lower()]]
                     section, offset = reader(docstring, offset + 1)
                     if section:
-                        section.title = groups["title"]
+                        section.title = title
                         sections.append(section)
 
                 else:
                     contents, offset = _read_block(docstring, offset + 1)
                     if contents:
+                        if title is None and " " in admonition_type:
+                            title = admonition_type
+                            admonition_type = "note"
                         sections.append(
                             DocstringSection(
                                 kind=DocstringSectionKind.admonition,
-                                value=DocstringAdmonition(kind=admonition_type, contents=contents),
-                                title=groups["title"],
+                                value=DocstringAdmonition(kind=admonition_type.lower(), contents=contents),
+                                title=title,
                             )
                         )
                     else:

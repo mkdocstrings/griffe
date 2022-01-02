@@ -51,6 +51,22 @@ def test_unknown_matching_admonitions():
     assert not warnings
 
 
+def test_parse_partially_indented_lines():
+    """Properly handle partially indented lines."""
+    docstring = """
+        The available formats are:
+           - JSON
+
+        The unavailable formats are:  
+           - YAML
+    """  # noqa: W291
+    sections, warnings = parse(docstring)
+    assert len(sections) == 2
+    assert sections[0].kind is DocstringSectionKind.admonition
+    assert sections[1].kind is DocstringSectionKind.text
+    assert not warnings
+
+
 def test_multiple_lines_in_sections_items():
     """Parse multi-line item description."""
     docstring = """
@@ -675,8 +691,8 @@ def test_parse_admonitions():
     sections, warnings = parse(docstring)
     assert len(sections) == 3
     assert not warnings
-    assert sections[0].title is None
-    assert sections[0].value.kind == "important note"
+    assert sections[0].title == "Important note"
+    assert sections[0].value.kind == "note"
     assert sections[0].value.contents == "Hello."
     assert sections[1].title == "With title."
     assert sections[1].value.kind == "note"
