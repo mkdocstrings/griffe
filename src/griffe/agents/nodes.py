@@ -494,8 +494,8 @@ class ObjectNode:
     @cached_property
     def _ids(self) -> set[int]:
         if self.parent is None:
-            return {id(self)}
-        return {id(self)} | self.parent._ids  # noqa: WPS437
+            return {id(self.obj)}
+        return {id(self.obj)} | self.parent._ids  # noqa: WPS437
 
     def _pick_member(self, member: Any) -> bool:
         return member is not type and member is not object and id(member) not in self._ids
