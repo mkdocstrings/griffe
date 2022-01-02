@@ -58,14 +58,14 @@ You can pass extensions to the loader to augment its capacities:
 
 ```python
 from griffe.loader import GriffeLoader
-from griffe.extensions import Extension, Extensions, When
+from griffe.extensions import VisitorExtension, Extensions, When
 
 # import extensions
 from some.package import TheirExtension
 
 
 # or define your own
-class ClassStartsAtOddLineNumberExtension(Extension):
+class ClassStartsAtOddLineNumberExtension(VisitorExtension):
     when = When.after_all
 
     def visit_classdef(self, node) -> None:

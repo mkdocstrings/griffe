@@ -8,7 +8,7 @@ and prefix each log message with the module name:
 
 ```python
 import logging
-from griffe import logger as patch_loggers
+from griffe.logger import patch_loggers
 
 
 class LoggerAdapter(logging.LoggerAdapter):

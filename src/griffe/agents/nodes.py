@@ -1,4 +1,4 @@
-"""This module contains utilities for extracting information from AST nodes."""
+"""This module contains utilities for extracting information from nodes."""
 
 from __future__ import annotations
 

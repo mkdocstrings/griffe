@@ -2,7 +2,7 @@
 
 The available formats are:
 
-- JSON: see the [encoder][griffe.encoders.Encoder] and [decoder][griffe.encoders.decoder].
+- `JSON`: see the [encoder][griffe.encoders.Encoder] and [decoder][griffe.encoders.decoder].
 """
 
 from __future__ import annotations
