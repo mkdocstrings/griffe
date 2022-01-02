@@ -6,8 +6,8 @@ See https://github.com/mkdocstrings/pytkdocs/pull/71.
 """
 
 from __future__ import annotations
-from contextlib import suppress
 
+from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, FrozenSet
 
