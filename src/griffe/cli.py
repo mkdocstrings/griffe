@@ -65,7 +65,7 @@ async def _load_packages_async(
         else:
             loaded[module.name] = module
     for obj in loaded.values():
-        if not await loader.follow_aliases(obj):
+        if not await loader.follow_aliases(obj, only_exported=False, only_known_modules=True):
             logger.info("Not all aliases were resolved")
     return loaded
 
@@ -87,14 +87,14 @@ def _load_packages(
         logger.info(f"Loading package {package}")
         try:
             module = loader.load_module(package, search_paths=search_paths)
-        except ModuleNotFoundError:
-            logger.error(f"Could not find package {package}")
-        except ImportError:
-            logger.error(f"Tried but could not import package {package}")
+        except ModuleNotFoundError as error:
+            logger.error(f"Could not find package {package}: {error}")
+        except ImportError as error:
+            logger.error(f"Tried but could not import package {package}: {error}")
         else:
             loaded[module.name] = module
     for obj in loaded.values():
-        if not loader.follow_aliases(obj):
+        if not loader.follow_aliases(obj, only_exported=False, only_known_modules=True):
             logger.info("Not all aliases were resolved")
     return loaded
 
