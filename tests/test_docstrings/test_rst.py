@@ -6,7 +6,7 @@ import inspect
 
 import pytest
 
-from griffe.dataclasses import Class, Function, Parameter, Parameters
+from griffe.dataclasses import Attribute, Class, Function, Module, Parameter, Parameters
 from griffe.docstrings import rst
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
@@ -809,39 +809,38 @@ def test_parse__raise_no_name__error():
     assert "Failed to parse exception directive from" in warnings[0]
 
 
-# TODO: uncomment once Attribute is used
-# def test_parse_module_attributes_section__expected_attributes_section():
-#     """Parse attributes section in modules."""
-#     docstring = """
-#         Let's describe some attributes.
+def test_parse_module_attributes_section__expected_attributes_section():
+    """Parse attributes section in modules."""
+    docstring = """
+        Let's describe some attributes.
 
-#         :var A: Alpha.
-#         :var B: Beta.
-#         :vartype B: bytes
-#         :var C: Gamma.
-#         :var D: Delta.
-#         :var E: Epsilon.
-#         :vartype E: float
-#     """
+        :var A: Alpha.
+        :vartype B: bytes
+        :var B: Beta.
+        :var C: Gamma.
+        :var D: Delta.
+        :var E: Epsilon.
+        :vartype E: float
+    """
 
-#     module = Module("mod", filepath=None)
-#     module["A"] = Attribute("A")  # annotation="int", value="0"
-#     module["B"] = Attribute("B")  # annotation="str", value=repr("ŧ")
-#     module["C"] = Attribute("C")  # annotation="bool", value="True"
-#     module["D"] = Attribute("D")  # annotation=None, value="3.0"
-#     module["E"] = Attribute("E")  # annotation=None, value="None"
-#     sections, warnings = parse(docstring)
+    module = Module("mod", filepath=None)
+    module["A"] = Attribute("A", annotation="int", value="0")
+    module["B"] = Attribute("B", annotation="str", value=repr("ŧ"))
+    module["C"] = Attribute("C", annotation="bool", value="True")
+    module["D"] = Attribute("D", annotation=None, value="3.0")
+    module["E"] = Attribute("E", annotation=None, value="None")
+    sections, warnings = parse(docstring, parent=module)
 
-#     attr_section = sections[1]
-#     assert attr_section.kind is DocstringSectionKind.attributes
-#     assert len(attr_section.value) == 5
-#     expected_kwargs = [
-#         {"name": "A", "annotation": "int", "description": "Alpha."},
-#         {"name": "B", "annotation": "bytes", "description": "Beta."},
-#         {"name": "C", "annotation": "bool", "description": "Gamma."},
-#         {"name": "D", "annotation": None, "description": "Delta."},
-#         {"name": "E", "annotation": "float", "description": "Epsilon."},
-#     ]
-#     for index, expected in enumerate(expected_kwargs):
-#         assert_annotated_obj_equal(attr_section.value[index], DocstringAttribute(**expected))
-#     assert not warnings
+    attr_section = sections[1]
+    assert attr_section.kind is DocstringSectionKind.attributes
+    assert len(attr_section.value) == 5
+    expected_kwargs = [
+        {"name": "A", "annotation": "int", "description": "Alpha."},
+        {"name": "B", "annotation": "bytes", "description": "Beta."},
+        {"name": "C", "annotation": "bool", "description": "Gamma."},
+        {"name": "D", "annotation": None, "description": "Delta."},
+        {"name": "E", "annotation": "float", "description": "Epsilon."},
+    ]
+    for index, expected in enumerate(expected_kwargs):
+        assert_attribute_equal(attr_section.value[index], DocstringAttribute(**expected))
+    assert not warnings

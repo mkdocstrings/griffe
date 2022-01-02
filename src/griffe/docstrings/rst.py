@@ -6,6 +6,7 @@ See https://github.com/mkdocstrings/pytkdocs/pull/71.
 """
 
 from __future__ import annotations
+from contextlib import suppress
 
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, FrozenSet
@@ -242,16 +243,20 @@ def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValu
         _warn(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
         return parsed_directive.next_index
 
-    annotation = None
+    annotation: str | Name | Expression | None = None
 
     # Annotation precedence:
     # - "vartype" directive type
+    # - annotation in the parent
     # - none
 
     parsed_attribute_type = parsed_values.attribute_types.get(name)
     if parsed_attribute_type is not None:
         annotation = parsed_attribute_type
-
+    else:
+        # try to use the annotation from the parent
+        with suppress(AttributeError, KeyError):
+            annotation = docstring.parent.attributes[name].annotation  # type: ignore[union-attr]
     if name in parsed_values.attributes:
         _warn(docstring, 0, f"Duplicate attribute entry for '{name}'")
     else:
