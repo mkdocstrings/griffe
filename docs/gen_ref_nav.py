@@ -6,9 +6,9 @@ import mkdocs_gen_files
 
 nav = mkdocs_gen_files.Nav()
 
-exclude = {"src/griffe/extensions/base.py"}
+exclude = {"src/griffe/agents/extensions/base.py"}
 
-for path in sorted(Path("src").glob("**/*.py")):
+for path in sorted(Path("src").rglob("*.py")):
     if str(path) in exclude:
         continue
     module_path = path.relative_to("src").with_suffix("")
