@@ -386,14 +386,21 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         Parameters:
             node: The node to visit.
         """
-        # TODO: does this handle relative imports?
         for name in node.names:
             alias_name = name.asname or name.name
+            level = node.level
+            module_path = node.module
+            if level > 0:
+                parent: Module = self.current.module
+                while level > 0:
+                    parent = parent.parent  # type: ignore[assignment]
+                    level -= 1
+                module_path = f"{parent.path}.{module_path}"
             if alias_name == "*":
-                alias_name = node.module.replace(".", "/") + "/*"  # type: ignore[union-attr]
-                alias_path = node.module
+                alias_name = module_path.replace(".", "/") + "/*"  # type: ignore[union-attr]
+                alias_path = module_path
             else:
-                alias_path = f"{node.module}.{name.name}"
+                alias_path = f"{module_path}.{name.name}"
                 self.current.imports[alias_name] = alias_path
             self.current[alias_name] = Alias(
                 alias_name,
