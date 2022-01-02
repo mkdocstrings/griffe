@@ -117,15 +117,18 @@ class _BaseGriffeLoader:
         )
 
     def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
-        return inspect(
-            module_name,
-            filepath=filepath,
-            extensions=self.extensions,
-            parent=parent,
-            docstring_parser=self.docstring_parser,
-            docstring_options=self.docstring_options,
-            lines_collection=self.lines_collection,
-        )
+        try:
+            return inspect(
+                module_name,
+                filepath=filepath,
+                extensions=self.extensions,
+                parent=parent,
+                docstring_parser=self.docstring_parser,
+                docstring_options=self.docstring_options,
+                lines_collection=self.lines_collection,
+            )
+        except SystemExit as error:
+            raise ImportError(f"Importing '{module_name}' raised a system exit") from error
 
     def _member_parent(self, module: Module, subparts: NamePartsType, subpath: Path) -> Module:
         parent_parts = subparts[:-1]
@@ -289,6 +292,8 @@ class GriffeLoader(_BaseGriffeLoader):
         except SyntaxError:
             message = traceback.format_exc(limit=0).replace("SyntaxError: invalid syntax", "").strip()
             logger.error(f"Syntax error: {message}")
+        except ImportError as error:  # noqa: WPS440
+            logger.error(f"Import error: {error}")
 
 
 class AsyncGriffeLoader(_BaseGriffeLoader):
@@ -422,11 +427,17 @@ class AsyncGriffeLoader(_BaseGriffeLoader):
         try:
             member_parent = self._member_parent(module, subparts, subpath)
         except UnimportableModuleError as error:
-            logger.debug(str(error))
-        else:
+            logger.warning(f"{error}. Missing __init__ module?")
+            return
+        try:
             member_parent[subparts[-1]] = await self._load_module_path(
                 subparts[-1], subpath, submodules=False, parent=member_parent
             )
+        except SyntaxError:
+            message = traceback.format_exc(limit=0).replace("SyntaxError: invalid syntax", "").strip()
+            logger.error(f"Syntax error: {message}")
+        except ImportError as error:  # noqa: WPS440
+            logger.error(f"Import error: {error}")
 
 
 def _top_name_and_path(
