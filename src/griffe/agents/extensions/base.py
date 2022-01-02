@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Sequence, Type, Union
 
 from griffe.agents.base import BaseInspector, BaseVisitor
 from griffe.agents.nodes import ObjectNode
+from griffe.exceptions import ExtensionNotLoadedError
 from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:
@@ -227,6 +228,12 @@ def load_extension(extension: str | dict[str, Any] | Extension | Type[Extension]
     Parameters:
         extension: An extension, with potential configuration options.
 
+    Raises:
+        ExtensionNotLoadedError: When the extension cannot be loaded,
+            either because the module is not found, or because it does not expose
+            the Extension attribute. ImportError will bubble up so users can see
+            the traceback.
+
     Returns:
         An extension instance.
     """
@@ -246,11 +253,15 @@ def load_extension(extension: str | dict[str, Any] | Extension | Type[Extension]
     if import_path in builtin_extensions:
         import_path = f"griffe.agents.extensions.{import_path}"
 
-    # TODO: handle AttributeError
-    ext_module = dynamic_import(import_path)
+    try:
+        ext_module = dynamic_import(import_path)
+    except ModuleNotFoundError as error:
+        raise ExtensionNotLoadedError(f"Extension module '{import_path}' could not be found") from error
 
-    # TODO: handle AttributeError
-    return ext_module.Extension(**options)
+    try:
+        return ext_module.Extension(**options)
+    except AttributeError as error:  # noqa: WPS440
+        raise ExtensionNotLoadedError(f"Extension module '{import_path}' has no 'Extension' attribute") from error
 
 
 def load_extensions(exts: Sequence[str | dict[str, Any] | Extension | Type[Extension]]) -> Extensions:  # noqa: WPS231

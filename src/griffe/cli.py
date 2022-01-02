@@ -26,6 +26,7 @@ from griffe.agents.extensions import Extensions
 from griffe.agents.extensions.base import load_extensions
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import Encoder
+from griffe.exceptions import ExtensionError
 from griffe.loader import AsyncGriffeLoader, GriffeLoader
 from griffe.logger import get_logger
 
@@ -219,7 +220,11 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     if opts.append_sys_path:
         search.extend(sys.path)
 
-    extensions = load_extensions(opts.extensions)
+    try:
+        extensions = load_extensions(opts.extensions)
+    except ExtensionError as error:
+        print(f"griffe: error: {error}", file=sys.stderr)
+        return 1
 
     if opts.async_loader:
         loop = asyncio.get_event_loop()

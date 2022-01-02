@@ -44,3 +44,7 @@ class BuiltinModuleError(GriffeError):
 
 class ExtensionError(GriffeError):
     """Base class for errors raised by extensions."""
+
+
+class ExtensionNotLoadedError(ExtensionError):
+    """Exception raised when an extension could not be loaded."""
