@@ -17,7 +17,7 @@ from typing import Any, Callable, cast
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
-from griffe.exceptions import AliasResolutionError, BuiltinModuleError, NameResolutionError
+from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import Expression, Name
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin
 
@@ -703,15 +703,22 @@ class Alias(ObjectAliasMixin):
         else:
             self._target = target
             self._target_path = target.path
-            if self.parent is not None:
-                target.aliases[self.path] = self
+            if parent is not None:
+                with suppress(AliasResolutionError):
+                    target.aliases[self.path] = self
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
         self._parent: Module | Class | None = parent
+        self._passed_through: bool = False
 
     def __getattr__(self, name: str) -> Any:
         # forward everything to the target
-        return getattr(self.target, name)
+        if self._passed_through:
+            raise CyclicAliasError
+        self._passed_through = True
+        attr = getattr(self.target, name)
+        self._passed_through = False
+        return attr
 
     def __getitem__(self, key):
         # not handled by __getattr__
@@ -747,7 +754,8 @@ class Alias(ObjectAliasMixin):
     def parent(self, value: Module | Class) -> None:
         self._parent = value
         if self.resolved:
-            self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just checked the target is not None
+            with suppress(AliasResolutionError):
+                self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just checked the target is not None
 
     @cached_property
     def path(self) -> str:

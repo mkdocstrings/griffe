@@ -30,6 +30,10 @@ class AliasResolutionError(GriffeError):
         super().__init__(f"could not resolve {self.target_path}")
 
 
+class CyclicAliasError(GriffeError):
+    """Exception raised when a cycle is detected in aliases."""
+
+
 class LastNodeError(GriffeError):
     """Exception raised when trying to access a next or previous node."""
 
