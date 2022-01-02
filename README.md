@@ -85,20 +85,24 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
     - Merging inherited members into class.
         Needs to be able to post-process classes,
         and to compute their MRO (C3Linearization, see docspec/pydocspec issues).
-    - Merging `__init__` method's docstring into class' docstring
+    - Merging `__init__` method's docstring into class' docstring (could be an extension)
     - Support for `typing.overload` decorator.
         We'll probably need to add an `overloads` attribute to `Function`,
         to store the list of `@overload`-decorated functions,
         because currently different members of a same object cannot have the same names.
     - Support for wildcard imports
-- Extension system
+- Extensions
     - Post-processing extensions
+    - Third-party libraries we could provide support for:
+        - Django support
+        - Marshmallow support
+        - Pydantic support
 - Docstrings parsers
-    - Styles
-        - epydoc
-        - New Markdown-based format? For graceful degradation
+    - epydoc
+    - New Markdown-based format? For graceful degradation
 - Serializer:
     - Flat JSON
+    - JSON schema
 - API diff:
     - Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
     - Ability to return warnings (things that are not backward-compatibility-friendly)
