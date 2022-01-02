@@ -363,7 +363,10 @@ class Inspector(BaseInspector):  # noqa: WPS338
             parent = parent.parent
             labels.add("instance")
 
-        value = repr(node.obj)
+        try:
+            value = repr(node.obj)
+        except Exception:  # could trigger anything
+            value = None
         docstring = self._get_docstring(node)
 
         attribute = Attribute(
