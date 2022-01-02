@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.8.0](https://github.com/pawamoy/griffe/releases/tag/0.8.0) - 2022-01-02
+
+<small>[Compare with 0.7.1](https://github.com/pawamoy/griffe/compare/0.7.1...0.8.0)</small>
+
+### Features
+- Support getting attribute annotation from parent in RST docstring parser ([25db61a](https://github.com/pawamoy/griffe/commit/25db61ab01042ad797ac5cdea0b2f7e2382191c1) by Timothée Mazzucotelli).
+- Handle relative imports ([62b0927](https://github.com/pawamoy/griffe/commit/62b0927516ca345de61aa3cc03e977d4d37220de) by Timothée Mazzucotelli).
+- Support wildcard imports ([77a3cb7](https://github.com/pawamoy/griffe/commit/77a3cb7e4198dc2e2cea953c5f621544b564552c) by Timothée Mazzucotelli).
+- Support configuring log level (CLI/env var) ([839d78e](https://github.com/pawamoy/griffe/commit/839d78ea302df004fba1b6fad9eb84d861f0f4aa) by Timothée Mazzucotelli).
+- Support loading `*.py[cod]` and `*.so` modules ([cd98a6f](https://github.com/pawamoy/griffe/commit/cd98a6f3afbbf8f6a176aa7780a8b916a9ee64f2) by Timothée Mazzucotelli).
+- Support inspecting builtin functions/methods ([aa1fce3](https://github.com/pawamoy/griffe/commit/aa1fce330ce3e2af4dd9a3c43827637d1e220dde) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Handle extensions errors ([11278ca](https://github.com/pawamoy/griffe/commit/11278caea27e9f91a1dc9cc160414f01b24f5354) by Timothée Mazzucotelli).
+- Don't always try to find a module as a relative  path ([e6df277](https://github.com/pawamoy/griffe/commit/e6df2774bfd631fd9a09913480b4d61d137bc0c6) by Timothée Mazzucotelli).
+- Improve loggers patching ([f4b262a](https://github.com/pawamoy/griffe/commit/f4b262ab5a3d874591324adc2b5ffff214c7e7da) by Timothée Mazzucotelli).
+- Improve dynamic imports ([2998195](https://github.com/pawamoy/griffe/commit/299819519b7eb9b07b938d22bfb3a27e3b05095d) by Timothée Mazzucotelli).
+
+
 ## [0.7.1](https://github.com/pawamoy/griffe/releases/tag/0.7.1) - 2021-12-28
 
 <small>[Compare with 0.7.0](https://github.com/pawamoy/griffe/compare/0.7.0...0.7.1)</small>
