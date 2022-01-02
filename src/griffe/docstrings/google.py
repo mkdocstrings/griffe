@@ -578,6 +578,7 @@ def parse(  # noqa: WPS231
                             )
                         )
                     else:
+                        offset -= 1
                         with suppress(IndexError):
                             current_section.append(lines[offset])
             else:

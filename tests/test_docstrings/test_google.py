@@ -32,6 +32,25 @@ def test_multiline_docstring():
     assert not warnings
 
 
+def test_unknown_matching_admonitions():
+    """Properly handle offset when matching an unknown admonition (line ending with `:`)."""
+    docstring = """
+        First line.
+
+        Matching but unknown admonition type:
+
+        - Some list items
+
+        Ending line.
+    """
+    sections, warnings = parse(docstring)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.text
+    # -2 because docstring is stripped
+    assert len(sections[0].value.splitlines()) == len(docstring.splitlines()) - 2
+    assert not warnings
+
+
 def test_multiple_lines_in_sections_items():
     """Parse multi-line item description."""
     docstring = """
