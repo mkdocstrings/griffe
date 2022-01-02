@@ -177,7 +177,8 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         """
         for before_visitor in self.extensions.before_children_visit:
             before_visitor.visit(node)
-        super().generic_visit(node)
+        for child in node.children:  # type: ignore[attr-defined]  # noqa: WPS437
+            self.visit(child)
         for after_visitor in self.extensions.after_children_visit:
             after_visitor.visit(node)
 
