@@ -22,6 +22,7 @@ and recursively handle its members.
 
 from __future__ import annotations
 
+import ast
 from inspect import Parameter as SignatureParameter
 from inspect import Signature, getdoc, getmodule
 from inspect import signature as getsignature
@@ -317,12 +318,14 @@ class Inspector(BaseInspector):  # noqa: WPS338
             parameters = None
             returns = None
         else:
-            parameters = Parameters(*[_convert_parameter(parameter) for parameter in signature.parameters.values()])
+            parameters = Parameters(
+                *[_convert_parameter(parameter, parent=self.current) for parameter in signature.parameters.values()]
+            )
             return_annotation = signature.return_annotation
             if return_annotation is empty:
                 returns = None
             else:
-                returns = return_annotation and get_annotation(return_annotation, parent=self.current)
+                returns = _convert_object_to_annotation(return_annotation, parent=self.current)
 
         function = Function(
             name=node.name,
@@ -393,15 +396,35 @@ _kind_map = {
 }
 
 
-def _convert_parameter(parameter):
+def _convert_parameter(parameter, parent):
     name = parameter.name
     if parameter.annotation is empty:
         annotation = None
     else:
-        annotation = parameter.annotation
+        annotation = _convert_object_to_annotation(parameter.annotation, parent=parent)
     kind = _kind_map[parameter.kind]
     if parameter.default is empty:
         default = None
     else:
-        default = parameter.default
+        default = repr(parameter.default)
     return Parameter(name, annotation=annotation, kind=kind, default=default)
+
+
+def _convert_object_to_annotation(obj, parent):
+    # even when *we* import future annotations,
+    # the object from which we get a signature
+    # can come from modules which did *not* import them,
+    # so inspect.signature returns actual Python objects
+    # that we must deal with
+    if not isinstance(obj, str):
+        if hasattr(obj, "__name__"):
+            # simple types like int, str, custom classes, etc.
+            obj = obj.__name__
+        else:
+            # other, more complex types: hope for the best
+            obj = repr(obj)
+    try:
+        annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
+    except SyntaxError:
+        return obj
+    return get_annotation(annotation_node.body, parent=parent)

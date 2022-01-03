@@ -75,5 +75,5 @@ def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -
         actual: The actual element.
         expected: The expected element.
     """
-    assert actual.annotation == expected.annotation
+    assert actual.annotation == expected.annotation  # type: ignore[operator]
     assert actual.description == expected.description
