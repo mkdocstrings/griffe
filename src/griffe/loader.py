@@ -278,9 +278,9 @@ class GriffeLoader:
         try:
             member_parent = self._member_parent(module, subparts, subpath)
         except UnimportableModuleError as error:
-            logger.warning(f"{error}. Missing __init__ module?")
+            logger.debug(f"{error}. Missing __init__ module?")
             return
-        try:
+        try:  # noqa: WPS225
             member_parent[subparts[-1]] = self._load_module_path(
                 subparts[-1], subpath, submodules=False, parent=member_parent
             )
@@ -289,6 +289,10 @@ class GriffeLoader:
             logger.error(f"Syntax error: {message}")
         except ImportError as error:  # noqa: WPS440
             logger.error(f"Import error: {error}")
+        except UnicodeDecodeError as error:  # noqa: WPS440
+            logger.error(f"UnicodeDecodeError when loading {subpath}: {error}")
+        except OSError as error:  # noqa: WPS440
+            logger.error(f"OSError when loading {subpath}: {error}")
 
     def _create_module(self, module_name: str, module_path: Path) -> Module:
         return Module(
