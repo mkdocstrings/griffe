@@ -330,7 +330,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         try:
             signature = getsignature(node.obj)
-        except (ValueError, TokenError, TypeError):
+        except (AttributeError, ValueError, TokenError, TypeError):
             parameters = None
             returns = None
         else:
