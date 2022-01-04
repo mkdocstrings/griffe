@@ -339,8 +339,15 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"
 
-    def __bool__(self):
-        return bool(self.docstring) or any(self.members.values())
+    @property
+    def has_docstring(self) -> bool:
+        """Tell if this object has a non-empty docstring."""
+        return bool(self.docstring)  # noqa: DAR201
+
+    @property
+    def has_docstrings(self) -> bool:
+        """Tell if this object or any of its members has a non-empty docstring."""
+        return self.has_docstring or any(member.has_docstrings for member in self.members.values())  # noqa: DAR201
 
     def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:
         """Tell if a member of this object is "exported".
@@ -515,7 +522,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             A dotted path.
         """
-        if not self.parent:
+        if self.parent is None:
             return self.name
         return ".".join((self.parent.path, self.name))
 
@@ -938,7 +945,7 @@ class Module(Object):
             True or False.
         """
         try:
-            return not self.parent and self.filepath.is_dir()
+            return self.parent is None and self.filepath.is_dir()
         except BuiltinModuleError:
             return False
 

@@ -471,7 +471,7 @@ class ObjectNode:
         Returns:
             If this node's object is a staticmethod.
         """
-        if not self.parent:
+        if self.parent is None:
             return False
         try:
             self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
@@ -487,7 +487,7 @@ class ObjectNode:
         Returns:
             If this node's object is a classmethod.
         """
-        if not self.parent:
+        if self.parent is None:
             return False
         try:
             self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
