@@ -954,7 +954,10 @@ def _get_sub_value(node: NodeSub) -> str:
 
 
 def _get_subscript_value(node: NodeSubscript) -> str:
-    return f"{get_value(node.value)}[{get_value(node.slice).strip('()')}]"
+    subscript = get_value(node.slice)
+    if isinstance(subscript, str):
+        subscript = subscript.strip("()")
+    return f"{get_value(node.value)}[{subscript}]"
 
 
 def _get_tuple_value(node: NodeTuple) -> str:
