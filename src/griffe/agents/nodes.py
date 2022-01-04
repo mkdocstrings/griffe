@@ -63,6 +63,7 @@ from ast import Tuple as NodeTuple
 from ast import UAdd as NodeUAdd
 from ast import UnaryOp as NodeUnaryOp
 from ast import USub as NodeUSub
+from ast import Yield as NodeYield
 from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
@@ -972,6 +973,12 @@ def _get_usub_value(node: NodeUSub) -> str:
     return "-"
 
 
+def _get_yield_value(node: NodeYield) -> str:
+    if node.value is None:
+        return repr(None)
+    return get_value(node.value)
+
+
 _node_value_map: dict[Type, Callable[[Any], str]] = {
     type(None): lambda _: repr(None),
     NodeAdd: _get_add_value,
@@ -1029,6 +1036,7 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeUAdd: _get_uadd_value,
     NodeUnaryOp: _get_unaryop_value,
     NodeUSub: _get_usub_value,
+    NodeYield: _get_yield_value,
 }
 
 # TODO: remove once Python 3.8 support is dropped
