@@ -274,6 +274,9 @@ class ObjectNode:
         parent: The parent node.
     """
 
+    # low level stuff known to cause issues when resolving aliases
+    exclude_specials = {"__builtins__", "__loader__", "__spec__"}
+
     def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
         """
         Initialize the object.
@@ -341,7 +344,7 @@ class ObjectNode:
         """
         children = []
         for name, member in inspect.getmembers(self.obj):
-            if self._pick_member(member):
+            if self._pick_member(name, member):
                 children.append(ObjectNode(member, name, parent=self))
         return children
 
@@ -497,8 +500,13 @@ class ObjectNode:
             return {id(self.obj)}
         return {id(self.obj)} | self.parent._ids  # noqa: WPS437
 
-    def _pick_member(self, member: Any) -> bool:
-        return member is not type and member is not object and id(member) not in self._ids
+    def _pick_member(self, name: str, member: Any) -> bool:
+        return (
+            name not in self.exclude_specials
+            and member is not type
+            and member is not object
+            and id(member) not in self._ids
+        )
 
 
 def _join(sequence, item):
