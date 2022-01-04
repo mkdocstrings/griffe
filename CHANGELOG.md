@@ -5,6 +5,37 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.9.0](https://github.com/pawamoy/griffe/releases/tag/0.9.0) - 2022-01-04
+
+<small>[Compare with 0.8.0](https://github.com/pawamoy/griffe/compare/0.8.0...0.9.0)</small>
+
+### Features
+- Loader option to only follow aliases in known modules ([879d91b](https://github.com/pawamoy/griffe/commit/879d91b4c50832620ce6ee7bdcc85107a6df9a1f) by Timothée Mazzucotelli).
+- Use aliases when inspecting too ([60439ee](https://github.com/pawamoy/griffe/commit/60439eefb4635e58e4bd898e5565eab48a5c91d0) by Timothée Mazzucotelli).
+
+### Bug Fixes
+- Handle more errors when loading modules ([1aa571a](https://github.com/pawamoy/griffe/commit/1aa571a112e3b2ca955c23f2eef97b36f34bcd8c) by Timothée Mazzucotelli).
+- Handle more errors when getting signature ([2db85e7](https://github.com/pawamoy/griffe/commit/2db85e7f655c1e383ba310f40195844c2867e1b9) by Timothée Mazzucotelli).
+- Fix checking parent truthfulness ([6129e50](https://github.com/pawamoy/griffe/commit/6129e50331f6e36bcbee2e07b871abee45f7e872) by Timothée Mazzucotelli).
+- Fix getting subscript value ([1699f12](https://github.com/pawamoy/griffe/commit/1699f121adc13fcc48f81f46dfca85946e2fb74f) by Timothée Mazzucotelli).
+- Support yield nodes ([7d536d5](https://github.com/pawamoy/griffe/commit/7d536d58ffc0faa4caf43f09194d88c35fc47704) by Timothée Mazzucotelli).
+- Exclude some special low-level members that cause cyclic issues ([b54ab34](https://github.com/pawamoy/griffe/commit/b54ab346308bb24cba66be9c8f1ee8599481381d) by Timothée Mazzucotelli).
+- Fix transforming elements of signatures to annotations ([e278c11](https://github.com/pawamoy/griffe/commit/e278c1102b2762b74bf6b83a2e97a5f87b566e2e) by Timothée Mazzucotelli).
+- Detect cyclic aliases and prevent resolution errors ([de5dd12](https://github.com/pawamoy/griffe/commit/de5dd12240acf8a203a86b04e458ce33b67ced9e) by Timothée Mazzucotelli).
+- Don't crash while trying to get the representation of an attribute value ([77ac55d](https://github.com/pawamoy/griffe/commit/77ac55d5033e83790c79f3303fdbd05ea66ab729) by Timothée Mazzucotelli).
+- Fix building value for joined strings ([6154b69](https://github.com/pawamoy/griffe/commit/6154b69b6da5d63c508ec5095aebe487e491b553) by Timothée Mazzucotelli).
+- Fix prevention of cycles while building objects nodes ([48062ac](https://github.com/pawamoy/griffe/commit/48062ac1f8356099b8e0e1069e4321a467073d33) by Timothée Mazzucotelli).
+- Better handle relative imports ([91b42de](https://github.com/pawamoy/griffe/commit/91b42dea73c035b2dc20db1e328a53960c51a645) by Timothée Mazzucotelli).
+- Fix Google parser missing lines ending with colon ([2f7969c](https://github.com/pawamoy/griffe/commit/2f7969ccbf91b63ae22deb742250068c114fe1a9) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Improve alias resolution robustness ([e708139](https://github.com/pawamoy/griffe/commit/e708139c9bd19be320bdb279310560212872326f) by Timothée Mazzucotelli).
+- Remove async loader for now ([acc5ecf](https://github.com/pawamoy/griffe/commit/acc5ecf2bb45dcebdd56d763a657a1075c4a3002) by Timothée Mazzucotelli).
+- Improve handling of Google admonitions ([8aa5ed0](https://github.com/pawamoy/griffe/commit/8aa5ed0be4f1902dbdfbce9b4a9c7ac619418d43) by Timothée Mazzucotelli).
+- Better handling of import errors and system exits while inspecting modules ([7ba1589](https://github.com/pawamoy/griffe/commit/7ba1589552fb37fba3c2f3093058e135a6e48a27) by Timothée Mazzucotelli).
+- Empty generic visit/inspect methods in base classes ([338760e](https://github.com/pawamoy/griffe/commit/338760ea2189e74577250b8c3f4ffe91f81e6b6e) by Timothée Mazzucotelli).
+
+
 ## [0.8.0](https://github.com/pawamoy/griffe/releases/tag/0.8.0) - 2022-01-02
 
 <small>[Compare with 0.7.1](https://github.com/pawamoy/griffe/compare/0.7.1...0.8.0)</small>
