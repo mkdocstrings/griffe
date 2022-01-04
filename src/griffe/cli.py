@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import logging
 import os
@@ -27,7 +26,7 @@ from griffe.agents.extensions.base import load_extensions
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import Encoder
 from griffe.exceptions import ExtensionError
-from griffe.loader import AsyncGriffeLoader, GriffeLoader
+from griffe.loader import GriffeLoader
 from griffe.logger import get_logger
 
 logger = get_logger(__name__)
@@ -39,35 +38,6 @@ def _print_data(data, output_file):
     else:
         with open(output_file, "w") as fd:
             print(data, file=fd)
-
-
-async def _load_packages_async(
-    packages: Sequence[str],
-    extensions: Extensions | None,
-    search_paths: Sequence[str],
-    docstring_parser: Parser | None,
-    docstring_options: dict[str, Any],
-):
-    loader = AsyncGriffeLoader(
-        extensions=extensions,
-        docstring_parser=docstring_parser,
-        docstring_options=docstring_options,
-    )
-    loaded = {}
-    for package in packages:
-        logger.info(f"Loading package {package}")
-        try:
-            module = await loader.load_module(package, search_paths=search_paths)
-        except ModuleNotFoundError:
-            logger.error(f"Could not find package {package}")
-        except ImportError:
-            logger.error(f"Tried but could not import package {package}")
-        else:
-            loaded[module.name] = module
-    for obj in loaded.values():
-        if not await loader.follow_aliases(obj, only_exported=False, only_known_modules=True):
-            logger.info("Not all aliases were resolved")
-    return loaded
 
 
 def _load_packages(
@@ -226,12 +196,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         print(f"griffe: error: {error}", file=sys.stderr)
         return 1
 
-    if opts.async_loader:
-        loop = asyncio.get_event_loop()
-        coroutine = _load_packages_async(opts.packages, extensions, search, opts.docstyle, opts.docopts)
-        packages = loop.run_until_complete(coroutine)
-    else:
-        packages = _load_packages(opts.packages, extensions, search, opts.docstyle, opts.docopts)
+    packages = _load_packages(opts.packages, extensions, search, opts.docstyle, opts.docopts)
 
     if per_package_output:
         for package_name, data in packages.items():

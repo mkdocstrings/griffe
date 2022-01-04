@@ -12,7 +12,6 @@ fastapi = griffe.load_module("fastapi")
 
 from __future__ import annotations
 
-import asyncio
 import os
 import sys
 import traceback
@@ -69,7 +68,9 @@ def _get_async_reader():
 _builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
-class _BaseGriffeLoader:
+class GriffeLoader:
+    """The Griffe loader, allowing to load data from modules."""
+
     def __init__(
         self,
         extensions: Extensions | None = None,
@@ -93,71 +94,6 @@ class _BaseGriffeLoader:
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         patch_ast()
-
-    def _create_module(self, module_name: str, module_path: Path) -> Module:
-        return Module(
-            module_name,
-            filepath=module_path,
-            lines_collection=self.lines_collection,
-            modules_collection=self.modules_collection,
-        )
-
-    def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
-        self.lines_collection[module_path] = code.splitlines(keepends=False)
-        return visit(
-            module_name,
-            filepath=module_path,
-            code=code,
-            extensions=self.extensions,
-            parent=parent,
-            docstring_parser=self.docstring_parser,
-            docstring_options=self.docstring_options,
-            lines_collection=self.lines_collection,
-            modules_collection=self.modules_collection,
-        )
-
-    def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
-        try:
-            return inspect(
-                module_name,
-                filepath=filepath,
-                extensions=self.extensions,
-                parent=parent,
-                docstring_parser=self.docstring_parser,
-                docstring_options=self.docstring_options,
-                lines_collection=self.lines_collection,
-            )
-        except SystemExit as error:
-            raise ImportError(f"Importing '{module_name}' raised a system exit") from error
-
-    def _member_parent(self, module: Module, subparts: NamePartsType, subpath: Path) -> Module:
-        parent_parts = subparts[:-1]
-        try:
-            return module[parent_parts]
-        except KeyError:
-            if module.is_namespace_package or module.is_namespace_subpackage:
-                member_parent = Module(
-                    subparts[0],
-                    filepath=subpath.parent,
-                    lines_collection=self.lines_collection,
-                    modules_collection=self.modules_collection,
-                )
-                module[parent_parts] = member_parent
-                return member_parent
-        raise UnimportableModuleError(f"{subpath} is not importable")
-
-    def _expand_wildcard(self, wildcard_obj: Alias) -> dict[str, Object | Alias]:
-        module = self.modules_collection[wildcard_obj.wildcard]  # type: ignore[index]  # we know it's a wildcard
-        explicitely = "__all__" in module.members
-        return {
-            name: imported_member
-            for name, imported_member in module.members.items()
-            if imported_member.is_exported(explicitely=explicitely)
-        }
-
-
-class GriffeLoader(_BaseGriffeLoader):
-    """The Griffe loader, allowing to load data from modules."""
 
     def load_module(
         self,
@@ -295,149 +231,66 @@ class GriffeLoader(_BaseGriffeLoader):
         except ImportError as error:  # noqa: WPS440
             logger.error(f"Import error: {error}")
 
-
-class AsyncGriffeLoader(_BaseGriffeLoader):
-    """The asynchronous Griffe loader, allowing to load data from modules."""
-
-    async def load_module(
-        self,
-        module: str | Path,
-        submodules: bool = True,
-        search_paths: Sequence[str | Path] | None = None,
-        try_relative_path: bool = True,
-    ) -> Module:
-        """Load a module.
-
-        Parameters:
-            module: The module name or path.
-            submodules: Whether to recurse on the submodules.
-            search_paths: The paths to search into.
-            try_relative_path: Whether to try finding the module as a relative path.
-
-        Returns:
-            A module.
-        """
-        if module in _builtin_modules:
-            logger.debug(f"{module} is a builtin module: inspecting")
-            module_name = module
-            top_module = self._inspect_module(module)  # type: ignore[arg-type]
-        else:
-            try:
-                module_name, top_module_name, top_module_path = _top_name_and_path(
-                    module, search_paths, try_relative_path
-                )
-            except ModuleNotFoundError:
-                logger.debug(f"Could not find {module}: trying inspection")
-                module_name = module
-                top_module = self._inspect_module(module)  # type: ignore[arg-type]
-            else:
-                logger.debug(f"Found {module}: visiting")
-                top_module = await self._load_module_path(top_module_name, top_module_path, submodules=submodules)
-        self.modules_collection[top_module.path] = top_module
-        return self.modules_collection[module_name]  # type: ignore[index]
-
-    async def follow_aliases(  # noqa: WPS231
-        self, obj: Object, only_exported: bool = True, only_known_modules: bool = True
-    ) -> bool:
-        """Follow aliases: try to recursively resolve all found aliases.
-
-        Parameters:
-            obj: The object and its members to recurse on.
-            only_exported: Only try to resolve an alias if it is explicitely exported.
-            only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
-
-        Returns:
-            True if everything was resolved, False otherwise.
-        """
-        success = True
-        expanded = {}
-        to_remove = []
-
-        # iterate a first time to expand wildcards
-        for member in obj.members.values():
-            if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
-                package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
-                if obj.package.path != package and package not in self.modules_collection:
-                    try:
-                        await self.load_module(package, try_relative_path=False)
-                    except ImportError as error:
-                        logger.warning(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
-                    else:
-                        expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
-                        to_remove.append(member.name)
-
-        for name in to_remove:
-            del obj[name]  # noqa: WPS420
-        for new_member in expanded.values():
-            obj[new_member.name] = Alias(new_member.name, new_member)
-
-        # iterate a second time to resolve aliases and recurse
-        for member in obj.members.values():  # noqa: WPS440
-            if member.is_alias and not member.wildcard:  # type: ignore[union-attr]
-                if only_exported and not member.is_explicitely_exported:
-                    continue
-                try:
-                    member.resolve_target()  # type: ignore[union-attr]
-                except AliasResolutionError as error:  # noqa: WPS440
-                    success = False
-                    package = error.target_path.split(".", 1)[0]
-                    load_module = (
-                        not only_known_modules
-                        and obj.package.path != package
-                        and package not in self.modules_collection
-                    )
-                    if load_module:
-                        try:  # noqa: WPS505
-                            await self.load_module(package, try_relative_path=False)
-                        except ImportError as error:  # noqa: WPS440
-                            logger.warning(f"Could not follow alias {member.path}: {error}")
-            elif member.kind in {Kind.MODULE, Kind.CLASS}:
-                success &= await self.follow_aliases(member)  # type: ignore[arg-type]  # we know it's an object
-
-        return success
-
-    async def _load_module_path(
-        self,
-        module_name: str,
-        module_path: Path,
-        submodules: bool = True,
-        parent: Module | None = None,
-    ) -> Module:
-        logger.debug(f"Loading path {module_path}")
-        if module_path.is_dir():
-            module = self._create_module(module_name, module_path)
-        elif module_path.suffix == ".py":
-            code = await _get_async_reader()(module_path)
-            module = self._visit_module(code, module_name, module_path, parent)
-        else:
-            module = self._inspect_module(module_name, module_path, parent)
-        if submodules:
-            await self._load_submodules(module)
-        return module
-
-    async def _load_submodules(self, module: Module) -> None:
-        await asyncio.gather(
-            *[
-                self._load_submodule(module, subparts, subpath)
-                for subparts, subpath in sorted(iter_submodules(module.filepath), key=_module_depth)
-            ]
+    def _create_module(self, module_name: str, module_path: Path) -> Module:
+        return Module(
+            module_name,
+            filepath=module_path,
+            lines_collection=self.lines_collection,
+            modules_collection=self.modules_collection,
         )
 
-    async def _load_submodule(self, module: Module, subparts: NamePartsType, subpath: Path) -> None:
+    def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
+        self.lines_collection[module_path] = code.splitlines(keepends=False)
+        return visit(
+            module_name,
+            filepath=module_path,
+            code=code,
+            extensions=self.extensions,
+            parent=parent,
+            docstring_parser=self.docstring_parser,
+            docstring_options=self.docstring_options,
+            lines_collection=self.lines_collection,
+            modules_collection=self.modules_collection,
+        )
+
+    def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
         try:
-            member_parent = self._member_parent(module, subparts, subpath)
-        except UnimportableModuleError as error:
-            logger.warning(f"{error}. Missing __init__ module?")
-            return
-        try:
-            member_parent[subparts[-1]] = await self._load_module_path(
-                subparts[-1], subpath, submodules=False, parent=member_parent
+            return inspect(
+                module_name,
+                filepath=filepath,
+                extensions=self.extensions,
+                parent=parent,
+                docstring_parser=self.docstring_parser,
+                docstring_options=self.docstring_options,
+                lines_collection=self.lines_collection,
             )
-        except SyntaxError:
-            message = traceback.format_exc(limit=0).replace("SyntaxError: invalid syntax", "").strip()
-            logger.error(f"Syntax error: {message}")
-        except ImportError as error:  # noqa: WPS440
-            logger.error(f"Import error: {error}")
+        except SystemExit as error:
+            raise ImportError(f"Importing '{module_name}' raised a system exit") from error
+
+    def _member_parent(self, module: Module, subparts: NamePartsType, subpath: Path) -> Module:
+        parent_parts = subparts[:-1]
+        try:
+            return module[parent_parts]
+        except KeyError:
+            if module.is_namespace_package or module.is_namespace_subpackage:
+                member_parent = Module(
+                    subparts[0],
+                    filepath=subpath.parent,
+                    lines_collection=self.lines_collection,
+                    modules_collection=self.modules_collection,
+                )
+                module[parent_parts] = member_parent
+                return member_parent
+        raise UnimportableModuleError(f"{subpath} is not importable")
+
+    def _expand_wildcard(self, wildcard_obj: Alias) -> dict[str, Object | Alias]:
+        module = self.modules_collection[wildcard_obj.wildcard]  # type: ignore[index]  # we know it's a wildcard
+        explicitely = "__all__" in module.members
+        return {
+            name: imported_member
+            for name, imported_member in module.members.items()
+            if imported_member.is_exported(explicitely=explicitely)
+        }
 
 
 def _top_name_and_path(
