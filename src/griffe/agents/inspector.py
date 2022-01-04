@@ -23,6 +23,7 @@ and recursively handle its members.
 from __future__ import annotations
 
 import ast
+import sys
 from inspect import Parameter as SignatureParameter
 from inspect import Signature, getdoc, getmodule
 from inspect import signature as getsignature
@@ -85,6 +86,20 @@ def inspect(
         docstring_options=docstring_options,
         lines_collection=lines_collection,
     ).get_module()
+
+
+def _force_inspect(parent_module, child_module):
+    # Special case for builtin modules, example:
+    # - `ast` does `from _ast import *`
+    # - so we go and inspect `_ast`
+    # - when iterating on its child, as usual, we check each child's real module
+    #   thanks to `inspect.getmodule`
+    # - but in that case, `inspect.getmodule` returns `ast` for the children
+    # - it puts us in a cycle
+    # - so we break the cycle by ignoring inspect's result and inspecting the private module
+    if parent_module.startswith("_"):
+        return parent_module[1:] == child_module and parent_module in sys.builtin_module_names
+    return False
 
 
 class Inspector(BaseInspector):  # noqa: WPS338
@@ -172,20 +187,21 @@ class Inspector(BaseInspector):  # noqa: WPS338
             before_inspector.inspect(node)
 
         for child in node.children:
-            try:
-                child_module = getmodule(child.obj).__name__  # type: ignore[union-attr]
-            except AttributeError:
-                child_module = None
+            child_module = getmodule(child.obj)
+            child_module_path = getattr(child_module, "__name__", None)
 
-            # special case: ast imports from _ast, while getmodule returns ast for objects in _ast -> cyclic
-            exclude = node.name == "_ast" and child_module == "ast"
-
-            if child_module and child_module != self.current.module.path and not exclude:
-                try:
-                    child_name = child.obj.__name__
-                except AttributeError:
-                    child_name = child.name
-                self.current[child.name] = Alias(child.name, f"{child_module}.{child_name}")
+            use_alias = (
+                child_module_path
+                and child_module_path != self.current.module.path
+                and not _force_inspect(node.name, child_module_path)
+            )
+            if use_alias:
+                if child_module is child.obj:
+                    target_path: str = child_module_path  # type: ignore[assignment]
+                else:
+                    child_name = getattr(child.obj, "__name__", child.name)
+                    target_path = f"{child_module_path}.{child_name}"
+                self.current[child.name] = Alias(child.name, target_path)
             else:
                 self.inspect(child)
 

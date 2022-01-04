@@ -26,7 +26,7 @@ from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
-from griffe.exceptions import AliasResolutionError, UnhandledPthFileError, UnimportableModuleError
+from griffe.exceptions import AliasResolutionError, CyclicAliasError, UnhandledPthFileError, UnimportableModuleError
 from griffe.logger import get_logger
 
 NamePartsType = Tuple[str, ...]
@@ -132,22 +132,63 @@ class GriffeLoader:
         self.modules_collection[top_module.path] = top_module
         return self.modules_collection[module_name]  # type: ignore[index]
 
-    def follow_aliases(  # noqa: WPS231
-        self, obj: Object, only_exported: bool = True, only_known_modules: bool = True
-    ) -> bool:
+    def resolve_aliases(  # noqa: WPS231
+        self,
+        only_exported: bool = True,
+        only_known_modules: bool = True,
+        max_iterations: int | None = None,
+    ) -> tuple[set[str], int]:
+        """Resolve aliases.
+
+        Parameters:
+            only_exported: When true, only try to resolve an alias if it is explicitely exported.
+            only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
+            max_iterations: Maximum number of iterations on the loader modules collection.
+
+        Returns:
+            The unresolved aliases and the number of iterations done.
+        """
+        if max_iterations is None:
+            max_iterations = float("inf")  # type: ignore[assignment]
+        prev_unresolved: set[str] = set()
+        unresolved: set[str] = set("0")  # init to enter loop
+        iterations = 0
+        collection = self.modules_collection.members
+        while unresolved and unresolved != prev_unresolved and iterations < max_iterations:  # type: ignore[operator]
+            prev_unresolved = unresolved
+            unresolved = set()
+            iterations += 1
+            for module_name in list(collection.keys()):
+                module = collection[module_name]
+                unresolved |= self.resolve_module_aliases(module, only_exported, only_known_modules)
+            logger.debug(f"Iteration {iterations}")
+            logger.debug(f"prev: {len(prev_unresolved)}; current: {len(unresolved)}")
+            logger.debug("\n- " + "\n- ".join(sorted(unresolved & prev_unresolved)))
+        return unresolved, iterations
+
+    def resolve_module_aliases(  # noqa: WPS231
+        self,
+        obj: Object,
+        only_exported: bool = True,
+        only_known_modules: bool = True,
+        seen: set | None = None,
+    ) -> set[str]:
         """Follow aliases: try to recursively resolve all found aliases.
 
         Parameters:
             obj: The object and its members to recurse on.
             only_exported: When true, only try to resolve an alias if it is explicitely exported.
             only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
+            seen: Used to avoid infinite recursion.
 
         Returns:
             True if everything was resolved, False otherwise.
         """
-        success = True
+        unresolved = set()
         expanded = {}
         to_remove = []
+        seen = seen or set()
+        seen.add(obj.path)
 
         # iterate a first time to expand wildcards
         for member in obj.members.values():
@@ -157,7 +198,7 @@ class GriffeLoader:
                     try:
                         self.load_module(package, try_relative_path=False)
                     except ImportError as error:
-                        logger.warning(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                     else:
                         expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
                         to_remove.append(member.name)
@@ -165,18 +206,32 @@ class GriffeLoader:
         for name in to_remove:
             del obj[name]  # noqa: WPS420
         for new_member in expanded.values():
-            obj[new_member.name] = Alias(new_member.name, new_member)
+            if new_member.is_alias and not new_member.wildcard:  # type: ignore[union-attr]
+                try:
+                    alias = Alias(new_member.name, new_member.target)  # type: ignore[union-attr]
+                except AliasResolutionError:
+                    alias = Alias(new_member.name, new_member._target_path)  # type: ignore[union-attr]  # noqa: WPS437
+                except CyclicAliasError as error:  # noqa: WPS440
+                    logger.debug(str(error))
+            else:
+                alias = Alias(new_member.name, new_member)
+            obj[new_member.name] = alias
 
         # iterate a second time to resolve aliases and recurse
         for member in obj.members.values():  # noqa: WPS440
-            if member.is_alias and not member.wildcard:  # type: ignore[union-attr]
+            if member.is_alias:
+                if member.wildcard or member.resolved:  # type: ignore[union-attr]
+                    continue
                 if only_exported and not member.is_explicitely_exported:
                     continue
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:  # noqa: WPS440
-                    success = False
-                    package = error.target_path.split(".", 1)[0]
+                    path = member.path
+                    target = error.target_path  # type: ignore[union-attr]  # noqa: WPS437
+                    logger.debug(f"Alias resolution error for {path} -> {target}")
+                    unresolved.add(path)
+                    package = target.split(".", 1)[0]
                     load_module = (
                         not only_known_modules
                         and obj.package.path != package
@@ -186,11 +241,15 @@ class GriffeLoader:
                         try:  # noqa: WPS505
                             self.load_module(package, try_relative_path=False)
                         except ImportError as error:  # noqa: WPS440
-                            logger.warning(f"Could not follow alias {member.path}: {error}")
-            elif member.kind in {Kind.MODULE, Kind.CLASS}:
-                success &= self.follow_aliases(member)  # type: ignore[arg-type]  # we know it's an object
+                            logger.debug(f"Could not follow alias {member.path}: {error}")
+                except CyclicAliasError as error:
+                    logger.debug(str(error))
+                else:
+                    logger.debug(f"Alias {member.path} was resolved to {member.target.path}")  # type: ignore[union-attr]
+            elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
+                unresolved |= self.resolve_module_aliases(member, only_exported, only_known_modules, seen)  # type: ignore[arg-type]
 
-        return success
+        return unresolved
 
     def _load_module_path(
         self,

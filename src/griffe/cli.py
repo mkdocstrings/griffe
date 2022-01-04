@@ -32,7 +32,7 @@ from griffe.logger import get_logger
 logger = get_logger(__name__)
 
 
-def _print_data(data, output_file):
+def _print_data(data: str, output_file: str):
     if output_file is sys.stdout:
         print(data)
     else:
@@ -46,27 +46,30 @@ def _load_packages(
     search_paths: Sequence[str],
     docstring_parser: Parser | None,
     docstring_options: dict[str, Any],
+    resolve_aliases: bool = True,
+    only_exported: bool = True,
+    only_known_modules: bool = True,
 ):
     loader = GriffeLoader(
         extensions=extensions,
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
     )
-    loaded = {}
     for package in packages:
         logger.info(f"Loading package {package}")
         try:
-            module = loader.load_module(package, search_paths=search_paths)
+            loader.load_module(package, search_paths=search_paths)
         except ModuleNotFoundError as error:
             logger.error(f"Could not find package {package}: {error}")
         except ImportError as error:
             logger.error(f"Tried but could not import package {package}: {error}")
+    if resolve_aliases:
+        unresolved, iterations = loader.resolve_aliases(only_exported, only_known_modules)
+        if unresolved:
+            logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
         else:
-            loaded[module.name] = module
-    for obj in loaded.values():
-        if not loader.follow_aliases(obj, only_exported=False, only_known_modules=True):
-            logger.info("Not all aliases were resolved")
-    return loaded
+            logger.info(f"All aliases were resolved after {iterations} iterations")
+    return loader.modules_collection.members
 
 
 _level_choices = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")

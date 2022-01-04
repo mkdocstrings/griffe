@@ -714,10 +714,14 @@ class Alias(ObjectAliasMixin):
     def __getattr__(self, name: str) -> Any:
         # forward everything to the target
         if self._passed_through:
-            raise CyclicAliasError
+            raise CyclicAliasError([self._target_path])
         self._passed_through = True
-        attr = getattr(self.target, name)
-        self._passed_through = False
+        try:
+            attr = getattr(self.target, name)
+        except CyclicAliasError as error:
+            raise CyclicAliasError([self._target_path] + error.chain)
+        finally:
+            self._passed_through = False
         return attr
 
     def __getitem__(self, key):

@@ -1,5 +1,7 @@
 """This module contains all the exceptions specific to Griffe."""
 
+from __future__ import annotations
+
 
 class GriffeError(Exception):
     """The base exception for all Griffe errors."""
@@ -27,11 +29,20 @@ class AliasResolutionError(GriffeError):
             target_path: The problematic target path.
         """
         self.target_path: str = target_path
-        super().__init__(f"could not resolve {self.target_path}")
+        super().__init__(f"Could not resolve {self.target_path}")
 
 
 class CyclicAliasError(GriffeError):
     """Exception raised when a cycle is detected in aliases."""
+
+    def __init__(self, chain: list[str]) -> None:
+        """Initialize the exception.
+
+        Parameters:
+            chain: The cyclic chain of items (such as target path).
+        """
+        self.chain: list[str] = chain
+        super().__init__("Cyclic aliases detected:\n  " + "\n  ".join(self.chain))
 
 
 class LastNodeError(GriffeError):
