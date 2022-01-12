@@ -152,19 +152,22 @@ class GriffeLoader:
             max_iterations = float("inf")  # type: ignore[assignment]
         prev_unresolved: set[str] = set()
         unresolved: set[str] = set("0")  # init to enter loop
-        iterations = 0
+        iteration = 0
         collection = self.modules_collection.members
-        while unresolved and unresolved != prev_unresolved and iterations < max_iterations:  # type: ignore[operator]
-            prev_unresolved = unresolved
+        while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
+            prev_unresolved = unresolved - {"0"}
             unresolved = set()
-            iterations += 1
+            resolved: set[str] = set()
+            iteration += 1
             for module_name in list(collection.keys()):
                 module = collection[module_name]
-                unresolved |= self.resolve_module_aliases(module, only_exported, only_known_modules)
-            logger.debug(f"Iteration {iterations}")
-            logger.debug(f"prev: {len(prev_unresolved)}; current: {len(unresolved)}")
-            logger.debug("\n- " + "\n- ".join(sorted(unresolved & prev_unresolved)))
-        return unresolved, iterations
+                next_resolved, next_unresolved = self.resolve_module_aliases(module, only_exported, only_known_modules)
+                resolved |= next_resolved
+                unresolved |= next_unresolved
+            logger.debug(
+                f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go"
+            )
+        return unresolved, iteration
 
     def resolve_module_aliases(  # noqa: WPS231
         self,
@@ -172,7 +175,7 @@ class GriffeLoader:
         only_exported: bool = True,
         only_known_modules: bool = True,
         seen: set | None = None,
-    ) -> set[str]:
+    ) -> tuple[set[str], set[str]]:
         """Follow aliases: try to recursively resolve all found aliases.
 
         Parameters:
@@ -182,8 +185,9 @@ class GriffeLoader:
             seen: Used to avoid infinite recursion.
 
         Returns:
-            True if everything was resolved, False otherwise.
+            Both sets of resolved and unresolved aliases.
         """
+        resolved = set()
         unresolved = set()
         expanded = {}
         to_remove = []
@@ -210,7 +214,7 @@ class GriffeLoader:
                 try:
                     alias = Alias(new_member.name, new_member.target)  # type: ignore[union-attr]
                 except AliasResolutionError:
-                    alias = Alias(new_member.name, new_member._target_path)  # type: ignore[union-attr]  # noqa: WPS437
+                    alias = new_member  # type: ignore[assignment]  # noqa: WPS437
                 except CyclicAliasError as error:  # noqa: WPS440
                     logger.debug(str(error))
             else:
@@ -246,10 +250,15 @@ class GriffeLoader:
                     logger.debug(str(error))
                 else:
                     logger.debug(f"Alias {member.path} was resolved to {member.target.path}")  # type: ignore[union-attr]
+                    resolved.add(member.path)
             elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
-                unresolved |= self.resolve_module_aliases(member, only_exported, only_known_modules, seen)  # type: ignore[arg-type]
+                sub_resolved, sub_unresolved = self.resolve_module_aliases(
+                    member, only_exported, only_known_modules, seen  # type: ignore[arg-type]
+                )
+                resolved |= sub_resolved
+                unresolved |= sub_unresolved
 
-        return unresolved
+        return resolved, unresolved
 
     def _load_module_path(
         self,

@@ -749,7 +749,7 @@ class Alias(ObjectAliasMixin):
         # custom behavior to avoid raising exceptions
         try:
             return self.target.kind
-        except AliasResolutionError:
+        except (AliasResolutionError, CyclicAliasError):
             return Kind.ALIAS
 
     @property
@@ -803,6 +803,8 @@ class Alias(ObjectAliasMixin):
 
     @target.setter
     def target(self, value: Object | Alias) -> None:
+        if value is self:
+            raise CyclicAliasError([self._target_path])
         self._target = value
         if self.parent is not None:
             self._target.aliases[self.path] = self
@@ -816,11 +818,15 @@ class Alias(ObjectAliasMixin):
                 or could not be loaded (unhandled dynamic object?),
                 or when the target is from a module that was not loaded
                 and added to the collection.
+            CyclicAliasError: When the resolved target is the alias itself.
         """
         try:
-            self._target = self.modules_collection[self._target_path]
+            resolved = self.modules_collection[self._target_path]
         except KeyError as error:
             raise AliasResolutionError(self._target_path) from error
+        if resolved is self:
+            raise CyclicAliasError([self._target_path])
+        self._target = resolved
         if self.parent is not None:
             self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
 
