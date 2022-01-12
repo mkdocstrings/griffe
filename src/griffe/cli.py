@@ -144,7 +144,24 @@ def get_parser() -> argparse.ArgumentParser:
         "-o",
         "--output",
         default=sys.stdout,
-        help="Output file. Supports templating to output each package in its own file, with {{package}}.",
+    parser.add_argument(
+        "-r",
+        "--resolve-aliases",
+        action="store_true",
+        help="Whether to resolve aliases.",
+    )
+    parser.add_argument(
+        "-I",
+        "--resolve-implicit",
+        action="store_true",
+        help="Whether to resolve implicitely exported aliases as well. "
+        "Aliases are explicitely exported when defined in '__all__'.",
+    )
+    parser.add_argument(
+        "-U",
+        "--resolve-external",
+        action="store_true",
+        help="Whether to resolve aliases pointing to external/unknown modules (not loaded directly).",
     )
     parser.add_argument(
         "-s",
@@ -206,6 +223,9 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         search,
         opts.docstyle,
         opts.docopts,
+        opts.resolve_aliases,
+        not opts.resolve_implicit,
+        not opts.resolve_external,
     )
     packages = loader.modules_collection.members
 
