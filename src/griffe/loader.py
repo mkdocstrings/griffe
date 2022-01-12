@@ -294,15 +294,14 @@ class GriffeLoader:
             member_parent[subparts[-1]] = self._load_module_path(
                 subparts[-1], subpath, submodules=False, parent=member_parent
             )
-        except SyntaxError:
-            message = traceback.format_exc(limit=0).replace("SyntaxError: invalid syntax", "").strip()
-            logger.error(f"Syntax error: {message}")
+        except SyntaxError as error:  # noqa: WPS440
+            logger.debug(f"Syntax error: {error}")
         except ImportError as error:  # noqa: WPS440
-            logger.error(f"Import error: {error}")
+            logger.debug(f"Import error: {error}")
         except UnicodeDecodeError as error:  # noqa: WPS440
-            logger.error(f"UnicodeDecodeError when loading {subpath}: {error}")
+            logger.debug(f"UnicodeDecodeError when loading {subpath}: {error}")
         except OSError as error:  # noqa: WPS440
-            logger.error(f"OSError when loading {subpath}: {error}")
+            logger.debug(f"OSError when loading {subpath}: {error}")
 
     def _create_module(self, module_name: str, module_path: Path) -> Module:
         return Module(
