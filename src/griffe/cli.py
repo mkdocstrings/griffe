@@ -63,13 +63,14 @@ def _load_packages(
             logger.error(f"Could not find package {package}: {error}")
         except ImportError as error:
             logger.error(f"Tried but could not import package {package}: {error}")
+    logger.info("Finished loading packages, starting alias resolution")
     if resolve_aliases:
         unresolved, iterations = loader.resolve_aliases(only_exported, only_known_modules)
         if unresolved:
             logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
         else:
             logger.info(f"All aliases were resolved after {iterations} iterations")
-    return loader.modules_collection.members
+    return loader
 
 
 _level_choices = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
@@ -199,7 +200,14 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         print(f"griffe: error: {error}", file=sys.stderr)
         return 1
 
-    packages = _load_packages(opts.packages, extensions, search, opts.docstyle, opts.docopts)
+    loader = _load_packages(
+        opts.packages,
+        extensions,
+        search,
+        opts.docstyle,
+        opts.docopts,
+    )
+    packages = loader.modules_collection.members
 
     if per_package_output:
         for package_name, data in packages.items():
