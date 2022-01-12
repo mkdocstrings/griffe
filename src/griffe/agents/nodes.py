@@ -590,7 +590,7 @@ def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
 
 
 def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str:
-    return repr(node.value)
+    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
 def _get_ellipsis_annotation(node: NodeEllipsis, parent: Module | Class) -> str:
