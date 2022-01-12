@@ -25,7 +25,7 @@ from __future__ import annotations
 import ast
 import sys
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, getdoc, getmodule
+from inspect import Signature, getdoc, getmodule, ismodule
 from inspect import signature as getsignature
 from pathlib import Path
 from tokenize import TokenError
@@ -88,18 +88,54 @@ def inspect(
     ).get_module()
 
 
-def _force_inspect(parent_module, child_module):
-    # Special case for builtin modules, example:
-    # - `ast` does `from _ast import *`
-    # - so we go and inspect `_ast`
-    # - when iterating on its child, as usual, we check each child's real module
-    #   thanks to `inspect.getmodule`
-    # - but in that case, `inspect.getmodule` returns `ast` for the children
-    # - it puts us in a cycle
-    # - so we break the cycle by ignoring inspect's result and inspecting the private module
-    if parent_module.startswith("_"):
-        return parent_module[1:] == child_module and parent_module in sys.builtin_module_names
-    return False
+_compiled_modules = {*sys.builtin_module_names, "_socket", "_struct"}
+
+
+def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_path: str) -> str | None:
+    # the whole point of the following logic is to deal with these cases:
+    # - parent object has a module member
+    # - if this module is not a submodule of the parent, alias it
+    # - but break special cycles coming from builtin modules
+    #   like ast -> _ast -> ast (here we inspect _ast)
+    #   or os -> posix/nt -> os (here we inspect posix/nt)
+
+    child_module = getmodule(child.obj)
+
+    if not child_module:
+        return None
+
+    if ismodule(parent.obj):
+        # TODO: is this necessary to check if the parent is a module?
+        # what happens for modules imported in class definitions?
+        parent_module = parent.obj
+        parent_module_name = parent_module.__name__
+        child_module_name = child_module.__name__
+        # special cases: inspect.getmodule does not return the real modules
+        # for those, but rather the "user-facing" ones - we prevent that
+        # and use the real parent module
+        # TODO: if the list grows, it should probably be moved
+        # in a separate function (also I don't like having to deal
+        # with third-party libraries here directly...)
+        trust_inspect = not (
+            parent_module_name in {"posix", "nt"}
+            and child_module_name == "os"
+            or parent_module_name == "numpy.core._multiarray_umath"
+            and child_module_name == "numpy.core.multiarray"
+        )
+        if not trust_inspect:
+            child_module = parent_module
+
+    child_module_path = child_module.__name__
+    parent_name = parent.name
+
+    is_submodule = child_module_path == current_module_path or child_module_path.startswith(current_module_path + ".")
+    is_public_version_of_private_builtin_module = (
+        parent_name.startswith("_") and parent_name[1:] == child_module_path and parent_name in _compiled_modules
+    )
+    if not is_public_version_of_private_builtin_module and not is_submodule:
+        return child_module_path
+
+    return None
 
 
 class Inspector(BaseInspector):  # noqa: WPS338
@@ -187,20 +223,10 @@ class Inspector(BaseInspector):  # noqa: WPS338
             before_inspector.inspect(node)
 
         for child in node.children:
-            child_module = getmodule(child.obj)
-            child_module_path = getattr(child_module, "__name__", None)
-
-            use_alias = (
-                child_module_path
-                and child_module_path != self.current.module.path
-                and not _force_inspect(node.name, child_module_path)
-            )
-            if use_alias:
-                if child_module is child.obj:
-                    target_path: str = child_module_path  # type: ignore[assignment]
-                else:
-                    child_name = getattr(child.obj, "__name__", child.name)
-                    target_path = f"{child_module_path}.{child_name}"
+            child_module_path = _should_create_alias(node, child, self.current.module.path)
+            if child_module_path:
+                child_name = getattr(child.obj, "__name__", child.name)
+                target_path = f"{child_module_path}.{child_name}"
                 self.current[child.name] = Alias(child.name, target_path)
             else:
                 self.inspect(child)
