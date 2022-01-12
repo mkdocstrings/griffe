@@ -268,6 +268,10 @@ def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
             _warn(docstring, line_number, f"Failed to get 'exception: description' pair from '{exception_lines[0]}'")
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
+            # try to compile the annotation to transform it into an expression
+            with suppress(AttributeError, SyntaxError):
+                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
+                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[assignment,arg-type]
             exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
     if exceptions:
