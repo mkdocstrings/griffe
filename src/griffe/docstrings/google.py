@@ -174,7 +174,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            with suppress(SyntaxError, AttributeError):
+            with suppress(AttributeError, SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         else:
@@ -238,7 +238,7 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            with suppress(SyntaxError):
+            with suppress(AttributeError, SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         else:
@@ -312,7 +312,7 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
 
         if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
-            with suppress(SyntaxError):
+            with suppress(AttributeError, SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         else:
@@ -351,7 +351,7 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
 
         if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
-            with suppress(SyntaxError):
+            with suppress(AttributeError, SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         else:
@@ -391,7 +391,7 @@ def _read_receives_section(docstring: Docstring, offset: int) -> tuple[Docstring
 
         if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
-            with suppress(SyntaxError):
+            with suppress(AttributeError, SyntaxError):
                 code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
                 annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
         # else:
