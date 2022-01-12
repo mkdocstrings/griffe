@@ -26,6 +26,7 @@ from griffe.agents.nodes import (
     get_parameter_default,
     get_value,
     parse__all__,
+    relative_to_absolute,
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -388,27 +389,20 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             node: The node to visit.
         """
         for name in node.names:
-            alias_name = name.asname or name.name
-            level = node.level
-            module_path = node.module
-            if level > 0:
-                if module_path is None:
-                    level -= 1
-                parent: Module = self.current.module
-                if parent.is_package or parent.is_subpackage:
-                    level -= 1
-                while level > 0:
-                    parent = parent.parent  # type: ignore[assignment]
-                    level -= 1
-                if module_path:
-                    module_path = f"{parent.path}.{module_path}"
-                else:
-                    module_path = parent.path
-            if alias_name == "*":
-                alias_name = module_path.replace(".", "/") + "/*"  # type: ignore[union-attr]
-                alias_path = module_path
+            if not node.module and node.level == 1:
+                if not name.asname:
+                    # special case: when being in `a` and doing `from . import b`,
+                    # we are effectively creating a member `b` in `a` that is pointing to `a.b`
+                    # -> cyclic alias! in that case, we just skip it, as both the member and module
+                    # have the same name and can be accessed the same way
+                    continue
+
+            if name.name == "*":
+                alias_name = node.module.replace(".", "/") + "/*"  # type: ignore[union-attr]
+                alias_path = node.module
             else:
-                alias_path = f"{module_path}.{name.name}"
+                alias_name = name.asname or name.name
+                alias_path = relative_to_absolute(node, name, self.current.module)
                 self.current.imports[alias_name] = alias_path
             self.current[alias_name] = Alias(
                 alias_name,

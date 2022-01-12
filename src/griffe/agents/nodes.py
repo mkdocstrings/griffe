@@ -31,6 +31,7 @@ from ast import GeneratorExp as NodeGeneratorExp
 from ast import Gt as NodeGt
 from ast import GtE as NodeGtE
 from ast import IfExp as NodeIfExp
+from ast import ImportFrom as NodeImportFrom
 from ast import In as NodeIn
 from ast import Invert as NodeInvert
 from ast import Is as NodeIs
@@ -64,6 +65,7 @@ from ast import UAdd as NodeUAdd
 from ast import UnaryOp as NodeUnaryOp
 from ast import USub as NodeUSub
 from ast import Yield as NodeYield
+from ast import alias as NodeAlias
 from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
@@ -1176,3 +1178,27 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
         return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
     # TODO: handle multiple line defaults
     return None
+
+
+# ==========================================================
+# relative imports
+def relative_to_absolute(node: NodeImportFrom, name: NodeAlias, current_module: Module) -> str:
+    """Convert a relative import path to an absolute one.
+
+    Parameters:
+        node: The "from ... import ..." AST node.
+        name: The imported name.
+        current_module: The module in which the import happens.
+
+    Returns:
+        The absolute import path.
+    """
+    level = node.level
+    if level > 0 and current_module.is_package or current_module.is_subpackage:
+        level -= 1
+    while level > 0 and current_module.parent is not None:
+        current_module = current_module.parent  # type: ignore[assignment]
+        level -= 1
+    base = current_module.path + "." if node.level > 0 else ""
+    node_module = node.module + "." if node.module else ""
+    return base + node_module + name.name

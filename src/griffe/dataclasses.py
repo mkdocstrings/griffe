@@ -915,7 +915,7 @@ class Module(Object):
             True or False.
         """
         try:
-            return self.filepath.name == "__init__.py"
+            return self.filepath.name.split(".", 1)[0] == "__init__"
         except BuiltinModuleError:
             return False
 
