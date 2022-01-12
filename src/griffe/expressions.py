@@ -81,7 +81,7 @@ class Name:
 class Expression(list):  # noqa: WPS600
     """This class represents a Python expression.
 
-    For example, it can represents complex annotations such as:
+    For example, it can represent complex annotations such as:
 
     - `Optional[Dict[str, Tuple[int, bool]]]`
     - `str | Callable | list[int]`
