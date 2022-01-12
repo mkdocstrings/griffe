@@ -36,6 +36,7 @@ logger = get_logger(__name__)
 
 _accepted_py_module_extensions = [".py", ".pyc", ".pyo", ".pyd", ".so"]
 _extensions_set = set(_accepted_py_module_extensions)
+_ignored_modules = {"debugpy", "_pydev"}
 
 # TODO: namespace packages can span multiple locations! we must support it.
 # ideally: find all locations, sort them, then reverse-merge their file lists
@@ -326,6 +327,9 @@ class GriffeLoader:
         )
 
     def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
+        for prefix in _ignored_modules:
+            if module_name.startswith(prefix):
+                raise ImportError(f"Ignored module '{module_name}'")
         try:
             return inspect(
                 module_name,
