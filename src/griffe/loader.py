@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import os
 import sys
-import traceback
 from contextlib import suppress
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterator, Sequence, Tuple
@@ -28,6 +28,7 @@ from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, UnhandledPthFileError, UnimportableModuleError
 from griffe.logger import get_logger
+from griffe.stats import stats
 
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
@@ -94,6 +95,10 @@ class GriffeLoader:
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        self._time_stats: dict = {
+            "time_spent_visiting": 0,
+            "time_spent_inspecting": 0,
+        }
         patch_ast()
 
     def load_module(
@@ -261,6 +266,14 @@ class GriffeLoader:
 
         return resolved, unresolved
 
+    def stats(self) -> dict:
+        """Compute some statistics.
+
+        Returns:
+            Some statistics.
+        """
+        return {**stats(self), **self._time_stats}
+
     def _load_module_path(
         self,
         module_name: str,
@@ -313,7 +326,8 @@ class GriffeLoader:
 
     def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
         self.lines_collection[module_path] = code.splitlines(keepends=False)
-        return visit(
+        start = datetime.now()
+        module = visit(
             module_name,
             filepath=module_path,
             code=code,
@@ -324,13 +338,17 @@ class GriffeLoader:
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
+        elapsed = datetime.now() - start
+        self._time_stats["time_spent_visiting"] += elapsed.microseconds
+        return module
 
     def _inspect_module(self, module_name: str, filepath: Path | None = None, parent: Module | None = None) -> Module:
         for prefix in _ignored_modules:
             if module_name.startswith(prefix):
                 raise ImportError(f"Ignored module '{module_name}'")
+        start = datetime.now()
         try:
-            return inspect(
+            module = inspect(
                 module_name,
                 filepath=filepath,
                 extensions=self.extensions,
@@ -341,6 +359,9 @@ class GriffeLoader:
             )
         except SystemExit as error:
             raise ImportError(f"Importing '{module_name}' raised a system exit") from error
+        elapsed = datetime.now() - start
+        self._time_stats["time_spent_inspecting"] += elapsed.microseconds
+        return module
 
     def _member_parent(self, module: Module, subparts: NamePartsType, subpath: Path) -> Module:
         parent_parts = subparts[:-1]

@@ -339,6 +339,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"
 
+    def __len__(self) -> int:
+        return len(self.members) + sum(len(member) for member in self.members.values())
+
     @property
     def has_docstring(self) -> bool:
         """Tell if this object has a non-empty docstring."""
@@ -738,6 +741,9 @@ class Alias(ObjectAliasMixin):
     def __setitem__(self, key, value):
         # not handled by __getattr__
         self.target[key] = value
+
+    def __len__(self) -> int:
+        return 1
 
     @property
     def kind(self) -> Kind:
