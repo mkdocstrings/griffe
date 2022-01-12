@@ -85,15 +85,15 @@ def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="griffe", add_help=False)
     parser.add_argument(
         "-A",
-        "--async-loader",
+        "--async",
         action="store_true",
         help="Whether to read files on disk asynchronously. "
         "Very large projects with many files will be processed faster. "
         "Small projects with a few files will not see any speed up.",
     )
     parser.add_argument(
-        "-a",
-        "--append-sys-path",
+        "-y",
+        "--sys-path",
         action="store_true",
         help="Whether to append sys.path to search paths specified with -s.",
     )
@@ -144,6 +144,8 @@ def get_parser() -> argparse.ArgumentParser:
         "-o",
         "--output",
         default=sys.stdout,
+        help="Output file. Supports templating to output each package in its own file, with {package}.",
+    )
     parser.add_argument(
         "-r",
         "--resolve-aliases",
@@ -208,7 +210,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         per_package_output = True
 
     search = opts.search
-    if opts.append_sys_path:
+    if opts.sys_path:
         search.extend(sys.path)
 
     try:
