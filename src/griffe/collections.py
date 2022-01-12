@@ -31,6 +31,18 @@ class LinesCollection:
     def __bool__(self):
         return True
 
+    def __getattr__(self, name: str, default: Any = None) -> Any:
+        """Lookup attributes into underlying dict.
+
+        Parameters:
+            name: The attribute name.
+            default: A default value.
+
+        Returns:
+            The attribute of the underlying dict.
+        """
+        return getattr(self._data, name, default)
+
     # TODO: remove once Python 3.7 support is dropped
     @lru_cache(maxsize=None)
     def tokens(self, path: Path) -> tuple[list[tokenize.TokenInfo], defaultdict]:
