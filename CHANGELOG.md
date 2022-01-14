@@ -5,6 +5,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.10.0](https://github.com/pawamoy/griffe/releases/tag/0.10.0) - 2022-01-14
+
+<small>[Compare with 0.9.0](https://github.com/pawamoy/griffe/compare/0.9.0...0.10.0)</small>
+
+### Bug Fixes
+- Fix infinite recursion errors in alias resolver ([133b4e4](https://github.com/pawamoy/griffe/commit/133b4e4bf721fc7536a1ca957f13f7c9f83bf07a) by Timothée Mazzucotelli).
+- Fix inspection of nodes children (aliases or not) ([bb354f2](https://github.com/pawamoy/griffe/commit/bb354f21e7b079f4c1e8dd50297d53810c18450e) by Timothée Mazzucotelli).
+- Fix relative to absolute import conversion ([464c39e](https://github.com/pawamoy/griffe/commit/464c39eaa812a927190469b18bd910e95e3c1d3c) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Rename some CLI options ([1323268](https://github.com/pawamoy/griffe/commit/13232685b0f2752d92428ab786d428d0af11743b) by Timothée Mazzucotelli).
+- Return the loader the to main function ([9c6317e](https://github.com/pawamoy/griffe/commit/9c6317e5afa25dd11d18906503b8010046878868) by Timothée Mazzucotelli).
+- Improve logging messages ([b8eb16e](https://github.com/pawamoy/griffe/commit/b8eb16e0fedfe50f2c3ad65e326f4dc6e6918ac0) by Timothée Mazzucotelli).
+- Skip inspection of some debug packages ([4ee8968](https://github.com/pawamoy/griffe/commit/4ee896864f1227e32d40571da03f7894c9404579) by Timothée Mazzucotelli).
+- Return ... instead of Ellipsis ([f9ae31d](https://github.com/pawamoy/griffe/commit/f9ae31d0f4c904a89c7f581aaa031692740edaef) by Timothée Mazzucotelli).
+- Catch attribute errors when cross-referencing docstring annotations ([288803a](https://github.com/pawamoy/griffe/commit/288803a3be93c4e077576ed36dded2a76ce33955) by Timothée Mazzucotelli).
+- Support dict methods in lines collection ([1b0cb94](https://github.com/pawamoy/griffe/commit/1b0cb945dba619df7ce1358f7961e4bd80f70218) by Timothée Mazzucotelli).
+
+### Features
+- Compute and show some stats ([1b8d0a1](https://github.com/pawamoy/griffe/commit/1b8d0a1c91e03dfa5f92ad9c6dff02863a43fc01) by Timothée Mazzucotelli).
+- Add CLI options for alias resolution ([87a59cb](https://github.com/pawamoy/griffe/commit/87a59cb7af5f8e7df9ddba41fb4a4b65cb264481) by Timothée Mazzucotelli).
+- Support Google raises annotations cross-refs ([8006ae1](https://github.com/pawamoy/griffe/commit/8006ae13bc27d117ce6b8fdc8ac91dc8541a670f) by Timothée Mazzucotelli).
+
+
 ## [0.9.0](https://github.com/pawamoy/griffe/releases/tag/0.9.0) - 2022-01-04
 
 <small>[Compare with 0.8.0](https://github.com/pawamoy/griffe/compare/0.8.0...0.9.0)</small>
