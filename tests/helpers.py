@@ -2,14 +2,38 @@
 
 from __future__ import annotations
 
+import sys
 import tempfile
+from collections import namedtuple
 from contextlib import contextmanager
+from importlib import invalidate_caches
+from inspect import cleandoc as dedent
 from pathlib import Path
 from typing import Iterator
 
 from griffe.agents.inspector import inspect
+from griffe.agents.visitor import visit
 from griffe.dataclasses import Module, Object
-from tests import TESTS_DIR, TMP_DIR
+
+TMPDIR_PREFIX = "griffe_"
+
+
+@contextmanager
+def sys_path(directory: str | Path) -> Iterator[None]:
+    """Insert a directory in front of `sys.path` then remove it.
+
+    Parameters:
+        directory: The directory to insert.
+
+    Yields:
+        Nothing.
+    """
+    old_path = sys.path
+    sys.path.insert(0, str(directory))
+    try:
+        yield
+    finally:
+        sys.path = old_path
 
 
 @contextmanager
@@ -23,11 +47,61 @@ def temporary_pyfile(code: str) -> Iterator[tuple[str, Path]]:
         module_name: The module name, as to dynamically import it.
         module_path: The module path.
     """
-    with tempfile.TemporaryDirectory(dir=TMP_DIR) as tmpdir:
-        tmpdirpath = Path(tmpdir).relative_to(TESTS_DIR.parent)
-        tmpfile = tmpdirpath / "module.py"
+    with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
+        tmpfile = Path(tmpdir) / "module.py"
         tmpfile.write_text(code)
-        yield ".".join(tmpdirpath.parts) + ".module", tmpfile
+        yield "module", tmpfile
+
+
+TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
+
+
+@contextmanager
+def temporary_pypackage(package: str, modules: list[str] | None = None) -> Iterator[TmpPackage]:
+    """Create a module.py file containing the given code in a temporary directory.
+
+    Parameters:
+        package: The package name. Example: `"a"` gives
+            a package named `a`, while `"a/b"` gives a namespace package
+            named `a` with a package inside named `b`.
+        modules: Additional modules to create in the package,
+            like '["b.py", "c/d.py", "e/f"]`.
+
+    Yields:
+        package_name: The package name, as to dynamically import it.
+        package_path: The package path.
+    """
+    modules = modules or []
+    mkdir_kwargs = {"parents": True, "exist_ok": True}
+    with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
+        tmpdirpath = Path(tmpdir)
+        package_name = ".".join(Path(package).parts)
+        package_path = tmpdirpath / package
+        package_path.mkdir(**mkdir_kwargs)
+        (package_path / "__init__.py").touch()
+        for module in modules:
+            current_path = package_path
+            for part in Path(module).parts:
+                if part.endswith(".py"):
+                    (current_path / part).touch()
+                else:
+                    current_path /= part
+                    current_path.mkdir(**mkdir_kwargs)
+                    (current_path / "__init__.py").touch()
+        yield TmpPackage(tmpdirpath, package_name, package_path)
+
+
+@contextmanager
+def temporary_visited_module(code: str) -> Iterator[Module]:
+    """Create and visit a temporary module with the given code.
+
+    Parameters:
+        code: The code of the module.
+
+    Yields:
+        The visited module.
+    """
+    yield visit("module", filepath=Path("/fake/module.py"), code=dedent(code))
 
 
 @contextmanager
@@ -40,8 +114,13 @@ def temporary_inspected_module(code: str) -> Iterator[Module]:
     Yields:
         The inspected module.
     """
-    with temporary_pyfile(code) as (name, path):
-        yield inspect(name, filepath=path)
+    with temporary_pyfile(dedent(code)) as (name, path):
+        with sys_path(path.parent):
+            try:
+                yield inspect(name, filepath=path)
+            finally:
+                del sys.modules["module"]  # noqa: WPS420
+                invalidate_caches()
 
 
 def vtree(*objects: Object, return_leaf: bool = False) -> Object:
@@ -105,8 +184,8 @@ def module_vtree(path, leaf_package: bool = True, return_leaf: bool = False) -> 
     modules = [Module(name, filepath=Path(*parts[:index], "__init__.py")) for index, name in enumerate(parts)]
     if not leaf_package:
         try:
-            filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[attr-defined]
+            filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[attr-defined,union-attr]
         except AttributeError:  # TODO: remove once Python 3.8 is dropped
-            filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")
+            filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")  # type: ignore[union-attr]
         modules[-1]._filepath = filepath  # noqa: WPS437
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]
