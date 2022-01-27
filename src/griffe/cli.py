@@ -113,13 +113,14 @@ def _load_packages(
 ):
     loader = GriffeLoader(
         extensions=extensions,
+        search_paths=search_paths,
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
     )
     for package in packages:
         logger.info(f"Loading package {package}")
         try:
-            loader.load_module(package, search_paths=search_paths)
+            loader.load_module(package)
         except ModuleNotFoundError as error:
             logger.error(f"Could not find package {package}: {error}")
         except ImportError as error:

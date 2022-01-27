@@ -12,7 +12,11 @@ class NameResolutionError(GriffeError):
 
 
 class UnhandledPthFileError(GriffeError):
-    """Exception for unhandled .path files, when searching modules."""
+    """Exception for unhandled .pth files, when searching modules."""
+
+
+class UnhandledEditablesModuleError(GriffeError):
+    """Exception for unhandled editables modules, when searching modules."""
 
 
 class UnimportableModuleError(GriffeError):

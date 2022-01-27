@@ -483,7 +483,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         return module
 
     @cached_property
-    def filepath(self) -> Path:
+    def filepath(self) -> Path | list[Path]:
         """Return the file path where this object was defined.
 
         It should never return None for non-module objects,
@@ -492,18 +492,38 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         If it _does_ return None, it means the tree was not built correctly.
 
         Returns:
-            A file path.
+            A file path or a list of directories.
         """
         return self.module.filepath
 
-    @cached_property
-    def relative_filepath(self) -> Path:
+    @cached_property  # noqa: WPS231
+    def relative_filepath(self) -> Path:  # noqa: WPS231
         """Return the file path where this object was defined, relative to the top module path.
+
+        Raises:
+            ValueError: When the relative path could not be computed.
 
         Returns:
             A file path.
         """
-        return self.module.filepath.relative_to(self.package.filepath.parent.parent)
+        package_path = self.package.filepath
+        if isinstance(self.module.filepath, list):
+            if isinstance(package_path, list):
+                for pkg_path in package_path:
+                    for self_path in self.module.filepath:
+                        with suppress(ValueError):
+                            return self_path.relative_to(pkg_path.parent)
+            else:
+                for self_path in self.module.filepath:  # noqa: WPS440
+                    with suppress(ValueError):
+                        return self_path.relative_to(package_path.parent.parent)
+            raise ValueError
+        if isinstance(package_path, list):
+            for pkg_path in package_path:  # noqa: WPS440
+                with suppress(ValueError):
+                    return self.module.filepath.relative_to(pkg_path.parent)
+            raise ValueError
+        return self.module.filepath.relative_to(package_path.parent.parent)
 
     @cached_property
     def path(self) -> str:
@@ -571,6 +591,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         try:
             filepath = self.filepath
         except BuiltinModuleError:
+            return []
+        if isinstance(filepath, list):
             return []
 
         # TODO: remove once Python 3.7 support is dropped
@@ -652,9 +674,13 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
 
     # TODO: remove once Python 3.7 support is dropped
     @property
-    def _endlineno(self) -> int:
+    def _endlineno(self) -> int | None:
         if self.kind is Kind.MODULE:
+            if isinstance(self.filepath, list):
+                return 0
             return len(self.lines_collection[self.filepath])
+        if isinstance(self.filepath, list):
+            return None
         tokens, tokens_by_line = self.lines_collection.tokens(self.filepath)
         first_token_index = tokens_by_line[self.lineno][0]
         blockfinder = inspect.BlockFinder()
@@ -888,7 +914,7 @@ class Module(Object):
 
     kind = Kind.MODULE
 
-    def __init__(self, *args: Any, filepath: Path | None = None, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, filepath: Path | list[Path] | None = None, **kwargs: Any) -> None:
         """Initialize the module.
 
         Parameters:
@@ -897,7 +923,7 @@ class Module(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self._filepath: Path | None = filepath
+        self._filepath: Path | list[Path] | None = filepath
 
     def __repr__(self) -> str:
         try:
@@ -906,7 +932,7 @@ class Module(Object):
             return f"<Module({self.name!r})>"
 
     @property
-    def filepath(self) -> Path:
+    def filepath(self) -> Path | list[Path]:
         """Get the file path of this module.
 
         Raises:
@@ -926,6 +952,8 @@ class Module(Object):
         Returns:
             True or False.
         """
+        if isinstance(self.filepath, list):
+            return False
         try:
             return self.filepath.name.split(".", 1)[0] == "__init__"
         except BuiltinModuleError:
@@ -957,7 +985,7 @@ class Module(Object):
             True or False.
         """
         try:
-            return self.parent is None and self.filepath.is_dir()
+            return self.parent is None and isinstance(self.filepath, list)
         except BuiltinModuleError:
             return False
 
@@ -971,7 +999,7 @@ class Module(Object):
         try:
             return (
                 self.parent is not None
-                and self.filepath.is_dir()
+                and isinstance(self.filepath, list)
                 and (
                     cast(Module, self.parent).is_namespace_package or cast(Module, self.parent).is_namespace_subpackage
                 )
