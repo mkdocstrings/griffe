@@ -345,6 +345,7 @@ class GriffeLoader:
             module = inspect(
                 module_name,
                 filepath=filepath,
+                import_paths=self.finder.search_paths,
                 extensions=self.extensions,
                 parent=parent,
                 docstring_parser=self.docstring_parser,

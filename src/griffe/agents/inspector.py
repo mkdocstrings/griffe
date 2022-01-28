@@ -57,6 +57,7 @@ def inspect(
     module_name: str,
     *,
     filepath: Path | None = None,
+    import_paths: list[Path] | None = None,
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: Parser | None = None,
@@ -68,6 +69,7 @@ def inspect(
     Parameters:
         module_name: The module name (as when importing [from] it).
         filepath: The module file path.
+        import_paths: Paths to import the module from.
         extensions: The extensions to use when inspecting the module.
         parent: The optional parent of this module.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
@@ -77,6 +79,8 @@ def inspect(
     Returns:
         The module, with its members populated.
     """
+    if not import_paths and filepath:
+        import_paths = [filepath.parent]
     return Inspector(
         module_name,
         filepath,
@@ -85,7 +89,7 @@ def inspect(
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
         lines_collection=lines_collection,
-    ).get_module()
+    ).get_module(import_paths)
 
 
 _compiled_modules = {*sys.builtin_module_names, "_socket", "_struct"}
@@ -185,10 +189,13 @@ class Inspector(BaseInspector):  # noqa: WPS338
             parser_options=self.docstring_options,
         )
 
-    def get_module(self) -> Module:
+    def get_module(self, import_paths: list[Path] | None = None) -> Module:
         """Build and return the object representing the module attached to this inspector.
 
         This method triggers a complete inspection of the module members.
+
+        Parameters:
+            import_paths: Paths replacing `sys.path` to import the module.
 
         Returns:
             A module instance.
@@ -196,7 +203,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         import_path = self.module_name
         if self.parent is not None:
             import_path = f"{self.parent.path}.{import_path}"
-        value = dynamic_import(import_path)
+        value = dynamic_import(import_path, import_paths)
         top_node = ObjectNode(value, self.module_name)
         self.inspect(top_node)
         return self.current.module

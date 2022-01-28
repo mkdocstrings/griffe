@@ -19,24 +19,6 @@ TMPDIR_PREFIX = "griffe_"
 
 
 @contextmanager
-def sys_path(directory: str | Path) -> Iterator[None]:
-    """Insert a directory in front of `sys.path` then remove it.
-
-    Parameters:
-        directory: The directory to insert.
-
-    Yields:
-        Nothing.
-    """
-    old_path = sys.path
-    sys.path.insert(0, str(directory))
-    try:
-        yield
-    finally:
-        sys.path = old_path
-
-
-@contextmanager
 def temporary_pyfile(code: str) -> Iterator[tuple[str, Path]]:
     """Create a module.py file containing the given code in a temporary directory.
 
@@ -115,12 +97,11 @@ def temporary_inspected_module(code: str) -> Iterator[Module]:
         The inspected module.
     """
     with temporary_pyfile(dedent(code)) as (name, path):
-        with sys_path(path.parent):
-            try:
-                yield inspect(name, filepath=path)
-            finally:
-                del sys.modules["module"]  # noqa: WPS420
-                invalidate_caches()
+        try:
+            yield inspect(name, filepath=path, import_paths=[path.parent])
+        finally:
+            del sys.modules["module"]  # noqa: WPS420
+            invalidate_caches()
 
 
 def vtree(*objects: Object, return_leaf: bool = False) -> Object:
