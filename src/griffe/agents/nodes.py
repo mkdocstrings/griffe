@@ -43,6 +43,7 @@ from ast import ListComp as NodeListComp
 from ast import LShift as NodeLShift
 from ast import Lt as NodeLt
 from ast import LtE as NodeLtE
+from ast import MatMult as NodeMatMult
 from ast import Mod as NodeMod
 from ast import Mult as NodeMult
 from ast import Name as NodeName
@@ -894,6 +895,10 @@ def _get_lt_value(node: NodeNotEq) -> str:
     return "<"
 
 
+def _get_matmult_value(node: NodeMatMult) -> str:
+    return "@"
+
+
 def _get_mod_value(node: NodeMod) -> str:
     return "%"
 
@@ -1022,6 +1027,7 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
     NodeLShift: _get_lshift_value,
     NodeLtE: _get_lte_value,
     NodeLt: _get_lt_value,
+    NodeMatMult: _get_matmult_value,
     NodeMod: _get_mod_value,
     NodeMult: _get_mult_value,
     NodeName: _get_name_value,
