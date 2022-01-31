@@ -7,8 +7,8 @@ import tempfile
 from collections import namedtuple
 from contextlib import contextmanager
 from importlib import invalidate_caches
-from inspect import cleandoc as dedent
 from pathlib import Path
+from textwrap import dedent
 from typing import Iterator
 
 from griffe.agents.inspector import inspect
