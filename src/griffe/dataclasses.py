@@ -624,7 +624,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             The resolved name.
         """
-        if name in self.members and not self.members[name].is_alias:
+        if name in self.members:
+            if self.members[name].is_alias:
+                return self.members[name].target_path  # type: ignore[union-attr]
             return self.members[name].path
         if name in self.imports:
             return self.imports[name]
@@ -709,6 +711,7 @@ class Alias(ObjectAliasMixin):
         lineno: The alias starting line number.
         endlineno: The alias ending line number.
         parent: The alias parent.
+        target_path: The alias target path.
     """
 
     is_alias: bool = True
@@ -735,10 +738,10 @@ class Alias(ObjectAliasMixin):
         self.name: str = name
         if isinstance(target, str):
             self._target: Object | Alias | None = None
-            self._target_path: str = target
+            self.target_path: str = target
         else:
             self._target = target
-            self._target_path = target.path
+            self.target_path = target.path
             if parent is not None:
                 with suppress(AliasResolutionError):
                     target.aliases[self.path] = self
@@ -750,12 +753,12 @@ class Alias(ObjectAliasMixin):
     def __getattr__(self, name: str) -> Any:
         # forward everything to the target
         if self._passed_through:
-            raise CyclicAliasError([self._target_path])
+            raise CyclicAliasError([self.target_path])
         self._passed_through = True
         try:
             attr = getattr(self.target, name)
         except CyclicAliasError as error:
-            raise CyclicAliasError([self._target_path] + error.chain)
+            raise CyclicAliasError([self.target_path] + error.chain)
         finally:
             self._passed_through = False
         return attr
@@ -836,7 +839,7 @@ class Alias(ObjectAliasMixin):
     @target.setter
     def target(self, value: Object | Alias) -> None:
         if value is self:
-            raise CyclicAliasError([self._target_path])
+            raise CyclicAliasError([self.target_path])
         self._target = value
         if self.parent is not None:
             self._target.aliases[self.path] = self
@@ -853,11 +856,11 @@ class Alias(ObjectAliasMixin):
             CyclicAliasError: When the resolved target is the alias itself.
         """
         try:
-            resolved = self.modules_collection[self._target_path]
+            resolved = self.modules_collection[self.target_path]
         except KeyError as error:
-            raise AliasResolutionError(self._target_path) from error
+            raise AliasResolutionError(self.target_path) from error
         if resolved is self:
-            raise CyclicAliasError([self._target_path])
+            raise CyclicAliasError([self.target_path])
         self._target = resolved
         if self.parent is not None:
             self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
@@ -879,7 +882,7 @@ class Alias(ObjectAliasMixin):
             The wildcard imported module, or None.
         """
         if self.name.endswith("/*"):
-            return self._target_path
+            return self.target_path
         return None
 
     def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
@@ -895,7 +898,7 @@ class Alias(ObjectAliasMixin):
         base = {
             "kind": Kind.ALIAS,
             "name": self.name,
-            "target_path": self._target_path,
+            "target_path": self.target_path,
         }
 
         if full:
