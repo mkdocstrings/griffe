@@ -98,7 +98,7 @@ def temporary_inspected_module(code: str) -> Iterator[Module]:
     """
     with temporary_pyfile(dedent(code)) as (name, path):
         try:
-            yield inspect(name, filepath=path, import_paths=[path.parent])
+            yield inspect(name, filepath=path)
         finally:
             del sys.modules["module"]  # noqa: WPS420
             invalidate_caches()
