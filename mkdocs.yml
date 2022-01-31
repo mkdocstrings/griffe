@@ -1,8 +1,8 @@
 site_name: "griffe"
 site_description: "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
-site_url: "https://pawamoy.github.io/griffe"
-repo_url: "https://github.com/pawamoy/griffe"
-repo_name: "pawamoy/griffe"
+site_url: "https://mkdocstrings.github.io/griffe"
+repo_url: "https://github.com/mkdocstrings/griffe"
+repo_name: "mkdocstrings/griffe"
 site_dir: "site"
 
 nav:

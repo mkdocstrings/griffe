@@ -41,12 +41,12 @@ async = [
 ]
 
 [project.urls]
-Homepage = "https://pawamoy.github.io/griffe"
-Documentation = "https://pawamoy.github.io/griffe"
-Changelog = "https://pawamoy.github.io/griffe/changelog"
-Repository = "https://github.com/pawamoy/griffe"
-Issues = "https://github.com/pawamoy/griffe/issues"
-Discussions = "https://github.com/pawamoy/griffe/discussions"
+Homepage = "https://mkdocstrings.github.io/griffe"
+Documentation = "https://mkdocstrings.github.io/griffe"
+Changelog = "https://mkdocstrings.github.io/griffe/changelog"
+Repository = "https://github.com/mkdocstrings/griffe"
+Issues = "https://github.com/mkdocstrings/griffe/issues"
+Discussions = "https://github.com/mkdocstrings/griffe/discussions"
 Gitter = "https://gitter.im/griffe/community"
 Funding = "https://github.com/sponsors/pawamoy"
 
