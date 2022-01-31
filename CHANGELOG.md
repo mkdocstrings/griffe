@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.11.0](https://github.com/pawamoy/griffe/releases/tag/0.11.0) - 2022-01-31
+
+<small>[Compare with 0.10.0](https://github.com/pawamoy/griffe/compare/0.10.0...0.11.0)</small>
+
+### Features
+- Support matrix multiplication operator in visitor ([6129e17](https://github.com/pawamoy/griffe/commit/6129e17c86ff49a8e539039dcd04a58b30e3648e) by Timothée Mazzucotelli).
+
+### Bug Fixes
+- Fix name resolution for inspected data ([ed3e7e5](https://github.com/pawamoy/griffe/commit/ed3e7e5fa8a9d702c92f47e8244635cf11a923f2) by Timothée Mazzucotelli).
+- Make importer actually able to import any nested object ([d007219](https://github.com/pawamoy/griffe/commit/d00721971c7b820e16e463408f04cc3e81a14db6) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Always use search paths to import modules ([a9a378f](https://github.com/pawamoy/griffe/commit/a9a378fc6e47678e08a22383879e4d01acd16b54) by Timothée Mazzucotelli).
+- Split out module finder ([7290642](https://github.com/pawamoy/griffe/commit/7290642e36341e64b8ed770e237e9f232e05eada) by Timothée Mazzucotelli).
+
+
 ## [0.10.0](https://github.com/pawamoy/griffe/releases/tag/0.10.0) - 2022-01-14
 
 <small>[Compare with 0.9.0](https://github.com/pawamoy/griffe/compare/0.9.0...0.10.0)</small>

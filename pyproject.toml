@@ -99,6 +99,7 @@ tests = [
     "pytest-cov>=3.0",
     "pytest-randomly>=3.10",
     "pytest-xdist>=2.4",
+    "hypothesmith>=0.2.0",
 ]
 typing = [
     "mypy>=0.910",
