@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.11.1](https://github.com/mkdocstrings/griffe/releases/tag/0.11.1) - 2022-02-01
+
+<small>[Compare with 0.11.0](https://github.com/mkdocstrings/griffe/compare/0.11.0...0.11.1)</small>
+
+### Code Refactoring
+- Rename RST parser to Sphinx ([a612cb1](https://github.com/mkdocstrings/griffe/commit/a612cb1c8d52fabe5a1ebaf892e9b82c67d15a30) by Timothée Mazzucotelli).
+
+
 ## [0.11.0](https://github.com/pawamoy/griffe/releases/tag/0.11.0) - 2022-01-31
 
 <small>[Compare with 0.10.0](https://github.com/pawamoy/griffe/compare/0.10.0...0.11.0)</small>
