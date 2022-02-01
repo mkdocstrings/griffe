@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 from griffe.docstrings.dataclasses import DocstringSection, DocstringSectionKind
 from griffe.docstrings.google import parse as parse_google
 from griffe.docstrings.numpy import parse as parse_numpy
-from griffe.docstrings.rst import parse as parse_rst
+from griffe.docstrings.sphinx import parse as parse_sphinx
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
@@ -25,13 +25,13 @@ class Parser(enum.Enum):
     """Enumeration for the different docstring parsers."""
 
     google = "google"
-    rst = "rst"
+    sphinx = "sphinx"
     numpy = "numpy"
 
 
 parsers = {
     Parser.google: parse_google,
-    Parser.rst: parse_rst,
+    Parser.sphinx: parse_sphinx,
     Parser.numpy: parse_numpy,
 }
 

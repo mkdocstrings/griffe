@@ -1,4 +1,4 @@
-"""Tests for the [RST-style parser][griffe.docstrings.rst]."""
+"""Tests for the [Sphinx-style parser][griffe.docstrings.sphinx]."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import inspect
 import pytest
 
 from griffe.dataclasses import Attribute, Class, Function, Module, Parameter, Parameters
-from griffe.docstrings import rst
+from griffe.docstrings import sphinx
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
     DocstringParameter,
@@ -23,7 +23,7 @@ SOME_EXTRA_TEXT = "more test text"
 SOME_EXCEPTION_NAME = "SomeException"
 SOME_OTHER_EXCEPTION_NAME = "SomeOtherException"
 
-parse = parser(rst)
+parse = parser(sphinx)
 
 
 @pytest.mark.parametrize(

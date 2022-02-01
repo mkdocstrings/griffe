@@ -1,4 +1,4 @@
-"""This module defines functions to parse RST-style docstrings into structured data.
+"""This module defines functions to parse Sphinx docstrings into structured data.
 
 Credits to Patrick Lannigan ([@plannigan](https://github.com/plannigan))
 who originally added the parser in the [pytkdocs project](https://github.com/mkdocstrings/pytkdocs).
@@ -82,7 +82,7 @@ class ParsedValues:
 
 
 def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:
-    """Parse an RST-styled docstring.
+    """Parse a Sphinx-styled docstring.
 
     Parameters:
         docstring: The docstring to parse.
@@ -112,16 +112,6 @@ def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:
 
 
 def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse a parameter value.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        Index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -191,16 +181,6 @@ def _determine_param_annotation(
 
 
 def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse a parameter type.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        Index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -223,16 +203,6 @@ def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: Parse
 
 
 def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse an attribute value.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        Index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -270,16 +240,6 @@ def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValu
 
 
 def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse a parameter type.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        Index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -302,16 +262,6 @@ def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: Parse
 
 
 def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse an exception value.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing a `DocstringSection` (or `None`) and the index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -326,16 +276,6 @@ def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValu
 
 
 def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse an return value.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        Index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -361,16 +301,6 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
 
 
 def _read_return_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
-    """
-    Parse an return type value.
-
-    Parameters:
-        docstring: The docstring.
-        offset: The line number to start at.
-
-    Returns:
-        Index at which to continue parsing.
-    """
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -413,16 +343,6 @@ def _parse_directive(docstring: Docstring, offset: int) -> ParsedDirective:
 
 
 def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str, int]:
-    """
-    Convert a docstring field into a single line if a line continuation exists.
-
-    Parameters:
-        lines: The docstring lines.
-        offset: The line number to start at.
-
-    Returns:
-        A tuple containing the continued lines as a single string and the index at which to continue parsing.
-    """
     curr_line_index = offset
     block = [lines[curr_line_index].lstrip()]
 
@@ -436,28 +356,10 @@ def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str,
 
 
 def _consolidate_descriptive_type(descriptive_type: str) -> str:
-    """Convert type descriptions with "or" into respective type signature.
-
-    "x or y" -> "x | y"
-
-    Parameters:
-        descriptive_type: Descriptions of an item's type.
-
-    Returns:
-        Type signature for descriptive type.
-    """
     return descriptive_type.replace(" or ", " | ")
 
 
 def _strip_blank_lines(lines: list[str]) -> list[str]:
-    """Remove lines with no text or only whitespace characters from the start and end of the list.
-
-    Parameters:
-        lines: Lines to be stripped.
-
-    Returns:
-        A list with the same contents, with any blank lines at the start or end removed.
-    """
     if not lines:
         return lines
 
