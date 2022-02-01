@@ -84,7 +84,7 @@ def _is_dash_line(line) -> bool:
     return not _is_empty_line(line) and _is_empty_line(line.replace("-", ""))
 
 
-def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[list[str]], int]:  # noqa: WPS231
+def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[list[str]], int]:  # noqa: WPS231,WPS234
     lines = docstring.lines
     if offset >= len(lines):
         return [], offset
@@ -228,14 +228,12 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
                 _warn(docstring, index, f"No types or annotations for parameters {names}")
 
         if default is None:
-            for name in names:
-                try:
+            for name in names:  # noqa: WPS440
+                with suppress(AttributeError, KeyError):
                     default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
                     break
-                except (AttributeError, KeyError):
-                    pass
 
-        for name in names:
+        for name in names:  # noqa: WPS440
             parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))
 
     return parameters, index
@@ -409,7 +407,7 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
     return DocstringSection(DocstringSectionKind.attributes, attributes), index
 
 
-def _read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:
+def _read_examples_section(docstring: Docstring, offset: int) -> tuple[DocstringSection | None, int]:  # noqa: WPS231
     text, index = _read_block(docstring, offset)
 
     sub_sections = []

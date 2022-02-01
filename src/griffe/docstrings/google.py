@@ -50,10 +50,7 @@ BlockItems = List[BlockItem]
 ItemsBlock = Tuple[BlockItems, int]
 
 _RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>[^\s].*))?$", re.I)
-"""Regular expression to match admonitions, of the form `TYPE: [TITLE]`."""
-
 _RE_NAME_ANNOTATION_DESCRIPTION: Pattern = re.compile(r"^(?:(?P<name>\w+)?\s*(?:\((?P<type>.+)\))?:\s*)?(?P<desc>.*)$")
-"""Regular expression to match `name (type): Description` in docstrings sections items."""
 
 
 def _read_block_items(docstring: Docstring, offset: int) -> ItemsBlock:  # noqa: WPS231
