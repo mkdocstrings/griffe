@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import re
-from ast import PyCF_ONLY_AST
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, List, Pattern, Tuple
 
-from griffe.agents.nodes import get_annotation
 from griffe.docstrings.dataclasses import (
     DocstringAdmonition,
     DocstringAttribute,
@@ -20,7 +18,7 @@ from griffe.docstrings.dataclasses import (
     DocstringWarn,
     DocstringYield,
 )
-from griffe.docstrings.utils import warning
+from griffe.docstrings.utils import parse_annotation, warning
 from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
@@ -171,9 +169,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            with suppress(AttributeError, SyntaxError):
-                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring)
         else:
             name = name_with_type
             # try to use the annotation from the signature
@@ -235,9 +231,7 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            with suppress(AttributeError, SyntaxError):
-                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring)
         else:
             name = name_with_type
             try:
@@ -258,6 +252,7 @@ def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
     exceptions = []
     block, new_offset = _read_block_items(docstring, offset)
 
+    annotation: str | Name | Expression
     for line_number, exception_lines in block:
         try:
             annotation, description = exception_lines[0].split(": ", 1)
@@ -266,9 +261,7 @@ def _read_raises_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
             # try to compile the annotation to transform it into an expression
-            with suppress(AttributeError, SyntaxError):
-                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[assignment,arg-type]
+            annotation = parse_annotation(annotation, docstring)
             exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
     if exceptions:
@@ -311,11 +304,9 @@ def _read_returns_section(docstring: Docstring, offset: int) -> tuple[DocstringS
         name, annotation, description = match.groups()
         description = "\n".join([description.lstrip(), *return_lines[1:]]).rstrip("\n")
 
-        if annotation and docstring.parent is not None:
+        if annotation:
             # try to compile the annotation to transform it into an expression
-            with suppress(AttributeError, SyntaxError):
-                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
@@ -352,9 +343,7 @@ def _read_yields_section(docstring: Docstring, offset: int) -> tuple[DocstringSe
 
         if annotation and docstring.parent is not None:
             # try to compile the annotation to transform it into an expression
-            with suppress(AttributeError, SyntaxError):
-                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
@@ -390,11 +379,9 @@ def _read_receives_section(docstring: Docstring, offset: int) -> tuple[Docstring
         name, annotation, description = match.groups()
         description = "\n".join([description.lstrip(), *receive_lines[1:]]).rstrip("\n")
 
-        if annotation and docstring.parent is not None:
+        if annotation:
             # try to compile the annotation to transform it into an expression
-            with suppress(AttributeError, SyntaxError):
-                code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-                annotation = code.body and get_annotation(code.body, parent=docstring.parent)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring)
         # else:
         # try to retrieve the annotation from the docstring parent
         # TODO: support getting receive part and exploding tuple (in a generator/iterator)
