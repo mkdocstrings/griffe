@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.11.3](https://github.com/mkdocstrings/griffe/releases/tag/0.11.3) - 2022-02-05
+
+<small>[Compare with 0.11.2](https://github.com/mkdocstrings/griffe/compare/0.11.2...0.11.3)</small>
+
+### Bug Fixes
+- Fix getting params defaults on Python 3.7 ([0afd867](https://github.com/mkdocstrings/griffe/commit/0afd8675d2d24302d68619f31adbe5ac5d8ff5a7) by Timothée Mazzucotelli).
+
+
 ## [0.11.2](https://github.com/mkdocstrings/griffe/releases/tag/0.11.2) - 2022-02-03
 
 <small>[Compare with 0.11.1](https://github.com/mkdocstrings/griffe/compare/0.11.1...0.11.2)</small>
