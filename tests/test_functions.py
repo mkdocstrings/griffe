@@ -8,6 +8,18 @@ from griffe.dataclasses import ParameterKind
 from tests.helpers import temporary_visited_module
 
 
+def test_visit_simple_function():
+    """Test functions parameters loading."""
+    with temporary_visited_module("def f(foo='<>'): ...") as module:
+        function = module["f"]
+        assert len(function.parameters) == 1
+        param = function.parameters[0]
+        assert param is function.parameters["foo"]
+        assert param.name == "foo"
+        assert param.kind is ParameterKind.positional_or_keyword
+        assert param.default == "'<>'"
+
+
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_visit_function_positional_only_param():
     """Test functions parameters loading."""

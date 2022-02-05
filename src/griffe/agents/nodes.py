@@ -1178,6 +1178,8 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
         return None
     if isinstance(node, NodeConstant):
         return repr(node.value)
+    if isinstance(node, NodeStr):
+        return repr(node.s)
     if isinstance(node, NodeName):
         return node.id
     if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
