@@ -257,6 +257,7 @@ class ModuleFinder:
         parent_path = path if path.is_dir() else path.parent
         for search_path in self.search_paths:
             with suppress(ValueError):
+                # TODO: it does not work when parent_path is relative and search_path absolute
                 rel_path = parent_path.relative_to(search_path)
                 top_path = search_path / rel_path.parts[0]
                 return top_path.name

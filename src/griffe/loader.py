@@ -295,6 +295,8 @@ class GriffeLoader:
         try:
             member_parent = self._member_parent(module, subparts, subpath)
         except UnimportableModuleError as error:
+            # TODO: maybe add option to still load them
+            # TODO: maybe increase level to WARNING
             logger.debug(f"{error}. Missing __init__ module?")
             return
         try:  # noqa: WPS225
