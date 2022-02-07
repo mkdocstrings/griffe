@@ -350,7 +350,12 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
     @property
     def has_docstrings(self) -> bool:
         """Tell if this object or any of its members has a non-empty docstring."""
-        return self.has_docstring or any(member.has_docstrings for member in self.members.values())  # noqa: DAR201
+        if self.has_docstring:  # noqa: DAR201
+            return True
+        for member in self.members.values():
+            if (not member.is_alias or member.resolved) and member.has_docstring:  # type: ignore[union-attr]
+                return True
+        return False
 
     def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:
         """Tell if a member of this object is "exported".

@@ -31,7 +31,7 @@ def temporary_pyfile(code: str) -> Iterator[tuple[str, Path]]:
     """
     with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
         tmpfile = Path(tmpdir) / "module.py"
-        tmpfile.write_text(code)
+        tmpfile.write_text(dedent(code))
         yield "module", tmpfile
 
 
@@ -96,7 +96,7 @@ def temporary_inspected_module(code: str) -> Iterator[Module]:
     Yields:
         The inspected module.
     """
-    with temporary_pyfile(dedent(code)) as (name, path):
+    with temporary_pyfile(code) as (name, path):
         try:
             yield inspect(name, filepath=path)
         finally:
