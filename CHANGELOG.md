@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.11.4](https://github.com/mkdocstrings/griffe/releases/tag/0.11.4) - 2022-02-07
+
+<small>[Compare with 0.11.3](https://github.com/mkdocstrings/griffe/compare/0.11.3...0.11.4)</small>
+
+### Bug Fixes
+- Don't trigger alias resolution while checking docstrings presence ([dda72ea](https://github.com/mkdocstrings/griffe/commit/dda72ea56b091d1c9bc1b7aa369548328894da29) by Timothée Mazzucotelli). References: [#37](https://github.com/mkdocstrings/griffe/issues/37)
+
+
 ## [0.11.3](https://github.com/mkdocstrings/griffe/releases/tag/0.11.3) - 2022-02-05
 
 <small>[Compare with 0.11.2](https://github.com/mkdocstrings/griffe/compare/0.11.2...0.11.3)</small>
