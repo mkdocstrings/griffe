@@ -692,11 +692,11 @@ def test_parse_admonitions():
     assert len(sections) == 3
     assert not warnings
     assert sections[0].title == "Important note"
-    assert sections[0].value.kind == "note"
+    assert sections[0].value.kind == "important-note"
     assert sections[0].value.contents == "Hello."
     assert sections[1].title == "With title."
     assert sections[1].value.kind == "note"
     assert sections[1].value.contents == "Hello again."
-    assert sections[2].title is None
+    assert sections[2].title == "Something"
     assert sections[2].value.kind == "something"
     assert sections[2].value.contents == "Something."

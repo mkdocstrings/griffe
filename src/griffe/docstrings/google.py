@@ -559,13 +559,13 @@ def parse(  # noqa: WPS231
                 else:
                     contents, offset = _read_block(docstring, offset + 1)
                     if contents:
-                        if title is None and " " in admonition_type:
+                        if title is None:
                             title = admonition_type
-                            admonition_type = "note"
+                        admonition_type = admonition_type.lower().replace(" ", "-")
                         sections.append(
                             DocstringSection(
                                 kind=DocstringSectionKind.admonition,
-                                value=DocstringAdmonition(kind=admonition_type.lower(), contents=contents),
+                                value=DocstringAdmonition(kind=admonition_type, contents=contents),
                                 title=title,
                             )
                         )
