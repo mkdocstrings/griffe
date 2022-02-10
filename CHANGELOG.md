@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.11.6](https://github.com/mkdocstrings/griffe/releases/tag/0.11.6) - 2022-02-10
+
+<small>[Compare with 0.11.5](https://github.com/mkdocstrings/griffe/compare/0.11.5...0.11.6)</small>
+
+### Bug Fixes
+- Fix infinite loop in Google parser ([8b7b97b](https://github.com/mkdocstrings/griffe/commit/8b7b97b6f507dc91b957592e1d247d79bd3e9a5b) by Timothée Mazzucotelli). [Issue #38](https://github.com/mkdocstrings/griffe/issues/38)
+
+
 ## [0.11.5](https://github.com/mkdocstrings/griffe/releases/tag/0.11.5) - 2022-02-08
 
 <small>[Compare with 0.11.4](https://github.com/mkdocstrings/griffe/compare/0.11.4...0.11.5)</small>
