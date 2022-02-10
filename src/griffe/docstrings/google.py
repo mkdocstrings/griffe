@@ -117,7 +117,7 @@ def _read_block_items(docstring: Docstring, offset: int) -> ItemsBlock:  # noqa:
 def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
     lines = docstring.lines
     if offset >= len(lines):
-        return "", offset
+        return "", offset - 1
 
     new_offset = offset
     block: list[str] = []
@@ -131,7 +131,7 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
 
     if indent == 0:
         # first non-empty line was not indented, abort
-        return "", new_offset - 1
+        return "", offset - 1
 
     # start processing first item
     block.append(lines[new_offset].lstrip())
@@ -215,7 +215,7 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
     attributes = []
     block, new_offset = _read_block_items(docstring, offset)
 
-    annotation: str | Name | Expression | None
+    annotation: str | Name | Expression | None = None
     for line_number, attr_lines in block:
         try:
             name_with_type, description = attr_lines[0].split(":", 1)
@@ -234,10 +234,8 @@ def _read_attributes_section(docstring: Docstring, offset: int) -> tuple[Docstri
             annotation = parse_annotation(annotation, docstring)
         else:
             name = name_with_type
-            try:
-                annotation = docstring.parent.attributes[name].annotation  # type: ignore[union-attr]
-            except (AttributeError, KeyError):
-                annotation = None
+            with suppress(AttributeError, KeyError):
+                annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
 
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=description))
 
@@ -570,7 +568,6 @@ def parse(  # noqa: WPS231
                             )
                         )
                     else:
-                        offset -= 1
                         with suppress(IndexError):
                             current_section.append(lines[offset])
             else:

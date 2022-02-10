@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import inspect
+
+import pytest
+
 from griffe.dataclasses import Function, Parameter, Parameters
 from griffe.docstrings import google
 from griffe.docstrings.dataclasses import DocstringSectionKind
@@ -29,25 +33,6 @@ def test_multiline_docstring():
         """
     )
     assert len(sections) == 1
-    assert not warnings
-
-
-def test_unknown_matching_admonitions():
-    """Properly handle offset when matching an unknown admonition (line ending with `:`)."""
-    docstring = """
-        First line.
-
-        Matching but unknown admonition type:
-
-        - Some list items
-
-        Ending line.
-    """
-    sections, warnings = parse(docstring)
-    assert len(sections) == 1
-    assert sections[0].kind is DocstringSectionKind.text
-    # -2 because docstring is stripped
-    assert len(sections[0].value.splitlines()) == len(docstring.splitlines()) - 2
     assert not warnings
 
 
@@ -700,3 +685,51 @@ def test_parse_admonitions():
     assert sections[2].title == "Something"
     assert sections[2].value.kind == "something"
     assert sections[2].value.contents == "Something."
+
+
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        """
+        ******************************
+        This looks like an admonition:
+        ******************************
+        """,
+        """
+        Warning: this line also looks
+        like an admonition.
+        """,
+        """
+        Matching but not an admonition:
+
+
+
+        - Multiple empty lines above.
+        """,
+        """Last line:""",
+    ],
+)
+def test_handle_false_admonitions_correctly(docstring):
+    """Correctly handle lines that look like admonitions.
+
+    Parameters:
+        docstring: The docstring to parse (parametrized).
+    """
+    sections, warnings = parse(docstring)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.text
+    assert len(sections[0].value.splitlines()) == len(inspect.cleandoc(docstring).splitlines())
+    assert not warnings
+
+
+def test_unknown_matching_admonitions():
+    """Properly handle offset when matching an unknown admonition (line ending with `:`)."""
+    docstring = """
+
+        Ending line.
+    """
+    sections, warnings = parse(docstring)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.text
+    assert len(sections[0].value.splitlines()) == len(inspect.cleandoc(docstring).splitlines())
+    assert not warnings
