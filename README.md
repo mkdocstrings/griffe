@@ -8,8 +8,6 @@
 
 Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API.
 
-:warning: Work in progress!
-
 ## Requirements
 
 griffe requires Python 3.7 or above.
@@ -90,7 +88,6 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
         We'll probably need to add an `overloads` attribute to `Function`,
         to store the list of `@overload`-decorated functions,
         because currently different members of a same object cannot have the same names.
-    - Support for wildcard imports
 - Extensions
     - Post-processing extensions
     - Third-party libraries we could provide support for:
