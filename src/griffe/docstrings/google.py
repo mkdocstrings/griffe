@@ -497,6 +497,7 @@ _section_reader = {
 
 def parse(  # noqa: WPS231
     docstring: Docstring,
+    ignore_init_summary: bool = False,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -506,6 +507,7 @@ def parse(  # noqa: WPS231
 
     Parameters:
         docstring: The docstring to parse.
+        ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         **options: Additional parsing options.
 
     Returns:
@@ -515,9 +517,21 @@ def parse(  # noqa: WPS231
     current_section = []
 
     in_code_block = False
-
     lines = docstring.lines
-    offset = 0
+
+    ignore_summary = (
+        ignore_init_summary  # noqa: WPS222
+        and docstring.parent is not None
+        and docstring.parent.name == "__init__"
+        and docstring.parent.is_function
+        and docstring.parent.parent is not None
+        and docstring.parent.parent.is_class
+    )
+
+    if ignore_summary:
+        offset = 2
+    else:
+        offset = 0
 
     while offset < len(lines):
         line_lower = lines[offset].lower()

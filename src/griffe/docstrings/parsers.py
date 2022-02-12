@@ -48,5 +48,5 @@ def parse(docstring: Docstring, parser: Parser | None, **options: Any) -> list[D
         A list of docstring sections.
     """
     if parser:
-        return parsers[parser](docstring, **options)
+        return parsers[parser](docstring, **options)  # type: ignore[operator]
     return [DocstringSection(DocstringSectionKind.text, docstring.value)]

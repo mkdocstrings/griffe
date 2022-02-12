@@ -6,7 +6,7 @@ import inspect
 
 import pytest
 
-from griffe.dataclasses import Function, Parameter, Parameters
+from griffe.dataclasses import Class, Function, Module, Parameter, Parameters
 from griffe.docstrings import google
 from griffe.docstrings.dataclasses import DocstringSectionKind
 from tests.test_docstrings.helpers import parser
@@ -720,3 +720,35 @@ def test_handle_false_admonitions_correctly(docstring):
     assert sections[0].kind is DocstringSectionKind.text
     assert len(sections[0].value.splitlines()) == len(inspect.cleandoc(docstring).splitlines())
     assert not warnings
+
+
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        "",
+        "\n",
+        "\n\n",
+        "Summary.",
+        "Summary.\n\n\n",
+        "Summary.\n\nParagraph.",
+        "Summary\non two lines.",
+        "Summary\non two lines.\n\nParagraph.",
+    ],
+)
+def test_ignore_init_summary(docstring):
+    """Correctly ignore summary in `__init__` methods' docstrings.
+
+    Parameters:
+        docstring: The docstring to parse (parametrized).
+    """
+    sections, _ = parse(docstring, parent=Function("__init__", parent=Class("C")), ignore_init_summary=True)
+    for section in sections:
+        assert "Summary" not in section.value
+
+    if docstring.strip():
+        sections, _ = parse(docstring, parent=Function("__init__", parent=Module("M")), ignore_init_summary=True)
+        assert "Summary" in sections[0].value
+        sections, _ = parse(docstring, parent=Function("f", parent=Class("C")), ignore_init_summary=True)
+        assert "Summary" in sections[0].value
+        sections, _ = parse(docstring, ignore_init_summary=True)
+        assert "Summary" in sections[0].value
