@@ -257,6 +257,8 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         else:
             lineno = node.lineno
 
+        # TODO: handle member already exist, setter of property
+
         # handle parameters
         parameters = Parameters()
         annotation: str | Name | Expression | None
@@ -465,9 +467,9 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 continue
 
             if name in parent.members:
-                # assigning multiple times: check for try/excepts
+                # assigning multiple times
                 # TODO: might be better to inspect
-                if isinstance(node.parent, ast.ExceptHandler):  # type: ignore[union-attr]
+                if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
                     continue  # prefer "no-exception" case
 
             attribute = Attribute(
