@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.11.7](https://github.com/mkdocstrings/griffe/releases/tag/0.11.7) - 2022-02-12
+
+<small>[Compare with 0.11.6](https://github.com/mkdocstrings/griffe/compare/0.11.6...0.11.7)</small>
+
+### Bug Fixes
+- Keep only first assignment in conditions ([0104440](https://github.com/mkdocstrings/griffe/commit/010444018ca6ba437e70166e0da3e2d2ca6bbbe8) by Timothée Mazzucotelli).
+- Support invert unary op in annotations ([734ef55](https://github.com/mkdocstrings/griffe/commit/734ef551f5c5b2b4b48de32033d4c2e7cff0a124) by Timothée Mazzucotelli).
+- Fix handling of missing modules during dynamic imports ([7a3b383](https://github.com/mkdocstrings/griffe/commit/7a3b38349712c5b66792da1a8a9efae1b6f663a7) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#380](https://github.com/mkdocstrings/mkdocstrings/issues/380)
+- Fix getting lines of compiled modules ([899461b](https://github.com/mkdocstrings/griffe/commit/899461b2f48622f334ceeaa6d73c935bacb540ea) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Get annotation with the same property on functions ([ecc7bba](https://github.com/mkdocstrings/griffe/commit/ecc7bba8880f90417a21830e0e9cccf30f582399) by Timothée Mazzucotelli).
+
+
 ## [0.11.6](https://github.com/mkdocstrings/griffe/releases/tag/0.11.6) - 2022-02-10
 
 <small>[Compare with 0.11.5](https://github.com/mkdocstrings/griffe/compare/0.11.5...0.11.6)</small>
