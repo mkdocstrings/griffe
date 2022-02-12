@@ -720,16 +720,3 @@ def test_handle_false_admonitions_correctly(docstring):
     assert sections[0].kind is DocstringSectionKind.text
     assert len(sections[0].value.splitlines()) == len(inspect.cleandoc(docstring).splitlines())
     assert not warnings
-
-
-def test_unknown_matching_admonitions():
-    """Properly handle offset when matching an unknown admonition (line ending with `:`)."""
-    docstring = """
-
-        Ending line.
-    """
-    sections, warnings = parse(docstring)
-    assert len(sections) == 1
-    assert sections[0].kind is DocstringSectionKind.text
-    assert len(sections[0].value.splitlines()) == len(inspect.cleandoc(docstring).splitlines())
-    assert not warnings
