@@ -219,7 +219,6 @@ class Extensions:
 
 builtin_extensions: set[str] = {
     "hybrid",
-    "no_init_summary",
 }
 
 
