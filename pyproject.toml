@@ -67,7 +67,7 @@ docs = [
     "mkdocs-literate-nav>=0.4",
     "mkdocs-material>=7.3",
     "mkdocs-section-index>=0.3",
-    "mkdocstrings>=0.17",
+    "mkdocstrings[python]>=0.18",
     "toml>=0.10",
 ]
 format = [
