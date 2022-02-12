@@ -395,6 +395,26 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
             kind = Kind(kind)
         return self.kind is kind
 
+    @property
+    def is_module(self) -> bool:
+        """Tell if this object is a module."""
+        return self.kind is Kind.MODULE  # noqa: DAR201
+
+    @property
+    def is_class(self) -> bool:
+        """Tell if this object is a class."""
+        return self.kind is Kind.CLASS  # noqa: DAR201
+
+    @property
+    def is_function(self) -> bool:
+        """Tell if this object is a function."""
+        return self.kind is Kind.FUNCTION  # noqa: DAR201
+
+    @property
+    def is_attribute(self) -> bool:
+        """Tell if this object is an attribute."""
+        return self.kind is Kind.ATTRIBUTE  # noqa: DAR201
+
     def has_labels(self, labels: set[str]) -> bool:
         """Tell if this object has all the given labels.
 
