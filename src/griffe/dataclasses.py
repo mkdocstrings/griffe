@@ -604,9 +604,13 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         if self.lineno and self.endlineno is None and sys.version_info < (3, 8):
             self.endlineno = self._endlineno
 
+        try:
+            lines = self.lines_collection[filepath]
+        except KeyError:
+            return []
         if self.lineno is None or self.endlineno is None:
-            return self.lines_collection[filepath]
-        return self.lines_collection[filepath][self.lineno - 1 : self.endlineno]
+            return lines
+        return lines[self.lineno - 1 : self.endlineno]
 
     @cached_property
     def source(self) -> str:
