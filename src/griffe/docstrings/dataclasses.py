@@ -140,7 +140,7 @@ class DocstringNamedElement(DocstringElement):
         *,
         description: str,
         annotation: str | Name | Expression | None = None,
-        value: str | None = None
+        value: str | None = None,
     ) -> None:
         """Initialize the element.
 

@@ -46,7 +46,7 @@ class Encoder(json.JSONEncoder):
         full: bool = False,
         docstring_parser: Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Initialize the encoder.
 
