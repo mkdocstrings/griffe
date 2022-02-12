@@ -1095,6 +1095,15 @@ class Function(Object):
         self.returns: str | Name | Expression | None = returns
         self.decorators: list[Decorator] = decorators or []
 
+    @property
+    def annotation(self) -> str | Name | Expression | None:
+        """Return the return annotation.
+
+        Returns:
+            The function return annotation.
+        """
+        return self.returns
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this function's data as a dictionary.
 
