@@ -5,7 +5,7 @@ from ast import PyCF_ONLY_AST
 import pytest
 
 from griffe.agents.nodes import relative_to_absolute
-from tests.helpers import module_vtree
+from tests.helpers import module_vtree, temporary_visited_module
 
 
 @pytest.mark.parametrize(
@@ -37,3 +37,29 @@ def test_relative_to_absolute_imports(code, path, is_package, expected):
     module = module_vtree(path, leaf_package=is_package, return_leaf=True)
     for name in node.names:
         assert relative_to_absolute(node, name, module) == expected
+
+
+@pytest.mark.parametrize(
+    "expression",
+    [
+        "A",
+        "A.B",
+        "A[B]",
+        "A.B[C.D]",
+        "~A",
+        "A | B",
+        "A[[B, C], D]",
+    ],
+)
+def test_building_annotations_from_nodes(expression):
+    """Test building annotations from AST nodes.
+
+    Parameters:
+        expression: An expression (parametrized).
+    """
+    class_defs = "\n\n".join(f"class {letter}: ..." for letter in "ABCD")
+    with temporary_visited_module(f"{class_defs}\n\nx: {expression}\ny: {expression} = 0") as module:
+        assert "x" in module.members
+        assert "y" in module.members
+        assert str(module["x"].annotation) == expression
+        assert str(module["y"].annotation) == expression

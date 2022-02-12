@@ -608,6 +608,10 @@ def _get_ifexp_annotation(node: NodeIfExp, parent: Module | Class) -> Expression
     )
 
 
+def _get_invert_annotation(node: NodeInvert, parent: Module | Class) -> str:
+    return "~"
+
+
 def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
     return Expression("[", *_join([_get_annotation(el, parent) for el in node.elts], ", "), "]")
 
@@ -626,6 +630,10 @@ def _get_tuple_annotation(node: NodeTuple, parent: Module | Class) -> Expression
     return Expression(*_join([_get_annotation(el, parent) for el in node.elts], ", "))
 
 
+def _get_unaryop_annotation(node: NodeUnaryOp, parent: Module | Class) -> Expression:
+    return Expression(_get_annotation(node.op, parent), _get_annotation(node.operand, parent))
+
+
 _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
     NodeAttribute: _get_attribute_annotation,
     NodeBinOp: _get_binop_annotation,
@@ -635,10 +643,12 @@ _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Ex
     NodeConstant: _get_constant_annotation,
     NodeEllipsis: _get_ellipsis_annotation,
     NodeIfExp: _get_ifexp_annotation,
+    NodeInvert: _get_invert_annotation,
     NodeList: _get_list_annotation,
     NodeName: _get_name_annotation,
     NodeSubscript: _get_subscript_annotation,
     NodeTuple: _get_tuple_annotation,
+    NodeUnaryOp: _get_unaryop_annotation,
 }
 
 # TODO: remove once Python 3.8 support is dropped
