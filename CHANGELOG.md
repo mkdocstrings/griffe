@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.12.0](https://github.com/mkdocstrings/griffe/releases/tag/0.12.0) - 2022-02-12
+
+<small>[Compare with 0.11.7](https://github.com/mkdocstrings/griffe/compare/0.11.7...0.12.0)</small>
+
+### Features
+- Add extension to remove summary from `__init__` docstrings ([7ddcc88](https://github.com/mkdocstrings/griffe/commit/7ddcc88f11f594a2de96b61f24d83ffc3e937f9f) by Timothée Mazzucotelli).
+
+
 ## [0.11.7](https://github.com/mkdocstrings/griffe/releases/tag/0.11.7) - 2022-02-12
 
 <small>[Compare with 0.11.6](https://github.com/mkdocstrings/griffe/compare/0.11.6...0.11.7)</small>
