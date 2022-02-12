@@ -43,26 +43,39 @@ def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> 
 
     Raises:
         ModuleNotFoundError: When the object's module could not be found.
+        ImportError: When there was an import error or when couldn't get the attribute.
 
     Returns:
         The imported object.
     """
     module_parts: list[str] = import_path.split(".")
     object_parts: list[str] = []
+    errors = []
 
     with sys_path(*(import_paths or ())):
         while True:
             module_path = ".".join(module_parts)
             try:  # noqa: WPS503 (false-positive)
                 module = import_module(module_path)
-            except ModuleNotFoundError:
+            except ModuleNotFoundError as error:
                 if len(module_parts) == 1:
                     raise
+                errors.append(str(error))
                 object_parts.insert(0, module_parts.pop(-1))
             else:
                 break
 
+    # Sometimes extra dependencies are not installed,
+    # and therefore we aren't able to import the leaf module,
+    # so we end up with its parent instead, on which we can't
+    # get the attribute either. In that case we re-raise an
+    # ImportError for consistency.
+    # See https://github.com/mkdocstrings/mkdocstrings/issues/380
+
     value = module
     for part in object_parts:
-        value = getattr(value, part)
+        try:
+            value = getattr(value, part)
+        except AttributeError as error:  # noqa: WPS440
+            raise ImportError("\n".join(errors)) from error
     return value

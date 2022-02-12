@@ -257,6 +257,8 @@ def load_extension(extension: str | dict[str, Any] | Extension | Type[Extension]
         ext_module = dynamic_import(import_path)
     except ModuleNotFoundError as error:
         raise ExtensionNotLoadedError(f"Extension module '{import_path}' could not be found") from error
+    except ImportError as error:
+        raise ExtensionNotLoadedError(f"Error while importing extension module '{import_path}': {error}") from error
 
     try:
         return ext_module.Extension(**options)
