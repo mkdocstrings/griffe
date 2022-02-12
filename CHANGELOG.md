@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.12.1](https://github.com/mkdocstrings/griffe/releases/tag/0.12.1) - 2022-02-12
+
+<small>[Compare with 0.11.7](https://github.com/mkdocstrings/griffe/compare/0.11.7...0.12.1)</small>
+
+### Features
+- Add `ignore_init_summary` option to the Google parser ([81f0333](https://github.com/mkdocstrings/griffe/commit/81f0333b1691955f6020095051b2cf869f0c2c24) by Timothée Mazzucotelli).
+- Add `is_KIND` properties on objects ([17a08cd](https://github.com/mkdocstrings/griffe/commit/17a08cd7142bdee041577735d5e5ac246c181ec9) by Timothée Mazzucotelli).
+
+
 ## [0.11.7](https://github.com/mkdocstrings/griffe/releases/tag/0.11.7) - 2022-02-12
 
 <small>[Compare with 0.11.6](https://github.com/mkdocstrings/griffe/compare/0.11.6...0.11.7)</small>
