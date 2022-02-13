@@ -433,13 +433,13 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 names = get_names(node)
             except KeyError:  # unsupported nodes, like subscript
                 return
-            labels.add("module")
+            labels.add("module-attribute")
         elif parent.kind is Kind.CLASS:
             try:
                 names = get_names(node)
             except KeyError:  # unsupported nodes, like subscript
                 return
-            labels.add("class")
+            labels.add("class-attribute")
         elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
@@ -448,7 +448,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             except KeyError:  # unsupported nodes, like subscript
                 return
             parent = parent.parent  # type: ignore[assignment]
-            labels.add("instance")
+            labels.add("instance-attribute")
 
         if not names:
             return
