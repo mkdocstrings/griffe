@@ -12,6 +12,7 @@ from pathlib import Path, PosixPath
 from typing import Any, Callable, Type
 
 from griffe.dataclasses import Attribute, Class, Function, Kind, Module, Object, ParameterKind
+from griffe.docstrings.dataclasses import DocstringSectionKind
 from griffe.docstrings.parsers import Parser
 
 
@@ -24,6 +25,7 @@ _type_map: dict[Type, Callable[[Any], Any]] = {
     PosixPath: str,
     ParameterKind: _enum_value,
     Kind: _enum_value,
+    DocstringSectionKind: _enum_value,
     set: list,
 }
 
