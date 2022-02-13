@@ -70,6 +70,7 @@ plugins:
     scripts:
     - docs/gen_credits.py
     - docs/gen_ref_nav.py
+    - docs/gen_griffe_json.py
 - literate-nav:
     nav_file: SUMMARY.md
 - section-index
@@ -81,11 +82,14 @@ plugins:
         - https://docs.python.org/3/objects.inv
         selection:
           docstring_style: google
+          docstring_options:
+            ignore_init_summary: yes
         rendering:
           show_submodules: no
           docstring_section_style: list
           members_order: alphabetical
           show_category_heading: no
+          merge_init_into_class: yes
     watch:
     - src/griffe
 

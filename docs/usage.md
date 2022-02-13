@@ -28,6 +28,8 @@ $ griffe griffe
 ]
 ```
 
+See [the full Griffe JSON dump](griffe.json). 
+
 By default, Griffe will search in `sys.path`, so if you installed it through *pipx*,
 there are few chances it will find your packages.
 To explicitely specify search paths, use the `-s, --search <PATH>` option.
@@ -42,15 +44,35 @@ Create a loader to load modules data, recursively:
 ```python
 from griffe.loader import GriffeLoader
 
-griffe = GriffeLoader()
-fastapi = griffe.load_module("fastapi")
+loader = GriffeLoader()
+griffe = loader.load_module("griffe")
 ```
 
 If you don't want to recurse in the submodules:
 
 ```python
-fastapi = griffe.load_module("fastapi", submodules=False)
+griffe = loader.load_module("griffe", submodules=False)
 ```
+
+The [`load_module`][griffe.loader.GriffeLoader.load_module] method
+returns a [`Module`][griffe.dataclasses.Module] instance.
+There are several ways to access members of an object:
+
+- through its `members` attribute, which is a dictionary,
+  with the usual `keys()`, `values()` and `items()` methods.
+- thanks to its `__getitem__` method. For example `griffe["dataclasses"]`
+  returns the `Module` instance representing Griffe's `dataclasses` module.
+  Since this module also has members, you can chain calls: `griffe["dataclasses"]["Module"]`.
+  Conveniently, you can chain the names with dots in a single call: `griffe["dataclasses.Module"]`.
+  You can even pass a tuple instead of a string: `griffe[("dataclasses", "Module")]`.
+- through the [`modules`][griffe.dataclasses.Object.modules],
+  [`classes`][griffe.dataclasses.Object.classes],
+  [`functions`][griffe.dataclasses.Object.functions] and
+  [`attributes`][griffe.dataclasses.Object.attributes] properties,
+  which take care of filtering members based on their kind, and return dictionaries.
+
+Most of the time, you will only use classes from the [`griffe.dataclasses`][griffe.dataclasses]
+and [`griffe.docstrings.dataclasses`][griffe.docstrings.dataclasses] modules.
 
 ### Extensions
 
@@ -86,16 +108,16 @@ class or module, etc.).
 
 Each time a node is visited, the main visitor will make the extensions visit the node as well.
 Implement the `visit_<NODE_TYPE_LOWER>` methods to visit nodes of certain types,
-and act on their properties.
+and act on their properties. See the [full list of AST nodes](#ast-nodes).
 
 !!! warning "Important note"
     Because the main visitor recursively walks the tree itself,
     calling extensions on each node,
-    **you must not call the `.generic_visit(node)` method in your `.visit_*` methods!**
+    **you must not visit child nodes in your `.visit_*` methods!**
     Otherwise, nodes down the tree will be visited twice or more:
     once by the main visitor, and as many times more as your extension is called.
     Let the main visitor do the walking, and just take care of the current node,
-    without handling its children (what the `generic_visit` does).
+    without handling its children.
 
 You can access the main visitor state and data through the `.visitor` attribute,
 and the nodes instances are extended with additional attributes and properties:
@@ -116,9 +138,9 @@ class MyExtension(Extension):
         self.visitor.current.kind  # the kind of object: module, class, function, attribute 
 ```
 
-See the data classes ([Module][griffe.dataclasses.Module],
-[Class][griffe.dataclasses.Class], [Function][griffe.dataclasses.Function]
-and [Attribute][griffe.dataclasses.Attribute])
+See the data classes ([`Module`][griffe.dataclasses.Module],
+[`Class`][griffe.dataclasses.Class], [`Function`][griffe.dataclasses.Function]
+and [`Attribute`][griffe.dataclasses.Attribute])
 for a complete description of their methods and attributes.
 
 Extensions are run at certain moments while walking the Abstract Syntax Tree (AST):
@@ -146,10 +168,56 @@ class MyExtension(Extension):
 By default, it will run the extension after the visit/inspection of the node:
 that's when the full data for this node and its children is loaded.
 
-### AST nodes
+## Using Griffe as a docstring-parsing library
 
-> NOTE: **Nodes**
->
+You can use Griffe to parse arbitrary docstrings.
+You don't have to load anything through the Griffe loader.
+You need to import the [`parse`][griffe.docstrings.parsers.parse] function,
+the [`Parser`][griffe.docstrings.parsers.Parser] enumeration,
+and the [`Docstring`][griffe.dataclasses.Docstring] class.
+Then you can build a `Docstring` instance and call `parse` on it,
+choosing the parsing-style to use:
+
+```python
+from griffe.dataclasses import Docstring
+from griffe.docstrings.parsers import Parser, parse
+
+text = "Hello I'm a docstring!"
+docstring = Docstring(text, lineno=1)
+parsed = parse(docstring, Parser.google)
+```
+
+If you want to take advantage of the parsers ability to fetch
+annotations from the object from which the docstring originates,
+you can manually create the parent objects and link them to the docstring:
+
+```python
+from griffe.dataclasses import Docstring, Function, Parameters, Parameter, ParameterKind
+from griffe.docstrings.parsers import Parser, parse
+
+function = Function(
+    "func",
+    parameters=Parameters(
+        Parameter("param1", annotation="str", kind=ParameterKind.positional_or_keyword),
+        Parameter("param2", annotation="int", kind=ParameterKind.keyword_only),
+    )
+)
+text = """
+Hello I'm a docstring!
+
+Parameters:
+    param1: Description.
+    param2: Description.
+"""
+docstring = Docstring(text, lineno=1, parent=function)
+parsed = parse(docstring, Parser.google)
+```
+
+With this the parser will fetch the `str` and `int` annotations
+from the parent function's parameters.
+
+## AST nodes
+
 > <table style="border: none; background-color: unset;"><tbody><tr><td>
 >
 > - [`Add`][ast.Add]

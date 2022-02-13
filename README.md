@@ -8,6 +8,9 @@
 
 Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API.
 
+Griffe, pronounced "grif" (`/ɡʁif/`), is a french word that means "claw",
+but also "signature" in a familiar way. "On reconnaît bien là sa griffe."
+
 ## Requirements
 
 griffe requires Python 3.7 or above.
