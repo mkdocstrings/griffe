@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.12.2](https://github.com/mkdocstrings/griffe/releases/tag/0.12.2) - 2022-02-13
+
+<small>[Compare with 0.12.1](https://github.com/mkdocstrings/griffe/compare/0.12.1...0.12.2)</small>
+
+### Bug Fixes
+- Fix JSON unable to serialize docstring kind values ([91e6719](https://github.com/mkdocstrings/griffe/commit/91e67190fc4f69911ad6ea3eb239a74fc1f15ba6) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Make attribute labels more explicit ([19eac2e](https://github.com/mkdocstrings/griffe/commit/19eac2e5a13d77175849c199ba3337a66e3824a2) by Timothée Mazzucotelli).
+
+
 ## [0.12.1](https://github.com/mkdocstrings/griffe/releases/tag/0.12.1) - 2022-02-12
 
 <small>[Compare with 0.11.7](https://github.com/mkdocstrings/griffe/compare/0.11.7...0.12.1)</small>
