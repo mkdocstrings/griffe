@@ -25,7 +25,7 @@ from typing import Any, Sequence
 from griffe.agents.extensions import Extensions
 from griffe.agents.extensions.base import load_extensions
 from griffe.docstrings.parsers import Parser
-from griffe.encoders import Encoder
+from griffe.encoders import JSONEncoder
 from griffe.exceptions import ExtensionError
 from griffe.loader import GriffeLoader
 from griffe.logger import get_logger
@@ -302,10 +302,10 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     started = datetime.now()
     if per_package_output:
         for package_name, data in packages.items():
-            serialized = json.dumps(data, cls=Encoder, indent=2, full=opts.full)
+            serialized = json.dumps(data, cls=JSONEncoder, indent=2, full=opts.full)
             _print_data(serialized, output.format(package=package_name))
     else:
-        serialized = json.dumps(packages, cls=Encoder, indent=2, full=opts.full)
+        serialized = json.dumps(packages, cls=JSONEncoder, indent=2, full=opts.full)
         _print_data(serialized, output)
     elapsed = datetime.now() - started
 

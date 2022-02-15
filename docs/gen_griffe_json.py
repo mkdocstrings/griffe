@@ -5,13 +5,13 @@ import json
 import mkdocs_gen_files
 
 from griffe.docstrings.parsers import Parser
-from griffe.encoders import Encoder
+from griffe.encoders import JSONEncoder
 from griffe.loader import GriffeLoader
 
 griffe = GriffeLoader().load_module("griffe")
 serialized = json.dumps(
     griffe,
-    cls=Encoder,
+    cls=JSONEncoder,
     indent=0,
     full=True,
     docstring_parser=Parser.google,
