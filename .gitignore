@@ -16,3 +16,4 @@ __pypackages__/
 .venv/
 profile.pstats
 profile.svg
+.hypothesis/
