@@ -24,7 +24,7 @@ from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
-from griffe.exceptions import AliasResolutionError, CyclicAliasError, UnimportableModuleError
+from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.finder import ModuleFinder
 from griffe.logger import get_logger
 from griffe.stats import stats
@@ -112,25 +112,33 @@ class GriffeLoader:
             submodules: Whether to recurse on the submodules.
             try_relative_path: Whether to try finding the module as a relative path.
 
+        Raises:
+            LoadingError: When loading a module failed for various reasons.
+
         Returns:
             A module.
         """
+        module_name: str
         if module in _builtin_modules:
             logger.debug(f"{module} is a builtin module: inspecting")
-            module_name = module
+            module_name = module  # type: ignore[assignment]
+            top_module = self._inspect_module(module)  # type: ignore[arg-type]
+            return self._store_and_return(module_name, top_module)
+
+        try:
+            module_name, package = self.finder.find_spec(module, try_relative_path)
+        except ModuleNotFoundError:
+            logger.debug(f"Could not find {module}: trying inspection")
+            module_name = module  # type: ignore[assignment]
             top_module = self._inspect_module(module)  # type: ignore[arg-type]
         else:
-            try:
-                module_name, package = self.finder.find_spec(module, try_relative_path)
-            except ModuleNotFoundError:
-                logger.debug(f"Could not find {module}: trying inspection")
-                module_name = module
-                top_module = self._inspect_module(module)  # type: ignore[arg-type]
-            else:
-                logger.debug(f"Found {module}: visiting")
-                top_module = self._load_module_path(package.name, package.path, submodules=submodules)
-        self.modules_collection[top_module.path] = top_module
-        return self.modules_collection[module_name]  # type: ignore[index]
+            logger.debug(f"Found {module}: loading")
+            try:  # noqa: WPS505
+                top_module = self._load_module(package.name, package.path, submodules=submodules)
+            except LoadingError as error:  # noqa: WPS440
+                logger.error(str(error))
+                raise
+        return self._store_and_return(module_name, top_module)
 
     def resolve_aliases(  # noqa: WPS231
         self,
@@ -268,6 +276,28 @@ class GriffeLoader:
         """
         return {**stats(self), **self._time_stats}
 
+    def _store_and_return(self, name: str, module: Module) -> Module:
+        self.modules_collection[module.path] = module
+        return self.modules_collection[name]  # type: ignore[index]
+
+    def _load_module(  # noqa: WPS238
+        self,
+        module_name: str,
+        module_path: Path | list[Path],
+        submodules: bool = True,
+        parent: Module | None = None,
+    ) -> Module:
+        try:  # noqa: WPS225
+            return self._load_module_path(module_name, module_path, submodules, parent)
+        except SyntaxError as error:  # noqa: WPS440
+            raise LoadingError(f"Syntax error: {error}") from error
+        except ImportError as error:  # noqa: WPS440
+            raise LoadingError(f"Import error: {error}") from error
+        except UnicodeDecodeError as error:  # noqa: WPS440
+            raise LoadingError(f"UnicodeDecodeError when loading {module_path}: {error}") from error
+        except OSError as error:  # noqa: WPS440
+            raise LoadingError(f"OSError when loading {module_path}: {error}") from error
+
     def _load_module_path(
         self,
         module_name: str,
@@ -299,18 +329,12 @@ class GriffeLoader:
             # TODO: maybe increase level to WARNING
             logger.debug(f"{error}. Missing __init__ module?")
             return
-        try:  # noqa: WPS225
-            member_parent[subparts[-1]] = self._load_module_path(
+        try:
+            member_parent[subparts[-1]] = self._load_module(
                 subparts[-1], subpath, submodules=False, parent=member_parent
             )
-        except SyntaxError as error:  # noqa: WPS440
-            logger.debug(f"Syntax error: {error}")
-        except ImportError as error:  # noqa: WPS440
-            logger.debug(f"Import error: {error}")
-        except UnicodeDecodeError as error:  # noqa: WPS440
-            logger.debug(f"UnicodeDecodeError when loading {subpath}: {error}")
-        except OSError as error:  # noqa: WPS440
-            logger.debug(f"OSError when loading {subpath}: {error}")
+        except LoadingError as error:  # noqa: WPS440
+            logger.debug(str(error))
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:
         return Module(

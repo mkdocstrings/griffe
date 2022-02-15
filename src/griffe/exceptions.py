@@ -7,6 +7,10 @@ class GriffeError(Exception):
     """The base exception for all Griffe errors."""
 
 
+class LoadingError(GriffeError):
+    """The base exception for all Griffe errors."""
+
+
 class NameResolutionError(GriffeError):
     """Exception for names that cannot be resolved in a object scope."""
 
