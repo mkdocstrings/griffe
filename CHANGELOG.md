@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.12.3](https://github.com/mkdocstrings/griffe/releases/tag/0.12.3) - 2022-02-15
+
+<small>[Compare with 0.12.2](https://github.com/mkdocstrings/griffe/compare/0.12.2...0.12.3)</small>
+
+### Bug Fixes
+- Always decode source as UTF8 ([563469b](https://github.com/mkdocstrings/griffe/commit/563469b4cf320ea38096846312dc757a614d8094) by Timothée Mazzucotelli).
+- Fix JSON encoder and decoder ([3e768d6](https://github.com/mkdocstrings/griffe/commit/3e768d6574a45624237e0897c1d6a6c87e446016) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Improve error handling ([7b15a51](https://github.com/mkdocstrings/griffe/commit/7b15a51fb9dd4722757f272f00402ce29ef2bd3f) by Timothée Mazzucotelli).
+
+
 ## [0.12.2](https://github.com/mkdocstrings/griffe/releases/tag/0.12.2) - 2022-02-13
 
 <small>[Compare with 0.12.1](https://github.com/mkdocstrings/griffe/compare/0.12.1...0.12.2)</small>
