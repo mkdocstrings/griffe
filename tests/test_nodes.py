@@ -22,6 +22,14 @@ from tests.helpers import module_vtree, temporary_visited_module
         ("from ... import f", "a.c.d.i", False, "a.f"),
         ("from ...b import f", "a.c.d.i", False, "a.b.f"),
         ("from ...c.d import e", "a.c.d.i", False, "a.c.d.e"),
+        ("from .c import *", "a", False, "a.c.*"),
+        ("from .c import *", "a.b", False, "a.c.*"),
+        ("from .b import *", "a.b", True, "a.b.b.*"),
+        ("from .. import *", "a.c.d.i", False, "a.c.*"),
+        ("from ..d import *", "a.c.d.i", False, "a.c.d.*"),
+        ("from ... import *", "a.c.d.i", False, "a.*"),
+        ("from ...b import *", "a.c.d.i", False, "a.b.*"),
+        ("from ...c.d import *", "a.c.d.i", False, "a.c.d.*"),
     ],
 )
 def test_relative_to_absolute_imports(code, path, is_package, expected):

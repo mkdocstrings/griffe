@@ -373,8 +373,8 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             node: The node to visit.
         """
         for name in node.names:
-            alias_path = name.name.split(".", 1)[0]
-            alias_name = name.asname or alias_path
+            alias_path = name.name
+            alias_name = name.asname or alias_path.split(".", 1)[0]
             self.current.imports[alias_name] = alias_path
             self.current[alias_name] = Alias(
                 alias_name,
@@ -399,12 +399,12 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                     # have the same name and can be accessed the same way
                     continue
 
+            alias_path = relative_to_absolute(node, name, self.current.module)
             if name.name == "*":
-                alias_name = node.module.replace(".", "/") + "/*"  # type: ignore[union-attr]
-                alias_path = node.module
+                alias_name = alias_path.replace(".", "/")  # type: ignore[union-attr]
+                alias_path = alias_path.replace(".*", "")
             else:
                 alias_name = name.asname or name.name
-                alias_path = relative_to_absolute(node, name, self.current.module)
                 self.current.imports[alias_name] = alias_path
             self.current[alias_name] = Alias(
                 alias_name,
