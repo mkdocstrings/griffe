@@ -871,6 +871,7 @@ class Alias(ObjectAliasMixin):
         if value is self:
             raise CyclicAliasError([self.target_path])
         self._target = value
+        self.target_path = value.path
         if self.parent is not None:
             self._target.aliases[self.path] = self
 
