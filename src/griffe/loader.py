@@ -162,6 +162,8 @@ class GriffeLoader:
         unresolved: set[str] = set("0")  # init to enter loop
         iteration = 0
         collection = self.modules_collection.members
+        for w_module in list(collection.values()):
+            self.expand_wildcards(w_module)
         while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
             prev_unresolved = unresolved - {"0"}
             unresolved = set()
@@ -176,6 +178,51 @@ class GriffeLoader:
                 f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go"
             )
         return unresolved, iteration
+
+    def expand_wildcards(self, obj: Object, seen: set | None = None) -> None:  # noqa: WPS231
+        """Expand wildcards: try to recursively expand all found wildcards.
+
+        Parameters:
+            obj: The object and its members to recurse on.
+            seen: Used to avoid infinite recursion.
+        """
+        expanded = {}
+        to_remove = []
+        seen = seen or set()
+        seen.add(obj.path)
+
+        for member in obj.members.values():
+            if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
+                package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
+                if obj.package.path != package and package not in self.modules_collection:
+                    try:
+                        self.load_module(package, try_relative_path=False)
+                    except ImportError as error:
+                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        continue
+                self.expand_wildcards(self.modules_collection[member.target_path])  # type: ignore[union-attr]
+                expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
+                to_remove.append(member.name)
+            elif not member.is_alias and member.is_module and member.path not in seen:
+                self.expand_wildcards(member, seen)  # type: ignore[arg-type]
+
+        for name in to_remove:
+            del obj[name]  # noqa: WPS420
+
+        for new_member in list(expanded.values()):
+            if new_member.is_alias:
+                try:
+                    # TODO: maybe don't shortcut aliases:
+                    # we want to keep public paths
+                    alias = Alias(new_member.name, new_member.target)  # type: ignore[union-attr]
+                except AliasResolutionError:
+                    alias = new_member  # type: ignore[assignment]  # noqa: WPS437
+                except CyclicAliasError as error:  # noqa: WPS440
+                    logger.debug(str(error))
+                    continue
+            else:
+                alias = Alias(new_member.name, new_member)
+            obj[new_member.name] = alias
 
     def resolve_module_aliases(  # noqa: WPS231
         self,
@@ -197,39 +244,9 @@ class GriffeLoader:
         """
         resolved = set()
         unresolved = set()
-        expanded = {}
-        to_remove = []
         seen = seen or set()
         seen.add(obj.path)
 
-        # iterate a first time to expand wildcards
-        for member in obj.members.values():
-            if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
-                package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
-                if obj.package.path != package and package not in self.modules_collection:
-                    try:
-                        self.load_module(package, try_relative_path=False)
-                    except ImportError as error:
-                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
-                    else:
-                        expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
-                        to_remove.append(member.name)
-
-        for name in to_remove:
-            del obj[name]  # noqa: WPS420
-        for new_member in expanded.values():
-            if new_member.is_alias and not new_member.wildcard:  # type: ignore[union-attr]
-                try:
-                    alias = Alias(new_member.name, new_member.target)  # type: ignore[union-attr]
-                except AliasResolutionError:
-                    alias = new_member  # type: ignore[assignment]  # noqa: WPS437
-                except CyclicAliasError as error:  # noqa: WPS440
-                    logger.debug(str(error))
-            else:
-                alias = Alias(new_member.name, new_member)
-            obj[new_member.name] = alias
-
-        # iterate a second time to resolve aliases and recurse
         for member in obj.members.values():  # noqa: WPS440
             if member.is_alias:
                 if member.wildcard or member.resolved:  # type: ignore[union-attr]
