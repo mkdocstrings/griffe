@@ -362,7 +362,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
 
         By exported, we mean that the object is included in the `__all__` attribute
         of its parent module or class. When `_all__` is not defined,
-        we consider the member to be *implicitely* exported.
+        we consider the member to be *implicitely* exported,
+        unless it's a module and it was not imported.
 
         Parameters:
             member: The member to verify.
@@ -372,7 +373,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
             True or False.
         """
         if self.exports is None:
-            return not explicitely
+            return not explicitely and (member.is_alias or not member.is_module or member.name in self.imports)
         return member.name in self.exports
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
