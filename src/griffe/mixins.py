@@ -13,28 +13,21 @@ class GetMembersMixin:
     """
 
     def __getitem__(self, key: str | Sequence[str]) -> Any:
-        if isinstance(key, str):
-            if not key:
-                return self
-            parts = key.split(".", 1)
-        else:
-            parts = list(key)
-        if not parts:
-            return self
+        parts = _get_parts(key)
         if len(parts) == 1:
             return self.members[parts[0]]  # type: ignore[attr-defined]
-        return self.members[parts[0]][parts[1]]  # type: ignore[attr-defined]
+        return self.members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
 
 
 def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
     if isinstance(key, str):
         if not key:
-            raise ValueError("cannot set self (empty key)")
-        parts = key.split(".", 1)
+            raise ValueError("Empty strings are not supported")
+        parts = key.split(".")
     else:
         parts = list(key)
     if not parts:
-        raise ValueError("cannot set self (empty parts)")
+        raise ValueError("Empty tuples are not supported")
     return parts
 
 
@@ -47,7 +40,7 @@ class DelMembersMixin:
             name = parts[0]
             del self.members[name]  # type: ignore[attr-defined]  # noqa: WPS420
         else:
-            del self.members[parts[0]][parts[1]]  # type: ignore[attr-defined]  # noqa: WPS420
+            del self.members[parts[0]][parts[1:]]  # type: ignore[attr-defined]  # noqa: WPS420
 
 
 class SetMembersMixin(DelMembersMixin):
@@ -70,7 +63,7 @@ class SetMembersMixin(DelMembersMixin):
             self.members[name] = value  # type: ignore[attr-defined]
             value.parent = self
         else:
-            self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
+            self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
 
 
 class SetCollectionMembersMixin(DelMembersMixin):
@@ -91,7 +84,7 @@ class SetCollectionMembersMixin(DelMembersMixin):
             self.members[name] = value  # type: ignore[attr-defined]
             value._modules_collection = self  # noqa: WPS437
         else:
-            self.members[parts[0]][parts[1]] = value  # type: ignore[attr-defined]
+            self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
 
 
 class ObjectAliasMixin:

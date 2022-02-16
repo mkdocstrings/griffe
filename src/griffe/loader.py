@@ -405,6 +405,8 @@ class GriffeLoader:
         parent_parts = subparts[:-1]
         try:
             return module[parent_parts]
+        except ValueError:
+            return module
         except KeyError:
             if module.is_namespace_package or module.is_namespace_subpackage:
                 member_parent = Module(
