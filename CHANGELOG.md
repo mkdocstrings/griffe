@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.12.4](https://github.com/mkdocstrings/griffe/releases/tag/0.12.4) - 2022-02-16
+
+<small>[Compare with 0.12.3](https://github.com/mkdocstrings/griffe/compare/0.12.3...0.12.4)</small>
+
+### Bug Fixes
+- Update target path when changing alias target ([5eda646](https://github.com/mkdocstrings/griffe/commit/5eda646f7bc2fdb112887fdeaa07f8a2f4635c12) by Timothée Mazzucotelli).
+- Fix relative imports to absolute with wildcards ([69500dd](https://github.com/mkdocstrings/griffe/commit/69500dd0ce06f4acc91eb60ff20ac8d79303a281) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#382](https://github.com/mkdocstrings/mkdocstrings/issues/382)
+- Fix accessing members using tuples ([87ff1df](https://github.com/mkdocstrings/griffe/commit/87ff1dfae93d9eb6f735f9c1290092d61cac7591) by Timothée Mazzucotelli).
+- Fix recursive wildcard expansion ([60e6edf](https://github.com/mkdocstrings/griffe/commit/60e6edf9dcade104b069946380a0d1dcc22bce9a) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#382](https://github.com/mkdocstrings/mkdocstrings/issues/382)
+- Only export submodules if they were imported ([98c72db](https://github.com/mkdocstrings/griffe/commit/98c72dbab114fd7782efd6f2f9bbf78e3f4ccb27) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#382](https://github.com/mkdocstrings/mkdocstrings/issues/382)
+
+
 ## [0.12.3](https://github.com/mkdocstrings/griffe/releases/tag/0.12.3) - 2022-02-15
 
 <small>[Compare with 0.12.2](https://github.com/mkdocstrings/griffe/compare/0.12.2...0.12.3)</small>
