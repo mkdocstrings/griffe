@@ -186,7 +186,7 @@ class GriffeLoader:
             obj: The object and its members to recurse on.
             seen: Used to avoid infinite recursion.
         """
-        expanded = {}
+        expanded = []
         to_remove = []
         seen = seen or set()
         seen.add(obj.path)
@@ -201,7 +201,7 @@ class GriffeLoader:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
                 self.expand_wildcards(self.modules_collection[member.target_path])  # type: ignore[union-attr]
-                expanded.update(self._expand_wildcard(member))  # type: ignore[arg-type]
+                expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
                 to_remove.append(member.name)
             elif not member.is_alias and member.is_module and member.path not in seen:
                 self.expand_wildcards(member, seen)  # type: ignore[arg-type]
@@ -209,19 +209,24 @@ class GriffeLoader:
         for name in to_remove:
             del obj[name]  # noqa: WPS420
 
-        for new_member in list(expanded.values()):
+        for new_member, alias_lineno, alias_endlineno in expanded:
             if new_member.is_alias:
                 try:
                     # TODO: maybe don't shortcut aliases:
                     # we want to keep public paths
-                    alias = Alias(new_member.name, new_member.target)  # type: ignore[union-attr]
+                    alias = Alias(
+                        new_member.name,
+                        new_member.target,  # type: ignore[union-attr]
+                        lineno=alias_lineno,
+                        endlineno=alias_endlineno,
+                    )
                 except AliasResolutionError:
                     alias = new_member  # type: ignore[assignment]  # noqa: WPS437
                 except CyclicAliasError as error:  # noqa: WPS440
                     logger.debug(str(error))
                     continue
             else:
-                alias = Alias(new_member.name, new_member)
+                alias = Alias(new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno)
             obj[new_member.name] = alias
 
     def resolve_module_aliases(  # noqa: WPS231
@@ -419,11 +424,11 @@ class GriffeLoader:
                 return member_parent
         raise UnimportableModuleError(f"{subpath} is not importable")
 
-    def _expand_wildcard(self, wildcard_obj: Alias) -> dict[str, Object | Alias]:
+    def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
         module = self.modules_collection[wildcard_obj.wildcard]  # type: ignore[index]  # we know it's a wildcard
         explicitely = "__all__" in module.members
-        return {
-            name: imported_member
-            for name, imported_member in module.members.items()
+        return [
+            (imported_member, wildcard_obj.alias_lineno, wildcard_obj.alias_endlineno)
+            for imported_member in module.members.values()
             if imported_member.is_exported(explicitely=explicitely)
-        }
+        ]

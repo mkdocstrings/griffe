@@ -775,8 +775,8 @@ class Alias(ObjectAliasMixin):
             if parent is not None:
                 with suppress(AliasResolutionError):
                     target.aliases[self.path] = self
-        self.lineno: int | None = lineno
-        self.endlineno: int | None = endlineno
+        self.alias_lineno: int | None = lineno
+        self.alias_endlineno: int | None = endlineno
         self._parent: Module | Class | None = parent
         self._passed_through: bool = False
 
@@ -816,6 +816,28 @@ class Alias(ObjectAliasMixin):
             return self.target.kind
         except (AliasResolutionError, CyclicAliasError):
             return Kind.ALIAS
+
+    @property
+    def lineno(self) -> int | None:
+        """Return the target lineno or the alias lineno.
+
+        Returns:
+            The target lineno or the alias lineno.
+        """
+        if self.resolved:
+            return self.target.lineno
+        return self.alias_lineno
+
+    @property
+    def endlineno(self) -> int | None:
+        """Return the target endlineno or the alias endlineno.
+
+        Returns:
+            The target endlineno or the alias endlineno.
+        """
+        if self.resolved:
+            return self.target.endlineno
+        return self.alias_endlineno
 
     @property
     def parent(self) -> Module | Class | None:
