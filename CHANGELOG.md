@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.12.5](https://github.com/mkdocstrings/griffe/releases/tag/0.12.5) - 2022-02-17
+
+<small>[Compare with 0.12.4](https://github.com/mkdocstrings/griffe/compare/0.12.4...0.12.5)</small>
+
+### Bug Fixes
+- Fix getting line numbers on aliases ([351750e](https://github.com/mkdocstrings/griffe/commit/351750ea70d0ab3f10c2766846c10d00612cda1d) by Timothée Mazzucotelli).
+
+
 ## [0.12.4](https://github.com/mkdocstrings/griffe/releases/tag/0.12.4) - 2022-02-16
 
 <small>[Compare with 0.12.3](https://github.com/mkdocstrings/griffe/compare/0.12.3...0.12.4)</small>
