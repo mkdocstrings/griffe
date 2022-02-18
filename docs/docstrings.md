@@ -104,3 +104,12 @@ Yields           | ✅     | [❌][issue-xref-numpy-yields]           | [❌][is
 [issue-xref-sphinx-returns]: https://github.com/mkdocstrings/griffe/issues/24
 [issue-xref-sphinx-warns]: https://github.com/mkdocstrings/griffe/issues/25
 [issue-xref-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/26
+
+## Parsing options
+
+Option                     | Google | Numpy                                 | Sphinx
+-------------------------- | ------ | ------------------------------------- | ------
+Ignore `__init__` summary  | ✅     | [❌][issue-ignore-init-summary-numpy] | [❌][issue-ignore-init-summary-sphinx]
+
+[issue-ignore-init-summary-numpy]: https://github.com/mkdocstrings/griffe/issues/44
+[issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
