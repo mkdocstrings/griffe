@@ -79,6 +79,8 @@ def test_indented_code_block():
     assert not warnings
 
 
+# =============================================================================================
+# Sections
 def test_parameters_section():
     """Parse parameters section."""
     docstring = """
@@ -98,6 +100,21 @@ def test_parameters_section():
 
     sections, _ = parse(docstring)
     assert len(sections) == 1
+
+
+def test_parse_starred_parameters():
+    """Parse parameters names with stars in them."""
+    docstring = """
+        Parameters
+        ----------
+        *a : str
+        **b : int
+        ***c : float
+    """
+
+    sections, warnings = parse(docstring)
+    assert len(sections) == 1
+    assert len(warnings) == 1
 
 
 def test_other_parameters_section():
@@ -132,19 +149,6 @@ def test_retrieve_annotation_from_parent():
     sections, _ = parse(docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))))
     assert len(sections) == 1
     assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="str"))
-
-
-def test_prefer_docstring_type_over_annotation():
-    """Prefer the type written in the docstring over the annotation in the parent."""
-    docstring = """
-        Parameters
-        ----------
-        a : int
-    """
-
-    sections, _ = parse(docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))))
-    assert len(sections) == 1
-    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
 
 
 def test_deprecated_section():
@@ -310,3 +314,18 @@ def test_examples_section():
     assert len(examples.value) == 5
     assert examples.value[0] == (DocstringSectionKind.text, "Hello.")
     assert examples.value[1] == (DocstringSectionKind.examples, ">>> 1 + 2\n3")
+
+
+# =============================================================================================
+# Annotations
+def test_prefer_docstring_type_over_annotation():
+    """Prefer the type written in the docstring over the annotation in the parent."""
+    docstring = """
+        Parameters
+        ----------
+        a : int
+    """
+
+    sections, _ = parse(docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))))
+    assert len(sections) == 1
+    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
