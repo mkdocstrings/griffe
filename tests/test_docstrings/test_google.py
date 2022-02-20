@@ -267,7 +267,7 @@ def test_parse_examples_sections():
 
             We also can write multiline examples:
 
-            >>> x = 3 + 2
+            >>> x = 3 + 2  # doctest: +SKIP
             >>> y = x + 10
             >>> y
             15
@@ -309,9 +309,12 @@ def test_parse_examples_sections():
             ),
             returns="int",
         ),
+        trim_doctest_flags=False,
     )
     assert len(sections) == 1
-    assert len(sections[0].value) == 9
+    examples = sections[0]
+    assert len(examples.value) == 9
+    assert examples.value[6][1].startswith(">>> x = 3 + 2  # doctest: +SKIP")
     assert not warnings
 
 
@@ -752,3 +755,72 @@ def test_ignore_init_summary(docstring):
         assert "Summary" in sections[0].value
         sections, _ = parse(docstring, ignore_init_summary=True)
         assert "Summary" in sections[0].value
+
+
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        """
+        Examples:
+            Base case 1. We want to skip the following test.
+            >>> 1 + 1 == 3  # doctest: +SKIP
+            True
+        """,
+        r"""
+        Examples:
+
+            Base case 2. We have a blankline test.
+            >>> print("a\n\nb")
+            a
+            <BLANKLINE>
+            b
+        """,
+    ],
+)
+def test_trim_doctest_flags_basic_example(docstring):
+    """Correctly parse simple example docstrings when `trim_doctest_flags` option is turned on.
+
+    Parameters:
+        docstring: The docstring to parse (parametrized).
+    """
+    sections, warnings = parse(docstring, trim_doctest_flags=True)
+    assert len(sections) == 1
+    assert len(sections[0].value) == 2
+    assert not warnings
+
+    # verify that doctest flags have indeed been trimmed
+    example_str = sections[0].value[1][1]
+    assert "# doctest: +SKIP" not in example_str
+    assert "<BLANKLINE>" not in example_str
+
+
+def test_trim_doctest_flags_multi_example():
+    """Correctly parse multiline example docstrings when `trim_doctest_flags` option is turned on."""
+    docstring = r"""
+    Examples:
+
+        Test multiline example blocks.
+        We want to skip the following test.
+        >>> 1 + 1 == 3  # doctest: +SKIP
+        True
+
+        And then a few more examples here:
+        >>> print("a\n\nb")
+        a
+        <BLANKLINE>
+        b
+        >>> 1 + 1 == 2  # doctest: +SKIP
+        >>> print(list(range(1, 100)))    # doctest: +ELLIPSIS
+        [1, 2, ..., 98, 99]
+    """
+    sections, warnings = parse(docstring, trim_doctest_flags=True)
+    assert len(sections) == 1
+    assert len(sections[0].value) == 4
+    assert not warnings
+
+    # verify that doctest flags have indeed been trimmed
+    example_str = sections[0].value[1][1]
+    assert "# doctest: +SKIP" not in example_str
+    example_str = sections[0].value[3][1]
+    assert "<BLANKLINE>" not in example_str
+    assert "\n>>> print(list(range(1, 100)))\n" in example_str
