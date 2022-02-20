@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from griffe.dataclasses import Function, Parameter, Parameters
 from griffe.docstrings import numpy
 from griffe.docstrings.dataclasses import (
@@ -296,7 +298,7 @@ def test_examples_section():
         >>> print("Hello again.")
         ```
 
-        >>> a = 0
+        >>> a = 0  # doctest: +SKIP
         >>> b = a + 1
         >>> print(b)
         1
@@ -308,12 +310,13 @@ def test_examples_section():
         Not in the section.
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse(docstring, trim_doctest_flags=False)
     assert len(sections) == 2
     examples = sections[0]
     assert len(examples.value) == 5
     assert examples.value[0] == (DocstringSectionKind.text, "Hello.")
     assert examples.value[1] == (DocstringSectionKind.examples, ">>> 1 + 2\n3")
+    assert examples.value[3][1].startswith(">>> a = 0  # doctest: +SKIP")
 
 
 # =============================================================================================
@@ -329,3 +332,77 @@ def test_prefer_docstring_type_over_annotation():
     sections, _ = parse(docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))))
     assert len(sections) == 1
     assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
+
+
+# =============================================================================================
+# Parser special features
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        """
+        Examples
+        --------
+        Base case 1. We want to skip the following test.
+        >>> 1 + 1 == 3  # doctest: +SKIP
+        True
+        """,
+        r"""
+        Examples
+        --------
+
+        Base case 2. We have a blankline test.
+        >>> print("a\n\nb")
+        a
+        <BLANKLINE>
+        b
+        """,
+    ],
+)
+def test_trim_doctest_flags_basic_example(docstring):
+    """Correctly parse simple example docstrings when `trim_doctest_flags` option is turned on.
+
+    Parameters:
+        docstring: The docstring to parse (parametrized).
+    """
+    sections, warnings = parse(docstring, trim_doctest_flags=True)
+    assert len(sections) == 1
+    assert len(sections[0].value) == 2
+    assert not warnings
+
+    # verify that doctest flags have indeed been trimmed
+    example_str = sections[0].value[1][1]
+    assert "# doctest: +SKIP" not in example_str
+    assert "<BLANKLINE>" not in example_str
+
+
+def test_trim_doctest_flags_multi_example():
+    """Correctly parse multiline example docstrings when `trim_doctest_flags` option is turned on."""
+    docstring = r"""
+    Examples
+    --------
+
+    Test multiline example blocks.
+    We want to skip the following test.
+    >>> 1 + 1 == 3  # doctest: +SKIP
+    True
+
+    And then a few more examples here:
+    >>> print("a\n\nb")
+    a
+    <BLANKLINE>
+    b
+    >>> 1 + 1 == 2  # doctest: +SKIP
+    >>> print(list(range(1, 100)))    # doctest: +ELLIPSIS
+    [1, 2, ..., 98, 99]
+    """
+    sections, warnings = parse(docstring, trim_doctest_flags=True)
+    assert len(sections) == 1
+    assert len(sections[0].value) == 4
+    assert not warnings
+
+    # verify that doctest flags have indeed been trimmed
+    example_str = sections[0].value[1][1]
+    assert "# doctest: +SKIP" not in example_str
+    example_str = sections[0].value[3][1]
+    assert "<BLANKLINE>" not in example_str
+    assert "\n>>> print(list(range(1, 100)))\n" in example_str
