@@ -32,7 +32,7 @@ _section_kind = {
     "params": DocstringSectionKind.parameters,
     "parameters": DocstringSectionKind.parameters,
     "keyword args": DocstringSectionKind.other_parameters,
-    "keyword parameters": DocstringSectionKind.other_parameters,
+    "keyword arguments": DocstringSectionKind.other_parameters,
     "other args": DocstringSectionKind.other_parameters,
     "other parameters": DocstringSectionKind.other_parameters,
     "raises": DocstringSectionKind.raises,
