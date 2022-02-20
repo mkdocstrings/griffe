@@ -110,6 +110,8 @@ Yields           | ✅     | [❌][issue-xref-numpy-yields]           | [❌][is
 Option                     | Google | Numpy                                 | Sphinx
 -------------------------- | ------ | ------------------------------------- | ------
 Ignore `__init__` summary  | ✅     | [❌][issue-ignore-init-summary-numpy] | [❌][issue-ignore-init-summary-sphinx]
+Trim doctest flags         | ✅     | ✅                                    | [❌][issue-trim-doctest-flags-sphinx]
 
 [issue-ignore-init-summary-numpy]: https://github.com/mkdocstrings/griffe/issues/44
 [issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
+[issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
