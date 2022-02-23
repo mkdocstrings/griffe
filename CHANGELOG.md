@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.13.0](https://github.com/mkdocstrings/griffe/releases/tag/0.13.0) - 2022-02-23
+
+<small>[Compare with 0.12.6](https://github.com/mkdocstrings/griffe/compare/0.12.6...0.13.0)</small>
+
+### Features
+- Implement `trim_doctest_flags` for Google and Numpy ([8057153](https://github.com/mkdocstrings/griffe/commit/8057153823711d8f486b1c52469090ce404771cb) by Jeremy Goh). [Issue mkdocstrings/mkdocstrings#386](https://github.com/mkdocstrings/mkdocstrings/issues/386), [PR #48](https://github.com/mkdocstrings/griffe/pull/48)
+
+### Bug Fixes
+- Rename keyword parameters to keyword arguments ([ce3eb6b](https://github.com/mkdocstrings/griffe/commit/ce3eb6b5d7caad6df41496dd300924535d92dc7f) by Jeremy Goh).
+
+
 ## [0.12.6](https://github.com/mkdocstrings/griffe/releases/tag/0.12.6) - 2022-02-18
 
 <small>[Compare with 0.12.5](https://github.com/mkdocstrings/griffe/compare/0.12.5...0.12.6)</small>
