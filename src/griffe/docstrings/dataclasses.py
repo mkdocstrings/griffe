@@ -3,96 +3,15 @@
 from __future__ import annotations
 
 import enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from typing import Any, Literal  # type: ignore[attr-defined]
+
     from griffe.dataclasses import Expression, Name
 
 
-class DocstringSectionKind(enum.Enum):
-    """The possible section kinds."""
-
-    text = "text"
-    parameters = "parameters"
-    other_parameters = "other parameters"
-    raises = "raises"
-    warns = "warns"
-    returns = "returns"
-    yields = "yields"
-    receives = "receives"
-    examples = "examples"
-    attributes = "attributes"
-    deprecated = "deprecated"
-    admonition = "admonition"
-
-
-class DocstringSection:
-    """Placeholder."""
-
-    def __init__(self, kind: DocstringSectionKind, value: Any, title: str | None = None) -> None:
-        """Initialize the section.
-
-        Parameters:
-            kind: The section kind.
-            value: The section value.
-            title: An optional title.
-        """
-        self.kind: DocstringSectionKind = kind
-        self.value: Any = value
-        self.title: str | None = title
-
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
-        """Return this section's data as a dictionary.
-
-        Parameters:
-            **kwargs: Additional serialization options.
-
-        Returns:
-            A dictionary.
-        """
-        if hasattr(self.value, "as_dict"):
-            serialized_value = self.value.as_dict(**kwargs)
-        else:
-            serialized_value = self.value
-        base = {"kind": self.kind.value, "value": serialized_value}
-        if self.title:
-            base["title"] = self.title
-        return base
-
-
-class DocstringAdmonition:
-    """This base class represents admonitions.
-
-    Attributes:
-        kind: The admonition kind.
-        contents: The admonition contents.
-    """
-
-    def __init__(self, *, kind: str, contents: str) -> None:
-        """Initialize the admonition.
-
-        Parameters:
-            kind: The admonition kind.
-            contents: The admonition contents.
-        """
-        self.kind: str = kind
-        self.contents: str = contents
-
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
-        """Return this admonition's data as a dictionary.
-
-        Parameters:
-            **kwargs: Additional serialization options.
-
-        Returns:
-            A dictionary.
-        """
-        return {
-            "kind": self.kind,
-            "contents": self.contents,
-        }
-
-
+# Elements -----------------------------------------------
 class DocstringElement:
     """This base class represents annotated, nameless elements.
 
@@ -169,6 +88,53 @@ class DocstringNamedElement(DocstringElement):
         return base
 
 
+class DocstringAdmonition(DocstringElement):
+    """This class represents an admonition."""
+
+    @property
+    def kind(self):
+        """Return the kind of this admonition.
+
+        Returns:
+            The admonition's kind.
+        """
+        return self.annotation
+
+    @kind.setter
+    def kind(self, value):
+        self.annotation = value
+
+    @property
+    def contents(self):
+        """Return the contents of this admonition.
+
+        Returns:
+            The admonition's contents.
+        """
+        return self.description
+
+    @contents.setter
+    def contents(self, value):
+        self.description = value
+
+
+class DocstringDeprecated(DocstringElement):
+    """This class represents a documented deprecated item."""
+
+    @property
+    def version(self):
+        """Return the version of this deprecation.
+
+        Returns:
+            The deprecation version.
+        """
+        return self.annotation
+
+    @version.setter
+    def version(self, value):
+        self.annotation = value
+
+
 class DocstringRaise(DocstringElement):
     """This class represents a documented raise value."""
 
@@ -208,3 +174,243 @@ class DocstringParameter(DocstringNamedElement):
 
 class DocstringAttribute(DocstringNamedElement):
     """This class represents a documented module/class attribute."""
+
+
+# Sections -----------------------------------------------
+class DocstringSectionKind(enum.Enum):
+    """The possible section kinds."""
+
+    text = "text"
+    parameters = "parameters"
+    other_parameters = "other parameters"
+    raises = "raises"
+    warns = "warns"
+    returns = "returns"
+    yields = "yields"
+    receives = "receives"
+    examples = "examples"
+    attributes = "attributes"
+    deprecated = "deprecated"
+    admonition = "admonition"
+
+
+class DocstringSection:
+    """This class represents a docstring section."""
+
+    kind: DocstringSectionKind
+
+    def __init__(self, title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            title: An optional title.
+        """
+        self.title: str | None = title
+
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+        """Return this section's data as a dictionary.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        if hasattr(self.value, "as_dict"):  # type: ignore[attr-defined]
+            serialized_value = self.value.as_dict(**kwargs)  # type: ignore[attr-defined]
+        else:
+            serialized_value = self.value  # type: ignore[attr-defined]
+        base = {"kind": self.kind.value, "value": serialized_value}
+        if self.title:
+            base["title"] = self.title
+        return base
+
+
+class DocstringSectionText(DocstringSection):
+    """This class represents a text section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.text
+
+    def __init__(self, value: str, title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section text.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: str = value
+
+
+class DocstringSectionParameters(DocstringSection):
+    """This class represents a parameters section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.parameters
+
+    def __init__(self, value: list[DocstringParameter], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section parameters.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringParameter] = value
+
+
+class DocstringSectionOtherParameters(DocstringSectionParameters):
+    """This class represents an other parameters section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.other_parameters
+
+
+class DocstringSectionRaises(DocstringSection):
+    """This class represents a raises section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.raises
+
+    def __init__(self, value: list[DocstringRaise], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section exceptions.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringRaise] = value
+
+
+class DocstringSectionWarns(DocstringSection):
+    """This class represents a warns section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.warns
+
+    def __init__(self, value: list[DocstringWarn], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section warnings.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringWarn] = value
+
+
+class DocstringSectionReturns(DocstringSection):
+    """This class represents a returns section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.returns
+
+    def __init__(self, value: list[DocstringReturn], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section returned items.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringReturn] = value
+
+
+class DocstringSectionYields(DocstringSection):
+    """This class represents a yields section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.yields
+
+    def __init__(self, value: list[DocstringYield], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section yielded items.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringYield] = value
+
+
+class DocstringSectionReceives(DocstringSection):
+    """This class represents a receives section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.receives
+
+    def __init__(self, value: list[DocstringReceive], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section received items.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringReceive] = value
+
+
+class DocstringSectionExamples(DocstringSection):
+    """This class represents an examples section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.examples
+
+    def __init__(
+        self,
+        value: list[tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]],
+        title: str | None = None,
+    ) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section examples.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[
+            tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]
+        ] = value
+
+
+class DocstringSectionAttributes(DocstringSection):
+    """This class represents an attributes section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.attributes
+
+    def __init__(self, value: list[DocstringAttribute], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section attributes.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringAttribute] = value
+
+
+class DocstringSectionDeprecated(DocstringSection):
+    """This class represents a deprecated section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.deprecated
+
+    def __init__(self, version: str, text: str, title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            version: The deprecation version.
+            text: The deprecation text.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: DocstringDeprecated = DocstringDeprecated(annotation=version, description=text)
+
+
+class DocstringSectionAdmonition(DocstringSection):
+    """This class represents an admonition section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.admonition
+
+    def __init__(self, kind: str, text: str, title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            kind: The admonition kind.
+            text: The admonition text.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: DocstringAdmonition = DocstringAdmonition(annotation=kind, description=text)

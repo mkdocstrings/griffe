@@ -41,7 +41,7 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Pattern
+from typing import TYPE_CHECKING
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
@@ -50,7 +50,18 @@ from griffe.docstrings.dataclasses import (
     DocstringReceive,
     DocstringReturn,
     DocstringSection,
+    DocstringSectionAttributes,
+    DocstringSectionDeprecated,
+    DocstringSectionExamples,
     DocstringSectionKind,
+    DocstringSectionOtherParameters,
+    DocstringSectionParameters,
+    DocstringSectionRaises,
+    DocstringSectionReceives,
+    DocstringSectionReturns,
+    DocstringSectionText,
+    DocstringSectionWarns,
+    DocstringSectionYields,
     DocstringWarn,
     DocstringYield,
 )
@@ -58,6 +69,8 @@ from griffe.docstrings.utils import warning
 from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
+    from typing import Any, Literal, Pattern  # type: ignore[attr-defined]
+
     from griffe.dataclasses import Docstring
 
 _warn = warning(__name__)
@@ -245,11 +258,11 @@ def _read_parameters_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionParameters | None, int]:
     parameters, index = _read_parameters(docstring, offset)
 
     if parameters:
-        return DocstringSection(DocstringSectionKind.parameters, parameters), index
+        return DocstringSectionParameters(parameters), index
 
     _warn(docstring, index, f"Empty parameters section at line {offset}")
     return None, index
@@ -259,11 +272,11 @@ def _read_other_parameters_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionOtherParameters | None, int]:
     parameters, index = _read_parameters(docstring, offset)
 
     if parameters:
-        return DocstringSection(DocstringSectionKind.other_parameters, parameters), index
+        return DocstringSectionOtherParameters(parameters), index
 
     _warn(docstring, index, f"Empty other parameters section at line {offset}")
     return None, index
@@ -273,7 +286,7 @@ def _read_deprecated_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionDeprecated | None, int]:
     # deprecated
     # SINCE_VERSION
     #     TEXT?
@@ -289,14 +302,14 @@ def _read_deprecated_section(
     item = items[0]
     version = item[0]
     text = dedent("\n".join(item[1:]))
-    return DocstringSection(DocstringSectionKind.deprecated, (version, text)), index
+    return DocstringSectionDeprecated(version=version, text=text), index
 
 
 def _read_returns_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionReturns | None, int]:
     # returns
     # (NAME : )?TYPE
     #     TEXT?
@@ -316,14 +329,14 @@ def _read_returns_section(
         name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
-    return DocstringSection(DocstringSectionKind.returns, returns), index
+    return DocstringSectionReturns(returns), index
 
 
 def _read_yields_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionYields | None, int]:
     # yields
     # (NAME : )?TYPE
     #     TEXT?
@@ -343,14 +356,14 @@ def _read_yields_section(
         name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
-    return DocstringSection(DocstringSectionKind.yields, yields), index
+    return DocstringSectionYields(yields), index
 
 
 def _read_receives_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionReceives | None, int]:
     # receives
     # (NAME : )?TYPE
     #     TEXT?
@@ -370,14 +383,14 @@ def _read_receives_section(
         name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
-    return DocstringSection(DocstringSectionKind.receives, receives), index
+    return DocstringSectionReceives(receives), index
 
 
 def _read_raises_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionRaises | None, int]:
     # raises
     # EXCEPTION
     #     TEXT?
@@ -392,14 +405,14 @@ def _read_raises_section(
         annotation = item[0]
         text = dedent("\n".join(item[1:]))
         raises.append(DocstringRaise(annotation=annotation, description=text))
-    return DocstringSection(DocstringSectionKind.raises, raises), index
+    return DocstringSectionRaises(raises), index
 
 
 def _read_warns_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionWarns | None, int]:
     # warns
     # WARNING
     #     TEXT?
@@ -414,14 +427,14 @@ def _read_warns_section(
         annotation = item[0]
         text = dedent("\n".join(item[1:]))
         warns.append(DocstringWarn(annotation=annotation, description=text))
-    return DocstringSection(DocstringSectionKind.warns, warns), index
+    return DocstringSectionWarns(warns), index
 
 
 def _read_attributes_section(
     docstring: Docstring,
     offset: int,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionAttributes | None, int]:
     # attributes (for classes)
     # NAME( : TYPE)?
     #    TEXT?
@@ -442,7 +455,7 @@ def _read_attributes_section(
             annotation = None
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
-    return DocstringSection(DocstringSectionKind.attributes, attributes), index
+    return DocstringSectionAttributes(attributes), index
 
 
 def _read_examples_section(  # noqa: WPS231
@@ -450,10 +463,10 @@ def _read_examples_section(  # noqa: WPS231
     offset: int,
     trim_doctest_flags: bool = True,
     **options: Any,
-) -> tuple[DocstringSection | None, int]:
+) -> tuple[DocstringSectionExamples | None, int]:
     text, index = _read_block(docstring, offset)
 
-    sub_sections = []
+    sub_sections: list[tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]] = []
     in_code_example = False
     in_code_block = False
     current_text: list[str] = []
@@ -501,7 +514,7 @@ def _read_examples_section(  # noqa: WPS231
         sub_sections.append((DocstringSectionKind.examples, "\n".join(current_example)))
 
     if sub_sections:
-        return DocstringSection(DocstringSectionKind.examples, sub_sections), index
+        return DocstringSectionExamples(sub_sections), index
 
     _warn(docstring, index, f"Empty examples section at line {offset}")
     return None, index
@@ -539,7 +552,7 @@ def parse(  # noqa: WPS231
     Returns:
         A list of docstring sections.
     """
-    sections = []
+    sections: list[DocstringSection] = []
     current_section = []
 
     in_code_block = False
@@ -563,9 +576,7 @@ def parse(  # noqa: WPS231
         elif line_lower in _section_kind and _is_dash_line(lines[index + 1]):
             if current_section:
                 if any(current_section):
-                    sections.append(
-                        DocstringSection(DocstringSectionKind.text, "\n".join(current_section).rstrip("\n"))
-                    )
+                    sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                 current_section = []
             reader = _section_reader[_section_kind[line_lower]]
             section, index = reader(docstring, index + 2, **options)  # type: ignore[operator]
@@ -582,6 +593,6 @@ def parse(  # noqa: WPS231
         index += 1
 
     if current_section:
-        sections.append(DocstringSection(DocstringSectionKind.text, "\n".join(current_section).rstrip("\n")))
+        sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
 
     return sections

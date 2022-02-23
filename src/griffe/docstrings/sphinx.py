@@ -17,7 +17,11 @@ from griffe.docstrings.dataclasses import (
     DocstringRaise,
     DocstringReturn,
     DocstringSection,
-    DocstringSectionKind,
+    DocstringSectionAttributes,
+    DocstringSectionParameters,
+    DocstringSectionRaises,
+    DocstringSectionReturns,
+    DocstringSectionText,
 )
 from griffe.docstrings.utils import warning
 from griffe.expressions import Expression, Name
@@ -316,17 +320,17 @@ def _read_return_type(docstring: Docstring, offset: int, parsed_values: ParsedVa
 
 def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[DocstringSection]:
     text = "\n".join(_strip_blank_lines(parsed_values.description))
-    result = [DocstringSection(DocstringSectionKind.text, text)]
+    result: list[DocstringSection] = [DocstringSectionText(text)]
     if parsed_values.parameters:
         param_values = list(parsed_values.parameters.values())
-        result.append(DocstringSection(DocstringSectionKind.parameters, param_values))
+        result.append(DocstringSectionParameters(param_values))
     if parsed_values.attributes:
         attribute_values = list(parsed_values.attributes.values())
-        result.append(DocstringSection(DocstringSectionKind.attributes, attribute_values))
+        result.append(DocstringSectionAttributes(attribute_values))
     if parsed_values.return_value is not None:
-        result.append(DocstringSection(DocstringSectionKind.returns, parsed_values.return_value))
+        result.append(DocstringSectionReturns([parsed_values.return_value]))
     if parsed_values.exceptions:
-        result.append(DocstringSection(DocstringSectionKind.raises, parsed_values.exceptions))
+        result.append(DocstringSectionRaises(parsed_values.exceptions))
     return result
 
 

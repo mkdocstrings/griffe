@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 from typing import TYPE_CHECKING, Any
 
-from griffe.docstrings.dataclasses import DocstringSection, DocstringSectionKind
+from griffe.docstrings.dataclasses import DocstringSection, DocstringSectionText
 from griffe.docstrings.google import parse as parse_google
 from griffe.docstrings.numpy import parse as parse_numpy
 from griffe.docstrings.sphinx import parse as parse_sphinx
@@ -49,4 +49,4 @@ def parse(docstring: Docstring, parser: Parser | None, **options: Any) -> list[D
     """
     if parser:
         return parsers[parser](docstring, **options)  # type: ignore[operator]
-    return [DocstringSection(DocstringSectionKind.text, docstring.value)]
+    return [DocstringSectionText(docstring.value)]
