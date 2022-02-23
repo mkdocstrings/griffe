@@ -620,7 +620,7 @@ def parse(  # noqa: WPS231
                             )
                         current_section = []
                     reader = _section_reader[_section_kind[admonition_type.lower()]]
-                    section, offset = reader(docstring, offset + 1, **options)
+                    section, offset = reader(docstring, offset + 1, **options)  # type: ignore[operator]
                     if section:
                         section.title = title
                         sections.append(section)

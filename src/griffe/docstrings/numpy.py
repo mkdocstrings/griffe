@@ -568,7 +568,7 @@ def parse(  # noqa: WPS231
                     )
                 current_section = []
             reader = _section_reader[_section_kind[line_lower]]
-            section, index = reader(docstring, index + 2, **options)
+            section, index = reader(docstring, index + 2, **options)  # type: ignore[operator]
             if section:
                 sections.append(section)
 
