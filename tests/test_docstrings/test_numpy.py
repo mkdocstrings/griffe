@@ -165,8 +165,8 @@ def test_deprecated_section():
 
     sections, _ = parse(docstring)
     assert len(sections) == 1
-    assert sections[0].value[0] == "1.23.4"
-    assert sections[0].value[1] == "Deprecated.\nSorry."
+    assert sections[0].value.version == "1.23.4"
+    assert sections[0].value.description == "Deprecated.\nSorry."
 
 
 def test_returns_section():
