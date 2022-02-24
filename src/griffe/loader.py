@@ -210,24 +210,7 @@ class GriffeLoader:
             del obj[name]  # noqa: WPS420
 
         for new_member, alias_lineno, alias_endlineno in expanded:
-            if new_member.is_alias:
-                try:
-                    # TODO: maybe don't shortcut aliases:
-                    # we want to keep public paths
-                    alias = Alias(
-                        new_member.name,
-                        new_member.target,  # type: ignore[union-attr]
-                        lineno=alias_lineno,
-                        endlineno=alias_endlineno,
-                    )
-                except AliasResolutionError:
-                    alias = new_member  # type: ignore[assignment]  # noqa: WPS437
-                except CyclicAliasError as error:  # noqa: WPS440
-                    logger.debug(str(error))
-                    continue
-            else:
-                alias = Alias(new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno)
-            obj[new_member.name] = alias
+            obj[new_member.name] = Alias(new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno)
 
     def resolve_module_aliases(  # noqa: WPS231
         self,

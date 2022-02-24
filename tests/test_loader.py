@@ -1,5 +1,6 @@
 """Tests for the `loader` module."""
 
+from griffe.expressions import Name
 from griffe.loader import GriffeLoader
 from tests.helpers import temporary_pyfile, temporary_pypackage
 
@@ -41,3 +42,25 @@ def test_recursive_wildcard_expansion():
         assert "CONST_Y" in package["mod_a"].members
         assert "CONST_X" in package["mod_a.mod_b"].members
         assert "CONST_Y" in package["mod_a.mod_b"].members
+
+
+def test_dont_shortcut_alias_chain_after_expanding_wildcards():
+    """Assert public aliases paths are not resolved to canonical paths when expanding wildcards."""
+    with temporary_pypackage("package", ["mod_a.py", "mod_b.py", "mod_c.py"]) as tmp_package:
+        mod_a = tmp_package.path / "mod_a.py"
+        mod_b = tmp_package.path / "mod_b.py"
+        mod_c = tmp_package.path / "mod_c.py"
+
+        mod_a.write_text("from package.mod_b import *\nclass Child(Base): ...\n")
+        mod_b.write_text("from package.mod_c import Base\n__all__ = ['Base']\n")
+        mod_c.write_text("class Base: ...\n")
+
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        package = loader.load_module(tmp_package.name)
+        loader.resolve_aliases(package)
+        child = package["mod_a.Child"]
+        assert child.bases
+        base = child.bases[0]
+        assert isinstance(base, Name)
+        assert base.source == "Base"
+        assert base.full == "package.mod_b.Base"
