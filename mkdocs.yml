@@ -58,9 +58,9 @@ markdown_extensions:
 - pymdownx.snippets:
     check_paths: true
 - pymdownx.superfences
-- pymdownx.tabbed
-- pymdownx.tasklist:
-    custom_checkbox: true
+- pymdownx.tabbed:
+    alternate_style: true
+- pymdownx.tasklist
 - toc:
     permalink: "¤"
 
@@ -73,8 +73,8 @@ plugins:
     - docs/gen_griffe_json.py
 - literate-nav:
     nav_file: SUMMARY.md
-- section-index
 - coverage
+- section-index
 - mkdocstrings:
     handlers:
       python:
