@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.13.1](https://github.com/mkdocstrings/griffe/releases/tag/0.13.1) - 2022-02-24
+
+<small>[Compare with 0.13.0](https://github.com/mkdocstrings/griffe/compare/0.13.0...0.13.1)</small>
+
+### Bug Fixes
+- Don't cut through wildcard-expanded aliases chains ([65dafa4](https://github.com/mkdocstrings/griffe/commit/65dafa4660e8c95687cad4d5c5145a56f126ae61) by Timothée Mazzucotelli).
+- Fix docstrings warnings when there's no parent module ([e080549](https://github.com/mkdocstrings/griffe/commit/e080549e3eaf887a0f037a4457329eab35bd6409) by Timothée Mazzucotelli). [Issue #51](https://github.com/mkdocstrings/griffe/issues/51)
+
+### Code Refactoring
+- Use proper classes for docstrings sections ([46eddac](https://github.com/mkdocstrings/griffe/commit/46eddac0b847eeb75e4964a3186069f7698235b0) by Timothée Mazzucotelli). [Issue mkdocstrings/python#3](https://github.com/mkdocstrings/python/issues/3), [PR #52](https://github.com/mkdocstrings/griffe/pull/52)
+
+
 ## [0.13.0](https://github.com/mkdocstrings/griffe/releases/tag/0.13.0) - 2022-02-23
 
 <small>[Compare with 0.12.6](https://github.com/mkdocstrings/griffe/compare/0.12.6...0.13.0)</small>
@@ -21,7 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <small>[Compare with 0.12.5](https://github.com/mkdocstrings/griffe/compare/0.12.5...0.12.6)</small>
 
 ### Bug Fixes
-- Support starred parameters in Numpy docstrings ([27f0fc2](https://github.com/mkdocstrings/griffe/commit/27f0fc21299a41a3afc07b46afbe8f37757c3918) by Timothée Mazzucotelli). References: [#43](https://github.com/mkdocstrings/griffe/issues/43)
+- Support starred parameters in Numpy docstrings ([27f0fc2](https://github.com/mkdocstrings/griffe/commit/27f0fc21299a41a3afc07b46afbe8f37757c3918) by Timothée Mazzucotelli). [Issue #43](https://github.com/mkdocstrings/griffe/issues/43)
 
 
 ## [0.12.5](https://github.com/mkdocstrings/griffe/releases/tag/0.12.5) - 2022-02-17
