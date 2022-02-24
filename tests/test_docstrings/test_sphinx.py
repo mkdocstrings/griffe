@@ -7,7 +7,6 @@ import inspect
 import pytest
 
 from griffe.dataclasses import Attribute, Class, Function, Module, Parameter, Parameters
-from griffe.docstrings import sphinx
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
     DocstringParameter,
@@ -15,15 +14,13 @@ from griffe.docstrings.dataclasses import (
     DocstringReturn,
     DocstringSectionKind,
 )
-from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal, parser
+from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
 
 SOME_NAME = "foo"
 SOME_TEXT = "descriptive test text"
 SOME_EXTRA_TEXT = "more test text"
 SOME_EXCEPTION_NAME = "SomeException"
 SOME_OTHER_EXCEPTION_NAME = "SomeOtherException"
-
-parse = parser(sphinx)
 
 
 @pytest.mark.parametrize(
@@ -37,13 +34,14 @@ parse = parser(sphinx)
         """,
     ],
 )
-def test_parse__description_only_docstring__single_markdown_section(docstring):
+def test_parse__description_only_docstring__single_markdown_section(parse_sphinx, docstring):
     """Parse a single or multiline docstring.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         docstring: A parametrized docstring.
     """
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_sphinx(docstring)
 
     assert len(sections) == 1
     assert sections[0].kind is DocstringSectionKind.text
@@ -51,9 +49,13 @@ def test_parse__description_only_docstring__single_markdown_section(docstring):
     assert not warnings
 
 
-def test_parse__no_description__single_markdown_section():
-    """Parse an empty docstring."""
-    sections, warnings = parse("")
+def test_parse__no_description__single_markdown_section(parse_sphinx):
+    """Parse an empty docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    sections, warnings = parse_sphinx("")
 
     assert len(sections) == 1
     assert sections[0].kind is DocstringSectionKind.text
@@ -61,9 +63,13 @@ def test_parse__no_description__single_markdown_section():
     assert not warnings
 
 
-def test_parse__multiple_blank_lines_before_description__single_markdown_section():
-    """Parse a docstring with initial blank lines."""
-    sections, warnings = parse(
+def test_parse__multiple_blank_lines_before_description__single_markdown_section(parse_sphinx):
+    """Parse a docstring with initial blank lines.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    sections, warnings = parse_sphinx(
         """
 
 
@@ -76,9 +82,13 @@ def test_parse__multiple_blank_lines_before_description__single_markdown_section
     assert not warnings
 
 
-def test_parse__param_field__param_section():
-    """Parse a parameter section."""
-    sections, _ = parse(
+def test_parse__param_field__param_section(parse_sphinx):
+    """Parse a parameter section.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    sections, _ = parse_sphinx(
         f"""
         Docstring with one line param.
 
@@ -90,9 +100,13 @@ def test_parse__param_field__param_section():
     assert_parameter_equal(sections[1].value[0], DocstringParameter(SOME_NAME, description=SOME_TEXT))
 
 
-def test_parse__only_param_field__empty_markdown():
-    """Parse only a parameter section."""
-    sections, _ = parse(":param foo: text")
+def test_parse__only_param_field__empty_markdown(parse_sphinx):
+    """Parse only a parameter section.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    sections, _ = parse_sphinx(":param foo: text")
     assert len(sections) == 2
     assert sections[0].kind is DocstringSectionKind.text
     assert sections[0].value == ""
@@ -109,13 +123,14 @@ def test_parse__only_param_field__empty_markdown():
         "keyword",
     ],
 )
-def test_parse__all_param_names__param_section(param_directive_name):
+def test_parse__all_param_names__param_section(parse_sphinx, param_directive_name):
     """Parse all parameters directives.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         param_directive_name: A parametrized directive name.
     """
-    sections, _ = parse(
+    sections, _ = parse_sphinx(
         f"""
         Docstring with one line param.
 
@@ -144,13 +159,14 @@ def test_parse__all_param_names__param_section(param_directive_name):
         """,
     ],
 )
-def test_parse__param_field_multi_line__param_section(docstring):
+def test_parse__param_field_multi_line__param_section(parse_sphinx, docstring):
     """Parse multiline directives.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         docstring: A parametrized docstring.
     """
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -159,15 +175,19 @@ def test_parse__param_field_multi_line__param_section(docstring):
     )
 
 
-def test_parse__param_field_for_function__param_section_with_kind():
-    """Parse parameters."""
+def test_parse__param_field_for_function__param_section_with_kind(parse_sphinx):
+    """Parse parameters.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -176,15 +196,19 @@ def test_parse__param_field_for_function__param_section_with_kind():
     )
 
 
-def test_parse__param_field_docs_type__param_section_with_type():
-    """Parse parameters with types."""
+def test_parse__param_field_docs_type__param_section_with_type(parse_sphinx):
+    """Parse parameters with types.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param str foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -193,8 +217,12 @@ def test_parse__param_field_docs_type__param_section_with_type():
     )
 
 
-def test_parse__param_field_type_field__param_section_with_type():
-    """Parse parameters with separated types."""
+def test_parse__param_field_type_field__param_section_with_type(parse_sphinx):
+    """Parse parameters with separated types.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -202,7 +230,7 @@ def test_parse__param_field_type_field__param_section_with_type():
         :type foo: str
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -211,8 +239,12 @@ def test_parse__param_field_type_field__param_section_with_type():
     )
 
 
-def test_parse__param_field_type_field_first__param_section_with_type():
-    """Parse parameters with separated types first."""
+def test_parse__param_field_type_field_first__param_section_with_type(parse_sphinx):
+    """Parse parameters with separated types first.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -220,7 +252,7 @@ def test_parse__param_field_type_field_first__param_section_with_type():
         :param foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -230,10 +262,11 @@ def test_parse__param_field_type_field_first__param_section_with_type():
 
 
 @pytest.mark.parametrize("union", ["str or None", "None or str", "str or int", "str or int or float"])
-def test_parse__param_field_type_field_or_none__param_section_with_optional(union):
+def test_parse__param_field_type_field_or_none__param_section_with_optional(parse_sphinx, union):
     """Parse parameters with separated union types.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         union: A parametrized union type.
     """
     docstring = f"""
@@ -243,7 +276,7 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional(unio
         :type foo: {union}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -252,15 +285,19 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional(unio
     )
 
 
-def test_parse__param_field_annotate_type__param_section_with_type():
-    """Parse a simple docstring."""
+def test_parse__param_field_annotate_type__param_section_with_type(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param foo: {SOME_TEXT}
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
@@ -273,15 +310,19 @@ def test_parse__param_field_annotate_type__param_section_with_type():
     assert not warnings
 
 
-def test_parse__param_field_no_matching_param__result_from_docstring():
-    """Parse a simple docstring."""
+def test_parse__param_field_no_matching_param__result_from_docstring(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param other: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(
@@ -290,15 +331,19 @@ def test_parse__param_field_no_matching_param__result_from_docstring():
     )
 
 
-def test_parse__param_field_with_default__result_from_docstring():
-    """Parse a simple docstring."""
+def test_parse__param_field_with_default__result_from_docstring(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param foo: {SOME_TEXT}
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", kind=None, default=repr("")))),
     )
@@ -311,44 +356,60 @@ def test_parse__param_field_with_default__result_from_docstring():
     assert not warnings
 
 
-def test_parse__param_field_no_matching_param__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_field_no_matching_param__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param other: {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "No matching parameter for 'other'" in warnings[0]
 
 
-def test_parse__invalid_param_field_only_initial_marker__error_message():
-    """Parse a simple docstring."""
+def test_parse__invalid_param_field_only_initial_marker__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param foo {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get ':directive: value' pair" in warnings[0]
 
 
-def test_parse__invalid_param_field_wrong_part_count__error_message():
-    """Parse a simple docstring."""
+def test_parse__invalid_param_field_wrong_part_count__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
         :param: {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to parse field directive" in warnings[0]
 
 
-def test_parse__param_twice__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_twice__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -356,15 +417,19 @@ def test_parse__param_twice__error_message():
         :param foo: {SOME_TEXT} again
     """
 
-    _, warnings = parse(
+    _, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", kind=None))),
     )
     assert "Duplicate parameter entry for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_twice_doc__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_type_twice_doc__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -372,15 +437,19 @@ def test_parse__param_type_twice_doc__error_message():
         :type foo: str
     """
 
-    _, warnings = parse(
+    _, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_twice_type_directive_first__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_type_twice_type_directive_first__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -388,15 +457,19 @@ def test_parse__param_type_twice_type_directive_first__error_message():
         :param str foo: {SOME_TEXT}
     """
 
-    _, warnings = parse(
+    _, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_twice_annotated__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_type_twice_annotated__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -404,15 +477,19 @@ def test_parse__param_type_twice_annotated__error_message():
         :type foo: str
     """
 
-    _, warnings = parse(
+    _, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_no_type__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_type_no_type__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -420,15 +497,19 @@ def test_parse__param_type_no_type__error_message():
         :type str
     """
 
-    _, warnings = parse(
+    _, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
 
-def test_parse__param_type_no_name__error_message():
-    """Parse a simple docstring."""
+def test_parse__param_type_no_name__error_message(parse_sphinx):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Docstring with line continuation.
 
@@ -436,7 +517,7 @@ def test_parse__param_type_no_name__error_message():
         :type: str
         """
 
-    _, warnings = parse(
+    _, warnings = parse_sphinx(
         docstring,
         parent=Function("func", parameters=Parameters(Parameter("foo", annotation="str", kind=None))),
     )
@@ -460,13 +541,14 @@ def test_parse__param_type_no_name__error_message():
         """,
     ],
 )
-def test_parse__attribute_field_multi_line__param_section(docstring):
+def test_parse__attribute_field_multi_line__param_section(parse_sphinx, docstring):
     """Parse multiline attributes.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         docstring: A parametrized docstring.
     """
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
@@ -484,13 +566,14 @@ def test_parse__attribute_field_multi_line__param_section(docstring):
         "cvar",
     ],
 )
-def test_parse__all_attribute_names__param_section(attribute_directive_name):
+def test_parse__all_attribute_names__param_section(parse_sphinx, attribute_directive_name):
     """Parse all attributes directives.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         attribute_directive_name: A parametrized directive name.
     """
-    sections, warnings = parse(
+    sections, warnings = parse_sphinx(
         f"""
         Docstring with one line attribute.
 
@@ -506,15 +589,19 @@ def test_parse__all_attribute_names__param_section(attribute_directive_name):
     assert not warnings
 
 
-def test_parse__class_attributes__attributes_section():
-    """Parse class attributes."""
+def test_parse__class_attributes__attributes_section(parse_sphinx):
+    """Parse class attributes.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
         :var foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring, parent=Class("klass"))
+    sections, _ = parse_sphinx(docstring, parent=Class("klass"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
@@ -523,8 +610,12 @@ def test_parse__class_attributes__attributes_section():
     )
 
 
-def test_parse__class_attributes_with_type__annotation_in_attributes_section():
-    """Parse typed class attributes."""
+def test_parse__class_attributes_with_type__annotation_in_attributes_section(parse_sphinx):
+    """Parse typed class attributes.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
@@ -532,7 +623,7 @@ def test_parse__class_attributes_with_type__annotation_in_attributes_section():
         :var foo: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring, parent=Class("klass"))
+    sections, _ = parse_sphinx(docstring, parent=Class("klass"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
     assert_attribute_equal(
@@ -541,32 +632,44 @@ def test_parse__class_attributes_with_type__annotation_in_attributes_section():
     )
 
 
-def test_parse__attribute_invalid_directive___error():
-    """Warn on invalid attribute directive."""
+def test_parse__attribute_invalid_directive___error(parse_sphinx):
+    """Warn on invalid attribute directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
         :var {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
 
-def test_parse__attribute_no_name__error():
-    """Warn on invalid attribute directive."""
+def test_parse__attribute_no_name__error(parse_sphinx):
+    """Warn on invalid attribute directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
         :var: {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to parse field directive from" in warnings[0]
 
 
-def test_parse__attribute_duplicate__error():
-    """Warn on duplicate attribute directive."""
+def test_parse__attribute_duplicate__error(parse_sphinx):
+    """Warn on duplicate attribute directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
@@ -574,12 +677,16 @@ def test_parse__attribute_duplicate__error():
         :var foo: {SOME_TEXT}
         """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Duplicate attribute entry for 'foo'" in warnings[0]
 
 
-def test_parse__class_attributes_type_invalid__error():
-    """Warn on invalid attribute type directive."""
+def test_parse__class_attributes_type_invalid__error(parse_sphinx):
+    """Warn on invalid attribute type directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
@@ -587,12 +694,16 @@ def test_parse__class_attributes_type_invalid__error():
         :var foo: {SOME_TEXT}
         """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__class_attributes_type_no_name__error():
-    """Warn on invalid attribute directive."""
+def test_parse__class_attributes_type_no_name__error(parse_sphinx):
+    """Warn on invalid attribute directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Class docstring with attributes
 
@@ -600,19 +711,23 @@ def test_parse__class_attributes_type_no_name__error():
         :var foo: {SOME_TEXT}
         """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get attribute name from" in warnings[0]
 
 
-def test_parse__return_directive__return_section_no_type():
-    """Parse return directives."""
+def test_parse__return_directive__return_section_no_type(parse_sphinx):
+    """Parse return directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return directive
 
         :return: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -621,8 +736,12 @@ def test_parse__return_directive__return_section_no_type():
     )
 
 
-def test_parse__return_directive_rtype__return_section_with_type():
-    """Parse typed return directives."""
+def test_parse__return_directive_rtype__return_section_with_type(parse_sphinx):
+    """Parse typed return directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return & rtype directive
 
@@ -630,7 +749,7 @@ def test_parse__return_directive_rtype__return_section_with_type():
         :rtype: str
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -639,8 +758,12 @@ def test_parse__return_directive_rtype__return_section_with_type():
     )
 
 
-def test_parse__return_directive_rtype_first__return_section_with_type():
-    """Parse typed-first return directives."""
+def test_parse__return_directive_rtype_first__return_section_with_type(parse_sphinx):
+    """Parse typed-first return directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return & rtype directive
 
@@ -648,7 +771,7 @@ def test_parse__return_directive_rtype_first__return_section_with_type():
         :return: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -657,15 +780,19 @@ def test_parse__return_directive_rtype_first__return_section_with_type():
     )
 
 
-def test_parse__return_directive_annotation__return_section_with_type():
-    """Parse return directives with return annotation."""
+def test_parse__return_directive_annotation__return_section_with_type(parse_sphinx):
+    """Parse return directives with return annotation.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with return directive, rtype directive, & annotation
 
         :return: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring, parent=Function("func", returns="str"))
+    sections, _ = parse_sphinx(docstring, parent=Function("func", returns="str"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -674,8 +801,12 @@ def test_parse__return_directive_annotation__return_section_with_type():
     )
 
 
-def test_parse__return_directive_annotation__prefer_return_directive():
-    """Prefer docstring type over return annotation."""
+def test_parse__return_directive_annotation__prefer_return_directive(parse_sphinx):
+    """Prefer docstring type over return annotation.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with return directive, rtype directive, & annotation
 
@@ -683,7 +814,7 @@ def test_parse__return_directive_annotation__prefer_return_directive():
         :rtype: str
     """
 
-    sections, _ = parse(docstring, parent=Function("func", returns="int"))
+    sections, _ = parse_sphinx(docstring, parent=Function("func", returns="int"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
     assert_element_equal(
@@ -692,39 +823,51 @@ def test_parse__return_directive_annotation__prefer_return_directive():
     )
 
 
-def test_parse__return_invalid__error():
-    """Warn on invalid return directive."""
+def test_parse__return_invalid__error(parse_sphinx):
+    """Warn on invalid return directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return directive
 
         :return {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__rtype_invalid__error():
-    """Warn on invalid typed return directive."""
+def test_parse__rtype_invalid__error(parse_sphinx):
+    """Warn on invalid typed return directive.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = """
         Function with only return directive
 
         :rtype str
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__raises_directive__exception_section():
-    """Parse raise directives."""
+def test_parse__raises_directive__exception_section(parse_sphinx):
+    """Parse raise directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return directive
 
         :raise SomeException: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.raises
     assert_element_equal(
@@ -733,8 +876,12 @@ def test_parse__raises_directive__exception_section():
     )
 
 
-def test_parse__multiple_raises_directive__exception_section_with_two():
-    """Parse multiple raise directives."""
+def test_parse__multiple_raises_directive__exception_section_with_two(parse_sphinx):
+    """Parse multiple raise directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return directive
 
@@ -742,7 +889,7 @@ def test_parse__multiple_raises_directive__exception_section_with_two():
         :raise SomeOtherException: {SOME_TEXT}
     """
 
-    sections, _ = parse(docstring)
+    sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.raises
     assert_element_equal(
@@ -764,13 +911,14 @@ def test_parse__multiple_raises_directive__exception_section_with_two():
         "exception",
     ],
 )
-def test_parse__all_exception_names__param_section(raise_directive_name):
+def test_parse__all_exception_names__param_section(parse_sphinx, raise_directive_name):
     """Parse all raise directives.
 
     Parameters:
+        parse_sphinx: Fixture parser.
         raise_directive_name: A parametrized directive name.
     """
-    sections, _ = parse(
+    sections, _ = parse_sphinx(
         f"""
         Docstring with one line attribute.
 
@@ -785,32 +933,44 @@ def test_parse__all_exception_names__param_section(raise_directive_name):
     )
 
 
-def test_parse__raise_invalid__error():
-    """Warn on invalid raise directives."""
+def test_parse__raise_invalid__error(parse_sphinx):
+    """Warn on invalid raise directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return directive
 
         :raise {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__raise_no_name__error():
-    """Warn on invalid raise directives."""
+def test_parse__raise_no_name__error(parse_sphinx):
+    """Warn on invalid raise directives.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = f"""
         Function with only return directive
 
         :raise: {SOME_TEXT}
     """
 
-    _, warnings = parse(docstring)
+    _, warnings = parse_sphinx(docstring)
     assert "Failed to parse exception directive from" in warnings[0]
 
 
-def test_parse_module_attributes_section__expected_attributes_section():
-    """Parse attributes section in modules."""
+def test_parse_module_attributes_section__expected_attributes_section(parse_sphinx):
+    """Parse attributes section in modules.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
     docstring = """
         Let's describe some attributes.
 
@@ -829,7 +989,7 @@ def test_parse_module_attributes_section__expected_attributes_section():
     module["C"] = Attribute("C", annotation="bool", value="True")
     module["D"] = Attribute("D", annotation=None, value="3.0")
     module["E"] = Attribute("E", annotation=None, value="None")
-    sections, warnings = parse(docstring, parent=module)
+    sections, warnings = parse_sphinx(docstring, parent=module)
 
     attr_section = sections[1]
     assert attr_section.kind is DocstringSectionKind.attributes

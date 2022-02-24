@@ -7,25 +7,29 @@ import inspect
 import pytest
 
 from griffe.dataclasses import Class, Function, Module, Parameter, Parameters
-from griffe.docstrings import google
 from griffe.docstrings.dataclasses import DocstringSectionKind
-from tests.test_docstrings.helpers import parser
-
-parse = parser(google)
 
 
 # =============================================================================================
 # Markup flow (multilines, indentation, etc.)
-def test_simple_docstring():
-    """Parse a simple docstring."""
-    sections, warnings = parse("A simple docstring.")
+def test_simple_docstring(parse_google):
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    sections, warnings = parse_google("A simple docstring.")
     assert len(sections) == 1
     assert not warnings
 
 
-def test_multiline_docstring():
-    """Parse a multi-line docstring."""
-    sections, warnings = parse(
+def test_multiline_docstring(parse_google):
+    """Parse a multi-line docstring.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    sections, warnings = parse_google(
         """
         A somewhat longer docstring.
 
@@ -36,8 +40,12 @@ def test_multiline_docstring():
     assert not warnings
 
 
-def test_parse_partially_indented_lines():
-    """Properly handle partially indented lines."""
+def test_parse_partially_indented_lines(parse_google):
+    """Properly handle partially indented lines.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         The available formats are:
            - JSON
@@ -45,15 +53,19 @@ def test_parse_partially_indented_lines():
         The unavailable formats are:  
            - YAML
     """  # noqa: W291
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 2
     assert sections[0].kind is DocstringSectionKind.admonition
     assert sections[1].kind is DocstringSectionKind.text
     assert not warnings
 
 
-def test_multiple_lines_in_sections_items():
-    """Parse multi-line item description."""
+def test_multiple_lines_in_sections_items(parse_google):
+    """Parse multi-line item description.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             p (int): This parameter
@@ -67,7 +79,7 @@ def test_multiple_lines_in_sections_items():
               What if the first line is blank?
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     assert len(sections[0].value) == 2
     assert warnings
@@ -75,8 +87,12 @@ def test_multiple_lines_in_sections_items():
         assert "should be 4 * 2 = 8 spaces, not" in warning
 
 
-def test_code_blocks():
-    """Parse code blocks."""
+def test_code_blocks(parse_google):
+    """Parse code blocks.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         This docstring contains a docstring in a code block o_O!
 
@@ -90,13 +106,17 @@ def test_code_blocks():
         ```
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     assert not warnings
 
 
-def test_indented_code_block():
-    """Parse indented code blocks."""
+def test_indented_code_block(parse_google):
+    """Parse indented code blocks.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         This docstring contains a docstring in a code block o_O!
 
@@ -108,13 +128,17 @@ def test_indented_code_block():
             \"\"\"
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     assert not warnings
 
 
-def test_different_indentation():
-    """Parse different indentations, warn on confusing indentation."""
+def test_different_indentation(parse_google):
+    """Parse different indentations, warn on confusing indentation.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Raises:
              StartAt5: this section's items starts with 5 spaces of indentation.
@@ -126,7 +150,7 @@ def test_different_indentation():
             AnyLine: ...indented with less than 5 spaces signifies the end of the section.
         """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 2
     assert len(sections[0].value) == 2
     assert sections[0].value[0].description == (
@@ -143,9 +167,13 @@ def test_different_indentation():
 
 # =============================================================================================
 # Annotations (general)
-def test_parse_without_parent():
-    """Parse a docstring without a parent function."""
-    sections, warnings = parse(
+def test_parse_without_parent(parse_google):
+    """Parse a docstring without a parent function.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    sections, warnings = parse_google(
         """
         Parameters:
             void: SEGFAULT.
@@ -171,8 +199,12 @@ def test_parse_without_parent():
     assert "return" in warnings[-1]
 
 
-def test_parse_without_annotations():
-    """Parse a function docstring without signature annotations."""
+def test_parse_without_annotations(parse_google):
+    """Parse a function docstring without signature annotations.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x: X value.
@@ -184,7 +216,7 @@ def test_parse_without_annotations():
             Sum X + Y + Z.
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -201,8 +233,12 @@ def test_parse_without_annotations():
     assert "return" in warnings[-1]
 
 
-def test_parse_with_annotations():
-    """Parse a function docstring with signature annotations."""
+def test_parse_with_annotations(parse_google):
+    """Parse a function docstring with signature annotations.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x: X value.
@@ -214,7 +250,7 @@ def test_parse_with_annotations():
             Sum X + Y.
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -231,21 +267,29 @@ def test_parse_with_annotations():
 
 # =============================================================================================
 # Sections (general)
-def test_parse_attributes_section():
-    """Parse Attributes sections."""
+def test_parse_attributes_section(parse_google):
+    """Parse Attributes sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Attributes:
             hey: Hey.
             ho: Ho.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     assert not warnings
 
 
-def test_parse_examples_sections():
-    """Parse a function docstring with examples."""
+def test_parse_examples_sections(parse_google):
+    """Parse a function docstring with examples.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Examples:
             Some examples that will create a unified code block:
@@ -299,7 +343,7 @@ def test_parse_examples_sections():
             False
         """
 
-    sections, warnings = parse(
+    sections, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -318,8 +362,12 @@ def test_parse_examples_sections():
     assert not warnings
 
 
-def test_parse_yields_section():
-    """Parse Yields section."""
+def test_parse_yields_section(parse_google):
+    """Parse Yields section.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Yields:
             x: Floats.
@@ -327,7 +375,7 @@ def test_parse_yields_section():
             y (int): Same.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     annotated = sections[0].value[0]
     assert annotated.name == "x"
@@ -345,8 +393,12 @@ def test_parse_yields_section():
     assert "'x'" in warnings[0]
 
 
-def test_invalid_sections():
-    """Warn on invalid (empty) sections."""
+def test_invalid_sections(parse_google):
+    """Warn on invalid (empty) sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
         Exceptions:
@@ -358,7 +410,7 @@ def test_invalid_sections():
         Important:
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     for warning in warnings[:3]:
         assert "Empty" in warning
@@ -366,8 +418,12 @@ def test_invalid_sections():
     assert "Empty" in warnings[-1]
 
 
-def test_close_sections():
-    """Parse sections without blank lines in between."""
+def test_close_sections(parse_google):
+    """Parse sections without blank lines in between.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x: X.
@@ -386,15 +442,19 @@ def test_close_sections():
             2.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 7
     assert len(warnings) == 5  # no type or annotations
 
 
 # =============================================================================================
 # Parameters sections
-def test_parse_args_and_kwargs():
-    """Parse args and kwargs."""
+def test_parse_args_and_kwargs(parse_google):
+    """Parse args and kwargs.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             a (str): a parameter.
@@ -402,7 +462,7 @@ def test_parse_args_and_kwargs():
             **kwargs (str): kwargs parameters.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     expected_parameters = {"a": "a parameter.", "*args": "args parameters.", "**kwargs": "kwargs parameters."}
     for parameter in sections[0].value:
@@ -411,8 +471,12 @@ def test_parse_args_and_kwargs():
     assert not warnings
 
 
-def test_parse_args_kwargs_keyword_only():
-    """Parse args and kwargs."""
+def test_parse_args_kwargs_keyword_only(parse_google):
+    """Parse args and kwargs.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             a (str): a parameter.
@@ -422,7 +486,7 @@ def test_parse_args_kwargs_keyword_only():
             **kwargs (str): kwargs parameters.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 2
     expected_parameters = {"a": "a parameter.", "*args": "args parameters."}
     for parameter in sections[0].value:
@@ -437,8 +501,12 @@ def test_parse_args_kwargs_keyword_only():
     assert not warnings
 
 
-def test_parse_types_in_docstring():
-    """Parse types in docstring."""
+def test_parse_types_in_docstring(parse_google):
+    """Parse types in docstring.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x (int): X value.
@@ -450,7 +518,7 @@ def test_parse_types_in_docstring():
             s (int): Sum X + Y + Z.
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -488,8 +556,12 @@ def test_parse_types_in_docstring():
     assert returns.description == "Sum X + Y + Z."
 
 
-def test_parse_optional_type_in_docstring():
-    """Parse optional types in docstring."""
+def test_parse_optional_type_in_docstring(parse_google):
+    """Parse optional types in docstring.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x (int): X value.
@@ -499,7 +571,7 @@ def test_parse_optional_type_in_docstring():
             z (int, optional): Z value.
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -538,8 +610,12 @@ def test_parse_optional_type_in_docstring():
     assert argz.value == "None"
 
 
-def test_prefer_docstring_types_over_annotations():
-    """Prefer the docstring type over the annotation."""
+def test_prefer_docstring_types_over_annotations(parse_google):
+    """Prefer the docstring type over the annotation.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x (str): X value.
@@ -551,7 +627,7 @@ def test_prefer_docstring_types_over_annotations():
             (str): Sum X + Y + Z.
     """
 
-    sections, warnings = parse(
+    sections, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -588,28 +664,36 @@ def test_prefer_docstring_types_over_annotations():
     assert returns.description == "Sum X + Y + Z."
 
 
-def test_parameter_line_without_colon():
-    """Warn when missing colon."""
+def test_parameter_line_without_colon(parse_google):
+    """Warn when missing colon.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Parameters:
             x is an integer.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert not sections  # getting x fails, so the section is empty and discarded
     assert len(warnings) == 2
     assert "pair" in warnings[0]
     assert "Empty" in warnings[1]
 
 
-def test_parameter_line_without_colon_keyword_only():
-    """Warn when missing colon."""
+def test_parameter_line_without_colon_keyword_only(parse_google):
+    """Warn when missing colon.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Keyword Args:
             x is an integer.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert not sections  # getting x fails, so the section is empty and discarded
     assert len(warnings) == 2
     assert "pair" in warnings[0]
@@ -617,43 +701,55 @@ def test_parameter_line_without_colon_keyword_only():
 
 
 # TODO: possible feature
-# def test_extra_parameter():
-#     """Warn on extra parameter in docstring."""
+# def test_extra_parameter(parse_google):
+#     """Warn on extra parameter in docstring.
+#
+#     Parameters:
+#         parse_google: Fixture parser.
+#     """
 #     docstring = """
 #         Parameters:
 #             x: Integer.
 #             y: Integer.
 #     """
 
-#     sections, warnings = parse(docstring)
+#     sections, warnings = parse_google(docstring)
 #     assert len(sections) == 1
 #     assert len(warnings) == 2
 
 
 # TODO: possible feature
-# def test_missing_parameter():
-#     """Warn on missing parameter in docstring."""
+# def test_missing_parameter(parse_google):
+#     """Warn on missing parameter in docstring.
+#
+#     Parameters:
+#         parse_google: Fixture parser.
+#     """
 #     docstring = """
 #         Parameters:
 #             x: Integer.
 #     """
 
-#     sections, warnings = parse(docstring)
+#     sections, warnings = parse_google(docstring)
 #     assert len(sections) == 1
 #     assert not warnings
 
 
 # =============================================================================================
 # Yields sections
-def test_parse_yields_section_with_return_annotation():
-    """Parse Yields section with a return annotation in the parent function."""
+def test_parse_yields_section_with_return_annotation(parse_google):
+    """Parse Yields section with a return annotation in the parent function.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Yields:
             Integers.
     """
 
     function = Function("func", returns="Iterator[int]")
-    sections, warnings = parse(docstring, function)
+    sections, warnings = parse_google(docstring, function)
     assert len(sections) == 1
     annotated = sections[0].value[0]
     assert annotated.annotation == "Iterator[int]"
@@ -663,8 +759,12 @@ def test_parse_yields_section_with_return_annotation():
 
 # =============================================================================================
 # Parser special features
-def test_parse_admonitions():
-    """Parse admonitions."""
+def test_parse_admonitions(parse_google):
+    """Parse admonitions.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = """
         Important note:
             Hello.
@@ -676,7 +776,7 @@ def test_parse_admonitions():
             Something.
     """
 
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 3
     assert not warnings
     assert sections[0].title == "Important note"
@@ -712,13 +812,14 @@ def test_parse_admonitions():
         """Last line:""",
     ],
 )
-def test_handle_false_admonitions_correctly(docstring):
+def test_handle_false_admonitions_correctly(parse_google, docstring):
     """Correctly handle lines that look like admonitions.
 
     Parameters:
-        docstring: The docstring to parse (parametrized).
+        parse_google: Fixture parser.
+        docstring: The docstring to parse_google (parametrized).
     """
-    sections, warnings = parse(docstring)
+    sections, warnings = parse_google(docstring)
     assert len(sections) == 1
     assert sections[0].kind is DocstringSectionKind.text
     assert len(sections[0].value.splitlines()) == len(inspect.cleandoc(docstring).splitlines())
@@ -738,22 +839,23 @@ def test_handle_false_admonitions_correctly(docstring):
         "Summary\non two lines.\n\nParagraph.",
     ],
 )
-def test_ignore_init_summary(docstring):
+def test_ignore_init_summary(parse_google, docstring):
     """Correctly ignore summary in `__init__` methods' docstrings.
 
     Parameters:
-        docstring: The docstring to parse (parametrized).
+        parse_google: Fixture parser.
+        docstring: The docstring to parse_google (parametrized).
     """
-    sections, _ = parse(docstring, parent=Function("__init__", parent=Class("C")), ignore_init_summary=True)
+    sections, _ = parse_google(docstring, parent=Function("__init__", parent=Class("C")), ignore_init_summary=True)
     for section in sections:
         assert "Summary" not in section.value
 
     if docstring.strip():
-        sections, _ = parse(docstring, parent=Function("__init__", parent=Module("M")), ignore_init_summary=True)
+        sections, _ = parse_google(docstring, parent=Function("__init__", parent=Module("M")), ignore_init_summary=True)
         assert "Summary" in sections[0].value
-        sections, _ = parse(docstring, parent=Function("f", parent=Class("C")), ignore_init_summary=True)
+        sections, _ = parse_google(docstring, parent=Function("f", parent=Class("C")), ignore_init_summary=True)
         assert "Summary" in sections[0].value
-        sections, _ = parse(docstring, ignore_init_summary=True)
+        sections, _ = parse_google(docstring, ignore_init_summary=True)
         assert "Summary" in sections[0].value
 
 
@@ -777,13 +879,14 @@ def test_ignore_init_summary(docstring):
         """,
     ],
 )
-def test_trim_doctest_flags_basic_example(docstring):
-    """Correctly parse simple example docstrings when `trim_doctest_flags` option is turned on.
+def test_trim_doctest_flags_basic_example(parse_google, docstring):
+    """Correctly parse_google simple example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
-        docstring: The docstring to parse (parametrized).
+        parse_google: Fixture parser.
+        docstring: The docstring to parse_google (parametrized).
     """
-    sections, warnings = parse(docstring, trim_doctest_flags=True)
+    sections, warnings = parse_google(docstring, trim_doctest_flags=True)
     assert len(sections) == 1
     assert len(sections[0].value) == 2
     assert not warnings
@@ -794,8 +897,12 @@ def test_trim_doctest_flags_basic_example(docstring):
     assert "<BLANKLINE>" not in example_str
 
 
-def test_trim_doctest_flags_multi_example():
-    """Correctly parse multiline example docstrings when `trim_doctest_flags` option is turned on."""
+def test_trim_doctest_flags_multi_example(parse_google):
+    """Correctly parse_google multiline example docstrings when `trim_doctest_flags` option is turned on.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
     docstring = r"""
     Examples:
 
@@ -813,7 +920,7 @@ def test_trim_doctest_flags_multi_example():
         >>> print(list(range(1, 100)))    # doctest: +ELLIPSIS
         [1, 2, ..., 98, 99]
     """
-    sections, warnings = parse(docstring, trim_doctest_flags=True)
+    sections, warnings = parse_google(docstring, trim_doctest_flags=True)
     assert len(sections) == 1
     assert len(sections[0].value) == 4
     assert not warnings
