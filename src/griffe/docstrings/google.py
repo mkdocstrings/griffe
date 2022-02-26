@@ -173,7 +173,7 @@ def _read_parameters(  # noqa: WPS231
 
     for line_number, param_lines in block:
 
-        # check the presence of a name and description, separated by a semi-colon
+        # check the presence of a name and description, separated by a colon
         try:
             name_with_type, description = param_lines[0].split(":", 1)
         except ValueError:
