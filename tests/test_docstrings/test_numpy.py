@@ -383,7 +383,11 @@ def test_examples_section(parse_numpy):
 
 
 def test_examples_section_when_followed_by_named_section(parse_numpy):
-    """Parse examples section."""
+    """Parse examples section.
+
+    Parameters:
+        parse_numpy: Parse function (fixture).
+    """
     docstring = """
         Examples
         --------
