@@ -382,6 +382,28 @@ def test_examples_section(parse_numpy):
     assert examples.value[3][1].startswith(">>> a = 0  # doctest: +SKIP")
 
 
+def test_examples_section_when_followed_by_named_section(parse_numpy):
+    """Parse examples section.
+
+    Parameters:
+        parse_numpy: Parse function (fixture).
+    """
+    docstring = """
+        Examples
+        --------
+        Hello, hello.
+
+        Parameters
+        ----------
+        foo : int
+    """
+
+    sections, _ = parse_numpy(docstring, trim_doctest_flags=False)
+    assert len(sections) == 2
+    assert sections[0].kind is DocstringSectionKind.examples
+    assert sections[1].kind is DocstringSectionKind.parameters
+
+
 # =============================================================================================
 # Annotations
 def test_prefer_docstring_type_over_annotation(parse_numpy):
