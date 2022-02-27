@@ -116,7 +116,7 @@ class Docstring:
         self.parser: Parser | None = parser
         self.parser_options: dict[str, Any] = parser_options or {}
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.value)
 
     @cached_property

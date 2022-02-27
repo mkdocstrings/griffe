@@ -28,7 +28,7 @@ class LinesCollection:
     def __setitem__(self, key: Path, value: list[str]) -> None:
         self._data[key] = value
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return True
 
     def __getattr__(self, name: str, default: Any = None) -> Any:
@@ -69,7 +69,7 @@ class ModulesCollection(GetMembersMixin, SetCollectionMembersMixin):
         """Initialize the collection."""
         self.members: dict[str, Module] = {}
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return True
 
     def __contains__(self, item: Any) -> bool:
