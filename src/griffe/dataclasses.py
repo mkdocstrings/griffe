@@ -663,7 +663,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         if self.parent is None:
             # could be a built-in
             raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
-        if name == self.parent.name:
+        if name == self.parent.name and not self.parent.is_module:
             return self.parent.path
         return self.parent.resolve(name)
 
