@@ -403,6 +403,34 @@ def test_prefer_docstring_type_over_annotation(parse_numpy):
     assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
 
 
+def test_parse_complex_annotations(parse_numpy):
+    """Check the type regex accepts all the necessary characters.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        a : typing.Tuple[str, random0123456789]
+        b : int | float | None
+        c : Literal['hello'] | Literal["world"]
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    param_a, param_b, param_c = sections[0].value
+    assert param_a.name == "a"
+    assert param_a.description == ""
+    assert param_a.annotation == "typing.Tuple[str, random0123456789]"
+    assert param_b.name == "b"
+    assert param_b.description == ""
+    assert param_b.annotation == "int | float | None"
+    assert param_c.name == "c"
+    assert param_c.description == ""
+    assert param_c.annotation == "Literal['hello'] | Literal[\"world\"]"
+
+
 # =============================================================================================
 # Parser special features
 @pytest.mark.parametrize(
