@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.13.2](https://github.com/mkdocstrings/griffe/releases/tag/0.13.2) - 2022-03-01
+
+<small>[Compare with 0.13.1](https://github.com/mkdocstrings/griffe/compare/0.13.1...0.13.2)</small>
+
+### Bug Fixes
+- Fix type regex in Numpy parser ([3a10fda](https://github.com/mkdocstrings/griffe/commit/3a10fda89c2e32e2d8acd89eb1ce8ab20a0fc251) by Timothée Mazzucotelli).
+- Current module must not be available in its members' scope ([54f9688](https://github.com/mkdocstrings/griffe/commit/54f9688c11a1f7d3893ca774a07afe876f0b809c) by Timothée Mazzucotelli).
+- Allow named sections after numpydoc examples ([a44d9c6](https://github.com/mkdocstrings/griffe/commit/a44d9c65cf24d2820e805d23365f38aab82c8c07) by Lucina). [PR #54](https://github.com/mkdocstrings/griffe/pull/54)
+
+
 ## [0.13.1](https://github.com/mkdocstrings/griffe/releases/tag/0.13.1) - 2022-02-24
 
 <small>[Compare with 0.13.0](https://github.com/mkdocstrings/griffe/compare/0.13.0...0.13.1)</small>
