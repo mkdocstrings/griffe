@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.14.0](https://github.com/mkdocstrings/griffe/releases/tag/0.14.0) - 2022-03-06
+
+<small>[Compare with 0.13.2](https://github.com/mkdocstrings/griffe/compare/0.13.2...0.14.0)</small>
+
+### Features
+- Ignore `__doc__` from parent classes ([10aa59e](https://github.com/mkdocstrings/griffe/commit/10aa59ef2fbf1db2c8829e0905bea88406495c41) by Will Da Silva). [Issue #55](https://github.com/mkdocstrings/griffe/issues/55), [PR #56](https://github.com/mkdocstrings/griffe/pull/56)
+
+
 ## [0.13.2](https://github.com/mkdocstrings/griffe/releases/tag/0.13.2) - 2022-03-01
 
 <small>[Compare with 0.13.1](https://github.com/mkdocstrings/griffe/compare/0.13.1...0.13.2)</small>
