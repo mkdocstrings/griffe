@@ -184,12 +184,10 @@ class Inspector(BaseInspector):  # noqa: WPS338
         value = getattr(node.obj, "__doc__", None)
         if value is None:
             return None
-        else:
+        return Docstring(
             # `inspect.getdoc` calls `inspect.cleandoc`. We avoid `inspect.getdoc` to avoid taking
             # the `__doc__` attribute from a parent class, but we still want to clean the doc.
-            value = cleandoc(value)
-        return Docstring(
-            value,
+            cleandoc(value),
             parser=self.docstring_parser,
             parser_options=self.docstring_options,
         )
