@@ -25,7 +25,7 @@ from __future__ import annotations
 import ast
 import sys
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, getdoc, getmodule, ismodule
+from inspect import Signature, cleandoc, getmodule, ismodule
 from inspect import signature as getsignature
 from pathlib import Path
 from tokenize import TokenError
@@ -180,11 +180,14 @@ class Inspector(BaseInspector):  # noqa: WPS338
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
-        value = getdoc(node.obj)
+        # Access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class.
+        value = getattr(node.obj, "__doc__", None)
         if value is None:
             return None
         return Docstring(
-            value,
+            # `inspect.getdoc` calls `inspect.cleandoc`. We avoid `inspect.getdoc` to avoid taking
+            # the `__doc__` attribute from a parent class, but we still want to clean the doc.
+            cleandoc(value),
             parser=self.docstring_parser,
             parser_options=self.docstring_options,
         )
