@@ -535,6 +535,7 @@ if sys.version_info < (3, 8):
         """
         return {elt.s for elt in node.value.elts}  # type: ignore[attr-defined]
 
+
 else:
 
     def parse__all__(node: NodeAssign) -> set[str]:  # noqa: WPS116,WPS120,WPS440
@@ -1186,12 +1187,9 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
     """
     if node is None:
         return None
-    if isinstance(node, NodeConstant):
-        return repr(node.value)
-    if isinstance(node, NodeStr):
-        return repr(node.s)
-    if isinstance(node, NodeName):
-        return node.id
+    value_to_str = _node_value_map.get(type(node), None)
+    if value_to_str is not None:
+        return value_to_str(node)
     if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
         return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
     # TODO: handle multiple line defaults
