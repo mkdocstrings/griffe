@@ -179,11 +179,17 @@ class GriffeLoader:
             )
         return unresolved, iteration
 
-    def expand_wildcards(self, obj: Object, seen: set | None = None) -> None:  # noqa: WPS231
+    def expand_wildcards(  # noqa: WPS231
+        self,
+        obj: Object,
+        only_known_modules: bool = True,
+        seen: set | None = None,
+    ) -> None:
         """Expand wildcards: try to recursively expand all found wildcards.
 
         Parameters:
             obj: The object and its members to recurse on.
+            only_known_modules: When true, don't try to load unspecified modules to expand wildcards.
             seen: Used to avoid infinite recursion.
         """
         expanded = []
@@ -194,17 +200,26 @@ class GriffeLoader:
         for member in obj.members.values():
             if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
                 package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
-                if obj.package.path != package and package not in self.modules_collection:
+                not_loaded = obj.package.path != package and package not in self.modules_collection
+                if not_loaded:
+                    if only_known_modules:
+                        continue
                     try:
                         self.load_module(package, try_relative_path=False)
                     except ImportError as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
-                self.expand_wildcards(self.modules_collection[member.target_path])  # type: ignore[union-attr]
+                target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
+                if target.path not in seen:
+                    try:
+                        self.expand_wildcards(target, only_known_modules)  # type: ignore[union-attr]
+                    except (AliasResolutionError, CyclicAliasError) as error:  # noqa: WPS440
+                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        continue
                 expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
                 to_remove.append(member.name)
             elif not member.is_alias and member.is_module and member.path not in seen:
-                self.expand_wildcards(member, seen)  # type: ignore[arg-type]
+                self.expand_wildcards(member, only_known_modules, seen)  # type: ignore[arg-type]
 
         for name in to_remove:
             del obj[name]  # noqa: WPS420
