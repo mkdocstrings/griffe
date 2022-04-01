@@ -71,3 +71,28 @@ def test_building_annotations_from_nodes(expression):
         assert "y" in module.members
         assert str(module["x"].annotation) == expression
         assert str(module["y"].annotation) == expression
+
+
+@pytest.mark.parametrize(
+    "default",
+    [
+        "1",
+        "'test_string'",
+        "dict(key=1)",
+        "{'key': 1}",
+        "DEFAULT_VALUE",
+        "None",
+    ],
+)
+def test_default_value_from_nodes(default):
+    """Test getting default value from AST nodes.
+
+    Parameters:
+        default: A default value (parametrized).
+    """
+    module_defs = f"def f(x={default}):\n    return x"
+    with temporary_visited_module(module_defs) as module:
+        assert "f" in module.members
+        params = module.members["f"].parameters
+        assert len(params) == 1
+        assert params[0].default == default

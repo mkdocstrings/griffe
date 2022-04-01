@@ -70,6 +70,7 @@ from ast import alias as NodeAlias
 from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
+from contextlib import suppress
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
@@ -1186,12 +1187,8 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
     """
     if node is None:
         return None
-    if isinstance(node, NodeConstant):
-        return repr(node.value)
-    if isinstance(node, NodeStr):
-        return repr(node.s)
-    if isinstance(node, NodeName):
-        return node.id
+    with suppress(KeyError):
+        return get_value(node)
     if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
         return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
     # TODO: handle multiple line defaults
