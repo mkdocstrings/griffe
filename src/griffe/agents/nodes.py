@@ -1,6 +1,7 @@
 """This module contains utilities for extracting information from nodes."""
 
 from __future__ import annotations
+from contextlib import suppress
 
 import enum
 import inspect
@@ -1187,9 +1188,8 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
     """
     if node is None:
         return None
-    value_to_str = _node_value_map.get(type(node), None)
-    if value_to_str is not None:
-        return value_to_str(node)
+    with suppress(KeyError):
+        return get_value(node)
     if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
         return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
     # TODO: handle multiple line defaults
