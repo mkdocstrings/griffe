@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.14.1](https://github.com/mkdocstrings/griffe/releases/tag/0.14.1) - 2022-04-01
+
+<small>[Compare with 0.14.0](https://github.com/mkdocstrings/griffe/compare/0.14.0...0.14.1)</small>
+
+### Bug Fixes
+- Retrieve default value for non-string parameters ([15952ed](https://github.com/mkdocstrings/griffe/commit/15952ed72f6f5db3a4dec2fc60cb256c838be6a3) by ThomasPJ). [Issue #59](https://github.com/mkdocstrings/griffe/issues/59), [issue mkdocstrings/python#8](https://github.com/mkdocstrings/python/issues/8), [PR #60](https://github.com/mkdocstrings/griffe/pull/60)
+- Prevent infinite recursion while expanding wildcards ([428628f](https://github.com/mkdocstrings/griffe/commit/428628f423192611529b9b346cd295999d0dad25) by Timothée Mazzucotelli). [Issue #57](https://github.com/mkdocstrings/griffe/issues/57)
+
+
 ## [0.14.0](https://github.com/mkdocstrings/griffe/releases/tag/0.14.0) - 2022-03-06
 
 <small>[Compare with 0.13.2](https://github.com/mkdocstrings/griffe/compare/0.13.2...0.14.0)</small>
