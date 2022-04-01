@@ -1,7 +1,6 @@
 """This module contains utilities for extracting information from nodes."""
 
 from __future__ import annotations
-from contextlib import suppress
 
 import enum
 import inspect
@@ -71,6 +70,7 @@ from ast import alias as NodeAlias
 from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
+from contextlib import suppress
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
@@ -535,7 +535,6 @@ if sys.version_info < (3, 8):
             A set of names.
         """
         return {elt.s for elt in node.value.elts}  # type: ignore[attr-defined]
-
 
 else:
 

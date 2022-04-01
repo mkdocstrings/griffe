@@ -44,7 +44,7 @@ class LinesCollection:
         return getattr(self._data, name, default)
 
     # TODO: remove once Python 3.7 support is dropped
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=None)  # noqa: B019
     def tokens(self, path: Path) -> tuple[list[tokenize.TokenInfo], defaultdict]:
         """Tokenize the code.
 
