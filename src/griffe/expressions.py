@@ -119,13 +119,40 @@ class Expression(list):  # noqa: WPS600
         return str(self)
 
     @property
+    def kind(self) -> str:
+        """Return the main type object as a string.
+
+        Returns:
+            The main type of this expression.
+        """
+        return str(self).split("[", 1)[0].rsplit(".", 1)[-1].lower()
+
+    @property
     def is_tuple(self) -> bool:
         """Tell whether this expression represents a tuple.
 
         Returns:
             True or False.
         """
-        return str(self).split("[", 1)[0].rsplit(".", 1)[-1].lower() == "tuple"
+        return self.kind == "tuple"
+
+    @property
+    def is_iterator(self) -> bool:
+        """Tell whether this expression represents an iterator.
+
+        Returns:
+            True or False.
+        """
+        return self.kind == "iterator"
+
+    @property
+    def is_generator(self) -> bool:
+        """Tell whether this expression represents a generator.
+
+        Returns:
+            True or False.
+        """
+        return self.kind == "generator"
 
     def tuple_item(self, nth: int) -> str | Name:
         """Return the n-th item of this tuple expression.
@@ -141,3 +168,31 @@ class Expression(list):  # noqa: WPS600
         #       N , N , N
         #       0 1 2 3 4
         return self[2][2 * nth]
+
+    def tuple_items(self) -> list[Name | Expression]:
+        """Return a tuple items as a list.
+
+        Returns:
+            The tuple items.
+        """
+        return self[2][::2]
+
+    def iterator_item(self) -> Name | Expression:
+        """Return the item of an iterator.
+
+        Returns:
+            The iterator item.
+        """
+        # Iterator[ItemType]
+        return self[2]
+
+    def generator_items(self) -> tuple[Name | Expression, Name | Expression, Name | Expression]:
+        """Return the items of a generator.
+
+        Returns:
+            The yield type.
+            The send/receive type.
+            The return type.
+        """
+        # Generator[Yield, Send/Receive, Return]
+        return self[2][0], self[2][2], self[2][4]

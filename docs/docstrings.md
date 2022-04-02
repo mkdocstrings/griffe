@@ -47,20 +47,18 @@ Yields           | ✅     | ✅    | [❌][issue-section-sphinx-yields]
 
 ## Getting annotations/defaults from parent
 
-Section          | Google                             | Numpy                               | Sphinx
----------------- | ---------------------------------- | ----------------------------------- | ------
-Attributes       | ✅                                 | [❌][issue-parent-numpy-attributes] | [❌][issue-parent-sphinx-attributes]
-Deprecated       | /                                  | /                                   | /
-Examples         | /                                  | /                                   | /
-Other Parameters | ✅                                 | ✅                                  | [❌][issue-parent-sphinx-other-parameters]
-Parameters       | ✅                                 | ✅                                  | ✅
-Raises           | /                                  | /                                   | /
-Receives         | [❌][issue-parent-google-receives] | [❌][issue-parent-numpy-receives]   | [❌][issue-parent-sphinx-receives]
-Returns          | ✅                                 | [❌][issue-parent-numpy-returns]    | ✅
-Warns            | /                                  | /                                   | /
-Yields           | ✅                                 | [❌][issue-parent-numpy-yields]     | [❌][issue-parent-sphinx-yields]
-
-[issue-parent-google-receives]: https://github.com/mkdocstrings/griffe/issues/28
+Section          | Google | Numpy                               | Sphinx
+---------------- | ------ | ----------------------------------- | ------
+Attributes       | ✅     | [❌][issue-parent-numpy-attributes] | [❌][issue-parent-sphinx-attributes]
+Deprecated       | /      | /                                   | /
+Examples         | /      | /                                   | /
+Other Parameters | ✅     | ✅                                  | [❌][issue-parent-sphinx-other-parameters]
+Parameters       | ✅     | ✅                                  | ✅
+Raises           | /      | /                                   | /
+Receives         | ✅     | [❌][issue-parent-numpy-receives]   | [❌][issue-parent-sphinx-receives]
+Returns          | ✅     | [❌][issue-parent-numpy-returns]    | ✅
+Warns            | /      | /                                   | /
+Yields           | ✅     | [❌][issue-parent-numpy-yields]     | [❌][issue-parent-sphinx-yields]
 
 [issue-parent-numpy-attributes]: https://github.com/mkdocstrings/griffe/issues/29
 [issue-parent-numpy-receives]: https://github.com/mkdocstrings/griffe/issues/30

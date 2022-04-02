@@ -347,11 +347,24 @@ def _read_returns_section(  # noqa: WPS231
             annotation = parse_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, KeyError):
+            with suppress(AttributeError, KeyError, ValueError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
                 if len(block) > 1:
                     if annotation.is_tuple:
                         annotation = annotation.tuple_item(index)
+                    else:
+                        if annotation.is_iterator:
+                            return_item = annotation.iterator_item()
+                        elif annotation.is_generator:
+                            _, _, return_item = annotation.generator_items()
+                        else:
+                            raise ValueError
+                        if isinstance(return_item, Name):
+                            annotation = return_item
+                        elif return_item.is_tuple:
+                            annotation = return_item.tuple_item(index)
+                        else:
+                            annotation = return_item
 
             if annotation is None:
                 returned_value = repr(name) or index
@@ -388,12 +401,21 @@ def _read_yields_section(  # noqa: WPS231
             annotation = parse_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, KeyError):
+            with suppress(AttributeError, KeyError, ValueError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
-                # TODO: support getting yield part and exploding tuple (in a generator/iterator)
-                # if len(block) > 1:
-                #     if annotation.is_tuple:
-                #         annotation = annotation.tuple_item(index)
+                if len(block) > 1:
+                    if annotation.is_iterator:
+                        yield_item = annotation.iterator_item()
+                    elif annotation.is_generator:
+                        yield_item, _, _ = annotation.generator_items()
+                    else:
+                        raise ValueError
+                    if isinstance(yield_item, Name):
+                        annotation = yield_item
+                    elif yield_item.is_tuple:
+                        annotation = yield_item.tuple_item(index)
+                    else:
+                        annotation = yield_item
 
             if annotation is None:
                 yielded_value = repr(name) or index
@@ -428,14 +450,18 @@ def _read_receives_section(  # noqa: WPS231
         if annotation:
             # try to compile the annotation to transform it into an expression
             annotation = parse_annotation(annotation, docstring)
-        # else:
-        # try to retrieve the annotation from the docstring parent
-        # TODO: support getting receive part and exploding tuple (in a generator/iterator)
-        # with suppress(AttributeError, KeyError):
-        #     annotation = docstring.parent.returns  # type: ignore[union-attr]
-        #     if len(block) > 1:
-        #         if annotation.is_tuple:
-        #             annotation = annotation.tuple_item(index)
+        else:
+            # try to retrieve the annotation from the docstring parent
+            with suppress(AttributeError, KeyError):
+                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                if len(block) > 1 and annotation.is_generator:
+                    _, receives_item, _ = annotation.generator_items()
+                    if isinstance(receives_item, Name):
+                        annotation = receives_item
+                    elif receives_item.is_tuple:
+                        annotation = receives_item.tuple_item(index)
+                    else:
+                        annotation = receives_item
 
         if annotation is None:
             received_value = repr(name) or index

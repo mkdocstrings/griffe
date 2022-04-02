@@ -6,8 +6,9 @@ import inspect
 
 import pytest
 
-from griffe.dataclasses import Class, Function, Module, Parameter, Parameters
+from griffe.dataclasses import Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.docstrings.dataclasses import DocstringSectionKind
+from griffe.docstrings.utils import parse_annotation
 
 
 # =============================================================================================
@@ -755,6 +756,99 @@ def test_parse_yields_section_with_return_annotation(parse_google):
     assert annotated.annotation == "Iterator[int]"
     assert annotated.description == "Integers."
     assert not warnings
+
+
+@pytest.mark.parametrize(
+    "return_annotation",
+    [
+        "Iterator[tuple[int, float]]",
+        "Generator[tuple[int, float], ..., ...]",
+    ],
+)
+def test_parse_yields_tuple_in_iterator_or_generator(parse_google, return_annotation):
+    """Parse Yields annotations in Iterator or Generator types.
+
+    Parameters:
+        parse_google: Fixture parser.
+        return_annotation: Parametrized return annotation as a string.
+    """
+    docstring = """
+        Summary.
+
+        Yields:
+            a: Whatever.
+            b: Whatever.
+    """
+    sections, _ = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+        ),
+    )
+    yields = sections[1].value
+    assert yields[0].name == "a"
+    assert yields[0].annotation.source == "int"
+    assert yields[1].name == "b"
+    assert yields[1].annotation.source == "float"
+
+
+# =============================================================================================
+# Receives sections
+def test_parse_receives_tuple_in_generator(parse_google):
+    """Parse Receives annotations in Generator type.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Receives:
+            a: Whatever.
+            b: Whatever.
+    """
+    sections, _ = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation("Generator[..., tuple[int, float], ...]", Docstring("d", parent=Function("f"))),
+        ),
+    )
+    receives = sections[1].value
+    assert receives[0].name == "a"
+    assert receives[0].annotation.source == "int"
+    assert receives[1].name == "b"
+    assert receives[1].annotation.source == "float"
+
+
+# =============================================================================================
+# Returns sections
+def test_parse_returns_tuple_in_generator(parse_google):
+    """Parse Returns annotations in Generator type.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Returns:
+            a: Whatever.
+            b: Whatever.
+    """
+    sections, _ = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation("Generator[..., ..., tuple[int, float]]", Docstring("d", parent=Function("f"))),
+        ),
+    )
+    returns = sections[1].value
+    assert returns[0].name == "a"
+    assert returns[0].annotation.source == "int"
+    assert returns[1].name == "b"
+    assert returns[1].annotation.source == "float"
 
 
 # =============================================================================================
