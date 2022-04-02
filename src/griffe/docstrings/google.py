@@ -52,6 +52,7 @@ _section_kind = {
     "exceptions": DocstringSectionKind.raises,
     "returns": DocstringSectionKind.returns,
     "yields": DocstringSectionKind.yields,
+    "receives": DocstringSectionKind.receives,
     "examples": DocstringSectionKind.examples,
     "attributes": DocstringSectionKind.attributes,
 }
