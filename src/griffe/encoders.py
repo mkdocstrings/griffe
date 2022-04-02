@@ -8,7 +8,7 @@ The available formats are:
 from __future__ import annotations
 
 import json
-from pathlib import Path, PosixPath
+from pathlib import Path, PosixPath, WindowsPath
 from typing import Any, Callable, Type
 
 from griffe.dataclasses import (
@@ -37,6 +37,7 @@ def _enum_value(obj):
 _json_encoder_map: dict[Type, Callable[[Any], Any]] = {
     Path: str,
     PosixPath: str,
+    WindowsPath: str,
     ParameterKind: _enum_value,
     Kind: _enum_value,
     DocstringSectionKind: _enum_value,
