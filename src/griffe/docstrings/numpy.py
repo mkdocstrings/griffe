@@ -65,7 +65,7 @@ from griffe.docstrings.dataclasses import (
     DocstringWarn,
     DocstringYield,
 )
-from griffe.docstrings.utils import warning
+from griffe.docstrings.utils import parse_annotation, warning
 from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
@@ -228,6 +228,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
 
         names = match.group("names").split(", ")
         annotation = match.group("type")
+        annotation = annotation or None
         choices = match.group("choices")
         if choices:
             choices = choices.split(", ", 1)
@@ -247,6 +248,8 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
                     break
             else:
                 _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
+        else:
+            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
 
         if default is None:
             for name in names:  # noqa: WPS440
@@ -355,7 +358,8 @@ def _read_returns_section(  # noqa: WPS231
                             annotation = return_item.tuple_item(index)
                         else:
                             annotation = return_item
-
+        else:
+            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReturns(returns), new_offset
 
@@ -401,6 +405,8 @@ def _read_yields_section(  # noqa: WPS231
                         annotation = yield_item.tuple_item(index)
                     else:
                         annotation = yield_item
+        else:
+            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
     return DocstringSectionYields(yields), new_offset
 
@@ -441,6 +447,8 @@ def _read_receives_section(  # noqa: WPS231
                         annotation = receives_item.tuple_item(index)
                     else:
                         annotation = receives_item
+        else:
+            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReceives(receives), new_offset
 
@@ -461,7 +469,7 @@ def _read_raises_section(
 
     raises = []
     for item in items:
-        annotation = item[0]
+        annotation = parse_annotation(item[0], docstring)
         text = dedent("\n".join(item[1:]))
         raises.append(DocstringRaise(annotation=annotation, description=text))
     return DocstringSectionRaises(raises), new_offset
@@ -483,7 +491,7 @@ def _read_warns_section(
 
     warns = []
     for item in items:
-        annotation = item[0]
+        annotation = parse_annotation(item[0], docstring)
         text = dedent("\n".join(item[1:]))
         warns.append(DocstringWarn(annotation=annotation, description=text))
     return DocstringSectionWarns(warns), new_offset
@@ -517,6 +525,8 @@ def _read_attributes_section(
         if annotation is None:
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
+        else:
+            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
     return DocstringSectionAttributes(attributes), new_offset

@@ -114,7 +114,7 @@ def test_prefer_docstring_type_over_annotation(parse_numpy):
         docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str")))
     )
     assert len(sections) == 1
-    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
+    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation=Name("int", "int")))
 
 
 def test_parse_complex_annotations(parse_numpy):
@@ -143,6 +143,33 @@ def test_parse_complex_annotations(parse_numpy):
     assert param_c.name == "c"
     assert param_c.description == ""
     assert param_c.annotation == "Literal['hello'] | Literal[\"world\"]"
+
+
+@pytest.mark.parametrize(
+    ("docstring", "name"),
+    [
+        ("Attributes\n---\na : {name}\n    Description.\n", "int"),
+        ("Parameters\n---\na : {name}\n    Description.\n", "int"),
+        ("Other Parameters\n---\na : {name}\n    Description.\n", "int"),
+        ("Yields\n---\na : {name}\n    Description.\n", "int"),
+        ("Receives\n---\na : {name}\n    Description.\n", "int"),
+        ("Returns\n---\na : {name}\n    Description.\n", "int"),
+        ("Raises\n---\n{name}\n    Description.\n", "RuntimeError"),
+        ("Warns\n---\n{name}\n    Description.\n", "UserWarning"),
+    ],
+)
+def test_parse_annotations_in_all_sections(parse_numpy, docstring, name):
+    """Assert annotations are parsed in all relevant sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+        docstring: Parametrized docstring.
+        name: Parametrized name in annotation.
+    """
+    docstring = docstring.format(name=name)
+    sections, _ = parse_numpy(docstring, parent=Function("f"))
+    assert len(sections) == 1
+    assert sections[0].value[0].annotation == Name(name, name)
 
 
 # =============================================================================================

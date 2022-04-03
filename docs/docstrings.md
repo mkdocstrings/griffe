@@ -67,27 +67,18 @@ Yields           | ✅     | ✅    | [❌][issue-parent-sphinx-yields]
 
 ## Cross-references for annotations in docstrings
 
-Section          | Google | Numpy                                     | Sphinx
----------------- | ------ | ----------------------------------------- | ------
-Attributes       | ✅     | [❌][issue-xref-numpy-attributes]       | [❌][issue-xref-sphinx-attributes]
-Deprecated       | /      | /                                         | /
-Examples         | /      | /                                         | /
-Other Parameters | ✅     | [❌][issue-xref-numpy-other-parameters] | [❌][issue-xref-sphinx-other-parameters]
-Parameters       | ✅     | [❌][issue-xref-numpy-parameters]       | [❌][issue-xref-sphinx-parameters]
-Raises           | ✅     | [❌][issue-xref-numpy-raises]           | [❌][issue-xref-sphinx-raises]
-Receives         | ✅     | [❌][issue-xref-numpy-receives]         | [❌][issue-xref-sphinx-receives]
-Returns          | ✅     | [❌][issue-xref-numpy-returns]          | [❌][issue-xref-sphinx-returns]
-Warns            | ✅     | [❌][issue-xref-numpy-warns]            | [❌][issue-xref-sphinx-warns]
-Yields           | ✅     | [❌][issue-xref-numpy-yields]           | [❌][issue-xref-sphinx-yields]
-
-[issue-xref-numpy-attributes]: https://github.com/mkdocstrings/griffe/issues/11
-[issue-xref-numpy-other-parameters]: https://github.com/mkdocstrings/griffe/issues/12
-[issue-xref-numpy-parameters]: https://github.com/mkdocstrings/griffe/issues/13
-[issue-xref-numpy-raises]: https://github.com/mkdocstrings/griffe/issues/14
-[issue-xref-numpy-receives]: https://github.com/mkdocstrings/griffe/issues/15
-[issue-xref-numpy-returns]: https://github.com/mkdocstrings/griffe/issues/16
-[issue-xref-numpy-warns]: https://github.com/mkdocstrings/griffe/issues/17
-[issue-xref-numpy-yields]: https://github.com/mkdocstrings/griffe/issues/18
+Section          | Google | Numpy | Sphinx
+---------------- | ------ | ----- | ------
+Attributes       | ✅     | ✅    | [❌][issue-xref-sphinx-attributes]
+Deprecated       | /      | /     | /
+Examples         | /      | /     | /
+Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]
+Parameters       | ✅     | ✅    | [❌][issue-xref-sphinx-parameters]
+Raises           | ✅     | ✅    | [❌][issue-xref-sphinx-raises]
+Receives         | ✅     | ✅    | [❌][issue-xref-sphinx-receives]
+Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
+Warns            | ✅     | ✅    | [❌][issue-xref-sphinx-warns]
+Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]
 
 [issue-xref-sphinx-attributes]: https://github.com/mkdocstrings/griffe/issues/19
 [issue-xref-sphinx-other-parameters]: https://github.com/mkdocstrings/griffe/issues/20
@@ -108,3 +99,4 @@ Trim doctest flags         | ✅     | ✅                                    | 
 [issue-ignore-init-summary-numpy]: https://github.com/mkdocstrings/griffe/issues/44
 [issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
 [issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
+
