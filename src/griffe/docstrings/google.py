@@ -396,7 +396,7 @@ def _read_yields_section(  # noqa: WPS231
         name, annotation, description = match.groups()
         description = "\n".join([description.lstrip(), *yield_lines[1:]]).rstrip("\n")
 
-        if annotation and docstring.parent is not None:
+        if annotation:
             # try to compile the annotation to transform it into an expression
             annotation = parse_annotation(annotation, docstring)
         else:
