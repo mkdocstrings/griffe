@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from griffe.dataclasses import Function, Parameter, Parameters
+from griffe.dataclasses import Attribute, Class, Docstring, Function, Parameter, Parameters
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
     DocstringParameter,
@@ -15,6 +15,8 @@ from griffe.docstrings.dataclasses import (
     DocstringWarn,
     DocstringYield,
 )
+from griffe.docstrings.utils import parse_annotation
+from griffe.expressions import Name
 from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
 
 
@@ -95,7 +97,56 @@ def test_indented_code_block(parse_numpy):
 
 
 # =============================================================================================
-# Sections
+# Annotations (general)
+def test_prefer_docstring_type_over_annotation(parse_numpy):
+    """Prefer the type written in the docstring over the annotation in the parent.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        a : int
+    """
+
+    sections, _ = parse_numpy(
+        docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str")))
+    )
+    assert len(sections) == 1
+    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
+
+
+def test_parse_complex_annotations(parse_numpy):
+    """Check the type regex accepts all the necessary characters.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        a : typing.Tuple[str, random0123456789]
+        b : int | float | None
+        c : Literal['hello'] | Literal["world"]
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    param_a, param_b, param_c = sections[0].value
+    assert param_a.name == "a"
+    assert param_a.description == ""
+    assert param_a.annotation == "typing.Tuple[str, random0123456789]"
+    assert param_b.name == "b"
+    assert param_b.description == ""
+    assert param_b.annotation == "int | float | None"
+    assert param_c.name == "c"
+    assert param_c.description == ""
+    assert param_c.annotation == "Literal['hello'] | Literal[\"world\"]"
+
+
+# =============================================================================================
+# Sections (general)
 def test_parameters_section(parse_numpy):
     """Parse parameters section.
 
@@ -405,52 +456,136 @@ def test_examples_section_when_followed_by_named_section(parse_numpy):
 
 
 # =============================================================================================
-# Annotations
-def test_prefer_docstring_type_over_annotation(parse_numpy):
-    """Prefer the type written in the docstring over the annotation in the parent.
+# Attributes sections
+def test_retrieve_attributes_annotation_from_parent(parse_numpy):
+    """Retrieve the annotations of attributes from the parent object.
 
     Parameters:
         parse_numpy: Fixture parser.
     """
     docstring = """
-        Parameters
-        ----------
-        a : int
-    """
+        Summary.
 
+        Attributes
+        ----------
+        a :
+            Whatever.
+        b :
+            Whatever.
+    """
+    parent = Class("cls")
+    parent["a"] = Attribute("a", annotation=Name("int", "int"))
+    parent["b"] = Attribute("b", annotation=Name("str", "str"))
+    sections, _ = parse_numpy(docstring, parent=parent)
+    attributes = sections[1].value
+    assert attributes[0].name == "a"
+    assert attributes[0].annotation.source == "int"
+    assert attributes[1].name == "b"
+    assert attributes[1].annotation.source == "str"
+
+
+# =============================================================================================
+# Yields sections
+@pytest.mark.parametrize(
+    "return_annotation",
+    [
+        "Iterator[tuple[int, float]]",
+        "Generator[tuple[int, float], ..., ...]",
+    ],
+)
+def test_parse_yields_tuple_in_iterator_or_generator(parse_numpy, return_annotation):
+    """Parse Yields annotations in Iterator or Generator types.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+        return_annotation: Parametrized return annotation as a string.
+    """
+    docstring = """
+        Summary.
+
+        Yields
+        ------
+        a :
+            Whatever.
+        b :
+            Whatever.
+    """
     sections, _ = parse_numpy(
-        docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str")))
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+        ),
     )
-    assert len(sections) == 1
-    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="int"))
+    yields = sections[1].value
+    assert yields[0].name == "a"
+    assert yields[0].annotation.source == "int"
+    assert yields[1].name == "b"
+    assert yields[1].annotation.source == "float"
 
 
-def test_parse_complex_annotations(parse_numpy):
-    """Check the type regex accepts all the necessary characters.
+# =============================================================================================
+# Receives sections
+def test_parse_receives_tuple_in_generator(parse_numpy):
+    """Parse Receives annotations in Generator type.
 
     Parameters:
         parse_numpy: Fixture parser.
     """
     docstring = """
-        Parameters
-        ----------
-        a : typing.Tuple[str, random0123456789]
-        b : int | float | None
-        c : Literal['hello'] | Literal["world"]
-    """
+        Summary.
 
-    sections, _ = parse_numpy(docstring)
-    assert len(sections) == 1
-    param_a, param_b, param_c = sections[0].value
-    assert param_a.name == "a"
-    assert param_a.description == ""
-    assert param_a.annotation == "typing.Tuple[str, random0123456789]"
-    assert param_b.name == "b"
-    assert param_b.description == ""
-    assert param_b.annotation == "int | float | None"
-    assert param_c.name == "c"
-    assert param_c.description == ""
-    assert param_c.annotation == "Literal['hello'] | Literal[\"world\"]"
+        Receives
+        --------
+        a :
+            Whatever.
+        b :
+            Whatever.
+    """
+    sections, _ = parse_numpy(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation("Generator[..., tuple[int, float], ...]", Docstring("d", parent=Function("f"))),
+        ),
+    )
+    receives = sections[1].value
+    assert receives[0].name == "a"
+    assert receives[0].annotation.source == "int"
+    assert receives[1].name == "b"
+    assert receives[1].annotation.source == "float"
+
+
+# =============================================================================================
+# Returns sections
+def test_parse_returns_tuple_in_generator(parse_numpy):
+    """Parse Returns annotations in Generator type.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Returns
+        -------
+        a :
+            Whatever.
+        b :
+            Whatever.
+    """
+    sections, _ = parse_numpy(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation("Generator[..., ..., tuple[int, float]]", Docstring("d", parent=Function("f"))),
+        ),
+    )
+    returns = sections[1].value
+    assert returns[0].name == "a"
+    assert returns[0].annotation.source == "int"
+    assert returns[1].name == "b"
+    assert returns[1].annotation.source == "float"
 
 
 # =============================================================================================

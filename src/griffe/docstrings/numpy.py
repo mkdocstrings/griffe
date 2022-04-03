@@ -326,14 +326,36 @@ def _read_returns_section(  # noqa: WPS231
         return None, new_offset
 
     returns = []
-    for item in items:
+    for index, item in enumerate(items):
         match = _RE_RETURNS.match(item[0])
         if not match:
             _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         name, annotation = match.groups()
+        annotation = annotation or None
         text = dedent("\n".join(item[1:]))
+        if annotation is None:
+            # try to retrieve the annotation from the docstring parent
+            with suppress(AttributeError, KeyError, ValueError):
+                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                if len(items) > 1:
+                    if annotation.is_tuple:
+                        annotation = annotation.tuple_item(index)
+                    else:
+                        if annotation.is_iterator:
+                            return_item = annotation.iterator_item()
+                        elif annotation.is_generator:
+                            _, _, return_item = annotation.generator_items()
+                        else:
+                            raise ValueError
+                        if isinstance(return_item, Name):
+                            annotation = return_item
+                        elif return_item.is_tuple:
+                            annotation = return_item.tuple_item(index)
+                        else:
+                            annotation = return_item
+
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReturns(returns), new_offset
 
@@ -353,14 +375,32 @@ def _read_yields_section(  # noqa: WPS231
         return None, new_offset
 
     yields = []
-    for item in items:
+    for index, item in enumerate(items):
         match = _RE_YIELDS.match(item[0])
         if not match:
             _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         name, annotation = match.groups()
+        annotation = annotation or None
         text = dedent("\n".join(item[1:]))
+        if annotation is None:
+            # try to retrieve the annotation from the docstring parent
+            with suppress(AttributeError, KeyError, ValueError):
+                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                if len(items) > 1:
+                    if annotation.is_iterator:
+                        yield_item = annotation.iterator_item()
+                    elif annotation.is_generator:
+                        yield_item, _, _ = annotation.generator_items()
+                    else:
+                        raise ValueError
+                    if isinstance(yield_item, Name):
+                        annotation = yield_item
+                    elif yield_item.is_tuple:
+                        annotation = yield_item.tuple_item(index)
+                    else:
+                        annotation = yield_item
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
     return DocstringSectionYields(yields), new_offset
 
@@ -380,14 +420,27 @@ def _read_receives_section(  # noqa: WPS231
         return None, new_offset
 
     receives = []
-    for item in items:
+    for index, item in enumerate(items):
         match = _RE_RECEIVES.match(item[0])
         if not match:
             _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         name, annotation = match.groups()
+        annotation = annotation or None
         text = dedent("\n".join(item[1:]))
+        if annotation is None:
+            # try to retrieve the annotation from the docstring parent
+            with suppress(AttributeError, KeyError):
+                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                if len(items) > 1 and annotation.is_generator:
+                    _, receives_item, _ = annotation.generator_items()
+                    if isinstance(receives_item, Name):
+                        annotation = receives_item
+                    elif receives_item.is_tuple:
+                        annotation = receives_item.tuple_item(index)
+                    else:
+                        annotation = receives_item
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReceives(receives), new_offset
 
@@ -450,7 +503,7 @@ def _read_attributes_section(
         _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
         return None, new_offset
 
-    annotation: str | None
+    annotation: str | Name | Expression | None = None
     attributes = []
     for item in items:
         name_type = item[0]
@@ -458,7 +511,8 @@ def _read_attributes_section(
             name, annotation = name_type.split(" : ", 1)
         else:
             name = name_type
-            annotation = None
+            with suppress(AttributeError, KeyError):
+                annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
     return DocstringSectionAttributes(attributes), new_offset
