@@ -9,7 +9,7 @@ from griffe import cli
 
 def test_main():
     """Basic CLI test."""
-    if sys.platform == 'windows':
+    if sys.platform == 'win32':
         assert cli.main(["griffe", "-s", "src", "-oNUL"]) == 0
     else:
         assert cli.main(["griffe", "-s", "src", "-o/dev/null"]) == 0
