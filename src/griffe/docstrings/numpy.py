@@ -185,8 +185,8 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:  # noqa: 
 _RE_OB: str = r"\{"  # opening bracket
 _RE_CB: str = r"\}"  # closing bracket
 _RE_NAME: str = r"\*{0,2}[_a-z][_a-z0-9]*"
-_RE_TYPE: str = r"[_a-z0-9 \[\]|().,'\"-]+"
-_RE_RETURNS: Pattern = re.compile(rf"^(?:(?P<name>{_RE_NAME}) : )?(?P<type>{_RE_TYPE})", re.IGNORECASE)
+_RE_TYPE: str = r"[_a-z0-9 \[\]|().,'\"-]*"
+_RE_RETURNS: Pattern = re.compile(rf"^(?:(?P<name>{_RE_NAME}) ?: ?)?(?P<type>{_RE_TYPE})", re.IGNORECASE)
 _RE_YIELDS: Pattern = _RE_RETURNS
 _RE_RECEIVES: Pattern = _RE_YIELDS
 _RE_PARAMETER: Pattern = re.compile(
