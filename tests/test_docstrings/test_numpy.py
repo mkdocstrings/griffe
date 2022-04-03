@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from griffe.dataclasses import Attribute, Class, Docstring, Function, Parameter, Parameters
+from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
     DocstringParameter,
@@ -617,6 +617,39 @@ def test_parse_returns_tuple_in_generator(parse_numpy):
 
 # =============================================================================================
 # Parser special features
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        "",
+        "\n",
+        "\n\n",
+        "Summary.",
+        "Summary.\n\n\n",
+        "Summary.\n\nParagraph.",
+        "Summary\non two lines.",
+        "Summary\non two lines.\n\nParagraph.",
+    ],
+)
+def test_ignore_init_summary(parse_numpy, docstring):
+    """Correctly ignore summary in `__init__` methods' docstrings.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+        docstring: The docstring to parse_google (parametrized).
+    """
+    sections, _ = parse_numpy(docstring, parent=Function("__init__", parent=Class("C")), ignore_init_summary=True)
+    for section in sections:
+        assert "Summary" not in section.value
+
+    if docstring.strip():
+        sections, _ = parse_numpy(docstring, parent=Function("__init__", parent=Module("M")), ignore_init_summary=True)
+        assert "Summary" in sections[0].value
+        sections, _ = parse_numpy(docstring, parent=Function("f", parent=Class("C")), ignore_init_summary=True)
+        assert "Summary" in sections[0].value
+        sections, _ = parse_numpy(docstring, ignore_init_summary=True)
+        assert "Summary" in sections[0].value
+
+
 @pytest.mark.parametrize(
     "docstring",
     [
