@@ -6,9 +6,10 @@ import inspect
 
 import pytest
 
-from griffe.dataclasses import Class, Docstring, Function, Module, Parameter, Parameters
+from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.docstrings.dataclasses import DocstringSectionKind
 from griffe.docstrings.utils import parse_annotation
+from griffe.expressions import Name
 
 
 # =============================================================================================
@@ -734,6 +735,32 @@ def test_parameter_line_without_colon_keyword_only(parse_google):
 #     sections, warnings = parse_google(docstring)
 #     assert len(sections) == 1
 #     assert not warnings
+
+
+# =============================================================================================
+# Attributes sections
+def test_retrieve_attributes_annotation_from_parent(parse_google):
+    """Retrieve the annotations of attributes from the parent object.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Attributes:
+            a: Whatever.
+            b: Whatever.
+    """
+    parent = Class("cls")
+    parent["a"] = Attribute("a", annotation=Name("int", "int"))
+    parent["b"] = Attribute("b", annotation=Name("str", "str"))
+    sections, _ = parse_google(docstring, parent=parent)
+    attributes = sections[1].value
+    assert attributes[0].name == "a"
+    assert attributes[0].annotation.source == "int"
+    assert attributes[1].name == "b"
+    assert attributes[1].annotation.source == "str"
 
 
 # =============================================================================================
