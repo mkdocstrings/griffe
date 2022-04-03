@@ -5,6 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.15.0](https://github.com/mkdocstrings/griffe/releases/tag/0.15.0) - 2022-04-03
+
+<small>[Compare with 0.14.1](https://github.com/mkdocstrings/griffe/compare/0.14.1...0.15.0)</small>
+
+### Features
+- Support `ignore_init_summary` in Numpy parser ([f8cd147](https://github.com/mkdocstrings/griffe/commit/f8cd14734603d29e6e72c9a350f663dccdeb36b4) by Timothée Mazzucotelli). [Issue #44](https://github.com/mkdocstrings/griffe/issues/44)
+- Enable cross-references for Numpy docstrings annotations ([e32a73c](https://github.com/mkdocstrings/griffe/commit/e32a73c9e100cf0778768c4a1f76152d9aecc451) by Timothée Mazzucotelli). Issues [#11](https://github.com/mkdocstrings/griffe/issues/11), [#12](https://github.com/mkdocstrings/griffe/issues/12), [#13](https://github.com/mkdocstrings/griffe/issues/13), [#14](https://github.com/mkdocstrings/griffe/issues/14), [#15](https://github.com/mkdocstrings/griffe/issues/15), [#16](https://github.com/mkdocstrings/griffe/issues/16), [#17](https://github.com/mkdocstrings/griffe/issues/17), [#18](https://github.com/mkdocstrings/griffe/issues/18)
+- Retrieve annotations from parent in Numpy parser ([8d4eae3](https://github.com/mkdocstrings/griffe/commit/8d4eae353cbd42f47fe6f8101e6e1f8be4054c84) by Timothée Mazzucotelli). Issues [#29](https://github.com/mkdocstrings/griffe/issues/29), [#30](https://github.com/mkdocstrings/griffe/issues/30), [#31](https://github.com/mkdocstrings/griffe/issues/31), [#32](https://github.com/mkdocstrings/griffe/issues/32)
+- Parse annotations in Iterator/Generator for Google docstrings ([f0129ef](https://github.com/mkdocstrings/griffe/commit/f0129efa2046089355ee62c48f23eb0189b054ce) by Timothée Mazzucotelli). [Issue #28](https://github.com/mkdocstrings/griffe/issues/28)
+
+### Bug Fixes
+- Fix missing "receives" entry in Google parser ([35d63fb](https://github.com/mkdocstrings/griffe/commit/35d63fbd566fa439a255c3f44ffeb4a9474db7f9) by Timothée Mazzucotelli).
+- Fix serialization of Windows paths ([b7e8da8](https://github.com/mkdocstrings/griffe/commit/b7e8da868cd6ec8230f2d58a8f3c38248f7c97b2) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Be less strict on spacing around ":" in Numpy docstrings ([aa592b5](https://github.com/mkdocstrings/griffe/commit/aa592b5f38b71e6eadd883257d2239fceec43752) by Timothée Mazzucotelli).
+- Be less strict in Numpy regular expressions ([603dc0e](https://github.com/mkdocstrings/griffe/commit/603dc0e21aa12754ec4f76ffc40869bf8519935d) by Timothée Mazzucotelli).
+- Rename variables in Numpy module ([4407244](https://github.com/mkdocstrings/griffe/commit/4407244a2e4b59c988c61e4c7b9f07532cad5b3c) by Timothée Mazzucotelli).
+
+
 ## [0.14.1](https://github.com/mkdocstrings/griffe/releases/tag/0.14.1) - 2022-04-01
 
 <small>[Compare with 0.14.0](https://github.com/mkdocstrings/griffe/compare/0.14.0...0.14.1)</small>
