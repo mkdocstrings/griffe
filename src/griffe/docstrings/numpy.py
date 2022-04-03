@@ -186,7 +186,7 @@ _RE_OB: str = r"\{"  # opening bracket
 _RE_CB: str = r"\}"  # closing bracket
 _RE_NAME: str = r"\*{0,2}[_a-z][_a-z0-9]*"
 _RE_TYPE: str = r"[_a-z0-9 \[\]|().,'\"-]*"
-_RE_RETURNS: Pattern = re.compile(rf"^(?:(?P<name>{_RE_NAME}) ?: ?)?(?P<type>{_RE_TYPE})", re.IGNORECASE)
+_RE_RETURNS: Pattern = re.compile(rf"^(?:(?P<name>{_RE_NAME})\s*:\s*)?(?P<type>{_RE_TYPE})", re.IGNORECASE)
 _RE_YIELDS: Pattern = _RE_RETURNS
 _RE_RECEIVES: Pattern = _RE_YIELDS
 _RE_PARAMETER: Pattern = re.compile(
@@ -507,10 +507,14 @@ def _read_attributes_section(
     attributes = []
     for item in items:
         name_type = item[0]
-        if " : " in name_type:
-            name, annotation = name_type.split(" : ", 1)
+        if ":" in name_type:
+            name, annotation = name_type.split(":", 1)
+            name = name.strip()
+            annotation = annotation.strip()
         else:
             name = name_type
+        annotation = annotation or None
+        if annotation is None:
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
         text = dedent("\n".join(item[1:]))
