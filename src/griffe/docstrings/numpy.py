@@ -102,22 +102,22 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[list[str]
     if offset >= len(lines):
         return [], offset
 
-    index = offset
+    new_offset = offset
     items: list[list[str]] = []
 
     # skip first empty lines
-    while _is_empty_line(lines[index]):
-        index += 1
+    while _is_empty_line(lines[new_offset]):
+        new_offset += 1
 
     previous_was_empty = False
 
     # start processing first item
-    current_item = [lines[index]]
-    index += 1
+    current_item = [lines[new_offset]]
+    new_offset += 1
 
     # loop on next lines
-    while index < len(lines):
-        line = lines[index]
+    while new_offset < len(lines):
+        line = lines[new_offset]
 
         if line.startswith(4 * " "):
             # continuation line
@@ -130,8 +130,8 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[list[str]
             current_item.append(line[cont_indent:])
             _warn(
                 docstring,
-                index,
-                f"Confusing indentation for continuation line {index+1} in docstring, "
+                new_offset,
+                f"Confusing indentation for continuation line {new_offset+1} in docstring, "
                 f"should be 4 spaces, not {cont_indent}",
             )
             previous_was_empty = False
@@ -149,12 +149,12 @@ def _read_block_items(docstring: Docstring, offset: int) -> tuple[list[list[str]
             current_item = [line]
             previous_was_empty = False
 
-        index += 1
+        new_offset += 1
 
     if current_item:
         items.append(current_item)
 
-    return items, index - 1
+    return items, new_offset - 1
 
 
 def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:  # noqa: WPS231
@@ -162,24 +162,24 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:  # noqa: 
     if offset >= len(lines):
         return "", offset
 
-    index = offset
+    new_offset = offset
     block: list[str] = []
 
     # skip first empty lines
-    while _is_empty_line(lines[index]):
-        index += 1
-    while index < len(lines):
-        is_empty = _is_empty_line(lines[index])
-        if is_empty and _is_dash_line(lines[index + 1]):
+    while _is_empty_line(lines[new_offset]):
+        new_offset += 1
+    while new_offset < len(lines):
+        is_empty = _is_empty_line(lines[new_offset])
+        if is_empty and _is_dash_line(lines[new_offset + 1]):
             break  # Break if a new unnamed section is reached.
 
-        if is_empty and index < len(lines) + 1 and _is_dash_line(lines[index + 2]):
+        if is_empty and new_offset < len(lines) + 1 and _is_dash_line(lines[new_offset + 2]):
             break  # Break if a new named section is reached.
 
-        block.append(lines[index])
-        index += 1
+        block.append(lines[new_offset])
+        new_offset += 1
 
-    return "\n".join(block).rstrip("\n"), index - 1
+    return "\n".join(block).rstrip("\n"), new_offset - 1
 
 
 _RE_OB: str = r"\{"  # opening bracket
@@ -217,13 +217,13 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
     parameters = []
     annotation: str | Name | Expression | None
 
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     for item in items:
 
         match = _RE_PARAMETER.match(item[0])
         if not match:
-            _warn(docstring, index, f"Could not parse line '{item[0]}'")
+            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         names = match.group("names").split(", ")
@@ -246,7 +246,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
                     annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
                     break
             else:
-                _warn(docstring, index, f"No types or annotations for parameters {names}")
+                _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
 
         if default is None:
             for name in names:  # noqa: WPS440
@@ -257,7 +257,7 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
         for name in names:  # noqa: WPS440
             parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))
 
-    return parameters, index
+    return parameters, new_offset
 
 
 def _read_parameters_section(
@@ -265,13 +265,13 @@ def _read_parameters_section(
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionParameters | None, int]:
-    parameters, index = _read_parameters(docstring, offset)
+    parameters, new_offset = _read_parameters(docstring, offset)
 
     if parameters:
-        return DocstringSectionParameters(parameters), index
+        return DocstringSectionParameters(parameters), new_offset
 
-    _warn(docstring, index, f"Empty parameters section at line {offset}")
-    return None, index
+    _warn(docstring, new_offset, f"Empty parameters section at line {offset}")
+    return None, new_offset
 
 
 def _read_other_parameters_section(
@@ -279,13 +279,13 @@ def _read_other_parameters_section(
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
-    parameters, index = _read_parameters(docstring, offset)
+    parameters, new_offset = _read_parameters(docstring, offset)
 
     if parameters:
-        return DocstringSectionOtherParameters(parameters), index
+        return DocstringSectionOtherParameters(parameters), new_offset
 
-    _warn(docstring, index, f"Empty other parameters section at line {offset}")
-    return None, index
+    _warn(docstring, new_offset, f"Empty other parameters section at line {offset}")
+    return None, new_offset
 
 
 def _read_deprecated_section(
@@ -296,22 +296,22 @@ def _read_deprecated_section(
     # deprecated
     # SINCE_VERSION
     #     TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty deprecated section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty deprecated section at line {offset}")
+        return None, new_offset
 
     if len(items) > 1:
-        _warn(docstring, index, f"Too many deprecated items at {offset}")
+        _warn(docstring, new_offset, f"Too many deprecated items at {offset}")
 
     item = items[0]
     version = item[0]
     text = dedent("\n".join(item[1:]))
-    return DocstringSectionDeprecated(version=version, text=text), index
+    return DocstringSectionDeprecated(version=version, text=text), new_offset
 
 
-def _read_returns_section(
+def _read_returns_section(  # noqa: WPS231
     docstring: Docstring,
     offset: int,
     **options: Any,
@@ -319,26 +319,26 @@ def _read_returns_section(
     # returns
     # (NAME : )?TYPE
     #     TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty returns section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty returns section at line {offset}")
+        return None, new_offset
 
     returns = []
     for item in items:
         match = _RE_RETURNS.match(item[0])
         if not match:
-            _warn(docstring, index, f"Could not parse line '{item[0]}'")
+            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
-    return DocstringSectionReturns(returns), index
+    return DocstringSectionReturns(returns), new_offset
 
 
-def _read_yields_section(
+def _read_yields_section(  # noqa: WPS231
     docstring: Docstring,
     offset: int,
     **options: Any,
@@ -346,26 +346,26 @@ def _read_yields_section(
     # yields
     # (NAME : )?TYPE
     #     TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty yields section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty yields section at line {offset}")
+        return None, new_offset
 
     yields = []
     for item in items:
         match = _RE_YIELDS.match(item[0])
         if not match:
-            _warn(docstring, index, f"Could not parse line '{item[0]}'")
+            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
-    return DocstringSectionYields(yields), index
+    return DocstringSectionYields(yields), new_offset
 
 
-def _read_receives_section(
+def _read_receives_section(  # noqa: WPS231
     docstring: Docstring,
     offset: int,
     **options: Any,
@@ -373,23 +373,23 @@ def _read_receives_section(
     # receives
     # (NAME : )?TYPE
     #     TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty receives section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty receives section at line {offset}")
+        return None, new_offset
 
     receives = []
     for item in items:
         match = _RE_RECEIVES.match(item[0])
         if not match:
-            _warn(docstring, index, f"Could not parse line '{item[0]}'")
+            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         name, annotation = match.groups()
         text = dedent("\n".join(item[1:]))
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
-    return DocstringSectionReceives(receives), index
+    return DocstringSectionReceives(receives), new_offset
 
 
 def _read_raises_section(
@@ -400,18 +400,18 @@ def _read_raises_section(
     # raises
     # EXCEPTION
     #     TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty raises section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty raises section at line {offset}")
+        return None, new_offset
 
     raises = []
     for item in items:
         annotation = item[0]
         text = dedent("\n".join(item[1:]))
         raises.append(DocstringRaise(annotation=annotation, description=text))
-    return DocstringSectionRaises(raises), index
+    return DocstringSectionRaises(raises), new_offset
 
 
 def _read_warns_section(
@@ -422,18 +422,18 @@ def _read_warns_section(
     # warns
     # WARNING
     #     TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty warns section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty warns section at line {offset}")
+        return None, new_offset
 
     warns = []
     for item in items:
         annotation = item[0]
         text = dedent("\n".join(item[1:]))
         warns.append(DocstringWarn(annotation=annotation, description=text))
-    return DocstringSectionWarns(warns), index
+    return DocstringSectionWarns(warns), new_offset
 
 
 def _read_attributes_section(
@@ -444,11 +444,11 @@ def _read_attributes_section(
     # attributes (for classes)
     # NAME( : TYPE)?
     #    TEXT?
-    items, index = _read_block_items(docstring, offset)
+    items, new_offset = _read_block_items(docstring, offset)
 
     if not items:
-        _warn(docstring, index, f"Empty attributes section at line {offset}")
-        return None, index
+        _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
+        return None, new_offset
 
     annotation: str | None
     attributes = []
@@ -461,7 +461,7 @@ def _read_attributes_section(
             annotation = None
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
-    return DocstringSectionAttributes(attributes), index
+    return DocstringSectionAttributes(attributes), new_offset
 
 
 def _read_examples_section(  # noqa: WPS231
@@ -470,7 +470,7 @@ def _read_examples_section(  # noqa: WPS231
     trim_doctest_flags: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionExamples | None, int]:
-    text, index = _read_block(docstring, offset)
+    text, new_offset = _read_block(docstring, offset)
 
     sub_sections: list[tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]] = []
     in_code_example = False
@@ -520,10 +520,10 @@ def _read_examples_section(  # noqa: WPS231
         sub_sections.append((DocstringSectionKind.examples, "\n".join(current_example)))
 
     if sub_sections:
-        return DocstringSectionExamples(sub_sections), index
+        return DocstringSectionExamples(sub_sections), new_offset
 
-    _warn(docstring, index, f"Empty examples section at line {offset}")
-    return None, index
+    _warn(docstring, new_offset, f"Empty examples section at line {offset}")
+    return None, new_offset
 
 
 _section_reader = {
@@ -569,34 +569,34 @@ def parse(  # noqa: WPS231
     }
 
     lines = docstring.lines
-    index = 0
+    offset = 0
 
-    while index < len(lines):
-        line_lower = lines[index].lower()
+    while offset < len(lines):
+        line_lower = lines[offset].lower()
 
         if in_code_block:
             if line_lower.lstrip(" ").startswith("```"):
                 in_code_block = False
-            current_section.append(lines[index])
+            current_section.append(lines[offset])
 
-        elif line_lower in _section_kind and _is_dash_line(lines[index + 1]):
+        elif line_lower in _section_kind and _is_dash_line(lines[offset + 1]):
             if current_section:
                 if any(current_section):
                     sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                 current_section = []
             reader = _section_reader[_section_kind[line_lower]]
-            section, index = reader(docstring, index + 2, **options)  # type: ignore[operator]
+            section, offset = reader(docstring, offset + 2, **options)  # type: ignore[operator]
             if section:
                 sections.append(section)
 
         elif line_lower.lstrip(" ").startswith("```"):
             in_code_block = True
-            current_section.append(lines[index])
+            current_section.append(lines[offset])
 
         else:
-            current_section.append(lines[index])
+            current_section.append(lines[offset])
 
-        index += 1
+        offset += 1
 
     if current_section:
         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
