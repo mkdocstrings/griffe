@@ -26,7 +26,6 @@ if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
     from functools import cached_property  # noqa: WPS440
-cached_property = property
 
 
 class ParameterKind(enum.Enum):
@@ -355,8 +354,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
             return True
         for member in self.members.values():
             if not member.is_alias or member.resolved:
-                has = member.has_docstring
-                assert has is not None
+                has = member.has_docstrings
+                # assert has is not None
                 if has:
                     return True
         return False

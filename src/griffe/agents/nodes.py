@@ -87,7 +87,6 @@ if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
     from functools import cached_property  # noqa: WPS440
-cached_property = property
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):

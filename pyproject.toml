@@ -95,7 +95,7 @@ quality = [
     "wps-light>=0.15",
 ]
 tests = [
-    "pytest>=6.2,<7",
+    "pytest>=7.1",
     "pytest-cov>=3.0",
     "pytest-randomly>=3.10",
     "pytest-xdist>=2.4",

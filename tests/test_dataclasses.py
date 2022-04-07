@@ -42,5 +42,6 @@ def test_handle_aliases_chain_in_has_docstrings():
         package = loader.load_module(tmp_package.name)
         loader.resolve_aliases(package)
 
-        assert not package.has_docstrings
+        has = package.has_docstrings
+        assert has is False
         print("hey")
