@@ -26,6 +26,7 @@ if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
     from functools import cached_property  # noqa: WPS440
+cached_property = property
 
 
 class ParameterKind(enum.Enum):
@@ -353,8 +354,11 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         if self.has_docstring:  # noqa: DAR201
             return True
         for member in self.members.values():
-            if (not member.is_alias or member.resolved) and member.has_docstring:  # type: ignore[union-attr]
-                return True
+            if not member.is_alias or member.resolved:
+                has = member.has_docstring
+                assert has is not None
+                if has:
+                    return True
         return False
 
     def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:
@@ -779,6 +783,9 @@ class Alias(ObjectAliasMixin):
         self.alias_endlineno: int | None = endlineno
         self._parent: Module | Class | None = parent
         self._passed_through: bool = False
+
+    def __repr__(self) -> str:
+        return f"<Alias({self.name!r}, {self.target_path!r})>"
 
     def __getattr__(self, name: str) -> Any:
         # forward everything to the target
