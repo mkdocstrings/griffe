@@ -57,7 +57,7 @@ def test_dont_shortcut_alias_chain_after_expanding_wildcards():
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load_module(tmp_package.name)
-        loader.resolve_aliases(package)
+        loader.resolve_aliases()
         child = package["mod_a.Child"]
         assert child.bases
         base = child.bases[0]
