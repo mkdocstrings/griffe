@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.15.1](https://github.com/mkdocstrings/griffe/releases/tag/0.15.1) - 2022-04-08
+
+<small>[Compare with 0.15.0](https://github.com/mkdocstrings/griffe/compare/0.15.0...0.15.1)</small>
+
+### Bug Fixes
+- Don't overwrite existing (lower) members when expanding wildcards ([9ff86e3](https://github.com/mkdocstrings/griffe/commit/9ff86e369d8fb3a6eeb7d94cd60c87fa26bf74b4) by Timothée Mazzucotelli).
+- Don't insert admonition before current section (Google parser) ([8d8a46f](https://github.com/mkdocstrings/griffe/commit/8d8a46fca7df917c4bba979128d94d3b79252ff5) by Timothée Mazzucotelli).
+- Handle aliases chains in `has_docstrings` method ([77c6943](https://github.com/mkdocstrings/griffe/commit/77c69430ddc74fedaa33fa65afd59ac546900829) by Timothée Mazzucotelli).
+- Actually check for docstrings recursively ([15f4193](https://github.com/mkdocstrings/griffe/commit/15f4193b764f85dcab042ab193e984bebf151029) by Timothée Mazzucotelli).
+
+
 ## [0.15.0](https://github.com/mkdocstrings/griffe/releases/tag/0.15.0) - 2022-04-03
 
 <small>[Compare with 0.14.1](https://github.com/mkdocstrings/griffe/compare/0.14.1...0.15.0)</small>
