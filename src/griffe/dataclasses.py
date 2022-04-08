@@ -780,6 +780,9 @@ class Alias(ObjectAliasMixin):
         self._parent: Module | Class | None = parent
         self._passed_through: bool = False
 
+    def __repr__(self) -> str:
+        return f"<Alias({self.name!r}, {self.target_path!r})>"
+
     def __getattr__(self, name: str) -> Any:
         # forward everything to the target
         if self._passed_through:
