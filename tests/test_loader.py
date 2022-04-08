@@ -64,3 +64,19 @@ def test_dont_shortcut_alias_chain_after_expanding_wildcards():
         assert isinstance(base, Name)
         assert base.source == "Base"
         assert base.full == "package.mod_b.Base"
+
+
+def test_dont_overwrite_lower_member_when_expanding_wildcard():
+    """Check that we don't overwrite a member defined after the import when expanding a wildcard."""
+    with temporary_pypackage("package", ["mod_a.py", "mod_b.py"]) as tmp_package:
+        mod_a = tmp_package.path / "mod_a.py"
+        mod_b = tmp_package.path / "mod_b.py"
+
+        mod_a.write_text("overwritten = 0\nfrom package.mod_b import *\nnot_overwritten = 0\n")
+        mod_b.write_text("overwritten = 1\nnot_overwritten = 1\n")
+
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        package = loader.load_module(tmp_package.name)
+        loader.resolve_aliases()
+        assert package["mod_a.overwritten"].value == "1"
+        assert package["mod_a.not_overwritten"].value == "0"

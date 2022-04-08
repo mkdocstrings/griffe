@@ -225,7 +225,10 @@ class GriffeLoader:
             del obj[name]  # noqa: WPS420
 
         for new_member, alias_lineno, alias_endlineno in expanded:
-            obj[new_member.name] = Alias(new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno)
+            if new_member.name not in obj.members or obj[new_member.name].lineno < alias_lineno:
+                obj[new_member.name] = Alias(
+                    new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno
+                )
 
     def resolve_module_aliases(  # noqa: WPS231
         self,
