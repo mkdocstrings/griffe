@@ -353,7 +353,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         if self.has_docstring:  # noqa: DAR201
             return True
         for member in self.members.values():
-            if (not member.is_alias or member.resolved) and member.has_docstrings:  # type: ignore[union-attr]
+            if member.has_docstrings:  # type: ignore[union-attr]
                 return True
         return False
 
@@ -841,6 +841,16 @@ class Alias(ObjectAliasMixin):
         if self.resolved:
             return self.target.endlineno
         return self.alias_endlineno
+
+    @property
+    def has_docstring(self) -> bool:
+        """Tell if this alias' target has a non-empty docstring."""
+        return self.resolved and self.target.has_docstring  # noqa: DAR201
+
+    @property
+    def has_docstrings(self) -> bool:
+        """Tell if this alias' target or any of its members has a non-empty docstring."""
+        return self.resolved and self.target.has_docstrings  # noqa: DAR201
 
     @property
     def parent(self) -> Module | Class | None:
