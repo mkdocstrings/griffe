@@ -663,6 +663,10 @@ def parse(  # noqa: WPS231
                 else:
                     contents, offset = _read_block(docstring, offset + 1)
                     if contents:
+                        if current_section:
+                            if any(current_section):
+                                sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
+                            current_section = []
                         if title is None:
                             title = admonition_type
                         admonition_type = admonition_type.lower().replace(" ", "-")

@@ -947,6 +947,26 @@ def test_handle_false_admonitions_correctly(parse_google, docstring):
     assert not warnings
 
 
+def test_dont_insert_admonition_before_current_section(parse_google):
+    """Check that admonitions are inserted at the right place.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Short description.
+
+        Info:
+            Something useful.
+    """
+    sections, _ = parse_google(docstring)
+    assert len(sections) == 2
+    assert sections[0].kind is DocstringSectionKind.text
+    assert sections[1].kind is DocstringSectionKind.admonition
+
+
 @pytest.mark.parametrize(
     "docstring",
     [
