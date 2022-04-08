@@ -702,22 +702,34 @@ def test_parameter_line_without_colon_keyword_only(parse_google):
     assert "Empty" in warnings[1]
 
 
-# TODO: possible feature
-# def test_extra_parameter(parse_google):
-#     """Warn on extra parameter in docstring.
-#
-#     Parameters:
-#         parse_google: Fixture parser.
-#     """
-#     docstring = """
-#         Parameters:
-#             x: Integer.
-#             y: Integer.
-#     """
+def test_extra_parameter(parse_google):
+    """Warn on extra parameter in docstring.
 
-#     sections, warnings = parse_google(docstring)
-#     assert len(sections) == 1
-#     assert len(warnings) == 2
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Parameters:
+            x: Integer.
+            y: Integer.
+    """
+
+    sections, warnings = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            parameters=Parameters(
+                Parameter("a"),
+                Parameter("y"),
+            ),
+        ),
+    )
+    assert len(sections) == 1
+    assert len(warnings) == 3
+    assert (
+        'The docstring for <Function(\'func\', None, None)> contains "x" as a parameter, but "x" is not an argument.'
+        in warnings
+    )
 
 
 # TODO: possible feature

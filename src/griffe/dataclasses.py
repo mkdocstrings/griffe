@@ -247,6 +247,9 @@ class Parameters:
     def __iter__(self):
         return iter(self._parameters_list)
 
+    def __contains__(self, item):
+        return item in self._parameters_dict
+
     def add(self, parameter: Parameter) -> None:
         """Add a parameter to the container.
 

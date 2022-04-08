@@ -161,7 +161,9 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:
     return "\n".join(block).rstrip("\n"), new_offset - 1
 
 
-def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
+def _read_parameters(
+    docstring: Docstring, offset: int, warn_unknown_params: bool = True
+) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
     parameters = []
     annotation: str | Name | Expression | None
 
@@ -201,6 +203,14 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
 
         if annotation is None:
             _warn(docstring, line_number, f"No type or annotation for parameter '{name}'")
+
+        if warn_unknown_params and docstring.parent is not None:
+            if name not in docstring.parent.parameters:
+                _warn(
+                    docstring,
+                    line_number,
+                    f'The docstring for {docstring.parent} contains "{name}" as a parameter, but "{name}" is not an argument.',
+                )
 
         parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))
 
