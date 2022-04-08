@@ -353,7 +353,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         if self.has_docstring:  # noqa: DAR201
             return True
         for member in self.members.values():
-            if (not member.is_alias or member.resolved) and member.has_docstring:  # type: ignore[union-attr]
+            if (not member.is_alias or member.resolved) and member.has_docstrings:  # type: ignore[union-attr]
                 return True
         return False
 
