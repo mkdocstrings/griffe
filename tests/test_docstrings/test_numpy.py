@@ -172,6 +172,22 @@ def test_parse_annotations_in_all_sections(parse_numpy, docstring, name):
     assert sections[0].value[0].annotation == Name(name, name)
 
 
+# https://github.com/mkdocstrings/mkdocstrings/issues/416
+def test_dont_crash_on_text_annotations(parse_numpy):
+    """Don't crash while parsing annotations containing unhandled nodes.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        region : str, list-like, geopandas.GeoSeries, geopandas.GeoDataFrame, geometric
+            Description.
+    """
+    assert parse_numpy(docstring, parent=Function("f"))
+
+
 # =============================================================================================
 # Sections (general)
 def test_parameters_section(parse_numpy):

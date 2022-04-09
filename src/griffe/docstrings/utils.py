@@ -53,7 +53,11 @@ def parse_annotation(annotation: str, docstring: Docstring) -> str | Name | Expr
     Returns:
         The string unchanged, or a new name or expression.
     """
-    with suppress(AttributeError, SyntaxError):
+    with suppress(
+        AttributeError,  # docstring has no parent that can be used to resolve names
+        KeyError,  # compiled annotation contains unhandled AST nodes
+        SyntaxError,  # annotation contains syntax errors
+    ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
         if code.body:
             return get_annotation(code.body, parent=docstring.parent) or annotation  # type: ignore[arg-type]
