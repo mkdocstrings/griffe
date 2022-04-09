@@ -528,6 +528,65 @@ def test_retrieve_attributes_annotation_from_parent(parse_numpy):
 
 
 # =============================================================================================
+# Parameters sections
+def test_warn_about_unknown_parameters(parse_numpy):
+    """Warn about unknown parameters in "Parameters" sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        x : int
+            Integer.
+        y : int
+            Integer.
+    """
+
+    _, warnings = parse_numpy(
+        docstring,
+        parent=Function(
+            "func",
+            parameters=Parameters(
+                Parameter("a"),
+                Parameter("y"),
+            ),
+        ),
+    )
+    assert len(warnings) == 1
+    assert "'x' does not appear in the parent signature" in warnings[0]
+
+
+def test_never_warn_about_unknown_other_parameters(parse_numpy):
+    """Never warn about unknown parameters in "Other parameters" sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Other Parameters
+        ----------------
+        x : int
+            Integer.
+        z : int
+            Integer.
+    """
+
+    _, warnings = parse_numpy(
+        docstring,
+        parent=Function(
+            "func",
+            parameters=Parameters(
+                Parameter("a"),
+                Parameter("y"),
+            ),
+        ),
+    )
+    assert not warnings
+
+
+# =============================================================================================
 # Yields sections
 @pytest.mark.parametrize(
     "return_annotation",
@@ -651,7 +710,7 @@ def test_ignore_init_summary(parse_numpy, docstring):
 
     Parameters:
         parse_numpy: Fixture parser.
-        docstring: The docstring to parse_google (parametrized).
+        docstring: The docstring to parse (parametrized).
     """
     sections, _ = parse_numpy(docstring, parent=Function("__init__", parent=Class("C")), ignore_init_summary=True)
     for section in sections:

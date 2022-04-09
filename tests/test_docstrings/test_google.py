@@ -702,8 +702,8 @@ def test_parameter_line_without_colon_keyword_only(parse_google):
     assert "Empty" in warnings[1]
 
 
-def test_warn_about_extra_parameters(parse_google):
-    """Warn about extra parameters in "Parameters" sections.
+def test_warn_about_unknown_parameters(parse_google):
+    """Warn about unknown parameters in "Parameters" sections.
 
     Parameters:
         parse_google: Fixture parser.
@@ -714,7 +714,7 @@ def test_warn_about_extra_parameters(parse_google):
             y (int): Integer.
     """
 
-    sections, warnings = parse_google(
+    _, warnings = parse_google(
         docstring,
         parent=Function(
             "func",
@@ -728,8 +728,8 @@ def test_warn_about_extra_parameters(parse_google):
     assert "'x' does not appear in the parent signature" in warnings[0]
 
 
-def test_never_warn_about_extra_other_parameters(parse_google):
-    """Never Warn about extra parameters in "Other parameters" sections.
+def test_never_warn_about_unknown_other_parameters(parse_google):
+    """Never warn about unknown parameters in "Other parameters" sections.
 
     Parameters:
         parse_google: Fixture parser.

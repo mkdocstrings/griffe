@@ -95,7 +95,8 @@ Option                     | Google | Numpy | Sphinx
 -------------------------- | ------ | ----- | ------
 Ignore `__init__` summary  | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
 Trim doctest flags         | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
+Warn about unknown params  | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
 
 [issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
 [issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
-
+[issue-warn-unknown-params-sphinx]: https://github.com/mkdocstrings/griffe/issues/64

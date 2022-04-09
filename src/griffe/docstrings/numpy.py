@@ -213,7 +213,11 @@ _RE_DOCTEST_BLANKLINE: Pattern = re.compile(r"^\s*<BLANKLINE>\s*$")
 _RE_DOCTEST_FLAGS: Pattern = re.compile(r"(\s*#\s*doctest:.+)$")
 
 
-def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringParameter], int]:  # noqa: WPS231
+def _read_parameters(  # noqa: WPS231
+    docstring: Docstring,
+    offset: int,
+    warn_unknown_params: bool = True,
+) -> tuple[list[DocstringParameter], int]:
     parameters = []
     annotation: str | Name | Expression | None
 
@@ -257,6 +261,15 @@ def _read_parameters(docstring: Docstring, offset: int) -> tuple[list[DocstringP
                     default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
                     break
 
+        if warn_unknown_params and docstring.parent is not None:
+            for name in names:  # noqa: WPS440
+                if name not in docstring.parent.parameters:  # type: ignore[attr-defined]
+                    _warn(
+                        docstring,
+                        new_offset,
+                        f"Parameter '{name}' does not appear in the parent signature",
+                    )
+
         for name in names:  # noqa: WPS440
             parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))
 
@@ -282,7 +295,7 @@ def _read_other_parameters_section(
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset)
+    parameters, new_offset = _read_parameters(docstring, offset, warn_unknown_params=False)
 
     if parameters:
         return DocstringSectionOtherParameters(parameters), new_offset
