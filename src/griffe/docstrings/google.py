@@ -209,7 +209,7 @@ def _read_parameters(
                 _warn(
                     docstring,
                     line_number,
-                    f'The docstring for {docstring.parent} contains "{name}" as a parameter, but "{name}" is not an argument.',
+                    f"Parameter '{name}' does not appear in the parent signature",
                 )
 
         parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))

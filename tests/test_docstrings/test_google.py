@@ -726,10 +726,7 @@ def test_extra_parameter(parse_google):
     )
     assert len(sections) == 1
     assert len(warnings) == 3
-    assert (
-        'The docstring for <Function(\'func\', None, None)> contains "x" as a parameter, but "x" is not an argument.'
-        in warnings
-    )
+    assert "'x' does not appear in parent signature" in warnings[1]
 
 
 # TODO: possible feature
