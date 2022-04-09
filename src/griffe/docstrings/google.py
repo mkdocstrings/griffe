@@ -236,7 +236,7 @@ def _read_other_parameters_section(
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset)
+    parameters, new_offset = _read_parameters(docstring, offset, warn_unknown_params=False)
 
     if parameters:
         return DocstringSectionOtherParameters(parameters), new_offset

@@ -712,6 +712,10 @@ def test_extra_parameter(parse_google):
         Parameters:
             x: Integer.
             y: Integer.
+        Other Parameters:
+            i (str): value i
+            j (str): value j
+            k (str): value k
     """
 
     sections, warnings = parse_google(
@@ -724,7 +728,9 @@ def test_extra_parameter(parse_google):
             ),
         ),
     )
-    assert len(sections) == 1
+    assert len(sections) == 2
+    for name in ("i", "j", "k"):
+        assert f"Parameter '{name}' does not appear in the parent signature" not in warnings
     assert len(warnings) == 3
     assert "'x' does not appear in the parent signature" in warnings[1]
 
