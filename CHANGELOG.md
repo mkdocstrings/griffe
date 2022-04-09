@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.16.0](https://github.com/mkdocstrings/griffe/releases/tag/0.16.0) - 2022-04-09
+
+<small>[Compare with 0.15.1](https://github.com/mkdocstrings/griffe/compare/0.15.1...0.16.0)</small>
+
+### Features
+- Warn about unknown parameters in Numpy docstrings ([23f63f2](https://github.com/mkdocstrings/griffe/commit/23f63f255eef5aa2dbaa1765f93634ecaf94dbb3) by Timothée Mazzucotelli).
+- Warn about unknown parameters in Google docstrings ([72be993](https://github.com/mkdocstrings/griffe/commit/72be993c95460a6465a4e70a95b79ae4095db541) by Kevin Musgrave). [Issue mkdocstrings/mkdocstrings#408](https://github.com/mkdocstrings/mkdocstrings/issues/408), [PR #63](https://github.com/mkdocstrings/griffe/issues/63)
+
+### Bug Fixes
+- Don't crash on unhandled AST nodes while parsing text annotations ([f3be3a6](https://github.com/mkdocstrings/griffe/commit/f3be3a68141e24a9c0c6b9a87e3f22e75a168d80) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#416](https://github.com/mkdocstrings/mkdocstrings/issues/416)
+
+
 ## [0.15.1](https://github.com/mkdocstrings/griffe/releases/tag/0.15.1) - 2022-04-08
 
 <small>[Compare with 0.15.0](https://github.com/mkdocstrings/griffe/compare/0.15.0...0.15.1)</small>
