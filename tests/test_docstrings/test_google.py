@@ -726,7 +726,7 @@ def test_extra_parameter(parse_google):
     )
     assert len(sections) == 1
     assert len(warnings) == 3
-    assert "'x' does not appear in parent signature" in warnings[1]
+    assert "'x' does not appear in the parent signature" in warnings[1]
 
 
 # TODO: possible feature
