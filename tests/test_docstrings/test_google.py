@@ -702,20 +702,16 @@ def test_parameter_line_without_colon_keyword_only(parse_google):
     assert "Empty" in warnings[1]
 
 
-def test_extra_parameter(parse_google):
-    """Warn on extra parameter in docstring.
+def test_warn_about_extra_parameters(parse_google):
+    """Warn about extra parameters in "Parameters" sections.
 
     Parameters:
         parse_google: Fixture parser.
     """
     docstring = """
         Parameters:
-            x: Integer.
-            y: Integer.
-        Other Parameters:
-            i (str): value i
-            j (str): value j
-            k (str): value k
+            x (int): Integer.
+            y (int): Integer.
     """
 
     sections, warnings = parse_google(
@@ -728,11 +724,33 @@ def test_extra_parameter(parse_google):
             ),
         ),
     )
-    assert len(sections) == 2
-    for name in ("i", "j", "k"):
-        assert f"Parameter '{name}' does not appear in the parent signature" not in warnings
-    assert len(warnings) == 3
-    assert "'x' does not appear in the parent signature" in warnings[1]
+    assert len(warnings) == 1
+    assert "'x' does not appear in the parent signature" in warnings[0]
+
+
+def test_never_warn_about_extra_other_parameters(parse_google):
+    """Never Warn about extra parameters in "Other parameters" sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Other Parameters:
+            x (int): Integer.
+            z (int): Integer.
+    """
+
+    _, warnings = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            parameters=Parameters(
+                Parameter("a"),
+                Parameter("y"),
+            ),
+        ),
+    )
+    assert not warnings
 
 
 # TODO: possible feature
