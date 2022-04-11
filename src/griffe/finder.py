@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import sys
 from contextlib import suppress
 from pathlib import Path
@@ -139,10 +140,9 @@ class ModuleFinder:
                             return abs_path
                         else:
                             init_module = abs_path / "__init__.py"
-                            if init_module.exists():
+                            if init_module.exists() and not _is_pkg_style_namespace(init_module):
                                 return init_module
-                            else:
-                                namespace_dirs.append(abs_path)
+                            namespace_dirs.append(abs_path)
 
         if namespace_dirs:
             return namespace_dirs
@@ -267,6 +267,17 @@ class ModuleFinder:
             parent_path = parent_path.parent
         self.search_paths.insert(0, parent_path.parent)
         return parent_path.name
+
+
+_re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")
+_re_pkgutil = re.compile(r"(?:__path__ = __import__\([\"']pkgutil[\"']\).extend_path\(__path__, __name__\))")
+
+
+# TODO: for better robustness, we should load and minify the AST
+# to search for particular call statements
+def _is_pkg_style_namespace(init_module: Path) -> bool:
+    code = init_module.read_text()
+    return bool(_re_pkgresources.search(code) or _re_pkgutil.search(code))
 
 
 def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
