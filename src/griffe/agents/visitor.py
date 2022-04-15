@@ -126,7 +126,6 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.extensions: Extensions = extensions.attach_visitor(self)
         self.parent: Module | None = parent
         self.current: Module | Class = None  # type: ignore[assignment]
-        self.in_decorator: bool = False
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
@@ -210,11 +209,9 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         decorators = []
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
-            self.in_decorator = True
             for decorator_node in node.decorator_list:
                 decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))  # type: ignore[attr-defined]
                 self.visit(decorator_node)
-            self.in_decorator = False
         else:
             lineno = node.lineno
 
@@ -251,11 +248,9 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         decorators = []
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
-            self.in_decorator = True
             for decorator_node in node.decorator_list:
                 decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))  # type: ignore[attr-defined]
                 self.visit(decorator_node)
-            self.in_decorator = False
         else:
             lineno = node.lineno
 
