@@ -54,13 +54,15 @@ class Decorator:
         endlineno: The ending line number.
     """
 
-    def __init__(self, lineno: int | None, endlineno: int | None) -> None:
+    def __init__(self, value: str, *, lineno: int | None, endlineno: int | None) -> None:
         """Initialize the decorator.
 
         Parameters:
+            value: The decorator code.
             lineno: The starting line number.
             endlineno: The ending line number.
         """
+        self.value: str = value
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
 
@@ -74,6 +76,7 @@ class Decorator:
             A dictionary.
         """
         return {
+            "value": self.value,
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
@@ -1167,6 +1170,9 @@ class Function(Object):
         self.parameters: Parameters = parameters or Parameters()
         self.returns: str | Name | Expression | None = returns
         self.decorators: list[Decorator] = decorators or []
+        self.setter: Function | None = None
+        self.deleter: Function | None = None
+        self.overloads: list[Function] | None = None
 
     @property
     def annotation(self) -> str | Name | Expression | None:

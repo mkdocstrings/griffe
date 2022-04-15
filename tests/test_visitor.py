@@ -99,3 +99,38 @@ def test_not_defined_at_runtime():
         assert "CONST_C" in package.members
         assert "TYPE_B" not in package.members
         assert "TYPE_C" not in package.members
+
+
+@pytest.mark.parametrize(
+    ("decorator", "label"),
+    [
+        ("property", "property"),
+        ("functools.cache", "cached"),
+        ("functools.cached_property", "cached"),
+        ("functools.lru_cache", "cached"),
+        ("functools.lru_cache(maxsize=8)", "cached"),
+        ("cache", "cached"),
+        ("cached_property", "cached"),
+        ("lru_cache", "cached"),
+        ("lru_cache(maxsize=8)", "cached"),
+    ],
+)
+def test_set_labels_using_decorators(decorator, label):
+    """Assert decorators are used to set labels on objects.
+
+    Parameters:
+        decorator: A parametrized decorator.
+        label: The expected, parametrized label.
+    """
+    code = f"""
+        import functools
+        from functools import cache, cached_property, lru_cache
+
+        class A:
+            @{decorator}
+            def f(self):
+                return 0
+    """
+    with temporary_visited_module(code) as module:
+        assert label in module["A.f"].labels
+

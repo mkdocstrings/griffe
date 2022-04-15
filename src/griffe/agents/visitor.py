@@ -43,8 +43,21 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.docstrings.parsers import Parser
-from griffe.exceptions import LastNodeError
+from griffe.exceptions import LastNodeError, NameResolutionError
 from griffe.expressions import Expression, Name
+
+builtin_decorators = {
+    "property",
+    "staticmethod",
+    "classmethod",
+}
+
+stdlib_decorators = {
+    "abc.abstractmethod",
+    "functools.cache",
+    "functools.cached_property",
+    "functools.lru_cache",
+}
 
 
 def visit(
@@ -210,8 +223,13 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
-                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))  # type: ignore[attr-defined]
-                self.visit(decorator_node)
+                decorators.append(
+                    Decorator(
+                        get_value(decorator_node),
+                        lineno=decorator_node.lineno,
+                        endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
+                    )
+                )
         else:
             lineno = node.lineno
 
@@ -235,6 +253,32 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.generic_visit(node)
         self.current = self.current.parent  # type: ignore[assignment]
 
+    def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:  # noqa: WPS231
+        """Build and return a set of labels based on decorators.
+
+        Parameters:
+            decorators: The decorators to check.
+
+        Returns:
+            A set of labels.
+        """
+        labels = set()
+        for decorator in decorators:
+            decorator_value = decorator.value.split("(", 1)[0]
+            if decorator_value in builtin_decorators:
+                labels.add(decorator_value)
+            else:
+                names = decorator_value.split(".")
+                with suppress(NameResolutionError):
+                    resolved_first = self.current.resolve(names[0])
+                    resolved_name = ".".join([resolved_first, *names[1:]])
+                    if resolved_name in stdlib_decorators:
+                        if "abstract" in resolved_name:
+                            labels.add("abstract")
+                        elif "cache" in resolved_name:
+                            labels.add("cached")
+        return labels
+
     def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None):  # noqa: WPS231
         """Handle a function definition node.
 
@@ -249,12 +293,18 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
-                decorators.append(Decorator(decorator_node.lineno, decorator_node.end_lineno))  # type: ignore[attr-defined]
-                self.visit(decorator_node)
+                decorator_value = get_value(decorator_node)
+                decorators.append(
+                    Decorator(
+                        decorator_value,
+                        lineno=decorator_node.lineno,
+                        endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
+                    )
+                )
         else:
             lineno = node.lineno
 
-        # TODO: handle member already exist, setter of property
+        labels |= self.decorators_to_labels(decorators)
 
         # handle parameters
         parameters = Parameters()
