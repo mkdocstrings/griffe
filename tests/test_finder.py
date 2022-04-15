@@ -48,7 +48,7 @@ def test_find_pkg_style_namespace_packages(statement):
     Parameters:
         statement: The statement in the `__init__` module allowing to mark the package as namespace.
     """
-    with temporary_pypackage("namespace/package1") as tmp_package1, temporary_pypackage(
+    with temporary_pypackage("namespace/package1") as tmp_package1, temporary_pypackage(  # noqa: WPS316
         "namespace/package2"
     ) as tmp_package2:
         tmp_package1.path.parent.joinpath("__init__.py").write_text(statement)
