@@ -134,3 +134,42 @@ def test_set_labels_using_decorators(decorator, label):
     with temporary_visited_module(code) as module:
         assert label in module["A.f"].labels
 
+
+
+@pytest.mark.parametrize(
+    "decorator",
+    [
+        "overload",
+        "typing.overload",
+    ],
+)
+def test_handle_typing_overaload(decorator):
+    """Assert `typing.overload` is supported.
+
+    Parameters:
+        decorator: A parametrized overload decorator.
+    """
+    code = f"""
+        import typing
+        from typing import overload
+        from pathlib import Path
+
+        class A:
+            @{decorator}
+            def absolute(self, path: str) -> str:
+                ...
+
+            @{decorator}
+            def absolute(self, path: Path) -> Path:
+                ...
+
+            def absolute(self, path: str | Path) -> str | Path:
+                ...
+    """
+    with temporary_visited_module(code) as module:
+        overloads = module["A.absolute"].overloads
+        assert len(overloads) == 2
+        assert overloads[0].parameters["path"].annotation.source == "str"  # noqa: WPS219
+        assert overloads[1].parameters["path"].annotation.source == "Path"  # noqa: WPS219
+        assert overloads[0].returns.source == "str"
+        assert overloads[1].returns.source == "Path"

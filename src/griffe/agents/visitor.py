@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import ast
 import inspect
+from collections import defaultdict
 from contextlib import suppress
 from itertools import zip_longest
 from pathlib import Path
@@ -144,6 +145,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         self.type_guarded: bool = False
+        self.overloads: dict[str, list[Function]] = defaultdict(list)
 
     def _get_docstring(self, node: ast.AST, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
@@ -290,10 +292,16 @@ class Visitor(BaseVisitor):  # noqa: WPS338
 
         # handle decorators
         decorators = []
+        overload = False
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
                 decorator_value = get_value(decorator_node)
+                overload = (
+                    decorator_value == "typing.overload"
+                    or decorator_value == "overload"
+                    and self.current.resolve("overload") == "typing.overload"
+                )
                 decorators.append(
                     Decorator(
                         decorator_value,
@@ -388,8 +396,15 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             decorators=decorators,
             docstring=self._get_docstring(node),
             runtime=not self.type_guarded,
+            parent=self.current,
         )
-        self.current[node.name] = function
+
+        if overload:
+            self.overloads[function.path].append(function)
+        else:
+            self.current[node.name] = function
+            if self.overloads[function.path]:
+                function.overloads = self.overloads[function.path]
 
         function.labels |= labels
 
