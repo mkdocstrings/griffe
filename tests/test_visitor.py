@@ -135,6 +135,26 @@ def test_set_labels_using_decorators(decorator, label):
         assert label in module["A.f"].labels
 
 
+def test_handle_property_setter_and_deleter():
+    """Assert property setters and deleters are supported."""
+    code = """
+        class A:
+            def __init__(self): self._thing = 0
+
+            @property
+            def thing(self): return self._thing
+
+            @thing.setter
+            def thing(self, value): self._thing = value
+
+            @thing.deleter
+            def thing(self): del self._thing
+    """
+    with temporary_visited_module(code) as module:
+        assert module["A.thing"].has_labels(["property", "writable", "deletable"])
+        assert module["A.thing"].setter.is_function
+        assert module["A.thing"].deleter.is_function
+
 
 @pytest.mark.parametrize(
     "decorator",

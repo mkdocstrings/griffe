@@ -281,6 +281,29 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                             labels.add("cached")
         return labels
 
+    def get_base_property(self, decorators: list[Decorator]) -> tuple[Function | None, str | None]:
+        """Check decorators to return the base property in case of setters and deleters.
+
+        Parameters:
+            decorators: The decorators to check.
+
+        Returns:
+            base_property: The property for which the setter/deleted is set.
+            property_function: Either `"setter"` or `"deleter"`.
+        """
+        for decorator in decorators:
+            names = decorator.value.split(".")
+            with suppress(ValueError):
+                base_name, base_function = names
+                property_setter_or_deleter = (
+                    base_function in {"setter", "deleter"}
+                    and base_name in self.current.members
+                    and self.current[base_name].has_labels({"property"})
+                )
+                if property_setter_or_deleter:
+                    return self.current[base_name], base_function
+        return None, None
+
     def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None):  # noqa: WPS231
         """Handle a function definition node.
 
@@ -313,6 +336,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             lineno = node.lineno
 
         labels |= self.decorators_to_labels(decorators)
+        base_property, property_function = self.get_base_property(decorators)
 
         # handle parameters
         parameters = Parameters()
@@ -401,6 +425,13 @@ class Visitor(BaseVisitor):  # noqa: WPS338
 
         if overload:
             self.overloads[function.path].append(function)
+        elif base_property is not None:
+            if property_function == "setter":
+                base_property.setter = function
+                base_property.labels.add("writable")
+            elif property_function == "deleter":
+                base_property.deleter = function
+                base_property.labels.add("deletable")
         else:
             self.current[node.name] = function
             if self.overloads[function.path]:
