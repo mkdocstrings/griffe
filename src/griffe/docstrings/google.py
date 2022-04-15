@@ -379,7 +379,7 @@ def _read_returns_section(  # noqa: WPS231
                             annotation = return_item
 
             if annotation is None:
-                returned_value = repr(name) or index
+                returned_value = repr(name) if name else index + 1
                 _warn(docstring, line_number, f"No type or annotation for returned value {returned_value}")
 
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=description))
@@ -430,7 +430,7 @@ def _read_yields_section(  # noqa: WPS231
                         annotation = yield_item
 
             if annotation is None:
-                yielded_value = repr(name) or index
+                yielded_value = repr(name) if name else index + 1
                 _warn(docstring, line_number, f"No type or annotation for yielded value {yielded_value}")
 
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=description))
@@ -476,7 +476,7 @@ def _read_receives_section(  # noqa: WPS231
                         annotation = receives_item
 
         if annotation is None:
-            received_value = repr(name) or index
+            received_value = repr(name) if name else index + 1
             _warn(docstring, line_number, f"No type or annotation for received value {received_value}")
 
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=description))
