@@ -306,6 +306,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         *,
         lineno: int | None = None,
         endlineno: int | None = None,
+        runtime: bool = True,
         docstring: Docstring | None = None,
         parent: Module | Class | None = None,
         lines_collection: LinesCollection | None = None,
@@ -317,6 +318,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
             name: The object name, as declared in the code.
             lineno: The object starting line, or None for modules. Lines start at 1.
             endlineno: The object ending line (inclusive), or None for modules.
+            runtime: Whether this object is present at runtime or not.
             docstring: The object docstring.
             parent: The object parent.
             lines_collection: A collection of source code lines.
@@ -332,6 +334,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         self.imports: dict[str, str] = {}
         self.exports: set[str] | None = None
         self.aliases: dict[str, Alias] = {}
+        self.runtime: bool = runtime
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
@@ -366,7 +369,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         By exported, we mean that the object is included in the `__all__` attribute
         of its parent module or class. When `_all__` is not defined,
         we consider the member to be *implicitely* exported,
-        unless it's a module and it was not imported.
+        unless it's a module and it was not imported,
+        and unless it's not defined at runtime.
 
         Parameters:
             member: The member to verify.
@@ -375,6 +379,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         Returns:
             True or False.
         """
+        if not member.runtime:
+            return False
         if self.exports is None:
             return not explicitely and (member.is_alias or not member.is_module or member.name in self.imports)
         return member.name in self.exports
@@ -756,6 +762,7 @@ class Alias(ObjectAliasMixin):
         *,
         lineno: int | None = None,
         endlineno: int | None = None,
+        runtime: bool = True,
         parent: Module | Class | None = None,
     ) -> None:
         """Initialize the alias.
@@ -766,6 +773,7 @@ class Alias(ObjectAliasMixin):
                 If it's an object, or even another alias, the target is immediately set.
             lineno: The alias starting line number.
             endlineno: The alias ending line number.
+            runtime: Whether this alias is present at runtime or not.
             parent: The alias parent.
         """
         self.name: str = name
@@ -780,6 +788,7 @@ class Alias(ObjectAliasMixin):
                     target.aliases[self.path] = self
         self.alias_lineno: int | None = lineno
         self.alias_endlineno: int | None = endlineno
+        self.runtime: bool = runtime
         self._parent: Module | Class | None = parent
         self._passed_through: bool = False
 

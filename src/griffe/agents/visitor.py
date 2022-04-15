@@ -131,6 +131,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        self.type_guarded: bool = False
 
     def _get_docstring(self, node: ast.AST, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
@@ -230,6 +231,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             docstring=self._get_docstring(node),
             decorators=decorators,
             bases=bases,  # type: ignore[arg-type]
+            runtime=not self.type_guarded,
         )
         self.current[node.name] = class_
         self.current = class_
@@ -340,6 +342,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             returns=get_annotation(node.returns, parent=self.current),
             decorators=decorators,
             docstring=self._get_docstring(node),
+            runtime=not self.type_guarded,
         )
         self.current[node.name] = function
 
@@ -381,6 +384,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 alias_path,
                 lineno=node.lineno,
                 endlineno=node.end_lineno,  # type: ignore[attr-defined]
+                runtime=not self.type_guarded,
             )
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:  # noqa: WPS231
@@ -410,6 +414,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 alias_path,  # type: ignore[arg-type]
                 lineno=node.lineno,
                 endlineno=node.end_lineno,  # type: ignore[attr-defined]
+                runtime=not self.type_guarded,
             )
 
     def handle_attribute(  # noqa: WPS231
@@ -477,6 +482,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 lineno=node.lineno,
                 endlineno=node.end_lineno,  # type: ignore[union-attr]
                 docstring=docstring,
+                runtime=not self.type_guarded,
             )
             attribute.labels |= labels
             parent[name] = attribute
@@ -500,6 +506,20 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             node: The node to visit.
         """
         self.handle_attribute(node, get_annotation(node.annotation, parent=self.current))
+
+    def visit_if(self, node: ast.If) -> None:
+        """Visit an "if" node.
+
+        Parameters:
+            node: The node to visit.
+        """
+        if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # type: ignore[attr-defined]
+            with suppress(KeyError):  # unhandled AST nodes
+                condition = get_annotation(node.test, self.current)
+                if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
+                    self.type_guarded = True
+        self.generic_visit(node)
+        self.type_guarded = False
 
 
 _patched = False

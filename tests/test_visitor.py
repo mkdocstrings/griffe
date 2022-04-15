@@ -1,8 +1,11 @@
 """Test visit mechanisms."""
 
+from textwrap import dedent
+
 import pytest
 
-from tests.helpers import temporary_visited_module
+from griffe.loader import GriffeLoader
+from tests.helpers import temporary_pypackage, temporary_visited_module
 
 # import sys
 # import hypothesmith as hs
@@ -65,3 +68,34 @@ def test_building_value_from_nodes(expression):
     with temporary_visited_module(f"a = {expression}") as module:
         assert "a" in module.members
         assert module["a"].value == expression
+
+
+def test_not_defined_at_runtime():
+    """Assert that objects not defined at runtime are not added to wildcards expansions."""
+    with temporary_pypackage("package", ["module_a.py", "module_b.py", "module_c.py"]) as tmp_package:
+        tmp_package.path.joinpath("__init__.py").write_text("from package.module_a import *")
+        tmp_package.path.joinpath("module_a.py").write_text(
+            dedent(
+                """
+                import typing
+                from typing import TYPE_CHECKING
+
+                from package.module_b import CONST_B
+                from package.module_c import CONST_C
+
+                if typing.TYPE_CHECKING:  # always false
+                    from package.module_b import TYPE_B
+                if TYPE_CHECKING:  # always false
+                    from package.module_c import TYPE_C
+                """
+            )
+        )
+        tmp_package.path.joinpath("module_b.py").write_text("CONST_B = 'hi'\nTYPE_B = str")
+        tmp_package.path.joinpath("module_c.py").write_text("CONST_C = 'ho'\nTYPE_C = str")
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        package = loader.load_module(tmp_package.name)
+        loader.resolve_aliases()
+        assert "CONST_B" in package.members
+        assert "CONST_C" in package.members
+        assert "TYPE_B" not in package.members
+        assert "TYPE_C" not in package.members
