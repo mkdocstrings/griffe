@@ -382,7 +382,6 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 lineno=node.lineno,
                 endlineno=node.end_lineno,  # type: ignore[attr-defined]
             )
-        self.generic_visit(node)
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:  # noqa: WPS231
         """Visit an "import from" node.
@@ -412,7 +411,6 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 lineno=node.lineno,
                 endlineno=node.end_lineno,  # type: ignore[attr-defined]
             )
-        self.generic_visit(node)
 
     def handle_attribute(  # noqa: WPS231
         self,
