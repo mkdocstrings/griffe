@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.17.0](https://github.com/mkdocstrings/griffe/releases/tag/0.17.0) - 2022-04-15
+
+<small>[Compare with 0.16.0](https://github.com/mkdocstrings/griffe/compare/0.16.0...0.17.0)</small>
+
+### Features
+- Handle properties setters and deleters ([50a4490](https://github.com/mkdocstrings/griffe/commit/50a449069de89bb83da854b1bbd1681ec68f0395) by Timothée Mazzucotelli).
+- Handle `typing.overload` decorator ([927bbd9](https://github.com/mkdocstrings/griffe/commit/927bbd9fe7712e8d0fc9763fb51d89bef3173350) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#308](https://github.com/mkdocstrings/mkdocstrings/issues/308)
+- Set labels on functions using decorators ([1c1feb2](https://github.com/mkdocstrings/griffe/commit/1c1feb264c748f4a78ffebf3b9ea1966f2533522) by Timothée Mazzucotelli). [Issue #47](https://github.com/mkdocstrings/griffe/issues/47)
+- Add `runtime` attribute to objects/aliases and handle type guarded objects ([2f2a04e](https://github.com/mkdocstrings/griffe/commit/2f2a04ea498aa50133b1404f3bc3498a25648545) by Timothée Mazzucotelli). [Issue #42](https://github.com/mkdocstrings/griffe/issues/42)
+- Support pkg-style namespace packages ([efba0c6](https://github.com/mkdocstrings/griffe/commit/efba0c6a5e1dc185e96e5a09c05e94c751abc4cb) by Timothée Mazzucotelli). [Issue #58](https://github.com/mkdocstrings/griffe/issues/58)
+
+### Code Refactoring
+- Remove useless attribute ([c4a92b7](https://github.com/mkdocstrings/griffe/commit/c4a92b7e2cbe240a376d5d6944b7b0d23255648b) by Timothée Mazzucotelli).
+- Improve Google warnings ([641089a](https://github.com/mkdocstrings/griffe/commit/641089aed53423894df8733941e404f7e6505b94) by Timothée Mazzucotelli).
+- Remove useless import nodes generic visits ([f83fc8e](https://github.com/mkdocstrings/griffe/commit/f83fc8e629451abd4f4eadfe34b448fb3b77b9b6) by Timothée Mazzucotelli).
+
+
 ## [0.16.0](https://github.com/mkdocstrings/griffe/releases/tag/0.16.0) - 2022-04-09
 
 <small>[Compare with 0.15.1](https://github.com/mkdocstrings/griffe/compare/0.15.1...0.16.0)</small>
