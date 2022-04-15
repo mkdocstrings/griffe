@@ -92,7 +92,7 @@ class DocstringAdmonition(DocstringElement):
     """This class represents an admonition."""
 
     @property
-    def kind(self):
+    def kind(self) -> str | Name | Expression | None:
         """Return the kind of this admonition.
 
         Returns:
@@ -101,11 +101,11 @@ class DocstringAdmonition(DocstringElement):
         return self.annotation
 
     @kind.setter
-    def kind(self, value):
+    def kind(self, value: str | Name | Expression) -> None:
         self.annotation = value
 
     @property
-    def contents(self):
+    def contents(self) -> str:
         """Return the contents of this admonition.
 
         Returns:
@@ -114,7 +114,7 @@ class DocstringAdmonition(DocstringElement):
         return self.description
 
     @contents.setter
-    def contents(self, value):
+    def contents(self, value: str) -> None:
         self.description = value
 
 
@@ -122,16 +122,16 @@ class DocstringDeprecated(DocstringElement):
     """This class represents a documented deprecated item."""
 
     @property
-    def version(self):
+    def version(self) -> str:
         """Return the version of this deprecation.
 
         Returns:
             The deprecation version.
         """
-        return self.annotation
+        return self.annotation  # type: ignore[return-value]
 
     @version.setter
-    def version(self, value):
+    def version(self, value: str) -> None:
         self.annotation = value
 
 
@@ -159,7 +159,7 @@ class DocstringParameter(DocstringNamedElement):
     """This class represent a documented function parameter."""
 
     @property
-    def default(self):
+    def default(self) -> str | None:
         """Return the default value of this parameter.
 
         Returns:
@@ -168,7 +168,7 @@ class DocstringParameter(DocstringNamedElement):
         return self.value
 
     @default.setter
-    def default(self, value):
+    def default(self, value: str) -> None:
         self.value = value
 
 
