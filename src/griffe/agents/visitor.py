@@ -275,8 +275,11 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                     resolved_first = self.current.resolve(names[0])
                     resolved_name = ".".join([resolved_first, *names[1:]])
                     if resolved_name in stdlib_decorators:
-                        if "abstract" in resolved_name:
-                            labels.add("abstract")
+                        if "abstractmethod" in resolved_name:
+                            labels.add("abstractmethod")
+                        elif "cached_property" in resolved_name:
+                            labels.add("cached")
+                            labels.add("property")
                         elif "cache" in resolved_name:
                             labels.add("cached")
         return labels

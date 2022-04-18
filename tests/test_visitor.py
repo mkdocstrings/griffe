@@ -102,28 +102,34 @@ def test_not_defined_at_runtime():
 
 
 @pytest.mark.parametrize(
-    ("decorator", "label"),
+    ("decorator", "labels"),
     [
-        ("property", "property"),
-        ("functools.cache", "cached"),
-        ("functools.cached_property", "cached"),
-        ("functools.lru_cache", "cached"),
-        ("functools.lru_cache(maxsize=8)", "cached"),
-        ("cache", "cached"),
-        ("cached_property", "cached"),
-        ("lru_cache", "cached"),
-        ("lru_cache(maxsize=8)", "cached"),
+        ("property", {"property"}),
+        ("staticmethod", {"staticmethod"}),
+        ("classmethod", {"classmethod"}),
+        ("functools.cache", {"cached"}),
+        ("functools.cached_property", {"cached", "property"}),
+        ("functools.lru_cache", {"cached"}),
+        ("functools.lru_cache(maxsize=8)", {"cached"}),
+        ("cache", {"cached"}),
+        ("cached_property", {"cached", "property"}),
+        ("lru_cache", {"cached"}),
+        ("lru_cache(maxsize=8)", {"cached"}),
+        ("abc.abstractmethod", {"abstractmethod"}),
+        ("abstractmethod", {"abstractmethod"}),
     ],
 )
-def test_set_labels_using_decorators(decorator, label):
+def test_set_labels_using_decorators(decorator, labels):
     """Assert decorators are used to set labels on objects.
 
     Parameters:
         decorator: A parametrized decorator.
-        label: The expected, parametrized label.
+        labels: The parametrized set of expected labels.
     """
     code = f"""
+        import abc
         import functools
+        from abc import abstractmethod
         from functools import cache, cached_property, lru_cache
 
         class A:
@@ -132,7 +138,7 @@ def test_set_labels_using_decorators(decorator, label):
                 return 0
     """
     with temporary_visited_module(code) as module:
-        assert label in module["A.f"].labels
+        assert module["A.f"].has_labels(labels)
 
 
 def test_handle_property_setter_and_deleter():
