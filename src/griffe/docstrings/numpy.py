@@ -261,14 +261,17 @@ def _read_parameters(  # noqa: WPS231
                     default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
                     break
 
-        if warn_unknown_params and docstring.parent is not None:
-            for name in names:  # noqa: WPS440
-                if name not in docstring.parent.parameters:  # type: ignore[attr-defined]
-                    _warn(
-                        docstring,
-                        new_offset,
-                        f"Parameter '{name}' does not appear in the parent signature",
-                    )
+        if warn_unknown_params:
+            with suppress(AttributeError):  # for parameters sections in objects without parameters
+                params = docstring.parent.parameters  # type: ignore[union-attr]
+                for name in names:  # noqa: WPS440
+                    if name not in params:
+                        message = f"Parameter '{name}' does not appear in the function signature"
+                        for starred_name in (f"*{name}", f"**{name}"):
+                            if starred_name in params:
+                                message += f". Did you mean '{starred_name}'?"
+                                break
+                        _warn(docstring, new_offset, message)
 
         for name in names:  # noqa: WPS440
             parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))

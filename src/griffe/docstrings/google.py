@@ -207,13 +207,15 @@ def _read_parameters(  # noqa: WPS231
             _warn(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
         if warn_unknown_params:
-            with suppress(AttributeError):  # for parameters sections in non-function docstrings
-                if name not in docstring.parent.parameters:  # type: ignore[union-attr]
-                    _warn(
-                        docstring,
-                        line_number,
-                        f"Parameter '{name}' does not appear in the parent signature",
-                    )
+            with suppress(AttributeError):  # for parameters sections in objects without parameters
+                params = docstring.parent.parameters  # type: ignore[union-attr]
+                if name not in params:
+                    message = f"Parameter '{name}' does not appear in the function signature"
+                    for starred_name in (f"*{name}", f"**{name}"):
+                        if starred_name in params:
+                            message += f". Did you mean '{starred_name}'?"
+                            break
+                    _warn(docstring, line_number, message)
 
         parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))
 

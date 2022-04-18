@@ -725,7 +725,7 @@ def test_warn_about_unknown_parameters(parse_google):
         ),
     )
     assert len(warnings) == 1
-    assert "'x' does not appear in the parent signature" in warnings[0]
+    assert "'x' does not appear in the function signature" in warnings[0]
 
 
 def test_never_warn_about_unknown_other_parameters(parse_google):
@@ -779,15 +779,8 @@ def test_class_uses_init_parameters(parse_google):
         Parameters:
             x: X value.
     """
-
     parent = Class("c")
-    parent["__init__"] = Function(
-        "__init__",
-        parameters=Parameters(
-            Parameter("x", annotation="int"),
-        ),
-    )
-
+    parent["__init__"] = Function("__init__", parameters=Parameters(Parameter("x", annotation="int")))
     sections, warnings = parse_google(docstring, parent=parent)
     assert not warnings
     argx = sections[0].value[0]

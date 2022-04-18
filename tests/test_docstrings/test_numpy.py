@@ -555,7 +555,7 @@ def test_warn_about_unknown_parameters(parse_numpy):
         ),
     )
     assert len(warnings) == 1
-    assert "'x' does not appear in the parent signature" in warnings[0]
+    assert "'x' does not appear in the function signature" in warnings[0]
 
 
 def test_never_warn_about_unknown_other_parameters(parse_numpy):
@@ -584,6 +584,48 @@ def test_never_warn_about_unknown_other_parameters(parse_numpy):
         ),
     )
     assert not warnings
+
+
+def test_unknown_params_scan_doesnt_crash_without_parameters(parse_numpy):
+    """Assert we don't crash when parsing parameters sections and parent object does not have parameters.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        this : str
+            This.
+        that : str
+            That.
+    """
+
+    _, warnings = parse_numpy(docstring, parent=Module("mod"))
+    assert not warnings
+
+
+def test_class_uses_init_parameters(parse_numpy):
+    """Assert we use the `__init__` parameters when parsing classes' parameters sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        x :
+            X value.
+    """
+
+    parent = Class("c")
+    parent["__init__"] = Function("__init__", parameters=Parameters(Parameter("x", annotation="int")))
+    sections, warnings = parse_numpy(docstring, parent=parent)
+    assert not warnings
+    argx = sections[0].value[0]
+    assert argx.name == "x"
+    assert argx.annotation == "int"
+    assert argx.description == "X value."
 
 
 # =============================================================================================
