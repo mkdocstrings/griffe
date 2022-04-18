@@ -25,6 +25,7 @@ from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
+from griffe.expressions import Name
 from griffe.finder import ModuleFinder
 from griffe.logger import get_logger
 from griffe.stats import stats
@@ -162,8 +163,10 @@ class GriffeLoader:
         unresolved: set[str] = set("0")  # init to enter loop
         iteration = 0
         collection = self.modules_collection.members
-        for w_module in list(collection.values()):
-            self.expand_wildcards(w_module)
+        for exports_module in list(collection.values()):
+            self.expand_exports(exports_module)
+        for wildcards_module in list(collection.values()):
+            self.expand_wildcards(wildcards_module)
         while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
             prev_unresolved = unresolved - {"0"}
             unresolved = set()
@@ -178,6 +181,25 @@ class GriffeLoader:
                 f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go"
             )
         return unresolved, iteration
+
+    def expand_exports(self, module: Module) -> None:
+        """Expand exports: try to recursively expand all module exports.
+
+        Parameters:
+            module: The module to recurse on.
+        """
+        if module.exports is None:
+            return
+        expanded = set()
+        for export in module.exports:
+            if isinstance(export, Name):
+                module_path = export.full.rsplit(".", 1)[0]  # remove trailing .__all__
+                next_module = self.modules_collection[module_path]
+                self.expand_exports(next_module)
+                expanded |= next_module.exports
+            else:
+                expanded.add(export)
+        module.exports = expanded
 
     def expand_wildcards(  # noqa: WPS231
         self,

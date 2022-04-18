@@ -583,7 +583,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = parse__all__(node)  # type: ignore[arg-type]
+                    parent.exports = parse__all__(node, self.current)  # type: ignore[assignment,arg-type]
 
     def visit_assign(self, node: ast.Assign) -> None:
         """Visit an assignment node.
@@ -600,6 +600,22 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             node: The node to visit.
         """
         self.handle_attribute(node, get_annotation(node.annotation, parent=self.current))
+
+    def visit_augassign(self, node: ast.AugAssign) -> None:
+        """Visit an augmented assignment node.
+
+        Parameters:
+            node: The node to visit.
+        """
+        with suppress(AttributeError):
+            all_augment = (
+                node.target.id == "__all__"  # type: ignore[attr-defined]
+                and self.current.is_module
+                and isinstance(node.op, ast.Add)
+            )
+            if all_augment:
+                # we assume exports is not None at this point
+                self.current.exports.extend(parse__all__(node, self.current))  # type: ignore[arg-type,union-attr]
 
     def visit_if(self, node: ast.If) -> None:
         """Visit an "if" node.

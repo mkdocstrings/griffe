@@ -335,7 +335,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         self.members: dict[str, Object | Alias] = {}
         self.labels: set[str] = set()
         self.imports: dict[str, str] = {}
-        self.exports: set[str] | None = None
+        self.exports: set[str] | list[str | Name] | None = None
         self.aliases: dict[str, Alias] = {}
         self.runtime: bool = runtime
         self._lines_collection: LinesCollection | None = lines_collection

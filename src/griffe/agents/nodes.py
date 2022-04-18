@@ -11,6 +11,7 @@ from ast import And as NodeAnd
 from ast import AnnAssign as NodeAnnAssign
 from ast import Assign as NodeAssign
 from ast import Attribute as NodeAttribute
+from ast import AugAssign as NodeAugAssign
 from ast import BinOp as NodeBinOp
 from ast import BitAnd as NodeBitAnd
 from ast import BitOr as NodeBitOr
@@ -523,31 +524,72 @@ def _join(sequence, item):
     return new_sequence
 
 
+def _parse__all__constant(node: NodeConstant, parent: Module) -> list[str]:
+    try:
+        return [node.value]
+    except AttributeError:
+        return [node.s]  # TODO: remove once Python 3.7 is dropped
+
+
+def _parse__all__name(node: NodeName, parent: Module) -> list[Name]:
+    return [Name(node.id, partial(parent.resolve, node.id))]
+
+
+def _parse__all__starred(node: NodeStarred, parent: Module) -> list[str | Name]:
+    return _parse__all__(node.value, parent)
+
+
+def _parse__all__sequence(node: NodeList | NodeSet | NodeTuple, parent: Module) -> list[str | Name]:
+    sequence = []
+    for elt in node.elts:
+        sequence.extend(_parse__all__(elt, parent))
+    return sequence
+
+
+def _parse__all__binop(node: NodeBinOp, parent: Module) -> list[str | Name]:
+    left = _parse__all__(node.left, parent)
+    right = _parse__all__(node.right, parent)
+    return left + right
+
+
+_node__all__map: dict[Type, Callable[[Any, Module], list[str | Name]]] = {  # noqa: WPS234
+    NodeConstant: _parse__all__constant,  # type: ignore[dict-item]
+    NodeName: _parse__all__name,  # type: ignore[dict-item]
+    NodeStarred: _parse__all__starred,
+    NodeList: _parse__all__sequence,
+    NodeSet: _parse__all__sequence,
+    NodeTuple: _parse__all__sequence,
+    NodeBinOp: _parse__all__binop,
+}
+
+# TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
 
-    def parse__all__(node: NodeAssign) -> set[str]:  # noqa: WPS116,WPS120
-        """Get the values declared in `__all__`.
+    def _parse__all__nameconstant(node: NodeNameConstant, parent: Module) -> list[Name]:
+        return [node.value]
 
-        Parameters:
-            node: The assignment node.
+    def _parse__all__str(node: NodeStr, parent: Module) -> list[str]:
+        return [node.s]
 
-        Returns:
-            A set of names.
-        """
-        return {elt.s for elt in node.value.elts}  # type: ignore[attr-defined]
+    _node__all__map[NodeNameConstant] = _parse__all__nameconstant  # type: ignore[assignment]
+    _node__all__map[NodeStr] = _parse__all__str  # type: ignore[assignment]
 
-else:
 
-    def parse__all__(node: NodeAssign) -> set[str]:  # noqa: WPS116,WPS120,WPS440
-        """Get the values declared in `__all__`.
+def _parse__all__(node: AST, parent: Module) -> list[str | Name]:
+    return _node__all__map[type(node)](node, parent)
 
-        Parameters:
-            node: The assignment node.
 
-        Returns:
-            A set of names.
-        """
-        return {elt.value for elt in node.value.elts}  # type: ignore[attr-defined]
+def parse__all__(node: NodeAssign | NodeAugAssign, parent: Module) -> list[str | Name]:  # noqa: WPS120,WPS440
+    """Get the values declared in `__all__`.
+
+    Parameters:
+        node: The assignment node.
+        parent: The parent module.
+
+    Returns:
+        A set of names.
+    """
+    return _parse__all__(node.value, parent)
 
 
 # ==========================================================
