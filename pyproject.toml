@@ -56,6 +56,7 @@ griffe = "griffe.cli:main"
 [tool.pdm]
 version = {use_scm = true}
 package-dir = "src"
+editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
 duty = ["duty>=0.7"]
@@ -76,7 +77,6 @@ format = [
     "isort>=5.10",
 ]
 maintain = [
-    # TODO: remove this section when git-changelog is more powerful
     "git-changelog>=0.4",
 ]
 quality = [
