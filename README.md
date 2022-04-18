@@ -78,19 +78,9 @@ See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for
 ## Todo
 
 - Visitor/Inspector:
-    - Labels
-        - Attribute: ?
-        - Function: ?
-        - Class: ?
-        - Module: ?
     - Merging inherited members into class.
         Needs to be able to post-process classes,
         and to compute their MRO (C3Linearization, see docspec/pydocspec issues).
-    - Merging `__init__` method's docstring into class' docstring (could be an extension)
-    - Support for `typing.overload` decorator.
-        We'll probably need to add an `overloads` attribute to `Function`,
-        to store the list of `@overload`-decorated functions,
-        because currently different members of a same object cannot have the same names.
 - Extensions
     - Post-processing extensions
     - Third-party libraries we could provide support for:
