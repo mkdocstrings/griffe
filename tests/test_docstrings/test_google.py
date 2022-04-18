@@ -753,7 +753,7 @@ def test_never_warn_about_unknown_other_parameters(parse_google):
     assert not warnings
 
 
-def test_unknown_params_scan_doesnt_crash_on_non_function_docstrings(parse_google):
+def test_unknown_params_scan_doesnt_crash_without_parameters(parse_google):
     """Assert we don't crash when parsing parameters sections and parent object does not have parameters.
 
     Parameters:
