@@ -1131,14 +1131,13 @@ class Class(Object):
 
     @property
     def parameters(self) -> Parameters:
-        """"Return the parameters of this class' __init__ method, if any.
+        """Return the parameters of this class' `__init__` method, if any.
 
         Returns:
             The parameters containter.
         """
-
         try:
-            return self.members["__init__"].parameters
+            return self.members["__init__"].parameters  # type: ignore[union-attr]
         except KeyError:
             return Parameters()
 

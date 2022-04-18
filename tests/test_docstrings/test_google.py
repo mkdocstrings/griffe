@@ -754,7 +754,7 @@ def test_never_warn_about_unknown_other_parameters(parse_google):
 
 
 def test_unknown_params_scan_doesnt_crash_on_non_function_docstrings(parse_google):
-    """Never warn about unknown parameters in non-function docstrings.
+    """Assert we don't crash when parsing parameters sections and parent object does not have parameters.
 
     Parameters:
         parse_google: Fixture parser.
@@ -765,53 +765,35 @@ def test_unknown_params_scan_doesnt_crash_on_non_function_docstrings(parse_googl
             that (str): That.
     """
 
-    _, warnings = parse_google(docstring, parent=Module("c"))
+    _, warnings = parse_google(docstring, parent=Module("mod"))
     assert not warnings
 
 
 def test_class_uses_init_parameters(parse_google):
-    """Use the __init__ parameters in class docstrings.
+    """Assert we use the `__init__` parameters when parsing classes' parameters sections.
 
     Parameters:
         parse_google: Fixture parser.
     """
     docstring = """
         Parameters:
-            x (str): X value.
-
-        Keyword Args:
-            y (str): Y value.
+            x: X value.
     """
 
-    c = Class("c")
-    c.members["__init__"] = Function(
+    parent = Class("c")
+    parent["__init__"] = Function(
         "__init__",
         parameters=Parameters(
             Parameter("x", annotation="int"),
-            Parameter("y", annotation="int"),
         ),
     )
 
-    sections, warnings = parse_google(docstring, parent=c)
-
-    assert len(sections) == 2
+    sections, warnings = parse_google(docstring, parent=parent)
     assert not warnings
-
-    assert sections[0].kind is DocstringSectionKind.parameters
-    assert sections[1].kind is DocstringSectionKind.other_parameters
-
-    (argx,) = sections[0].value  # noqa: WPS460
-    (argy,) = sections[1].value  # noqa: WPS460
-
+    argx = sections[0].value[0]
     assert argx.name == "x"
-    assert argx.annotation.source == "str"
-    assert argx.annotation.full == "str"
+    assert argx.annotation == "int"
     assert argx.description == "X value."
-
-    assert argy.name == "y"
-    assert argy.annotation.source == "str"
-    assert argy.annotation.full == "str"
-    assert argy.description == "Y value."
 
 
 # TODO: possible feature
