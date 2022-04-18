@@ -754,7 +754,7 @@ def test_never_warn_about_unknown_other_parameters(parse_google):
 
 
 def test_unknown_params_scan_doesnt_crash_on_non_function_docstrings(parse_google):
-    """Never warn about unknown parameters in "Other parameters" sections.
+    """Never warn about unknown parameters in non-function docstrings.
 
     Parameters:
         parse_google: Fixture parser.
@@ -765,8 +765,53 @@ def test_unknown_params_scan_doesnt_crash_on_non_function_docstrings(parse_googl
             that (str): That.
     """
 
-    _, warnings = parse_google(docstring, parent=Class("c"))
+    _, warnings = parse_google(docstring, parent=Module("c"))
     assert not warnings
+
+
+def test_class_uses_init_parameters(parse_google):
+    """Use the __init__ parameters in class docstrings.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Parameters:
+            x (str): X value.
+
+        Keyword Args:
+            y (str): Y value.
+    """
+
+    c = Class("c")
+    c.members["__init__"] = Function(
+        "__init__",
+        parameters=Parameters(
+            Parameter("x", annotation="int"),
+            Parameter("y", annotation="int"),
+        ),
+    )
+
+    sections, warnings = parse_google(docstring, parent=c)
+
+    assert len(sections) == 2
+    assert not warnings
+
+    assert sections[0].kind is DocstringSectionKind.parameters
+    assert sections[1].kind is DocstringSectionKind.other_parameters
+
+    (argx,) = sections[0].value  # noqa: WPS460
+    (argy,) = sections[1].value  # noqa: WPS460
+
+    assert argx.name == "x"
+    assert argx.annotation.source == "str"
+    assert argx.annotation.full == "str"
+    assert argx.description == "X value."
+
+    assert argy.name == "y"
+    assert argy.annotation.source == "str"
+    assert argy.annotation.full == "str"
+    assert argy.description == "Y value."
 
 
 # TODO: possible feature

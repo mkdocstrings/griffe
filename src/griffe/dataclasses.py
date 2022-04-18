@@ -1131,9 +1131,15 @@ class Class(Object):
 
     @property
     def parameters(self) -> Parameters:
+        """"Return the parameters of this class' __init__ method, if any.
+
+        Returns:
+            The parameters containter.
+        """
+
         try:
             return self.members["__init__"].parameters
-        except:
+        except KeyError:
             return Parameters()
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
