@@ -1129,6 +1129,13 @@ class Class(Object):
         self.bases: list[Name | Expression | str] = bases or []
         self.decorators: list[Decorator] = decorators or []
 
+    @property
+    def parameters(self) -> Parameters:
+        try:
+            return self.members["__init__"].parameters
+        except:
+            return Parameters()
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this class' data as a dictionary.
 
