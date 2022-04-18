@@ -753,6 +753,22 @@ def test_never_warn_about_unknown_other_parameters(parse_google):
     assert not warnings
 
 
+def test_unknown_params_scan_doesnt_crash_on_non_function_docstrings(parse_google):
+    """Never warn about unknown parameters in "Other parameters" sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Parameters:
+            this (str): This.
+            that (str): That.
+    """
+
+    _, warnings = parse_google(docstring, parent=Class("c"))
+    assert not warnings
+
+
 # TODO: possible feature
 # def test_missing_parameter(parse_google):
 #     """Warn on missing parameter in docstring.

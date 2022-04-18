@@ -206,13 +206,14 @@ def _read_parameters(  # noqa: WPS231
         if annotation is None:
             _warn(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
-        if warn_unknown_params and docstring.parent is not None:
-            if name not in docstring.parent.parameters:  # type: ignore[attr-defined]
-                _warn(
-                    docstring,
-                    line_number,
-                    f"Parameter '{name}' does not appear in the parent signature",
-                )
+        if warn_unknown_params:
+            with suppress(AttributeError):  # for parameters sections in non-function docstrings
+                if name not in docstring.parent.parameters:  # type: ignore[union-attr]
+                    _warn(
+                        docstring,
+                        line_number,
+                        f"Parameter '{name}' does not appear in the parent signature",
+                    )
 
         parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))
 
