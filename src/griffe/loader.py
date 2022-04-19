@@ -77,6 +77,7 @@ class GriffeLoader:
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
+        allow_inspection: bool = True,
     ) -> None:
         """Initialize the loader.
 
@@ -93,6 +94,7 @@ class GriffeLoader:
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        self.allow_inspection: bool = allow_inspection
         self.finder: ModuleFinder = ModuleFinder(search_paths)
         self._time_stats: dict = {
             "time_spent_visiting": 0,
@@ -121,17 +123,23 @@ class GriffeLoader:
         """
         module_name: str
         if module in _builtin_modules:
-            logger.debug(f"{module} is a builtin module: inspecting")
-            module_name = module  # type: ignore[assignment]
-            top_module = self._inspect_module(module)  # type: ignore[arg-type]
-            return self._store_and_return(module_name, top_module)
-
+            logger.debug(f"{module} is a builtin module")
+            if self.allow_inspection:
+                logger.debug(f"Inspecting {module}")
+                module_name = module  # type: ignore[assignment]
+                top_module = self._inspect_module(module)  # type: ignore[arg-type]
+                return self._store_and_return(module_name, top_module)
+            raise LoadingError("Cannot load builtin module without inspection")
         try:
             module_name, package = self.finder.find_spec(module, try_relative_path)
         except ModuleNotFoundError:
-            logger.debug(f"Could not find {module}: trying inspection")
-            module_name = module  # type: ignore[assignment]
-            top_module = self._inspect_module(module)  # type: ignore[arg-type]
+            logger.debug(f"Could not find {module}")
+            if self.allow_inspection:
+                logger.debug(f"Trying inspection on {module}")
+                module_name = module  # type: ignore[assignment]
+                top_module = self._inspect_module(module)  # type: ignore[arg-type]
+            else:
+                raise
         else:
             logger.debug(f"Found {module}: loading")
             try:  # noqa: WPS505
@@ -356,8 +364,10 @@ class GriffeLoader:
         elif module_path.suffix == ".py":
             code = module_path.read_text(encoding="utf8")
             module = self._visit_module(code, module_name, module_path, parent)
-        else:
+        elif self.allow_inspection:
             module = self._inspect_module(module_name, module_path, parent)
+        else:
+            raise LoadingError("Cannot load compiled module without inspection")
         if submodules:
             self._load_submodules(module)
         return module

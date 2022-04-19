@@ -110,12 +110,14 @@ def _load_packages(
     resolve_aliases: bool = True,
     only_exported: bool = True,
     only_known_modules: bool = True,
+    allow_inspection: bool = True,
 ):
     loader = GriffeLoader(
         extensions=extensions,
         search_paths=search_paths,
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
+        allow_inspection=allow_inspection,
     )
     for package in packages:
         if not package:
@@ -244,6 +246,12 @@ def get_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Show statistics at the end.",
     )
+    parser.add_argument(
+        "-X",
+        "--no-inspection",
+        action="store_true",
+        help="Disallow inspection of builtin/compiled/not found modules.",
+    )
 
     parser.add_argument("packages", metavar="PACKAGE", nargs="+", help="Packages to find and parse.")
     return parser
@@ -300,6 +308,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         opts.resolve_aliases,
         not opts.resolve_implicit,
         not opts.resolve_external,
+        not opts.no_inspection,
     )
     packages = loader.modules_collection.members
 
