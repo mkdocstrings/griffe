@@ -79,6 +79,9 @@ from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
 from griffe.collections import LinesCollection
 from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
+from griffe.logger import get_logger
+
+logger = get_logger(__name__)
 
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
@@ -589,7 +592,11 @@ def parse__all__(node: NodeAssign | NodeAugAssign, parent: Module) -> list[str |
     Returns:
         A set of names.
     """
-    return _parse__all__(node.value, parent)
+    try:
+        return _parse__all__(node.value, parent)
+    except KeyError as error:
+        logger.debug(f"Cannot parse __all__ assignment: {get_value(node.value)} ({error})")
+        return []
 
 
 # ==========================================================
