@@ -348,6 +348,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"
 
+    def __bool__(self) -> bool:
+        return True
+
     def __len__(self) -> int:
         return len(self.members) + sum(len(member) for member in self.members.values())
 
