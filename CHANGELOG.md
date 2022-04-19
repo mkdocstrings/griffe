@@ -5,6 +5,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.18.0](https://github.com/mkdocstrings/griffe/releases/tag/0.18.0) - 2022-04-19
+
+<small>[Compare with 0.17.0](https://github.com/mkdocstrings/griffe/compare/0.17.0...0.18.0)</small>
+
+### Features
+- Add CLI option to disallow inspection ([8f71a07](https://github.com/mkdocstrings/griffe/commit/8f71a07c17de4cfb2b519dc2b4086f102de4d325) by Timothée Mazzucotelli).
+- Support complex `__all__` assignments ([9a2128b](https://github.com/mkdocstrings/griffe/commit/9a2128b8d4533119b705ec47fc1eca404b4282ef) by Timothée Mazzucotelli). [Issue #40](https://github.com/mkdocstrings/griffe/issues/40)
+- Inherit class parameters from `__init__` method ([e195593](https://github.com/mkdocstrings/griffe/commit/e195593b181690313c9e447c8bc2befa72fd6e09) by François Rozet). [Issue mkdocstrings/python#19](https://github.com/mkdocstrings/python/issues/19), [PR #65](https://github.com/mkdocstrings/python/pull/65).
+  It allows to write "Parameters" sections in the docstring of the class itself.
+
+### Performance Improvements
+- Avoid using `__len__` as boolean method ([d465493](https://github.com/mkdocstrings/griffe/commit/d4654930577186fb6d3e89ea1561a2daf15b3a65) by Timothée Mazzucotelli).
+
+### Bug Fixes
+- Don't crash on unhandle `__all__` assignments ([cbc103c](https://github.com/mkdocstrings/griffe/commit/cbc103c91836db2e235a46a0f9048c1230de507d) by Timothée Mazzucotelli).
+- Handle empty packages names in CLI ([52b51c4](https://github.com/mkdocstrings/griffe/commit/52b51c49a14783c986beb851abd33cbcd0ab8729) by Timothée Mazzucotelli).
+- Don't crash on Google parameters sections found in non-function docstrings ([4a417bc](https://github.com/mkdocstrings/griffe/commit/4a417bc6c0e83b42fe1a74a4a8b0881d3955075f) by Timothée Mazzucotelli). [Issue mkdocstrings/python#19](https://github.com/mkdocstrings/python/issues/19)
+
+### Code Refactoring
+- Improve "unknown parameter" messages ([7191799](https://github.com/mkdocstrings/griffe/commit/7191799c92d7544f949c5870cf2867e02d406c57) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#423](https://github.com/mkdocstrings/mkdocstrings/issues/423)
+- Set property label on `@cached_property`-decoratored methods ([bc068f8](https://github.com/mkdocstrings/griffe/commit/bc068f8123c5bcbe4dce272dda52840019141b06) by Timothée Mazzucotelli).
+
+
 ## [0.17.0](https://github.com/mkdocstrings/griffe/releases/tag/0.17.0) - 2022-04-15
 
 <small>[Compare with 0.16.0](https://github.com/mkdocstrings/griffe/compare/0.16.0...0.17.0)</small>
