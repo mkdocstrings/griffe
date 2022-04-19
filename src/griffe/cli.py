@@ -128,8 +128,9 @@ def _load_packages(
             logger.error(f"Could not find package {package}: {error}")
         except ImportError as error:
             logger.error(f"Tried but could not import package {package}: {error}")
-    logger.info("Finished loading packages, starting alias resolution")
+    logger.info("Finished loading packages")
     if resolve_aliases:
+        logger.info("Starting alias resolution")
         unresolved, iterations = loader.resolve_aliases(only_exported, only_known_modules)
         if unresolved:
             logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
