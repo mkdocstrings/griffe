@@ -38,7 +38,7 @@ $ griffe httpx fastapi
 ]
 ```
 
-See [the Usage section](https://pawamoy.github.io/griffe/usage/#on-the-command-line) for more examples.
+See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#on-the-command-line) for more examples.
 
 **With Python:**
 
@@ -49,7 +49,7 @@ griffe = GriffeLoader()
 fastapi = griffe.load_module("fastapi")
 ```
 
-See [the Usage section](https://pawamoy.github.io/griffe/usage/#with-python) for more examples.
+See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#with-python) for more examples.
 
 ## Todo
 
