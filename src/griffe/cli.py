@@ -118,6 +118,9 @@ def _load_packages(
         docstring_options=docstring_options,
     )
     for package in packages:
+        if not package:
+            logger.debug("Empty package name, continuing")
+            continue
         logger.info(f"Loading package {package}")
         try:
             loader.load_module(package)
