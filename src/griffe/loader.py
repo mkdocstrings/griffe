@@ -88,6 +88,7 @@ class GriffeLoader:
             docstring_options: Additional docstring parsing options.
             lines_collection: A collection of source code lines.
             modules_collection: A collection of modules.
+            allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         """
         self.extensions: Extensions = extensions or Extensions()
         self.docstring_parser: Parser | None = docstring_parser
@@ -102,7 +103,7 @@ class GriffeLoader:
         }
         patch_ast()
 
-    def load_module(
+    def load_module(  # noqa: WPS231
         self,
         module: str | Path,
         submodules: bool = True,
@@ -117,6 +118,7 @@ class GriffeLoader:
 
         Raises:
             LoadingError: When loading a module failed for various reasons.
+            ModuleNotFoundError: When a module was not found and inspection is disallowed.
 
         Returns:
             A module.
@@ -130,7 +132,7 @@ class GriffeLoader:
                 top_module = self._inspect_module(module)  # type: ignore[arg-type]
                 return self._store_and_return(module_name, top_module)
             raise LoadingError("Cannot load builtin module without inspection")
-        try:
+        try:  # noqa: WPS503
             module_name, package = self.finder.find_spec(module, try_relative_path)
         except ModuleNotFoundError:
             logger.debug(f"Could not find {module}")
