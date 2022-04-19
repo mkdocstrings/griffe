@@ -382,6 +382,7 @@ def profile(ctx, browser: bool = False, **opts):
             "-m",
             "griffe",
             "-o/dev/null",
+            "-LDEBUG",
             *griffe_opts,
             *packages,
         ],
