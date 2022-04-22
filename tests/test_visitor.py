@@ -108,19 +108,19 @@ def test_not_defined_at_runtime():
         ("staticmethod", {"staticmethod"}),
         ("classmethod", {"classmethod"}),
         ("functools.cache", {"cached"}),
+        ("cache", {"cached"}),
         ("functools.cached_property", {"cached", "property"}),
+        ("cached_property", {"cached", "property"}),
         ("functools.lru_cache", {"cached"}),
         ("functools.lru_cache(maxsize=8)", {"cached"}),
-        ("cache", {"cached"}),
-        ("cached_property", {"cached", "property"}),
         ("lru_cache", {"cached"}),
         ("lru_cache(maxsize=8)", {"cached"}),
         ("abc.abstractmethod", {"abstractmethod"}),
         ("abstractmethod", {"abstractmethod"}),
     ],
 )
-def test_set_labels_using_decorators(decorator, labels):
-    """Assert decorators are used to set labels on objects.
+def test_set_function_labels_using_decorators(decorator, labels):
+    """Assert decorators are used to set labels on functions.
 
     Parameters:
         decorator: A parametrized decorator.

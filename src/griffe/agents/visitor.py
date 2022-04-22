@@ -48,16 +48,16 @@ from griffe.exceptions import LastNodeError, NameResolutionError
 from griffe.expressions import Expression, Name
 
 builtin_decorators = {
-    "property",
-    "staticmethod",
-    "classmethod",
+    "property": "property",
+    "staticmethod": "staticmethod",
+    "classmethod": "classmethod",
 }
 
 stdlib_decorators = {
-    "abc.abstractmethod",
-    "functools.cache",
-    "functools.cached_property",
-    "functools.lru_cache",
+    "abc.abstractmethod": {"abstractmethod"},
+    "functools.cache": {"cached"},
+    "functools.cached_property": {"cached", "property"},
+    "functools.lru_cache": {"cached"},
 }
 
 
@@ -268,20 +268,14 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         for decorator in decorators:
             decorator_value = decorator.value.split("(", 1)[0]
             if decorator_value in builtin_decorators:
-                labels.add(decorator_value)
+                labels.add(builtin_decorators[decorator_value])
             else:
                 names = decorator_value.split(".")
                 with suppress(NameResolutionError):
                     resolved_first = self.current.resolve(names[0])
                     resolved_name = ".".join([resolved_first, *names[1:]])
                     if resolved_name in stdlib_decorators:
-                        if "abstractmethod" in resolved_name:
-                            labels.add("abstractmethod")
-                        elif "cached_property" in resolved_name:
-                            labels.add("cached")
-                            labels.add("property")
-                        elif "cache" in resolved_name:
-                            labels.add("cached")
+                        labels |= stdlib_decorators[resolved_name]
         return labels
 
     def get_base_property(self, decorators: list[Decorator]) -> tuple[Function | None, str | None]:
