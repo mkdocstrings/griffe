@@ -720,7 +720,7 @@ if sys.version_info < (3, 8):
     def _get_bytes_annotation(node: NodeBytes, parent: Module | Class) -> str:
         return repr(node.s)
 
-    def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str | Name | Expression:
+    def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str:
         return repr(node.value)
 
     def _get_num_annotation(node: NodeNum, parent: Module | Class) -> str:
