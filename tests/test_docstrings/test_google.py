@@ -789,6 +789,34 @@ def test_class_uses_init_parameters(parse_google):
     assert argx.description == "X value."
 
 
+def test_dataclass_uses_attributes(parse_google):
+    """Assert we use the class' attributes as parameters when parsing dataclasses' parameters sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Parameters:
+            auth: Auth method.
+            base_url: Base URL.
+    """
+    parent = Class("c")
+    parent.labels.add("dataclass")
+    parent["auth"] = Attribute("auth", annotation="Optional[str]", value="None")
+    parent["base_url"] = Attribute("base_url", annotation="str", value="'https://api.example.com'")
+    sections, warnings = parse_google(docstring, parent=parent)
+    assert not warnings
+    auth, base_url = sections[0].value
+    assert auth.name == "auth"
+    assert auth.annotation == "Optional[str]"
+    assert auth.description == "Auth method."
+    assert auth.default == "None"
+    assert base_url.name == "base_url"
+    assert base_url.annotation == "str"
+    assert base_url.description == "Base URL."
+    assert base_url.default == "'https://api.example.com'"
+
+
 # TODO: possible feature
 # def test_missing_parameter(parse_google):
 #     """Warn on missing parameter in docstring.

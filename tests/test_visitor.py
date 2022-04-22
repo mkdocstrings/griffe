@@ -117,6 +117,8 @@ def test_not_defined_at_runtime():
         ("lru_cache(maxsize=8)", {"cached"}),
         ("abc.abstractmethod", {"abstractmethod"}),
         ("abstractmethod", {"abstractmethod"}),
+        ("dataclasses.dataclass", {"dataclass"}),
+        ("dataclass", {"dataclass"}),
     ],
 )
 def test_set_function_labels_using_decorators(decorator, labels):
@@ -128,8 +130,10 @@ def test_set_function_labels_using_decorators(decorator, labels):
     """
     code = f"""
         import abc
+        import dataclasses
         import functools
         from abc import abstractmethod
+        from dataclasses import dataclass
         from functools import cache, cached_property, lru_cache
 
         class A:
@@ -139,6 +143,31 @@ def test_set_function_labels_using_decorators(decorator, labels):
     """
     with temporary_visited_module(code) as module:
         assert module["A.f"].has_labels(labels)
+
+
+@pytest.mark.parametrize(
+    ("decorator", "labels"),
+    [
+        ("dataclasses.dataclass", {"dataclass"}),
+        ("dataclass", {"dataclass"}),
+    ],
+)
+def test_set_class_labels_using_decorators(decorator, labels):
+    """Assert decorators are used to set labels on classes.
+
+    Parameters:
+        decorator: A parametrized decorator.
+        labels: The parametrized set of expected labels.
+    """
+    code = f"""
+        import dataclasses
+        from dataclasses import dataclass
+
+        @{decorator}
+        class A: ...
+    """
+    with temporary_visited_module(code) as module:
+        assert module["A"].has_labels(labels)
 
 
 def test_handle_property_setter_and_deleter():

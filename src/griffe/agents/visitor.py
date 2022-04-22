@@ -58,6 +58,7 @@ stdlib_decorators = {
     "functools.cache": {"cached"},
     "functools.cached_property": {"cached", "property"},
     "functools.lru_cache": {"cached"},
+    "dataclasses.dataclass": {"dataclass"},
 }
 
 
@@ -250,6 +251,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             bases=bases,  # type: ignore[arg-type]
             runtime=not self.type_guarded,
         )
+        class_.labels |= self.decorators_to_labels(decorators)
         self.current[node.name] = class_
         self.current = class_
         self.generic_visit(node)

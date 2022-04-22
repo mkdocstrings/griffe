@@ -1142,6 +1142,13 @@ class Class(Object):
         try:
             return self.members["__init__"].parameters  # type: ignore[union-attr]
         except KeyError:
+            if "dataclass" in self.labels:
+                return Parameters(
+                    *[
+                        Parameter(attr.name, annotation=attr.annotation, default=attr.value)
+                        for attr in self.attributes.values()
+                    ]
+                )
             return Parameters()
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
