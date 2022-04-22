@@ -41,7 +41,7 @@ _json_encoder_map: dict[Type, Callable[[Any], Any]] = {
     ParameterKind: _enum_value,
     Kind: _enum_value,
     DocstringSectionKind: _enum_value,
-    set: list,
+    set: sorted,
 }
 
 
