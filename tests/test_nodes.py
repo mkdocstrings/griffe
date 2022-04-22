@@ -57,6 +57,7 @@ def test_relative_to_absolute_imports(code, path, is_package, expected):
         "~A",
         "A | B",
         "A[[B, C], D]",
+        "A(b=c, d=1)",
     ],
 )
 def test_building_annotations_from_nodes(expression):

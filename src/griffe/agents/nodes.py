@@ -626,8 +626,8 @@ def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
 
 
 def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
-    posargs = Expression(*[_get_annotation(arg, parent) for arg in node.args])
-    kwargs = Expression(*[_get_annotation(kwarg, parent) for kwarg in node.keywords])
+    posargs = Expression(*_join([_get_annotation(arg, parent) for arg in node.args], ", "))
+    kwargs = Expression(*_join([_get_annotation(kwarg, parent) for kwarg in node.keywords], ", "))
     args: Expression | str
     if posargs and kwargs:
         args = Expression(posargs, ", ", kwargs)
@@ -662,6 +662,10 @@ def _get_invert_annotation(node: NodeInvert, parent: Module | Class) -> str:
     return "~"
 
 
+def _get_keyword_annotation(node: NodeKeyword, parent: Module | Class) -> Expression:
+    return Expression(f"{node.arg}=", _get_annotation(node.value, parent))
+
+
 def _get_list_annotation(node: NodeList, parent: Module | Class) -> Expression:
     return Expression("[", *_join([_get_annotation(el, parent) for el in node.elts], ", "), "]")
 
@@ -694,6 +698,7 @@ _node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Ex
     NodeEllipsis: _get_ellipsis_annotation,
     NodeIfExp: _get_ifexp_annotation,
     NodeInvert: _get_invert_annotation,
+    NodeKeyword: _get_keyword_annotation,
     NodeList: _get_list_annotation,
     NodeName: _get_name_annotation,
     NodeSubscript: _get_subscript_annotation,
@@ -712,13 +717,21 @@ if sys.version_info < (3, 9):
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
 
+    def _get_bytes_annotation(node: NodeBytes, parent: Module | Class) -> str:
+        return repr(node.s)
+
     def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str | Name | Expression:
         return repr(node.value)
+
+    def _get_num_annotation(node: NodeNum, parent: Module | Class) -> str:
+        return repr(node.n)
 
     def _get_str_annotation(node: NodeStr, parent: Module | Class) -> str:
         return node.s
 
+    _node_annotation_map[NodeBytes] = _get_bytes_annotation
     _node_annotation_map[NodeNameConstant] = _get_nameconstant_annotation
+    _node_annotation_map[NodeNum] = _get_num_annotation
     _node_annotation_map[NodeStr] = _get_str_annotation
 
 
@@ -772,8 +785,6 @@ def get_docstring(
 
 # ==========================================================
 # values
-
-
 def _get_add_value(node: NodeAdd) -> str:
     return "+"
 
