@@ -467,3 +467,66 @@ class GriffeLoader:
             for imported_member in module.members.values()
             if imported_member.is_exported(explicitely=explicitely)
         ]
+
+
+def load(
+    module: str | Path,
+    submodules: bool = True,
+    try_relative_path: bool = True,
+    extensions: Extensions | None = None,
+    search_paths: Sequence[str | Path] | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+    allow_inspection: bool = True,
+) -> Module:
+    """Load and return a module.
+
+    Example:
+
+    ```python
+    import griffe
+
+    module = griffe.load(...)
+    ```
+
+    This is a shortcut for:
+
+    ```python
+    from griffe.loader import GriffeLoader
+
+    loader = GriffeLoader(...)
+    module = loader.load_module(...)
+    ```
+
+    See the documentation for the loader: [`GriffeLoader`][griffe.loader.GriffeLoader].
+
+    Parameters:
+        module: The module name or path.
+        submodules: Whether to recurse on the submodules.
+        try_relative_path: Whether to try finding the module as a relative path.
+        extensions: The extensions to use.
+        search_paths: The paths to search into.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
+        allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+
+    Returns:
+        A loaded module.
+    """
+    return GriffeLoader(
+        extensions=extensions,
+        search_paths=search_paths,
+        docstring_parser=docstring_parser,
+        docstring_options=docstring_options,
+        lines_collection=lines_collection,
+        modules_collection=modules_collection,
+        allow_inspection=allow_inspection,
+    ).load_module(
+        module=module,
+        submodules=submodules,
+        try_relative_path=try_relative_path,
+    )
