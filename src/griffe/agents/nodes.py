@@ -798,11 +798,11 @@ def _get_arguments_value(node: NodeArguments) -> str:
 
 
 def _get_attribute_value(node: NodeAttribute) -> str:
-    return f"{get_value(node.value)}.{node.attr}"
+    return f"{_get_value(node.value)}.{node.attr}"
 
 
 def _get_binop_value(node: NodeBinOp) -> str:
-    return f"{get_value(node.left)} {get_value(node.op)} {get_value(node.right)}"
+    return f"{_get_value(node.left)} {_get_value(node.op)} {_get_value(node.right)}"
 
 
 def _get_bitor_value(node: NodeBitOr) -> str:
@@ -818,12 +818,12 @@ def _get_bitxor_value(node: NodeBitXor) -> str:
 
 
 def _get_boolop_value(node: NodeBoolOp) -> str:
-    return get_value(node.op).join(get_value(value) for value in node.values)
+    return _get_value(node.op).join(_get_value(value) for value in node.values)
 
 
 def _get_call_value(node: NodeCall) -> str:
-    posargs = ", ".join(get_value(arg) for arg in node.args)
-    kwargs = ", ".join(get_value(kwarg) for kwarg in node.keywords)
+    posargs = ", ".join(_get_value(arg) for arg in node.args)
+    kwargs = ", ".join(_get_value(kwarg) for kwarg in node.keywords)
     if posargs and kwargs:
         args = f"{posargs}, {kwargs}"
     elif posargs:
@@ -832,20 +832,20 @@ def _get_call_value(node: NodeCall) -> str:
         args = kwargs
     else:
         args = ""
-    return f"{get_value(node.func)}({args})"
+    return f"{_get_value(node.func)}({args})"
 
 
 def _get_compare_value(node: NodeCompare) -> str:
-    left = get_value(node.left)
-    ops = [get_value(op) for op in node.ops]
-    comparators = [get_value(comparator) for comparator in node.comparators]
+    left = _get_value(node.left)
+    ops = [_get_value(op) for op in node.ops]
+    comparators = [_get_value(comparator) for comparator in node.comparators]
     return f"{left} " + " ".join(f"{op} {comp}" for op, comp in zip(ops, comparators))
 
 
 def _get_comprehension_value(node: NodeComprehension) -> str:
-    target = get_value(node.target)
-    iterable = get_value(node.iter)
-    conditions = [get_value(condition) for condition in node.ifs]
+    target = _get_value(node.target)
+    iterable = _get_value(node.iter)
+    conditions = [_get_value(condition) for condition in node.ifs]
     value = f"for {target} in {iterable}"
     if conditions:
         value = f"{value} if " + " if ".join(conditions)
@@ -864,14 +864,14 @@ def _get_constant_value_no_repr(node: NodeConstant) -> str:
 
 def _get_dict_value(node: NodeDict) -> str:
     pairs = zip(node.keys, node.values)
-    gen = (f"{'None' if key is None else get_value(key)}: {get_value(value)}" for key, value in pairs)  # noqa: WPS509
+    gen = (f"{'None' if key is None else _get_value(key)}: {_get_value(value)}" for key, value in pairs)  # noqa: WPS509
     return "{" + ", ".join(gen) + "}"
 
 
 def _get_dictcomp_value(node: NodeDictComp) -> str:
-    key = get_value(node.key)
-    value = get_value(node.value)
-    generators = [get_value(gen) for gen in node.generators]
+    key = _get_value(node.key)
+    value = _get_value(node.value)
+    generators = [_get_value(gen) for gen in node.generators]
     return f"{{{key}: {value} " + " ".join(generators) + "}"
 
 
@@ -892,12 +892,12 @@ def _get_floordiv_value(node: NodeFloorDiv) -> str:
 
 
 def _get_formatted_value(node: NodeFormattedValue) -> str:
-    return f"{{{get_value(node.value)}}}"
+    return f"{{{_get_value(node.value)}}}"
 
 
 def _get_generatorexp_value(node: NodeGeneratorExp) -> str:
-    element = get_value(node.elt)
-    generators = [get_value(gen) for gen in node.generators]
+    element = _get_value(node.elt)
+    generators = [_get_value(gen) for gen in node.generators]
     return f"{element} " + " ".join(generators)
 
 
@@ -910,7 +910,7 @@ def _get_gt_value(node: NodeNotEq) -> str:
 
 
 def _get_ifexp_value(node: NodeIfExp) -> str:
-    return f"{get_value(node.body)} if {get_value(node.test)} else {get_value(node.orelse)}"
+    return f"{_get_value(node.body)} if {_get_value(node.test)} else {_get_value(node.orelse)}"
 
 
 def _get_invert_value(node: NodeInvert) -> str:
@@ -931,26 +931,26 @@ def _get_isnot_value(node: NodeIsNot) -> str:
 
 def _get_joinedstr_value(node: NodeJoinedStr) -> str:
     _node_value_map[NodeConstant] = _get_constant_value_no_repr
-    result = repr("".join(get_value(value) for value in node.values))
+    result = repr("".join(_get_value(value) for value in node.values))
     _node_value_map[NodeConstant] = _get_constant_value
     return result
 
 
 def _get_keyword_value(node: NodeKeyword) -> str:
-    return f"{node.arg}={get_value(node.value)}"
+    return f"{node.arg}={_get_value(node.value)}"
 
 
 def _get_lambda_value(node: NodeLambda) -> str:
-    return f"lambda {get_value(node.args)}: {get_value(node.body)}"
+    return f"lambda {_get_value(node.args)}: {_get_value(node.body)}"
 
 
 def _get_list_value(node: NodeList) -> str:
-    return "[" + ", ".join(get_value(el) for el in node.elts) + "]"
+    return "[" + ", ".join(_get_value(el) for el in node.elts) + "]"
 
 
 def _get_listcomp_value(node: NodeListComp) -> str:
-    element = get_value(node.elt)
-    generators = [get_value(gen) for gen in node.generators]
+    element = _get_value(node.elt)
+    generators = [_get_value(gen) for gen in node.generators]
     return f"[{element} " + " ".join(generators) + "]"
 
 
@@ -1007,24 +1007,24 @@ def _get_rshift_value(node: NodeRShift) -> str:
 
 
 def _get_set_value(node: NodeSet) -> str:
-    return "{" + ", ".join(get_value(el) for el in node.elts) + "}"
+    return "{" + ", ".join(_get_value(el) for el in node.elts) + "}"
 
 
 def _get_setcomp_value(node: NodeSetComp) -> str:
-    element = get_value(node.elt)
-    generators = [get_value(gen) for gen in node.generators]
+    element = _get_value(node.elt)
+    generators = [_get_value(gen) for gen in node.generators]
     return f"{{{element} " + " ".join(generators) + "}"
 
 
 def _get_slice_value(node: NodeSlice) -> str:
-    value = f"{get_value(node.lower) if node.lower else ''}:{get_value(node.upper) if node.upper else ''}"
+    value = f"{_get_value(node.lower) if node.lower else ''}:{_get_value(node.upper) if node.upper else ''}"
     if node.step:
-        value = f"{value}:{get_value(node.step)}"
+        value = f"{value}:{_get_value(node.step)}"
     return value
 
 
 def _get_starred_value(node: NodeStarred) -> str:
-    return get_value(node.value)
+    return _get_value(node.value)
 
 
 def _get_sub_value(node: NodeSub) -> str:
@@ -1032,14 +1032,14 @@ def _get_sub_value(node: NodeSub) -> str:
 
 
 def _get_subscript_value(node: NodeSubscript) -> str:
-    subscript = get_value(node.slice)
+    subscript = _get_value(node.slice)
     if isinstance(subscript, str):
         subscript = subscript.strip("()")
-    return f"{get_value(node.value)}[{subscript}]"
+    return f"{_get_value(node.value)}[{subscript}]"
 
 
 def _get_tuple_value(node: NodeTuple) -> str:
-    return "(" + ", ".join(get_value(el) for el in node.elts) + ")"
+    return "(" + ", ".join(_get_value(el) for el in node.elts) + ")"
 
 
 def _get_uadd_value(node: NodeUAdd) -> str:
@@ -1047,7 +1047,7 @@ def _get_uadd_value(node: NodeUAdd) -> str:
 
 
 def _get_unaryop_value(node: NodeUnaryOp) -> str:
-    return f"{get_value(node.op)}{get_value(node.operand)}"
+    return f"{_get_value(node.op)}{_get_value(node.operand)}"
 
 
 def _get_usub_value(node: NodeUSub) -> str:
@@ -1057,11 +1057,11 @@ def _get_usub_value(node: NodeUSub) -> str:
 def _get_yield_value(node: NodeYield) -> str:
     if node.value is None:
         return repr(None)
-    return get_value(node.value)
+    return _get_value(node.value)
 
 
 _node_value_map: dict[Type, Callable[[Any], str]] = {
-    type(None): lambda _: repr(None),
+    # type(None): lambda _: repr(None),
     NodeAdd: _get_add_value,
     NodeAnd: _get_and_value,
     NodeArguments: _get_arguments_value,
@@ -1125,7 +1125,7 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
 if sys.version_info < (3, 9):
 
     def _get_index_value(node: NodeIndex) -> str:
-        return get_value(node.value)
+        return _get_value(node.value)
 
     _node_value_map[NodeIndex] = _get_index_value
 
@@ -1151,7 +1151,11 @@ if sys.version_info < (3, 8):
     _node_value_map[NodeStr] = _get_str_value
 
 
-def get_value(node: AST) -> str:
+def _get_value(node: AST) -> str:
+    return _node_value_map[type(node)](node)
+
+
+def get_value(node: AST | None) -> str | None:
     """Extract a complex value as a string.
 
     Parameters:
@@ -1160,6 +1164,8 @@ def get_value(node: AST) -> str:
     Returns:
         The unparsed code of the node.
     """
+    if node is None:
+        return None
     return _node_value_map[type(node)](node)
 
 
@@ -1248,7 +1254,7 @@ def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesColl
     if node is None:
         return None
     with suppress(KeyError):
-        return get_value(node)
+        return _get_value(node)
     if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
         return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
     # TODO: handle multiple line defaults
