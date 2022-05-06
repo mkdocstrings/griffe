@@ -177,7 +177,7 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno", None),
         docstring=_load_docstring(obj_dict),
-        value=obj_dict["value"],
+        value=obj_dict.get("value", None),
         annotation=_load_annotation(obj_dict.get("annotation", None)),
     )
     attribute.labels |= set(obj_dict.get("labels", ()))

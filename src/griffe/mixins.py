@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
+from contextlib import suppress
 from typing import Any, Sequence
+
+from griffe.logger import get_logger
+from griffe.merger import merge_stubs
+
+logger = get_logger(__name__)
 
 
 class GetMembersMixin:
@@ -51,13 +57,20 @@ class SetMembersMixin(DelMembersMixin):
     Each time a member is set, its `parent` attribute is set as well.
     """
 
-    def __setitem__(self, key: str | Sequence[str], value) -> None:
+    def __setitem__(self, key: str | Sequence[str], value) -> None:  # noqa: WPS231
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
             if name in self.members:  # type: ignore[attr-defined]
                 member = self.members[name]  # type: ignore[attr-defined]
                 if not member.is_alias:
+                    # when reassigning a module to an existing one,
+                    # try to merge them as one regular and one stubs module
+                    # (implicit support for .pyi modules)
+                    if member.is_module and value.is_module:
+                        logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")
+                        with suppress(ValueError):
+                            value = merge_stubs(member, value)
                     for alias in member.aliases.values():
                         alias.target = value
             self.members[name] = value  # type: ignore[attr-defined]

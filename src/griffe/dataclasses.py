@@ -9,6 +9,7 @@ from __future__ import annotations
 import enum
 import inspect
 import sys
+from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
@@ -1011,6 +1012,7 @@ class Module(Object):
         """
         super().__init__(*args, **kwargs)
         self._filepath: Path | list[Path] | None = filepath
+        self.overloads: dict[str, list[Function]] = defaultdict(list)
 
     def __repr__(self) -> str:
         try:
@@ -1131,6 +1133,7 @@ class Class(Object):
         super().__init__(*args, **kwargs)
         self.bases: list[Name | Expression | str] = bases or []
         self.decorators: list[Decorator] = decorators or []
+        self.overloads: dict[str, list[Function]] = defaultdict(list)
 
     @property
     def parameters(self) -> Parameters:

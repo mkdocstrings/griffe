@@ -1,5 +1,7 @@
 """Tests for the `loader` module."""
 
+from textwrap import dedent
+
 from griffe.expressions import Name
 from griffe.loader import GriffeLoader
 from tests.helpers import temporary_pyfile, temporary_pypackage
@@ -80,3 +82,115 @@ def test_dont_overwrite_lower_member_when_expanding_wildcard():
         loader.resolve_aliases()
         assert package["mod_a.overwritten"].value == "1"
         assert package["mod_a.not_overwritten"].value == "0"
+
+
+def test_load_data_from_stubs():
+    """Check that the loader is able to load data from stubs / `*.pyi` files."""
+    with temporary_pypackage("package", ["_rust_notify.pyi"]) as tmp_package:
+        # code taken from samuelcolvin/watchfiles project
+        code = '''
+            from typing import List, Literal, Optional, Protocol, Set, Tuple, Union
+
+            __all__ = 'RustNotify', 'WatchfilesRustInternalError'
+
+            class AbstractEvent(Protocol):
+                def is_set(self) -> bool: ...
+
+            class RustNotify:
+                """
+                Interface to the Rust [notify](https://crates.io/crates/notify) crate which does
+                the heavy lifting of watching for file changes and grouping them into a single event.
+                """
+
+                def __init__(self, watch_paths: List[str], debug: bool) -> None:
+                    """
+                    Create a new RustNotify instance and start a thread to watch for changes.
+
+                    `FileNotFoundError` is raised if one of the paths does not exist.
+
+                    Args:
+                        watch_paths: file system paths to watch for changes, can be directories or files
+                        debug: if true, print details about all events to stderr
+                    """
+        '''
+        tmp_package.path.joinpath("_rust_notify.pyi").write_text(dedent(code))
+        tmp_package.path.joinpath("__init__.py").write_text(
+            "from ._rust_notify import RustNotify\n__all__ = ['RustNotify']"
+        )
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        package = loader.load_module(tmp_package.name)
+        loader.resolve_aliases()
+
+        assert "_rust_notify" in package.members
+        assert "RustNotify" in package.members
+        assert package["RustNotify"].resolved
+
+
+def test_load_from_both_py_and_pyi_files():
+    """Check that the loader is able to merge data loaded from `*.py` and `*.pyi` files."""
+    with temporary_pypackage("package", ["mod.py", "mod.pyi"]) as tmp_package:
+        tmp_package.path.joinpath("mod.py").write_text(
+            dedent(
+                """
+                CONST = 0
+
+                class Class:
+                    class_attr = True
+
+                    def function1(self, arg1):
+                        pass
+
+                    def function2(self, arg1=2.2):
+                        pass
+                """
+            )
+        )
+        tmp_package.path.joinpath("mod.pyi").write_text(
+            dedent(
+                """
+                from typing import Sequence, overload
+
+                CONST: int
+
+                class Class:
+                    class_attr: bool
+
+                    @overload
+                    def function1(self, arg1: str) -> Sequence[str]: ...
+                    @overload
+                    def function1(self, arg1: bytes) -> Sequence[bytes]: ...
+
+                    def function2(self, arg1: float) -> float: ...
+                """
+            )
+        )
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        package = loader.load_module(tmp_package.name)
+        loader.resolve_aliases()
+
+        assert "mod" in package.members
+        mod = package["mod"]
+        assert mod.filepath.suffix == ".py"
+
+        assert "CONST" in mod.members
+        const = mod["CONST"]
+        assert const.value == "0"
+        assert const.annotation.source == "int"
+
+        assert "Class" in mod.members
+        class_ = mod["Class"]
+
+        assert "class_attr" in class_.members
+        class_attr = class_["class_attr"]
+        assert class_attr.value == "True"
+        assert class_attr.annotation.source == "bool"
+
+        assert "function1" in class_.members
+        function1 = class_["function1"]
+        assert len(function1.overloads) == 2
+
+        assert "function2" in class_.members
+        function2 = class_["function2"]
+        assert function2.returns.source == "float"
+        assert function2.parameters["arg1"].annotation.source == "float"
+        assert function2.parameters["arg1"].default == "2.2"

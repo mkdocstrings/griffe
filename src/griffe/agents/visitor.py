@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import ast
 import inspect
-from collections import defaultdict
 from contextlib import suppress
 from itertools import zip_longest
 from pathlib import Path
@@ -146,7 +145,6 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         self.type_guarded: bool = False
-        self.overloads: dict[str, list[Function]] = defaultdict(list)
 
     def _get_docstring(self, node: ast.AST, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
@@ -228,7 +226,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             for decorator_node in node.decorator_list:
                 decorators.append(
                     Decorator(
-                        get_value(decorator_node),
+                        get_value(decorator_node),  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
                         endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
                     )
@@ -326,7 +324,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 )
                 decorators.append(
                     Decorator(
-                        decorator_value,
+                        decorator_value,  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
                         endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
                     )
@@ -423,7 +421,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         )
 
         if overload:
-            self.overloads[function.path].append(function)
+            self.current.overloads[function.name].append(function)
         elif base_property is not None:
             if property_function == "setter":
                 base_property.setter = function
@@ -433,8 +431,9 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 base_property.labels.add("deletable")
         else:
             self.current[node.name] = function
-            if self.overloads[function.path]:
-                function.overloads = self.overloads[function.path]
+            if self.current.overloads[function.name]:
+                function.overloads = self.current.overloads[function.name]
+                del self.current.overloads[function.name]  # noqa: WPS420
 
         function.labels |= labels
 

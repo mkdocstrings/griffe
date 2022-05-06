@@ -64,7 +64,7 @@ def temporary_pypackage(package: str, modules: list[str] | None = None) -> Itera
         for module in modules:
             current_path = package_path
             for part in Path(module).parts:
-                if part.endswith(".py"):
+                if part.endswith(".py") or part.endswith(".pyi"):
                     (current_path / part).touch()
                 else:
                     current_path /= part

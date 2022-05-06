@@ -42,7 +42,7 @@ class Package:
 class ModuleFinder:
     """The Griffe finder, allowing to find modules on the file system."""
 
-    accepted_py_module_extensions = [".py", ".pyc", ".pyo", ".pyd", ".so"]
+    accepted_py_module_extensions = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
     extensions_set = set(accepted_py_module_extensions)
 
     def __init__(self, search_paths: Sequence[str | Path] | None = None) -> None:
@@ -166,7 +166,7 @@ class ModuleFinder:
 
         if path.stem == "__init__":
             path = path.parent
-        # optimization: just check if the file name ends with .py[cod]/.so
+        # optimization: just check if the file name ends with .py[icod]/.so
         # (to distinguish it from a directory),
         # not if it's an actual file
         elif path.suffix in self.extensions_set:

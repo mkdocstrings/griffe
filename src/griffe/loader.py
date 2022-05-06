@@ -363,7 +363,7 @@ class GriffeLoader:
         logger.debug(f"Loading path {module_path}")
         if isinstance(module_path, list):
             module = self._create_module(module_name, module_path)
-        elif module_path.suffix == ".py":
+        elif module_path.suffix in {".py", ".pyi"}:
             code = module_path.read_text(encoding="utf8")
             module = self._visit_module(code, module_name, module_path, parent)
         elif self.allow_inspection:
