@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.19.0](https://github.com/mkdocstrings/griffe/releases/tag/0.19.0) - 2022-05-06
+
+<small>[Compare with 0.18.0](https://github.com/mkdocstrings/griffe/compare/0.18.0...0.19.0)</small>
+
+### Features
+- Add `load` shortcut function for convenience ([f38a42d](https://github.com/mkdocstrings/griffe/commit/f38a42ddd7ac9d58f36627d9f2a69f4acd65df50) by Timothée Mazzucotelli).
+- Support loading (and merging) `*.pyi` files ([41518f4](https://github.com/mkdocstrings/griffe/commit/41518f4aa9e00756a910067cf6f01f07ca7327da) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#404](https://github.com/mkdocstrings/mkdocstrings/issues/404)
+- Improve support for call nodes in annotations ([45e5bf5](https://github.com/mkdocstrings/griffe/commit/45e5bf53d509344b3f28118836d356903c64bbf3) by Timothée Mazzucotelli). [Issue #66](https://github.com/mkdocstrings/griffe/issues/66)
+- Support `dataclass` decorators on classes ([f579431](https://github.com/mkdocstrings/griffe/commit/f579431474cc4db687e4264f5062074654dec2f3) by Timothée Mazzucotelli).
+
+### Code Refactoring
+- Handle absence of values ([190585d](https://github.com/mkdocstrings/griffe/commit/190585d3482bfc3a72694910529b7a0aac35444c) by Timothée Mazzucotelli).
+- Simplify decorators to labels function ([04e768f](https://github.com/mkdocstrings/griffe/commit/04e768fb621898faf7a96cc7e7170f10da876664) by Timothée Mazzucotelli).
+- Always sort labels when serializing ([bd2504b](https://github.com/mkdocstrings/griffe/commit/bd2504bdb43df3e290c88bd8d25903823f5fc2d6) by Timothée Mazzucotelli).
+
+
 ## [0.18.0](https://github.com/mkdocstrings/griffe/releases/tag/0.18.0) - 2022-04-19
 
 <small>[Compare with 0.17.0](https://github.com/mkdocstrings/griffe/compare/0.17.0...0.18.0)</small>
