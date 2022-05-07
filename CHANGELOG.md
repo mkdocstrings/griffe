@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.19.1](https://github.com/mkdocstrings/griffe/releases/tag/0.19.1) - 2022-05-07
+
+<small>[Compare with 0.19.0](https://github.com/mkdocstrings/griffe/compare/0.19.0...0.19.1)</small>
+
+### Bug Fixes
+- Don't crash on nested functions in `__init__` methods ([cd5af43](https://github.com/mkdocstrings/griffe/commit/cd5af43f3a98d54d822015818b7aa0ef15159286) by Timothée Mazzucotelli). [Issue #68](https://github.com/mkdocstrings/griffe/issues/68)
+
+
 ## [0.19.0](https://github.com/mkdocstrings/griffe/releases/tag/0.19.0) - 2022-05-06
 
 <small>[Compare with 0.18.0](https://github.com/mkdocstrings/griffe/compare/0.18.0...0.19.0)</small>
