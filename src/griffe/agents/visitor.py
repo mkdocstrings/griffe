@@ -431,7 +431,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 base_property.labels.add("deletable")
         else:
             self.current[node.name] = function
-            if self.current.overloads[function.name]:
+            if self.current.kind in {Kind.MODULE, Kind.CLASS} and self.current.overloads[function.name]:
                 function.overloads = self.current.overloads[function.name]
                 del self.current.overloads[function.name]  # noqa: WPS420
 

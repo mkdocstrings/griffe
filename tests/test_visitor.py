@@ -277,3 +277,17 @@ def test_parse_complex__all__assignments(statements):
         loader.resolve_aliases()
 
         assert package.exports == {"CONST_INIT", "CONST_A", "CONST_B", "CONST_C"}
+
+
+# issue https://github.com/mkdocstrings/griffe/issues/68
+def test_dont_crash_on_nested_functions_in_init():
+    """Assert we don't crash when visiting a nested function in `__init__` methods."""
+    with temporary_visited_module(
+        """
+        class C:
+            def __init__(self):
+                def pl(i: int):
+                    return i + 1
+        """
+    ) as module:
+        assert module
