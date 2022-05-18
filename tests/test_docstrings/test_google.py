@@ -1035,7 +1035,7 @@ def test_handle_false_admonitions_correctly(parse_google, docstring):
 
     Parameters:
         parse_google: Fixture parser.
-        docstring: The docstring to parse_google (parametrized).
+        docstring: The docstring to parse (parametrized).
     """
     sections, warnings = parse_google(docstring)
     assert len(sections) == 1
@@ -1118,11 +1118,11 @@ def test_ignore_init_summary(parse_google, docstring):
     ],
 )
 def test_trim_doctest_flags_basic_example(parse_google, docstring):
-    """Correctly parse_google simple example docstrings when `trim_doctest_flags` option is turned on.
+    """Correctly parse simple example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
         parse_google: Fixture parser.
-        docstring: The docstring to parse_google (parametrized).
+        docstring: The docstring to parse (parametrized).
     """
     sections, warnings = parse_google(docstring, trim_doctest_flags=True)
     assert len(sections) == 1
@@ -1136,7 +1136,7 @@ def test_trim_doctest_flags_basic_example(parse_google, docstring):
 
 
 def test_trim_doctest_flags_multi_example(parse_google):
-    """Correctly parse_google multiline example docstrings when `trim_doctest_flags` option is turned on.
+    """Correctly parse multiline example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
         parse_google: Fixture parser.
@@ -1169,3 +1169,16 @@ def test_trim_doctest_flags_multi_example(parse_google):
     example_str = sections[0].value[3][1]
     assert "<BLANKLINE>" not in example_str
     assert "\n>>> print(list(range(1, 100)))\n" in example_str
+
+
+def test_single_line_with_trailing_whitespace(parse_google):
+    """Don't crash on single line docstrings with trailing whitespace.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = "a: b\n    "
+    sections, warnings = parse_google(docstring, trim_doctest_flags=True)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.text
+    assert not warnings

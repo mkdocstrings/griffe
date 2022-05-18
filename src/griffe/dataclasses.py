@@ -113,7 +113,7 @@ class Docstring:
             parser: The docstring parser to use. By default, no parsing is done.
             parser_options: Additional docstring parsing options.
         """
-        self.value: str = inspect.cleandoc(value)
+        self.value: str = inspect.cleandoc(value.rstrip())
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
         self.parent: Object | None = parent
