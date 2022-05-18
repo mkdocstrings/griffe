@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.19.2](https://github.com/mkdocstrings/griffe/releases/tag/0.19.2) - 2022-05-18
+
+<small>[Compare with 0.19.1](https://github.com/mkdocstrings/griffe/compare/0.19.1...0.19.2)</small>
+
+### Bug Fixes
+- Don't crash on single line docstrings with trailing whitespace (Google) ([8d9ccd5](https://github.com/mkdocstrings/griffe/commit/8d9ccd531dd91c6fbfa0922a0133680f881733b0) by Timothée Mazzucotelli).
+
+
 ## [0.19.1](https://github.com/mkdocstrings/griffe/releases/tag/0.19.1) - 2022-05-07
 
 <small>[Compare with 0.19.0](https://github.com/mkdocstrings/griffe/compare/0.19.0...0.19.1)</small>
