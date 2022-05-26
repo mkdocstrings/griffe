@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.19.3](https://github.com/mkdocstrings/griffe/releases/tag/0.19.3) - 2022-05-26
+
+<small>[Compare with 0.19.2](https://github.com/mkdocstrings/griffe/compare/0.19.2...0.19.3)</small>
+
+### Bug Fixes
+- Support USub and UAdd nodes in annotations ([1169c51](https://github.com/mkdocstrings/griffe/commit/1169c51bd6ae04f491fa5e50cae93d99e8ce920d) by Timothée Mazzucotelli). [Issue #71](https://github.com/mkdocstrings/griffe/issues/71)
+
+
 ## [0.19.2](https://github.com/mkdocstrings/griffe/releases/tag/0.19.2) - 2022-05-18
 
 <small>[Compare with 0.19.1](https://github.com/mkdocstrings/griffe/compare/0.19.1...0.19.2)</small>
