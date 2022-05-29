@@ -517,7 +517,6 @@ def load(
     Returns:
         A loaded module.
     """
-    print("LL", locals())
     return GriffeLoader(
         extensions=extensions,
         search_paths=search_paths,
