@@ -85,9 +85,13 @@ def load_git(
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
 ) -> Module:
-    """Load and return a module from a specific git commit.
+    """Load and return a module from a specific git commit in `repo`.
 
-    See the documentation for the loader: [`GriffeLoader`][griffe.loader.GriffeLoader].
+    This function will create a temporary
+    [git worktree](https://git-scm.com/docs/git-worktree) at the requested `commit`,
+    before loading `module` with [`griffe.load`][griffe.loader.load].
+    
+    This function requires that the `git` executable be installed.
 
     Parameters:
         module: The module name or path.
