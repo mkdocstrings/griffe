@@ -53,7 +53,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
     repo = str(repo)
     _assert_git_repo(repo)
     with TemporaryDirectory() as td:
-        uid = str(uuid1())
+        uid = f'{str(uuid1())[:5]}_{commit}'.replace(" ", "_")
         target = os.path.join(td, uid)
         retval = run(  # noqa: S603,S607
             ["git", "-C", repo, "worktree", "add", "-b", uid, target, commit],
