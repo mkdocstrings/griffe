@@ -14,11 +14,11 @@ def test_minimal_data_is_enough():
     """
     loader = GriffeLoader()
     module = loader.load_module("griffe")
-    minimal = module.as_json(full=False, indent=2)
-    full = module.as_json(full=True, indent=2)
+    minimal = module.as_json(full=False)
+    full = module.as_json(full=True)
     reloaded = Module.from_json(minimal)
-    assert reloaded.as_json(full=False, indent=2) == minimal
-    assert reloaded.as_json(full=True, indent=2) == full
+    assert reloaded.as_json(full=False) == minimal
+    assert reloaded.as_json(full=True) == full
 
     # also works (but will result in a different type hint)
     assert Object.from_json(minimal)
