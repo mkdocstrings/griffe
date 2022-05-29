@@ -138,12 +138,11 @@ class ObjectAliasMixin:
 class SerializationMixin:
     """A mixin that adds de/serialization conveniences."""
 
-    def as_json(self, full: bool = False, indent: int = 2, **kwargs: Any) -> str:
+    def as_json(self, full: bool = False, **kwargs: Any) -> str:
         """Return this object's data as a JSON string.
 
         Parameters:
             full: Whether to return full info, or just base info.
-            indent: Indentation level for JSON output.
             **kwargs: Additional serialization options passed to encoder.
 
         Returns:
@@ -151,10 +150,10 @@ class SerializationMixin:
         """
         from griffe.encoders import JSONEncoder  # avoid circular import
 
-        return json.dumps(self, cls=JSONEncoder, indent=indent, full=full, **kwargs)
+        return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
 
     @classmethod
-    def from_json(cls: Type[_ObjType], json_string: str, **kwargs) -> _ObjType:
+    def from_json(cls: Type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:
         """Create an instance of this class from a JSON string.
 
         Parameters:
@@ -166,7 +165,7 @@ class SerializationMixin:
 
         Raises:
             TypeError: When the json_string does not represent and object
-                       of the class from which this classmethod has been called.
+                of the class from which this classmethod has been called.
         """
         from griffe.encoders import json_decoder  # avoid circular import
 

@@ -315,7 +315,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     started = datetime.now()
     if per_package_output:
         for package_name, data in packages.items():
-            serialized = data.as_json(full=opts.full)
+            serialized = data.as_json(indent=2, full=opts.full)
             _print_data(serialized, output.format(package=package_name))
     else:
         serialized = json.dumps(packages, cls=JSONEncoder, indent=2, full=opts.full)
