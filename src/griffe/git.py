@@ -4,7 +4,7 @@ import os
 import shutil
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import DEVNULL, CalledProcessError, check_output, run
+from subprocess import DEVNULL, PIPE, CalledProcessError, check_output, run
 from tempfile import TemporaryDirectory
 from typing import Any, Iterator, Sequence
 from uuid import uuid1
@@ -33,11 +33,14 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
     with TemporaryDirectory() as td:
         _name = str(uuid1())
         target = os.path.join(td, _name)
-        run(
+        retval = run(
             ["git", "-C", repo, "worktree", "add", "-b", _name, target, commit],
-            stdout=DEVNULL,
-            stderr=DEVNULL,
+            stderr=PIPE,
+            stdout=PIPE,
         )
+        if retval.returncode:
+            raise RuntimeError(f"Could not create git worktree: {retval.stderr.decode()}")
+
         try:
             yield target
         finally:
