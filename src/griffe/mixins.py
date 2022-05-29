@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import json
 from contextlib import suppress
-from typing import Any, Sequence
+from typing import Any, Sequence, Type, TypeVar
 
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 
 logger = get_logger(__name__)
+_ObjType = TypeVar("_ObjType")
 
 
 class GetMembersMixin:
@@ -131,3 +133,45 @@ class ObjectAliasMixin:
             True or False.
         """
         return self.parent.exports is None  # type: ignore[attr-defined]
+
+
+class SerializationMixin:
+    """A mixin that adds de/serialization conveniences."""
+
+    def as_json(self, full: bool = False, indent: int = 2, **kwargs: Any) -> str:
+        """Return this object's data as a JSON string.
+
+        Parameters:
+            full: Whether to return full info, or just base info.
+            indent: Indentation level for JSON output.
+            **kwargs: Additional serialization options passed to encoder.
+
+        Returns:
+            A string.
+        """
+        from griffe.encoders import JSONEncoder  # avoid circular import
+
+        return json.dumps(self, cls=JSONEncoder, indent=indent, full=full, **kwargs)
+
+    @classmethod
+    def from_json(cls: Type[_ObjType], json_string: str, **kwargs) -> _ObjType:
+        """Create an instance of this class from a JSON string.
+
+        Parameters:
+            json_string: JSON to decode into Object.
+            **kwargs: Additional options passed to decoder.
+
+        Returns:
+            An Object instance.
+
+        Raises:
+            TypeError: When the json_string does not represent and object
+                       of the class from which this classmethod has been called.
+        """
+        from griffe.encoders import json_decoder  # avoid circular import
+
+        kwargs.setdefault("object_hook", json_decoder)
+        obj = json.loads(json_string, **kwargs)
+        if not isinstance(obj, cls):
+            raise TypeError(f"provided JSON object is not of type {cls}")
+        return obj
