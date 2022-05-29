@@ -1,8 +1,7 @@
 """Tests for the `encoders` module."""
+import pytest
 
-import json
-
-from griffe.encoders import JSONEncoder, json_decoder
+from griffe.dataclasses import Function, Module, Object
 from griffe.loader import GriffeLoader
 
 
@@ -15,8 +14,16 @@ def test_minimal_data_is_enough():
     """
     loader = GriffeLoader()
     module = loader.load_module("griffe")
-    minimal = json.dumps(module, cls=JSONEncoder, full=False, indent=2)
-    full = json.dumps(module, cls=JSONEncoder, full=True, indent=2)
-    reloaded = json.loads(minimal, object_hook=json_decoder)
-    assert json.dumps(reloaded, cls=JSONEncoder, full=False, indent=2) == minimal
-    assert json.dumps(reloaded, cls=JSONEncoder, full=True, indent=2) == full
+    minimal = module.as_json(full=False)
+    full = module.as_json(full=True)
+    reloaded = Module.from_json(minimal)
+    assert reloaded.as_json(full=False) == minimal
+    assert reloaded.as_json(full=True) == full
+
+    # also works (but will result in a different type hint)
+    assert Object.from_json(minimal)
+
+    # Won't work if the JSON doesn't represent the type requested.
+    with pytest.raises(TypeError) as err:
+        Function.from_json(minimal)
+    assert "provided JSON object is not of type" in str(err.value)  # noqa: WPS441
