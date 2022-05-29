@@ -115,5 +115,6 @@ def load_git(
     kwargs.pop("repo")
     with tmp_worktree(commit, repo) as worktree:
         search_paths = list(search_paths) if search_paths else []
-        kwargs["search_paths"] = [worktree] + search_paths
+        search_paths.insert(0, worktree)
+        kwargs["search_paths"] = search_paths
         return loader.load(**kwargs)
