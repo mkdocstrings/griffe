@@ -27,7 +27,8 @@ def _assert_git_repo(repo: str) -> None:
 
 
 @contextmanager
-def tmp_worktree(commit: str = "HEAD", repo: str = ".") -> Iterator[str]:
+def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
+    repo = str(repo)
     _assert_git_repo(repo)
     with TemporaryDirectory() as td:
         _name = str(uuid1())
@@ -48,7 +49,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str = ".") -> Iterator[str]:
 def git_load(
     module: str | Path,
     commit: str = "HEAD",
-    repo: str = ".",
+    repo: str | Path = ".",
     submodules: bool = True,
     try_relative_path: bool = True,
     extensions: Extensions | None = None,
