@@ -53,7 +53,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
     repo = str(repo)
     _assert_git_repo(repo)
     with TemporaryDirectory() as td:
-        uid = f'{str(uuid1())[:5]}_{commit}'.replace(" ", "_")
+        uid = f"{str(uuid1())[:5]}_{commit}".replace(" ", "_")
         target = os.path.join(td, uid)
         retval = run(  # noqa: S603,S607
             ["git", "-C", repo, "worktree", "add", "-b", uid, target, commit],
@@ -90,7 +90,7 @@ def load_git(
     This function will create a temporary
     [git worktree](https://git-scm.com/docs/git-worktree) at the requested `commit`,
     before loading `module` with [`griffe.load`][griffe.loader.load].
-    
+
     This function requires that the `git` executable be installed.
 
     Parameters:
