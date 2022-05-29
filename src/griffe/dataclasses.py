@@ -8,12 +8,13 @@ from __future__ import annotations
 
 import enum
 import inspect
+import json
 import sys
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Callable, cast
+from typing import Any, Callable, Type, TypeVar, cast
 
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.docstrings.dataclasses import DocstringSection
@@ -27,6 +28,8 @@ if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
     from functools import cached_property  # noqa: WPS440
+
+_ObjType = TypeVar("_ObjType")
 
 
 class ParameterKind(enum.Enum):
@@ -719,6 +722,44 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
         base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
 
         return base
+
+    def as_json(self, full: bool = False, indent: int = 2, **kwargs: Any) -> str:
+        """Return this object's data as a JSON string.
+
+        Parameters:
+            full: Whether to return full info, or just base info.
+            indent: Indentation level for JSON output.
+            **kwargs: Additional serialization options passed to encoder.
+
+        Returns:
+            A string.
+        """
+        from griffe.encoders import JSONEncoder
+
+        return json.dumps(self, cls=JSONEncoder, indent=indent, full=full, **kwargs)
+
+    @classmethod
+    def from_json(cls: Type[_ObjType], json_string: str, **kwargs) -> _ObjType:
+        """Create an instance of this class from a JSON string.
+
+        Parameters:
+            json_string: JSON to decode into Object.
+            **kwargs: Additional options passed to decoder.
+
+        Returns:
+            An Object instance.
+
+        Raises:
+            TypeError: When the json_string does not represent and object
+                       of the class from which this classmethod has been called.
+        """
+        from griffe.encoders import json_decoder
+
+        kwargs.setdefault("object_hook", json_decoder)
+        obj = json.loads(json_string, **kwargs)
+        if not isinstance(obj, cls):
+            raise TypeError(f"provided JSON object is not of type {cls}")
+        return obj
 
     # TODO: remove once Python 3.7 support is dropped
     @property
