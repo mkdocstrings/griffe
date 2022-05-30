@@ -145,7 +145,8 @@ class ModuleFinder:
                                 init_module = abs_path / f"__init__{ext}"
                                 if init_module.exists() and not _is_pkg_style_namespace(init_module):
                                     found_paths.append(init_module)
-                                namespace_dirs.append(abs_path)
+                                elif ext == '.py':
+                                    namespace_dirs.append(abs_path)
 
         if found_paths:
             return found_paths[0] if len(found_paths) == 1 else found_paths
