@@ -81,6 +81,7 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
     Returns:
         The regular module.
     """
+    logger.debug(f"Trying to merge {mod1.filepath} and {mod2.filepath}")
     if mod1.filepath.suffix == ".pyi":  # type: ignore[union-attr]
         stubs = mod1
         module = mod2

@@ -204,3 +204,19 @@ def test_overwrite_module_with_attribute():
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         loader.load_module(tmp_package.name)
         loader.resolve_aliases()
+
+
+def test_load_package_from_both_py_and_pyi_files():
+    """Check that the loader is able to merge a package loaded from `*.py` and `*.pyi` files.
+
+    This is a special case of the previous test: where the package itself has a top level
+    `__init__.pyi` (not so uncommon) or the package is a single module distribution that
+    also drops a `.pyi` file in site-packages.
+    """
+    with temporary_pypackage("package", ["__init__.py", "__init__.pyi"]) as tmp_package:
+        tmp_package.path.joinpath("__init__.py").write_text("globals()['f'] = lambda x: str(x)")
+        tmp_package.path.joinpath("__init__.pyi").write_text("def f(x: int) -> str: ...")
+
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        package = loader.load_module(tmp_package.name)
+        assert "f" in package.members

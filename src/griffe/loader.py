@@ -13,8 +13,9 @@ fastapi = griffe.load_module("fastapi")
 from __future__ import annotations
 
 import sys
+from contextlib import suppress
 from datetime import datetime
-from functools import lru_cache
+from functools import lru_cache, reduce
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -26,8 +27,9 @@ from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import Name
-from griffe.finder import ModuleFinder
+from griffe.finder import ModuleFinder, Package
 from griffe.logger import get_logger
+from griffe.merger import merge_stubs
 from griffe.stats import stats
 
 logger = get_logger(__name__)
@@ -145,7 +147,7 @@ class GriffeLoader:
         else:
             logger.debug(f"Found {module}: loading")
             try:  # noqa: WPS505
-                top_module = self._load_module(package.name, package.path, submodules=submodules)
+                top_module = self._load_package(package, submodules=submodules)
             except LoadingError as error:  # noqa: WPS440
                 logger.error(str(error))
                 raise
@@ -340,6 +342,34 @@ class GriffeLoader:
     def _store_and_return(self, name: str, module: Module) -> Module:
         self.modules_collection[module.path] = module
         return self.modules_collection[name]  # type: ignore[index]
+
+    def _load_package(self, pkg: Package, submodules: bool = True) -> Module:
+        """Load top module in a package.
+
+        If multiple paths are found, they will be merged (implicit support for .pyi)
+
+        Parameters:
+            pkg: Package object to load
+            submodules: Whether to recurse on the submodules. Note: only the first
+                package in pkg.path will be recursed.
+
+        Returns:
+            a Module.
+
+        Raises:
+            ValueError: In the extremely unlikely case that `pkg` was instantiated
+                without any paths. (This should have been prevented in ModuleFinder.find_spec)
+        """
+        pths = pkg.path if isinstance(pkg.path, list) else [pkg.path]
+        modules = [self._load_module(pkg.name, pth, submodules=submodules and not ii) for ii, pth in enumerate(pths)]
+
+        if len(modules) > 1:
+            with suppress(ValueError):
+                return reduce(merge_stubs, modules)
+        if modules:
+            return modules[0]
+
+        raise ValueError("Cannot load a Package with no paths.")
 
     def _load_module(  # noqa: WPS238
         self,

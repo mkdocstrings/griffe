@@ -70,7 +70,6 @@ class SetMembersMixin(DelMembersMixin):
                     # try to merge them as one regular and one stubs module
                     # (implicit support for .pyi modules)
                     if member.is_module and value.is_module:
-                        logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")
                         with suppress(ValueError):
                             value = merge_stubs(member, value)
                     for alias in member.aliases.values():

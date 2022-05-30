@@ -127,8 +127,10 @@ class ModuleFinder:
             Path(module_name),
             # TODO: handle .py[cod] and .so files?
             Path(f"{module_name}.py"),
+            Path(f"{module_name}.pyi"),
         ]
 
+        found_paths = []
         namespace_dirs = []
         for path in self.search_paths:  # noqa: WPS440
             path_contents = self._contents(path)
@@ -137,13 +139,16 @@ class ModuleFinder:
                     abs_path = path / choice
                     if abs_path in path_contents:
                         if abs_path.suffix:
-                            return abs_path
+                            found_paths.append(abs_path)
                         else:
-                            init_module = abs_path / "__init__.py"
-                            if init_module.exists() and not _is_pkg_style_namespace(init_module):
-                                return init_module
-                            namespace_dirs.append(abs_path)
+                            for ext in (".py", ".pyi"):
+                                init_module = abs_path / f"__init__{ext}"
+                                if init_module.exists() and not _is_pkg_style_namespace(init_module):
+                                    found_paths.append(init_module)
+                                namespace_dirs.append(abs_path)
 
+        if found_paths:
+            return found_paths[0] if len(found_paths) == 1 else found_paths
         if namespace_dirs:
             return namespace_dirs
 
