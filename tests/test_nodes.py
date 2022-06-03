@@ -4,7 +4,7 @@ from ast import PyCF_ONLY_AST
 
 import pytest
 
-from griffe.agents.nodes import relative_to_absolute
+from griffe.agents.nodes import get_value, relative_to_absolute
 from tests.helpers import module_vtree, temporary_visited_module
 
 
@@ -98,3 +98,60 @@ def test_default_value_from_nodes(default):
         params = module.members["f"].parameters
         assert len(params) == 1
         assert params[0].default == default
+
+
+@pytest.mark.parametrize(
+    "expression",
+    [
+        # operations
+        "b + c",
+        "b - c",
+        "b * c",
+        "b / c",
+        "b // c",
+        "b ** c",
+        "b ^ c",
+        "b & c",
+        "b | c",
+        "b @ c",
+        "b % c",
+        "b >> c",
+        "b << c",
+        # unary operations
+        "+b",
+        "-b",
+        "~b",
+        # comparisons
+        "b == c",
+        "b >= c",
+        "b > c",
+        "b <= c",
+        "b < c",
+        "b != c",
+        # boolean logic
+        "b and c",
+        "b or c",
+        "not b",
+        # identify
+        "b is c",
+        "b is not c",
+        # membership
+        "b in c",
+        "b not in c",
+        # calls
+        "call()",
+        "call(something)",
+        "call(something=something)",
+        # strings
+        "f'{round(key, 2)}'",
+    ],
+)
+def test_building_value_from_nodes(expression):
+    """Test building value from AST nodes.
+
+    Parameters:
+        expression: An expression (parametrized).
+    """
+    node = compile(expression, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0].value
+    value = get_value(node)
+    assert value == expression

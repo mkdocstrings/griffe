@@ -18,58 +18,6 @@ from tests.helpers import temporary_pypackage, temporary_visited_module
 #         ...
 
 
-# TODO: move this in test_nodes once hypothesmith is ready
-@pytest.mark.parametrize(
-    "expression",
-    [
-        # operations
-        "b + c",
-        "b - c",
-        "b * c",
-        "b / c",
-        "b // c",
-        "b ** c",
-        "b ^ c",
-        "b & c",
-        "b | c",
-        "b @ c",
-        "b % c",
-        "b >> c",
-        "b << c",
-        # unary operations
-        "+b",
-        "-b",
-        "~b",
-        # comparisons
-        "b == c",
-        "b >= c",
-        "b > c",
-        "b <= c",
-        "b < c",
-        "b != c",
-        # boolean logic
-        "b and c",
-        "b or c",
-        "not b",
-        # identify
-        "b is c",
-        "b is not c",
-        # membership
-        "b in c",
-        "b not in c",
-    ],
-)
-def test_building_value_from_nodes(expression):
-    """Test building value from AST nodes.
-
-    Parameters:
-        expression: An expression (parametrized).
-    """
-    with temporary_visited_module(f"a = {expression}") as module:
-        assert "a" in module.members
-        assert module["a"].value == expression
-
-
 def test_not_defined_at_runtime():
     """Assert that objects not defined at runtime are not added to wildcards expansions."""
     with temporary_pypackage("package", ["module_a.py", "module_b.py", "module_c.py"]) as tmp_package:

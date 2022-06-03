@@ -868,8 +868,10 @@ def _get_constant_value(node: NodeConstant) -> str:
     return repr(node.value)
 
 
-def _get_constant_value_no_repr(node: NodeConstant) -> str:
-    return node.value
+def _get_constant_value_no_string_repr(node: NodeConstant) -> str:
+    if isinstance(node.value, str):
+        return node.value
+    return repr(node.value)
 
 
 def _get_dict_value(node: NodeDict) -> str:
@@ -940,8 +942,8 @@ def _get_isnot_value(node: NodeIsNot) -> str:
 
 
 def _get_joinedstr_value(node: NodeJoinedStr) -> str:
-    _node_value_map[NodeConstant] = _get_constant_value_no_repr
-    result = repr("".join(_get_value(value) for value in node.values))
+    _node_value_map[NodeConstant] = _get_constant_value_no_string_repr
+    result = "f" + repr("".join(_get_value(value) for value in node.values))
     _node_value_map[NodeConstant] = _get_constant_value
     return result
 
