@@ -20,7 +20,7 @@ from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import Expression, Name
-from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin
+from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin, SerializationMixin
 
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
@@ -287,7 +287,7 @@ class Kind(enum.Enum):
     ALIAS: str = "alias"
 
 
-class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin):
+class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):  # noqa: WPS215
     """An abstract class representing a Python object.
 
     Attributes:
