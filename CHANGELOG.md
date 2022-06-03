@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.20.0](https://github.com/mkdocstrings/griffe/releases/tag/0.20.0) - 2022-06-03
+
+<small>[Compare with 0.19.3](https://github.com/mkdocstrings/griffe/compare/0.19.3...0.20.0)</small>
+
+### Features
+- Add `as_json` and `from_json` convenience methods on objects ([5c3d751](https://github.com/mkdocstrings/griffe/commit/5c3d7511d2465e16805fa564c3d60d44618410d8) by Talley Lambert). [PR #74](https://github.com/mkdocstrings/griffe/pull/74)
+
+### Bug Fixes
+- Fix unparsing of f-strings ([9ca74bd](https://github.com/mkdocstrings/griffe/commit/9ca74bd144167de9506cf5b0725a784e52f5e67a) by Timothée Mazzucotelli). [Issue #80](https://github.com/mkdocstrings/griffe/issues/80)
+- Don't crash when overwriting a submodule with a wildcard imported attribute ([bfad1cc](https://github.com/mkdocstrings/griffe/commit/bfad1ccf079e69fa0161754d9f1f7edd5819f943) by Timothée Mazzucotelli). [Issue #72](https://github.com/mkdocstrings/griffe/issues/72), [#79](https://github.com/mkdocstrings/griffe/issues/79), [mkdocstrings/mkdocstrings#438](https://github.com/mkdocstrings/mkdocstrings/issues/438)
+
+
 ## [0.19.3](https://github.com/mkdocstrings/griffe/releases/tag/0.19.3) - 2022-05-26
 
 <small>[Compare with 0.19.2](https://github.com/mkdocstrings/griffe/compare/0.19.2...0.19.3)</small>
