@@ -257,7 +257,13 @@ class GriffeLoader:
             del obj[name]  # noqa: WPS420
 
         for new_member, alias_lineno, alias_endlineno in expanded:
-            if new_member.name not in obj.members or obj[new_member.name].lineno < alias_lineno:
+            overwrite = False
+            already_present = new_member.name in obj.members
+            if already_present:
+                old_member = obj[new_member.name]
+                old_lineno = getattr(old_member, "alias_lineno", old_member.lineno or 0)
+                overwrite = alias_lineno > old_lineno  # type: ignore[operator]
+            if not already_present or overwrite:
                 obj[new_member.name] = Alias(
                     new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno
                 )

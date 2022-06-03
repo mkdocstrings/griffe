@@ -194,3 +194,13 @@ def test_load_from_both_py_and_pyi_files():
         assert function2.returns.source == "float"
         assert function2.parameters["arg1"].annotation.source == "float"
         assert function2.parameters["arg1"].default == "2.2"
+
+
+def test_overwrite_module_with_attribute():
+    """Check we are able to overwrite a module with an attribute."""
+    with temporary_pypackage("package", ["mod.py"]) as tmp_package:
+        tmp_package.path.joinpath("mod.py").write_text("mod: list = [0, 1, 2]")
+        tmp_package.path.joinpath("__init__.py").write_text("from package.mod import *")
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        loader.load_module(tmp_package.name)
+        loader.resolve_aliases()
