@@ -344,22 +344,6 @@ class GriffeLoader:
         return self.modules_collection[name]  # type: ignore[index]
 
     def _load_package(self, pkg: Package, submodules: bool = True) -> Module:
-        """Load top module in a package.
-
-        If multiple paths are found, they will be merged (implicit support for .pyi)
-
-        Parameters:
-            pkg: Package object to load
-            submodules: Whether to recurse on the submodules. Note: only the first
-                package in pkg.path will be recursed.
-
-        Returns:
-            a Module.
-
-        Raises:
-            ValueError: In the extremely unlikely case that `pkg` was instantiated
-                without any paths. (This should have been prevented in ModuleFinder.find_spec)
-        """
         pths = pkg.path if isinstance(pkg.path, list) else [pkg.path]
         modules = [self._load_module(pkg.name, pth, submodules=submodules and not ii) for ii, pth in enumerate(pths)]
 
