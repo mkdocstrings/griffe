@@ -13,10 +13,9 @@ import os
 import shutil
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import DEVNULL, PIPE, CalledProcessError, check_output, run  # noqa: S404
+from subprocess import DEVNULL, PIPE, CalledProcessError, run  # noqa: S404
 from tempfile import TemporaryDirectory
 from typing import Any, Iterator, Sequence
-from uuid import uuid1
 
 from griffe import loader
 from griffe.agents.extensions import Extensions
@@ -30,7 +29,9 @@ def _assert_git_repo(repo: str) -> None:
         raise RuntimeError("Could not find git executable. Please install git.")
 
     try:
-        check_output(["git", "-C", repo, "rev-parse", "--is-inside-work-tree"], stderr=DEVNULL)  # noqa: S603,S607
+        run(  # noqa: S603,S607
+            ["git", "-C", repo, "rev-parse", "--is-inside-work-tree"], check=True, stdout=DEVNULL, stderr=DEVNULL
+        )
     except CalledProcessError as err:
         raise OSError(f"Not a git repository: {repo!r}") from err
 
@@ -53,7 +54,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
     repo = str(repo)
     _assert_git_repo(repo)
     with TemporaryDirectory() as td:
-        uid = f"{str(uuid1())[:5]}_{commit}".replace(" ", "_")
+        uid = f"griffe_{commit}"
         target = os.path.join(td, uid)
         retval = run(  # noqa: S603,S607
             ["git", "-C", repo, "worktree", "add", "-b", uid, target, commit],
