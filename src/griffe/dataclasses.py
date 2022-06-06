@@ -20,7 +20,7 @@ from griffe.docstrings.dataclasses import DocstringSection
 from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import Expression, Name
-from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SetMembersMixin, SerializationMixin
+from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
 
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
