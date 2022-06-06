@@ -110,11 +110,18 @@ def load_git(
     Returns:
         A loaded module.
     """
-    kwargs = locals().copy()
-    kwargs.pop("commit")
-    kwargs.pop("repo")
     with tmp_worktree(commit, repo) as worktree:
         search_paths = list(search_paths) if search_paths else []
         search_paths.insert(0, worktree)
-        kwargs["search_paths"] = search_paths
-        return loader.load(**kwargs)
+        return loader.load(
+            module=module,
+            submodules=submodules,
+            try_relative_path=try_relative_path,
+            extensions=extensions,
+            search_paths=search_paths,
+            docstring_parser=docstring_parser,
+            docstring_options=docstring_options,
+            lines_collection=lines_collection,
+            modules_collection=modules_collection,
+            allow_inspection=allow_inspection,
+        )

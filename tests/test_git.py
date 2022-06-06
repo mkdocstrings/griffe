@@ -7,9 +7,10 @@ import pytest
 
 from griffe.dataclasses import Module
 from griffe.git import load_git
+from tests import FIXTURES_DIR
 
 REPO_NAME = "my-repo"
-REPO_SOURCE = Path(__file__).parent / "_repo"
+REPO_SOURCE = FIXTURES_DIR / "_repo"
 MODULE_NAME = "my_module"
 
 
