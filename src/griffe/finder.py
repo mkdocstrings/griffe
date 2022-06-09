@@ -286,7 +286,7 @@ def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
 
 def _handle_pth_file(path):
     # support for .pth files pointing to a directory
-    instructions = path.read_text().strip("\n").split(";")
+    instructions = list(filter(lambda l: not l.strip().startswith("#"), path.read_text().strip("\n").split(";")))
     added_dir = Path(instructions[0])
     if added_dir.exists():
         return added_dir
