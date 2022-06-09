@@ -109,7 +109,14 @@ class ModuleFinder:
             module_name = module
             top_module_name = module.split(".", 1)[0]
         top_module_path = self.find_module(top_module_name)
-        return module_name, Package(top_module_name, top_module_path)
+
+        # look for adjacent stubs
+        paths = top_module_path if isinstance(top_module_path, list) else [top_module_path]
+        for path in list(paths):
+            stub = path.with_suffix(".pyi")
+            if stub.exists():
+                paths.append(stub)
+        return module_name, Package(top_module_name, paths)
 
     def find_module(self, module_name: str) -> Path | list[Path]:  # noqa: WPS231
         """Find a module.
@@ -127,10 +134,8 @@ class ModuleFinder:
             Path(module_name),
             # TODO: handle .py[cod] and .so files?
             Path(f"{module_name}.py"),
-            Path(f"{module_name}.pyi"),
         ]
 
-        found_paths = []
         namespace_dirs = []
         for path in self.search_paths:  # noqa: WPS440
             path_contents = self._contents(path)
@@ -139,17 +144,13 @@ class ModuleFinder:
                     abs_path = path / choice
                     if abs_path in path_contents:
                         if abs_path.suffix:
-                            found_paths.append(abs_path)
+                            return abs_path
                         else:
-                            for ext in (".py", ".pyi"):
-                                init_module = abs_path / f"__init__{ext}"
-                                if init_module.exists() and not _is_pkg_style_namespace(init_module):
-                                    found_paths.append(init_module)
-                                elif ext == '.py':
-                                    namespace_dirs.append(abs_path)
+                            init_module = abs_path / "__init__.py"
+                            if init_module.exists() and not _is_pkg_style_namespace(init_module):
+                                return init_module
+                            namespace_dirs.append(abs_path)
 
-        if found_paths:
-            return found_paths[0] if len(found_paths) == 1 else found_paths
         if namespace_dirs:
             return namespace_dirs
 
