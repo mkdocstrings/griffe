@@ -1,8 +1,12 @@
 """Tests for the `finder` module."""
 
+from pathlib import Path
+from textwrap import dedent
+
 import pytest
 
-from griffe.finder import ModuleFinder
+from griffe.exceptions import UnhandledPthFileError
+from griffe.finder import ModuleFinder, _handle_pth_file  # noqa: WPS450
 from tests.helpers import temporary_pypackage
 
 
@@ -58,3 +62,30 @@ def test_find_pkg_style_namespace_packages(statement):
         assert package.name == "namespace"
         assert package.is_namespace
         assert package.path == [tmp_package1.path.parent, tmp_package2.path.parent]
+
+
+def test_pth_file_handling(tmp_path):
+    """Assert .pth files are correctly handled.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    pth_file = tmp_path / "hello.pth"
+    pth_file.write_text(
+        dedent(
+            """
+            # comment
+
+            import thing
+            import\tthing
+            /doesnotexist
+            tests
+            """
+        )
+    )
+    directories = _handle_pth_file(pth_file)
+    assert directories == [Path("tests")]
+
+    pth_file.write_text("# comment\n")
+    with pytest.raises(UnhandledPthFileError):
+        _handle_pth_file(pth_file)

@@ -235,7 +235,8 @@ class ModuleFinder:
             for item in self._contents(path):
                 if item.suffix == ".pth":
                     with suppress(UnhandledPthFileError):
-                        self._append_search_path(_handle_pth_file(item))
+                        for directory in _handle_pth_file(item):
+                            self._append_search_path(directory)
 
     def _extend_from_editables_modules(self):
         for path in self.search_paths:  # noqa: WPS440
@@ -271,6 +272,7 @@ class ModuleFinder:
 
 _re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")
 _re_pkgutil = re.compile(r"(?:__path__ = __import__\([\"']pkgutil[\"']\).extend_path\(__path__, __name__\))")
+_re_import_line = re.compile(r"^import[ \t]")
 
 
 # TODO: for better robustness, we should load and minify the AST
@@ -284,12 +286,25 @@ def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
     return len(name_parts_and_path[0])
 
 
-def _handle_pth_file(path):
-    # support for .pth files pointing to a directory
-    instructions = list(filter(lambda l: not l.strip().startswith("#"), path.read_text().strip("\n").split(";")))
-    added_dir = Path(instructions[0])
-    if added_dir.exists():
-        return added_dir
+def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
+    # Support for .pth files pointing to a directories.
+    # From https://docs.python.org/3/library/site.html:
+    # A path configuration file is a file whose name has the form name.pth
+    # and exists in one of the four directories mentioned above;
+    # its contents are additional items (one per line) to be added to sys.path.
+    # Non-existing items are never added to sys.path,
+    # and no check is made that the item refers to a directory rather than a file.
+    # No item is added to sys.path more than once.
+    # Blank lines and lines beginning with # are skipped.
+    # Lines starting with import (followed by space or tab) are executed.
+    directories = []
+    for line in path.read_text().strip().splitlines(keepends=False):
+        line = line.strip()
+        if line and not line.startswith("#") and not _re_import_line.search(line):
+            if os.path.exists(line):
+                directories.append(Path(line))
+    if directories:
+        return directories
     raise UnhandledPthFileError(path)
 
 
