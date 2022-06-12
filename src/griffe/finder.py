@@ -287,7 +287,7 @@ def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
 
 
 def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
-    # Support for .pth files pointing to a directories.
+    # Support for .pth files pointing to directories.
     # From https://docs.python.org/3/library/site.html:
     # A path configuration file is a file whose name has the form name.pth
     # and exists in one of the four directories mentioned above;
