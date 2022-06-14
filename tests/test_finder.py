@@ -5,7 +5,6 @@ from textwrap import dedent
 
 import pytest
 
-from griffe.exceptions import UnhandledPthFileError
 from griffe.finder import ModuleFinder, _handle_pth_file  # noqa: WPS450
 from tests.helpers import temporary_pypackage
 
@@ -85,7 +84,3 @@ def test_pth_file_handling(tmp_path):
     )
     directories = _handle_pth_file(pth_file)
     assert directories == [Path("tests")]
-
-    pth_file.write_text("# comment\n")
-    with pytest.raises(UnhandledPthFileError):
-        _handle_pth_file(pth_file)
