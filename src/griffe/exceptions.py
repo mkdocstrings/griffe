@@ -15,10 +15,6 @@ class NameResolutionError(GriffeError):
     """Exception for names that cannot be resolved in a object scope."""
 
 
-class UnhandledPthFileError(GriffeError):
-    """Exception for unhandled .pth files, when searching modules."""
-
-
 class UnhandledEditablesModuleError(GriffeError):
     """Exception for unhandled editables modules, when searching modules."""
 

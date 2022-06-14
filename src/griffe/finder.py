@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Iterator, Sequence, Tuple
 
 from griffe.dataclasses import Module
-from griffe.exceptions import UnhandledEditablesModuleError, UnhandledPthFileError
+from griffe.exceptions import UnhandledEditablesModuleError
 
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
@@ -234,9 +234,8 @@ class ModuleFinder:
         for path in self.search_paths:
             for item in self._contents(path):
                 if item.suffix == ".pth":
-                    with suppress(UnhandledPthFileError):
-                        for directory in _handle_pth_file(item):
-                            self._append_search_path(directory)
+                    for directory in _handle_pth_file(item):
+                        self._append_search_path(directory)
 
     def _extend_from_editables_modules(self):
         for path in self.search_paths:  # noqa: WPS440
@@ -303,9 +302,7 @@ def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
         if line and not line.startswith("#") and not _re_import_line.search(line):
             if os.path.exists(line):
                 directories.append(Path(line))
-    if directories:
-        return directories
-    raise UnhandledPthFileError(path)
+    return directories
 
 
 def _handle_editables_module(path: Path):
