@@ -13,9 +13,8 @@ fastapi = griffe.load_module("fastapi")
 from __future__ import annotations
 
 import sys
-from contextlib import suppress
 from datetime import datetime
-from functools import lru_cache, reduce
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -27,7 +26,7 @@ from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import Name
-from griffe.finder import ModuleFinder, Package, NamespacePackage
+from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 from griffe.stats import stats
