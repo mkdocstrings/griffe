@@ -9,7 +9,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from griffe.mixins import GetMembersMixin, SetCollectionMembersMixin
+from griffe.mixins import GetMembersMixin, SetMembersMixin
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Module
@@ -62,7 +62,7 @@ class LinesCollection:
         return tokens, token_table
 
 
-class ModulesCollection(GetMembersMixin, SetCollectionMembersMixin):
+class ModulesCollection(GetMembersMixin, SetMembersMixin):
     """A collection of modules, allowing easy access to members."""
 
     def __init__(self) -> None:

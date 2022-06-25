@@ -27,7 +27,7 @@ from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import Name
-from griffe.finder import ModuleFinder, Package
+from griffe.finder import ModuleFinder, Package, NamespacePackage
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 from griffe.stats import stats
@@ -343,17 +343,14 @@ class GriffeLoader:
         self.modules_collection[module.path] = module
         return self.modules_collection[name]  # type: ignore[index]
 
-    def _load_package(self, pkg: Package, submodules: bool = True) -> Module:
-        pths = pkg.path if isinstance(pkg.path, list) else [pkg.path]
-        modules = [self._load_module(pkg.name, pth, submodules=submodules and not ii) for ii, pth in enumerate(pths)]
-
-        if len(modules) > 1:
-            with suppress(ValueError):
-                return reduce(merge_stubs, modules)
-        if modules:
-            return modules[0]
-
-        raise ValueError("Cannot load a Package with no paths.")
+    def _load_package(self, package: Package | NamespacePackage, submodules: bool = True) -> Module:
+        top_module = self._load_module(package.name, package.path, submodules=submodules)
+        if isinstance(package, NamespacePackage):
+            return top_module
+        if package.stubs:
+            stubs = self._load_module(package.name, package.stubs, submodules=False)
+            return merge_stubs(top_module, stubs)
+        return top_module
 
     def _load_module(  # noqa: WPS238
         self,

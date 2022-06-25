@@ -5,7 +5,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe.finder import ModuleFinder, _handle_pth_file  # noqa: WPS450
+from griffe.finder import ModuleFinder, NamespacePackage, _handle_pth_file  # noqa: WPS450
 from tests.helpers import temporary_pypackage
 
 
@@ -32,7 +32,7 @@ def test_find_module_with_path(pypackage, module, add_to_search_path, expected_t
         finder = ModuleFinder(search_paths=[tmp_package.tmpdir] if add_to_search_path else None)
         _, package = finder.find_spec(tmp_package.tmpdir / module)
         assert package.name == expected_top_name
-        if package.is_namespace:
+        if isinstance(package, NamespacePackage):
             assert package.path == [tmp_package.tmpdir / expected_top_path]
         else:
             assert package.path == tmp_package.tmpdir / expected_top_path
@@ -59,7 +59,7 @@ def test_find_pkg_style_namespace_packages(statement):
         finder = ModuleFinder(search_paths=[tmp_package1.tmpdir, tmp_package2.tmpdir])
         _, package = finder.find_spec("namespace")
         assert package.name == "namespace"
-        assert package.is_namespace
+        assert isinstance(package, NamespacePackage)
         assert package.path == [tmp_package1.path.parent, tmp_package2.path.parent]
 
 

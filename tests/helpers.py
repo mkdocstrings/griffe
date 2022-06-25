@@ -50,6 +50,7 @@ def temporary_pypackage(package: str, modules: list[str] | None = None) -> Itera
             like '["b.py", "c/d.py", "e/f"]`.
 
     Yields:
+        tmp_dir: The temporary directory containing the package.
         package_name: The package name, as to dynamically import it.
         package_path: The package path.
     """
