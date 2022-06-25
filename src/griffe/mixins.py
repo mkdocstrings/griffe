@@ -70,34 +70,15 @@ class SetMembersMixin(DelMembersMixin):
                     # try to merge them as one regular and one stubs module
                     # (implicit support for .pyi modules)
                     if member.is_module and value.is_module:
-                        logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")
                         with suppress(ValueError):
                             value = merge_stubs(member, value)
                     for alias in member.aliases.values():
                         alias.target = value
             self.members[name] = value  # type: ignore[attr-defined]
-            value.parent = self
-        else:
-            self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
-
-
-class SetCollectionMembersMixin(DelMembersMixin):
-    """This mixin adds a `__setitem__` method to a class.
-
-    It makes it easier to set members of an object.
-    The method expects a `members` attribute/property to be available on the instance.
-    Each time a member is set, its `_modules_collection` attribute is set as well.
-    """
-
-    def __setitem__(self, key: str | Sequence[str], value):
-        parts = _get_parts(key)
-        if len(parts) == 1:
-            name = parts[0]
-            if name in self.members:  # type: ignore[attr-defined]
-                for alias in self.members[name].aliases.values():  # type: ignore[attr-defined]
-                    alias.target = value
-            self.members[name] = value  # type: ignore[attr-defined]
-            value._modules_collection = self  # noqa: WPS437
+            if self.is_collection:  # type: ignore[attr-defined]
+                value._modules_collection = self  # noqa: WPS437
+            else:
+                value.parent = self
         else:
             self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
 

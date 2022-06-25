@@ -17,26 +17,33 @@ NamePartsAndPathType = Tuple[NamePartsType, Path]
 
 
 class Package:
-    """This class is a simple placeholder used during the process of finding modules."""
+    """This class is a simple placeholder used during the process of finding packages."""
 
-    def __init__(self, name: str, path: Path | list[Path]) -> None:
+    def __init__(self, name: str, path: Path, stubs: Path | None = None) -> None:
         """Initialize the package.
 
         Parameters:
             name: The package name.
             path: The package path(s).
+            stubs: An optional path to the related stubs file (.pyi).
         """
         self.name: str = name
-        self.path: Path | list[Path] = path
+        self.path: Path = path
+        self.stubs: Path | None = stubs
 
-    @property
-    def is_namespace(self) -> bool:
-        """Tell if this package is a namespace one.
 
-        Returns:
-            True or false.
+class NamespacePackage:
+    """This class is a simple placeholder used during the process of finding packages."""
+
+    def __init__(self, name: str, path: list[Path]) -> None:
+        """Initialize the namespace package.
+
+        Parameters:
+            name: The package name.
+            path: The package paths.
         """
-        return isinstance(self.path, list)
+        self.name: str = name
+        self.path: list[Path] = path
 
 
 class ModuleFinder:
@@ -63,7 +70,7 @@ class ModuleFinder:
         self,
         module: str | Path,
         try_relative_path: bool = True,
-    ) -> tuple[str, Package]:
+    ) -> tuple[str, Package | NamespacePackage]:
         """Find the top module of a module.
 
         If a Path is passed, only try to find the module as a file path.
@@ -90,10 +97,9 @@ class ModuleFinder:
                 - or unsupported .pth file
 
         Returns:
-            The name of the module (or package), the name of its top module, and the path(s) of its top module.
+            The name of the module, and an instance representing its (namespace) package.
         """
         module_path: Path | list[Path]
-        top_module_path: Path | list[Path]
         if isinstance(module, Path):
             module_name, module_path = self._module_name_path(module)  # type: ignore[arg-type]
             top_module_name = self._top_module_name(module_path)
@@ -108,11 +114,10 @@ class ModuleFinder:
         else:
             module_name = module
             top_module_name = module.split(".", 1)[0]
-        top_module_path = self.find_module(top_module_name)
-        return module_name, Package(top_module_name, top_module_path)
+        return module_name, self.find_package(top_module_name)
 
-    def find_module(self, module_name: str) -> Path | list[Path]:  # noqa: WPS231
-        """Find a module.
+    def find_package(self, module_name: str) -> Package | NamespacePackage:  # noqa: WPS231
+        """Find a package or namespace package.
 
         Parameters:
             module_name: The module name.
@@ -121,7 +126,7 @@ class ModuleFinder:
             ModuleNotFoundError: When the module cannot be found.
 
         Returns:
-            The module file path.
+            A package or namespace package wrapper.
         """
         filepaths = [
             Path(module_name),
@@ -137,15 +142,17 @@ class ModuleFinder:
                     abs_path = path / choice
                     if abs_path in path_contents:
                         if abs_path.suffix:
-                            return abs_path
+                            stubs = abs_path.with_suffix(".pyi")
+                            return Package(module_name, abs_path, stubs if stubs.exists() else None)
                         else:
                             init_module = abs_path / "__init__.py"
                             if init_module.exists() and not _is_pkg_style_namespace(init_module):
-                                return init_module
+                                stubs = init_module.with_suffix(".pyi")
+                                return Package(module_name, init_module, stubs if stubs.exists() else None)
                             namespace_dirs.append(abs_path)
 
         if namespace_dirs:
-            return namespace_dirs
+            return NamespacePackage(module_name, namespace_dirs)
 
         raise ModuleNotFoundError(module_name)
 

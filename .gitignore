@@ -17,3 +17,4 @@ __pypackages__/
 profile.pstats
 profile.svg
 .hypothesis/
+.vscode/

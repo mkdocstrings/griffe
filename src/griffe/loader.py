@@ -26,8 +26,9 @@ from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import Name
-from griffe.finder import ModuleFinder
+from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.logger import get_logger
+from griffe.merger import merge_stubs
 from griffe.stats import stats
 
 logger = get_logger(__name__)
@@ -145,7 +146,7 @@ class GriffeLoader:
         else:
             logger.debug(f"Found {module}: loading")
             try:  # noqa: WPS505
-                top_module = self._load_module(package.name, package.path, submodules=submodules)
+                top_module = self._load_package(package, submodules=submodules)
             except LoadingError as error:  # noqa: WPS440
                 logger.error(str(error))
                 raise
@@ -340,6 +341,15 @@ class GriffeLoader:
     def _store_and_return(self, name: str, module: Module) -> Module:
         self.modules_collection[module.path] = module
         return self.modules_collection[name]  # type: ignore[index]
+
+    def _load_package(self, package: Package | NamespacePackage, submodules: bool = True) -> Module:
+        top_module = self._load_module(package.name, package.path, submodules=submodules)
+        if isinstance(package, NamespacePackage):
+            return top_module
+        if package.stubs:
+            stubs = self._load_module(package.name, package.stubs, submodules=False)
+            return merge_stubs(top_module, stubs)
+        return top_module
 
     def _load_module(  # noqa: WPS238
         self,
