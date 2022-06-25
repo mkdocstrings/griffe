@@ -1256,7 +1256,7 @@ def get_instance_names(node: AST) -> list[str]:
 
 # ==========================================================
 # parameters
-def get_parameter_default(node: AST, filepath: Path, lines_collection: LinesCollection) -> str | None:
+def get_parameter_default(node: AST | None, filepath: Path, lines_collection: LinesCollection) -> str | None:
     """Extract the default value of a function parameter.
 
     Parameters:

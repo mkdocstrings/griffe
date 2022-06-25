@@ -13,7 +13,7 @@ import inspect
 from contextlib import suppress
 from itertools import zip_longest
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 from griffe.agents.base import BaseVisitor
 from griffe.agents.extensions import Extensions
@@ -346,7 +346,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             posonlyargs = []
 
         # TODO: probably some optimizations to do here
-        args_kinds_defaults = reversed(
+        args_kinds_defaults: Iterable = reversed(
             (
                 *zip_longest(  # noqa: WPS356
                     reversed(
@@ -364,9 +364,12 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 ),
             )
         )
-        for (arg, kind), default in args_kinds_defaults:
+        arg: ast.arg
+        kind: ParameterKind
+        arg_default: ast.AST | None
+        for (arg, kind), arg_default in args_kinds_defaults:
             annotation = get_annotation(arg.annotation, parent=self.current)
-            default = get_parameter_default(default, self.filepath, self.lines_collection)
+            default = get_parameter_default(arg_default, self.filepath, self.lines_collection)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
@@ -381,7 +384,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             )
 
         # TODO: probably some optimizations to do here
-        kwargs_defaults = reversed(
+        kwargs_defaults: Iterable = reversed(
             (
                 *zip_longest(  # noqa: WPS356
                     reversed(node.args.kwonlyargs),
@@ -390,9 +393,11 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 ),
             )
         )
-        for kwarg, default in kwargs_defaults:  # noqa: WPS440
+        kwarg: ast.arg
+        kwarg_default: ast.AST | None
+        for kwarg, kwarg_default in kwargs_defaults:  # noqa: WPS440
             annotation = get_annotation(kwarg.annotation, parent=self.current)
-            default = get_parameter_default(default, self.filepath, self.lines_collection)
+            default = get_parameter_default(kwarg_default, self.filepath, self.lines_collection)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
