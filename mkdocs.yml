@@ -4,6 +4,7 @@ site_url: "https://mkdocstrings.github.io/griffe"
 repo_url: "https://github.com/mkdocstrings/griffe"
 repo_name: "mkdocstrings/griffe"
 site_dir: "site"
+watch: [README.md, CONTRIBUTING.md, CHANGELOG.md, src/griffe]
 
 nav:
 - Home:
@@ -28,6 +29,7 @@ theme:
     logo: material/currency-sign
   features:
   - navigation.tabs
+  - navigation.tabs.sticky
   - navigation.top
   palette:
   - media: "(prefers-color-scheme: light)"
@@ -67,9 +69,9 @@ markdown_extensions:
 
 plugins:
 - search
+- markdown-exec
 - gen-files:
     scripts:
-    - docs/gen_credits.py
     - docs/gen_ref_nav.py
     - docs/gen_griffe_json.py
 - literate-nav:
@@ -81,18 +83,15 @@ plugins:
       python:
         import:
         - https://docs.python.org/3/objects.inv
-        selection:
+        options:
           docstring_style: google
           docstring_options:
             ignore_init_summary: yes
-        rendering:
           show_submodules: no
           docstring_section_style: list
           members_order: alphabetical
           show_category_heading: no
           merge_init_into_class: yes
-    watch:
-    - src/griffe
 
 extra:
   social:
