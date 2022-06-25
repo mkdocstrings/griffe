@@ -75,7 +75,7 @@ class SetMembersMixin(DelMembersMixin):
                     for alias in member.aliases.values():
                         alias.target = value
             self.members[name] = value  # type: ignore[attr-defined]
-            if self.__class__.__name__ == "ModulesCollection":
+            if self.is_collection:  # type: ignore[attr-defined]
                 value._modules_collection = self  # noqa: WPS437
             else:
                 value.parent = self

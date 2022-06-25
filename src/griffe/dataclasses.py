@@ -303,6 +303,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     kind: Kind
     is_alias: bool = False
+    is_collection = False
 
     def __init__(
         self,

@@ -65,6 +65,8 @@ class LinesCollection:
 class ModulesCollection(GetMembersMixin, SetMembersMixin):
     """A collection of modules, allowing easy access to members."""
 
+    is_collection = True
+
     def __init__(self) -> None:
         """Initialize the collection."""
         self.members: dict[str, Module] = {}
