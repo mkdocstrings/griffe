@@ -228,6 +228,7 @@ def test_load_single_module_from_both_py_and_pyi_files():
     distribution that also drops a `.pyi` file in site-packages.
     """
     with temporary_pypackage("just_a_folder", ["mod.py", "mod.pyi"]) as tmp_folder:
+        tmp_folder.path.joinpath("__init__.py").unlink()
         tmp_folder.path.joinpath("mod.py").write_text("globals()['f'] = lambda x: str(x)")
         tmp_folder.path.joinpath("mod.pyi").write_text("def f(x: int) -> str: ...")
 
