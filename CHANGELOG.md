@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.21.0](https://github.com/mkdocstrings/griffe/releases/tag/0.21.0) - 2022-06-25
+
+<small>[Compare with 0.20.0](https://github.com/mkdocstrings/griffe/compare/0.20.0...0.21.0)</small>
+
+### Features
+- Add `load_git` function allowing to load data from a specific git ref ([b2c3946](https://github.com/mkdocstrings/griffe/commit/b2c39467630c33edc914dd7e6dc96fb611267905) by Talley Lambert). [Issue #75](https://github.com/mkdocstrings/griffe/issues/75), [PR #76](https://github.com/mkdocstrings/griffe/pull/76)
+
+### Bug Fixes
+- Fix detecting and merging stubs for single-file packages ([6a82542](https://github.com/mkdocstrings/griffe/commit/6a825423a9dfd86343532c2872980240f2e98b74) by Talley Lambert). [Issue #77](https://github.com/mkdocstrings/griffe/issues/77), [PR #78](https://github.com/mkdocstrings/griffe/pull/78)
+- Fix parsing ExtSlice nodes when getting values ([b2fe968](https://github.com/mkdocstrings/griffe/commit/b2fe9684f274786decdf9fb395bebc5057235eda) by Timothée Mazzucotelli). [Issue #87](https://github.com/mkdocstrings/griffe/issues/87)
+- Don't trigger alias resolution when merging stubs ([2b88627](https://github.com/mkdocstrings/griffe/commit/2b88627862b8db50045cc97ae5644abd36f36b5a) by Timothée Mazzucotelli). [Issue #89](https://github.com/mkdocstrings/griffe/issues/89)
+- Fix handling of .pth files ([f212dd3](https://github.com/mkdocstrings/griffe/commit/f212dd3b92f51a64795fdbb30aefd0a730393523) by Gabriel Dugny). [Issue #84](https://github.com/mkdocstrings/griffe/issues/84), [PR #85](https://github.com/mkdocstrings/griffe/pull/85)
+
+
 ## [0.20.0](https://github.com/mkdocstrings/griffe/releases/tag/0.20.0) - 2022-06-03
 
 <small>[Compare with 0.19.3](https://github.com/mkdocstrings/griffe/compare/0.19.3...0.20.0)</small>
