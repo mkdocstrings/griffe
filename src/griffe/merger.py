@@ -55,6 +55,8 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:  #
     for member_name, stub_member in stubs.members.items():
         if member_name in obj.members:
             obj_member = obj[member_name]
+            if obj_member.is_alias:
+                continue
             if obj_member.kind is not stub_member.kind:
                 logger.debug(f"Cannot merge stubs of kind {stub_member.kind} into object of kind {obj_member.kind}")
             elif obj_member.is_class:
