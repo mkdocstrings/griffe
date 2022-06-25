@@ -144,6 +144,11 @@ def test_default_value_from_nodes(default):
         "call(something=something)",
         # strings
         "f'{round(key, 2)}'",
+        # slices
+        "o[x]",
+        "o[x,y]",
+        "o[x:y]",
+        "o[x:y,z]",
     ],
 )
 def test_building_value_from_nodes(expression):
@@ -154,4 +159,9 @@ def test_building_value_from_nodes(expression):
     """
     node = compile(expression, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0].value
     value = get_value(node)
+
+    # make space after comma non-significant
+    value = value.replace(", ", ",")
+    expression = expression.replace(", ", ",")
+
     assert value == expression

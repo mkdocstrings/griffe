@@ -94,6 +94,7 @@ else:
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
+    from ast import ExtSlice as NodeExtSlice
     from ast import Index as NodeIndex
 
 if TYPE_CHECKING:
@@ -1136,9 +1137,13 @@ _node_value_map: dict[Type, Callable[[Any], str]] = {
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
 
+    def _get_extslice_value(node: NodeExtSlice) -> str:
+        return ",".join(_get_value(dim) for dim in node.dims)
+
     def _get_index_value(node: NodeIndex) -> str:
         return _get_value(node.value)
 
+    _node_value_map[NodeExtSlice] = _get_extslice_value
     _node_value_map[NodeIndex] = _get_index_value
 
 
