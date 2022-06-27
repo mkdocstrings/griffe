@@ -641,7 +641,14 @@ def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
     return Expression(_get_annotation(node.func, parent), "(", args, ")")
 
 
-def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str:
+def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str | Name:
+    if isinstance(node.value, str):
+        node.id = node.value  # type: ignore[attr-defined]  # fake node as Name
+        return _get_name_annotation(node, parent)  # type: ignore[arg-type]
+    return _get_literal_annotation(node, parent)
+
+
+def _get_literal_annotation(node: NodeConstant, parent: Module | Class) -> str:
     return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
@@ -677,7 +684,12 @@ def _get_name_annotation(node: NodeName, parent: Module | Class) -> Name:
 
 def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Expression:
     left = _get_annotation(node.value, parent)
-    subscript = _get_annotation(node.slice, parent)
+    if left.full == "typing.Literal":  # type: ignore[union-attr]
+        _node_annotation_map[NodeConstant] = _get_literal_annotation
+        subscript = _get_annotation(node.slice, parent)
+        _node_annotation_map[NodeConstant] = _get_constant_annotation
+    else:
+        subscript = _get_annotation(node.slice, parent)
     return Expression(left, "[", subscript, "]")
 
 
@@ -737,8 +749,9 @@ if sys.version_info < (3, 8):
     def _get_num_annotation(node: NodeNum, parent: Module | Class) -> str:
         return repr(node.n)
 
-    def _get_str_annotation(node: NodeStr, parent: Module | Class) -> str:
-        return node.s
+    def _get_str_annotation(node: NodeStr, parent: Module | Class) -> str | Name:
+        node.value = node.s  # type: ignore[attr-defined]  # fake node as constant
+        return _node_annotation_map[NodeConstant](node, parent)  # type: ignore[return-value]
 
     _node_annotation_map[NodeBytes] = _get_bytes_annotation
     _node_annotation_map[NodeNameConstant] = _get_nameconstant_annotation

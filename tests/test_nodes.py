@@ -1,10 +1,13 @@
 """Test nodes utilities."""
 
+from __future__ import annotations
+
 from ast import PyCF_ONLY_AST
 
 import pytest
 
 from griffe.agents.nodes import get_value, relative_to_absolute
+from griffe.expressions import Expression, Name
 from tests.helpers import module_vtree, temporary_visited_module
 
 
@@ -73,6 +76,44 @@ def test_building_annotations_from_nodes(expression):
         assert "y" in module.members
         assert str(module["x"].annotation) == expression
         assert str(module["y"].annotation) == expression
+
+
+def _flat(expression: str | Name | Expression) -> list[str | Name]:
+    if not isinstance(expression, Expression):
+        return [expression]
+    items = []
+    for item in expression:
+        if isinstance(item, Expression):
+            items.extend(_flat(item))
+        else:
+            items.append(item)
+    return items
+
+
+@pytest.mark.parametrize(
+    ("code", "has_name"),
+    [
+        ("import typing\nclass A: ...\na: typing.Literal['A']", False),
+        ("from typing import Literal\nclass A: ...\na: Literal['A']", False),
+        ("from mod import A\na: 'A'", True),
+        ("from mod import A\na: list['A']", True),
+    ],
+)
+def test_forward_references(code, has_name):
+    """Check that we support forward references (type names as strings).
+
+    Parameters:
+        code: Parametrized code.
+        has_name: Whether the annotation should contain a Name rather than a string.
+    """
+    with temporary_visited_module(code) as module:
+        flat = _flat(module["a"].annotation)
+        if has_name:
+            assert any(isinstance(item, Name) and item.source == "A" for item in flat)
+            assert all(not (isinstance(item, str) and item == "A") for item in flat)
+        else:
+            assert any(isinstance(item, str) and item == "'A'" for item in flat)
+            assert all(not (isinstance(item, Name) and item.source == "A") for item in flat)
 
 
 @pytest.mark.parametrize(
