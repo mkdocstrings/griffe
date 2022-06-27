@@ -6,7 +6,7 @@ from ast import PyCF_ONLY_AST
 from contextlib import suppress
 from typing import TYPE_CHECKING, Callable
 
-from griffe.agents.nodes import get_annotation
+from griffe.agents.nodes import safe_get_annotation
 from griffe.expressions import Expression, Name
 from griffe.logger import get_logger
 
@@ -55,10 +55,9 @@ def parse_annotation(annotation: str, docstring: Docstring) -> str | Name | Expr
     """
     with suppress(
         AttributeError,  # docstring has no parent that can be used to resolve names
-        KeyError,  # compiled annotation contains unhandled AST nodes
         SyntaxError,  # annotation contains syntax errors
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
         if code.body:
-            return get_annotation(code.body, parent=docstring.parent) or annotation  # type: ignore[arg-type]
+            return safe_get_annotation(code.body, parent=docstring.parent) or annotation  # type: ignore[arg-type]
     return annotation

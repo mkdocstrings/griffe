@@ -24,9 +24,10 @@ from griffe.agents.nodes import (
     get_instance_names,
     get_names,
     get_parameter_default,
-    get_value,
     parse__all__,
     relative_to_absolute,
+    safe_get_annotation,
+    safe_get_value,
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -226,7 +227,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             for decorator_node in node.decorator_list:
                 decorators.append(
                     Decorator(
-                        get_value(decorator_node),  # type: ignore[arg-type]
+                        safe_get_value(decorator_node, self.current.relative_filepath),  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
                         endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
                     )
@@ -238,7 +239,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         bases = []
         if node.bases:
             for base in node.bases:
-                bases.append(get_annotation(base, self.current))
+                bases.append(safe_get_annotation(base, parent=self.current))
 
         class_ = Class(
             name=node.name,
@@ -316,7 +317,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
-                decorator_value = get_value(decorator_node)
+                decorator_value = safe_get_value(decorator_node, self.filepath)
                 overload = (
                     decorator_value == "typing.overload"
                     or decorator_value == "overload"
@@ -368,12 +369,12 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         kind: ParameterKind
         arg_default: ast.AST | None
         for (arg, kind), arg_default in args_kinds_defaults:
-            annotation = get_annotation(arg.annotation, parent=self.current)
+            annotation = safe_get_annotation(arg.annotation, parent=self.current)
             default = get_parameter_default(arg_default, self.filepath, self.lines_collection)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
-            annotation = get_annotation(node.args.vararg.annotation, parent=self.current)
+            annotation = safe_get_annotation(node.args.vararg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"*{node.args.vararg.arg}",
@@ -396,14 +397,14 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         kwarg: ast.arg
         kwarg_default: ast.AST | None
         for kwarg, kwarg_default in kwargs_defaults:  # noqa: WPS440
-            annotation = get_annotation(kwarg.annotation, parent=self.current)
+            annotation = safe_get_annotation(kwarg.annotation, parent=self.current)
             default = get_parameter_default(kwarg_default, self.filepath, self.lines_collection)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
             )
 
         if node.args.kwarg:
-            annotation = get_annotation(node.args.kwarg.annotation, parent=self.current)
+            annotation = safe_get_annotation(node.args.kwarg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
                     f"**{node.args.kwarg.arg}",
@@ -418,7 +419,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             lineno=lineno,
             endlineno=node.end_lineno,  # type: ignore[union-attr]
             parameters=parameters,
-            returns=get_annotation(node.returns, parent=self.current),
+            returns=safe_get_annotation(node.returns, parent=self.current),
             decorators=decorators,
             docstring=self._get_docstring(node),
             runtime=not self.type_guarded,
@@ -550,7 +551,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         if not names:
             return
 
-        value = get_value(node.value)  # type: ignore[arg-type]
+        value = safe_get_value(node.value, self.filepath)  # type: ignore[arg-type]
 
         try:
             docstring = self._get_docstring(node.next, strict=True)  # type: ignore[union-attr]
@@ -599,7 +600,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         Parameters:
             node: The node to visit.
         """
-        self.handle_attribute(node, get_annotation(node.annotation, parent=self.current))
+        self.handle_attribute(node, safe_get_annotation(node.annotation, parent=self.current))
 
     def visit_augassign(self, node: ast.AugAssign) -> None:
         """Visit an augmented assignment node.
@@ -625,7 +626,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         """
         if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # type: ignore[attr-defined]
             with suppress(KeyError):  # unhandled AST nodes
-                condition = get_annotation(node.test, self.current)
+                condition = get_annotation(node.test, parent=self.current)
                 if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
                     self.type_guarded = True
         self.generic_visit(node)

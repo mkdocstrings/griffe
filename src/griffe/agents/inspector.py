@@ -33,7 +33,7 @@ from typing import Any
 
 from griffe.agents.base import BaseInspector
 from griffe.agents.extensions import Extensions
-from griffe.agents.nodes import ObjectKind, ObjectNode, get_annotation
+from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
 from griffe.collections import LinesCollection
 from griffe.dataclasses import (
     Alias,
@@ -479,4 +479,4 @@ def _convert_object_to_annotation(obj, parent):
         annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
-    return get_annotation(annotation_node.body, parent=parent)
+    return safe_get_annotation(annotation_node.body, parent=parent)

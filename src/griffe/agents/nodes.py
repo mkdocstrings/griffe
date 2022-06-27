@@ -778,6 +778,28 @@ def get_annotation(node: AST | None, parent: Module | Class) -> str | Name | Exp
     return _get_annotation(node, parent)
 
 
+def safe_get_annotation(node: AST | None, parent: Module | Class) -> str | Name | Expression | None:
+    """Safely (no exception) extract a resolvable annotation.
+
+    Parameters:
+        node: The annotation node.
+        parent: The parent used to resolve the name.
+
+    Returns:
+        A string or resovable name or expression.
+    """
+    try:
+        return get_annotation(node, parent)
+    except Exception as error:
+        message = f"Failed to parse annotation from '{node.__class__.__name__}' node"
+        with suppress(Exception):
+            message += f" at {parent.relative_filepath}:{node.lineno}"  # type: ignore[union-attr]
+        if not isinstance(error, KeyError):
+            message += f": {error}"
+        logger.error(message)
+        return None
+
+
 # ==========================================================
 # docstrings
 def get_docstring(
@@ -1186,10 +1208,10 @@ def _get_value(node: AST) -> str:
 
 
 def get_value(node: AST | None) -> str | None:
-    """Extract a complex value as a string.
+    """Unparse a node to its string representation.
 
     Parameters:
-        node: The node to extract the value from.
+        node: The node to unparse.
 
     Returns:
         The unparsed code of the node.
@@ -1197,6 +1219,27 @@ def get_value(node: AST | None) -> str | None:
     if node is None:
         return None
     return _node_value_map[type(node)](node)
+
+
+def safe_get_value(node: AST | None, filepath: str | Path | None = None) -> str | None:
+    """Safely (no exception) unparse a node to its string representation.
+
+    Parameters:
+        node: The node to unparse.
+        filepath: An optional filepath from where the node comes.
+
+    Returns:
+        The unparsed code of the node.
+    """
+    try:
+        return get_value(node)
+    except Exception as error:
+        message = f"Failed to unparse node {node}"
+        if filepath:
+            message += f" at {filepath}:{node.lineno}"  # type: ignore[union-attr]
+        message += f": {error}"
+        logger.error(message)
+        return None
 
 
 # ==========================================================
