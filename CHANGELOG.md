@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.22.0](https://github.com/mkdocstrings/griffe/releases/tag/0.22.0) - 2022-06-28
+
+<small>[Compare with 0.21.0](https://github.com/mkdocstrings/griffe/compare/0.21.0...0.22.0)</small>
+
+### Features
+- Support forward references ([245daea](https://github.com/mkdocstrings/griffe/commit/245daeabc8130bd7ecab86f55c4906d9161b9e73) by Timothée Mazzucotelli). [Issue #86](https://github.com/mkdocstrings/griffe/issues/86)
+
+### Code Refactoring
+- Safely parse annotations and values ([b023e2b](https://github.com/mkdocstrings/griffe/commit/b023e2be509f3ac39dbe1ed9adf21247e4416e53) by Timothée Mazzucotelli).
+
+
 ## [0.21.0](https://github.com/mkdocstrings/griffe/releases/tag/0.21.0) - 2022-06-25
 
 <small>[Compare with 0.20.0](https://github.com/mkdocstrings/griffe/compare/0.20.0...0.21.0)</small>
