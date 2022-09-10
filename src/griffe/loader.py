@@ -51,7 +51,7 @@ def _get_async_reader():
         logger.warning("aiofiles is not installed, fallback to blocking read")
 
         async def _read_async(path):  # noqa: WPS430
-            return path.read_text()
+            return path.read_text(encoding="utf8")
 
     else:
 

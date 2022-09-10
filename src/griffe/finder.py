@@ -284,7 +284,7 @@ _re_import_line = re.compile(r"^import[ \t]")
 # TODO: for better robustness, we should load and minify the AST
 # to search for particular call statements
 def _is_pkg_style_namespace(init_module: Path) -> bool:
-    code = init_module.read_text()
+    code = init_module.read_text(encoding="utf8")
     return bool(_re_pkgresources.search(code) or _re_pkgutil.search(code))
 
 
@@ -304,7 +304,7 @@ def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
     # Blank lines and lines beginning with # are skipped.
     # Lines starting with import (followed by space or tab) are executed.
     directories = []
-    for line in path.read_text().strip().splitlines(keepends=False):
+    for line in path.read_text(encoding="utf8").strip().splitlines(keepends=False):
         line = line.strip()
         if line and not line.startswith("#") and not _re_import_line.search(line):
             if os.path.exists(line):
@@ -314,7 +314,7 @@ def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
 
 def _handle_editables_module(path: Path):
     try:
-        editables_lines = path.read_text().splitlines(keepends=False)
+        editables_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
     except FileNotFoundError:
         raise UnhandledEditablesModuleError(path)
     # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')

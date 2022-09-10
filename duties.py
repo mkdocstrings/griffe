@@ -204,7 +204,7 @@ def check_types(ctx):  # noqa: WPS231
     # handle .pth files
     for pth in pkgs_dir.glob("*.pth"):
         with suppress(OSError):
-            for package in Path(pth.read_text().splitlines()[0]).glob("*"):  # noqa: WPS440
+            for package in Path(pth.read_text(encoding="utf8").splitlines()[0]).glob("*"):  # noqa: WPS440
                 if package.suffix != ".dist-info":
                     packages[package.name] = package
 
@@ -223,7 +223,7 @@ def check_types(ctx):  # noqa: WPS231
                 Path(tmpdir, pkg_name).symlink_to(packages[pkg_name], target_is_directory=True)
 
         # create temporary mypy config to ignore stubbed packages
-        newconfig = Path("config", "mypy.ini").read_text()
+        newconfig = Path("config", "mypy.ini").read_text(encoding="utf8")
         newconfig += "\n" + "\n\n".join(f"[mypy-{pkg}.*]\nignore_errors=true" for pkg in ignore)
         tmpconfig = Path(tmpdir, "mypy.ini")
         tmpconfig.write_text(newconfig)
