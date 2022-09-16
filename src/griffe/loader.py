@@ -207,7 +207,7 @@ class GriffeLoader:
                 module_path = export.full.rsplit(".", 1)[0]  # remove trailing .__all__
                 next_module = self.modules_collection[module_path]
                 self.expand_exports(next_module)
-                expanded |= next_module.exports
+                expanded |= next_module.exports or set()
             else:
                 expanded.add(export)
         module.exports = expanded
