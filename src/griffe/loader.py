@@ -245,7 +245,7 @@ class GriffeLoader:
                 target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
                 if target.path not in seen:
                     try:
-                        self.expand_wildcards(target, only_known_modules)  # type: ignore[union-attr]
+                        self.expand_wildcards(target, only_known_modules, seen)  # type: ignore[union-attr]
                     except (AliasResolutionError, CyclicAliasError) as error:  # noqa: WPS440
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
