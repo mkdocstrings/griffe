@@ -235,3 +235,18 @@ def test_load_single_module_from_both_py_and_pyi_files():
         loader = GriffeLoader(search_paths=[tmp_folder.path])
         package = loader.load_module("mod")
         assert "f" in package.members
+
+
+def test_unsupported_item_in_all(caplog):
+    """Check that unsupported items in `__all__` log a warning.
+
+    Parameters:
+        caplog: Pytest fixture to capture logs.
+    """
+    item_name = "XXX"
+    with temporary_pypackage("package", ["mod.py"]) as tmp_folder:
+        tmp_folder.path.joinpath("__init__.py").write_text(f"from .mod import {item_name}\n__all__ = [{item_name}]")
+        tmp_folder.path.joinpath("mod.py").write_text(f"class {item_name}: ...")
+        loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
+        loader.expand_exports(loader.load_module("package"))
+    assert any(item_name in record.message and record.levelname == "WARNING" for record in caplog.records)

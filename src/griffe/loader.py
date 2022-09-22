@@ -211,7 +211,10 @@ class GriffeLoader:
                 next_module = self.modules_collection[module_path]
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
-                    expanded |= next_module.exports
+                    try:
+                        expanded |= next_module.exports
+                    except TypeError:
+                        logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
             else:
                 expanded.add(export)
         module.exports = expanded
