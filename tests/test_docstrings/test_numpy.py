@@ -477,7 +477,7 @@ def test_examples_section(parse_numpy):
 
 
 def test_examples_section_when_followed_by_named_section(parse_numpy):
-    """Parse examples section.
+    """Parse examples section followed by another section.
 
     Parameters:
         parse_numpy: Parse function (fixture).
@@ -496,6 +496,30 @@ def test_examples_section_when_followed_by_named_section(parse_numpy):
     assert len(sections) == 2
     assert sections[0].kind is DocstringSectionKind.examples
     assert sections[1].kind is DocstringSectionKind.parameters
+
+
+def test_examples_section_as_last(parse_numpy):
+    """Parse examples section being last in the docstring.
+
+    Parameters:
+        parse_numpy: Parse function (fixture).
+    """
+    docstring = """
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+
+        Examples
+        --------
+        ```python
+        >>> LoremIpsum.from_string("consectetur")
+        <foofoo: Ipsum.Lorem>
+
+        ```
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].kind is DocstringSectionKind.text
+    assert sections[1].kind is DocstringSectionKind.examples
 
 
 # =============================================================================================

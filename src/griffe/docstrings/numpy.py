@@ -170,10 +170,10 @@ def _read_block(docstring: Docstring, offset: int) -> tuple[str, int]:  # noqa: 
         new_offset += 1
     while new_offset < len(lines):
         is_empty = _is_empty_line(lines[new_offset])
-        if is_empty and _is_dash_line(lines[new_offset + 1]):
+        if is_empty and new_offset < len(lines) - 1 and _is_dash_line(lines[new_offset + 1]):
             break  # Break if a new unnamed section is reached.
 
-        if is_empty and new_offset < len(lines) + 1 and _is_dash_line(lines[new_offset + 2]):
+        if is_empty and new_offset < len(lines) - 2 and _is_dash_line(lines[new_offset + 2]):
             break  # Break if a new named section is reached.
 
         block.append(lines[new_offset])
