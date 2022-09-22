@@ -193,7 +193,7 @@ class GriffeLoader:
             )
         return unresolved, iteration
 
-    def expand_exports(self, module: Module, seen: set | None = None) -> None:
+    def expand_exports(self, module: Module, seen: set | None = None) -> None:  # noqa: WPS231
         """Expand exports: try to recursively expand all module exports.
 
         Parameters:
