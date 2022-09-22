@@ -227,7 +227,6 @@ def test_parse_complex__all__assignments(statements):
         assert package.exports == {"CONST_INIT", "CONST_A", "CONST_B", "CONST_C"}
 
 
-# issue https://github.com/mkdocstrings/griffe/issues/68
 def test_dont_crash_on_nested_functions_in_init():
     """Assert we don't crash when visiting a nested function in `__init__` methods."""
     with temporary_visited_module(
@@ -239,3 +238,25 @@ def test_dont_crash_on_nested_functions_in_init():
         """
     ) as module:
         assert module
+
+
+def test_get_correct_docstring_starting_line_number():
+    """Assert we get the correct line numbers for docstring, even on Python 3.7."""
+    with temporary_visited_module(
+        """
+        '''
+        Module docstring.
+        '''
+        class C:
+            '''
+            Class docstring.
+            '''
+            def method(self):
+                '''
+                Method docstring.
+                '''
+        """
+    ) as module:
+        assert module.docstring.lineno == 2
+        assert module["C"].docstring.lineno == 6
+        assert module["C.method"].docstring.lineno == 10

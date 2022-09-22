@@ -825,7 +825,15 @@ def get_docstring(
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
         return doc.value, doc.lineno, doc.end_lineno  # type: ignore[attr-defined]
     if isinstance(doc, NodeStr):
-        return doc.s, doc.lineno, doc.end_lineno  # type: ignore[attr-defined]
+
+        # TODO: remove once Python 3.7 support is dropped
+        # on Python 3.7, lineno seems to be the ending line of the string
+        # rather than the starting one, so we substract the number of newlines
+        lineno = doc.lineno
+        if sys.version_info < (3, 8):
+            lineno -= doc.s.count("\n")
+
+        return doc.s, lineno, doc.end_lineno  # type: ignore[attr-defined]
     return None, None, None
 
 
