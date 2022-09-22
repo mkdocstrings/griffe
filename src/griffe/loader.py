@@ -193,12 +193,15 @@ class GriffeLoader:
             )
         return unresolved, iteration
 
-    def expand_exports(self, module: Module) -> None:
+    def expand_exports(self, module: Module, seen: set | None = None) -> None:
         """Expand exports: try to recursively expand all module exports.
 
         Parameters:
             module: The module to recurse on.
+            seen: Used to avoid infinite recursion.
         """
+        seen = seen or set()
+        seen.add(module.path)
         if module.exports is None:
             return
         expanded = set()
@@ -206,8 +209,9 @@ class GriffeLoader:
             if isinstance(export, Name):
                 module_path = export.full.rsplit(".", 1)[0]  # remove trailing .__all__
                 next_module = self.modules_collection[module_path]
-                self.expand_exports(next_module)
-                expanded |= next_module.exports
+                if next_module.path not in seen:
+                    self.expand_exports(next_module, seen)
+                    expanded |= next_module.exports
             else:
                 expanded.add(export)
         module.exports = expanded
