@@ -1,5 +1,6 @@
 """Tests for the `loader` module."""
 
+import logging
 from textwrap import dedent
 
 from griffe.expressions import Name
@@ -250,3 +251,16 @@ def test_unsupported_item_in_all(caplog):
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
         loader.expand_exports(loader.load_module("package"))
     assert any(item_name in record.message and record.levelname == "WARNING" for record in caplog.records)
+
+
+def test_skip_modules_with_dots_in_filename(caplog):
+    """Check that modules with dots in their filenames are skipped.
+
+    Parameters:
+        caplog: Pytest fixture to capture logs.
+    """
+    caplog.set_level(logging.DEBUG)
+    with temporary_pypackage("package", ["gunicorn.conf.py"]) as tmp_folder:
+        loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
+        loader.load_module("package")
+    assert any("gunicorn.conf.py" in record.message and record.levelname == "DEBUG" for record in caplog.records)

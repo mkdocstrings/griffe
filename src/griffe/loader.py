@@ -415,6 +415,9 @@ class GriffeLoader:
             )
         except LoadingError as error:  # noqa: WPS440
             logger.debug(str(error))
+        except KeyError:
+            if "." in subparts[-1]:
+                logger.debug(f"Skip {subpath}, dots in filenames are not supported")
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:
         return Module(
