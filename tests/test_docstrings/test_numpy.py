@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 import pytest
 
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
@@ -172,12 +174,12 @@ def test_parse_annotations_in_all_sections(parse_numpy, docstring, name):
     assert sections[0].value[0].annotation == Name(name, name)
 
 
-# https://github.com/mkdocstrings/mkdocstrings/issues/416
-def test_dont_crash_on_text_annotations(parse_numpy):
+def test_dont_crash_on_text_annotations(parse_numpy, caplog):
     """Don't crash while parsing annotations containing unhandled nodes.
 
     Parameters:
         parse_numpy: Fixture parser.
+        caplog: Pytest fixture used to capture logs.
     """
     docstring = """
         Parameters
@@ -185,7 +187,9 @@ def test_dont_crash_on_text_annotations(parse_numpy):
         region : str, list-like, geopandas.GeoSeries, geopandas.GeoDataFrame, geometric
             Description.
     """
+    caplog.set_level(logging.DEBUG)
     assert parse_numpy(docstring, parent=Function("f"))
+    assert all(record.levelname == "DEBUG" for record in caplog.records if "Failed to parse" in record.message)
 
 
 # =============================================================================================

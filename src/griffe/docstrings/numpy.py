@@ -67,6 +67,7 @@ from griffe.docstrings.dataclasses import (
 )
 from griffe.docstrings.utils import parse_annotation, warning
 from griffe.expressions import Expression, Name
+from griffe.logger import LogLevel
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern  # type: ignore[attr-defined]
@@ -253,7 +254,7 @@ def _read_parameters(  # noqa: WPS231
             else:
                 _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
-            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
 
         if default is None:
             for name in names:  # noqa: WPS440

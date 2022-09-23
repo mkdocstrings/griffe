@@ -79,7 +79,7 @@ from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
 from griffe.collections import LinesCollection
 from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
-from griffe.logger import get_logger
+from griffe.logger import LogLevel, get_logger
 
 logger = get_logger(__name__)
 
@@ -778,12 +778,17 @@ def get_annotation(node: AST | None, parent: Module | Class) -> str | Name | Exp
     return _get_annotation(node, parent)
 
 
-def safe_get_annotation(node: AST | None, parent: Module | Class) -> str | Name | Expression | None:
+def safe_get_annotation(
+    node: AST | None,
+    parent: Module | Class,
+    log_level: LogLevel = LogLevel.error,
+) -> str | Name | Expression | None:
     """Safely (no exception) extract a resolvable annotation.
 
     Parameters:
         node: The annotation node.
         parent: The parent used to resolve the name.
+        log_level: Log level to use to log a message.
 
     Returns:
         A string or resovable name or expression.
@@ -796,7 +801,7 @@ def safe_get_annotation(node: AST | None, parent: Module | Class) -> str | Name 
             message += f" at {parent.relative_filepath}:{node.lineno}"  # type: ignore[union-attr]
         if not isinstance(error, KeyError):
             message += f": {error}"
-        logger.error(message)
+        getattr(logger, log_level.value)(message)
         return None
 
 

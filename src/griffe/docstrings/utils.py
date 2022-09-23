@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Callable
 
 from griffe.agents.nodes import safe_get_annotation
 from griffe.expressions import Expression, Name
-from griffe.logger import get_logger
+from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
@@ -42,13 +42,18 @@ def warning(name: str) -> Callable[[Docstring, int, str], None]:
     return warn
 
 
-def parse_annotation(annotation: str, docstring: Docstring) -> str | Name | Expression:
+def parse_annotation(
+    annotation: str,
+    docstring: Docstring,
+    log_level: LogLevel = LogLevel.error,
+) -> str | Name | Expression:
     """Parse a string into a true name or expression that can be resolved later.
 
     Parameters:
         annotation: The annotation to parse.
         docstring: The docstring in which the annotation appears.
             The docstring's parent is accessed to bind a resolver to the resulting name/expression.
+        log_level: Log level to use to log a message.
 
     Returns:
         The string unchanged, or a new name or expression.
@@ -59,5 +64,10 @@ def parse_annotation(annotation: str, docstring: Docstring) -> str | Name | Expr
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
         if code.body:
-            return safe_get_annotation(code.body, parent=docstring.parent) or annotation  # type: ignore[arg-type]
+            name_or_expr = safe_get_annotation(
+                code.body,
+                parent=docstring.parent,  # type: ignore[arg-type]
+                log_level=log_level,
+            )
+            return name_or_expr or annotation
     return annotation
