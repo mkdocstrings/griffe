@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.22.2](https://github.com/mkdocstrings/griffe/releases/tag/0.22.2) - 2022-09-24
+
+<small>[Compare with 0.22.1](https://github.com/mkdocstrings/griffe/compare/0.22.1...0.22.2)</small>
+
+### Bug Fixes
+- Log debug instead of errors when failing to parse Numpy annotations ([75eeeda](https://github.com/mkdocstrings/griffe/commit/75eeeda2f1181ae680b3d47df3814bad200220d3) by Timothée Mazzucotelli). [Issue #93](https://github.com/mkdocstrings/griffe/issues/93)
+- Don't crash on unsupported module names (containing dots) ([6a57194](https://github.com/mkdocstrings/griffe/commit/6a571949000a3d2910990337f96751c0cac7e815) by Timothée Mazzucotelli). [Issue #94](https://github.com/mkdocstrings/griffe/issues/94)
+- Show correct docstring line numbers on Python 3.7 ([edd4b6d](https://github.com/mkdocstrings/griffe/commit/edd4b6d23f4399960db4e16a8c269318aef033d6) by Timothée Mazzucotelli). [Issue #98](https://github.com/mkdocstrings/griffe/issues/98)
+- Fix parsing of Numpy docstring with an Examples section at the end ([3114727](https://github.com/mkdocstrings/griffe/commit/3114727296891fdd5cacecf487652774ee6e4fc8) by Timothée Mazzucotelli). [Issue #97](https://github.com/mkdocstrings/griffe/issues/97)
+- Don't crash on unsupported item in `__all__` (log a warning instead) ([9e5df0a](https://github.com/mkdocstrings/griffe/commit/9e5df0aea8e615217554e5204221a35c9df25938) by Timothée Mazzucotelli). [Issue #92](https://github.com/mkdocstrings/griffe/issues/92)
+- Prevent infinite recursion while expanding exports ([68446f7](https://github.com/mkdocstrings/griffe/commit/68446f7ab94536596dccb690fb2cac613cd32460) by Timothée Mazzucotelli).
+- Add missing check while expanding wildcards ([7e816ed](https://github.com/mkdocstrings/griffe/commit/7e816ed141d6f13bf1ae7c758c32e68cc663fe0e) by Timothée Mazzucotelli).
+
+
 ## [0.22.1](https://github.com/mkdocstrings/griffe/releases/tag/0.22.1) - 2022-09-10
 
 <small>[Compare with 0.22.0](https://github.com/mkdocstrings/griffe/compare/0.22.0...0.22.1)</small>
