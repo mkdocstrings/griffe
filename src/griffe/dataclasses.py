@@ -885,7 +885,7 @@ class Alias(ObjectAliasMixin):
     def parent(self, value: Module | Class) -> None:
         self._parent = value
         if self.resolved:
-            with suppress(AliasResolutionError):
+            with suppress(AliasResolutionError, CyclicAliasError):
                 self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just checked the target is not None
 
     @cached_property
@@ -923,7 +923,7 @@ class Alias(ObjectAliasMixin):
 
     @target.setter
     def target(self, value: Object | Alias) -> None:
-        if value is self:
+        if value is self or value.path == self.path:
             raise CyclicAliasError([self.target_path])
         self._target = value
         self.target_path = value.path
@@ -958,7 +958,7 @@ class Alias(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        return self._target is not None
+        return self._target is not None and (not self._target.is_alias or self._target.resolved)  # type: ignore[union-attr]
 
     @cached_property
     def wildcard(self) -> str | None:

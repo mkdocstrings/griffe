@@ -6,6 +6,7 @@ import json
 from contextlib import suppress
 from typing import Any, Sequence, Type, TypeVar
 
+from griffe.exceptions import AliasResolutionError, CyclicAliasError
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 
@@ -69,11 +70,15 @@ class SetMembersMixin(DelMembersMixin):
                     # when reassigning a module to an existing one,
                     # try to merge them as one regular and one stubs module
                     # (implicit support for .pyi modules)
-                    if member.is_module and value.is_module:
-                        with suppress(ValueError):
-                            value = merge_stubs(member, value)
+                    if member.is_module:
+                        with suppress(AliasResolutionError, CyclicAliasError):
+                            if value.is_module:
+                                logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")
+                                with suppress(ValueError):
+                                    value = merge_stubs(member, value)
                     for alias in member.aliases.values():
-                        alias.target = value
+                        with suppress(CyclicAliasError):
+                            alias.target = value
             self.members[name] = value  # type: ignore[attr-defined]
             if self.is_collection:  # type: ignore[attr-defined]
                 value._modules_collection = self  # noqa: WPS437
