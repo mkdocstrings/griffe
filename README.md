@@ -70,25 +70,25 @@ See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#with-python
     - Flat JSON
     - JSON schema
 - API diff:
-    - Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
-    - Ability to return warnings (things that are not backward-compatibility-friendly)
+    - [ ] Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
+    - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)
     - List of things to consider for warnings
         - Multiple positional-or-keyword parameters
         - Public imports in public modules
         - Private things made public through imports/assignments
         - Too many public things? Generally annoying. Configuration?
-    - Ability to compare two APIs to return breaking changes
+    - [x] Ability to compare two APIs to return breaking changes
     - List of things to consider for breaking changes
-        - Changed position of positional only parameter
-        - Changed position of positional or keyword parameter
-        - Changed type of parameter
-        - Changed type of public module attribute
-        - Changed return type of a public function/method
-        - Added parameter without a default value
-        - Removed keyword-only parameter without a default value, without **kwargs to swallow it
-        - Removed positional-only parameter without a default value, without *args to swallow it
-        - Removed positional-or_keyword argument without a default value, without *args and **kwargs to swallow it
-        - Removed public module/class/function/method/attribute
-        - All of the previous even when parent is private (could be publicly imported or assigned somewhere),
+        - [x] Changed position of positional only parameter
+        - [x] Changed position of positional or keyword parameter
+        - [ ] Changed type of parameter
+        - [ ] Changed type of public module attribute
+        - [ ] Changed return type of a public function/method
+        - [x] Added parameter without a default value
+        - [x] Removed keyword-only parameter without a default value, without **kwargs to swallow it
+        - [x] Removed positional-only parameter without a default value, without *args to swallow it
+        - [x] Removed positional-or_keyword argument without a default value, without *args and **kwargs to swallow it
+        - [x] Removed public module/class/function/method/attribute
+        - [ ] All of the previous even when parent is private (could be publicly imported or assigned somewhere),
             and later be smarter: public assign/import makes private things public!
-        - Inheritance: removed base, or added/changed base that changes MRO
+        - [ ] Inheritance: removed, added or changed base that changes MRO

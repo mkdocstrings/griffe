@@ -37,7 +37,7 @@ def _assert_git_repo(repo: str) -> None:
 
 
 @contextmanager
-def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
+def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[Path]:
     """Context manager that checks out `commit` in `repo` to a temporary worktree.
 
     Parameters:
@@ -53,7 +53,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
     """
     repo = str(repo)
     _assert_git_repo(repo)
-    with TemporaryDirectory() as td:
+    with TemporaryDirectory(prefix="griffe-worktree-") as td:
         uid = f"griffe_{commit}"
         target = os.path.join(td, uid)
         retval = run(  # noqa: S603,S607
@@ -65,7 +65,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[str]:
             raise RuntimeError(f"Could not create git worktree: {retval.stderr.decode()}")
 
         try:
-            yield target
+            yield Path(target)
         finally:
             run(["git", "-C", repo, "worktree", "remove", uid], stdout=DEVNULL)  # noqa: S603,S607
             run(["git", "-C", repo, "worktree", "prune"], stdout=DEVNULL)  # noqa: S603,S607
@@ -77,7 +77,6 @@ def load_git(
     commit: str = "HEAD",
     repo: str | Path = ".",
     submodules: bool = True,
-    try_relative_path: bool = True,
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
     docstring_parser: Parser | None = None,
@@ -95,13 +94,12 @@ def load_git(
     This function requires that the `git` executable be installed.
 
     Parameters:
-        module: The module name or path.
+        module: The module path, relative to the repository root.
         commit: A "commit-ish" - such as a hash or tag.
         repo: Path to the repository (i.e. the directory *containing* the `.git` directory)
         submodules: Whether to recurse on the submodules.
-        try_relative_path: Whether to try finding the module as a relative path.
         extensions: The extensions to use.
-        search_paths: The paths to search into.
+        search_paths: The paths to search into (relative to the repository root).
         docstring_parser: The docstring parser to use. By default, no parsing is done.
         docstring_options: Additional docstring parsing options.
         lines_collection: A collection of source code lines.
@@ -112,12 +110,13 @@ def load_git(
         A loaded module.
     """
     with tmp_worktree(commit, repo) as worktree:
-        search_paths = list(search_paths) if search_paths else []
-        search_paths.insert(0, worktree)
+        search_paths = [worktree / path for path in search_paths or ["."]]
+        if isinstance(module, Path):
+            module = worktree / module
         return loader.load(
             module=module,
             submodules=submodules,
-            try_relative_path=try_relative_path,
+            try_relative_path=False,
             extensions=extensions,
             search_paths=search_paths,
             docstring_parser=docstring_parser,

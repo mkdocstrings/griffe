@@ -206,6 +206,21 @@ class Parameter:
         self.kind: ParameterKind | None = kind
         self.default: str | None = default
 
+    def __str__(self) -> str:
+        param = f"{self.name}: {self.annotation} = {self.default}"
+        if self.kind:
+            return f"[{self.kind.value}] {param}"
+        return param
+
+    @property
+    def required(self) -> bool:
+        """Tell if this parameter is required.
+
+        Returns:
+            True or False.
+        """
+        return self.default is None
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this parameter's data as a dictionary.
 
