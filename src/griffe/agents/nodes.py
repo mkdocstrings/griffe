@@ -1094,8 +1094,8 @@ def _get_sub_value(node: NodeSub) -> str:
 
 def _get_subscript_value(node: NodeSubscript) -> str:
     subscript = _get_value(node.slice)
-    if isinstance(subscript, str):
-        subscript = subscript.strip("()")
+    if isinstance(subscript, str) and subscript.startswith("(") and subscript.endswith(")"):
+        subscript = subscript[1:-1]
     return f"{_get_value(node.value)}[{subscript}]"
 
 
