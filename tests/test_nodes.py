@@ -190,6 +190,7 @@ def test_default_value_from_nodes(default):
         "o[x,y]",
         "o[x:y]",
         "o[x:y,z]",
+        "o[x, y(z)]",
     ],
 )
 def test_building_value_from_nodes(expression):
