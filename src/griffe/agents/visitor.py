@@ -319,9 +319,9 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             for decorator_node in node.decorator_list:
                 decorator_value = safe_get_value(decorator_node, self.filepath)
                 overload = (
-                    decorator_value == "typing.overload"
+                    decorator_value in ("typing.overload", "typing_extensions.overload")
                     or decorator_value == "overload"
-                    and self.current.resolve("overload") == "typing.overload"
+                    and self.current.resolve("overload") in ("typing.overload", "typing_extensions.overload")
                 )
                 decorators.append(
                     Decorator(
