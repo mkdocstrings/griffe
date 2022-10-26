@@ -376,7 +376,7 @@ def _read_returns_section(  # noqa: WPS231
                         else:
                             annotation = return_item
         else:
-            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReturns(returns), new_offset
 
@@ -423,7 +423,7 @@ def _read_yields_section(  # noqa: WPS231
                     else:
                         annotation = yield_item
         else:
-            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
     return DocstringSectionYields(yields), new_offset
 
@@ -465,7 +465,7 @@ def _read_receives_section(  # noqa: WPS231
                     else:
                         annotation = receives_item
         else:
-            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReceives(receives), new_offset
 
@@ -543,7 +543,7 @@ def _read_attributes_section(
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
         else:
-            annotation = parse_annotation(annotation, docstring)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
     return DocstringSectionAttributes(attributes), new_offset
