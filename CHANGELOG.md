@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.23.0](https://github.com/mkdocstrings/griffe/releases/tag/0.23.0) - 2022-10-26
+
+<small>[Compare with 0.22.2](https://github.com/mkdocstrings/griffe/compare/0.22.2...0.23.0)</small>
+
+### Features
+- Support `typing_extensions.overload` ([c29fad5](https://github.com/mkdocstrings/griffe/commit/c29fad58c721399badfc93ff8e0f10a6f92c359e) by Nyuan Zhang). [PR #108](https://github.com/mkdocstrings/griffe/pull/108)
+
+### Bug Fixes
+- Log debug instead of errors when failing to parse NumPy annotations for additional sections ([568ff60](https://github.com/mkdocstrings/griffe/commit/568ff60621c0b5cc35ac0e0d0209fa3bc1b2ba8a) by Sigurd Spieckermann). [Issue #93](https://github.com/mkdocstrings/griffe/issues/93), [PR #109](https://github.com/mkdocstrings/griffe/pull/109)
+- Don't strip too many parentheses around a call node ([bb5c5e7](https://github.com/mkdocstrings/griffe/commit/bb5c5e71f95c537ca2d19299b157a0bbf59e5279) by Timothée Mazzucotelli). [PR #107](https://github.com/mkdocstrings/griffe/pull/107)
+- Guard against more alias resolution errors ([2be135d](https://github.com/mkdocstrings/griffe/commit/2be135d8ab88d6f97175c958e31e76b0d7d8f934) by Timothée Mazzucotelli). [Issue #83](https://github.com/mkdocstrings/griffe/issues/83), [PR #103](https://github.com/mkdocstrings/griffe/pull/103)
+
+
 ## [0.22.2](https://github.com/mkdocstrings/griffe/releases/tag/0.22.2) - 2022-09-24
 
 <small>[Compare with 0.22.1](https://github.com/mkdocstrings/griffe/compare/0.22.1...0.22.2)</small>
