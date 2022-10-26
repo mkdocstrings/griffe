@@ -182,9 +182,29 @@ def test_dont_crash_on_text_annotations(parse_numpy, caplog):
         caplog: Pytest fixture used to capture logs.
     """
     docstring = """
+        Attributes
+        ----------
+        region : str, list-like, geopandas.GeoSeries, geopandas.GeoDataFrame, geometric
+            Description.
+
         Parameters
         ----------
         region : str, list-like, geopandas.GeoSeries, geopandas.GeoDataFrame, geometric
+            Description.
+
+        Returns
+        -------
+        str or bytes
+            Description.
+
+        Receives
+        --------
+        region : str, list-like, geopandas.GeoSeries, geopandas.GeoDataFrame, geometric
+            Description.
+
+        Yields
+        ------
+        str or bytes
             Description.
     """
     caplog.set_level(logging.DEBUG)
