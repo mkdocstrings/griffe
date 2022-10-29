@@ -17,6 +17,7 @@ from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Sequence
+from warnings import warn
 
 from griffe.agents.extensions import Extensions
 from griffe.agents.inspector import inspect
@@ -154,20 +155,48 @@ class GriffeLoader:
 
     def resolve_aliases(  # noqa: WPS231
         self,
-        only_exported: bool = True,
-        only_known_modules: bool = True,
+        *,
+        implicit: bool | None = None,
+        external: bool | None = None,
         max_iterations: int | None = None,
+        only_exported: bool | None = None,
+        only_known_modules: bool | None = None,
     ) -> tuple[set[str], int]:
         """Resolve aliases.
 
         Parameters:
-            only_exported: When true, only try to resolve an alias if it is explicitely exported.
-            only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
+            implicit: When false, only try to resolve an alias if it is explicitely exported.
+            external: When false, don't try to load unspecified modules to resolve aliases.
             max_iterations: Maximum number of iterations on the loader modules collection.
+            only_exported: Deprecated. Use the `implicit` parameter instead (inverting the value).
+            only_known_modules: Deprecated. Use the `external` parameter instead (inverting the value).
 
         Returns:
             The unresolved aliases and the number of iterations done.
         """
+        # TODO: remove deprecated params at some point
+        if only_exported is not None and implicit is None:
+            warn(
+                "Parameter `only_exported` is deprecated, use `implicit` instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            implicit = not only_exported
+
+        if only_known_modules is not None and external is None:
+            warn(
+                "Parameter `only_known_modules` is deprecated, use `external` instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            external = not only_known_modules
+
+        # TODO: set as param defaults once deprecated params are dropped
+        if implicit is None:
+            implicit = False
+        if external is None:
+            external = False
+
         if max_iterations is None:
             max_iterations = float("inf")  # type: ignore[assignment]
         prev_unresolved: set[str] = set()
@@ -185,7 +214,7 @@ class GriffeLoader:
             iteration += 1
             for module_name in list(collection.keys()):
                 module = collection[module_name]
-                next_resolved, next_unresolved = self.resolve_module_aliases(module, only_exported, only_known_modules)
+                next_resolved, next_unresolved = self.resolve_module_aliases(module, implicit, external)
                 resolved |= next_resolved
                 unresolved |= next_unresolved
             logger.debug(
@@ -279,16 +308,16 @@ class GriffeLoader:
     def resolve_module_aliases(  # noqa: WPS231
         self,
         obj: Object,
-        only_exported: bool = True,
-        only_known_modules: bool = True,
+        implicit: bool = False,
+        external: bool = False,
         seen: set | None = None,
     ) -> tuple[set[str], set[str]]:
         """Follow aliases: try to recursively resolve all found aliases.
 
         Parameters:
             obj: The object and its members to recurse on.
-            only_exported: When true, only try to resolve an alias if it is explicitely exported.
-            only_known_modules: When true, don't try to load unspecified modules to resolve aliases.
+            implicit: When false, only try to resolve an alias if it is explicitely exported.
+            external: When false, don't try to load unspecified modules to resolve aliases.
             seen: Used to avoid infinite recursion.
 
         Returns:
@@ -303,7 +332,7 @@ class GriffeLoader:
             if member.is_alias:
                 if member.wildcard or member.resolved:  # type: ignore[union-attr]
                     continue
-                if only_exported and not member.is_explicitely_exported:
+                if not implicit and not member.is_explicitely_exported:
                     continue
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
@@ -313,11 +342,7 @@ class GriffeLoader:
                     logger.debug(f"Alias resolution error for {path} -> {target}")
                     unresolved.add(path)
                     package = target.split(".", 1)[0]
-                    load_module = (
-                        not only_known_modules
-                        and obj.package.path != package
-                        and package not in self.modules_collection
-                    )
+                    load_module = external and obj.package.path != package and package not in self.modules_collection
                     if load_module:
                         try:  # noqa: WPS505
                             self.load_module(package, try_relative_path=False)
@@ -330,7 +355,7 @@ class GriffeLoader:
                     resolved.add(member.path)
             elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
                 sub_resolved, sub_unresolved = self.resolve_module_aliases(
-                    member, only_exported, only_known_modules, seen  # type: ignore[arg-type]
+                    member, implicit, external, seen  # type: ignore[arg-type]
                 )
                 resolved |= sub_resolved
                 unresolved |= sub_unresolved
