@@ -20,9 +20,9 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Sequence
+from typing import IO, Any, Sequence, Type
 
-from griffe.agents.extensions import Extensions
+from griffe.agents.extensions import Extension, Extensions
 from griffe.agents.extensions.base import load_extensions
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
@@ -33,12 +33,14 @@ from griffe.logger import get_logger
 logger = get_logger(__name__)
 
 
-def _print_data(data: str, output_file: str):
-    if output_file is sys.stdout:
-        print(data)
-    else:
+def _print_data(data: str, output_file: str | IO | None):
+    if isinstance(output_file, str):
         with open(output_file, "w") as fd:
             print(data, file=fd)
+    else:
+        if output_file is None:
+            output_file = sys.stdout
+        print(data, file=output_file)
 
 
 def _stats(stats):
@@ -103,13 +105,14 @@ def _stats(stats):
 
 def _load_packages(
     packages: Sequence[str],
+    *,
     extensions: Extensions | None,
-    search_paths: Sequence[str],
+    search_paths: Sequence[str | Path],
     docstring_parser: Parser | None,
-    docstring_options: dict[str, Any],
+    docstring_options: dict[str, Any] | None,
     resolve_aliases: bool = True,
-    only_exported: bool = True,
-    only_known_modules: bool = True,
+    resolve_implicit: bool = False,
+    resolve_external: bool = False,
     allow_inspection: bool = True,
 ):
     loader = GriffeLoader(
@@ -133,7 +136,7 @@ def _load_packages(
     logger.info("Finished loading packages")
     if resolve_aliases:
         logger.info("Starting alias resolution")
-        unresolved, iterations = loader.resolve_aliases(only_exported, only_known_modules)
+        unresolved, iterations = loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
         if unresolved:
             logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
         else:
@@ -150,111 +153,211 @@ def get_parser() -> argparse.ArgumentParser:
     Returns:
         The argument parser for the program.
     """
-    parser = argparse.ArgumentParser(prog="griffe", add_help=False)
-    parser.add_argument(
-        "-A",
-        "--async",
-        action="store_true",
-        help="Whether to read files on disk asynchronously. "
-        "Very large projects with many files will be processed faster. "
-        "Small projects with a few files will not see any speed up.",
-    )
-    parser.add_argument(
-        "-y",
-        "--sys-path",
-        action="store_true",
-        help="Whether to append sys.path to search paths specified with -s.",
-    )
-    parser.add_argument(
-        "-d",
-        "--docstyle",
-        default=None,
-        type=Parser,
-        help="The docstring style to parse.",
-    )
-    parser.add_argument(
-        "-D",
-        "--docopts",
-        default={},
-        type=json.loads,
-        help="The options for the docstring parser.",
-    )
-    parser.add_argument(
-        "-e",
-        "--extensions",
-        default={},
-        type=json.loads,
-        help="A list of extensions to use.",
-    )
-    parser.add_argument(
+    usage = "%(prog)s [GLOBAL_OPTS...] COMMAND [COMMAND_OPTS...]"  # noqa: WPS323 (%-formatting)
+    description = "Signatures for entire Python programs. "
+    "Extract the structure, the frame, the skeleton of your project, "
+    "to generate API documentation or find breaking changes in your API."
+    parser = argparse.ArgumentParser(add_help=False, usage=usage, description=description, prog="griffe")
+
+    main_help = "Show this help message and exit. Commands also accept the -h/--help option."
+    subcommand_help = "Show this help message and exit."
+
+    global_options = parser.add_argument_group(title="Global options")
+    global_options.add_argument("-h", "--help", action="help", help=main_help)
+
+    def add_common_options(subparser):  # noqa: WPS430
+        common_options = subparser.add_argument_group(title="Common options")
+        common_options.add_argument("-h", "--help", action="help", help=subcommand_help)
+        search_options = subparser.add_argument_group(title="Search options")
+        search_options.add_argument(
+            "-s",
+            "--search",
+            dest="search_paths",
+            action="append",
+            type=Path,
+            help="Paths to search packages into.",
+        )
+        search_options.add_argument(
+            "-y",
+            "--sys-path",
+            dest="append_sys_path",
+            action="store_true",
+            help="Whether to append sys.path to search paths specified with -s.",
+        )
+        loading_options = subparser.add_argument_group(title="Loading options")
+        loading_options.add_argument(
+            "-e",
+            "--extensions",
+            default={},
+            type=json.loads,
+            help="A list of extensions to use.",
+        )
+        loading_options.add_argument(
+            "-r",
+            "--resolve-aliases",
+            action="store_true",
+            help="Whether to resolve aliases.",
+        )
+        loading_options.add_argument(
+            "-I",
+            "--resolve-implicit",
+            action="store_true",
+            help="Whether to resolve implicitely exported aliases as well. "
+            "Aliases are explicitely exported when defined in '__all__'.",
+        )
+        loading_options.add_argument(
+            "-U",
+            "--resolve-external",
+            action="store_true",
+            help="Whether to resolve aliases pointing to external/unknown modules (not loaded directly).",
+        )
+        loading_options.add_argument(
+            "-X",
+            "--no-inspection",
+            dest="allow_inspection",
+            action="store_false",
+            default=True,
+            help="Disallow inspection of builtin/compiled/not found modules.",
+        )
+        docstring_options = subparser.add_argument_group(title="Docstrings options")
+        docstring_options.add_argument(
+            "-d",
+            "--docstyle",
+            dest="docstring_parser",
+            default=None,
+            type=Parser,
+            help="The docstring style to parse.",
+        )
+        docstring_options.add_argument(
+            "-D",
+            "--docopts",
+            dest="docstring_options",
+            default={},
+            type=json.loads,
+            help="The options for the docstring parser.",
+        )
+        debug_options = subparser.add_argument_group(title="Debugging options")
+        debug_options.add_argument(
+            "-L",
+            "--log-level",
+            metavar="LEVEL",
+            default=os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper(),
+            choices=_level_choices,
+            type=str.upper,
+            help="Set the log level: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
+        )
+        debug_options.add_argument(
+            "-S",
+            "--stats",
+            action="store_true",
+            help="Show statistics at the end.",
+        )
+
+    # ========= SUBPARSERS ========= #
+    subparsers = parser.add_subparsers(dest="subcommand", title="Commands", metavar="", prog="griffe")
+
+    def add_subparser(command: str, text: str, **kwargs) -> argparse.ArgumentParser:  # noqa: WPS430 (nested function)
+        return subparsers.add_parser(command, add_help=False, help=text, description=text, **kwargs)
+
+    # ========= DUMP PARSER ========= #
+    dump_parser = add_subparser("dump", "Load package-signatures and dump them as JSON.")
+    dump_options = dump_parser.add_argument_group(title="Dump options")
+    dump_options.add_argument("packages", metavar="PACKAGE", nargs="+", help="Packages to find, load and dump.")
+    dump_options.add_argument(
         "-f",
         "--full",
         action="store_true",
         default=False,
         help="Whether to dump full data in JSON.",
     )
-    parser.add_argument(
-        "-h",
-        "--help",
-        action="help",
-        help="Show this help message and exit.",
-    )
-    parser.add_argument(
-        "-L",
-        "--log-level",
-        metavar="LEVEL",
-        default=os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper(),
-        choices=_level_choices,
-        type=str.upper,
-        help="Set the log level: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
-    )
-    parser.add_argument(
+    dump_options.add_argument(
         "-o",
         "--output",
         default=sys.stdout,
         help="Output file. Supports templating to output each package in its own file, with {package}.",
     )
-    parser.add_argument(
-        "-r",
-        "--resolve-aliases",
-        action="store_true",
-        help="Whether to resolve aliases.",
-    )
-    parser.add_argument(
-        "-I",
-        "--resolve-implicit",
-        action="store_true",
-        help="Whether to resolve implicitely exported aliases as well. "
-        "Aliases are explicitely exported when defined in '__all__'.",
-    )
-    parser.add_argument(
-        "-U",
-        "--resolve-external",
-        action="store_true",
-        help="Whether to resolve aliases pointing to external/unknown modules (not loaded directly).",
-    )
-    parser.add_argument(
-        "-s",
-        "--search",
-        action="append",
-        type=Path,
-        help="Paths to search packages into.",
-    )
-    parser.add_argument(
-        "-S",
-        "--stats",
-        action="store_true",
-        help="Show statistics at the end.",
-    )
-    parser.add_argument(
-        "-X",
-        "--no-inspection",
-        action="store_true",
-        help="Disallow inspection of builtin/compiled/not found modules.",
-    )
+    add_common_options(dump_parser)
 
-    parser.add_argument("packages", metavar="PACKAGE", nargs="+", help="Packages to find and parse.")
     return parser
+
+
+def dump(
+    packages: Sequence[str],
+    *,
+    output: str | IO | None = None,
+    full: bool = False,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    extensions: Sequence[str | dict[str, Any] | Extension | Type[Extension]] | None = None,
+    resolve_aliases: bool = False,
+    resolve_implicit: bool = False,
+    resolve_external: bool = False,
+    search_paths: Sequence[str | Path] | None = None,
+    append_sys_path: bool = False,
+    allow_inspection: bool = True,
+    stats: bool = False,
+) -> int:
+    """Load packages data and dump it as JSON.
+
+    Parameters:
+        packages: The packages to load and dump.
+        output: Where to output the JSON-serialized data.
+        full: Whether to output full or minimal data.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        resolve_aliases: Whether to resolve aliases (indirect objects references).
+        resolve_implicit: Whether to resolve every alias or only the explicitly exported ones.
+        resolve_external: Whether to load additional, unspecified modules to resolve aliases.
+        extensions: The extensions to use.
+        search_paths: The paths to search into.
+        append_sys_path: Whether to append the contents of `sys.path` to the search paths.
+        allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        stats: Whether to compute and log stats about loading.
+
+    Returns:
+        `0` for success, `1` for failure.
+    """
+    per_package_output = False
+    if isinstance(output, str) and output.format(package="package") != output:
+        per_package_output = True
+
+    search_paths = list(search_paths) if search_paths else []
+    if append_sys_path:
+        search_paths.extend(sys.path)
+
+    try:
+        loaded_extensions = load_extensions(extensions or ())
+    except ExtensionError as error:
+        logger.error(error)
+        return 1
+
+    loader = _load_packages(
+        packages,
+        extensions=loaded_extensions,
+        search_paths=search_paths,
+        docstring_parser=docstring_parser,
+        docstring_options=docstring_options,
+        resolve_aliases=resolve_aliases,
+        resolve_implicit=resolve_implicit,
+        resolve_external=resolve_external,
+        allow_inspection=allow_inspection,
+    )
+    data_packages = loader.modules_collection.members
+
+    started = datetime.now()
+    if per_package_output:
+        for package_name, data in data_packages.items():
+            serialized = data.as_json(indent=2, full=full)
+            _print_data(serialized, output.format(package=package_name))  # type: ignore[union-attr]
+    else:
+        serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full)
+        _print_data(serialized, output)
+    elapsed = datetime.now() - started
+
+    if stats:
+        logger.info(_stats({"time_spent_serializing": elapsed.microseconds, **loader.stats()}))
+
+    return 0 if len(data_packages) == len(packages) else 1
 
 
 def main(args: list[str] | None = None) -> int:  # noqa: WPS231
@@ -270,59 +373,20 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
     """
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)
+    opts_dict = opts.__dict__
+    subcommand = opts_dict.pop("subcommand")
 
+    log_level = opts_dict.pop("log_level")
     try:
-        level = getattr(logging, opts.log_level)
+        level = getattr(logging, log_level)
     except AttributeError:
         choices = "', '".join(_level_choices)
         print(
-            f"griffe: error: env var GRIFFE_LOG_LEVEL: invalid level '{opts.log_level}' (choose from '{choices}')",
+            f"griffe: error: invalid log level '{log_level}' (choose from '{choices}')",
             file=sys.stderr,
         )
-        sys.exit(1)
-
-    logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)  # noqa: WPS323
-
-    output = opts.output
-
-    per_package_output = False
-    if isinstance(output, str) and output.format(package="package") != output:
-        per_package_output = True
-
-    search = opts.search
-    if opts.sys_path:
-        search.extend(sys.path)
-
-    try:
-        extensions = load_extensions(opts.extensions)
-    except ExtensionError as error:
-        print(f"griffe: error: {error}", file=sys.stderr)
         return 1
-
-    loader = _load_packages(
-        opts.packages,
-        extensions,
-        search,
-        opts.docstyle,
-        opts.docopts,
-        opts.resolve_aliases,
-        not opts.resolve_implicit,
-        not opts.resolve_external,
-        not opts.no_inspection,
-    )
-    packages = loader.modules_collection.members
-
-    started = datetime.now()
-    if per_package_output:
-        for package_name, data in packages.items():
-            serialized = data.as_json(indent=2, full=opts.full)
-            _print_data(serialized, output.format(package=package_name))
     else:
-        serialized = json.dumps(packages, cls=JSONEncoder, indent=2, full=opts.full)
-        _print_data(serialized, output)
-    elapsed = datetime.now() - started
+        logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)  # noqa: WPS323
 
-    if opts.stats:
-        logger.info(_stats({"time_spent_serializing": elapsed.microseconds, **loader.stats()}))
-
-    return 0 if len(packages) == len(opts.packages) else 1
+    return {"dump": dump}[subcommand](**opts_dict)
