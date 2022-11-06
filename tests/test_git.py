@@ -1,4 +1,5 @@
 """Tests for creating a griffe Module from specific commits in a git repository."""
+
 import shutil
 from pathlib import Path
 from subprocess import run  # noqa: S404
