@@ -378,7 +378,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             annotation = safe_get_annotation(node.args.vararg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
-                    f"*{node.args.vararg.arg}",
+                    node.args.vararg.arg,
                     annotation=annotation,
                     kind=ParameterKind.var_positional,
                     default="()",
@@ -408,7 +408,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             annotation = safe_get_annotation(node.args.kwarg.annotation, parent=self.current)
             parameters.add(
                 Parameter(
-                    f"**{node.args.kwarg.arg}",
+                    node.args.kwarg.arg,
                     annotation=annotation,
                     kind=ParameterKind.var_keyword,
                     default="{}",  # noqa: P103

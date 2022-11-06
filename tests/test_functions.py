@@ -112,13 +112,13 @@ def test_visit_function_variadic_params():
         function = module["f"]
         assert len(function.parameters) == 3
         param = function.parameters[0]
-        assert param.name == "*args"
+        assert param.name == "args"
         assert param.annotation.source == "str"
         assert param.annotation.full == "str"
         param = function.parameters[1]
         assert param.annotation is None
         param = function.parameters[2]
-        assert param.name == "**kwargs"
+        assert param.name == "kwargs"
         assert param.annotation.source == "int"
         assert param.annotation.full == "int"
 
