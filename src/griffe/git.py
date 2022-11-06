@@ -74,6 +74,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[Path]
 
 def load_git(
     module: str | Path,
+    *,
     commit: str = "HEAD",
     repo: str | Path = ".",
     submodules: bool = True,
