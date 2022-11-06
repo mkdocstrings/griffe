@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from griffe import cli
+from griffe import cli  # type: ignore[attr-defined]
 
 
 def test_main():
