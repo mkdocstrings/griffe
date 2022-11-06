@@ -6,6 +6,8 @@ import contextlib
 import enum
 from typing import Any, Iterable, Iterator
 
+from colorama import Fore, Style
+
 from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
 from griffe.logger import get_logger
 
@@ -14,6 +16,13 @@ KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_key
 POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
 
 logger = get_logger(__name__)
+
+
+class ExplanationStyle(enum.Enum):
+    """An enumeration of the possible styles for explanations."""
+
+    ONE_LINE: str = "oneline"
+    VERBOSE: str = "verbose"
 
 
 class BreakageKind(enum.Enum):
@@ -75,6 +84,69 @@ class Breakage:
             "new_value": self.new_value,
         }
 
+    def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+        """Explain the breakage by showing old and new value.
+
+        Parameters:
+            style: The explanation style to use.
+
+        Returns:
+            An explanation.
+        """
+        return getattr(self, f"_explain_{style.value}")()
+
+    def _relative_path(self) -> str:
+        return self.obj.canonical_path[len(self.obj.module.canonical_path) + 1 :]
+
+    def _format_location(self) -> str:
+        return f"{Style.BRIGHT}{self.obj.filepath}{Style.RESET_ALL}:{self.obj.lineno}"
+
+    def _format_title(self) -> str:
+        return self._relative_path()
+
+    def _format_kind(self) -> str:
+        return f"{Fore.YELLOW}{self.kind.value}{Fore.RESET}"
+
+    def _format_old_value(self) -> str:
+        return str(self.old_value)
+
+    def _format_new_value(self) -> str:
+        return str(self.new_value)
+
+    def _explain_oneline(self) -> str:
+        explanation = f"{self._format_location()}: {self._format_title()}: {self._format_kind()}"
+        old = self._format_old_value()
+        new = self._format_new_value()
+        if old and new:
+            change = f"{old} -> {new}"
+        elif old:
+            change = old
+        elif new:
+            change = new
+        else:
+            change = ""
+        if change:
+            return f"{explanation}: {change}"
+        return explanation
+
+    def _explain_verbose(self) -> str:
+        lines = [f"{self._format_location()}: {self._format_title()}:"]
+        kind = self._format_kind()
+        old = self._format_old_value()
+        new = self._format_new_value()
+        if old or new:
+            lines.append(f"{kind}:")
+        else:
+            lines.append(kind)
+        if old:
+            lines.append(f"  Old: {old}")
+        if new:
+            lines.append(f"  New: {new}")
+        if self.details:
+            lines.append(f"  Details: {self.details}")
+        lines.append("")
+        return "\n".join(lines)
+
 
 class ParameterMovedBreakage(Breakage):
     """Specific breakage class for moved parameters."""
@@ -87,11 +159,29 @@ class ParameterRemovedBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_REMOVED
 
+    def _format_title(self) -> str:
+        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+
+    def _format_old_value(self) -> str:
+        return ""
+
+    def _format_new_value(self) -> str:
+        return ""
+
 
 class ParameterChangedKindBreakage(Breakage):
     """Specific breakage class for parameters whose kind changed."""
 
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_KIND
+
+    def _format_title(self) -> str:
+        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+
+    def _format_old_value(self) -> str:
+        return str(self.old_value.kind.value)
+
+    def _format_new_value(self) -> str:
+        return str(self.new_value.kind.value)
 
 
 class ParameterChangedDefaultBreakage(Breakage):
@@ -99,17 +189,44 @@ class ParameterChangedDefaultBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_DEFAULT
 
+    def _format_title(self) -> str:
+        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+
+    def _format_old_value(self) -> str:
+        return str(self.old_value.default)
+
+    def _format_new_value(self) -> str:
+        return str(self.new_value.default)
+
 
 class ParameterChangedRequiredBreakage(Breakage):
     """Specific breakage class for parameters which became required."""
 
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_REQUIRED
 
+    def _format_title(self) -> str:
+        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+
+    def _format_old_value(self) -> str:
+        return ""
+
+    def _format_new_value(self) -> str:
+        return ""
+
 
 class ParameterAddedRequiredBreakage(Breakage):
     """Specific breakage class for new parameters added as required."""
 
     kind: BreakageKind = BreakageKind.PARAMETER_ADDED_REQUIRED
+
+    def _format_title(self) -> str:
+        return f"{self._relative_path()}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
+
+    def _format_old_value(self) -> str:
+        return ""
+
+    def _format_new_value(self) -> str:
+        return ""
 
 
 class ReturnChangedTypeBreakage(Breakage):
@@ -123,11 +240,23 @@ class ObjectRemovedBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.OBJECT_REMOVED
 
+    def _format_old_value(self) -> str:
+        return ""
+
+    def _format_new_value(self) -> str:
+        return ""
+
 
 class ObjectChangedKindBreakage(Breakage):
     """Specific breakage class for objects whose kind changed."""
 
     kind: BreakageKind = BreakageKind.OBJECT_CHANGED_KIND
+
+    def _format_old_value(self) -> str:
+        return self.old_value.value
+
+    def _format_new_value(self) -> str:
+        return self.new_value.value
 
 
 class AttributeChangedTypeBreakage(Breakage):
@@ -147,10 +276,16 @@ class ClassRemovedBaseBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.CLASS_REMOVED_BASE
 
+    def _format_old_value(self) -> str:
+        return "[" + ", ".join(base.full for base in self.old_value) + "]"
+
+    def _format_new_value(self) -> str:
+        return "[" + ", ".join(base.full for base in self.new_value) + "]"
+
 
 # TODO: decorators!
 def _class_incompatibilities(old_class: Class, new_class: Class, ignore_private: bool = True) -> Iterable[Breakage]:
-    yield from ()  # noqa WPS353
+    yield from ()  # noqa: WPS353
     if new_class.bases != old_class.bases:
         if len(new_class.bases) < len(old_class.bases):
             yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)

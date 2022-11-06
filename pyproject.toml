@@ -32,6 +32,7 @@ classifiers = [
 ]
 dependencies = [
     "cached-property; python_version < '3.8'",
+    "colorama>=0.4",
 ]
 
 [project.optional-dependencies]
