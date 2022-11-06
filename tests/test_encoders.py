@@ -1,4 +1,5 @@
 """Tests for the `encoders` module."""
+
 import pytest
 
 from griffe.dataclasses import Function, Module, Object
