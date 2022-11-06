@@ -258,7 +258,7 @@ class Parameters:
     def __getitem__(self, name_or_index: int | str) -> Parameter:
         if isinstance(name_or_index, int):
             return self._parameters_list[name_or_index]
-        return self._parameters_dict[name_or_index]
+        return self._parameters_dict[name_or_index.lstrip("*")]
 
     def __len__(self):
         return len(self._parameters_list)
@@ -267,7 +267,7 @@ class Parameters:
         return iter(self._parameters_list)
 
     def __contains__(self, param_name: str):
-        return param_name in self._parameters_dict
+        return param_name.lstrip("*") in self._parameters_dict
 
     def add(self, parameter: Parameter) -> None:
         """Add a parameter to the container.
