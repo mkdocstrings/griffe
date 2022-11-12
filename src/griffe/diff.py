@@ -153,6 +153,15 @@ class ParameterMovedBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_MOVED
 
+    def _format_title(self) -> str:
+        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+
+    def _format_old_value(self) -> str:
+        return ""
+
+    def _format_new_value(self) -> str:
+        return ""
+
 
 class ParameterRemovedBreakage(Breakage):
     """Specific breakage class for removed parameters."""
