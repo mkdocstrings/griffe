@@ -283,7 +283,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         Parameters:
             node: The node to inspect.
         """
-        self.handle_function(node, {"classmethod"})
+        self.handle_function(node, {"staticmethod"})
 
     def inspect_classmethod(self, node: ObjectNode) -> None:
         """Inspect a class method.
@@ -291,7 +291,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         Parameters:
             node: The node to inspect.
         """
-        self.handle_function(node, {"staticmethod"})
+        self.handle_function(node, {"classmethod"})
 
     def inspect_method_descriptor(self, node: ObjectNode) -> None:
         """Inspect a method descriptor.
