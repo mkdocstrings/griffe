@@ -37,12 +37,12 @@ def _assert_git_repo(repo: str) -> None:
 
 
 @contextmanager
-def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[Path]:
-    """Context manager that checks out `commit` in `repo` to a temporary worktree.
+def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
+    """Context manager that checks out the given reference in the given repository to a temporary worktree.
 
     Parameters:
-        commit: A "commit-ish" - such as a hash or tag.
         repo: Path to the repository (i.e. the directory *containing* the `.git` directory)
+        ref: A Git reference such as a commit, tag or branch.
 
     Yields:
         The path to the temporary worktree.
@@ -54,10 +54,10 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[Path]
     repo = str(repo)
     _assert_git_repo(repo)
     with TemporaryDirectory(prefix="griffe-worktree-") as td:
-        uid = f"griffe_{commit}"
+        uid = f"griffe_{ref}"
         target = os.path.join(td, uid)
         retval = run(  # noqa: S603,S607
-            ["git", "-C", repo, "worktree", "add", "-b", uid, target, commit],
+            ["git", "-C", repo, "worktree", "add", "-b", uid, target, ref],
             stderr=PIPE,
             stdout=PIPE,
         )
@@ -75,7 +75,7 @@ def tmp_worktree(commit: str = "HEAD", repo: str | Path = ".") -> Iterator[Path]
 def load_git(
     module: str | Path,
     *,
-    commit: str = "HEAD",
+    ref: str = "HEAD",
     repo: str | Path = ".",
     submodules: bool = True,
     extensions: Extensions | None = None,
@@ -86,17 +86,17 @@ def load_git(
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
 ) -> Module:
-    """Load and return a module from a specific git commit in `repo`.
+    """Load and return a module from a specific Git reference.
 
     This function will create a temporary
-    [git worktree](https://git-scm.com/docs/git-worktree) at the requested `commit`,
+    [git worktree](https://git-scm.com/docs/git-worktree) at the requested reference
     before loading `module` with [`griffe.load`][griffe.loader.load].
 
-    This function requires that the `git` executable be installed.
+    This function requires that the `git` executable is installed.
 
     Parameters:
         module: The module path, relative to the repository root.
-        commit: A "commit-ish" - such as a hash or tag.
+        ref: A Git reference such as a commit, tag or branch.
         repo: Path to the repository (i.e. the directory *containing* the `.git` directory)
         submodules: Whether to recurse on the submodules.
         extensions: The extensions to use.
@@ -110,7 +110,7 @@ def load_git(
     Returns:
         A loaded module.
     """
-    with tmp_worktree(commit, repo) as worktree:
+    with tmp_worktree(repo, ref) as worktree:
         search_paths = [worktree / path for path in search_paths or ["."]]
         if isinstance(module, Path):
             module = worktree / module

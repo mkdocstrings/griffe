@@ -71,8 +71,8 @@ def test_load_git(git_repo: Path):  # noqa: WPS442
     Parameters:
         git_repo: temporary git repo
     """
-    v1 = load_git(MODULE_NAME, commit="v0.1.0", repo=git_repo)
-    v2 = load_git(MODULE_NAME, commit="v0.2.0", repo=git_repo)
+    v1 = load_git(MODULE_NAME, ref="v0.1.0", repo=git_repo)
+    v2 = load_git(MODULE_NAME, ref="v0.2.0", repo=git_repo)
     assert isinstance(v1, Module)
     assert isinstance(v2, Module)
     assert v1.attributes["__version__"].value == "'0.1.0'"
@@ -86,10 +86,10 @@ def test_load_git_errors(git_repo: Path):  # noqa: WPS442
         git_repo: temporary git repo
     """
     with pytest.raises(OSError, match="Not a git repository"):
-        load_git(MODULE_NAME, commit="v0.2.0", repo="not-a-repo")
+        load_git(MODULE_NAME, ref="v0.2.0", repo="not-a-repo")
 
     with pytest.raises(RuntimeError, match="Could not create git worktre"):
-        load_git(MODULE_NAME, commit="invalid-tag", repo=git_repo)
+        load_git(MODULE_NAME, ref="invalid-tag", repo=git_repo)
 
     with pytest.raises(ModuleNotFoundError, match="No module named 'not_a_real_module'"):
-        load_git("not_a_real_module", commit="v0.2.0", repo=git_repo)
+        load_git("not_a_real_module", ref="v0.2.0", repo=git_repo)

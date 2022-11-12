@@ -453,7 +453,7 @@ def check(
 
     old_package = load_git(
         against_path,
-        commit=against,
+        ref=against,
         repo=repository,
         extensions=loaded_extensions,
         search_paths=search_paths,
@@ -462,7 +462,7 @@ def check(
     if base_ref:
         new_package = load_git(
             package,
-            commit=base_ref,
+            ref=base_ref,
             repo=repository,
             extensions=loaded_extensions,
             search_paths=search_paths,
