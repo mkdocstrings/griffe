@@ -270,7 +270,7 @@ class ModuleFinder:
                 return top_path.name
         # if not, get the highest directory with an __init__ module,
         # add its parent to search paths and return it
-        while (parent_path.parent / "__init__.py").exists():
+        while parent_path.parent != parent_path and (parent_path.parent / "__init__.py").exists():
             parent_path = parent_path.parent
         self.search_paths.insert(0, parent_path.parent)
         return parent_path.name
