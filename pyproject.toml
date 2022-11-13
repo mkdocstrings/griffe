@@ -73,6 +73,7 @@ docs = [
     "markdown-callouts>=0.2",
     "markdown-exec>=0.5",
     "toml>=0.10",
+    "rich>=12.6.0",
 ]
 format = [
     "autoflake>=1.4",

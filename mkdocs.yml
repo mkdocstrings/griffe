@@ -13,8 +13,15 @@ nav:
   - Credits: credits.md
   - License: license.md
 - Usage:
-  - usage.md
-  - Docstrings: docstrings.md
+  - CLI reference: cli_reference.md
+  - Checking for API breakages: checking.md
+  - Dumping data as JSON: dumping.md
+  - Loading and navigating data: loading.md
+  - Extensions:
+    - Using and writing extensions: extensions.md
+  - Docstrings:
+    - Supported styles: docstrings.md
+    - Parsing docstrings in Python: parsing_docstrings.md
 # defer to gen-files + literate-nav
 - Code Reference: reference/
 - Development:
@@ -31,6 +38,7 @@ theme:
   - navigation.tabs
   - navigation.tabs.sticky
   - navigation.top
+  - navigation.sections
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
@@ -74,6 +82,7 @@ plugins:
     scripts:
     - docs/gen_ref_nav.py
     - docs/gen_griffe_json.py
+    - docs/redirects.py
 - literate-nav:
     nav_file: SUMMARY.md
 - coverage

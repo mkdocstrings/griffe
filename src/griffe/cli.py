@@ -231,7 +231,7 @@ def get_parser() -> argparse.ArgumentParser:
             default=DEFAULT_LOG_LEVEL,
             choices=_level_choices,
             type=str.upper,
-            help="Set the log level: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
+            help="Set the log level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.",
         )
 
     # ========= SUBPARSERS ========= #
@@ -257,7 +257,7 @@ def get_parser() -> argparse.ArgumentParser:
         "-o",
         "--output",
         default=sys.stdout,
-        help="Output file. Supports templating to output each package in its own file, with {package}.",
+        help="Output file. Supports templating to output each package in its own file, with `{package}`.",
     )
     dump_options.add_argument(
         "-d",
@@ -280,7 +280,7 @@ def get_parser() -> argparse.ArgumentParser:
         "--sys-path",
         dest="append_sys_path",
         action="store_true",
-        help="Whether to append sys.path to search paths specified with -s.",
+        help="Whether to append `sys.path` to search paths specified with `-s`.",
     )
     dump_options.add_argument(
         "-r",
@@ -293,7 +293,7 @@ def get_parser() -> argparse.ArgumentParser:
         "--resolve-implicit",
         action="store_true",
         help="Whether to resolve implicitely exported aliases as well. "
-        "Aliases are explicitely exported when defined in '__all__'.",
+        "Aliases are explicitely exported when defined in `__all__`.",
     )
     dump_options.add_argument(
         "-U",

@@ -26,10 +26,10 @@ pipx install griffe
 
 ## Usage
 
-**On the command line**, pass the names of packages to the `griffe` command:
+**On the command line**, pass the names of packages to the `griffe dump` command:
 
 ```console
-$ griffe httpx fastapi
+$ griffe dump httpx fastapi
 [
   {
     "name": "httpx",
@@ -38,15 +38,46 @@ $ griffe httpx fastapi
 ]
 ```
 
+Or pass a relative path to the `griffe check` command:
+
+```console
+$ griffe check mypackage --verbose
+mypackage/mymodule.py:10: MyClass.mymethod(myparam):
+Parameter kind was changed:
+  Old: positional or keyword
+  New: keyword-only
+```
+
+For `src` layouts:
+
+```console
+$ griffe check --search src mypackage --verbose
+src/mypackage/mymodule.py:10: MyClass.mymethod(myparam):
+Parameter kind was changed:
+  Old: positional or keyword
+  New: keyword-only
+```
+
 See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#on-the-command-line) for more examples.
 
-**With Python:**
+**With Python**, loading a package:
 
 ```python
-from griffe.loader import GriffeLoader
+import griffe
 
-griffe = GriffeLoader()
-fastapi = griffe.load_module("fastapi")
+fastapi = griffe.load("fastapi")
+```
+
+Finding breaking changes:
+
+```python
+import griffe
+
+previous = griffe.load_git("mypackage", ref="0.2.0")
+current = griffe.load("mypackage")
+
+for breakage in griffe.find_breaking_changes(previous, current):
+    ...
 ```
 
 See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#with-python) for more examples.
