@@ -38,6 +38,8 @@ $ griffe dump httpx fastapi
 ]
 ```
 
+See [the Dumping data section](https://mkdocstrings.github.io/griffe/dumping/) for more examples.
+
 Or pass a relative path to the `griffe check` command:
 
 ```console
@@ -58,7 +60,7 @@ Parameter kind was changed:
   New: keyword-only
 ```
 
-See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#on-the-command-line) for more examples.
+See [the API breakage section](https://mkdocstrings.github.io/griffe/checking/) for more examples.
 
 **With Python**, loading a package:
 
@@ -80,7 +82,7 @@ for breakage in griffe.find_breaking_changes(previous, current):
     ...
 ```
 
-See [the Usage section](https://mkdocstrings.github.io/griffe/usage/#with-python) for more examples.
+See [the Loading data section](https://mkdocstrings.github.io/griffe/loading/) for more examples.
 
 ## Todo
 
