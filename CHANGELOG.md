@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.24.1](https://github.com/mkdocstrings/griffe/releases/tag/0.24.1) - 2022-11-18
+
+<small>[Compare with 0.24.0](https://github.com/mkdocstrings/griffe/compare/0.24.0...0.24.1)</small>
+
+### Bug Fixes
+- Support nested namespace packages ([d571f8f](https://github.com/mkdocstrings/griffe/commit/d571f8f726d50b34c84fbdaa6db3b2059cfe9dec) by Timothée Mazzucotelli).
+
+
 ## [0.24.0](https://github.com/mkdocstrings/griffe/releases/tag/0.24.0) - 2022-11-13
 
 <small>[Compare with 0.23.0](https://github.com/mkdocstrings/griffe/compare/0.23.0...0.24.0)</small>
