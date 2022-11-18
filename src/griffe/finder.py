@@ -11,9 +11,11 @@ from typing import Iterator, Sequence, Tuple
 
 from griffe.dataclasses import Module
 from griffe.exceptions import UnhandledEditablesModuleError
+from griffe.logger import get_logger
 
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
+logger = get_logger(__name__)
 
 
 class Package:
@@ -156,19 +158,31 @@ class ModuleFinder:
 
         raise ModuleNotFoundError(module_name)
 
-    def iter_submodules(self, path: Path | list[Path]) -> Iterator[NamePartsAndPathType]:  # noqa: WPS231,WPS234
+    def iter_submodules(  # noqa: WPS231,WPS234
+        self,
+        path: Path | list[Path],
+        seen: set | None = None,
+    ) -> Iterator[NamePartsAndPathType]:
         """Iterate on a module's submodules, if any.
 
         Parameters:
             path: The module path.
+            seen: If not none, this set is used to skip some files.
+                The goal is to replicate the behavior of Python by
+                only using the first packages (with `__init__` modules)
+                of the same name found in different namespace packages.
+                As soon as we find an `__init__` module, we add its parent
+                path to the `seen` set, which will be reused when scanning
+                the next namespace packages.
 
         Yields:
             name_parts (tuple[str, ...]): The parts of a submodule name.
             filepath (Path): A submodule filepath.
         """
         if isinstance(path, list):
+            seen = set()
             for path_elem in path:
-                yield from self.iter_submodules(path_elem)
+                yield from self.iter_submodules(path_elem, seen)
             return
 
         if path.stem == "__init__":
@@ -179,8 +193,12 @@ class ModuleFinder:
         elif path.suffix in self.extensions_set:
             return
 
+        skip = set(seen) if seen else set()
         for subpath in self._filter_py_modules(path):
             rel_subpath = subpath.relative_to(path)
+            if rel_subpath.parent in skip:
+                logger.debug(f"Skip {subpath}, another module took precedence")
+                continue
             py_file = rel_subpath.suffix == ".py"
             stem = rel_subpath.stem
             if not py_file:
@@ -194,6 +212,8 @@ class ModuleFinder:
                 if len(rel_subpath.parts) == 1:
                     continue
                 yield rel_subpath.parts[:-1], subpath
+                if seen is not None:
+                    seen.add(rel_subpath.parent)
             elif py_file:
                 yield rel_subpath.with_suffix("").parts, subpath
             else:
