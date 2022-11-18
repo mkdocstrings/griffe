@@ -61,16 +61,16 @@ def temporary_pypackage(package: str, modules: list[str] | None = None) -> Itera
         package_name = ".".join(Path(package).parts)
         package_path = tmpdirpath / package
         package_path.mkdir(**mkdir_kwargs)
-        (package_path / "__init__.py").touch()
+        package_path.joinpath("__init__.py").touch()
         for module in modules:
             current_path = package_path
             for part in Path(module).parts:
                 if part.endswith(".py") or part.endswith(".pyi"):
-                    (current_path / part).touch()
+                    current_path.joinpath(part).touch()
                 else:
                     current_path /= part
                     current_path.mkdir(**mkdir_kwargs)
-                    (current_path / "__init__.py").touch()
+                    current_path.joinpath("__init__.py").touch()
         yield TmpPackage(tmpdirpath, package_name, package_path)
 
 
