@@ -973,13 +973,9 @@ class Alias(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        try:
-            return self._target is not None and (not self._target.is_alias or self._target.resolved)  # type: ignore[union-attr]
-        except RecursionError as e:
-            import warnings
-
-            warnings.warn(f"Cyclic aliases detected : {self.target_path}")
+        if getattr(self._target, "_target", None) is self:  # circular alias
             return False
+        return self._target is not None and (not self._target.is_alias or self._target.resolved)  # type: ignore[union-attr]
 
     @cached_property
     def wildcard(self) -> str | None:
