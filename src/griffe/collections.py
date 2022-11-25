@@ -7,7 +7,7 @@ from collections import defaultdict
 from functools import lru_cache
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ItemsView, KeysView, ValuesView
 
 from griffe.mixins import GetMembersMixin, SetMembersMixin
 
@@ -31,17 +31,29 @@ class LinesCollection:
     def __bool__(self) -> bool:
         return True
 
-    def __getattr__(self, name: str, default: Any = None) -> Any:
-        """Lookup attributes into underlying dict.
-
-        Parameters:
-            name: The attribute name.
-            default: A default value.
+    def keys(self) -> KeysView:
+        """Return the collection keys.
 
         Returns:
-            The attribute of the underlying dict.
+            The collection keys.
         """
-        return getattr(self._data, name, default)
+        return self._data.keys()
+
+    def values(self) -> ValuesView:
+        """Return the collection values.
+
+        Returns:
+            The collection values.
+        """
+        return self._data.values()
+
+    def items(self) -> ItemsView:
+        """Return the collection items.
+
+        Returns:
+            The collection items.
+        """
+        return self._data.items()
 
     # TODO: remove once Python 3.7 support is dropped
     @lru_cache(maxsize=None)  # noqa: B019

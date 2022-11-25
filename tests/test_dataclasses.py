@@ -1,5 +1,7 @@
 """Tests for the `dataclasses` module."""
 
+from copy import deepcopy
+
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
 from tests.helpers import module_vtree, temporary_pypackage
@@ -57,3 +59,12 @@ def test_has_docstrings_does_not_trigger_alias_resolution():
         package = loader.load_module(tmp_package.name)
         assert not package.has_docstrings
         assert not package["mod_a.someobj"].resolved
+
+
+def test_deepcopy():
+    """Assert we can deep-copy object trees."""
+    loader = GriffeLoader()
+    mod = loader.load_module("griffe")
+
+    deepcopy(mod)
+    deepcopy(mod.as_dict())

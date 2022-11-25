@@ -13,7 +13,7 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Callable, cast
+from typing import Any, Callable, Union, cast
 
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.docstrings.dataclasses import DocstringSection
@@ -318,7 +318,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     kind: Kind
     is_alias: bool = False
-    is_collection = False
+    is_collection: bool = False
 
     def __init__(
         self,
@@ -754,7 +754,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return blockfinder.last
 
 
-class Alias(ObjectAliasMixin):
+class Alias(ObjectAliasMixin):  # noqa: WPS338
     """This class represents an alias, or indirection, to an object declared in another module.
 
     Aliases represent objects that are in the scope of a module or class,
@@ -777,6 +777,7 @@ class Alias(ObjectAliasMixin):
     """
 
     is_alias: bool = True
+    is_collection: bool = False
 
     def __init__(
         self,
@@ -818,19 +819,6 @@ class Alias(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"<Alias({self.name!r}, {self.target_path!r})>"
 
-    def __getattr__(self, name: str) -> Any:
-        # forward everything to the target
-        if self._passed_through:
-            raise CyclicAliasError([self.target_path])
-        self._passed_through = True
-        try:
-            attr = getattr(self.target, name)
-        except CyclicAliasError as error:
-            raise CyclicAliasError([self.target_path] + error.chain)
-        finally:
-            self._passed_through = False
-        return attr
-
     def __getitem__(self, key):
         # not handled by __getattr__
         return self.target[key]
@@ -841,6 +829,8 @@ class Alias(ObjectAliasMixin):
 
     def __len__(self) -> int:
         return 1
+
+    # SPECIAL PROXIES -------------------------------
 
     @property
     def kind(self) -> Kind:
@@ -921,6 +911,155 @@ class Alias(ObjectAliasMixin):
         """
         # no need to forward to the target
         return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
+
+    # GENERIC OBJECT PROXIES --------------------------------
+
+    @property
+    def docstring(self):  # noqa: D102
+        return self.target.docstring
+
+    @property
+    def members(self):  # noqa: D102
+        return self.target.members
+
+    @property
+    def labels(self):  # noqa: D102
+        return self.target.labels
+
+    @property
+    def imports(self):  # noqa: D102
+        return self.target.imports
+
+    @property
+    def exports(self):  # noqa: D102
+        return self.target.exports
+
+    @property
+    def aliases(self):  # noqa: D102
+        return self.target.aliases
+
+    def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:  # noqa: D102
+        return self.target.member_is_exported(member, explicitely)
+
+    def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
+        return self.target.is_kind(kind)
+
+    @property
+    def is_module(self):  # noqa: D102
+        return self.target.is_module
+
+    @property
+    def is_class(self):  # noqa: D102
+        return self.target.is_class
+
+    @property
+    def is_function(self):  # noqa: D102
+        return self.target.is_function
+
+    @property
+    def is_attribute(self):  # noqa: D102
+        return self.target.is_attribute
+
+    def has_labels(self, labels: set[str]) -> bool:  # noqa: D102
+        return self.target.has_labels(labels)
+
+    def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:  # noqa: D102
+        return self.target.filter_members(*predicates)
+
+    @property
+    def modules(self):  # noqa: D102
+        return self.target.modules
+
+    @property
+    def classes(self):  # noqa: D102
+        return self.target.classes
+
+    @property
+    def functions(self):  # noqa: D102
+        return self.target.functions
+
+    @property
+    def attributes(self):  # noqa: D102
+        return self.target.attributes
+
+    @property
+    def module(self):  # noqa: D102
+        return self.target.module
+
+    @property
+    def package(self):  # noqa: D102
+        return self.target.package
+
+    @property
+    def filepath(self):  # noqa: D102
+        return self.target.filepath
+
+    @property
+    def relative_filepath(self):  # noqa: D102
+        return self.target.relative_filepath
+
+    @property
+    def canonical_path(self):  # noqa: D102
+        return self.target.canonical_path
+
+    @property
+    def lines_collection(self):  # noqa: D102
+        return self.target.lines_collection
+
+    @property
+    def lines(self):  # noqa: D102
+        return self.target.lines
+
+    @property
+    def source(self):  # noqa: D102
+        return self.target.source
+
+    def resolve(self, name: str) -> str:  # noqa: D102
+        return self.target.resolve(name)
+
+    # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
+
+    @property
+    def _filepath(self) -> Path | list[Path] | None:  # noqa: D102
+        return cast(Module, self.target)._filepath  # noqa: WPS437
+
+    @property
+    def bases(self) -> list[Name | Expression | str]:  # noqa: D102
+        return cast(Class, self.target).bases
+
+    @property
+    def decorators(self) -> list[Decorator]:  # noqa: D102
+        return cast(Union[Class, Function], self.target).decorators
+
+    @property
+    def overloads(self) -> dict[str, list[Function]] | list[Function] | None:  # noqa: D102
+        return cast(Union[Module, Class, Function], self.target).overloads
+
+    @property
+    def parameters(self) -> Parameters:  # noqa: D102
+        return cast(Function, self.target).parameters
+
+    @property
+    def returns(self) -> str | Name | Expression | None:  # noqa: D102
+        return cast(Function, self.target).returns
+
+    @property
+    def setter(self) -> Function | None:  # noqa: D102
+        return cast(Function, self.target).setter
+
+    @property
+    def deleter(self) -> Function | None:  # noqa: D102
+        return cast(Function, self.target).deleter
+
+    @property
+    def value(self) -> str | None:  # noqa: D102
+        return cast(Attribute, self.target).value
+
+    @property
+    def annotation(self) -> str | Name | Expression | None:  # noqa: D102
+        return cast(Attribute, self.target).annotation
+
+    # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
 
     @property
     def target(self) -> Object | Alias:
