@@ -428,21 +428,22 @@ class GriffeLoader:
 
     def _load_submodule(self, module: Module, subparts: tuple[str, ...], subpath: Path) -> None:
         try:
-            member_parent = self._member_parent(module, subparts, subpath)
+            parent_module = self._get_or_create_parent_module(module, subparts, subpath)
         except UnimportableModuleError as error:
             # TODO: maybe add option to still load them
             # TODO: maybe increase level to WARNING
             logger.debug(f"{error}. Missing __init__ module?")
             return
+        submodule_name = subparts[-1]
+        if "." in submodule_name:
+            logger.debug(f"Skip {subpath}, dots in filenames are not supported")
+            return
         try:
-            member_parent[subparts[-1]] = self._load_module(
-                subparts[-1], subpath, submodules=False, parent=member_parent
+            parent_module[submodule_name] = self._load_module(
+                submodule_name, subpath, submodules=False, parent=parent_module
             )
         except LoadingError as error:  # noqa: WPS440
             logger.debug(str(error))
-        except KeyError:
-            if "." in subparts[-1]:
-                logger.debug(f"Skip {subpath}, dots in filenames are not supported")
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:
         return Module(
@@ -492,23 +493,35 @@ class GriffeLoader:
         self._time_stats["time_spent_inspecting"] += elapsed.microseconds
         return module
 
-    def _member_parent(self, module: Module, subparts: tuple[str, ...], subpath: Path) -> Module:
+    def _get_or_create_parent_module(  # noqa: WPS231
+        self,
+        module: Module,
+        subparts: tuple[str, ...],
+        subpath: Path,
+    ) -> Module:
         parent_parts = subparts[:-1]
-        try:
-            return module[parent_parts]
-        except ValueError:
+        if not parent_parts:
             return module
-        except KeyError:
-            if module.is_namespace_package or module.is_namespace_subpackage:
-                member_parent = Module(
-                    subparts[0],
-                    filepath=subpath.parent,
-                    lines_collection=self.lines_collection,
-                    modules_collection=self.modules_collection,
-                )
-                module[parent_parts] = member_parent
-                return member_parent
-        raise UnimportableModuleError(f"{subpath} is not importable")
+        parent_module = module
+        parents = list(subpath.parents)
+        if subpath.stem == "__init__":
+            parents.pop(0)
+        for parent_offset, parent_part in enumerate(parent_parts, 2):
+            module_filepath = parents[len(subparts) - parent_offset]
+            try:
+                parent_module = parent_module[parent_part]
+            except KeyError:
+                if parent_module.is_namespace_package or parent_module.is_namespace_subpackage:
+                    next_parent_module = self._create_module(parent_part, [module_filepath])
+                    parent_module[parent_part] = next_parent_module
+                    parent_module = next_parent_module
+                else:
+                    raise UnimportableModuleError(f"Skip {subpath}, it is not importable")
+            else:
+                if parent_module.is_namespace_package or parent_module.is_namespace_subpackage:
+                    if module_filepath not in parent_module.filepath:  # type: ignore[operator]
+                        parent_module.filepath.append(module_filepath)  # type: ignore[union-attr]
+        return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
         module = self.modules_collection[wildcard_obj.wildcard]  # type: ignore[index]  # we know it's a wildcard

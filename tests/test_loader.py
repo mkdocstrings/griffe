@@ -264,3 +264,71 @@ def test_skip_modules_with_dots_in_filename(caplog):
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
         loader.load_module("package")
     assert any("gunicorn.conf.py" in record.message and record.levelname == "DEBUG" for record in caplog.records)
+
+
+def test_nested_namespace_packages():
+    """Load a deeply nested namespace package."""
+    with temporary_pypackage("a/b/c/d", ["mod.py"]) as tmp_folder:
+        loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
+        a_package = loader.load_module("a")
+        assert "b" in a_package.members
+        b_package = a_package.members["b"]
+        assert "c" in b_package.members
+        c_package = b_package.members["c"]
+        assert "d" in c_package.members
+        d_package = c_package.members["d"]
+        assert "mod" in d_package.members
+
+
+def test_multiple_nested_namespace_packages():
+    """Load a deeply nested namespace package appearing in several places."""
+    with temporary_pypackage("a/b/c/d", ["mod1.py"], init=False) as tmp_ns1:
+        with temporary_pypackage("a/b/c/d", ["mod2.py"], init=False) as tmp_ns2:
+            with temporary_pypackage("a/b/c/d", ["mod3.py"], init=False) as tmp_ns3:
+                tmp_namespace_pkgs = [tmp_ns.tmpdir for tmp_ns in (tmp_ns1, tmp_ns2, tmp_ns3)]
+                loader = GriffeLoader(search_paths=tmp_namespace_pkgs)
+
+                a_package = loader.load_module("a")
+                for tmp_ns in tmp_namespace_pkgs:
+                    assert tmp_ns.joinpath("a") in a_package.filepath
+                assert "b" in a_package.members
+
+                b_package = a_package.members["b"]
+                for tmp_ns in tmp_namespace_pkgs:  # noqa: WPS440
+                    assert tmp_ns.joinpath("a/b") in b_package.filepath
+                assert "c" in b_package.members
+
+                c_package = b_package.members["c"]
+                for tmp_ns in tmp_namespace_pkgs:  # noqa: WPS440
+                    assert tmp_ns.joinpath("a/b/c") in c_package.filepath
+                assert "d" in c_package.members
+
+                d_package = c_package.members["d"]
+                for tmp_ns in tmp_namespace_pkgs:  # noqa: WPS440
+                    assert tmp_ns.joinpath("a/b/c/d") in d_package.filepath
+                assert "mod1" in d_package.members
+                assert "mod2" in d_package.members
+                assert "mod3" in d_package.members
+
+
+def test_stop_at_first_package_inside_namespace_package():
+    """Stop loading similar paths once we found a non-namespace package."""
+    with temporary_pypackage("a/b/c/d", ["mod1.py"], init=True) as tmp_ns1:
+        with temporary_pypackage("a/b/c/d", ["mod2.py"], init=True) as tmp_ns2:
+            tmp_namespace_pkgs = [tmp_ns.tmpdir for tmp_ns in (tmp_ns1, tmp_ns2)]
+            loader = GriffeLoader(search_paths=tmp_namespace_pkgs)
+
+            a_package = loader.load_module("a")
+            assert "b" in a_package.members
+
+            b_package = a_package.members["b"]
+            assert "c" in b_package.members
+
+            c_package = b_package.members["c"]
+            assert "d" in c_package.members
+
+            d_package = c_package.members["d"]
+            assert d_package.is_subpackage
+            assert d_package.filepath == tmp_ns1.tmpdir.joinpath("a/b/c/d/__init__.py")
+            assert "mod1" in d_package.members
+            assert "mod2" not in d_package.members

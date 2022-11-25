@@ -39,15 +39,17 @@ TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
 
 
 @contextmanager
-def temporary_pypackage(package: str, modules: list[str] | None = None) -> Iterator[TmpPackage]:
+def temporary_pypackage(package: str, modules: list[str] | None = None, init: bool = True) -> Iterator[TmpPackage]:
     """Create a module.py file containing the given code in a temporary directory.
 
     Parameters:
         package: The package name. Example: `"a"` gives
             a package named `a`, while `"a/b"` gives a namespace package
             named `a` with a package inside named `b`.
+            If `init` is false, then `b` is also a namespace package.
         modules: Additional modules to create in the package,
             like '["b.py", "c/d.py", "e/f"]`.
+        init: Whether to create an `__init__` module in the leaf package.
 
     Yields:
         tmp_dir: The temporary directory containing the package.
@@ -61,16 +63,17 @@ def temporary_pypackage(package: str, modules: list[str] | None = None) -> Itera
         package_name = ".".join(Path(package).parts)
         package_path = tmpdirpath / package
         package_path.mkdir(**mkdir_kwargs)
-        (package_path / "__init__.py").touch()
+        if init:
+            package_path.joinpath("__init__.py").touch()
         for module in modules:
             current_path = package_path
             for part in Path(module).parts:
                 if part.endswith(".py") or part.endswith(".pyi"):
-                    (current_path / part).touch()
+                    current_path.joinpath(part).touch()
                 else:
                     current_path /= part
                     current_path.mkdir(**mkdir_kwargs)
-                    (current_path / "__init__.py").touch()
+                    current_path.joinpath("__init__.py").touch()
         yield TmpPackage(tmpdirpath, package_name, package_path)
 
 
