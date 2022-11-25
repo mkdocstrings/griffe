@@ -318,7 +318,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     kind: Kind
     is_alias: bool = False
-    is_collection = False
+    is_collection: bool = False
 
     def __init__(
         self,
@@ -777,6 +777,7 @@ class Alias(ObjectAliasMixin):
     """
 
     is_alias: bool = True
+    is_collection: bool = False
 
     def __init__(
         self,
@@ -818,18 +819,18 @@ class Alias(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"<Alias({self.name!r}, {self.target_path!r})>"
 
-    def __getattr__(self, name: str) -> Any:
-        # forward everything to the target
-        if self._passed_through:
-            raise CyclicAliasError([self.target_path])
-        self._passed_through = True
-        try:
-            attr = getattr(self.target, name)
-        except CyclicAliasError as error:
-            raise CyclicAliasError([self.target_path] + error.chain)
-        finally:
-            self._passed_through = False
-        return attr
+    # def __getattr__(self, name: str) -> Any:
+    #     # forward everything to the target
+    #     if self._passed_through:
+    #         raise CyclicAliasError([self.target_path])
+    #     self._passed_through = True
+    #     try:
+    #         attr = getattr(self.target, name)
+    #     except CyclicAliasError as error:
+    #         raise CyclicAliasError([self.target_path] + error.chain)
+    #     finally:
+    #         self._passed_through = False
+    #     return attr
 
     def __getitem__(self, key):
         # not handled by __getattr__
@@ -841,6 +842,8 @@ class Alias(ObjectAliasMixin):
 
     def __len__(self) -> int:
         return 1
+
+    # SPECIAL PROXIES -------------------------------
 
     @property
     def kind(self) -> Kind:
@@ -921,6 +924,155 @@ class Alias(ObjectAliasMixin):
         """
         # no need to forward to the target
         return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
+
+    # GENERIC OBJECT PROXIES --------------------------------
+
+    @property
+    def docstring(self):
+        return self.target.docstring
+
+    @property
+    def members(self):
+        return self.target.members
+
+    @property
+    def labels(self):
+        return self.target.labels
+
+    @property
+    def imports(self):
+        return self.target.imports
+
+    @property
+    def exports(self):
+        return self.target.exports
+
+    @property
+    def aliases(self):
+        return self.target.aliases
+
+    # @property
+    # def runtime(self):
+    #     return self.target.runtime
+
+    def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:
+        return self.target.member_is_exported(member, explicitely)
+
+    def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
+        return self.target.is_kind(kind)
+
+    @property
+    def is_module(self):
+        return self.target.is_module
+
+    @property
+    def is_class(self):
+        return self.target.is_class
+
+    @property
+    def is_function(self):
+        return self.target.is_function
+
+    @property
+    def is_attribute(self):
+        return self.target.is_attribute
+
+    def has_labels(self, labels: set[str]) -> bool:
+        return self.target.has_labels(labels)
+
+    def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
+        return self.target.filter_members(*predicates)
+
+    @property
+    def modules(self):
+        return self.target.modules
+
+    @property
+    def classes(self):
+        return self.target.classes
+
+    @property
+    def functions(self):
+        return self.target.functions
+
+    @property
+    def attributes(self):
+        return self.target.attributes
+
+    @property
+    def module(self):
+        return self.target.module
+
+    @property
+    def package(self):
+        return self.target.package
+
+    @property
+    def filepath(self):
+        return self.target.filepath
+
+    @property
+    def relative_filepath(self):
+        return self.target.relative_filepath
+
+    @property
+    def canonical_path(self):
+        return self.target.canonical_path
+
+    @property
+    def lines_collection(self):
+        return self.target.lines_collection
+
+    @property
+    def lines(self):
+        return self.target.lines
+
+    @property
+    def source(self):
+        return self.target.source
+
+    @property
+    def resolve(self, name: str) -> str:
+        return self.target.resolve(name)
+
+    # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES --------------------------------
+    @property
+    def bases(self) -> list[Name | Expression | str]:
+        return self.target.bases
+
+    @property
+    def decorators(self) -> list[Decorator]:
+        return self.target.decorators
+
+    @property
+    def overloads(self) -> dict[str, list[Function]] | list[Function] | None:
+        return self.target.overloads
+
+    @property
+    def parameters(self) -> Parameters:
+        return self.target.parameters
+
+    @property
+    def returns(self) -> str | Name | Expression | None:
+        return self.target.returns
+
+    @property
+    def setter(self) -> Function | None:
+        return self.target.setter
+
+    @property
+    def deleter(self) -> Function | None:
+        return self.target.deleter
+
+    @property
+    def value(self) -> str | None:
+        return self.target.value
+
+    @property
+    def annotation(self) -> str | Name | Expression | None:
+        return self.target.annotation
+
+    # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
 
     @property
     def target(self) -> Object | Alias:
