@@ -819,19 +819,6 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     def __repr__(self) -> str:
         return f"<Alias({self.name!r}, {self.target_path!r})>"
 
-    # def __getattr__(self, name: str) -> Any:
-    #     # forward everything to the target
-    #     if self._passed_through:
-    #         raise CyclicAliasError([self.target_path])
-    #     self._passed_through = True
-    #     try:
-    #         attr = getattr(self.target, name)
-    #     except CyclicAliasError as error:
-    #         raise CyclicAliasError([self.target_path] + error.chain)
-    #     finally:
-    #         self._passed_through = False
-    #     return attr
-
     def __getitem__(self, key):
         # not handled by __getattr__
         return self.target[key]
@@ -1030,7 +1017,8 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     def resolve(self, name: str) -> str:  # noqa: D102
         return self.target.resolve(name)
 
-    # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES --------------------------------
+    # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
+
     @property
     def _filepath(self) -> Path | list[Path] | None:  # noqa: D102
         return cast(Module, self.target)._filepath  # noqa: WPS437
