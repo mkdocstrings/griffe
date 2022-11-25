@@ -392,11 +392,14 @@ def _member_incompatibilities(  # noqa: WPS231
 ) -> Iterator[Breakage]:
     for name, old_member in old_obj.members.items():
         if ignore_private and name.startswith("_"):
+            logger.debug(f"API check: {old_obj.path}.{name}: skip private object")
             continue
 
         if old_member.is_alias:
+            logger.debug(f"API check: {old_obj.path}.{name}: skip alias")
             continue  # TODO
 
+        logger.debug(f"API check: {old_obj.path}.{name}")
         try:
             new_member = new_obj.members[name]
         except KeyError:
