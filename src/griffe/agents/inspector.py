@@ -93,6 +93,12 @@ def inspect(
 
 
 _compiled_modules = {*sys.builtin_module_names, "_socket", "_struct"}
+_cyclic_relationships = {
+    ("os", "nt"),
+    ("os", "posix"),
+    ("numpy.core._multiarray_umath", "numpy.core.multiarray"),
+    ("pymmcore._pymmcore_swig", "pymmcore.pymmcore_swig"),
+}
 
 
 def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_path: str) -> str | None:
@@ -117,16 +123,7 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
         # special cases: inspect.getmodule does not return the real modules
         # for those, but rather the "user-facing" ones - we prevent that
         # and use the real parent module
-        # TODO: if the list grows, it should probably be moved
-        # in a separate function (also I don't like having to deal
-        # with third-party libraries here directly...)
-        trust_inspect = not (
-            parent_module_name in {"posix", "nt"}
-            and child_module_name == "os"
-            or parent_module_name == "numpy.core._multiarray_umath"
-            and child_module_name == "numpy.core.multiarray"
-        )
-        if not trust_inspect:
+        if (parent_module_name, child_module_name) in _cyclic_relationships:
             child_module = parent_module
 
     child_module_path = child_module.__name__
