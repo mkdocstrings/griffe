@@ -70,7 +70,7 @@ class SetMembersMixin(DelMembersMixin):
                     # when reassigning a module to an existing one,
                     # try to merge them as one regular and one stubs module
                     # (implicit support for .pyi modules)
-                    if member.is_module:
+                    if member.is_module and not (member.is_namespace_package or member.is_namespace_subpackage):
                         with suppress(AliasResolutionError, CyclicAliasError):
                             if value.is_module:
                                 logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")

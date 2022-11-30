@@ -132,7 +132,8 @@ class GriffeLoader:
                 logger.debug(f"Inspecting {module}")
                 module_name = module  # type: ignore[assignment]
                 top_module = self._inspect_module(module)  # type: ignore[arg-type]
-                return self._store_and_return(module_name, top_module)
+                self.modules_collection[top_module.path] = top_module
+                return self.modules_collection[module_name]  # type: ignore[index]
             raise LoadingError("Cannot load builtin module without inspection")
         try:  # noqa: WPS503
             module_name, package = self.finder.find_spec(module, try_relative_path)
@@ -151,7 +152,7 @@ class GriffeLoader:
             except LoadingError as error:  # noqa: WPS440
                 logger.error(str(error))
                 raise
-        return self._store_and_return(module_name, top_module)
+        return self.modules_collection[module_name]  # type: ignore[index]
 
     def resolve_aliases(  # noqa: WPS231
         self,
@@ -370,15 +371,13 @@ class GriffeLoader:
         """
         return {**stats(self), **self._time_stats}
 
-    def _store_and_return(self, name: str, module: Module) -> Module:
-        self.modules_collection[module.path] = module
-        return self.modules_collection[name]  # type: ignore[index]
-
     def _load_package(self, package: Package | NamespacePackage, submodules: bool = True) -> Module:
         top_module = self._load_module(package.name, package.path, submodules=submodules)
+        self.modules_collection[top_module.path] = top_module
         if isinstance(package, NamespacePackage):
             return top_module
         if package.stubs:
+            self.expand_wildcards(top_module)
             stubs = self._load_module(package.name, package.stubs, submodules=False)
             return merge_stubs(top_module, stubs)
         return top_module
