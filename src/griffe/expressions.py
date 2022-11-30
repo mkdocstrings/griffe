@@ -29,8 +29,12 @@ class Name:
             self._full = ""
             self._resolver = full
 
-    def __eq__(self, other: Name | Expression) -> bool:  # type: ignore[override]
-        return self.full == other.full  # noqa: WPS437
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, str):
+            return self.full == other or self.brief == other
+        if isinstance(other, (Name, Expression)):
+            return self.full == other.full  # noqa: WPS437
+        raise NotImplementedError(f"uncomparable types: {type(self)} and {type(other)}")
 
     def __repr__(self) -> str:
         return f"Name(source={self.source!r}, full={self.full!r})"
