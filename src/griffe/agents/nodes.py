@@ -327,8 +327,6 @@ class ObjectNode:
             return ObjectKind.STATICMETHOD
         if self.is_classmethod:
             return ObjectKind.CLASSMETHOD
-        if self.is_method_descriptor:
-            return ObjectKind.METHOD_DESCRIPTOR
         if self.is_method:
             return ObjectKind.METHOD
         if self.is_builtin_method:
@@ -343,6 +341,8 @@ class ObjectNode:
             return ObjectKind.CACHED_PROPERTY
         if self.is_property:
             return ObjectKind.PROPERTY
+        if self.is_method_descriptor:
+            return ObjectKind.METHOD_DESCRIPTOR
         return ObjectKind.ATTRIBUTE
 
     @cached_property

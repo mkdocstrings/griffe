@@ -260,3 +260,24 @@ def test_get_correct_docstring_starting_line_number():
         assert module.docstring.lineno == 2
         assert module["C"].docstring.lineno == 6
         assert module["C.method"].docstring.lineno == 10
+
+
+def test_visit_properties_as_attributes():
+    """Assert properties are created as attributes and not functions."""
+    with temporary_visited_module(
+        """
+        from functools import cached_property
+
+        class C:
+            @property
+            def prop(self) -> bool:
+                return True
+            @cached_property
+            def cached_prop(self) -> int:
+                return 0
+        """
+    ) as module:
+        assert module["C.prop"].is_attribute
+        assert "property" in module["C.prop"].labels
+        assert module["C.cached_prop"].is_attribute
+        assert "cached" in module["C.cached_prop"].labels

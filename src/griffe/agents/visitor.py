@@ -57,6 +57,7 @@ stdlib_decorators = {
     "abc.abstractmethod": {"abstractmethod"},
     "functools.cache": {"cached"},
     "functools.cached_property": {"cached", "property"},
+    "cached_property.cached_property": {"cached", "property"},
     "functools.lru_cache": {"cached"},
     "dataclasses.dataclass": {"dataclass"},
 }
@@ -335,6 +336,21 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             lineno = node.lineno
 
         labels |= self.decorators_to_labels(decorators)
+
+        if "property" in labels:
+            attribute = Attribute(
+                name=node.name,
+                value=None,
+                annotation=safe_get_annotation(node.returns, parent=self.current),
+                lineno=node.lineno,
+                endlineno=node.end_lineno,  # type: ignore[union-attr]
+                docstring=self._get_docstring(node),
+                runtime=not self.type_guarded,
+            )
+            attribute.labels |= labels
+            self.current[node.name] = attribute
+            return
+
         base_property, property_function = self.get_base_property(decorators)
 
         # handle parameters

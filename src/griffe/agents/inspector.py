@@ -50,6 +50,11 @@ from griffe.docstrings.parsers import Parser
 from griffe.expressions import Expression, Name
 from griffe.importer import dynamic_import
 
+if sys.version_info < (3, 8):
+    from cached_property import cached_property
+else:
+    from functools import cached_property  # noqa: WPS440
+
 empty = Signature.empty
 
 
@@ -109,7 +114,11 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
     #   like ast -> _ast -> ast (here we inspect _ast)
     #   or os -> posix/nt -> os (here we inspect posix/nt)
 
-    child_module = getmodule(child.obj)
+    child_obj = child.obj
+    if isinstance(child_obj, cached_property):
+        child_obj = child_obj.func
+
+    child_module = getmodule(child_obj)
 
     if not child_module:
         return None
@@ -344,7 +353,8 @@ class Inspector(BaseInspector):  # noqa: WPS338
         Parameters:
             node: The node to inspect.
         """
-        self.handle_function(node, {"cached property"})
+        node.obj = node.obj.func
+        self.handle_function(node, {"cached", "property"})
 
     def inspect_property(self, node: ObjectNode) -> None:
         """Inspect a property.
@@ -376,15 +386,24 @@ class Inspector(BaseInspector):  # noqa: WPS338
             else:
                 returns = _convert_object_to_annotation(return_annotation, parent=self.current)
 
-        function = Function(
-            name=node.name,
-            parameters=parameters,
-            returns=returns,
-            docstring=self._get_docstring(node),
-        )
-        if labels:
-            function.labels |= labels
-        self.current[node.name] = function
+        obj: Attribute | Function
+        labels = labels or set()
+        if "property" in labels:
+            obj = Attribute(
+                name=node.name,
+                value=None,
+                annotation=returns,
+                docstring=self._get_docstring(node),
+            )
+        else:
+            obj = Function(
+                name=node.name,
+                parameters=parameters,
+                returns=returns,
+                docstring=self._get_docstring(node),
+            )
+        obj.labels |= labels
+        self.current[node.name] = obj
 
     def inspect_attribute(self, node: ObjectNode) -> None:
         """Inspect an attribute.

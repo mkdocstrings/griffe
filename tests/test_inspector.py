@@ -50,3 +50,27 @@ def test_missing_dependency():
         with pytest.raises(ImportError):  # noqa: PT012
             with suppress(ModuleNotFoundError):
                 inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
+
+
+def test_inspect_properties_as_attributes():
+    """Assert properties are created as attributes and not functions."""
+    with temporary_inspected_module(
+        """
+        try:
+            from functools import cached_property
+        except ImportError:
+            from cached_property import cached_property
+
+        class C:
+            @property
+            def prop(self) -> bool:
+                return True
+            @cached_property
+            def cached_prop(self) -> int:
+                return 0
+        """
+    ) as module:
+        assert module["C.prop"].is_attribute
+        assert "property" in module["C.prop"].labels
+        assert module["C.cached_prop"].is_attribute
+        assert "cached" in module["C.cached_prop"].labels

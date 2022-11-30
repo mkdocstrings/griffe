@@ -363,7 +363,12 @@ def _read_returns_section(  # noqa: WPS231
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
-                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                if docstring.parent.is_function:  # type: ignore[union-attr]
+                    annotation = docstring.parent.returns  # type: ignore[union-attr]
+                elif docstring.parent.is_attribute:  # type: ignore[union-attr]
+                    annotation = docstring.parent.annotation  # type: ignore[union-attr]
+                else:
+                    raise ValueError
                 if len(block) > 1:
                     if annotation.is_tuple:
                         annotation = annotation.tuple_item(index)
