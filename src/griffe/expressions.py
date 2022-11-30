@@ -2,9 +2,16 @@
 
 from __future__ import annotations
 
+import sys
 from typing import Any, Callable
 
 from griffe.exceptions import NameResolutionError
+
+# TODO: remove once Python 3.7 support is dropped
+if sys.version_info < (3, 8):
+    from cached_property import cached_property
+else:
+    from functools import cached_property  # noqa: WPS440
 
 
 class Name:
@@ -129,7 +136,7 @@ class Expression(list):  # noqa: WPS600
         Returns:
             The main type of this expression.
         """
-        return str(self).split("[", 1)[0].rsplit(".", 1)[-1].lower()
+        return str(self.non_optional).split("[", 1)[0].rsplit(".", 1)[-1].lower()
 
     @property
     def is_tuple(self) -> bool:
@@ -158,6 +165,30 @@ class Expression(list):  # noqa: WPS600
         """
         return self.kind == "generator"
 
+    @cached_property
+    def non_optional(self) -> Expression:
+        """Return the same expression as non-optional.
+
+        This will return a new expression without
+        the `Optional[]` or `| None` parts.
+
+        Returns:
+            A non-optional expression.
+        """
+        if self[-1] == "None" and self[-2] == " | ":
+            if isinstance(self[0], Expression):
+                return self[0]
+            return Expression(self[0])
+        if self[0] == "None" and self[1] == " | ":
+            if isinstance(self[2], Expression):
+                return self[2]
+            return Expression(self[2])
+        if isinstance(self[0], Name) and self[0].full == "typing.Optional":
+            if isinstance(self[2], Expression):
+                return self[2]
+            return Expression(self[2])
+        return self
+
     def tuple_item(self, nth: int) -> str | Name:
         """Return the n-th item of this tuple expression.
 
@@ -171,7 +202,7 @@ class Expression(list):  # noqa: WPS600
         # N|E [     E     ]
         #       N , N , N
         #       0 1 2 3 4
-        return self[2][2 * nth]
+        return self.non_optional[2][2 * nth]
 
     def tuple_items(self) -> list[Name | Expression]:
         """Return a tuple items as a list.
@@ -179,7 +210,7 @@ class Expression(list):  # noqa: WPS600
         Returns:
             The tuple items.
         """
-        return self[2][::2]
+        return self.non_optional[2][::2]
 
     def iterator_item(self) -> Name | Expression:
         """Return the item of an iterator.
@@ -188,7 +219,7 @@ class Expression(list):  # noqa: WPS600
             The iterator item.
         """
         # Iterator[ItemType]
-        return self[2]
+        return self.non_optional[2]
 
     def generator_items(self) -> tuple[Name | Expression, Name | Expression, Name | Expression]:
         """Return the items of a generator.
@@ -199,4 +230,4 @@ class Expression(list):  # noqa: WPS600
             The return type.
         """
         # Generator[Yield, Send/Receive, Return]
-        return self[2][0], self[2][2], self[2][4]
+        return self.non_optional[2][0], self[2][2], self[2][4]
