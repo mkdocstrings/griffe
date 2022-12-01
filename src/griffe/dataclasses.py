@@ -544,11 +544,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     def filepath(self) -> Path | list[Path]:
         """Return the file path where this object was defined.
 
-        It should never return None for non-module objects,
-        as they should always have a parent module.
-        If not, `self.module` would trigger a `ValueError` anyway.
-        If it _does_ return None, it means the tree was not built correctly.
-
         Returns:
             A file path or a list of directories.
         """

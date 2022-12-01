@@ -101,6 +101,7 @@ plugins:
           members_order: alphabetical
           show_category_heading: no
           merge_init_into_class: yes
+          separate_signature: yes
 
 extra:
   social:
