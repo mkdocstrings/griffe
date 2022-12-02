@@ -796,6 +796,11 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
             parent: The alias parent.
         """
         self.name: str = name
+        self.alias_lineno: int | None = lineno
+        self.alias_endlineno: int | None = endlineno
+        self.runtime: bool = runtime
+        self._parent: Module | Class | None = parent
+        self._passed_through: bool = False
         if isinstance(target, str):
             self._target: Object | Alias | None = None
             self.target_path: str = target
@@ -805,11 +810,6 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
             if parent is not None:
                 with suppress(AliasResolutionError):
                     target.aliases[self.path] = self
-        self.alias_lineno: int | None = lineno
-        self.alias_endlineno: int | None = endlineno
-        self.runtime: bool = runtime
-        self._parent: Module | Class | None = parent
-        self._passed_through: bool = False
 
     def __repr__(self) -> str:
         return f"<Alias({self.name!r}, {self.target_path!r})>"
