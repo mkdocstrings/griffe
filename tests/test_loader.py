@@ -332,3 +332,24 @@ def test_stop_at_first_package_inside_namespace_package():
             assert d_package.filepath == tmp_ns1.tmpdir.joinpath("a/b/c/d/__init__.py")
             assert "mod1" in d_package.members
             assert "mod2" not in d_package.members
+
+
+def test_load_builtin_modules():
+    """Assert builtin/compiled modules can be loaded."""
+    loader = GriffeLoader()
+    loader.load_module("_ast")
+    loader.load_module("_collections")
+    loader.load_module("_json")
+    assert "_ast" in loader.modules_collection
+    assert "_collections" in loader.modules_collection
+    assert "_json" in loader.modules_collection
+
+
+def test_resolve_aliases_of_builtin_modules():
+    """Assert builtin/compiled modules can be loaded."""
+    loader = GriffeLoader()
+    loader.load_module("io")
+    loader.load_module("_io")
+    unresolved, _ = loader.resolve_aliases(external=True, implicit=True, max_iterations=1)
+    io_unresolved = {un for un in unresolved if un.startswith(("io", "_io"))}
+    assert len(io_unresolved) < 5
