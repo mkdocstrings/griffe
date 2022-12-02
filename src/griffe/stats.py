@@ -55,6 +55,8 @@ def _sum_extensions(exts, module):
         suffix = module.filepath.suffix
     except BuiltinModuleError:
         current_exts[""] = 1
+    except AttributeError:
+        suffix = ""
     else:
         if suffix:
             current_exts[suffix] = 1
@@ -72,14 +74,18 @@ def stats(loader: GriffeLoader) -> dict:
     Returns:
         Some statistics.
     """
-    modules_by_extension = {
-        "": 0,
-        ".py": 0,
-        ".pyc": 0,
-        ".pyo": 0,
-        ".pyd": 0,
-        ".so": 0,
-    }
+    modules_by_extension = defaultdict(
+        int,
+        {
+            "": 0,
+            ".py": 0,
+            ".pyi": 0,
+            ".pyc": 0,
+            ".pyo": 0,
+            ".pyd": 0,
+            ".so": 0,
+        },
+    )
     top_modules = loader.modules_collection.members.values()
     for module in top_modules:
         _sum_extensions(modules_by_extension, module)

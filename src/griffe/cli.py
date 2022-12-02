@@ -92,7 +92,8 @@ def _stats(stats):
     per_ext = stats["modules_by_extension"]
     builtin = per_ext[""]
     regular = per_ext[".py"]
-    compiled = modules - builtin - regular
+    stubs = per_ext[".pyi"]
+    compiled = modules - builtin - regular - stubs
     lines.append("")
     lines.append(f"Total number of lines: {stats['lines']}")
     lines.append("")
@@ -100,6 +101,7 @@ def _stats(stats):
     lines.append(f"  Builtin: {builtin}")
     lines.append(f"  Compiled: {compiled}")
     lines.append(f"  Regular: {regular}")
+    lines.append(f"  Stubs: {stubs}")
     lines.append("  Per extension:")
     for ext, number in sorted(per_ext.items()):
         if ext:
