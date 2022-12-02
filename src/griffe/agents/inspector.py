@@ -186,14 +186,20 @@ class Inspector(BaseInspector):  # noqa: WPS338
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
-        # Access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class.
+        # access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class
         value = getattr(node.obj, "__doc__", None)
         if value is None:
             return None
+        try:
+            # we avoid `inspect.getdoc` to avoid getting
+            # the `__doc__` attribute from a parent class,
+            # but we still want to clean the doc
+            cleaned = cleandoc(value)
+        except AttributeError:
+            # triggered on method descriptors
+            return None
         return Docstring(
-            # `inspect.getdoc` calls `inspect.cleandoc`. We avoid `inspect.getdoc` to avoid taking
-            # the `__doc__` attribute from a parent class, but we still want to clean the doc.
-            cleandoc(value),
+            cleaned,
             parser=self.docstring_parser,
             parser_options=self.docstring_options,
         )
