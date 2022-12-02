@@ -143,6 +143,7 @@ class GriffeLoader:
                 logger.debug(f"Trying inspection on {module}")
                 module_name = module  # type: ignore[assignment]
                 top_module = self._inspect_module(module)  # type: ignore[arg-type]
+                self.modules_collection[top_module.path] = top_module
             else:
                 raise
         else:
