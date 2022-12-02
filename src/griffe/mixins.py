@@ -72,7 +72,7 @@ class SetMembersMixin(DelMembersMixin):
                     # (implicit support for .pyi modules)
                     if member.is_module and not (member.is_namespace_package or member.is_namespace_subpackage):
                         with suppress(AliasResolutionError, CyclicAliasError):
-                            if value.is_module:
+                            if value.is_module and value.filepath != member.filepath:
                                 logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")
                                 with suppress(ValueError):
                                     value = merge_stubs(member, value)
