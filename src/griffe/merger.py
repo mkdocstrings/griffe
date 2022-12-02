@@ -47,9 +47,10 @@ def _merge_stubs_docstring(obj: Object, stubs: Object) -> None:
 
 def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
     for function_name, overloads in list(stubs.overloads.items()):
-        with suppress(KeyError):
-            obj[function_name].overloads = overloads
-            del stubs.overloads[function_name]  # noqa: WPS420
+        if overloads:
+            with suppress(KeyError):
+                obj[function_name].overloads = overloads
+        del stubs.overloads[function_name]  # noqa: WPS420
 
 
 def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:  # noqa: WPS231

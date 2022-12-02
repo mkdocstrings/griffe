@@ -1030,6 +1030,10 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     def overloads(self) -> dict[str, list[Function]] | list[Function] | None:  # noqa: D102
         return cast(Union[Module, Class, Function], self.target).overloads
 
+    @overloads.setter
+    def overloads(self, overloads: list[Function] | None) -> None:
+        cast(Union[Module, Class, Function], self.target).overloads = overloads
+
     @property
     def parameters(self) -> Parameters:  # noqa: D102
         return cast(Function, self.target).parameters
@@ -1037,6 +1041,10 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     @property
     def returns(self) -> str | Name | Expression | None:  # noqa: D102
         return cast(Function, self.target).returns
+
+    @returns.setter
+    def returns(self, returns: str | Name | Expression | None) -> None:
+        cast(Function, self.target).returns = returns
 
     @property
     def setter(self) -> Function | None:  # noqa: D102
@@ -1053,6 +1061,10 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     @property
     def annotation(self) -> str | Name | Expression | None:  # noqa: D102
         return cast(Attribute, self.target).annotation
+
+    @annotation.setter
+    def annotation(self, annotation: str | Name | Expression | None) -> None:
+        cast(Attribute, self.target).annotation = annotation
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
 
