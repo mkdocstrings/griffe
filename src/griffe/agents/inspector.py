@@ -28,7 +28,6 @@ from inspect import Parameter as SignatureParameter
 from inspect import Signature, cleandoc, getmodule, ismodule
 from inspect import signature as getsignature
 from pathlib import Path
-from tokenize import TokenError
 from typing import Any
 
 from griffe.agents.base import BaseInspector
@@ -379,7 +378,9 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         try:
             signature = getsignature(node.obj)
-        except (AttributeError, ValueError, TokenError, TypeError):
+        except Exception:
+            # so many exceptions can be raised here:
+            # AttributeError, NameError, RuntimeError, ValueError, TokenError, TypeError
             parameters = None
             returns = None
         else:
