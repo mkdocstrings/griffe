@@ -209,6 +209,7 @@ class GriffeLoader:
             self.expand_exports(exports_module)
         for wildcards_module in list(collection.values()):
             self.expand_wildcards(wildcards_module)
+        load_failures: set[str] = set()
         while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
             prev_unresolved = unresolved - {"0"}
             unresolved = set()
@@ -216,7 +217,12 @@ class GriffeLoader:
             iteration += 1
             for module_name in list(collection.keys()):
                 module = collection[module_name]
-                next_resolved, next_unresolved = self.resolve_module_aliases(module, implicit, external)
+                next_resolved, next_unresolved = self.resolve_module_aliases(
+                    module,
+                    implicit,
+                    external,
+                    load_failures=load_failures,
+                )
                 resolved |= next_resolved
                 unresolved |= next_unresolved
             logger.debug(
@@ -312,7 +318,8 @@ class GriffeLoader:
         obj: Object,
         implicit: bool = False,
         external: bool = False,
-        seen: set | None = None,
+        seen: set[str] | None = None,
+        load_failures: set[str] | None = None,
     ) -> tuple[set[str], set[str]]:
         """Follow aliases: try to recursively resolve all found aliases.
 
@@ -321,12 +328,15 @@ class GriffeLoader:
             implicit: When false, only try to resolve an alias if it is explicitely exported.
             external: When false, don't try to load unspecified modules to resolve aliases.
             seen: Used to avoid infinite recursion.
+            load_failures: Set of external packages we failed to load (to prevent retries).
 
         Returns:
             Both sets of resolved and unresolved aliases.
         """
         resolved = set()
         unresolved = set()
+        if load_failures is None:
+            load_failures = set()
         seen = seen or set()
         seen.add(obj.path)
 
@@ -339,17 +349,22 @@ class GriffeLoader:
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:  # noqa: WPS440
-                    path = member.path
                     target = error.target_path  # type: ignore[union-attr]  # noqa: WPS437
-                    logger.debug(f"Alias resolution error for {path} -> {target}")
-                    unresolved.add(path)
+                    unresolved.add(member.path)
                     package = target.split(".", 1)[0]
-                    load_module = external and obj.package.path != package and package not in self.modules_collection
+                    load_module = (
+                        external
+                        and package not in load_failures
+                        and obj.package.path != package
+                        and package not in self.modules_collection
+                    )
                     if load_module:
+                        logger.debug(f"Failed to resolve alias {member.path} -> {target}")
                         try:  # noqa: WPS505
                             self.load_module(package, try_relative_path=False)
                         except ImportError as error:  # noqa: WPS440
                             logger.debug(f"Could not follow alias {member.path}: {error}")
+                            load_failures.add(package)
                 except CyclicAliasError as error:
                     logger.debug(str(error))
                 else:
@@ -357,7 +372,7 @@ class GriffeLoader:
                     resolved.add(member.path)
             elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
                 sub_resolved, sub_unresolved = self.resolve_module_aliases(
-                    member, implicit, external, seen  # type: ignore[arg-type]
+                    member, implicit, external, seen, load_failures  # type: ignore[arg-type]
                 )
                 resolved |= sub_resolved
                 unresolved |= sub_unresolved
