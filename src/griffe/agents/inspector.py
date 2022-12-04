@@ -96,7 +96,6 @@ def inspect(
     ).get_module(import_paths)
 
 
-_compiled_modules = {*sys.builtin_module_names, "_socket", "_struct"}
 _cyclic_relationships = {
     ("os", "nt"),
     ("os", "posix"),
@@ -118,32 +117,31 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
         child_obj = child_obj.func
 
     child_module = getmodule(child_obj)
-
     if not child_module:
         return None
 
     if ismodule(parent.obj):
-        # TODO: is this necessary to check if the parent is a module?
-        # what happens for modules imported in class definitions?
         parent_module = parent.obj
-        parent_module_name = parent_module.__name__
-        child_module_name = child_module.__name__
-        # special cases: inspect.getmodule does not return the real modules
-        # for those, but rather the "user-facing" ones - we prevent that
-        # and use the real parent module
-        if (parent_module_name, child_module_name) in _cyclic_relationships:
-            child_module = parent_module
+    else:
+        parent_module = getmodule(parent.obj)  # type: ignore[assignment]
+        if not parent_module:
+            return None
 
-    child_module_path = child_module.__name__
-    parent_name = parent.name
+    parent_module_path = getattr(parent_module.__spec__, "name", parent_module.__name__)
+    child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
+    parent_base_name = parent_module_path.split(".")[-1]
+    child_base_name = child_module_path.split(".")[-1]
+
+    # special cases: inspect.getmodule does not return the real modules
+    # for those, but rather the "user-facing" ones - we prevent that
+    # and use the real parent module
+    if (parent_module_path, child_module_path) in _cyclic_relationships or parent_base_name == f"_{child_base_name}":
+        child_module = parent_module
+        child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
 
     is_submodule = child_module_path == current_module_path or child_module_path.startswith(current_module_path + ".")
-    is_public_version_of_private_builtin_module = (
-        parent_name.startswith("_") and parent_name[1:] == child_module_path and parent_name in _compiled_modules
-    )
-    if not is_public_version_of_private_builtin_module and not is_submodule:
-        return child_module_path
-
+    if not is_submodule:
+        return child_module_path.lstrip("_")
     return None
 
 
