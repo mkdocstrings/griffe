@@ -253,14 +253,14 @@ class GriffeLoader:
     def expand_wildcards(  # noqa: WPS231
         self,
         obj: Object,
-        only_known_modules: bool = True,
+        external: bool = False,
         seen: set | None = None,
     ) -> None:
         """Expand wildcards: try to recursively expand all found wildcards.
 
         Parameters:
             obj: The object and its members to recurse on.
-            only_known_modules: When true, don't try to load unspecified modules to expand wildcards.
+            external: When true, try to load unspecified modules to expand wildcards.
             seen: Used to avoid infinite recursion.
         """
         expanded = []
@@ -273,7 +273,7 @@ class GriffeLoader:
                 package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
                 not_loaded = obj.package.path != package and package not in self.modules_collection
                 if not_loaded:
-                    if only_known_modules:
+                    if not external:
                         continue
                     try:
                         self.load_module(package, try_relative_path=False)
@@ -283,14 +283,14 @@ class GriffeLoader:
                 target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
                 if target.path not in seen:
                     try:
-                        self.expand_wildcards(target, only_known_modules, seen)  # type: ignore[union-attr]
+                        self.expand_wildcards(target, external, seen)  # type: ignore[union-attr]
                     except (AliasResolutionError, CyclicAliasError) as error:  # noqa: WPS440
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
                 expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
                 to_remove.append(member.name)
             elif not member.is_alias and member.is_module and member.path not in seen:
-                self.expand_wildcards(member, only_known_modules, seen)  # type: ignore[arg-type]
+                self.expand_wildcards(member, external, seen)  # type: ignore[arg-type]
 
         for name in to_remove:
             del obj[name]  # noqa: WPS420
