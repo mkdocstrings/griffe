@@ -1091,7 +1091,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         if self.parent is not None:
             self._target.aliases[self.path] = self
 
-    def resolve_target(self) -> None:
+    def resolve_target(self) -> None:  # noqa: WPS231,WPS238
         """Resolve the target.
 
         Raises:
@@ -1102,12 +1102,22 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
                 and added to the collection.
             CyclicAliasError: When the resolved target is the alias itself.
         """
+        if self._passed_through:
+            raise CyclicAliasError([self.target_path])
         try:
             resolved = self.modules_collection[self.target_path]
         except KeyError as error:
             raise AliasResolutionError(self.target_path) from error
         if resolved is self:
             raise CyclicAliasError([self.target_path])
+        if resolved.is_alias and not resolved.resolved:
+            self._passed_through = True
+            try:
+                resolved.resolve_target()
+            except CyclicAliasError as error:  # noqa: WPS440
+                raise CyclicAliasError([self.target_path] + error.chain)
+            finally:
+                self._passed_through = False
         self._target = resolved
         if self.parent is not None:
             self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
@@ -1119,7 +1129,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         Returns:
             True or False.
         """
-        return self._target is not None and (not self._target.is_alias or self._target.resolved)  # type: ignore[union-attr]
+        return self._target is not None  # type: ignore[union-attr]
 
     @cached_property
     def wildcard(self) -> str | None:
