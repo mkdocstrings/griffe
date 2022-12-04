@@ -245,7 +245,11 @@ class GriffeLoader:
         for export in module.exports:
             if isinstance(export, Name):
                 module_path = export.full.rsplit(".", 1)[0]  # remove trailing .__all__
-                next_module = self.modules_collection[module_path]
+                try:
+                    next_module = self.modules_collection[module_path]
+                except KeyError:
+                    logger.debug(f"Cannot expand '{export.full}', try pre-loading corresponding package")
+                    continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
                     try:
