@@ -5,7 +5,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe.finder import ModuleFinder, NamespacePackage, _handle_pth_file  # noqa: WPS450
+from griffe.finder import ModuleFinder, NamespacePackage, _handle_editable_module, _handle_pth_file  # noqa: WPS450
 from tests.helpers import temporary_pypackage
 
 
@@ -84,3 +84,25 @@ def test_pth_file_handling(tmp_path):
     )
     directories = _handle_pth_file(pth_file)
     assert directories == [Path("tests")]
+
+
+def test_editables_file_handling(tmp_path):
+    """Assert editable modules by `editables` are handled.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    pth_file = tmp_path / "__editables_whatever.py"
+    pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')")
+    assert _handle_editable_module(pth_file) == Path("src")
+
+
+def test_setuptools_file_handling(tmp_path):
+    """Assert editable modules by `setuptools` are handled.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    pth_file = tmp_path / "__editable__whatever.py"
+    pth_file.write_text("hello\nMAPPING = {'griffe': 'src/griffe'}")
+    assert _handle_editable_module(pth_file) == Path("src")

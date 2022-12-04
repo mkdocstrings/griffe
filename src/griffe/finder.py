@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Iterator, Sequence, Tuple
 
 from griffe.dataclasses import Module
-from griffe.exceptions import UnhandledEditablesModuleError
+from griffe.exceptions import UnhandledEditableModuleError
 from griffe.logger import get_logger
 
 NamePartsType = Tuple[str, ...]
@@ -66,7 +66,7 @@ class ModuleFinder:
         if bool(search_paths):
             # without custom search paths, sys.path is used, and is already extended from .pth files
             self._extend_from_pth_files()
-        self._extend_from_editables_modules()
+        self._extend_from_editable_modules()
 
     def find_spec(
         self,
@@ -264,12 +264,12 @@ class ModuleFinder:
                     for directory in _handle_pth_file(item):
                         self._append_search_path(directory)
 
-    def _extend_from_editables_modules(self):
+    def _extend_from_editable_modules(self):
         for path in self.search_paths:  # noqa: WPS440
             for item in self._contents(path):
-                if item.stem.startswith("__editables_") and item.suffix == ".py":
-                    with suppress(UnhandledEditablesModuleError):
-                        self._append_search_path(_handle_editables_module(item))
+                if item.stem.startswith(("__editables_", "__editable__")) and item.suffix == ".py":
+                    with suppress(UnhandledEditableModuleError):
+                        self._append_search_path(_handle_editable_module(item))
 
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
         for root, dirs, files in os.walk(path, topdown=True):
@@ -299,6 +299,7 @@ class ModuleFinder:
 _re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")
 _re_pkgutil = re.compile(r"(?:__path__ = __import__\([\"']pkgutil[\"']\).extend_path\(__path__, __name__\))")
 _re_import_line = re.compile(r"^import[ \t]")
+_re_mapping_line = re.compile(r"^MAPPING = \{['\"].+['\"]: +['\"](.+)['\"]\}")
 
 
 # TODO: for better robustness, we should load and minify the AST
@@ -332,16 +333,27 @@ def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
     return directories
 
 
-def _handle_editables_module(path: Path):
+def _handle_editable_module(path: Path):  # noqa: WPS231
     try:
-        editables_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
+        editable_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
     except FileNotFoundError:
-        raise UnhandledEditablesModuleError(path)
-    # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
-    # TODO: write something more robust
-    new_path = Path(editables_lines[-1].split("'")[3])
-    if new_path.exists():
-        if new_path.name.startswith("__init__"):
-            return new_path.parent.parent
-        return new_path
-    raise UnhandledEditablesModuleError(path)
+        raise UnhandledEditableModuleError(path)
+    if path.name.startswith("__editables_"):
+        # support for how 'editables' writes these files:
+        # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
+        new_path = Path(editable_lines[-1].split("'")[3])
+        if new_path.exists():  # TODO: could remove existence check
+            if new_path.name.startswith("__init__"):
+                return new_path.parent.parent
+            return new_path
+    elif path.name.startswith("__editable__"):
+        # support for how 'setuptools' writes these files:
+        # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe'}
+        for line in editable_lines:
+            match = _re_mapping_line.match(line)
+            if match:
+                new_path = Path(match.group(1))
+                if new_path.exists():  # TODO: could remove existence check
+                    return new_path.parent
+                break
+    raise UnhandledEditableModuleError(path)

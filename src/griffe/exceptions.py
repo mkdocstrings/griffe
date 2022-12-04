@@ -15,7 +15,7 @@ class NameResolutionError(GriffeError):
     """Exception for names that cannot be resolved in a object scope."""
 
 
-class UnhandledEditablesModuleError(GriffeError):
+class UnhandledEditableModuleError(GriffeError):
     """Exception for unhandled editables modules, when searching modules."""
 
 
