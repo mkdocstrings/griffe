@@ -16,7 +16,7 @@ import sys
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Sequence, cast
 from warnings import warn
 
 from griffe.agents.extensions import Extensions
@@ -308,13 +308,18 @@ class GriffeLoader:
         for new_member, alias_lineno, alias_endlineno in expanded:
             overwrite = False
             already_present = new_member.name in obj.members
+            self_alias = new_member.is_alias and cast(Alias, new_member).target_path == f"{obj.path}.{new_member.name}"
             if already_present:
                 old_member = obj[new_member.name]
                 old_lineno = getattr(old_member, "alias_lineno", old_member.lineno or 0)
                 overwrite = alias_lineno > old_lineno  # type: ignore[operator]
-            if not already_present or overwrite:
+            if not self_alias and (not already_present or overwrite):
                 obj[new_member.name] = Alias(
-                    new_member.name, new_member, lineno=alias_lineno, endlineno=alias_endlineno
+                    new_member.name,
+                    new_member,
+                    lineno=alias_lineno,
+                    endlineno=alias_endlineno,
+                    parent=obj,  # type: ignore[arg-type]
                 )
 
     def resolve_module_aliases(  # noqa: WPS231
