@@ -5,6 +5,45 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.25.0](https://github.com/mkdocstrings/griffe/releases/tag/0.25.0) - 2022-12-11
+
+<small>[Compare with 0.24.1](https://github.com/mkdocstrings/griffe/compare/0.24.1...0.25.0)</small>
+
+### Breaking changes
+- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcard()`][griffe.loader.GriffeLoader.expand_wildcard] method of the loader.
+- Exception `UnhandledEditablesModuleError` was renamed `UnhandledEditableModuleError` since we now support editable installation from other packages than `editables`.
+
+### Highlights
+- Properties are now fetched as attributes rather than functions, since that is how they are used. This was asked by users, and since Griffe generates signatures for Python APIs (emphasis on **APIs**), it makes sense to return data that matches the interface provided to users. Such property objects in Griffe's output will still have the associated `property` labels of course.
+- Lots of bug fixes. These bugs were discovered by running Griffe on *many* major packages as well as the standard library. Particularly, alias resolution should be more robust now, and should generate less issues like cyclic aliases, meaning indirect/wildcard imports should be better understood.
+
+### Features
+- Support `setuptools` editable modules ([abc18f7](https://github.com/mkdocstrings/griffe/commit/abc18f7b94cea7b7850bb9f14ebc4822beb1d27c) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#463](https://github.com/mkdocstrings/mkdocstrings/issues/463)
+- Support merging stubs on wildcard imported objects ([0ed9c36](https://github.com/mkdocstrings/griffe/commit/0ed9c363b6b064361d311acee1732e757899291b) by Timothée Mazzucotelli). [Issue #116](https://github.com/mkdocstrings/griffe/issues/116)
+
+### Bug Fixes
+- Prevent cyclic alias creation when expanding wildcards ([a77e4e8](https://github.com/mkdocstrings/griffe/commit/a77e4e8bbba8a24d9f604eaff4cc57c6851c14c3) by Timothée Mazzucotelli).
+- Don't crash and show hint when wildcard expansion fails ([336faf6](https://github.com/mkdocstrings/griffe/commit/336faf6dff679c970e594151a7a5d2bd99f52af6) by Timothée Mazzucotelli).
+- Register top module after inspection ([86454ec](https://github.com/mkdocstrings/griffe/commit/86454ececfa8e88b0f1024bde49e6dd0cb8542d0) by Timothée Mazzucotelli).
+- Set alias attributes early ([2ac1a9b](https://github.com/mkdocstrings/griffe/commit/2ac1a9bafb632daa491b3d26f2c39d74c9b31e3d) by Timothée Mazzucotelli).
+- Allow writing attributes on aliases ([c8f736e](https://github.com/mkdocstrings/griffe/commit/c8f736efcee354d2c47675413955390e80e77425) by Timothée Mazzucotelli).
+- Don't crash on inspection of functions signatures ([051e337](https://github.com/mkdocstrings/griffe/commit/051e337306006a60b4ae0da030a6fb912db1f05c) by Timothée Mazzucotelli).
+- Don't crash on inspection of method descriptors' docstrings ([09571bb](https://github.com/mkdocstrings/griffe/commit/09571bb6ffebe041ac9fdd143fc4a1cb239dda63) by Timothée Mazzucotelli).
+- Fix stats computing (handle stubs and namespace packages) ([a81f8dc](https://github.com/mkdocstrings/griffe/commit/a81f8dcf9e8eedc3a42cfdaaaaa28ec9379e2c4b) by Timothée Mazzucotelli).
+- Support documenting multiple items for optional tuples ([727456d](https://github.com/mkdocstrings/griffe/commit/727456deba90ac01a04119371b72c011755360b6) by Timothée Mazzucotelli). [Issue #117](https://github.com/mkdocstrings/griffe/issues/117)
+- Fix comparing names with strings ([37ae0a2](https://github.com/mkdocstrings/griffe/commit/37ae0a2f37c7e446c890d9e1204edddfb3591dc7) by Timothée Mazzucotelli). [Issue #114](https://github.com/mkdocstrings/griffe/issues/114)
+- Fix deepcopy crashing because of `__getattr__` ([11b023b](https://github.com/mkdocstrings/griffe/commit/11b023b8bc0575313a9aea1f6ef99944c8b02537) by Timothée Mazzucotelli). [Issue #73](https://github.com/mkdocstrings/griffe/issues/73), [PR #119](https://github.com/mkdocstrings/griffe/pull/119)
+
+### Code Refactoring
+- Prevent reloading of failed modules ([8ef14ab](https://github.com/mkdocstrings/griffe/commit/8ef14ab6389bb06e1903c7628dd1d811f2af101a) by Timothée Mazzucotelli).
+- Rename `only_known_modules` parameter to `external` ([5f816c6](https://github.com/mkdocstrings/griffe/commit/5f816c67222f9aa1bd008782430501a2de26d5a4) by Timothée Mazzucotelli).
+- Rework alias creation decision in the inspector ([f434943](https://github.com/mkdocstrings/griffe/commit/f434943579e02fb02c28f7e2be65293f6ab6b657) by Timothée Mazzucotelli).
+- Resolve alias chain recursively ([6cdd3b2](https://github.com/mkdocstrings/griffe/commit/6cdd3b2ed4170347282118c06407b587cd65fd36) by Timothée Mazzucotelli).
+- Don't try to stubs-merge identical modules ([7099971](https://github.com/mkdocstrings/griffe/commit/7099971e441d5dd804c0304f010343a558685f9a) by Timothée Mazzucotelli).
+- Load properties as attributes ([5c97a45](https://github.com/mkdocstrings/griffe/commit/5c97a45087e0ba8c39a9745d9c5248c4c35909a8) by Timothée Mazzucotelli). [Issue mkdocstrings/python#9](https://github.com/mkdocstrings/python/issues/9)
+- Use a cyclic relationship map for inspection ([9a2a711](https://github.com/mkdocstrings/griffe/commit/9a2a7117d2d9d7b8327e640e8760594349531627) by Timothée Mazzucotelli). [PR #115](https://github.com/mkdocstrings/griffe/pull/115)
+
+
 ## [0.24.1](https://github.com/mkdocstrings/griffe/releases/tag/0.24.1) - 2022-11-18
 
 <small>[Compare with 0.24.0](https://github.com/mkdocstrings/griffe/compare/0.24.0...0.24.1)</small>
