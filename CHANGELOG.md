@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <small>[Compare with 0.24.1](https://github.com/mkdocstrings/griffe/compare/0.24.1...0.25.0)</small>
 
 ### Breaking changes
-- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcard()`][griffe.loader.GriffeLoader.expand_wildcard] method of the loader.
+- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcards()`][griffe.loader.GriffeLoader.expand_wildcards] method of the loader.
 - Exception `UnhandledEditablesModuleError` was renamed `UnhandledEditableModuleError` since we now support editable installation from other packages than `editables`.
 
 ### Highlights
 - Properties are now fetched as attributes rather than functions, since that is how they are used. This was asked by users, and since Griffe generates signatures for Python APIs (emphasis on **APIs**), it makes sense to return data that matches the interface provided to users. Such property objects in Griffe's output will still have the associated `property` labels of course.
-- Lots of bug fixes. These bugs were discovered by running Griffe on *many* major packages as well as the standard library. Particularly, alias resolution should be more robust now, and should generate less issues like cyclic aliases, meaning indirect/wildcard imports should be better understood.
+- Lots of bug fixes. These bugs were discovered by running Griffe on *many* major packages as well as the standard library (again). Particularly, alias resolution should be more robust now, and should generate less issues like cyclic aliases, meaning indirect/wildcard imports should be better understood. We still highly discourage the use of wilcard imports :grinning:
 
 ### Features
 - Support `setuptools` editable modules ([abc18f7](https://github.com/mkdocstrings/griffe/commit/abc18f7b94cea7b7850bb9f14ebc4822beb1d27c) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#463](https://github.com/mkdocstrings/mkdocstrings/issues/463)
