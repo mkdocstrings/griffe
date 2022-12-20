@@ -1104,6 +1104,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         """
         if self._passed_through:
             raise CyclicAliasError([self.target_path])
+        self._passed_through = True
         try:
             resolved = self.modules_collection[self.target_path]
         except KeyError as error:
@@ -1111,7 +1112,6 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         if resolved is self:
             raise CyclicAliasError([self.target_path])
         if resolved.is_alias and not resolved.resolved:
-            self._passed_through = True
             try:
                 resolved.resolve_target()
             except CyclicAliasError as error:  # noqa: WPS440
