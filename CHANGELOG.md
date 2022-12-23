@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.25.2](https://github.com/mkdocstrings/griffe/releases/tag/0.25.2) - 2022-12-24
+
+<small>[Compare with 0.25.1](https://github.com/mkdocstrings/griffe/compare/0.25.1...0.25.2)</small>
+
+### Bug Fixes
+- Make sure passage through aliases is reset ([79733f4](https://github.com/mkdocstrings/griffe/commit/79733f4d03f3f66b948dc17c57404349d9e72c9a) by Timothée Mazzucotelli). [Issue #123](https://github.com/mkdocstrings/griffe/issues/123)
+- Ignore cyclic alias errors when updating target aliases ([bb62b2f](https://github.com/mkdocstrings/griffe/commit/bb62b2f744d221efedeba1cb33151b3787d2ee57) by Timothée Mazzucotelli). [Issue #123](https://github.com/mkdocstrings/griffe/issues/123)
+
+
 ## [0.25.1](https://github.com/mkdocstrings/griffe/releases/tag/0.25.1) - 2022-12-20
 
 <small>[Compare with 0.25.0](https://github.com/mkdocstrings/griffe/compare/0.25.0...0.25.1)</small>
