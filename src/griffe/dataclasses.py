@@ -807,9 +807,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         else:
             self._target = target
             self.target_path = target.path
-            if parent is not None:
-                with suppress(AliasResolutionError):
-                    target.aliases[self.path] = self
+            self._update_target_aliases()
 
     def __repr__(self) -> str:
         return f"<Alias({self.name!r}, {self.target_path!r})>"
@@ -884,9 +882,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     @parent.setter
     def parent(self, value: Module | Class) -> None:
         self._parent = value
-        if self.resolved:
-            with suppress(AliasResolutionError, CyclicAliasError):
-                self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just checked the target is not None
+        self._update_target_aliases()
 
     @cached_property
     def path(self) -> str:
@@ -1121,6 +1117,10 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         self._target = resolved
         if self.parent is not None:
             self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
+
+    def _update_target_aliases(self) -> None:
+        with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
+            self._target.aliases[self.path] = self  # type: ignore[union-attr]
 
     @property
     def resolved(self) -> bool:
