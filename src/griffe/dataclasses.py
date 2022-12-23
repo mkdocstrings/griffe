@@ -1101,6 +1101,12 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         if self._passed_through:
             raise CyclicAliasError([self.target_path])
         self._passed_through = True
+        try:  # noqa: WPS501
+            self._resolve_target()
+        finally:
+            self._passed_through = False
+
+    def _resolve_target(self) -> None:
         try:
             resolved = self.modules_collection[self.target_path]
         except KeyError as error:
@@ -1112,8 +1118,6 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
                 resolved.resolve_target()
             except CyclicAliasError as error:  # noqa: WPS440
                 raise CyclicAliasError([self.target_path] + error.chain)
-            finally:
-                self._passed_through = False
         self._target = resolved
         if self.parent is not None:
             self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
