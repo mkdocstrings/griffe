@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.25.3](https://github.com/mkdocstrings/griffe/releases/tag/0.25.3) - 2023-01-04
+
+<small>[Compare with 0.25.2](https://github.com/mkdocstrings/griffe/compare/0.25.2...0.25.3)</small>
+
+### Bug Fixes
+- Fix parsing of annotations in Numpy attributes sections ([18fa396](https://github.com/mkdocstrings/griffe/commit/18fa39612b828e2892665b7367f7cdf76908970c) by Timothée Mazzucotelli). [Issue #72](https://github.com/mkdocstrings/griffe/issues/72)
+
+
 ## [0.25.2](https://github.com/mkdocstrings/griffe/releases/tag/0.25.2) - 2022-12-24
 
 <small>[Compare with 0.25.1](https://github.com/mkdocstrings/griffe/compare/0.25.1...0.25.2)</small>
