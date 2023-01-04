@@ -533,17 +533,17 @@ def _read_attributes_section(
         _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
         return None, new_offset
 
-    annotation: str | Name | Expression | None = None
+    annotation: str | Name | Expression | None
     attributes = []
     for item in items:
         name_type = item[0]
         if ":" in name_type:
             name, annotation = name_type.split(":", 1)
             name = name.strip()
-            annotation = annotation.strip()
+            annotation = annotation.strip() or None
         else:
             name = name_type
-        annotation = annotation or None
+            annotation = None
         if annotation is None:
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
