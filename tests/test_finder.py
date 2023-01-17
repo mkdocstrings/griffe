@@ -94,7 +94,7 @@ def test_editables_file_handling(tmp_path):
     """
     pth_file = tmp_path / "__editables_whatever.py"
     pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')")
-    assert _handle_editable_module(pth_file) == Path("src")
+    assert _handle_editable_module(pth_file) == [Path("src")]
 
 
 def test_setuptools_file_handling(tmp_path):
@@ -105,4 +105,17 @@ def test_setuptools_file_handling(tmp_path):
     """
     pth_file = tmp_path / "__editable__whatever.py"
     pth_file.write_text("hello\nMAPPING = {'griffe': 'src/griffe'}")
-    assert _handle_editable_module(pth_file) == Path("src")
+    assert _handle_editable_module(pth_file) == [Path("src")]
+
+
+def test_setuptools_file_handling_multiple_paths(tmp_path):
+    """Assert editable modules by `setuptools` are handled when multiple packages are installed in the same editable.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    pth_file = tmp_path / "__editable__whatever.py"
+    pth_file.write_text(
+        "hello=1\nMAPPING = {\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}\ndef printer():\n  print(hello)"
+    )
+    assert _handle_editable_module(pth_file) == [Path("src1"), Path("src2")]

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import os
 import re
 import sys
@@ -264,12 +265,13 @@ class ModuleFinder:
                     for directory in _handle_pth_file(item):
                         self._append_search_path(directory)
 
-    def _extend_from_editable_modules(self):
+    def _extend_from_editable_modules(self):  # noqa: WPS231
         for path in self.search_paths:  # noqa: WPS440
             for item in self._contents(path):
                 if item.stem.startswith(("__editables_", "__editable__")) and item.suffix == ".py":
                     with suppress(UnhandledEditableModuleError):
-                        self._append_search_path(_handle_editable_module(item))
+                        for editable_path in _handle_editable_module(item):
+                            self._append_search_path(editable_path)
 
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
         for root, dirs, files in os.walk(path, topdown=True):
@@ -299,7 +301,6 @@ class ModuleFinder:
 _re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")
 _re_pkgutil = re.compile(r"(?:__path__ = __import__\([\"']pkgutil[\"']\).extend_path\(__path__, __name__\))")
 _re_import_line = re.compile(r"^import[ \t]")
-_re_mapping_line = re.compile(r"^MAPPING = \{['\"].+['\"]: +['\"](.+)['\"]\}")
 
 
 # TODO: for better robustness, we should load and minify the AST
@@ -338,22 +339,24 @@ def _handle_editable_module(path: Path):  # noqa: WPS231
         editable_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
     except FileNotFoundError:
         raise UnhandledEditableModuleError(path)
+
     if path.name.startswith("__editables_"):
         # support for how 'editables' writes these files:
         # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
         new_path = Path(editable_lines[-1].split("'")[3])
         if new_path.exists():  # TODO: could remove existence check
             if new_path.name.startswith("__init__"):
-                return new_path.parent.parent
-            return new_path
+                return [new_path.parent.parent]
+            return [new_path]
     elif path.name.startswith("__editable__"):
         # support for how 'setuptools' writes these files:
-        # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe'}
-        for line in editable_lines:
-            match = _re_mapping_line.match(line)
-            if match:
-                new_path = Path(match.group(1))
-                if new_path.exists():  # TODO: could remove existence check
-                    return new_path.parent
-                break
+        # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}
+        parsed_module = ast.parse(path.read_text())
+        for node in parsed_module.body:
+            if isinstance(node, ast.Assign):
+                if isinstance(node.targets[0], ast.Name) and node.targets[0].id == "MAPPING":
+                    if isinstance(node.value, ast.Dict):
+                        return [
+                            Path(constant.s).parent for constant in node.value.values if isinstance(constant, ast.Str)
+                        ]
     raise UnhandledEditableModuleError(path)
