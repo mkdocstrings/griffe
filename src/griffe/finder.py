@@ -339,7 +339,6 @@ def _handle_editable_module(path: Path):  # noqa: WPS231
         editable_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
     except FileNotFoundError:
         raise UnhandledEditableModuleError(path)
-
     if path.name.startswith("__editables_"):
         # support for how 'editables' writes these files:
         # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
