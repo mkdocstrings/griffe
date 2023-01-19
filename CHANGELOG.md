@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.25.4](https://github.com/mkdocstrings/griffe/releases/tag/0.25.4) - 2023-01-19
+
+<small>[Compare with 0.25.3](https://github.com/mkdocstrings/griffe/compare/0.25.3...0.25.4)</small>
+
+### Bug Fixes
+- Fix creation of aliases to modules when inspecting ([54242cb](https://github.com/mkdocstrings/griffe/commit/54242cbdbbcb68785942fa327113cd6508815fa9) by Timothée Mazzucotelli).
+- Support (setuptools) editable packages with multiple roots ([bd37dfb](https://github.com/mkdocstrings/griffe/commit/bd37dfb16b43fac53207b426ee02218e57a5d5d1) by Gilad). [PR #126](https://github.com/mkdocstrings/griffe/pull/126)
+
+
 ## [0.25.3](https://github.com/mkdocstrings/griffe/releases/tag/0.25.3) - 2023-01-04
 
 <small>[Compare with 0.25.2](https://github.com/mkdocstrings/griffe/compare/0.25.2...0.25.3)</small>
