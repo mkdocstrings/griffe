@@ -244,8 +244,11 @@ class Inspector(BaseInspector):  # noqa: WPS338
         for child in node.children:
             child_module_path = _should_create_alias(node, child, self.current.module.path)
             if child_module_path:
-                child_name = getattr(child.obj, "__name__", child.name)
-                target_path = f"{child_module_path}.{child_name}"
+                if child.kind is ObjectKind.MODULE:
+                    target_path = child_module_path
+                else:
+                    child_name = getattr(child.obj, "__name__", child.name)
+                    target_path = f"{child_module_path}.{child_name}"
                 self.current[child.name] = Alias(child.name, target_path)
             else:
                 self.inspect(child)

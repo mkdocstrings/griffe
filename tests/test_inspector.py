@@ -74,3 +74,10 @@ def test_inspect_properties_as_attributes():
         assert "property" in module["C.prop"].labels
         assert module["C.cached_prop"].is_attribute
         assert "cached" in module["C.cached_prop"].labels
+
+
+def test_inspecting_module_importing_other_module():
+    """Assert aliases to modules are correctly inspected and aliased."""
+    with temporary_inspected_module("import itertools as it") as module:
+        assert module["it"].is_alias
+        assert module["it"].target_path == "itertools"
