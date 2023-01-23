@@ -8,12 +8,16 @@ Pass the names of packages to the `griffe dump` command:
 
 ```console
 $ griffe dump httpx fastapi
-[
-  {
+{
+  "httpx": {
     "name": "httpx",
     ...
+  },
+  "fastapi": {
+    "name": "fastapi",
+    ...
   }
-]
+}
 ```
 
 It will output a JSON-serialized version of the packages' signatures.
@@ -22,12 +26,12 @@ Try it out on Griffe itself:
 
 ```console
 $ griffe dump griffe
-[
-  {
+{
+  "griffe": {
     "name": "griffe",
     ...
   }
-]
+}
 ```
 
 To output in a file instead of standard output,

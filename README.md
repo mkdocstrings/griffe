@@ -36,12 +36,16 @@ pipx install griffe
 
 ```console
 $ griffe dump httpx fastapi
-[
-  {
+{
+  "httpx": {
     "name": "httpx",
     ...
+  },
+  "fastapi": {
+    "name": "fastapi",
+    ...
   }
-]
+}
 ```
 
 See [the Dumping data section](https://mkdocstrings.github.io/griffe/dumping/) for more examples.
