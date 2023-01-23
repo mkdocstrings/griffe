@@ -1,6 +1,6 @@
 # Loading data with Python
 
-Griffe provides a shorcut function for simple needs:
+Griffe provides a shortcut function for simple needs:
 
 ```python
 import griffe

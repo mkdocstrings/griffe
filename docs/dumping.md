@@ -8,12 +8,16 @@ Pass the names of packages to the `griffe dump` command:
 
 ```console
 $ griffe dump httpx fastapi
-[
-  {
+{
+  "httpx": {
     "name": "httpx",
     ...
+  },
+  "fastapi": {
+    "name": "fastapi",
+    ...
   }
-]
+}
 ```
 
 It will output a JSON-serialized version of the packages' signatures.
@@ -22,12 +26,12 @@ Try it out on Griffe itself:
 
 ```console
 $ griffe dump griffe
-[
-  {
+{
+  "griffe": {
     "name": "griffe",
     ...
   }
-]
+}
 ```
 
 To output in a file instead of standard output,
@@ -46,7 +50,7 @@ $ griffe dump griffe -o './dumps/{package}.json'
 
 By default, Griffe will search in `sys.path`, so if you installed it through *pipx*,
 there are few chances it will find your packages.
-To explicitely specify search paths, use the `-s, --search <PATH>` option.
+To explicitly specify search paths, use the `-s, --search <PATH>` option.
 You can use it multiple times.
 You can also add the search paths to the `PYTHONPATH` environment variable.
 If Griffe can't find the packages, it will fail with a `ModuleNotFoundError`.
