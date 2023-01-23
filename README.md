@@ -109,7 +109,7 @@ See [the Loading data section](https://mkdocstrings.github.io/griffe/loading/) f
     - Flat JSON
     - JSON schema
 - API diff:
-    - [ ] Mecanism to cache APIs? Should users version them, or store them somewhere (docs)?
+    - [ ] Mechanism to cache APIs? Should users version them, or store them somewhere (docs)?
     - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)
     - List of things to consider for warnings
         - Multiple positional-or-keyword parameters

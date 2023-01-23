@@ -68,7 +68,7 @@ In essence, your public API is what you say it is.
 However, we do have conventions like prefixing objects
 with an underscore to tell users these objects are part of the private API,
 or internals, and therefore should not be used.
-For the rest, Griffe can detect changes that *will* trigger immedate errors
+For the rest, Griffe can detect changes that *will* trigger immediate errors
 in your users code', and changes that *might* cause issues in your users' code.
 Although the latter sound less impactful, they do have a serious impact,
 because they can *silently* change the behavior of your users' code,
@@ -107,7 +107,7 @@ depending on our definition of API,
 since this won't raise immediate errors like `TypeError`.
 The function expects a number of arguments,
 and the developer pass it this same number of arguments:
-the contract is fullfilled. But parameters very often have specific meaning,
+the contract is fulfilled. But parameters very often have specific meaning,
 and changing their order will *silently lead* (no immediate error) to incorrect behavior,
 potentially making it difficult to detect, understand and fix the issue.
 That is why it is important to warn developers about such changes.
@@ -360,7 +360,7 @@ NOTE: Changing default value of parameters is not really an API breakage,
 depending on our definition of API,
 since this won't raise immediate errors like `TypeError`.
 Not using the parameter still provides the argument with a default value:
-the contract is fullfilled. But default values very often have specific meaning,
+the contract is fulfilled. But default values very often have specific meaning,
 and changing them will *silently lead* (no immediate error) to incorrect behavior,
 potentially making it difficult to detect, understand and fix the issue.
 That is why it is important to warn developers about such changes.
@@ -562,7 +562,7 @@ if isinstance(factory, Factory):
 NOTE: Changing the kind of an object is not really an API breakage,
 depending on our definition of API,
 since this won't always raise immediate errors like `TypeError`.
-The object is still here and accessed: the contract is fullfilled.
+The object is still here and accessed: the contract is fulfilled.
 But developers sometimes rely on the kind of an object, so changing it
 will lead to incorrect behavior, potentially making it
 difficult to detect, understand and fix the issue.
@@ -603,7 +603,7 @@ if PY_VERSION is None:
 NOTE: Changing the value of an attribute is not really an API breakage,
 depending on our definition of API,
 since this won't raise immediate errors like `TypeError`.
-The attribute is still here and accessed: the contract is fullfilled.
+The attribute is still here and accessed: the contract is fulfilled.
 But developers heavily rely on the value of public attributes,
 so changing it will lead to incorrect behavior, potentially making it
 difficult to detect, understand and fix the issue.
@@ -646,7 +646,7 @@ NOTE: Unless inherited members are lost in the process,
 removing a class base is not really an API breakage,
 depending on our definition of API,
 since this won't raise immediate errors like `TypeError`.
-The class is here, its members as well: the contract is fullfilled.
+The class is here, its members as well: the contract is fulfilled.
 But developers sometimes rely on the actual bases of a class,
 so changing them will lead to incorrect behavior, potentially making it
 difficult to detect, understand and fix the issue.
