@@ -167,6 +167,18 @@ def test_different_indentation(parse_google):
     assert "should be 5 * 2 = 10 spaces, not 6" in warnings[0]
 
 
+def test_empty_indented_lines_in_section_with_items(parse_google):
+    """In sections with items, don't treat lines with just indentation as items.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = "Returns:\n    only_item: Description.\n    \n    \n\nSomething."
+    sections, _ = parse_google(docstring)
+    assert len(sections) == 2
+    assert len(sections[0].value) == 1
+
+
 # =============================================================================================
 # Annotations (general)
 def test_parse_without_parent(parse_google):

@@ -109,14 +109,14 @@ def _read_block_items(docstring: Docstring, offset: int) -> ItemsBlock:  # noqa:
                 f"should be {indent} * 2 = {indent*2} spaces, not {cont_indent}",
             )
 
+        elif _is_empty_line(line):
+            # empty line: preserve it in the current item
+            current_item[1].append("")
+
         elif line.startswith(indent * " "):
             # indent equal to initial one: new item
             items.append(current_item)
             current_item = (new_offset, [line[indent:]])
-
-        elif _is_empty_line(line):
-            # empty line: preserve it in the current item
-            current_item[1].append("")
 
         else:
             # indent lower than initial one: end of section

@@ -98,6 +98,18 @@ def test_indented_code_block(parse_numpy):
     assert not warnings
 
 
+def test_empty_indented_lines_in_section_with_items(parse_numpy):
+    """In sections with items, don't treat lines with just indentation as items.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = "Returns\n-------\nonly_item : type\n    Description.\n    \n    \n\nSomething."
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert len(sections[0].value) == 1
+
+
 # =============================================================================================
 # Annotations (general)
 def test_prefer_docstring_type_over_annotation(parse_numpy):
