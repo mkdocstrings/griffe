@@ -43,7 +43,7 @@ setup:
 
 .PHONY: check
 check:
-	@bash scripts/multirun.sh duty check-quality check-types check-docs
+	@pdm multirun duty check-quality check-types check-docs
 	@$(DUTY) check-dependencies
 
 .PHONY: $(BASIC_DUTIES)
@@ -52,4 +52,4 @@ $(BASIC_DUTIES):
 
 .PHONY: $(QUALITY_DUTIES)
 $(QUALITY_DUTIES):
-	@bash scripts/multirun.sh duty $@ $(call args,$@)
+	@pdm multirun duty $@ $(call args,$@)

@@ -38,6 +38,8 @@ theme:
   - navigation.tabs.sticky
   - navigation.top
   - navigation.sections
+  - search.highlight
+  - search.suggest
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
@@ -79,11 +81,11 @@ plugins:
 - markdown-exec
 - gen-files:
     scripts:
-    - docs/gen_ref_nav.py
-    - docs/gen_griffe_json.py
-    - docs/redirects.py
+    - scripts/gen_ref_nav.py
+    - scripts/gen_griffe_json.py
+    - scripts/redirects.py
 - literate-nav:
-    nav_file: SUMMARY.md
+    nav_file: SUMMARY.txt
 - coverage
 - section-index
 - mkdocstrings:
@@ -106,5 +108,7 @@ extra:
   social:
   - icon: fontawesome/brands/github
     link: https://github.com/pawamoy
+  - icon: fontawesome/brands/mastodon
+    link: https://fosstodon.org/@pawamoy
   - icon: fontawesome/brands/twitter
     link: https://twitter.com/pawamoy

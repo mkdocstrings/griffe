@@ -2,112 +2,58 @@
 
 import importlib
 import os
-import re
 import sys
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Pattern
-from urllib.request import urlopen
 
 from duty import duty
 
-PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "duties.py", "docs"))
+PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "duties.py", "scripts"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
 PY_SRC = " ".join(PY_SRC_LIST)
 TESTING = os.environ.get("TESTING", "0") in {"1", "true"}
 CI = os.environ.get("CI", "0") in {"1", "true", "yes", ""}
 WINDOWS = os.name == "nt"
 PTY = not WINDOWS and not CI
+MULTIRUN = os.environ.get("PDM_MULTIRUN", "0") == "1"
 
 
-def _latest(lines: List[str], regex: Pattern) -> Optional[str]:
-    for line in lines:
-        match = regex.search(line)
-        if match:
-            return match.groupdict()["version"]
-    return None
-
-
-def _unreleased(versions, last_release):
-    for index, version in enumerate(versions):
-        if version.tag == last_release:
-            return versions[:index]
-    return versions
-
-
-def update_changelog(
-    inplace_file: str,
-    marker: str,
-    version_regex: str,
-    template_url: str,
-) -> None:
-    """
-    Update the given changelog file in place.
-
-    Parameters:
-        inplace_file: The file to update in-place.
-        marker: The line after which to insert new contents.
-        version_regex: A regular expression to find currently documented versions in the file.
-        template_url: The URL to the Jinja template used to render contents.
-    """
-    from git_changelog.build import Changelog
-    from git_changelog.commit import AngularStyle
-    from jinja2.sandbox import SandboxedEnvironment
-
-    AngularStyle.DEFAULT_RENDER.insert(0, AngularStyle.TYPES["build"])
-    env = SandboxedEnvironment(autoescape=False)
-    template_text = urlopen(template_url).read().decode("utf8")  # noqa: S310
-    template = env.from_string(template_text)
-    changelog = Changelog(".", style="angular")
-
-    if len(changelog.versions_list) == 1:
-        last_version = changelog.versions_list[0]
-        if last_version.planned_tag is None:
-            planned_tag = "0.1.0"
-            last_version.tag = planned_tag
-            last_version.url += planned_tag
-            last_version.compare_url = last_version.compare_url.replace("HEAD", planned_tag)
-
-    with open(inplace_file, "r") as changelog_file:
-        lines = changelog_file.read().splitlines()
-
-    last_released = _latest(lines, re.compile(version_regex))
-    if last_released:
-        changelog.versions_list = _unreleased(changelog.versions_list, last_released)
-    rendered = template.render(changelog=changelog, inplace=True)
-    lines[lines.index(marker)] = rendered
-
-    with open(inplace_file, "w") as changelog_file:  # noqa: WPS440
-        changelog_file.write("\n".join(lines).rstrip("\n") + "\n")
+def pyprefix(title: str) -> str:  # noqa: D103
+    if MULTIRUN:
+        prefix = f"(python{sys.version_info.major}.{sys.version_info.minor})"
+        return f"{prefix:14}{title}"
+    return title
 
 
 @duty
 def changelog(ctx):
-    """
-    Update the changelog in-place with latest commits.
+    """Update the changelog in-place with latest commits.
 
     Parameters:
         ctx: The context instance (passed automatically).
     """
-    commit = "166758a98d5e544aaa94fda698128e00733497f4"
-    template_url = f"https://raw.githubusercontent.com/pawamoy/jinja-templates/{commit}/keepachangelog.md"
+    from git_changelog.cli import build_and_render as git_changelog
+
     ctx.run(
-        update_changelog,
+        git_changelog,
         kwargs={
-            "inplace_file": "CHANGELOG.md",
-            "marker": "<!-- insertion marker -->",
-            "version_regex": r"^## \[v?(?P<version>[^\]]+)",
-            "template_url": template_url,
+            "repository": ".",
+            "output": "CHANGELOG.md",
+            "convention": "angular",
+            "template": "keepachangelog",
+            "parse_trailers": True,
+            "parse_refs": False,
+            "sections": ("build", "deps", "feat", "fix", "refactor"),
+            "bump_latest": True,
+            "in_place": True,
         },
         title="Updating changelog",
-        pty=PTY,
     )
 
 
 @duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies"])
 def check(ctx):
-    """
-    Check it all!
+    """Check it all!
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -116,20 +62,18 @@ def check(ctx):
 
 @duty
 def check_quality(ctx, files=PY_SRC):
-    """
-    Check the code quality.
+    """Check the code quality.
 
     Parameters:
         ctx: The context instance (passed automatically).
         files: The files to check.
     """
-    ctx.run(f"flake8 --config=config/flake8.ini {files}", title="Checking code quality", pty=PTY)
+    ctx.run(f"flake8 --config=config/flake8.ini {files}", title=pyprefix("Checking code quality"), pty=PTY)
 
 
 @duty
 def check_dependencies(ctx):
-    """
-    Check for vulnerabilities in dependencies.
+    """Check for vulnerabilities in dependencies.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -177,15 +121,14 @@ def check_dependencies(ctx):
 
 @duty
 def check_docs(ctx):
-    """
-    Check if the documentation builds correctly.
+    """Check if the documentation builds correctly.
 
     Parameters:
         ctx: The context instance (passed automatically).
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
-    ctx.run("mkdocs build -s", title="Building documentation", pty=PTY)
+    ctx.run("mkdocs build -s", title=pyprefix("Building documentation"), pty=PTY)
 
 
 @duty  # noqa: WPS231
@@ -196,13 +139,12 @@ def check_types(ctx):  # noqa: WPS231
     Parameters:
         ctx: The context instance (passed automatically).
     """
-    ctx.run(f"mypy --config-file config/mypy.ini {PY_SRC}", title="Type-checking", pty=PTY)
+    ctx.run(f"mypy --config-file config/mypy.ini {PY_SRC}", title=pyprefix("Type-checking"), pty=PTY)
 
 
 @duty(silent=True)
 def clean(ctx):
-    """
-    Delete temporary files.
+    """Delete temporary files.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -222,8 +164,7 @@ def clean(ctx):
 
 @duty
 def docs(ctx):
-    """
-    Build the documentation locally.
+    """Build the documentation locally.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -233,8 +174,7 @@ def docs(ctx):
 
 @duty
 def docs_serve(ctx, host="127.0.0.1", port=8000):
-    """
-    Serve the documentation (localhost:8000).
+    """Serve the documentation (localhost:8000).
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -246,8 +186,7 @@ def docs_serve(ctx, host="127.0.0.1", port=8000):
 
 @duty
 def docs_deploy(ctx):
-    """
-    Deploy the documentation on GitHub pages.
+    """Deploy the documentation on GitHub pages.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -257,8 +196,7 @@ def docs_deploy(ctx):
 
 @duty
 def format(ctx):
-    """
-    Run formatting tools on the code.
+    """Run formatting tools on the code.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -274,8 +212,7 @@ def format(ctx):
 
 @duty
 def release(ctx, version):
-    """
-    Release a new Python package.
+    """Release a new Python package.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -294,8 +231,7 @@ def release(ctx, version):
 
 @duty(silent=True)
 def coverage(ctx):
-    """
-    Report coverage as text and HTML.
+    """Report coverage as text and HTML.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -307,8 +243,7 @@ def coverage(ctx):
 
 @duty
 def test(ctx, match: str = ""):
-    """
-    Run the test suite.
+    """Run the test suite.
 
     Parameters:
         ctx: The context instance (passed automatically).
@@ -318,7 +253,7 @@ def test(ctx, match: str = ""):
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
     ctx.run(
         ["pytest", "-c", "config/pytest.ini", "-n", "auto", "-k", match, "tests"],
-        title="Running tests",
+        title=pyprefix("Running tests"),
         pty=PTY,
         nofail=py_version == "311",
     )

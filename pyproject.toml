@@ -77,11 +77,11 @@ docs = [
 ]
 format = [
     "autoflake>=1.4",
-    "black>=22.3",
+    "black>=23.1",
     "isort>=5.10",
 ]
 maintain = [
-    "git-changelog>=0.4",
+    "git-changelog>=1.0",
 ]
 quality = [
     # TODO: remove once importlib-metadata version conflict is resolved
