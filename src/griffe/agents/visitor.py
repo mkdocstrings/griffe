@@ -627,7 +627,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         """
         with suppress(AttributeError):
             all_augment = (
-                node.target.id == "__all__"  # type: ignore[attr-defined]
+                node.target.id == "__all__"  # type: ignore[attr-defined,union-attr]
                 and self.current.is_module
                 and isinstance(node.op, ast.Add)
             )

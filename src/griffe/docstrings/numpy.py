@@ -225,7 +225,6 @@ def _read_parameters(  # noqa: WPS231
     items, new_offset = _read_block_items(docstring, offset)
 
     for item in items:
-
         match = _RE_PARAMETER.match(item[0])
         if not match:
             _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
