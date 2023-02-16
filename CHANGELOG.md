@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.25.5](https://github.com/mkdocstrings/griffe/releases/tag/0.25.5) - 2023-02-16
+
+<small>[Compare with 0.25.4](https://github.com/mkdocstrings/griffe/compare/0.25.4...0.25.5)</small>
+
+### Bug Fixes
+
+- Fix parsing empty lines with indentation in Google docstrings ([705edff](https://github.com/mkdocstrings/griffe/commit/705edff6c208281bdab387a464799de613b087b5) by Timothée Mazzucotelli). [Issue #129](https://github.com/mkdocstrings/griffe/issues/129)
+
 ## [0.25.4](https://github.com/mkdocstrings/griffe/releases/tag/0.25.4) - 2023-01-19
 
 <small>[Compare with 0.25.3](https://github.com/mkdocstrings/griffe/compare/0.25.3...0.25.4)</small>
