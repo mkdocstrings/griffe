@@ -1,3 +1,5 @@
+"""Module that contains the command line application."""
+
 # Why does this file exist, and why not put this in `__main__`?
 #
 # You might be tempted to import things from `__main__` later,
@@ -8,8 +10,6 @@
 #   `griffe.__main__` in `sys.modules`.
 # - When you import `__main__` it will get executed again (as a module) because
 #   there's no `griffe.__main__` in `sys.modules`.
-
-"""Module that contains the command line application."""
 
 from __future__ import annotations
 
