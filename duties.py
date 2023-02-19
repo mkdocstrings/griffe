@@ -243,19 +243,16 @@ def test(ctx: Context, match: str = "") -> None:
 
 
 @duty
-def profile(ctx, browser: bool = False, **opts):
-    """
-    Run the test suite.
+def profile(ctx: Context, *, browser: bool = False, **opts: str) -> None:
+    """Run the test suite.
 
     Parameters:
         ctx: The context instance (passed automatically).
         browser: Whether to open the SVG file in the browser at the end.
         **opts: Additional options: async.
     """
-    async_loader = opts.pop("async", False)
-    griffe_opts = ["-A"] if async_loader else []
     packages = ctx.run(
-        "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",  # noqa: P103
+        "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
         title="Finding packages",
     ).split("\n")
     ctx.run(
@@ -265,14 +262,14 @@ def profile(ctx, browser: bool = False, **opts):
             "-oprofile.pstats",
             "-m",
             "griffe",
+            "dump",
             "-o/dev/null",
             "-LDEBUG",
-            *griffe_opts,
             *packages,
         ],
-        title=f"Profiling in {'async' if async_loader else 'sync'} mode on {len(packages)} packages",
+        title=f"Profiling on {len(packages)} packages",
         pty=False,
     )
     ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
     if browser:
-        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
+        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")
