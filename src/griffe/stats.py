@@ -3,56 +3,64 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, Union, cast
 
+from griffe.dataclasses import Class, Module
 from griffe.exceptions import BuiltinModuleError
 
 if TYPE_CHECKING:
+    from griffe.dataclasses import Alias, Object
     from griffe.loader import GriffeLoader
 
 
-def _direct(objects):
+def _direct(objects: Iterable[Object | Alias]) -> list[Object | Alias]:
     return [obj for obj in objects if not obj.is_alias]
 
 
-def _n_modules(module):
+def _n_modules(module: Module) -> int:
     submodules = _direct(module.modules.values())
-    return len(submodules) + sum(_n_modules(mod) for mod in submodules)
+    return len(submodules) + sum(_n_modules(cast(Module, mod)) for mod in submodules)
 
 
-def _n_classes(module_or_class):
+def _n_classes(module_or_class: Module | Class) -> int:
     submodules = _direct(module_or_class.modules.values())
     subclasses = _direct(module_or_class.classes.values())
     mods_or_classes = [mc for mc in (*submodules, *subclasses) if not mc.is_alias]
-    return len(subclasses) + sum(_n_classes(mod_or_class) for mod_or_class in mods_or_classes)
+    return len(subclasses) + sum(
+        _n_classes(cast(Union[Module, Class], mod_or_class)) for mod_or_class in mods_or_classes
+    )
 
 
-def _n_functions(module_or_class):
+def _n_functions(module_or_class: Module | Class) -> int:
     submodules = _direct(module_or_class.modules.values())
     subclasses = _direct(module_or_class.classes.values())
     functions = _direct(module_or_class.functions.values())
     mods_or_classes = [*submodules, *subclasses]
-    return len(functions) + sum(_n_functions(mod_or_class) for mod_or_class in mods_or_classes)
+    return len(functions) + sum(
+        _n_functions(cast(Union[Module, Class], mod_or_class)) for mod_or_class in mods_or_classes
+    )
 
 
-def _n_attributes(module_or_class):
+def _n_attributes(module_or_class: Module | Class) -> int:
     submodules = _direct(module_or_class.modules.values())
     subclasses = _direct(module_or_class.classes.values())
     attributes = _direct(module_or_class.attributes.values())
     mods_or_classes = [*submodules, *subclasses]
-    return len(attributes) + sum(_n_attributes(mod_or_class) for mod_or_class in mods_or_classes)
+    return len(attributes) + sum(
+        _n_attributes(cast(Union[Module, Class], mod_or_class)) for mod_or_class in mods_or_classes
+    )
 
 
-def _merge_exts(exts1, exts2):
+def _merge_exts(exts1: dict[str, int], exts2: dict[str, int]) -> dict[str, int]:
     for ext, value in exts2.items():
         exts1[ext] += value
     return exts1
 
 
-def _sum_extensions(exts, module):
+def _sum_extensions(exts: dict[str, int], module: Module) -> None:
     current_exts = defaultdict(int)
     try:
-        suffix = module.filepath.suffix
+        suffix = module.filepath.suffix  # type: ignore[union-attr]
     except BuiltinModuleError:
         current_exts[""] = 1
     except AttributeError:
@@ -61,7 +69,7 @@ def _sum_extensions(exts, module):
         if suffix:
             current_exts[suffix] = 1
         for submodule in _direct(module.modules.values()):
-            _sum_extensions(current_exts, submodule)
+            _sum_extensions(current_exts, cast(Module, submodule))
     _merge_exts(exts, current_exts)
 
 

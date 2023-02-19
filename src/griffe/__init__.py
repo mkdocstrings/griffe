@@ -9,6 +9,6 @@ from __future__ import annotations
 
 from griffe.diff import find_breaking_changes
 from griffe.git import load_git
-from griffe.loader import load  # noqa: WPS347
+from griffe.loader import load
 
 __all__: list[str] = ["find_breaking_changes", "load", "load_git"]

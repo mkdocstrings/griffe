@@ -11,7 +11,7 @@ from griffe.exceptions import NameResolutionError
 if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
-    from functools import cached_property  # noqa: WPS440
+    from functools import cached_property
 
 
 class Name:
@@ -40,7 +40,7 @@ class Name:
         if isinstance(other, str):
             return self.full == other or self.brief == other
         if isinstance(other, (Name, Expression)):
-            return self.full == other.full  # noqa: WPS437
+            return self.full == other.full
         raise NotImplementedError(f"uncomparable types: {type(self)} and {type(other)}")
 
     def __repr__(self) -> str:
@@ -77,7 +77,7 @@ class Name:
         """
         return self.source.rsplit(".", 1)[-1]
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this name's data as a dictionary.
 
         Parameters:
@@ -89,7 +89,7 @@ class Name:
         return {"source": self.source, "full": self.full}
 
 
-class Expression(list):  # noqa: WPS600
+class Expression(list):
     """This class represents a Python expression.
 
     For example, it can represent complex annotations such as:
@@ -111,9 +111,6 @@ class Expression(list):  # noqa: WPS600
         self.extend(values)
         # for value in values:
         #     if isinstance(value, Expression):
-        #         self.extend(value)
-        #     else:
-        #         self.append(value)
 
     def __str__(self):
         return "".join(str(element) for element in self)
@@ -199,7 +196,6 @@ class Expression(list):  # noqa: WPS600
             A string or name.
         """
         #  0  1     2     3
-        # N|E [     E     ]
         #       N , N , N
         #       0 1 2 3 4
         return self.non_optional[2][2 * nth]
@@ -218,7 +214,6 @@ class Expression(list):  # noqa: WPS600
         Returns:
             The iterator item.
         """
-        # Iterator[ItemType]
         return self.non_optional[2]
 
     def generator_items(self) -> tuple[Name | Expression, Name | Expression, Name | Expression]:
@@ -229,5 +224,4 @@ class Expression(list):  # noqa: WPS600
             The send/receive type.
             The return type.
         """
-        # Generator[Yield, Send/Receive, Return]
         return self.non_optional[2][0], self[2][2], self[2][4]

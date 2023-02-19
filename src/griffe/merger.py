@@ -50,10 +50,10 @@ def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
         if overloads:
             with suppress(KeyError):
                 obj[function_name].overloads = overloads
-        del stubs.overloads[function_name]  # noqa: WPS420
+        del stubs.overloads[function_name]
 
 
-def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:  # noqa: WPS231
+def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
     for member_name, stub_member in stubs.members.items():
         if member_name in obj.members:
             obj_member = obj[member_name]

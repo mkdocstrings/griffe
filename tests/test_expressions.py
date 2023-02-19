@@ -17,7 +17,7 @@ from tests.helpers import temporary_visited_module
         ("typing.Optional[tuple[int, float]]", 2),
     ],
 )
-def test_explode_return_annotations(annotation, items):
+def test_explode_return_annotations(annotation: str, items: int) -> None:
     """Check that we correctly split items from return annotations.
 
     Parameters:

@@ -1,10 +1,12 @@
 """Tests for the `diff` module."""
 
+from __future__ import annotations
+
 import sys
 
 import pytest
 
-from griffe.diff import BreakageKind, find_breaking_changes
+from griffe.diff import Breakage, BreakageKind, find_breaking_changes
 from tests.helpers import temporary_visited_module
 
 
@@ -12,10 +14,6 @@ from tests.helpers import temporary_visited_module
 @pytest.mark.parametrize(
     ("old_code", "new_code", "expected_breakages"),
     [
-        # (
-        #     "var: int",
-        #     "var: str",
-        #     [BreakageKind.ATTRIBUTE_CHANGED_TYPE],
         # ),
         (
             "a = True",
@@ -167,7 +165,7 @@ from tests.helpers import temporary_visited_module
         ),
     ],
 )
-def test_diff_griffe(old_code, new_code, expected_breakages):
+def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Breakage]) -> None:
     """Test the different incompatibility finders.
 
     Parameters:
@@ -175,9 +173,8 @@ def test_diff_griffe(old_code, new_code, expected_breakages):
         new_code: Parametrized code of the new module version.
         expected_breakages: A list of breakage kinds to expect.
     """
-    with temporary_visited_module(old_code) as old_module:
-        with temporary_visited_module(new_code) as new_module:
-            breaking = list(find_breaking_changes(old_module, new_module))
+    with temporary_visited_module(old_code) as old_module, temporary_visited_module(new_code) as new_module:
+        breaking = list(find_breaking_changes(old_module, new_module))
     if not expected_breakages:
         assert not breaking
     for breakage, expected_kind in zip(breaking, expected_breakages):

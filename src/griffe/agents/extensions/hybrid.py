@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
-import ast
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from griffe.agents.extensions.base import InspectorExtension, VisitorExtension, When, load_extension
 from griffe.agents.nodes import ObjectNode
-from griffe.agents.visitor import Visitor
 from griffe.exceptions import ExtensionError
 from griffe.importer import dynamic_import
 from griffe.logger import get_logger
+
+if TYPE_CHECKING:
+    import ast
+
+    from griffe.agents.visitor import Visitor
 
 logger = get_logger(__name__)
 
@@ -44,7 +47,7 @@ class HybridExtension(VisitorExtension):
             raise ExtensionError(
                 "the 'hybrid' extension only accepts inspector extensions. "
                 "If you want to use a visitor extension, just add it normally "
-                "to your extensions configuration, without using 'hybrid'."
+                "to your extensions configuration, without using 'hybrid'.",
             )
         super().__init__()
 

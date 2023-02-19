@@ -1,5 +1,7 @@
 """Tests for the `dataclasses` module."""
 
+from __future__ import annotations
+
 from copy import deepcopy
 
 from griffe.dataclasses import Docstring, Module
@@ -7,7 +9,7 @@ from griffe.loader import GriffeLoader
 from tests.helpers import module_vtree, temporary_pypackage
 
 
-def test_submodule_exports():
+def test_submodule_exports() -> None:
     """Check that a module is exported depending on whether it was also imported."""
     root = Module("root")
     sub = Module("sub")
@@ -25,14 +27,14 @@ def test_submodule_exports():
     assert root.member_is_exported(sub, explicitely=False)
 
 
-def test_has_docstrings():
+def test_has_docstrings() -> None:
     """Assert the `.has_docstrings` method is recursive."""
     module = module_vtree("a.b.c.d")
     module["b.c.d"].docstring = Docstring("Hello.")
     assert module.has_docstrings
 
 
-def test_handle_aliases_chain_in_has_docstrings():
+def test_handle_aliases_chain_in_has_docstrings() -> None:
     """Assert the `.has_docstrings` method can handle aliases chains in members."""
     with temporary_pypackage("package", ["mod_a.py", "mod_b.py"]) as tmp_package:
         mod_a = tmp_package.path / "mod_a.py"
@@ -43,11 +45,11 @@ def test_handle_aliases_chain_in_has_docstrings():
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load_module(tmp_package.name)
         assert not package.has_docstrings
-        loader.resolve_aliases(only_exported=False)
+        loader.resolve_aliases(implicit=True)
         assert not package.has_docstrings
 
 
-def test_has_docstrings_does_not_trigger_alias_resolution():
+def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
     """Assert the `.has_docstrings` method does not trigger alias resolution."""
     with temporary_pypackage("package", ["mod_a.py", "mod_b.py"]) as tmp_package:
         mod_a = tmp_package.path / "mod_a.py"
@@ -61,7 +63,7 @@ def test_has_docstrings_does_not_trigger_alias_resolution():
         assert not package["mod_a.someobj"].resolved
 
 
-def test_deepcopy():
+def test_deepcopy() -> None:
     """Assert we can deep-copy object trees."""
     loader = GriffeLoader()
     mod = loader.load_module("griffe")

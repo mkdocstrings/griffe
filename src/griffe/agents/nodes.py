@@ -73,13 +73,17 @@ from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
 from contextlib import suppress
 from functools import partial
-from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Sequence, Type
+from typing import TYPE_CHECKING, Any, Callable, Sequence
 
-from griffe.collections import LinesCollection
 from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel, get_logger
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from griffe.collections import LinesCollection
+
 
 logger = get_logger(__name__)
 
@@ -90,7 +94,7 @@ if sys.version_info < (3, 8):
 
     from cached_property import cached_property
 else:
-    from functools import cached_property  # noqa: WPS440
+    from functools import cached_property
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
@@ -107,8 +111,8 @@ class ASTNode:
     parent: ASTNode
 
     # TODO: remove once Python 3.7 support is dropped
-    if sys.version_info < (3, 8):  # noqa: WPS604
-        end_lineno = property(lambda node: None)
+    if sys.version_info < (3, 8):
+        end_lineno = property(lambda _: None)
 
     @cached_property
     def kind(self) -> str:
@@ -119,15 +123,15 @@ class ASTNode:
         """
         return self.__class__.__name__.lower()
 
-    @cached_property  # noqa: WPS231
-    def children(self) -> Sequence[ASTNode]:  # noqa: WPS231
+    @cached_property
+    def children(self) -> Sequence[ASTNode]:
         """Build and return the children of this node.
 
         Returns:
             A list of children.
         """
         children = []
-        for field_name in self._fields:  # type: ignore[attr-defined]  # noqa: WPS437
+        for field_name in self._fields:  # type: ignore[attr-defined]
             try:
                 field = getattr(self, field_name)
             except AttributeError:
@@ -203,7 +207,7 @@ class ASTNode:
         except IndexError as error:
             raise LastNodeError("there is no previous node") from error
 
-    @cached_property  # noqa: A003
+    @cached_property
     def next(self) -> ASTNode:  # noqa: A003
         """Return the next sibling of this node.
 
@@ -234,7 +238,7 @@ class ASTNode:
             raise LastNodeError("there are no children node") from error
 
     @cached_property
-    def last_child(self) -> ASTNode:  # noqa: A003
+    def last_child(self) -> ASTNode:
         """Return the lasts child of this node.
 
         Raises:
@@ -288,8 +292,7 @@ class ObjectNode:
     exclude_specials = {"__builtins__", "__loader__", "__spec__"}
 
     def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
-        """
-        Initialize the object.
+        """Initialize the object.
 
         Arguments:
             obj: A Python object.
@@ -298,12 +301,12 @@ class ObjectNode:
         """
         try:
             obj = inspect.unwrap(obj)
-        except Exception:  # noqa: S110,W0703 (we purposely catch every possible exception)
+        except Exception as error:  # noqa: BLE001
             # inspect.unwrap at some point runs hasattr(obj, "__wrapped__"),
             # which triggers the __getattr__ method of the object, which in
             # turn can raise various exceptions. Probably not just __getattr__.
             # See https://github.com/pawamoy/pytkdocs/issues/45
-            pass  # noqa: WPS420 (no other way than passing)
+            logger.debug(f"Could not unwrap {name}: {error!r}")
 
         self.obj: Any = obj
         self.name: str = name
@@ -346,7 +349,7 @@ class ObjectNode:
         return ObjectKind.ATTRIBUTE
 
     @cached_property
-    def children(self) -> Sequence[ObjectNode]:  # noqa: WPS231
+    def children(self) -> Sequence[ObjectNode]:
         """Build and return the children of this node.
 
         Returns:
@@ -360,8 +363,7 @@ class ObjectNode:
 
     @cached_property
     def is_module(self) -> bool:
-        """
-        Tell if this node's object is a module.
+        """Tell if this node's object is a module.
 
         Returns:
             The root of the tree.
@@ -370,8 +372,7 @@ class ObjectNode:
 
     @cached_property
     def is_class(self) -> bool:
-        """
-        Tell if this node's object is a class.
+        """Tell if this node's object is a class.
 
         Returns:
             If this node's object is a class.
@@ -380,8 +381,7 @@ class ObjectNode:
 
     @cached_property
     def is_function(self) -> bool:
-        """
-        Tell if this node's object is a function.
+        """Tell if this node's object is a function.
 
         Returns:
             If this node's object is a function.
@@ -390,8 +390,7 @@ class ObjectNode:
 
     @cached_property
     def is_builtin_function(self) -> bool:
-        """
-        Tell if this node's object is a builtin function.
+        """Tell if this node's object is a builtin function.
 
         Returns:
             If this node's object is a builtin function.
@@ -400,8 +399,7 @@ class ObjectNode:
 
     @cached_property
     def is_coroutine(self) -> bool:
-        """
-        Tell if this node's object is a coroutine.
+        """Tell if this node's object is a coroutine.
 
         Returns:
             If this node's object is a coroutine.
@@ -410,8 +408,7 @@ class ObjectNode:
 
     @cached_property
     def is_property(self) -> bool:
-        """
-        Tell if this node's object is a property.
+        """Tell if this node's object is a property.
 
         Returns:
             If this node's object is a property.
@@ -420,8 +417,7 @@ class ObjectNode:
 
     @cached_property
     def is_cached_property(self) -> bool:
-        """
-        Tell if this node's object is a cached property.
+        """Tell if this node's object is a cached property.
 
         Returns:
             If this node's object is a cached property.
@@ -430,8 +426,7 @@ class ObjectNode:
 
     @cached_property
     def parent_is_class(self) -> bool:
-        """
-        Tell if the object of this node's parent is a class.
+        """Tell if the object of this node's parent is a class.
 
         Returns:
             If the object of this node's parent is a class.
@@ -440,8 +435,7 @@ class ObjectNode:
 
     @cached_property
     def is_method(self) -> bool:
-        """
-        Tell if this node's object is a method.
+        """Tell if this node's object is a method.
 
         Returns:
             If this node's object is a method.
@@ -451,8 +445,7 @@ class ObjectNode:
 
     @cached_property
     def is_method_descriptor(self) -> bool:
-        """
-        Tell if this node's object is a method descriptor.
+        """Tell if this node's object is a method descriptor.
 
         Built-in methods (e.g. those implemented in C/Rust) are often
         method descriptors, rather than normal methods.
@@ -464,8 +457,7 @@ class ObjectNode:
 
     @cached_property
     def is_builtin_method(self) -> bool:
-        """
-        Tell if this node's object is a builtin method.
+        """Tell if this node's object is a builtin method.
 
         Returns:
             If this node's object is a builtin method.
@@ -474,8 +466,7 @@ class ObjectNode:
 
     @cached_property
     def is_staticmethod(self) -> bool:
-        """
-        Tell if this node's object is a staticmethod.
+        """Tell if this node's object is a staticmethod.
 
         Returns:
             If this node's object is a staticmethod.
@@ -483,15 +474,14 @@ class ObjectNode:
         if self.parent is None:
             return False
         try:
-            self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+            self_from_parent = self.parent.obj.__dict__.get(self.name, None)
         except AttributeError:
             return False
         return self.parent_is_class and isinstance(self_from_parent, staticmethod)
 
     @cached_property
     def is_classmethod(self) -> bool:
-        """
-        Tell if this node's object is a classmethod.
+        """Tell if this node's object is a classmethod.
 
         Returns:
             If this node's object is a classmethod.
@@ -499,7 +489,7 @@ class ObjectNode:
         if self.parent is None:
             return False
         try:
-            self_from_parent = self.parent.obj.__dict__.get(self.name, None)  # noqa: WPS609
+            self_from_parent = self.parent.obj.__dict__.get(self.name, None)
         except AttributeError:
             return False
         return self.parent_is_class and isinstance(self_from_parent, classmethod)
@@ -508,7 +498,7 @@ class ObjectNode:
     def _ids(self) -> set[int]:
         if self.parent is None:
             return {id(self.obj)}
-        return {id(self.obj)} | self.parent._ids  # noqa: WPS437
+        return {id(self.obj)} | self.parent._ids
 
     def _pick_member(self, name: str, member: Any) -> bool:
         return (
@@ -519,16 +509,17 @@ class ObjectNode:
         )
 
 
-def _join(sequence, item):
+def _join(sequence: Sequence, item: str) -> list:
     if not sequence:
         return []
     new_sequence = [sequence[0]]
     for element in sequence[1:]:
-        new_sequence.extend((item, element))
+        new_sequence.append(item)
+        new_sequence.append(element)
     return new_sequence
 
 
-def _parse__all__constant(node: NodeConstant, parent: Module) -> list[str]:
+def _parse__all__constant(node: NodeConstant, parent: Module) -> list[str]:  # noqa: ARG001
     try:
         return [node.value]
     except AttributeError:
@@ -556,7 +547,7 @@ def _parse__all__binop(node: NodeBinOp, parent: Module) -> list[str | Name]:
     return left + right
 
 
-_node__all__map: dict[Type, Callable[[Any, Module], list[str | Name]]] = {  # noqa: WPS234
+_node__all__map: dict[type, Callable[[Any, Module], list[str | Name]]] = {
     NodeConstant: _parse__all__constant,  # type: ignore[dict-item]
     NodeName: _parse__all__name,  # type: ignore[dict-item]
     NodeStarred: _parse__all__starred,
@@ -569,10 +560,10 @@ _node__all__map: dict[Type, Callable[[Any, Module], list[str | Name]]] = {  # no
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
 
-    def _parse__all__nameconstant(node: NodeNameConstant, parent: Module) -> list[Name]:
+    def _parse__all__nameconstant(node: NodeNameConstant, parent: Module) -> list[Name]:  # noqa: ARG001
         return [node.value]
 
-    def _parse__all__str(node: NodeStr, parent: Module) -> list[str]:
+    def _parse__all__str(node: NodeStr, parent: Module) -> list[str]:  # noqa: ARG001
         return [node.s]
 
     _node__all__map[NodeNameConstant] = _parse__all__nameconstant  # type: ignore[assignment]
@@ -583,7 +574,7 @@ def _parse__all__(node: AST, parent: Module) -> list[str | Name]:
     return _node__all__map[type(node)](node, parent)
 
 
-def parse__all__(node: NodeAssign | NodeAugAssign, parent: Module) -> list[str | Name]:  # noqa: WPS120,WPS440
+def parse__all__(node: NodeAssign | NodeAugAssign, parent: Module) -> list[str | Name]:
     """Get the values declared in `__all__`.
 
     Parameters:
@@ -605,8 +596,8 @@ def parse__all__(node: NodeAssign | NodeAugAssign, parent: Module) -> list[str |
 def _get_attribute_annotation(node: NodeAttribute, parent: Module | Class) -> Expression:
     left = _get_annotation(node.value, parent)
 
-    def resolver():  # noqa: WPS430
-        return f"{left.full}.{node.attr}"
+    def resolver() -> str:
+        return f"{left.full}.{node.attr}"  # type: ignore[union-attr]
 
     right = Name(node.attr, resolver)
     return Expression(left, ".", right)
@@ -618,11 +609,11 @@ def _get_binop_annotation(node: NodeBinOp, parent: Module | Class) -> Expression
     return Expression(left, _get_annotation(node.op, parent), right)
 
 
-def _get_bitand_annotation(node: NodeBitAnd, parent: Module | Class) -> str:
+def _get_bitand_annotation(node: NodeBitAnd, parent: Module | Class) -> str:  # noqa: ARG001
     return " & "
 
 
-def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:
+def _get_bitor_annotation(node: NodeBitOr, parent: Module | Class) -> str:  # noqa: ARG001
     return " | "
 
 
@@ -648,11 +639,11 @@ def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str 
     return _get_literal_annotation(node, parent)
 
 
-def _get_literal_annotation(node: NodeConstant, parent: Module | Class) -> str:
+def _get_literal_annotation(node: NodeConstant, parent: Module | Class) -> str:  # noqa: ARG001
     return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
-def _get_ellipsis_annotation(node: NodeEllipsis, parent: Module | Class) -> str:
+def _get_ellipsis_annotation(node: NodeEllipsis, parent: Module | Class) -> str:  # noqa: ARG001
     return "..."
 
 
@@ -666,7 +657,7 @@ def _get_ifexp_annotation(node: NodeIfExp, parent: Module | Class) -> Expression
     )
 
 
-def _get_invert_annotation(node: NodeInvert, parent: Module | Class) -> str:
+def _get_invert_annotation(node: NodeInvert, parent: Module | Class) -> str:  # noqa: ARG001
     return "~"
 
 
@@ -701,15 +692,15 @@ def _get_unaryop_annotation(node: NodeUnaryOp, parent: Module | Class) -> Expres
     return Expression(_get_annotation(node.op, parent), _get_annotation(node.operand, parent))
 
 
-def _get_uadd_annotation(node: NodeUAdd, parent: Module | Class) -> str:
+def _get_uadd_annotation(node: NodeUAdd, parent: Module | Class) -> str:  # noqa: ARG001
     return "+"
 
 
-def _get_usub_annotation(node: NodeUSub, parent: Module | Class) -> str:
+def _get_usub_annotation(node: NodeUSub, parent: Module | Class) -> str:  # noqa: ARG001
     return "-"
 
 
-_node_annotation_map: dict[Type, Callable[[Any, Module | Class], str | Name | Expression]] = {
+_node_annotation_map: dict[type, Callable[[Any, Module | Class], str | Name | Expression]] = {
     NodeAttribute: _get_attribute_annotation,
     NodeBinOp: _get_binop_annotation,
     NodeBitAnd: _get_bitand_annotation,
@@ -740,13 +731,13 @@ if sys.version_info < (3, 9):
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
 
-    def _get_bytes_annotation(node: NodeBytes, parent: Module | Class) -> str:
+    def _get_bytes_annotation(node: NodeBytes, parent: Module | Class) -> str:  # noqa: ARG001
         return repr(node.s)
 
-    def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str:
+    def _get_nameconstant_annotation(node: NodeNameConstant, parent: Module | Class) -> str:  # noqa: ARG001
         return repr(node.value)
 
-    def _get_num_annotation(node: NodeNum, parent: Module | Class) -> str:
+    def _get_num_annotation(node: NodeNum, parent: Module | Class) -> str:  # noqa: ARG001
         return repr(node.n)
 
     def _get_str_annotation(node: NodeStr, parent: Module | Class) -> str | Name:
@@ -795,7 +786,7 @@ def safe_get_annotation(
     """
     try:
         return get_annotation(node, parent)
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001
         message = f"Failed to parse annotation from '{node.__class__.__name__}' node"
         with suppress(Exception):
             message += f" at {parent.relative_filepath}:{node.lineno}"  # type: ignore[union-attr]
@@ -809,6 +800,7 @@ def safe_get_annotation(
 # docstrings
 def get_docstring(
     node: AST,
+    *,
     strict: bool = False,
 ) -> tuple[str | None, int | None, int | None]:
     """Extract a docstring.
@@ -843,11 +835,11 @@ def get_docstring(
 
 # ==========================================================
 # values
-def _get_add_value(node: NodeAdd) -> str:
+def _get_add_value(node: NodeAdd) -> str:  # noqa: ARG001
     return "+"
 
 
-def _get_and_value(node: NodeAnd) -> str:
+def _get_and_value(node: NodeAnd) -> str:  # noqa: ARG001
     return " and "
 
 
@@ -863,15 +855,15 @@ def _get_binop_value(node: NodeBinOp) -> str:
     return f"{_get_value(node.left)} {_get_value(node.op)} {_get_value(node.right)}"
 
 
-def _get_bitor_value(node: NodeBitOr) -> str:
+def _get_bitor_value(node: NodeBitOr) -> str:  # noqa: ARG001
     return "|"
 
 
-def _get_bitand_value(node: NodeBitAnd) -> str:
+def _get_bitand_value(node: NodeBitAnd) -> str:  # noqa: ARG001
     return "&"
 
 
-def _get_bitxor_value(node: NodeBitXor) -> str:
+def _get_bitxor_value(node: NodeBitXor) -> str:  # noqa: ARG001
     return "^"
 
 
@@ -908,7 +900,7 @@ def _get_comprehension_value(node: NodeComprehension) -> str:
     if conditions:
         value = f"{value} if " + " if ".join(conditions)
     if node.is_async:
-        value = f"async {value}"
+        return f"async {value}"
     return value
 
 
@@ -924,7 +916,7 @@ def _get_constant_value_no_string_repr(node: NodeConstant) -> str:
 
 def _get_dict_value(node: NodeDict) -> str:
     pairs = zip(node.keys, node.values)
-    gen = (f"{'None' if key is None else _get_value(key)}: {_get_value(value)}" for key, value in pairs)  # noqa: WPS509
+    gen = (f"{'None' if key is None else _get_value(key)}: {_get_value(value)}" for key, value in pairs)
     return "{" + ", ".join(gen) + "}"
 
 
@@ -935,19 +927,19 @@ def _get_dictcomp_value(node: NodeDictComp) -> str:
     return f"{{{key}: {value} " + " ".join(generators) + "}"
 
 
-def _get_div_value(node: NodeDiv) -> str:
+def _get_div_value(node: NodeDiv) -> str:  # noqa: ARG001
     return "/"
 
 
-def _get_ellipsis_value(node: NodeEllipsis) -> str:
+def _get_ellipsis_value(node: NodeEllipsis) -> str:  # noqa: ARG001
     return "..."
 
 
-def _get_eq_value(node: NodeEq) -> str:
+def _get_eq_value(node: NodeEq) -> str:  # noqa: ARG001
     return "=="
 
 
-def _get_floordiv_value(node: NodeFloorDiv) -> str:
+def _get_floordiv_value(node: NodeFloorDiv) -> str:  # noqa: ARG001
     return "//"
 
 
@@ -961,11 +953,11 @@ def _get_generatorexp_value(node: NodeGeneratorExp) -> str:
     return f"{element} " + " ".join(generators)
 
 
-def _get_gte_value(node: NodeNotEq) -> str:
+def _get_gte_value(node: NodeNotEq) -> str:  # noqa: ARG001
     return ">="
 
 
-def _get_gt_value(node: NodeNotEq) -> str:
+def _get_gt_value(node: NodeNotEq) -> str:  # noqa: ARG001
     return ">"
 
 
@@ -973,27 +965,28 @@ def _get_ifexp_value(node: NodeIfExp) -> str:
     return f"{_get_value(node.body)} if {_get_value(node.test)} else {_get_value(node.orelse)}"
 
 
-def _get_invert_value(node: NodeInvert) -> str:
+def _get_invert_value(node: NodeInvert) -> str:  # noqa: ARG001
     return "~"
 
 
-def _get_in_value(node: NodeIn) -> str:
+def _get_in_value(node: NodeIn) -> str:  # noqa: ARG001
     return "in"
 
 
-def _get_is_value(node: NodeIs) -> str:
+def _get_is_value(node: NodeIs) -> str:  # noqa: ARG001
     return "is"
 
 
-def _get_isnot_value(node: NodeIsNot) -> str:
+def _get_isnot_value(node: NodeIsNot) -> str:  # noqa: ARG001
     return "is not"
 
 
 def _get_joinedstr_value(node: NodeJoinedStr) -> str:
     _node_value_map[NodeConstant] = _get_constant_value_no_string_repr
-    result = "f" + repr("".join(_get_value(value) for value in node.values))
-    _node_value_map[NodeConstant] = _get_constant_value
-    return result
+    try:
+        return "f" + repr("".join(_get_value(value) for value in node.values))
+    finally:
+        _node_value_map[NodeConstant] = _get_constant_value
 
 
 def _get_keyword_value(node: NodeKeyword) -> str:
@@ -1014,27 +1007,27 @@ def _get_listcomp_value(node: NodeListComp) -> str:
     return f"[{element} " + " ".join(generators) + "]"
 
 
-def _get_lshift_value(node: NodeLShift) -> str:
+def _get_lshift_value(node: NodeLShift) -> str:  # noqa: ARG001
     return "<<"
 
 
-def _get_lte_value(node: NodeNotEq) -> str:
+def _get_lte_value(node: NodeNotEq) -> str:  # noqa: ARG001
     return "<="
 
 
-def _get_lt_value(node: NodeNotEq) -> str:
+def _get_lt_value(node: NodeNotEq) -> str:  # noqa: ARG001
     return "<"
 
 
-def _get_matmult_value(node: NodeMatMult) -> str:
+def _get_matmult_value(node: NodeMatMult) -> str:  # noqa: ARG001
     return "@"
 
 
-def _get_mod_value(node: NodeMod) -> str:
+def _get_mod_value(node: NodeMod) -> str:  # noqa: ARG001
     return "%"
 
 
-def _get_mult_value(node: NodeMult) -> str:
+def _get_mult_value(node: NodeMult) -> str:  # noqa: ARG001
     return "*"
 
 
@@ -1042,27 +1035,27 @@ def _get_name_value(node: NodeName) -> str:
     return node.id
 
 
-def _get_not_value(node: NodeNot) -> str:
+def _get_not_value(node: NodeNot) -> str:  # noqa: ARG001
     return "not "
 
 
-def _get_noteq_value(node: NodeNotEq) -> str:
+def _get_noteq_value(node: NodeNotEq) -> str:  # noqa: ARG001
     return "!="
 
 
-def _get_notin_value(node: NodeNotIn) -> str:
+def _get_notin_value(node: NodeNotIn) -> str:  # noqa: ARG001
     return "not in"
 
 
-def _get_or_value(node: NodeOr) -> str:
+def _get_or_value(node: NodeOr) -> str:  # noqa: ARG001
     return " or "
 
 
-def _get_pow_value(node: NodePow) -> str:
+def _get_pow_value(node: NodePow) -> str:  # noqa: ARG001
     return "**"
 
 
-def _get_rshift_value(node: NodeRShift) -> str:
+def _get_rshift_value(node: NodeRShift) -> str:  # noqa: ARG001
     return ">>"
 
 
@@ -1079,7 +1072,7 @@ def _get_setcomp_value(node: NodeSetComp) -> str:
 def _get_slice_value(node: NodeSlice) -> str:
     value = f"{_get_value(node.lower) if node.lower else ''}:{_get_value(node.upper) if node.upper else ''}"
     if node.step:
-        value = f"{value}:{_get_value(node.step)}"
+        return f"{value}:{_get_value(node.step)}"
     return value
 
 
@@ -1087,7 +1080,7 @@ def _get_starred_value(node: NodeStarred) -> str:
     return _get_value(node.value)
 
 
-def _get_sub_value(node: NodeSub) -> str:
+def _get_sub_value(node: NodeSub) -> str:  # noqa: ARG001
     return "-"
 
 
@@ -1102,7 +1095,7 @@ def _get_tuple_value(node: NodeTuple) -> str:
     return "(" + ", ".join(_get_value(el) for el in node.elts) + ")"
 
 
-def _get_uadd_value(node: NodeUAdd) -> str:
+def _get_uadd_value(node: NodeUAdd) -> str:  # noqa: ARG001
     return "+"
 
 
@@ -1110,7 +1103,7 @@ def _get_unaryop_value(node: NodeUnaryOp) -> str:
     return f"{_get_value(node.op)}{_get_value(node.operand)}"
 
 
-def _get_usub_value(node: NodeUSub) -> str:
+def _get_usub_value(node: NodeUSub) -> str:  # noqa: ARG001
     return "-"
 
 
@@ -1120,7 +1113,7 @@ def _get_yield_value(node: NodeYield) -> str:
     return _get_value(node.value)
 
 
-_node_value_map: dict[Type, Callable[[Any], str]] = {
+_node_value_map: dict[type, Callable[[Any], str]] = {
     # type(None): lambda _: repr(None),
     NodeAdd: _get_add_value,
     NodeAnd: _get_and_value,
@@ -1250,7 +1243,7 @@ def safe_get_value(node: AST | None, filepath: str | Path | None = None) -> str 
         if filepath:
             message += f" at {filepath}:{node.lineno}"  # type: ignore[union-attr]
         message += f": {error}"
-        logger.error(message)
+        logger.exception(message)
         return None
 
 
@@ -1264,7 +1257,7 @@ def _get_name_name(node: NodeName) -> str:
     return node.id
 
 
-_node_name_map: dict[Type, Callable[[Any], str]] = {
+_node_name_map: dict[type, Callable[[Any], str]] = {
     NodeName: _get_name_name,
     NodeAttribute: _get_attribute_name,
 }
@@ -1292,7 +1285,7 @@ def _get_annassign_names(node: NodeAnnAssign) -> list[str]:
     return [name] if name else []
 
 
-_node_names_map: dict[Type, Callable[[Any], list[str]]] = {  # noqa: WPS234
+_node_names_map: dict[type, Callable[[Any], list[str]]] = {
     NodeAssign: _get_assign_names,
     NodeAnnAssign: _get_annassign_names,
 }

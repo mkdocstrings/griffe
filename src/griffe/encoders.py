@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path, PosixPath, WindowsPath
-from typing import Any, Callable, Type
+from typing import TYPE_CHECKING, Any, Callable
 
 from griffe.dataclasses import (
     Alias,
@@ -26,15 +26,19 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.docstrings.dataclasses import DocstringSectionKind
-from griffe.docstrings.parsers import Parser
 from griffe.expressions import Expression, Name
 
+if TYPE_CHECKING:
+    from enum import Enum
 
-def _enum_value(obj):
+    from griffe.docstrings.parsers import Parser
+
+
+def _enum_value(obj: Enum) -> str | int:
     return obj.value
 
 
-_json_encoder_map: dict[Type, Callable[[Any], Any]] = {
+_json_encoder_map: dict[type, Callable[[Any], Any]] = {
     Path: str,
     PosixPath: str,
     WindowsPath: str,
@@ -87,7 +91,7 @@ class JSONEncoder(json.JSONEncoder):
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
 
-    def default(self, obj: Any) -> Any:  # noqa: WPS212
+    def default(self, obj: Any) -> Any:
         """Return a serializable representation of the given object.
 
         Parameters:
@@ -102,13 +106,13 @@ class JSONEncoder(json.JSONEncoder):
             return _json_encoder_map.get(type(obj), super().default)(obj)
 
 
-def _load_docstring(obj_dict):
+def _load_docstring(obj_dict: dict) -> Docstring | None:
     if "docstring" in obj_dict:
         return Docstring(**obj_dict["docstring"])
     return None
 
 
-def _load_decorators(obj_dict):
+def _load_decorators(obj_dict: dict) -> list[Decorator]:
     return [Decorator(**dec) for dec in obj_dict.get("decorators", [])]
 
 
@@ -193,7 +197,7 @@ def _load_alias(obj_dict: dict[str, Any]) -> Alias:
     )
 
 
-_loader_map: dict[Kind, Callable[[dict[str, Any]], Module | Class | Function | Attribute | Alias]] = {  # noqa: WPS234
+_loader_map: dict[Kind, Callable[[dict[str, Any]], Module | Class | Function | Attribute | Alias]] = {
     Kind.MODULE: _load_module,
     Kind.CLASS: _load_class,
     Kind.FUNCTION: _load_function,
@@ -202,7 +206,7 @@ _loader_map: dict[Kind, Callable[[dict[str, Any]], Module | Class | Function | A
 }
 
 
-def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | Parameter:  # noqa: WPS231
+def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | Parameter:
     """Decode dictionaries as data classes.
 
     The [`json.loads`][] method walks the tree from bottom to top.

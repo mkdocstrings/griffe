@@ -1,5 +1,7 @@
 """Test functions loading."""
 
+from __future__ import annotations
+
 import sys
 
 import pytest
@@ -8,7 +10,7 @@ from griffe.dataclasses import ParameterKind
 from tests.helpers import temporary_visited_module
 
 
-def test_visit_simple_function():
+def test_visit_simple_function() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(foo='<>'): ...") as module:
         function = module["f"]
@@ -21,7 +23,7 @@ def test_visit_simple_function():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
-def test_visit_function_positional_only_param():
+def test_visit_function_positional_only_param() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly, /): ...") as module:
         function = module["f"]
@@ -34,7 +36,7 @@ def test_visit_function_positional_only_param():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
-def test_visit_function_positional_only_param_with_default():
+def test_visit_function_positional_only_param_with_default() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly=0, /): ...") as module:
         function = module["f"]
@@ -47,7 +49,7 @@ def test_visit_function_positional_only_param_with_default():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
-def test_visit_function_positional_or_keyword_param():
+def test_visit_function_positional_or_keyword_param() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly, /, poskw): ...") as module:
         function = module["f"]
@@ -60,7 +62,7 @@ def test_visit_function_positional_or_keyword_param():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
-def test_visit_function_positional_or_keyword_param_with_default():
+def test_visit_function_positional_or_keyword_param_with_default() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly, /, poskw=0): ...") as module:
         function = module["f"]
@@ -72,7 +74,7 @@ def test_visit_function_positional_or_keyword_param_with_default():
         assert param.default == "0"
 
 
-def test_visit_function_keyword_only_param():
+def test_visit_function_keyword_only_param() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(*, kwonly): ...") as module:
         function = module["f"]
@@ -86,7 +88,7 @@ def test_visit_function_keyword_only_param():
 
 # TODO: is it possible to support that?
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="kwonly params defaults not supported on Python 3.7 (ast nodes)")
-def test_visit_function_keyword_only_param_with_default():
+def test_visit_function_keyword_only_param_with_default() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(*, kwonly=0): ...") as module:
         function = module["f"]
@@ -99,14 +101,13 @@ def test_visit_function_keyword_only_param_with_default():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
-def test_visit_function_syntax_error():
+def test_visit_function_syntax_error() -> None:
     """Test functions parameters loading."""
-    with pytest.raises(SyntaxError):  # noqa: PT012
-        with temporary_visited_module("def f(/, poskw=0): ..."):
-            ...
+    with pytest.raises(SyntaxError), temporary_visited_module("def f(/, poskw=0): ..."):
+        ...
 
 
-def test_visit_function_variadic_params():
+def test_visit_function_variadic_params() -> None:
     """Test functions variadic parameters visit."""
     with temporary_visited_module("def f(*args: str, kw=1, **kwargs: int): ...") as module:
         function = module["f"]
@@ -123,7 +124,7 @@ def test_visit_function_variadic_params():
         assert param.annotation.full == "int"
 
 
-def test_visit_function_params_annotations():
+def test_visit_function_params_annotations() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module(
         """
@@ -135,7 +136,7 @@ def test_visit_function_params_annotations():
             c: typing.Optional[typing.List[int]],
             d: float | None):
             ...
-        """
+        """,
     ) as module:
         function = module["f_annorations"]
         assert len(function.parameters) == 4

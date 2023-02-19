@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -11,10 +12,13 @@ from griffe.docstrings.dataclasses import DocstringSectionKind
 from griffe.docstrings.utils import parse_annotation
 from griffe.expressions import Name
 
+if TYPE_CHECKING:
+    from tests.test_docstrings.helpers import ParserType
+
 
 # =============================================================================================
 # Markup flow (multilines, indentation, etc.)
-def test_simple_docstring(parse_google):
+def test_simple_docstring(parse_google: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -25,7 +29,7 @@ def test_simple_docstring(parse_google):
     assert not warnings
 
 
-def test_multiline_docstring(parse_google):
+def test_multiline_docstring(parse_google: ParserType) -> None:
     """Parse a multi-line docstring.
 
     Parameters:
@@ -36,13 +40,13 @@ def test_multiline_docstring(parse_google):
         A somewhat longer docstring.
 
         Blablablabla.
-        """
+        """,
     )
     assert len(sections) == 1
     assert not warnings
 
 
-def test_parse_partially_indented_lines(parse_google):
+def test_parse_partially_indented_lines(parse_google: ParserType) -> None:
     """Properly handle partially indented lines.
 
     Parameters:
@@ -54,7 +58,7 @@ def test_parse_partially_indented_lines(parse_google):
 
         The unavailable formats are:  
            - YAML
-    """  # noqa: W291
+    """
     sections, warnings = parse_google(docstring)
     assert len(sections) == 2
     assert sections[0].kind is DocstringSectionKind.admonition
@@ -62,7 +66,7 @@ def test_parse_partially_indented_lines(parse_google):
     assert not warnings
 
 
-def test_multiple_lines_in_sections_items(parse_google):
+def test_multiple_lines_in_sections_items(parse_google: ParserType) -> None:
     """Parse multi-line item description.
 
     Parameters:
@@ -89,22 +93,17 @@ def test_multiple_lines_in_sections_items(parse_google):
         assert "should be 4 * 2 = 8 spaces, not" in warning
 
 
-def test_code_blocks(parse_google):
+def test_code_blocks(parse_google: ParserType) -> None:
     """Parse code blocks.
 
     Parameters:
         parse_google: Fixture parser.
     """
     docstring = """
-        This docstring contains a docstring in a code block o_O!
+        This docstring contains a code block!
 
         ```python
-        \"\"\"
-        This docstring is contained in another docstring O_o!
-
-        Parameters:
-            s: A string.
-        \"\"\"
+        print("hello")
         ```
     """
 
@@ -113,7 +112,7 @@ def test_code_blocks(parse_google):
     assert not warnings
 
 
-def test_indented_code_block(parse_google):
+def test_indented_code_block(parse_google: ParserType) -> None:
     """Parse indented code blocks.
 
     Parameters:
@@ -135,7 +134,7 @@ def test_indented_code_block(parse_google):
     assert not warnings
 
 
-def test_different_indentation(parse_google):
+def test_different_indentation(parse_google: ParserType) -> None:
     """Parse different indentations, warn on confusing indentation.
 
     Parameters:
@@ -167,7 +166,7 @@ def test_different_indentation(parse_google):
     assert "should be 5 * 2 = 10 spaces, not 6" in warnings[0]
 
 
-def test_empty_indented_lines_in_section_with_items(parse_google):
+def test_empty_indented_lines_in_section_with_items(parse_google: ParserType) -> None:
     """In sections with items, don't treat lines with just indentation as items.
 
     Parameters:
@@ -180,8 +179,7 @@ def test_empty_indented_lines_in_section_with_items(parse_google):
 
 
 # =============================================================================================
-# Annotations (general)
-def test_parse_without_parent(parse_google):
+def test_parse_without_parent(parse_google: ParserType) -> None:
     """Parse a docstring without a parent function.
 
     Parameters:
@@ -203,7 +201,7 @@ def test_parse_without_parent(parse_google):
 
         Returns:
             Itself.
-        """
+        """,
     )
 
     assert len(sections) == 4
@@ -213,7 +211,7 @@ def test_parse_without_parent(parse_google):
     assert "return" in warnings[-1]
 
 
-def test_parse_without_annotations(parse_google):
+def test_parse_without_annotations(parse_google: ParserType) -> None:
     """Parse a function docstring without signature annotations.
 
     Parameters:
@@ -247,7 +245,7 @@ def test_parse_without_annotations(parse_google):
     assert "return" in warnings[-1]
 
 
-def test_parse_with_annotations(parse_google):
+def test_parse_with_annotations(parse_google: ParserType) -> None:
     """Parse a function docstring with signature annotations.
 
     Parameters:
@@ -280,8 +278,7 @@ def test_parse_with_annotations(parse_google):
 
 
 # =============================================================================================
-# Sections (general)
-def test_parse_attributes_section(parse_google):
+def test_parse_attributes_section(parse_google: ParserType) -> None:
     """Parse Attributes sections.
 
     Parameters:
@@ -298,7 +295,7 @@ def test_parse_attributes_section(parse_google):
     assert not warnings
 
 
-def test_parse_examples_sections(parse_google):
+def test_parse_examples_sections(parse_google: ParserType) -> None:
     """Parse a function docstring with examples.
 
     Parameters:
@@ -339,7 +336,7 @@ def test_parse_examples_sections(parse_google):
 
             Even if it contains doctests, the following block is still considered a normal code-block.
 
-            ```python
+            ```pycon
             >>> print("examples")
             "examples"
             >>> 2 + 2
@@ -376,7 +373,7 @@ def test_parse_examples_sections(parse_google):
     assert not warnings
 
 
-def test_parse_yields_section(parse_google):
+def test_parse_yields_section(parse_google: ParserType) -> None:
     """Parse Yields section.
 
     Parameters:
@@ -407,7 +404,7 @@ def test_parse_yields_section(parse_google):
     assert "'x'" in warnings[0]
 
 
-def test_invalid_sections(parse_google):
+def test_invalid_sections(parse_google: ParserType) -> None:
     """Warn on invalid (empty) sections.
 
     Parameters:
@@ -432,7 +429,7 @@ def test_invalid_sections(parse_google):
     assert "Empty" in warnings[-1]
 
 
-def test_close_sections(parse_google):
+def test_close_sections(parse_google: ParserType) -> None:
     """Parse sections without blank lines in between.
 
     Parameters:
@@ -463,7 +460,7 @@ def test_close_sections(parse_google):
 
 # =============================================================================================
 # Parameters sections
-def test_parse_args_and_kwargs(parse_google):
+def test_parse_args_and_kwargs(parse_google: ParserType) -> None:
     """Parse args and kwargs.
 
     Parameters:
@@ -485,7 +482,7 @@ def test_parse_args_and_kwargs(parse_google):
     assert not warnings
 
 
-def test_parse_args_kwargs_keyword_only(parse_google):
+def test_parse_args_kwargs_keyword_only(parse_google: ParserType) -> None:
     """Parse args and kwargs.
 
     Parameters:
@@ -515,7 +512,7 @@ def test_parse_args_kwargs_keyword_only(parse_google):
     assert not warnings
 
 
-def test_parse_types_in_docstring(parse_google):
+def test_parse_types_in_docstring(parse_google: ParserType) -> None:
     """Parse types in docstring.
 
     Parameters:
@@ -549,9 +546,9 @@ def test_parse_types_in_docstring(parse_google):
     assert sections[1].kind is DocstringSectionKind.other_parameters
     assert sections[2].kind is DocstringSectionKind.returns
 
-    (argx,) = sections[0].value  # noqa: WPS460
-    (argy,) = sections[1].value  # noqa: WPS460
-    (returns,) = sections[2].value  # noqa: WPS460
+    (argx,) = sections[0].value
+    (argy,) = sections[1].value
+    (returns,) = sections[2].value
 
     assert argx.name == "x"
     assert argx.annotation.source == "int"
@@ -570,7 +567,7 @@ def test_parse_types_in_docstring(parse_google):
     assert returns.description == "Sum X + Y + Z."
 
 
-def test_parse_optional_type_in_docstring(parse_google):
+def test_parse_optional_type_in_docstring(parse_google: ParserType) -> None:
     """Parse optional types in docstring.
 
     Parameters:
@@ -603,7 +600,7 @@ def test_parse_optional_type_in_docstring(parse_google):
     assert sections[1].kind is DocstringSectionKind.other_parameters
 
     argx, argy = sections[0].value
-    (argz,) = sections[1].value  # noqa: WPS460
+    (argz,) = sections[1].value
 
     assert argx.name == "x"
     assert argx.annotation.source == "int"
@@ -624,7 +621,7 @@ def test_parse_optional_type_in_docstring(parse_google):
     assert argz.value == "None"
 
 
-def test_prefer_docstring_types_over_annotations(parse_google):
+def test_prefer_docstring_types_over_annotations(parse_google: ParserType) -> None:
     """Prefer the docstring type over the annotation.
 
     Parameters:
@@ -659,9 +656,9 @@ def test_prefer_docstring_types_over_annotations(parse_google):
     assert sections[1].kind is DocstringSectionKind.other_parameters
     assert sections[2].kind is DocstringSectionKind.returns
 
-    (argx,) = sections[0].value  # noqa: WPS460
-    (argy,) = sections[1].value  # noqa: WPS460
-    (returns,) = sections[2].value  # noqa: WPS460
+    (argx,) = sections[0].value
+    (argy,) = sections[1].value
+    (returns,) = sections[2].value
 
     assert argx.name == "x"
     assert argx.annotation.source == "str"
@@ -678,7 +675,7 @@ def test_prefer_docstring_types_over_annotations(parse_google):
     assert returns.description == "Sum X + Y + Z."
 
 
-def test_parameter_line_without_colon(parse_google):
+def test_parameter_line_without_colon(parse_google: ParserType) -> None:
     """Warn when missing colon.
 
     Parameters:
@@ -696,7 +693,7 @@ def test_parameter_line_without_colon(parse_google):
     assert "Empty" in warnings[1]
 
 
-def test_parameter_line_without_colon_keyword_only(parse_google):
+def test_parameter_line_without_colon_keyword_only(parse_google: ParserType) -> None:
     """Warn when missing colon.
 
     Parameters:
@@ -714,7 +711,7 @@ def test_parameter_line_without_colon_keyword_only(parse_google):
     assert "Empty" in warnings[1]
 
 
-def test_warn_about_unknown_parameters(parse_google):
+def test_warn_about_unknown_parameters(parse_google: ParserType) -> None:
     """Warn about unknown parameters in "Parameters" sections.
 
     Parameters:
@@ -740,7 +737,7 @@ def test_warn_about_unknown_parameters(parse_google):
     assert "'x' does not appear in the function signature" in warnings[0]
 
 
-def test_never_warn_about_unknown_other_parameters(parse_google):
+def test_never_warn_about_unknown_other_parameters(parse_google: ParserType) -> None:
     """Never warn about unknown parameters in "Other parameters" sections.
 
     Parameters:
@@ -765,7 +762,7 @@ def test_never_warn_about_unknown_other_parameters(parse_google):
     assert not warnings
 
 
-def test_unknown_params_scan_doesnt_crash_without_parameters(parse_google):
+def test_unknown_params_scan_doesnt_crash_without_parameters(parse_google: ParserType) -> None:
     """Assert we don't crash when parsing parameters sections and parent object does not have parameters.
 
     Parameters:
@@ -781,7 +778,7 @@ def test_unknown_params_scan_doesnt_crash_without_parameters(parse_google):
     assert not warnings
 
 
-def test_class_uses_init_parameters(parse_google):
+def test_class_uses_init_parameters(parse_google: ParserType) -> None:
     """Assert we use the `__init__` parameters when parsing classes' parameters sections.
 
     Parameters:
@@ -801,7 +798,7 @@ def test_class_uses_init_parameters(parse_google):
     assert argx.description == "X value."
 
 
-def test_dataclass_uses_attributes(parse_google):
+def test_dataclass_uses_attributes(parse_google: ParserType) -> None:
     """Assert we use the class' attributes as parameters when parsing dataclasses' parameters sections.
 
     Parameters:
@@ -830,7 +827,7 @@ def test_dataclass_uses_attributes(parse_google):
 
 
 # TODO: possible feature
-# def test_missing_parameter(parse_google):
+# def test_missing_parameter(parse_google: ParserType) -> None:
 #     """Warn on missing parameter in docstring.
 #
 #     Parameters:
@@ -841,14 +838,12 @@ def test_dataclass_uses_attributes(parse_google):
 #             x: Integer.
 #     """
 
-#     sections, warnings = parse_google(docstring)
-#     assert len(sections) == 1
 #     assert not warnings
 
 
 # =============================================================================================
 # Attributes sections
-def test_retrieve_attributes_annotation_from_parent(parse_google):
+def test_retrieve_attributes_annotation_from_parent(parse_google: ParserType) -> None:
     """Retrieve the annotations of attributes from the parent object.
 
     Parameters:
@@ -874,7 +869,7 @@ def test_retrieve_attributes_annotation_from_parent(parse_google):
 
 # =============================================================================================
 # Yields sections
-def test_parse_yields_section_with_return_annotation(parse_google):
+def test_parse_yields_section_with_return_annotation(parse_google: ParserType) -> None:
     """Parse Yields section with a return annotation in the parent function.
 
     Parameters:
@@ -901,7 +896,7 @@ def test_parse_yields_section_with_return_annotation(parse_google):
         "Generator[tuple[int, float], ..., ...]",
     ],
 )
-def test_parse_yields_tuple_in_iterator_or_generator(parse_google, return_annotation):
+def test_parse_yields_tuple_in_iterator_or_generator(parse_google: ParserType, return_annotation: str) -> None:
     """Parse Yields annotations in Iterator or Generator types.
 
     Parameters:
@@ -931,7 +926,7 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_google, return_annota
 
 # =============================================================================================
 # Receives sections
-def test_parse_receives_tuple_in_generator(parse_google):
+def test_parse_receives_tuple_in_generator(parse_google: ParserType) -> None:
     """Parse Receives annotations in Generator type.
 
     Parameters:
@@ -960,7 +955,7 @@ def test_parse_receives_tuple_in_generator(parse_google):
 
 # =============================================================================================
 # Returns sections
-def test_parse_returns_tuple_in_generator(parse_google):
+def test_parse_returns_tuple_in_generator(parse_google: ParserType) -> None:
     """Parse Returns annotations in Generator type.
 
     Parameters:
@@ -989,7 +984,7 @@ def test_parse_returns_tuple_in_generator(parse_google):
 
 # =============================================================================================
 # Parser special features
-def test_parse_admonitions(parse_google):
+def test_parse_admonitions(parse_google: ParserType) -> None:
     """Parse admonitions.
 
     Parameters:
@@ -1042,7 +1037,7 @@ def test_parse_admonitions(parse_google):
         """Last line:""",
     ],
 )
-def test_handle_false_admonitions_correctly(parse_google, docstring):
+def test_handle_false_admonitions_correctly(parse_google: ParserType, docstring: str) -> None:
     """Correctly handle lines that look like admonitions.
 
     Parameters:
@@ -1056,7 +1051,7 @@ def test_handle_false_admonitions_correctly(parse_google, docstring):
     assert not warnings
 
 
-def test_dont_insert_admonition_before_current_section(parse_google):
+def test_dont_insert_admonition_before_current_section(parse_google: ParserType) -> None:
     """Check that admonitions are inserted at the right place.
 
     Parameters:
@@ -1089,7 +1084,7 @@ def test_dont_insert_admonition_before_current_section(parse_google):
         "Summary\non two lines.\n\nParagraph.",
     ],
 )
-def test_ignore_init_summary(parse_google, docstring):
+def test_ignore_init_summary(parse_google: ParserType, docstring: str) -> None:
     """Correctly ignore summary in `__init__` methods' docstrings.
 
     Parameters:
@@ -1129,7 +1124,7 @@ def test_ignore_init_summary(parse_google, docstring):
         """,
     ],
 )
-def test_trim_doctest_flags_basic_example(parse_google, docstring):
+def test_trim_doctest_flags_basic_example(parse_google: ParserType, docstring: str) -> None:
     """Correctly parse simple example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
@@ -1147,7 +1142,7 @@ def test_trim_doctest_flags_basic_example(parse_google, docstring):
     assert "<BLANKLINE>" not in example_str
 
 
-def test_trim_doctest_flags_multi_example(parse_google):
+def test_trim_doctest_flags_multi_example(parse_google: ParserType) -> None:
     """Correctly parse multiline example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
@@ -1183,7 +1178,7 @@ def test_trim_doctest_flags_multi_example(parse_google):
     assert "\n>>> print(list(range(1, 100)))\n" in example_str
 
 
-def test_single_line_with_trailing_whitespace(parse_google):
+def test_single_line_with_trailing_whitespace(parse_google: ParserType) -> None:
     """Don't crash on single line docstrings with trailing whitespace.
 
     Parameters:

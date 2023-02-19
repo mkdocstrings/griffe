@@ -8,11 +8,14 @@ import re
 import sys
 from contextlib import suppress
 from pathlib import Path
-from typing import Iterator, Sequence, Tuple
+from typing import TYPE_CHECKING, Iterator, Sequence, Tuple
 
-from griffe.dataclasses import Module
 from griffe.exceptions import UnhandledEditableModuleError
 from griffe.logger import get_logger
+
+if TYPE_CHECKING:
+    from griffe.dataclasses import Module
+
 
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
@@ -72,6 +75,7 @@ class ModuleFinder:
     def find_spec(
         self,
         module: str | Path,
+        *,
         try_relative_path: bool = True,
     ) -> tuple[str, Package | NamespacePackage]:
         """Find the top module of a module.
@@ -119,7 +123,7 @@ class ModuleFinder:
             top_module_name = module.split(".", 1)[0]
         return module_name, self.find_package(top_module_name)
 
-    def find_package(self, module_name: str) -> Package | NamespacePackage:  # noqa: WPS231
+    def find_package(self, module_name: str) -> Package | NamespacePackage:
         """Find a package or namespace package.
 
         Parameters:
@@ -138,7 +142,7 @@ class ModuleFinder:
         ]
 
         namespace_dirs = []
-        for path in self.search_paths:  # noqa: WPS440
+        for path in self.search_paths:
             path_contents = self._contents(path)
             if path_contents:
                 for choice in filepaths:
@@ -147,19 +151,18 @@ class ModuleFinder:
                         if abs_path.suffix:
                             stubs = abs_path.with_suffix(".pyi")
                             return Package(module_name, abs_path, stubs if stubs.exists() else None)
-                        else:
-                            init_module = abs_path / "__init__.py"
-                            if init_module.exists() and not _is_pkg_style_namespace(init_module):
-                                stubs = init_module.with_suffix(".pyi")
-                                return Package(module_name, init_module, stubs if stubs.exists() else None)
-                            namespace_dirs.append(abs_path)
+                        init_module = abs_path / "__init__.py"
+                        if init_module.exists() and not _is_pkg_style_namespace(init_module):
+                            stubs = init_module.with_suffix(".pyi")
+                            return Package(module_name, init_module, stubs if stubs.exists() else None)
+                        namespace_dirs.append(abs_path)
 
         if namespace_dirs:
             return NamespacePackage(module_name, namespace_dirs)
 
         raise ModuleNotFoundError(module_name)
 
-    def iter_submodules(  # noqa: WPS231,WPS234
+    def iter_submodules(
         self,
         path: Path | list[Path],
         seen: set | None = None,
@@ -231,7 +234,7 @@ class ModuleFinder:
         """
         return sorted(self.iter_submodules(module.filepath), key=_module_depth)
 
-    def _module_name_path(self, path: Path) -> tuple[str, Path]:  # noqa: WPS231
+    def _module_name_path(self, path: Path) -> tuple[str, Path]:
         if path.is_dir():
             for ext in self.accepted_py_module_extensions:
                 module_path = path / f"__init__{ext}"
@@ -258,15 +261,15 @@ class ModuleFinder:
         if path not in self.search_paths:
             self.search_paths.append(path)
 
-    def _extend_from_pth_files(self):
+    def _extend_from_pth_files(self) -> None:
         for path in self.search_paths:
             for item in self._contents(path):
                 if item.suffix == ".pth":
                     for directory in _handle_pth_file(item):
                         self._append_search_path(directory)
 
-    def _extend_from_editable_modules(self):  # noqa: WPS231
-        for path in self.search_paths:  # noqa: WPS440
+    def _extend_from_editable_modules(self) -> None:
+        for path in self.search_paths:
             for item in self._contents(path):
                 if item.stem.startswith(("__editables_", "__editable__")) and item.suffix == ".py":
                     with suppress(UnhandledEditableModuleError):
@@ -276,7 +279,7 @@ class ModuleFinder:
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
         for root, dirs, files in os.walk(path, topdown=True):
             # optimization: modify dirs in-place to exclude __pycache__ directories
-            dirs[:] = [dir for dir in dirs if dir != "__pycache__"]  # noqa: WPS362
+            dirs[:] = [dir for dir in dirs if dir != "__pycache__"]
             for relfile in files:
                 if os.path.splitext(relfile)[1] in self.extensions_set:
                     yield Path(root, relfile)
@@ -314,7 +317,7 @@ def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
     return len(name_parts_and_path[0])
 
 
-def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
+def _handle_pth_file(path: Path) -> list[Path]:
     # Support for .pth files pointing to directories.
     # From https://docs.python.org/3/library/site.html:
     # A path configuration file is a file whose name has the form name.pth
@@ -328,17 +331,16 @@ def _handle_pth_file(path) -> list[Path]:  # noqa: WPS231
     directories = []
     for line in path.read_text(encoding="utf8").strip().splitlines(keepends=False):
         line = line.strip()
-        if line and not line.startswith("#") and not _re_import_line.search(line):
-            if os.path.exists(line):
-                directories.append(Path(line))
+        if line and not line.startswith("#") and not _re_import_line.search(line) and os.path.exists(line):
+            directories.append(Path(line))
     return directories
 
 
-def _handle_editable_module(path: Path):  # noqa: WPS231
+def _handle_editable_module(path: Path) -> list[Path]:
     try:
         editable_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
-    except FileNotFoundError:
-        raise UnhandledEditableModuleError(path)
+    except FileNotFoundError as error:
+        raise UnhandledEditableModuleError(path) from error
     if path.name.startswith("__editables_"):
         # support for how 'editables' writes these files:
         # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
@@ -352,10 +354,10 @@ def _handle_editable_module(path: Path):  # noqa: WPS231
         # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}
         parsed_module = ast.parse(path.read_text())
         for node in parsed_module.body:
-            if isinstance(node, ast.Assign):
-                if isinstance(node.targets[0], ast.Name) and node.targets[0].id == "MAPPING":
-                    if isinstance(node.value, ast.Dict):
-                        return [
-                            Path(constant.s).parent for constant in node.value.values if isinstance(constant, ast.Str)
-                        ]
+            if (
+                isinstance(node, ast.Assign)
+                and isinstance(node.targets[0], ast.Name)
+                and node.targets[0].id == "MAPPING"
+            ) and isinstance(node.value, ast.Dict):
+                return [Path(constant.s).parent for constant in node.value.values if isinstance(constant, ast.Str)]
     raise UnhandledEditableModuleError(path)

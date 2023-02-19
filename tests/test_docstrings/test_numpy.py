@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -21,10 +22,13 @@ from griffe.docstrings.utils import parse_annotation
 from griffe.expressions import Name
 from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
 
+if TYPE_CHECKING:
+    from tests.test_docstrings.helpers import ParserType
+
 
 # =============================================================================================
 # Markup flow (multilines, indentation, etc.)
-def test_simple_docstring(parse_numpy):
+def test_simple_docstring(parse_numpy: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -35,7 +39,7 @@ def test_simple_docstring(parse_numpy):
     assert not warnings
 
 
-def test_multiline_docstring(parse_numpy):
+def test_multiline_docstring(parse_numpy: ParserType) -> None:
     """Parse a multi-line docstring.
 
     Parameters:
@@ -46,28 +50,23 @@ def test_multiline_docstring(parse_numpy):
         A somewhat longer docstring.
 
         Blablablabla.
-        """
+        """,
     )
     assert len(sections) == 1
     assert not warnings
 
 
-def test_code_blocks(parse_numpy):
+def test_code_blocks(parse_numpy: ParserType) -> None:
     """Parse code blocks.
 
     Parameters:
         parse_numpy: Fixture parser.
     """
     docstring = """
-        This docstring contains a docstring in a code block o_O!
+        This docstring contains a code block!
 
         ```python
-        \"\"\"
-        This docstring is contained in another docstring O_o!
-
-        Parameters:
-            s: A string.
-        \"\"\"
+        print("hello")
         ```
     """
 
@@ -76,7 +75,7 @@ def test_code_blocks(parse_numpy):
     assert not warnings
 
 
-def test_indented_code_block(parse_numpy):
+def test_indented_code_block(parse_numpy: ParserType) -> None:
     """Parse indented code blocks.
 
     Parameters:
@@ -98,7 +97,7 @@ def test_indented_code_block(parse_numpy):
     assert not warnings
 
 
-def test_empty_indented_lines_in_section_with_items(parse_numpy):
+def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> None:
     """In sections with items, don't treat lines with just indentation as items.
 
     Parameters:
@@ -111,8 +110,7 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy):
 
 
 # =============================================================================================
-# Annotations (general)
-def test_prefer_docstring_type_over_annotation(parse_numpy):
+def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
     """Prefer the type written in the docstring over the annotation in the parent.
 
     Parameters:
@@ -125,13 +123,14 @@ def test_prefer_docstring_type_over_annotation(parse_numpy):
     """
 
     sections, _ = parse_numpy(
-        docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str")))
+        docstring,
+        parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))),
     )
     assert len(sections) == 1
     assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation=Name("int", "int")))
 
 
-def test_parse_complex_annotations(parse_numpy):
+def test_parse_complex_annotations(parse_numpy: ParserType) -> None:
     """Check the type regex accepts all the necessary characters.
 
     Parameters:
@@ -172,7 +171,7 @@ def test_parse_complex_annotations(parse_numpy):
         ("Warns\n---\n{name}\n    Description.\n", "UserWarning"),
     ],
 )
-def test_parse_annotations_in_all_sections(parse_numpy, docstring, name):
+def test_parse_annotations_in_all_sections(parse_numpy: ParserType, docstring: str, name: str) -> None:
     """Assert annotations are parsed in all relevant sections.
 
     Parameters:
@@ -186,7 +185,7 @@ def test_parse_annotations_in_all_sections(parse_numpy, docstring, name):
     assert sections[0].value[0].annotation == Name(name, name)
 
 
-def test_dont_crash_on_text_annotations(parse_numpy, caplog):
+def test_dont_crash_on_text_annotations(parse_numpy: ParserType, caplog: pytest.LogCaptureFixture) -> None:
     """Don't crash while parsing annotations containing unhandled nodes.
 
     Parameters:
@@ -225,8 +224,7 @@ def test_dont_crash_on_text_annotations(parse_numpy, caplog):
 
 
 # =============================================================================================
-# Sections (general)
-def test_parameters_section(parse_numpy):
+def test_parameters_section(parse_numpy: ParserType) -> None:
     """Parse parameters section.
 
     Parameters:
@@ -251,7 +249,7 @@ def test_parameters_section(parse_numpy):
     assert len(sections) == 1
 
 
-def test_parse_starred_parameters(parse_numpy):
+def test_parse_starred_parameters(parse_numpy: ParserType) -> None:
     """Parse parameters names with stars in them.
 
     Parameters:
@@ -270,7 +268,7 @@ def test_parse_starred_parameters(parse_numpy):
     assert len(warnings) == 1
 
 
-def test_other_parameters_section(parse_numpy):
+def test_other_parameters_section(parse_numpy: ParserType) -> None:
     """Parse other parameters section.
 
     Parameters:
@@ -295,7 +293,7 @@ def test_other_parameters_section(parse_numpy):
     assert len(sections) == 1
 
 
-def test_retrieve_annotation_from_parent(parse_numpy):
+def test_retrieve_annotation_from_parent(parse_numpy: ParserType) -> None:
     """Retrieve parameter annotation from the parent object.
 
     Parameters:
@@ -308,13 +306,14 @@ def test_retrieve_annotation_from_parent(parse_numpy):
     """
 
     sections, _ = parse_numpy(
-        docstring, parent=Function("func", parameters=Parameters(Parameter("a", annotation="str")))
+        docstring,
+        parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))),
     )
     assert len(sections) == 1
     assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="str"))
 
 
-def test_deprecated_section(parse_numpy):
+def test_deprecated_section(parse_numpy: ParserType) -> None:
     """Parse deprecated section.
 
     Parameters:
@@ -334,7 +333,7 @@ def test_deprecated_section(parse_numpy):
     assert sections[0].value.description == "Deprecated.\nSorry."
 
 
-def test_returns_section(parse_numpy):
+def test_returns_section(parse_numpy: ParserType) -> None:
     """Parse returns section.
 
     Parameters:
@@ -353,14 +352,16 @@ def test_returns_section(parse_numpy):
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringReturn(name="", annotation="list of int", description="A list of integers.")
+        sections[0].value[0],
+        DocstringReturn(name="", annotation="list of int", description="A list of integers."),
     )
     assert_element_equal(
-        sections[0].value[1], DocstringReturn(name="", annotation="bool", description="Some kind\nof flag.")
+        sections[0].value[1],
+        DocstringReturn(name="", annotation="bool", description="Some kind\nof flag."),
     )
 
 
-def test_yields_section(parse_numpy):
+def test_yields_section(parse_numpy: ParserType) -> None:
     """Parse yields section.
 
     Parameters:
@@ -379,14 +380,16 @@ def test_yields_section(parse_numpy):
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringYield(name="", annotation="list of int", description="A list of integers.")
+        sections[0].value[0],
+        DocstringYield(name="", annotation="list of int", description="A list of integers."),
     )
     assert_element_equal(
-        sections[0].value[1], DocstringYield(name="", annotation="bool", description="Some kind\nof flag.")
+        sections[0].value[1],
+        DocstringYield(name="", annotation="bool", description="Some kind\nof flag."),
     )
 
 
-def test_receives_section(parse_numpy):
+def test_receives_section(parse_numpy: ParserType) -> None:
     """Parse receives section.
 
     Parameters:
@@ -405,14 +408,16 @@ def test_receives_section(parse_numpy):
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringReceive(name="", annotation="list of int", description="A list of integers.")
+        sections[0].value[0],
+        DocstringReceive(name="", annotation="list of int", description="A list of integers."),
     )
     assert_element_equal(
-        sections[0].value[1], DocstringReceive(name="", annotation="bool", description="Some kind\nof flag.")
+        sections[0].value[1],
+        DocstringReceive(name="", annotation="bool", description="Some kind\nof flag."),
     )
 
 
-def test_raises_section(parse_numpy):
+def test_raises_section(parse_numpy: ParserType) -> None:
     """Parse raises section.
 
     Parameters:
@@ -428,11 +433,12 @@ def test_raises_section(parse_numpy):
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
     assert_element_equal(
-        sections[0].value[0], DocstringRaise(annotation="RuntimeError", description="There was an issue.")
+        sections[0].value[0],
+        DocstringRaise(annotation="RuntimeError", description="There was an issue."),
     )
 
 
-def test_warns_section(parse_numpy):
+def test_warns_section(parse_numpy: ParserType) -> None:
     """Parse warns section.
 
     Parameters:
@@ -450,7 +456,7 @@ def test_warns_section(parse_numpy):
     assert_element_equal(sections[0].value[0], DocstringWarn(annotation="ResourceWarning", description="Heads up."))
 
 
-def test_attributes_section(parse_numpy):
+def test_attributes_section(parse_numpy: ParserType) -> None:
     """Parse attributes section.
 
     Parameters:
@@ -473,7 +479,7 @@ def test_attributes_section(parse_numpy):
     assert_attribute_equal(sections[0].value[2], DocstringAttribute(name="z", annotation="int", description="Bye."))
 
 
-def test_examples_section(parse_numpy):
+def test_examples_section(parse_numpy: ParserType) -> None:
     """Parse examples section.
 
     Parameters:
@@ -487,7 +493,7 @@ def test_examples_section(parse_numpy):
         >>> 1 + 2
         3
 
-        ```python
+        ```pycon
         >>> print("Hello again.")
         ```
 
@@ -512,7 +518,7 @@ def test_examples_section(parse_numpy):
     assert examples.value[3][1].startswith(">>> a = 0  # doctest: +SKIP")
 
 
-def test_examples_section_when_followed_by_named_section(parse_numpy):
+def test_examples_section_when_followed_by_named_section(parse_numpy: ParserType) -> None:
     """Parse examples section followed by another section.
 
     Parameters:
@@ -534,7 +540,7 @@ def test_examples_section_when_followed_by_named_section(parse_numpy):
     assert sections[1].kind is DocstringSectionKind.parameters
 
 
-def test_examples_section_as_last(parse_numpy):
+def test_examples_section_as_last(parse_numpy: ParserType) -> None:
     """Parse examples section being last in the docstring.
 
     Parameters:
@@ -545,7 +551,7 @@ def test_examples_section_as_last(parse_numpy):
 
         Examples
         --------
-        ```python
+        ```pycon
         >>> LoremIpsum.from_string("consectetur")
         <foofoo: Ipsum.Lorem>
 
@@ -560,7 +566,7 @@ def test_examples_section_as_last(parse_numpy):
 
 # =============================================================================================
 # Attributes sections
-def test_retrieve_attributes_annotation_from_parent(parse_numpy):
+def test_retrieve_attributes_annotation_from_parent(parse_numpy: ParserType) -> None:
     """Retrieve the annotations of attributes from the parent object.
 
     Parameters:
@@ -589,7 +595,7 @@ def test_retrieve_attributes_annotation_from_parent(parse_numpy):
 
 # =============================================================================================
 # Parameters sections
-def test_warn_about_unknown_parameters(parse_numpy):
+def test_warn_about_unknown_parameters(parse_numpy: ParserType) -> None:
     """Warn about unknown parameters in "Parameters" sections.
 
     Parameters:
@@ -618,7 +624,7 @@ def test_warn_about_unknown_parameters(parse_numpy):
     assert "'x' does not appear in the function signature" in warnings[0]
 
 
-def test_never_warn_about_unknown_other_parameters(parse_numpy):
+def test_never_warn_about_unknown_other_parameters(parse_numpy: ParserType) -> None:
     """Never warn about unknown parameters in "Other parameters" sections.
 
     Parameters:
@@ -646,7 +652,7 @@ def test_never_warn_about_unknown_other_parameters(parse_numpy):
     assert not warnings
 
 
-def test_unknown_params_scan_doesnt_crash_without_parameters(parse_numpy):
+def test_unknown_params_scan_doesnt_crash_without_parameters(parse_numpy: ParserType) -> None:
     """Assert we don't crash when parsing parameters sections and parent object does not have parameters.
 
     Parameters:
@@ -665,7 +671,7 @@ def test_unknown_params_scan_doesnt_crash_without_parameters(parse_numpy):
     assert not warnings
 
 
-def test_class_uses_init_parameters(parse_numpy):
+def test_class_uses_init_parameters(parse_numpy: ParserType) -> None:
     """Assert we use the `__init__` parameters when parsing classes' parameters sections.
 
     Parameters:
@@ -697,7 +703,7 @@ def test_class_uses_init_parameters(parse_numpy):
         "Generator[tuple[int, float], ..., ...]",
     ],
 )
-def test_parse_yields_tuple_in_iterator_or_generator(parse_numpy, return_annotation):
+def test_parse_yields_tuple_in_iterator_or_generator(parse_numpy: ParserType, return_annotation: str) -> None:
     """Parse Yields annotations in Iterator or Generator types.
 
     Parameters:
@@ -730,7 +736,7 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_numpy, return_annotat
 
 # =============================================================================================
 # Receives sections
-def test_parse_receives_tuple_in_generator(parse_numpy):
+def test_parse_receives_tuple_in_generator(parse_numpy: ParserType) -> None:
     """Parse Receives annotations in Generator type.
 
     Parameters:
@@ -762,7 +768,7 @@ def test_parse_receives_tuple_in_generator(parse_numpy):
 
 # =============================================================================================
 # Returns sections
-def test_parse_returns_tuple_in_generator(parse_numpy):
+def test_parse_returns_tuple_in_generator(parse_numpy: ParserType) -> None:
     """Parse Returns annotations in Generator type.
 
     Parameters:
@@ -807,7 +813,7 @@ def test_parse_returns_tuple_in_generator(parse_numpy):
         "Summary\non two lines.\n\nParagraph.",
     ],
 )
-def test_ignore_init_summary(parse_numpy, docstring):
+def test_ignore_init_summary(parse_numpy: ParserType, docstring: str) -> None:
     """Correctly ignore summary in `__init__` methods' docstrings.
 
     Parameters:
@@ -849,7 +855,7 @@ def test_ignore_init_summary(parse_numpy, docstring):
         """,
     ],
 )
-def test_trim_doctest_flags_basic_example(parse_numpy, docstring):
+def test_trim_doctest_flags_basic_example(parse_numpy: ParserType, docstring: str) -> None:
     """Correctly parse_numpy simple example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
@@ -867,7 +873,7 @@ def test_trim_doctest_flags_basic_example(parse_numpy, docstring):
     assert "<BLANKLINE>" not in example_str
 
 
-def test_trim_doctest_flags_multi_example(parse_numpy):
+def test_trim_doctest_flags_multi_example(parse_numpy: ParserType) -> None:
     """Correctly parse_numpy multiline example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:

@@ -6,12 +6,13 @@ import tokenize
 from collections import defaultdict
 from functools import lru_cache
 from io import BytesIO
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, ItemsView, KeysView, ValuesView
 
 from griffe.mixins import GetMembersMixin, SetMembersMixin
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from griffe.dataclasses import Module
 
 

@@ -1,10 +1,12 @@
 """Tests for the docstrings utility functions."""
 
+from __future__ import annotations
+
 from griffe.dataclasses import Docstring, Function, Parameter, ParameterKind, Parameters
-from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
+from griffe.docstrings.parsers import Parser, parse
 
 
-def test_can_warn_without_parent_module():
+def test_can_warn_without_parent_module() -> None:
     """Assert we can parse a docstring even if it does not have a parent module."""
     function = Function(
         "func",

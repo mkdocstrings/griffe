@@ -2,16 +2,36 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Iterator, List, Tuple, Union
+import sys
+from typing import TYPE_CHECKING, Any, Iterator, List, Tuple, Union
 
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module
 from griffe.docstrings.dataclasses import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
+
+if TYPE_CHECKING:
+    from types import ModuleType
+
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Protocol
+else:
+    from typing import Protocol
 
 ParentType = Union[Module, Class, Function, Attribute, None]
 ParseResultType = Tuple[List[DocstringSection], List[str]]
 
 
-def parser(parser_module) -> Iterator[Callable[[str, ParentType, Any], ParseResultType]]:
+class ParserType(Protocol):  # noqa: D101
+    def __call__(  # noqa: D102
+        self,
+        docstring: str,
+        parent: ParentType | None = None,
+        **parser_opts: Any,
+    ) -> ParseResultType:
+        ...
+
+
+def parser(parser_module: ModuleType) -> Iterator[ParserType]:
     """Wrap a parser to help testing.
 
     Parameters:
@@ -20,9 +40,9 @@ def parser(parser_module) -> Iterator[Callable[[str, ParentType, Any], ParseResu
     Yields:
         The wrapped function.
     """
-    original_warn = parser_module._warn  # noqa: WPS437
+    original_warn = parser_module._warn
 
-    def parse(docstring: str, parent: ParentType = None, **parser_opts: Any) -> ParseResultType:  # noqa: WPS430
+    def parse(docstring: str, parent: ParentType = None, **parser_opts: Any) -> ParseResultType:
         """Parse a doctring.
 
         Parameters:
@@ -39,13 +59,13 @@ def parser(parser_module) -> Iterator[Callable[[str, ParentType, Any], ParseResu
             docstring_object.parent = parent
             parent.docstring = docstring_object
         warnings = []
-        parser_module._warn = lambda _docstring, _offset, message: warnings.append(message)  # noqa: WPS437
+        parser_module._warn = lambda _docstring, _offset, message: warnings.append(message)  # type: ignore[attr-defined]
         sections = parser_module.parse(docstring_object, **parser_opts)
         return sections, warnings
 
-    yield parse  # type: ignore
+    yield parse  # type: ignore[misc]
 
-    parser_module._warn = original_warn  # noqa: WPS437
+    parser_module._warn = original_warn  # type: ignore[attr-defined]
 
 
 def assert_parameter_equal(actual: DocstringParameter, expected: DocstringParameter) -> None:

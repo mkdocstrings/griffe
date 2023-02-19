@@ -12,8 +12,7 @@ import ast
 import inspect
 from contextlib import suppress
 from itertools import zip_longest
-from pathlib import Path
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
 
 from griffe.agents.base import BaseVisitor
 from griffe.agents.extensions import Extensions
@@ -43,9 +42,14 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
-from griffe.docstrings.parsers import Parser
 from griffe.exceptions import LastNodeError, NameResolutionError
-from griffe.expressions import Expression, Name
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from griffe.docstrings.parsers import Parser
+    from griffe.expressions import Expression, Name
+
 
 builtin_decorators = {
     "property": "property",
@@ -105,7 +109,7 @@ def visit(
     ).get_module()
 
 
-class Visitor(BaseVisitor):  # noqa: WPS338
+class Visitor(BaseVisitor):
     """This class is used to instantiate a visitor.
 
     Visitors iterate on AST nodes to extract data from them.
@@ -149,7 +153,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         self.type_guarded: bool = False
 
-    def _get_docstring(self, node: ast.AST, strict: bool = False) -> Docstring | None:
+    def _get_docstring(self, node: ast.AST, *, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
         if value is None:
             return None
@@ -187,7 +191,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         for after_visitor in self.extensions.after_visit:
             after_visitor.visit(node)
 
-    def generic_visit(self, node: ast.AST) -> None:  # noqa: WPS231
+    def generic_visit(self, node: ast.AST) -> None:
         """Extend the base generic visit with extensions.
 
         Parameters:
@@ -195,7 +199,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         """
         for before_visitor in self.extensions.before_children_visit:
             before_visitor.visit(node)
-        for child in node.children:  # type: ignore[attr-defined]  # noqa: WPS437
+        for child in node.children:  # type: ignore[attr-defined]
             self.visit(child)
         for after_visitor in self.extensions.after_children_visit:
             after_visitor.visit(node)
@@ -232,7 +236,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                         safe_get_value(decorator_node, self.current.relative_filepath),  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
                         endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
-                    )
+                    ),
                 )
         else:
             lineno = node.lineno
@@ -258,7 +262,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         self.generic_visit(node)
         self.current = self.current.parent  # type: ignore[assignment]
 
-    def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:  # noqa: WPS231
+    def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:
         """Build and return a set of labels based on decorators.
 
         Parameters:
@@ -304,7 +308,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                     return self.current[base_name], base_function
         return None, None
 
-    def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None):  # noqa: WPS231
+    def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None) -> None:
         """Handle a function definition node.
 
         Parameters:
@@ -330,7 +334,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                         decorator_value,  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
                         endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
-                    )
+                    ),
                 )
         else:
             lineno = node.lineno
@@ -366,7 +370,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
         # TODO: probably some optimizations to do here
         args_kinds_defaults: Iterable = reversed(
             (
-                *zip_longest(  # noqa: WPS356
+                *zip_longest(
                     reversed(
                         (
                             *zip_longest(
@@ -380,7 +384,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                     reversed(node.args.defaults),
                     fillvalue=None,
                 ),
-            )
+            ),
         )
         arg: ast.arg
         kind: ParameterKind
@@ -398,26 +402,26 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                     annotation=annotation,
                     kind=ParameterKind.var_positional,
                     default="()",
-                )
+                ),
             )
 
         # TODO: probably some optimizations to do here
         kwargs_defaults: Iterable = reversed(
             (
-                *zip_longest(  # noqa: WPS356
+                *zip_longest(
                     reversed(node.args.kwonlyargs),
                     reversed(node.args.kw_defaults),
                     fillvalue=None,
                 ),
-            )
+            ),
         )
         kwarg: ast.arg
         kwarg_default: ast.AST | None
-        for kwarg, kwarg_default in kwargs_defaults:  # noqa: WPS440
+        for kwarg, kwarg_default in kwargs_defaults:
             annotation = safe_get_annotation(kwarg.annotation, parent=self.current)
             default = get_parameter_default(kwarg_default, self.filepath, self.lines_collection)
             parameters.add(
-                Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default)
+                Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default),
             )
 
         if node.args.kwarg:
@@ -427,8 +431,8 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                     node.args.kwarg.arg,
                     annotation=annotation,
                     kind=ParameterKind.var_keyword,
-                    default="{}",  # noqa: P103
-                )
+                    default="{}",
+                ),
             )
 
         function = Function(
@@ -456,7 +460,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             self.current[node.name] = function
             if self.current.kind in {Kind.MODULE, Kind.CLASS} and self.current.overloads[function.name]:
                 function.overloads = self.current.overloads[function.name]
-                del self.current.overloads[function.name]  # noqa: WPS420
+                del self.current.overloads[function.name]
 
         function.labels |= labels
 
@@ -499,20 +503,19 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 runtime=not self.type_guarded,
             )
 
-    def visit_importfrom(self, node: ast.ImportFrom) -> None:  # noqa: WPS231
+    def visit_importfrom(self, node: ast.ImportFrom) -> None:
         """Visit an "import from" node.
 
         Parameters:
             node: The node to visit.
         """
         for name in node.names:
-            if not node.module and node.level == 1:
-                if not name.asname:
-                    # special case: when being in `a` and doing `from . import b`,
-                    # we are effectively creating a member `b` in `a` that is pointing to `a.b`
-                    # -> cyclic alias! in that case, we just skip it, as both the member and module
-                    # have the same name and can be accessed the same way
-                    continue
+            if not node.module and node.level == 1 and not name.asname:
+                # special case: when being in `a` and doing `from . import b`,
+                # we are effectively creating a member `b` in `a` that is pointing to `a.b`
+                # -> cyclic alias! in that case, we just skip it, as both the member and module
+                # have the same name and can be accessed the same way
+                continue
 
             alias_path = relative_to_absolute(node, name, self.current.module)
             if name.name == "*":
@@ -529,11 +532,11 @@ class Visitor(BaseVisitor):  # noqa: WPS338
                 runtime=not self.type_guarded,
             )
 
-    def handle_attribute(  # noqa: WPS231
+    def handle_attribute(
         self,
         node: ast.Assign | ast.AnnAssign,
         annotation: str | Name | Expression | None = None,
-    ):
+    ) -> None:
         """Handle an attribute (assignment) node.
 
         Parameters:
@@ -581,7 +584,7 @@ class Visitor(BaseVisitor):  # noqa: WPS338
             if "." in name:
                 continue
 
-            if name in parent.members:
+            if name in parent.members:  # noqa: SIM102
                 # assigning multiple times
                 # TODO: might be better to inspect
                 if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
@@ -655,11 +658,10 @@ _patched = False
 
 def patch_ast() -> None:
     """Extend the base `ast.AST` class to provide more functionality."""
-    global _patched  # noqa: WPS420
+    global _patched
     if _patched:
         return
     for name, member in inspect.getmembers(ast):
-        if name != "AST" and inspect.isclass(member):
-            if ast.AST in member.__bases__:  # noqa: WPS609
-                member.__bases__ = (*member.__bases__, ASTNode)  # noqa: WPS609
-    _patched = True  # noqa: WPS122,WPS442
+        if name != "AST" and inspect.isclass(member) and ast.AST in member.__bases__:
+            member.__bases__ = (*member.__bases__, ASTNode)
+    _patched = True

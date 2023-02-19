@@ -27,8 +27,7 @@ import sys
 from inspect import Parameter as SignatureParameter
 from inspect import Signature, cleandoc, getmodule, ismodule
 from inspect import signature as getsignature
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from griffe.agents.base import BaseInspector
 from griffe.agents.extensions import Extensions
@@ -45,14 +44,19 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
-from griffe.docstrings.parsers import Parser
-from griffe.expressions import Expression, Name
 from griffe.importer import dynamic_import
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from griffe.docstrings.parsers import Parser
+    from griffe.expressions import Expression, Name
+
 
 if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
-    from functools import cached_property  # noqa: WPS440
+    from functools import cached_property
 
 empty = Signature.empty
 
@@ -145,7 +149,7 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
     return None
 
 
-class Inspector(BaseInspector):  # noqa: WPS338
+class Inspector(BaseInspector):
     """This class is used to instantiate an inspector.
 
     Inspectors iterate on objects members to extract data from them.
@@ -232,7 +236,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         for after_inspector in self.extensions.after_inspection:
             after_inspector.inspect(node)
 
-    def generic_inspect(self, node: ObjectNode) -> None:  # noqa: WPS231
+    def generic_inspect(self, node: ObjectNode) -> None:
         """Extend the base generic inspection with extensions.
 
         Parameters:
@@ -277,7 +281,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         Parameters:
             node: The node to inspect.
         """
-        bases = [base.__name__ for base in node.obj.__bases__ if base is not object]  # noqa: WPS609
+        bases = [base.__name__ for base in node.obj.__bases__ if base is not object]
 
         class_ = Class(
             name=node.name,
@@ -370,7 +374,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         self.handle_function(node, {"property"})
 
-    def handle_function(self, node: ObjectNode, labels: set | None = None):  # noqa: WPS231
+    def handle_function(self, node: ObjectNode, labels: set | None = None) -> None:
         """Handle a function.
 
         Parameters:
@@ -379,20 +383,21 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         try:
             signature = getsignature(node.obj)
-        except Exception:
+        except Exception:  # noqa: BLE001
             # so many exceptions can be raised here:
             # AttributeError, NameError, RuntimeError, ValueError, TokenError, TypeError
             parameters = None
             returns = None
         else:
             parameters = Parameters(
-                *[_convert_parameter(parameter, parent=self.current) for parameter in signature.parameters.values()]
+                *[_convert_parameter(parameter, parent=self.current) for parameter in signature.parameters.values()],
             )
             return_annotation = signature.return_annotation
-            if return_annotation is empty:
-                returns = None
-            else:
-                returns = _convert_object_to_annotation(return_annotation, parent=self.current)
+            returns = (
+                None
+                if return_annotation is empty
+                else _convert_object_to_annotation(return_annotation, parent=self.current)
+            )
 
         obj: Attribute | Function
         labels = labels or set()
@@ -421,7 +426,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
         """
         self.handle_attribute(node)
 
-    def handle_attribute(self, node: ObjectNode, annotation: str | Name | Expression | None = None):  # noqa: WPS231
+    def handle_attribute(self, node: ObjectNode, annotation: str | Name | Expression | None = None) -> None:
         """Handle an attribute.
 
         Parameters:
@@ -444,7 +449,7 @@ class Inspector(BaseInspector):  # noqa: WPS338
 
         try:
             value = repr(node.obj)
-        except Exception:  # could trigger anything
+        except Exception:  # noqa: BLE001
             value = None
         docstring = self._get_docstring(node)
 
@@ -452,8 +457,6 @@ class Inspector(BaseInspector):  # noqa: WPS338
             name=node.name,
             value=value,
             annotation=annotation,
-            # lineno=node.lineno,
-            # endlineno=node.end_lineno,
             docstring=docstring,
         )
         attribute.labels |= labels
@@ -472,28 +475,24 @@ _kind_map = {
 }
 
 
-def _convert_parameter(parameter, parent):
+def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) -> Parameter:
     name = parameter.name
-    if parameter.annotation is empty:
-        annotation = None
-    else:
-        annotation = _convert_object_to_annotation(parameter.annotation, parent=parent)
+    annotation = (
+        None if parameter.annotation is empty else _convert_object_to_annotation(parameter.annotation, parent=parent)
+    )
     kind = _kind_map[parameter.kind]
-    if parameter.default is empty:
-        default = None
-    else:
-        default = repr(parameter.default)
+    default = None if parameter.default is empty else repr(parameter.default)
     return Parameter(name, annotation=annotation, kind=kind, default=default)
 
 
-def _convert_object_to_annotation(obj, parent):
+def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Name | Expression | None:
     # even when *we* import future annotations,
     # the object from which we get a signature
     # can come from modules which did *not* import them,
     # so inspect.signature returns actual Python objects
     # that we must deal with
     if not isinstance(obj, str):
-        if hasattr(obj, "__name__"):
+        if hasattr(obj, "__name__"):  # noqa: SIM108
             # simple types like int, str, custom classes, etc.
             obj = obj.__name__
         else:

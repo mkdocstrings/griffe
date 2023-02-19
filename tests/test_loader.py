@@ -1,14 +1,20 @@
 """Tests for the `loader` module."""
 
+from __future__ import annotations
+
 import logging
 from textwrap import dedent
+from typing import TYPE_CHECKING
 
 from griffe.expressions import Name
 from griffe.loader import GriffeLoader
 from tests.helpers import temporary_pyfile, temporary_pypackage
 
+if TYPE_CHECKING:
+    import pytest
 
-def test_has_docstrings_does_not_try_to_resolve_alias():
+
+def test_has_docstrings_does_not_try_to_resolve_alias() -> None:
     """Assert that checkins presence of docstrings does not trigger alias resolution."""
     with temporary_pyfile("""from abc import abstractmethod""") as (module_name, path):
         loader = GriffeLoader(search_paths=[path.parent])
@@ -18,7 +24,7 @@ def test_has_docstrings_does_not_try_to_resolve_alias():
         assert not module.has_docstrings
 
 
-def test_recursive_wildcard_expansion():
+def test_recursive_wildcard_expansion() -> None:
     """Assert that wildcards are expanded recursively."""
     with temporary_pypackage("package", ["mod_a/mod_b/mod_c.py"]) as tmp_package:
         mod_a_dir = tmp_package.path / "mod_a"
@@ -47,7 +53,7 @@ def test_recursive_wildcard_expansion():
         assert "CONST_Y" in package["mod_a.mod_b"].members
 
 
-def test_dont_shortcut_alias_chain_after_expanding_wildcards():
+def test_dont_shortcut_alias_chain_after_expanding_wildcards() -> None:
     """Assert public aliases paths are not resolved to canonical paths when expanding wildcards."""
     with temporary_pypackage("package", ["mod_a.py", "mod_b.py", "mod_c.py"]) as tmp_package:
         mod_a = tmp_package.path / "mod_a.py"
@@ -69,7 +75,7 @@ def test_dont_shortcut_alias_chain_after_expanding_wildcards():
         assert base.full == "package.mod_b.Base"
 
 
-def test_dont_overwrite_lower_member_when_expanding_wildcard():
+def test_dont_overwrite_lower_member_when_expanding_wildcard() -> None:
     """Check that we don't overwrite a member defined after the import when expanding a wildcard."""
     with temporary_pypackage("package", ["mod_a.py", "mod_b.py"]) as tmp_package:
         mod_a = tmp_package.path / "mod_a.py"
@@ -85,7 +91,7 @@ def test_dont_overwrite_lower_member_when_expanding_wildcard():
         assert package["mod_a.not_overwritten"].value == "0"
 
 
-def test_load_data_from_stubs():
+def test_load_data_from_stubs() -> None:
     """Check that the loader is able to load data from stubs / `*.pyi` files."""
     with temporary_pypackage("package", ["_rust_notify.pyi"]) as tmp_package:
         # code taken from samuelcolvin/watchfiles project
@@ -116,7 +122,7 @@ def test_load_data_from_stubs():
         '''
         tmp_package.path.joinpath("_rust_notify.pyi").write_text(dedent(code))
         tmp_package.path.joinpath("__init__.py").write_text(
-            "from ._rust_notify import RustNotify\n__all__ = ['RustNotify']"
+            "from ._rust_notify import RustNotify\n__all__ = ['RustNotify']",
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load_module(tmp_package.name)
@@ -127,7 +133,7 @@ def test_load_data_from_stubs():
         assert package["RustNotify"].resolved
 
 
-def test_load_from_both_py_and_pyi_files():
+def test_load_from_both_py_and_pyi_files() -> None:
     """Check that the loader is able to merge data loaded from `*.py` and `*.pyi` files."""
     with temporary_pypackage("package", ["mod.py", "mod.pyi"]) as tmp_package:
         tmp_package.path.joinpath("mod.py").write_text(
@@ -143,8 +149,8 @@ def test_load_from_both_py_and_pyi_files():
 
                     def function2(self, arg1=2.2):
                         pass
-                """
-            )
+                """,
+            ),
         )
         tmp_package.path.joinpath("mod.pyi").write_text(
             dedent(
@@ -162,8 +168,8 @@ def test_load_from_both_py_and_pyi_files():
                     def function1(self, arg1: bytes) -> Sequence[bytes]: ...
 
                     def function2(self, arg1: float) -> float: ...
-                """
-            )
+                """,
+            ),
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load_module(tmp_package.name)
@@ -197,7 +203,7 @@ def test_load_from_both_py_and_pyi_files():
         assert function2.parameters["arg1"].default == "2.2"
 
 
-def test_overwrite_module_with_attribute():
+def test_overwrite_module_with_attribute() -> None:
     """Check we are able to overwrite a module with an attribute."""
     with temporary_pypackage("package", ["mod.py"]) as tmp_package:
         tmp_package.path.joinpath("mod.py").write_text("mod: list = [0, 1, 2]")
@@ -207,7 +213,7 @@ def test_overwrite_module_with_attribute():
         loader.resolve_aliases()
 
 
-def test_load_package_from_both_py_and_pyi_files():
+def test_load_package_from_both_py_and_pyi_files() -> None:
     """Check that the loader is able to merge a package loaded from `*.py` and `*.pyi` files.
 
     This is a special case of the previous test: where the package itself has a top level
@@ -222,7 +228,7 @@ def test_load_package_from_both_py_and_pyi_files():
         assert "f" in package.members
 
 
-def test_load_single_module_from_both_py_and_pyi_files():
+def test_load_single_module_from_both_py_and_pyi_files() -> None:
     """Check that the loader is able to merge a single-module package loaded from `*.py` and `*.pyi` files.
 
     This is a special case of the previous test: where  the package is a single module
@@ -238,7 +244,7 @@ def test_load_single_module_from_both_py_and_pyi_files():
         assert "f" in package.members
 
 
-def test_unsupported_item_in_all(caplog):
+def test_unsupported_item_in_all(caplog: pytest.LogCaptureFixture) -> None:
     """Check that unsupported items in `__all__` log a warning.
 
     Parameters:
@@ -253,7 +259,7 @@ def test_unsupported_item_in_all(caplog):
     assert any(item_name in record.message and record.levelname == "WARNING" for record in caplog.records)
 
 
-def test_skip_modules_with_dots_in_filename(caplog):
+def test_skip_modules_with_dots_in_filename(caplog: pytest.LogCaptureFixture) -> None:
     """Check that modules with dots in their filenames are skipped.
 
     Parameters:
@@ -266,7 +272,7 @@ def test_skip_modules_with_dots_in_filename(caplog):
     assert any("gunicorn.conf.py" in record.message and record.levelname == "DEBUG" for record in caplog.records)
 
 
-def test_nested_namespace_packages():
+def test_nested_namespace_packages() -> None:
     """Load a deeply nested namespace package."""
     with temporary_pypackage("a/b/c/d", ["mod.py"]) as tmp_folder:
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
@@ -280,9 +286,9 @@ def test_nested_namespace_packages():
         assert "mod" in d_package.members
 
 
-def test_multiple_nested_namespace_packages():
+def test_multiple_nested_namespace_packages() -> None:
     """Load a deeply nested namespace package appearing in several places."""
-    with temporary_pypackage("a/b/c/d", ["mod1.py"], init=False) as tmp_ns1:
+    with temporary_pypackage("a/b/c/d", ["mod1.py"], init=False) as tmp_ns1:  # noqa: SIM117
         with temporary_pypackage("a/b/c/d", ["mod2.py"], init=False) as tmp_ns2:
             with temporary_pypackage("a/b/c/d", ["mod3.py"], init=False) as tmp_ns3:
                 tmp_namespace_pkgs = [tmp_ns.tmpdir for tmp_ns in (tmp_ns1, tmp_ns2, tmp_ns3)]
@@ -290,30 +296,30 @@ def test_multiple_nested_namespace_packages():
 
                 a_package = loader.load_module("a")
                 for tmp_ns in tmp_namespace_pkgs:
-                    assert tmp_ns.joinpath("a") in a_package.filepath
+                    assert tmp_ns.joinpath("a") in a_package.filepath  # type: ignore[operator]
                 assert "b" in a_package.members
 
                 b_package = a_package.members["b"]
-                for tmp_ns in tmp_namespace_pkgs:  # noqa: WPS440
-                    assert tmp_ns.joinpath("a/b") in b_package.filepath
+                for tmp_ns in tmp_namespace_pkgs:
+                    assert tmp_ns.joinpath("a/b") in b_package.filepath  # type: ignore[operator]
                 assert "c" in b_package.members
 
                 c_package = b_package.members["c"]
-                for tmp_ns in tmp_namespace_pkgs:  # noqa: WPS440
-                    assert tmp_ns.joinpath("a/b/c") in c_package.filepath
+                for tmp_ns in tmp_namespace_pkgs:
+                    assert tmp_ns.joinpath("a/b/c") in c_package.filepath  # type: ignore[operator]
                 assert "d" in c_package.members
 
                 d_package = c_package.members["d"]
-                for tmp_ns in tmp_namespace_pkgs:  # noqa: WPS440
-                    assert tmp_ns.joinpath("a/b/c/d") in d_package.filepath
+                for tmp_ns in tmp_namespace_pkgs:
+                    assert tmp_ns.joinpath("a/b/c/d") in d_package.filepath  # type: ignore[operator]
                 assert "mod1" in d_package.members
                 assert "mod2" in d_package.members
                 assert "mod3" in d_package.members
 
 
-def test_stop_at_first_package_inside_namespace_package():
+def test_stop_at_first_package_inside_namespace_package() -> None:
     """Stop loading similar paths once we found a non-namespace package."""
-    with temporary_pypackage("a/b/c/d", ["mod1.py"], init=True) as tmp_ns1:
+    with temporary_pypackage("a/b/c/d", ["mod1.py"], init=True) as tmp_ns1:  # noqa: SIM117
         with temporary_pypackage("a/b/c/d", ["mod2.py"], init=True) as tmp_ns2:
             tmp_namespace_pkgs = [tmp_ns.tmpdir for tmp_ns in (tmp_ns1, tmp_ns2)]
             loader = GriffeLoader(search_paths=tmp_namespace_pkgs)
@@ -328,13 +334,13 @@ def test_stop_at_first_package_inside_namespace_package():
             assert "d" in c_package.members
 
             d_package = c_package.members["d"]
-            assert d_package.is_subpackage
+            assert d_package.is_subpackage  # type: ignore[union-attr]
             assert d_package.filepath == tmp_ns1.tmpdir.joinpath("a/b/c/d/__init__.py")
             assert "mod1" in d_package.members
             assert "mod2" not in d_package.members
 
 
-def test_load_builtin_modules():
+def test_load_builtin_modules() -> None:
     """Assert builtin/compiled modules can be loaded."""
     loader = GriffeLoader()
     loader.load_module("_ast")
@@ -345,7 +351,7 @@ def test_load_builtin_modules():
     assert "_json" in loader.modules_collection
 
 
-def test_resolve_aliases_of_builtin_modules():
+def test_resolve_aliases_of_builtin_modules() -> None:
     """Assert builtin/compiled modules can be loaded."""
     loader = GriffeLoader()
     loader.load_module("io")

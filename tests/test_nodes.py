@@ -35,7 +35,7 @@ from tests.helpers import module_vtree, temporary_visited_module
         ("from ...c.d import *", "a.c.d.i", False, "a.c.d.*"),
     ],
 )
-def test_relative_to_absolute_imports(code, path, is_package, expected):
+def test_relative_to_absolute_imports(code: str, path: str, is_package: bool, expected: str) -> None:
     """Check if relative imports are correctly converted to absolute ones.
 
     Parameters:
@@ -64,7 +64,7 @@ def test_relative_to_absolute_imports(code, path, is_package, expected):
         "A[-1, +2.3]",
     ],
 )
-def test_building_annotations_from_nodes(expression):
+def test_building_annotations_from_nodes(expression: str) -> None:
     """Test building annotations from AST nodes.
 
     Parameters:
@@ -99,7 +99,7 @@ def _flat(expression: str | Name | Expression) -> list[str | Name]:
         ("from mod import A\na: list['A']", True),
     ],
 )
-def test_forward_references(code, has_name):
+def test_forward_references(code: str, has_name: bool) -> None:
     """Check that we support forward references (type names as strings).
 
     Parameters:
@@ -127,7 +127,7 @@ def test_forward_references(code, has_name):
         "None",
     ],
 )
-def test_default_value_from_nodes(default):
+def test_default_value_from_nodes(default: str) -> None:
     """Test getting default value from AST nodes.
 
     Parameters:
@@ -136,7 +136,7 @@ def test_default_value_from_nodes(default):
     module_defs = f"def f(x={default}):\n    return x"
     with temporary_visited_module(module_defs) as module:
         assert "f" in module.members
-        params = module.members["f"].parameters
+        params = module.members["f"].parameters  # type: ignore[union-attr]
         assert len(params) == 1
         assert params[0].default == default
 
@@ -193,7 +193,7 @@ def test_default_value_from_nodes(default):
         "o[x, y(z)]",
     ],
 )
-def test_building_value_from_nodes(expression):
+def test_building_value_from_nodes(expression: str) -> None:
     """Test building value from AST nodes.
 
     Parameters:
@@ -203,7 +203,7 @@ def test_building_value_from_nodes(expression):
     value = get_value(node)
 
     # make space after comma non-significant
-    value = value.replace(", ", ",")
+    value = value.replace(", ", ",")  # type: ignore[union-attr]
     expression = expression.replace(", ", ",")
 
     assert value == expression

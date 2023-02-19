@@ -67,7 +67,7 @@ class Breakage:
     def __repr__(self) -> str:
         return f"<{self.kind.name}>"
 
-    def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this object's data as a dictionary.
 
         Parameters:
@@ -293,8 +293,8 @@ class ClassRemovedBaseBreakage(Breakage):
 
 
 # TODO: decorators!
-def _class_incompatibilities(old_class: Class, new_class: Class, ignore_private: bool = True) -> Iterable[Breakage]:
-    yield from ()  # noqa: WPS353
+def _class_incompatibilities(old_class: Class, new_class: Class, *, ignore_private: bool = True) -> Iterable[Breakage]:
+    yield from ()
     if new_class.bases != old_class.bases:
         if len(new_class.bases) < len(old_class.bases):
             yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)
@@ -305,7 +305,7 @@ def _class_incompatibilities(old_class: Class, new_class: Class, ignore_private:
 
 
 # TODO: decorators!
-def _function_incompatibilities(old_function: Function, new_function: Function) -> Iterator[Breakage]:  # noqa: WPS231
+def _function_incompatibilities(old_function: Function, new_function: Function) -> Iterator[Breakage]:
     new_param_names = [param.name for param in new_function.parameters]
     param_kinds = {param.kind for param in new_function.parameters}
     has_variadic_args = ParameterKind.var_positional in param_kinds
@@ -315,7 +315,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
         # checking if parameter was removed
         if old_param.name not in new_function.parameters:
             swallowed = (
-                (old_param.kind is ParameterKind.keyword_only and has_variadic_kwargs)  # noqa: WPS222,WPS408
+                (old_param.kind is ParameterKind.keyword_only and has_variadic_kwargs)
                 or (old_param.kind is ParameterKind.positional_only and has_variadic_args)
                 or (old_param.kind is ParameterKind.positional_or_keyword and has_variadic_args and has_variadic_kwargs)
             )
@@ -353,7 +353,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
                     new_param.kind is ParameterKind.var_positional
                     and old_param.kind is not ParameterKind.positional_only
                     and not has_variadic_kwargs,
-                )
+                ),
             )
             if incompatible_kind:
                 yield ParameterChangedKindBreakage(new_function, old_param, new_param)
@@ -363,12 +363,12 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
         try:
             if old_param.default is not None and old_param.default != new_param.default:
                 yield breakage
-        except Exception:  # equality checks sometimes fail, e.g. numpy arrays
+        except Exception:  # noqa: BLE001 (equality checks sometimes fail, e.g. numpy arrays)
             # TODO: emitting breakage on a failed comparison could be a preference
             yield breakage
 
     # checking if required parameters were added
-    for new_param in new_function.parameters:  # noqa: WPS440
+    for new_param in new_function.parameters:
         if new_param.name not in old_function.parameters and new_param.required:
             yield ParameterAddedRequiredBreakage(new_function, None, new_param)
 
@@ -380,14 +380,14 @@ def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attrib
     # TODO: use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
     # if old_attribute.annotation is not None and new_attribute.annotation is not None:
     #     if not is_subhint(new_attribute.annotation, old_attribute.annotation):
-    #         yield AttributeChangedTypeBreakage(new_attribute, old_attribute.annotation, new_attribute.annotation)
     if old_attribute.value != new_attribute.value:
         yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
 
 
-def _member_incompatibilities(  # noqa: WPS231
+def _member_incompatibilities(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
+    *,
     ignore_private: bool = True,
 ) -> Iterator[Breakage]:
     for name, old_member in old_obj.members.items():

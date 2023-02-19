@@ -2,19 +2,20 @@
 
 from __future__ import annotations
 
-import ast
 import enum
 from collections import defaultdict
 from inspect import isclass
-from typing import TYPE_CHECKING, Any, Sequence, Type, Union
+from typing import TYPE_CHECKING, Any, Sequence, Union
 
 from griffe.agents.base import BaseInspector, BaseVisitor
-from griffe.agents.nodes import ObjectNode
 from griffe.exceptions import ExtensionNotLoadedError
 from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:
+    import ast
+
     from griffe.agents.inspector import Inspector
+    from griffe.agents.nodes import ObjectNode
     from griffe.agents.visitor import Visitor
 
 
@@ -125,7 +126,7 @@ class Extensions:
         Returns:
             Self, conveniently.
         """
-        for when in self._visitors.keys():
+        for when in self._visitors:
             for visitor in self._visitors[when]:
                 visitor.attach(parent_visitor)
         return self
@@ -139,7 +140,7 @@ class Extensions:
         Returns:
             Self, conveniently.
         """
-        for when in self._inspectors.keys():
+        for when in self._inspectors:
             for inspector in self._inspectors[when]:
                 inspector.attach(parent_inspector)
         return self
@@ -222,7 +223,7 @@ builtin_extensions: set[str] = {
 }
 
 
-def load_extension(extension: str | dict[str, Any] | Extension | Type[Extension]) -> Extension:
+def load_extension(extension: str | dict[str, Any] | Extension | type[Extension]) -> Extension:
     """Load a configured extension.
 
     Parameters:
@@ -262,11 +263,11 @@ def load_extension(extension: str | dict[str, Any] | Extension | Type[Extension]
 
     try:
         return ext_module.Extension(**options)
-    except AttributeError as error:  # noqa: WPS440
+    except AttributeError as error:
         raise ExtensionNotLoadedError(f"Extension module '{import_path}' has no 'Extension' attribute") from error
 
 
-def load_extensions(exts: Sequence[str | dict[str, Any] | Extension | Type[Extension]]) -> Extensions:  # noqa: WPS231
+def load_extensions(exts: Sequence[str | dict[str, Any] | Extension | type[Extension]]) -> Extensions:
     """Load configured extensions.
 
     Parameters:

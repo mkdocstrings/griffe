@@ -1,12 +1,14 @@
 """Tests for the `merger` module."""
 
+from __future__ import annotations
+
 from textwrap import dedent
 
 from griffe.loader import GriffeLoader
 from tests.helpers import temporary_pypackage
 
 
-def test_dont_trigger_alias_resolution_when_merging_stubs():
+def test_dont_trigger_alias_resolution_when_merging_stubs() -> None:
     """Assert that we don't trigger alias resolution when merging stubs."""
     with temporary_pypackage("package", ["mod.py", "mod.pyi"]) as tmp_package:
         tmp_package.path.joinpath("mod.py").write_text(
@@ -16,8 +18,8 @@ def test_dont_trigger_alias_resolution_when_merging_stubs():
 
                 def f() -> pathlib.Path:
                     return pathlib.Path()
-                """
-            )
+                """,
+            ),
         )
         tmp_package.path.joinpath("mod.pyi").write_text(
             dedent(
@@ -25,14 +27,14 @@ def test_dont_trigger_alias_resolution_when_merging_stubs():
                 import pathlib
 
                 def f() -> pathlib.Path: ...
-                """
-            )
+                """,
+            ),
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         loader.load_module(tmp_package.name)
 
 
-def test_merge_stubs_on_wildcard_imported_objects():
+def test_merge_stubs_on_wildcard_imported_objects() -> None:
     """Assert that stubs can be merged on wildcard imported objects."""
     with temporary_pypackage("package", ["mod.py", "__init__.pyi"]) as tmp_package:
         tmp_package.path.joinpath("mod.py").write_text(
@@ -41,8 +43,8 @@ def test_merge_stubs_on_wildcard_imported_objects():
                 class A:
                     def hello(value: int | str) -> int | str:
                         return value
-                """
-            )
+                """,
+            ),
         )
         tmp_package.path.joinpath("__init__.py").write_text("from .mod import *")
         tmp_package.path.joinpath("__init__.pyi").write_text(
@@ -54,8 +56,8 @@ def test_merge_stubs_on_wildcard_imported_objects():
                     def hello(value: int) -> int: ...
                     @overload
                     def hello(value: str) -> str: ...
-                """
-            )
+                """,
+            ),
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         module = loader.load_module(tmp_package.name)

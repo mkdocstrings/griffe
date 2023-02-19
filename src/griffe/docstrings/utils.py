@@ -7,11 +7,11 @@ from contextlib import suppress
 from typing import TYPE_CHECKING, Callable
 
 from griffe.agents.nodes import safe_get_annotation
-from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
+    from griffe.expressions import Expression, Name
 
 
 def warning(name: str) -> Callable[[Docstring, int, str], None]:
@@ -32,7 +32,7 @@ def warning(name: str) -> Callable[[Docstring, int, str], None]:
     """
     logger = get_logger(name)
 
-    def warn(docstring: Docstring, offset: int, message: str) -> None:  # noqa: WPS430
+    def warn(docstring: Docstring, offset: int, message: str) -> None:
         try:
             prefix = docstring.parent.relative_filepath  # type: ignore[union-attr]
         except (AttributeError, ValueError):

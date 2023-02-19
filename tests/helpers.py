@@ -39,7 +39,7 @@ TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
 
 
 @contextmanager
-def temporary_pypackage(package: str, modules: list[str] | None = None, init: bool = True) -> Iterator[TmpPackage]:
+def temporary_pypackage(package: str, modules: list[str] | None = None, *, init: bool = True) -> Iterator[TmpPackage]:
     """Create a module.py file containing the given code in a temporary directory.
 
     Parameters:
@@ -68,7 +68,7 @@ def temporary_pypackage(package: str, modules: list[str] | None = None, init: bo
         for module in modules:
             current_path = package_path
             for part in Path(module).parts:
-                if part.endswith(".py") or part.endswith(".pyi"):
+                if part.endswith((".py", ".pyi")):
                     current_path.joinpath(part).touch()
                 else:
                     current_path /= part
@@ -104,7 +104,7 @@ def temporary_inspected_module(code: str) -> Iterator[Module]:
         try:
             yield inspect(name, filepath=path)
         finally:
-            del sys.modules["module"]  # noqa: WPS420
+            del sys.modules["module"]
             invalidate_caches()
 
 
@@ -151,7 +151,7 @@ def htree(*objects: Object) -> Object:
     return top
 
 
-def module_vtree(path, leaf_package: bool = True, return_leaf: bool = False) -> Module:
+def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = False) -> Module:
     """Link objects together, vertically.
 
     Parameters:
@@ -172,5 +172,5 @@ def module_vtree(path, leaf_package: bool = True, return_leaf: bool = False) -> 
             filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[attr-defined,union-attr]
         except AttributeError:  # TODO: remove once Python 3.8 is dropped
             filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")  # type: ignore[union-attr]
-        modules[-1]._filepath = filepath  # noqa: WPS437
+        modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]

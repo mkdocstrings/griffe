@@ -1,11 +1,13 @@
 """Tests for the `finder` module."""
 
+from __future__ import annotations
+
 from pathlib import Path
 from textwrap import dedent
 
 import pytest
 
-from griffe.finder import ModuleFinder, NamespacePackage, _handle_editable_module, _handle_pth_file  # noqa: WPS450
+from griffe.finder import ModuleFinder, NamespacePackage, _handle_editable_module, _handle_pth_file
 from tests.helpers import temporary_pypackage
 
 
@@ -18,7 +20,13 @@ from tests.helpers import temporary_pypackage
         (("a/b", ["c.py"]), "a/b/c.py", False, "b", "a/b/__init__.py"),
     ],
 )
-def test_find_module_with_path(pypackage, module, add_to_search_path, expected_top_name, expected_top_path):
+def test_find_module_with_path(
+    pypackage: tuple[str, list[str]],
+    module: str,
+    add_to_search_path: bool,
+    expected_top_name: str,
+    expected_top_path: str,
+) -> None:
     """Check that the finder can find modules using strings and Paths.
 
     Parameters:
@@ -45,14 +53,14 @@ def test_find_module_with_path(pypackage, module, add_to_search_path, expected_t
         "__path__ = __import__('pkgutil').extend_path(__path__, __name__)",
     ],
 )
-def test_find_pkg_style_namespace_packages(statement):
+def test_find_pkg_style_namespace_packages(statement: str) -> None:
     """Check that the finder can find pkg-style namespace packages.
 
     Parameters:
         statement: The statement in the `__init__` module allowing to mark the package as namespace.
     """
-    with temporary_pypackage("namespace/package1") as tmp_package1, temporary_pypackage(  # noqa: WPS316
-        "namespace/package2"
+    with temporary_pypackage("namespace/package1") as tmp_package1, temporary_pypackage(
+        "namespace/package2",
     ) as tmp_package2:
         tmp_package1.path.parent.joinpath("__init__.py").write_text(statement)
         tmp_package2.path.parent.joinpath("__init__.py").write_text(statement)
@@ -63,7 +71,7 @@ def test_find_pkg_style_namespace_packages(statement):
         assert package.path == [tmp_package1.path.parent, tmp_package2.path.parent]
 
 
-def test_pth_file_handling(tmp_path):
+def test_pth_file_handling(tmp_path: Path) -> None:
     """Assert .pth files are correctly handled.
 
     Parameters:
@@ -79,14 +87,14 @@ def test_pth_file_handling(tmp_path):
             import\tthing
             /doesnotexist
             tests
-            """
-        )
+            """,
+        ),
     )
     directories = _handle_pth_file(pth_file)
     assert directories == [Path("tests")]
 
 
-def test_editables_file_handling(tmp_path):
+def test_editables_file_handling(tmp_path: Path) -> None:
     """Assert editable modules by `editables` are handled.
 
     Parameters:
@@ -97,7 +105,7 @@ def test_editables_file_handling(tmp_path):
     assert _handle_editable_module(pth_file) == [Path("src")]
 
 
-def test_setuptools_file_handling(tmp_path):
+def test_setuptools_file_handling(tmp_path: Path) -> None:
     """Assert editable modules by `setuptools` are handled.
 
     Parameters:
@@ -108,7 +116,7 @@ def test_setuptools_file_handling(tmp_path):
     assert _handle_editable_module(pth_file) == [Path("src")]
 
 
-def test_setuptools_file_handling_multiple_paths(tmp_path):
+def test_setuptools_file_handling_multiple_paths(tmp_path: Path) -> None:
     """Assert editable modules by `setuptools` are handled when multiple packages are installed in the same editable.
 
     Parameters:
@@ -116,6 +124,6 @@ def test_setuptools_file_handling_multiple_paths(tmp_path):
     """
     pth_file = tmp_path / "__editable__whatever.py"
     pth_file.write_text(
-        "hello=1\nMAPPING = {\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}\ndef printer():\n  print(hello)"
+        "hello=1\nMAPPING = {\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}\ndef printer():\n  print(hello)",
     )
     assert _handle_editable_module(pth_file) == [Path("src1"), Path("src2")]

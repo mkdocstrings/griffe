@@ -13,15 +13,17 @@ import os
 import shutil
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import DEVNULL, PIPE, CalledProcessError, run  # noqa: S404
+from subprocess import DEVNULL, CalledProcessError, run
 from tempfile import TemporaryDirectory
-from typing import Any, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Iterator, Sequence
 
 from griffe import loader
-from griffe.agents.extensions import Extensions
-from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import Module
-from griffe.docstrings.parsers import Parser
+
+if TYPE_CHECKING:
+    from griffe.agents.extensions import Extensions
+    from griffe.collections import LinesCollection, ModulesCollection
+    from griffe.dataclasses import Module
+    from griffe.docstrings.parsers import Parser
 
 
 def _assert_git_repo(repo: str) -> None:
@@ -29,8 +31,11 @@ def _assert_git_repo(repo: str) -> None:
         raise RuntimeError("Could not find git executable. Please install git.")
 
     try:
-        run(  # noqa: S603,S607
-            ["git", "-C", repo, "rev-parse", "--is-inside-work-tree"], check=True, stdout=DEVNULL, stderr=DEVNULL
+        run(
+            ["git", "-C", repo, "rev-parse", "--is-inside-work-tree"],
+            check=True,
+            stdout=DEVNULL,
+            stderr=DEVNULL,
         )
     except CalledProcessError as err:
         raise OSError(f"Not a git repository: {repo!r}") from err
@@ -56,10 +61,9 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     with TemporaryDirectory(prefix="griffe-worktree-") as td:
         uid = f"griffe_{ref}"
         target = os.path.join(td, uid)
-        retval = run(  # noqa: S603,S607
+        retval = run(
             ["git", "-C", repo, "worktree", "add", "-b", uid, target, ref],
-            stderr=PIPE,
-            stdout=PIPE,
+            capture_output=True,
         )
         if retval.returncode:
             raise RuntimeError(f"Could not create git worktree: {retval.stderr.decode()}")
@@ -67,9 +71,9 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         try:
             yield Path(target)
         finally:
-            run(["git", "-C", repo, "worktree", "remove", uid], stdout=DEVNULL)  # noqa: S603,S607
-            run(["git", "-C", repo, "worktree", "prune"], stdout=DEVNULL)  # noqa: S603,S607
-            run(["git", "-C", repo, "branch", "-d", uid], stdout=DEVNULL)  # noqa: S603,S607
+            run(["git", "-C", repo, "worktree", "remove", uid], stdout=DEVNULL)
+            run(["git", "-C", repo, "worktree", "prune"], stdout=DEVNULL)
+            run(["git", "-C", repo, "branch", "-d", uid], stdout=DEVNULL)
 
 
 def load_git(

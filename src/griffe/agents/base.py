@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import ast
+from typing import TYPE_CHECKING
 
-from griffe.agents.nodes import ObjectNode
+if TYPE_CHECKING:
+    import ast
+
+    from griffe.agents.nodes import ObjectNode
 
 
 class BaseVisitor:

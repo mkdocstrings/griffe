@@ -1,5 +1,7 @@
 """Tests for the `cli` module."""
 
+from __future__ import annotations
+
 import sys
 
 import pytest
@@ -7,7 +9,7 @@ import pytest
 from griffe import cli  # type: ignore[attr-defined]
 
 
-def test_main():
+def test_main() -> None:
     """Basic CLI test."""
     if sys.platform == "win32":
         assert cli.main(["dump", "griffe", "-s", "src", "-oNUL"]) == 0
@@ -15,7 +17,7 @@ def test_main():
         assert cli.main(["dump", "griffe", "-s", "src", "-o/dev/null"]) == 0
 
 
-def test_show_help(capsys):
+def test_show_help(capsys: pytest.CaptureFixture) -> None:
     """Show help.
 
     Parameters:

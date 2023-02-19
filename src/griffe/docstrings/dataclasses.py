@@ -30,7 +30,7 @@ class DocstringElement:
         self.description: str = description
         self.annotation: str | Name | Expression | None = annotation
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this element's data as a dictionary.
 
         Parameters:
@@ -206,6 +206,7 @@ class DocstringSection:
             title: An optional title.
         """
         self.title: str | None = title
+        self.value: Any = None
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this section's data as a dictionary.
@@ -216,7 +217,7 @@ class DocstringSection:
         Returns:
             A dictionary.
         """
-        if hasattr(self.value, "as_dict"):  # type: ignore[attr-defined]
+        if hasattr(self.value, "as_dict"):  # type: ignore[attr-defined]  # noqa: SIM108
             serialized_value = self.value.as_dict(**kwargs)  # type: ignore[attr-defined]
         else:
             serialized_value = self.value  # type: ignore[attr-defined]

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -15,6 +16,9 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionKind,
 )
 from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
+
+if TYPE_CHECKING:
+    from tests.test_docstrings.helpers import ParserType
 
 SOME_NAME = "foo"
 SOME_TEXT = "descriptive test text"
@@ -34,7 +38,7 @@ SOME_OTHER_EXCEPTION_NAME = "SomeOtherException"
         """,
     ],
 )
-def test_parse__description_only_docstring__single_markdown_section(parse_sphinx, docstring):
+def test_parse__description_only_docstring__single_markdown_section(parse_sphinx: ParserType, docstring: str) -> None:
     """Parse a single or multiline docstring.
 
     Parameters:
@@ -49,7 +53,7 @@ def test_parse__description_only_docstring__single_markdown_section(parse_sphinx
     assert not warnings
 
 
-def test_parse__no_description__single_markdown_section(parse_sphinx):
+def test_parse__no_description__single_markdown_section(parse_sphinx: ParserType) -> None:
     """Parse an empty docstring.
 
     Parameters:
@@ -63,7 +67,7 @@ def test_parse__no_description__single_markdown_section(parse_sphinx):
     assert not warnings
 
 
-def test_parse__multiple_blank_lines_before_description__single_markdown_section(parse_sphinx):
+def test_parse__multiple_blank_lines_before_description__single_markdown_section(parse_sphinx: ParserType) -> None:
     """Parse a docstring with initial blank lines.
 
     Parameters:
@@ -73,7 +77,7 @@ def test_parse__multiple_blank_lines_before_description__single_markdown_section
         """
 
 
-        Now text"""
+        Now text""",
     )
 
     assert len(sections) == 1
@@ -82,7 +86,7 @@ def test_parse__multiple_blank_lines_before_description__single_markdown_section
     assert not warnings
 
 
-def test_parse__param_field__param_section(parse_sphinx):
+def test_parse__param_field__param_section(parse_sphinx: ParserType) -> None:
     """Parse a parameter section.
 
     Parameters:
@@ -93,14 +97,14 @@ def test_parse__param_field__param_section(parse_sphinx):
         Docstring with one line param.
 
         :param {SOME_NAME}: {SOME_TEXT}
-        """
+        """,
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     assert_parameter_equal(sections[1].value[0], DocstringParameter(SOME_NAME, description=SOME_TEXT))
 
 
-def test_parse__only_param_field__empty_markdown(parse_sphinx):
+def test_parse__only_param_field__empty_markdown(parse_sphinx: ParserType) -> None:
     """Parse only a parameter section.
 
     Parameters:
@@ -123,7 +127,7 @@ def test_parse__only_param_field__empty_markdown(parse_sphinx):
         "keyword",
     ],
 )
-def test_parse__all_param_names__param_section(parse_sphinx, param_directive_name):
+def test_parse__all_param_names__param_section(parse_sphinx: ParserType, param_directive_name: str) -> None:
     """Parse all parameters directives.
 
     Parameters:
@@ -135,7 +139,7 @@ def test_parse__all_param_names__param_section(parse_sphinx, param_directive_nam
         Docstring with one line param.
 
         :{param_directive_name} {SOME_NAME}: {SOME_TEXT}
-        """
+        """,
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
@@ -159,7 +163,7 @@ def test_parse__all_param_names__param_section(parse_sphinx, param_directive_nam
         """,
     ],
 )
-def test_parse__param_field_multi_line__param_section(parse_sphinx, docstring):
+def test_parse__param_field_multi_line__param_section(parse_sphinx: ParserType, docstring: str) -> None:
     """Parse multiline directives.
 
     Parameters:
@@ -175,7 +179,7 @@ def test_parse__param_field_multi_line__param_section(parse_sphinx, docstring):
     )
 
 
-def test_parse__param_field_for_function__param_section_with_kind(parse_sphinx):
+def test_parse__param_field_for_function__param_section_with_kind(parse_sphinx: ParserType) -> None:
     """Parse parameters.
 
     Parameters:
@@ -196,7 +200,7 @@ def test_parse__param_field_for_function__param_section_with_kind(parse_sphinx):
     )
 
 
-def test_parse__param_field_docs_type__param_section_with_type(parse_sphinx):
+def test_parse__param_field_docs_type__param_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse parameters with types.
 
     Parameters:
@@ -217,7 +221,7 @@ def test_parse__param_field_docs_type__param_section_with_type(parse_sphinx):
     )
 
 
-def test_parse__param_field_type_field__param_section_with_type(parse_sphinx):
+def test_parse__param_field_type_field__param_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse parameters with separated types.
 
     Parameters:
@@ -239,7 +243,7 @@ def test_parse__param_field_type_field__param_section_with_type(parse_sphinx):
     )
 
 
-def test_parse__param_field_type_field_first__param_section_with_type(parse_sphinx):
+def test_parse__param_field_type_field_first__param_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse parameters with separated types first.
 
     Parameters:
@@ -262,7 +266,10 @@ def test_parse__param_field_type_field_first__param_section_with_type(parse_sphi
 
 
 @pytest.mark.parametrize("union", ["str or None", "None or str", "str or int", "str or int or float"])
-def test_parse__param_field_type_field_or_none__param_section_with_optional(parse_sphinx, union):
+def test_parse__param_field_type_field_or_none__param_section_with_optional(
+    parse_sphinx: ParserType,
+    union: str,
+) -> None:
     """Parse parameters with separated union types.
 
     Parameters:
@@ -285,7 +292,7 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional(pars
     )
 
 
-def test_parse__param_field_annotate_type__param_section_with_type(parse_sphinx):
+def test_parse__param_field_annotate_type__param_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -310,7 +317,7 @@ def test_parse__param_field_annotate_type__param_section_with_type(parse_sphinx)
     assert not warnings
 
 
-def test_parse__param_field_no_matching_param__result_from_docstring(parse_sphinx):
+def test_parse__param_field_no_matching_param__result_from_docstring(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -331,7 +338,7 @@ def test_parse__param_field_no_matching_param__result_from_docstring(parse_sphin
     )
 
 
-def test_parse__param_field_with_default__result_from_docstring(parse_sphinx):
+def test_parse__param_field_with_default__result_from_docstring(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -356,7 +363,7 @@ def test_parse__param_field_with_default__result_from_docstring(parse_sphinx):
     assert not warnings
 
 
-def test_parse__param_field_no_matching_param__error_message(parse_sphinx):
+def test_parse__param_field_no_matching_param__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -372,7 +379,7 @@ def test_parse__param_field_no_matching_param__error_message(parse_sphinx):
     assert "No matching parameter for 'other'" in warnings[0]
 
 
-def test_parse__invalid_param_field_only_initial_marker__error_message(parse_sphinx):
+def test_parse__invalid_param_field_only_initial_marker__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -388,7 +395,7 @@ def test_parse__invalid_param_field_only_initial_marker__error_message(parse_sph
     assert "Failed to get ':directive: value' pair" in warnings[0]
 
 
-def test_parse__invalid_param_field_wrong_part_count__error_message(parse_sphinx):
+def test_parse__invalid_param_field_wrong_part_count__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -404,7 +411,7 @@ def test_parse__invalid_param_field_wrong_part_count__error_message(parse_sphinx
     assert "Failed to parse field directive" in warnings[0]
 
 
-def test_parse__param_twice__error_message(parse_sphinx):
+def test_parse__param_twice__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -424,7 +431,7 @@ def test_parse__param_twice__error_message(parse_sphinx):
     assert "Duplicate parameter entry for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_twice_doc__error_message(parse_sphinx):
+def test_parse__param_type_twice_doc__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -444,7 +451,7 @@ def test_parse__param_type_twice_doc__error_message(parse_sphinx):
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_twice_type_directive_first__error_message(parse_sphinx):
+def test_parse__param_type_twice_type_directive_first__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -464,7 +471,7 @@ def test_parse__param_type_twice_type_directive_first__error_message(parse_sphin
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_twice_annotated__error_message(parse_sphinx):
+def test_parse__param_type_twice_annotated__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -484,7 +491,7 @@ def test_parse__param_type_twice_annotated__error_message(parse_sphinx):
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
-def test_parse__param_type_no_type__error_message(parse_sphinx):
+def test_parse__param_type_no_type__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -504,7 +511,7 @@ def test_parse__param_type_no_type__error_message(parse_sphinx):
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
 
-def test_parse__param_type_no_name__error_message(parse_sphinx):
+def test_parse__param_type_no_name__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 
     Parameters:
@@ -541,7 +548,7 @@ def test_parse__param_type_no_name__error_message(parse_sphinx):
         """,
     ],
 )
-def test_parse__attribute_field_multi_line__param_section(parse_sphinx, docstring):
+def test_parse__attribute_field_multi_line__param_section(parse_sphinx: ParserType, docstring: str) -> None:
     """Parse multiline attributes.
 
     Parameters:
@@ -566,7 +573,7 @@ def test_parse__attribute_field_multi_line__param_section(parse_sphinx, docstrin
         "cvar",
     ],
 )
-def test_parse__all_attribute_names__param_section(parse_sphinx, attribute_directive_name):
+def test_parse__all_attribute_names__param_section(parse_sphinx: ParserType, attribute_directive_name: str) -> None:
     """Parse all attributes directives.
 
     Parameters:
@@ -578,7 +585,7 @@ def test_parse__all_attribute_names__param_section(parse_sphinx, attribute_direc
         Docstring with one line attribute.
 
         :{attribute_directive_name} {SOME_NAME}: {SOME_TEXT}
-        """
+        """,
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
@@ -589,7 +596,7 @@ def test_parse__all_attribute_names__param_section(parse_sphinx, attribute_direc
     assert not warnings
 
 
-def test_parse__class_attributes__attributes_section(parse_sphinx):
+def test_parse__class_attributes__attributes_section(parse_sphinx: ParserType) -> None:
     """Parse class attributes.
 
     Parameters:
@@ -610,7 +617,7 @@ def test_parse__class_attributes__attributes_section(parse_sphinx):
     )
 
 
-def test_parse__class_attributes_with_type__annotation_in_attributes_section(parse_sphinx):
+def test_parse__class_attributes_with_type__annotation_in_attributes_section(parse_sphinx: ParserType) -> None:
     """Parse typed class attributes.
 
     Parameters:
@@ -632,7 +639,7 @@ def test_parse__class_attributes_with_type__annotation_in_attributes_section(par
     )
 
 
-def test_parse__attribute_invalid_directive___error(parse_sphinx):
+def test_parse__attribute_invalid_directive___error(parse_sphinx: ParserType) -> None:
     """Warn on invalid attribute directive.
 
     Parameters:
@@ -648,7 +655,7 @@ def test_parse__attribute_invalid_directive___error(parse_sphinx):
     assert "Failed to get ':directive: value' pair from" in warnings[0]
 
 
-def test_parse__attribute_no_name__error(parse_sphinx):
+def test_parse__attribute_no_name__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid attribute directive.
 
     Parameters:
@@ -664,7 +671,7 @@ def test_parse__attribute_no_name__error(parse_sphinx):
     assert "Failed to parse field directive from" in warnings[0]
 
 
-def test_parse__attribute_duplicate__error(parse_sphinx):
+def test_parse__attribute_duplicate__error(parse_sphinx: ParserType) -> None:
     """Warn on duplicate attribute directive.
 
     Parameters:
@@ -681,7 +688,7 @@ def test_parse__attribute_duplicate__error(parse_sphinx):
     assert "Duplicate attribute entry for 'foo'" in warnings[0]
 
 
-def test_parse__class_attributes_type_invalid__error(parse_sphinx):
+def test_parse__class_attributes_type_invalid__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid attribute type directive.
 
     Parameters:
@@ -698,7 +705,7 @@ def test_parse__class_attributes_type_invalid__error(parse_sphinx):
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__class_attributes_type_no_name__error(parse_sphinx):
+def test_parse__class_attributes_type_no_name__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid attribute directive.
 
     Parameters:
@@ -715,7 +722,7 @@ def test_parse__class_attributes_type_no_name__error(parse_sphinx):
     assert "Failed to get attribute name from" in warnings[0]
 
 
-def test_parse__return_directive__return_section_no_type(parse_sphinx):
+def test_parse__return_directive__return_section_no_type(parse_sphinx: ParserType) -> None:
     """Parse return directives.
 
     Parameters:
@@ -736,7 +743,7 @@ def test_parse__return_directive__return_section_no_type(parse_sphinx):
     )
 
 
-def test_parse__return_directive_rtype__return_section_with_type(parse_sphinx):
+def test_parse__return_directive_rtype__return_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse typed return directives.
 
     Parameters:
@@ -758,7 +765,7 @@ def test_parse__return_directive_rtype__return_section_with_type(parse_sphinx):
     )
 
 
-def test_parse__return_directive_rtype_first__return_section_with_type(parse_sphinx):
+def test_parse__return_directive_rtype_first__return_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse typed-first return directives.
 
     Parameters:
@@ -780,7 +787,7 @@ def test_parse__return_directive_rtype_first__return_section_with_type(parse_sph
     )
 
 
-def test_parse__return_directive_annotation__return_section_with_type(parse_sphinx):
+def test_parse__return_directive_annotation__return_section_with_type(parse_sphinx: ParserType) -> None:
     """Parse return directives with return annotation.
 
     Parameters:
@@ -801,7 +808,7 @@ def test_parse__return_directive_annotation__return_section_with_type(parse_sphi
     )
 
 
-def test_parse__return_directive_annotation__prefer_return_directive(parse_sphinx):
+def test_parse__return_directive_annotation__prefer_return_directive(parse_sphinx: ParserType) -> None:
     """Prefer docstring type over return annotation.
 
     Parameters:
@@ -823,7 +830,7 @@ def test_parse__return_directive_annotation__prefer_return_directive(parse_sphin
     )
 
 
-def test_parse__return_invalid__error(parse_sphinx):
+def test_parse__return_invalid__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid return directive.
 
     Parameters:
@@ -839,7 +846,7 @@ def test_parse__return_invalid__error(parse_sphinx):
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__rtype_invalid__error(parse_sphinx):
+def test_parse__rtype_invalid__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid typed return directive.
 
     Parameters:
@@ -855,7 +862,7 @@ def test_parse__rtype_invalid__error(parse_sphinx):
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__raises_directive__exception_section(parse_sphinx):
+def test_parse__raises_directive__exception_section(parse_sphinx: ParserType) -> None:
     """Parse raise directives.
 
     Parameters:
@@ -876,7 +883,7 @@ def test_parse__raises_directive__exception_section(parse_sphinx):
     )
 
 
-def test_parse__multiple_raises_directive__exception_section_with_two(parse_sphinx):
+def test_parse__multiple_raises_directive__exception_section_with_two(parse_sphinx: ParserType) -> None:
     """Parse multiple raise directives.
 
     Parameters:
@@ -911,7 +918,7 @@ def test_parse__multiple_raises_directive__exception_section_with_two(parse_sphi
         "exception",
     ],
 )
-def test_parse__all_exception_names__param_section(parse_sphinx, raise_directive_name):
+def test_parse__all_exception_names__param_section(parse_sphinx: ParserType, raise_directive_name: str) -> None:
     """Parse all raise directives.
 
     Parameters:
@@ -923,7 +930,7 @@ def test_parse__all_exception_names__param_section(parse_sphinx, raise_directive
         Docstring with one line attribute.
 
         :{raise_directive_name} {SOME_EXCEPTION_NAME}: {SOME_TEXT}
-        """
+        """,
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.raises
@@ -933,7 +940,7 @@ def test_parse__all_exception_names__param_section(parse_sphinx, raise_directive
     )
 
 
-def test_parse__raise_invalid__error(parse_sphinx):
+def test_parse__raise_invalid__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid raise directives.
 
     Parameters:
@@ -949,7 +956,7 @@ def test_parse__raise_invalid__error(parse_sphinx):
     assert "Failed to get ':directive: value' pair from " in warnings[0]
 
 
-def test_parse__raise_no_name__error(parse_sphinx):
+def test_parse__raise_no_name__error(parse_sphinx: ParserType) -> None:
     """Warn on invalid raise directives.
 
     Parameters:
@@ -965,7 +972,7 @@ def test_parse__raise_no_name__error(parse_sphinx):
     assert "Failed to parse exception directive from" in warnings[0]
 
 
-def test_parse_module_attributes_section__expected_attributes_section(parse_sphinx):
+def test_parse_module_attributes_section__expected_attributes_section(parse_sphinx: ParserType) -> None:
     """Parse attributes section in modules.
 
     Parameters:
@@ -1002,5 +1009,5 @@ def test_parse_module_attributes_section__expected_attributes_section(parse_sphi
         {"name": "E", "annotation": "float", "description": "Epsilon."},
     ]
     for index, expected in enumerate(expected_kwargs):
-        assert_attribute_equal(attr_section.value[index], DocstringAttribute(**expected))
+        assert_attribute_equal(attr_section.value[index], DocstringAttribute(**expected))  # type: ignore[arg-type]
     assert not warnings

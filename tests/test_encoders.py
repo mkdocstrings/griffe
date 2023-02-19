@@ -1,12 +1,14 @@
 """Tests for the `encoders` module."""
 
+from __future__ import annotations
+
 import pytest
 
 from griffe.dataclasses import Function, Module, Object
 from griffe.loader import GriffeLoader
 
 
-def test_minimal_data_is_enough():
+def test_minimal_data_is_enough() -> None:
     """Test serialization and de-serialization.
 
     This is an end-to-end test that asserts
@@ -27,4 +29,4 @@ def test_minimal_data_is_enough():
     # Won't work if the JSON doesn't represent the type requested.
     with pytest.raises(TypeError) as err:
         Function.from_json(minimal)
-    assert "provided JSON object is not of type" in str(err.value)  # noqa: WPS441
+    assert "provided JSON object is not of type" in str(err.value)

@@ -13,10 +13,8 @@ fastapi = griffe.load_module("fastapi")
 from __future__ import annotations
 
 import sys
-from datetime import datetime
-from functools import lru_cache
-from pathlib import Path
-from typing import Any, Sequence, cast
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any, Sequence, cast
 from warnings import warn
 
 from griffe.agents.extensions import Extensions
@@ -24,7 +22,6 @@ from griffe.agents.inspector import inspect
 from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
-from griffe.docstrings.parsers import Parser
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import Name
 from griffe.finder import ModuleFinder, NamespacePackage, Package
@@ -32,37 +29,12 @@ from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 from griffe.stats import stats
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from griffe.docstrings.parsers import Parser
+
 logger = get_logger(__name__)
-
-
-# TODO: namespace packages can span multiple locations! we must support it.
-# ideally: find all locations, sort them, then reverse-merge their file lists
-# (sure about sorting? yes: https://github.com/python/cpython/blob/3.10/Lib/pkgutil.py#L155,
-# and we could say "but it's locale-dependent!", but it's not an issue since our process
-# will use the same locale anyway, so the behavior will be as expected)
-# when iterating on multiple locations, if one has an __init__ module,
-# just return this one, as it takes precedence as a regular package
-
-
-@lru_cache(maxsize=1)
-def _get_async_reader():
-    try:  # noqa: WPS503 (false-positive)
-        from aiofiles import open as aopen
-    except ModuleNotFoundError:
-        logger.warning("aiofiles is not installed, fallback to blocking read")
-
-        async def _read_async(path):  # noqa: WPS430
-            return path.read_text(encoding="utf8")
-
-    else:
-
-        async def _read_async(path):  # noqa: WPS430,WPS440
-            async with aopen(path) as fd:
-                return await fd.read()
-
-    return _read_async
-
-
 _builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
@@ -73,6 +45,7 @@ class GriffeLoader:
 
     def __init__(
         self,
+        *,
         extensions: Extensions | None = None,
         search_paths: Sequence[str | Path] | None = None,
         docstring_parser: Parser | None = None,
@@ -105,9 +78,10 @@ class GriffeLoader:
         }
         patch_ast()
 
-    def load_module(  # noqa: WPS231
+    def load_module(
         self,
         module: str | Path,
+        *,
         submodules: bool = True,
         try_relative_path: bool = True,
     ) -> Module:
@@ -135,8 +109,8 @@ class GriffeLoader:
                 self.modules_collection[top_module.path] = top_module
                 return self.modules_collection[module_name]  # type: ignore[index]
             raise LoadingError("Cannot load builtin module without inspection")
-        try:  # noqa: WPS503
-            module_name, package = self.finder.find_spec(module, try_relative_path)
+        try:
+            module_name, package = self.finder.find_spec(module, try_relative_path=try_relative_path)
         except ModuleNotFoundError:
             logger.debug(f"Could not find {module}")
             if self.allow_inspection:
@@ -148,14 +122,14 @@ class GriffeLoader:
                 raise
         else:
             logger.debug(f"Found {module}: loading")
-            try:  # noqa: WPS505
+            try:
                 top_module = self._load_package(package, submodules=submodules)
-            except LoadingError as error:  # noqa: WPS440
-                logger.error(str(error))
+            except LoadingError as error:
+                logger.exception(str(error))
                 raise
         return self.modules_collection[module_name]  # type: ignore[index]
 
-    def resolve_aliases(  # noqa: WPS231
+    def resolve_aliases(
         self,
         *,
         implicit: bool | None = None,
@@ -219,18 +193,18 @@ class GriffeLoader:
                 module = collection[module_name]
                 next_resolved, next_unresolved = self.resolve_module_aliases(
                     module,
-                    implicit,
-                    external,
+                    implicit=implicit,
+                    external=external,
                     load_failures=load_failures,
                 )
                 resolved |= next_resolved
                 unresolved |= next_unresolved
             logger.debug(
-                f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go"
+                f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go",
             )
         return unresolved, iteration
 
-    def expand_exports(self, module: Module, seen: set | None = None) -> None:  # noqa: WPS231
+    def expand_exports(self, module: Module, seen: set | None = None) -> None:
         """Expand exports: try to recursively expand all module exports.
 
         Parameters:
@@ -260,9 +234,10 @@ class GriffeLoader:
                 expanded.add(export)
         module.exports = expanded
 
-    def expand_wildcards(  # noqa: WPS231
+    def expand_wildcards(
         self,
         obj: Object,
+        *,
         external: bool = False,
         seen: set | None = None,
     ) -> None:
@@ -293,17 +268,17 @@ class GriffeLoader:
                 target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
                 if target.path not in seen:
                     try:
-                        self.expand_wildcards(target, external, seen)  # type: ignore[union-attr]
-                    except (AliasResolutionError, CyclicAliasError) as error:  # noqa: WPS440
+                        self.expand_wildcards(target, external=external, seen=seen)  # type: ignore[union-attr]
+                    except (AliasResolutionError, CyclicAliasError) as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
                 expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
                 to_remove.append(member.name)
             elif not member.is_alias and member.is_module and member.path not in seen:
-                self.expand_wildcards(member, external, seen)  # type: ignore[arg-type]
+                self.expand_wildcards(member, external=external, seen=seen)  # type: ignore[arg-type]
 
         for name in to_remove:
-            del obj[name]  # noqa: WPS420
+            del obj[name]
 
         for new_member, alias_lineno, alias_endlineno in expanded:
             overwrite = False
@@ -322,9 +297,10 @@ class GriffeLoader:
                     parent=obj,  # type: ignore[arg-type]
                 )
 
-    def resolve_module_aliases(  # noqa: WPS231
+    def resolve_module_aliases(
         self,
-        obj: Object,
+        obj: Object | Alias,
+        *,
         implicit: bool = False,
         external: bool = False,
         seen: set[str] | None = None,
@@ -349,7 +325,7 @@ class GriffeLoader:
         seen = seen or set()
         seen.add(obj.path)
 
-        for member in obj.members.values():  # noqa: WPS440
+        for member in obj.members.values():
             if member.is_alias:
                 if member.wildcard or member.resolved:  # type: ignore[union-attr]
                     continue
@@ -357,8 +333,8 @@ class GriffeLoader:
                     continue
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
-                except AliasResolutionError as error:  # noqa: WPS440
-                    target = error.target_path  # type: ignore[union-attr]  # noqa: WPS437
+                except AliasResolutionError as error:
+                    target = error.target_path  # type: ignore[union-attr]
                     unresolved.add(member.path)
                     package = target.split(".", 1)[0]
                     load_module = (
@@ -369,9 +345,9 @@ class GriffeLoader:
                     )
                     if load_module:
                         logger.debug(f"Failed to resolve alias {member.path} -> {target}")
-                        try:  # noqa: WPS505
+                        try:
                             self.load_module(package, try_relative_path=False)
-                        except ImportError as error:  # noqa: WPS440
+                        except ImportError as error:
                             logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
                 except CyclicAliasError as error:
@@ -381,7 +357,11 @@ class GriffeLoader:
                     resolved.add(member.path)
             elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
                 sub_resolved, sub_unresolved = self.resolve_module_aliases(
-                    member, implicit, external, seen, load_failures  # type: ignore[arg-type]
+                    member,
+                    implicit=implicit,
+                    external=external,
+                    seen=seen,
+                    load_failures=load_failures,  # type: ignore[arg-type]
                 )
                 resolved |= sub_resolved
                 unresolved |= sub_unresolved
@@ -396,7 +376,7 @@ class GriffeLoader:
         """
         return {**stats(self), **self._time_stats}
 
-    def _load_package(self, package: Package | NamespacePackage, submodules: bool = True) -> Module:
+    def _load_package(self, package: Package | NamespacePackage, *, submodules: bool = True) -> Module:
         top_module = self._load_module(package.name, package.path, submodules=submodules)
         self.modules_collection[top_module.path] = top_module
         if isinstance(package, NamespacePackage):
@@ -407,28 +387,30 @@ class GriffeLoader:
             return merge_stubs(top_module, stubs)
         return top_module
 
-    def _load_module(  # noqa: WPS238
+    def _load_module(
         self,
         module_name: str,
         module_path: Path | list[Path],
+        *,
         submodules: bool = True,
         parent: Module | None = None,
     ) -> Module:
-        try:  # noqa: WPS225
-            return self._load_module_path(module_name, module_path, submodules, parent)
-        except SyntaxError as error:  # noqa: WPS440
+        try:
+            return self._load_module_path(module_name, module_path, submodules=submodules, parent=parent)
+        except SyntaxError as error:
             raise LoadingError(f"Syntax error: {error}") from error
-        except ImportError as error:  # noqa: WPS440
+        except ImportError as error:
             raise LoadingError(f"Import error: {error}") from error
-        except UnicodeDecodeError as error:  # noqa: WPS440
+        except UnicodeDecodeError as error:
             raise LoadingError(f"UnicodeDecodeError when loading {module_path}: {error}") from error
-        except OSError as error:  # noqa: WPS440
+        except OSError as error:
             raise LoadingError(f"OSError when loading {module_path}: {error}") from error
 
     def _load_module_path(
         self,
         module_name: str,
         module_path: Path | list[Path],
+        *,
         submodules: bool = True,
         parent: Module | None = None,
     ) -> Module:
@@ -464,9 +446,12 @@ class GriffeLoader:
             return
         try:
             parent_module[submodule_name] = self._load_module(
-                submodule_name, subpath, submodules=False, parent=parent_module
+                submodule_name,
+                subpath,
+                submodules=False,
+                parent=parent_module,
             )
-        except LoadingError as error:  # noqa: WPS440
+        except LoadingError as error:
             logger.debug(str(error))
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:
@@ -479,7 +464,7 @@ class GriffeLoader:
 
     def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
         self.lines_collection[module_path] = code.splitlines(keepends=False)
-        start = datetime.now()
+        start = datetime.now(tz=timezone.utc)
         module = visit(
             module_name,
             filepath=module_path,
@@ -491,7 +476,7 @@ class GriffeLoader:
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
-        elapsed = datetime.now() - start
+        elapsed = datetime.now(tz=timezone.utc) - start
         self._time_stats["time_spent_visiting"] += elapsed.microseconds
         return module
 
@@ -499,7 +484,7 @@ class GriffeLoader:
         for prefix in self.ignored_modules:
             if module_name.startswith(prefix):
                 raise ImportError(f"Ignored module '{module_name}'")
-        start = datetime.now()
+        start = datetime.now(tz=timezone.utc)
         try:
             module = inspect(
                 module_name,
@@ -513,11 +498,11 @@ class GriffeLoader:
             )
         except SystemExit as error:
             raise ImportError(f"Importing '{module_name}' raised a system exit") from error
-        elapsed = datetime.now() - start
+        elapsed = datetime.now(tz=timezone.utc) - start
         self._time_stats["time_spent_inspecting"] += elapsed.microseconds
         return module
 
-    def _get_or_create_parent_module(  # noqa: WPS231
+    def _get_or_create_parent_module(
         self,
         module: Module,
         subparts: tuple[str, ...],
@@ -534,17 +519,17 @@ class GriffeLoader:
             module_filepath = parents[len(subparts) - parent_offset]
             try:
                 parent_module = parent_module[parent_part]
-            except KeyError:
+            except KeyError as error:
                 if parent_module.is_namespace_package or parent_module.is_namespace_subpackage:
                     next_parent_module = self._create_module(parent_part, [module_filepath])
                     parent_module[parent_part] = next_parent_module
                     parent_module = next_parent_module
                 else:
-                    raise UnimportableModuleError(f"Skip {subpath}, it is not importable")
+                    raise UnimportableModuleError(f"Skip {subpath}, it is not importable") from error
             else:
-                if parent_module.is_namespace_package or parent_module.is_namespace_subpackage:
-                    if module_filepath not in parent_module.filepath:  # type: ignore[operator]
-                        parent_module.filepath.append(module_filepath)  # type: ignore[union-attr]
+                parent_namespace = parent_module.is_namespace_package or parent_module.is_namespace_subpackage
+                if parent_namespace and module_filepath not in parent_module.filepath:  # type: ignore[operator]
+                    parent_module.filepath.append(module_filepath)  # type: ignore[union-attr]
         return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
@@ -559,6 +544,7 @@ class GriffeLoader:
 
 def load(
     module: str | Path,
+    *,
     submodules: bool = True,
     try_relative_path: bool = True,
     extensions: Extensions | None = None,
@@ -572,7 +558,6 @@ def load(
     """Load and return a module.
 
     Example:
-
     ```python
     import griffe
 

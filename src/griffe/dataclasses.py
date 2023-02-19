@@ -11,22 +11,26 @@ import inspect
 import sys
 from collections import defaultdict
 from contextlib import suppress
-from pathlib import Path
 from textwrap import dedent
-from typing import Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Union, cast
 
-from griffe.collections import LinesCollection, ModulesCollection
-from griffe.docstrings.dataclasses import DocstringSection
-from griffe.docstrings.parsers import Parser, parse  # noqa: WPS347
+from griffe.docstrings.parsers import Parser, parse
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
-from griffe.expressions import Expression, Name
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from griffe.collections import LinesCollection, ModulesCollection
+    from griffe.docstrings.dataclasses import DocstringSection
+    from griffe.expressions import Expression, Name
+
 
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
-    from functools import cached_property  # noqa: WPS440
+    from functools import cached_property
 
 
 class ParameterKind(enum.Enum):
@@ -67,7 +71,7 @@ class Decorator:
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this decorator's data as a dictionary.
 
         Parameters:
@@ -154,7 +158,7 @@ class Docstring:
         """
         return parse(self, parser or self.parser, **(options or self.parser_options))
 
-    def as_dict(self, full: bool = False, docstring_parser: Parser | None = None, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, *, full: bool = False, docstring_parser: Parser | None = None, **kwargs: Any) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Parameters:
@@ -221,7 +225,7 @@ class Parameter:
         """
         return self.default is None
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this parameter's data as a dictionary.
 
         Parameters:
@@ -302,7 +306,7 @@ class Kind(enum.Enum):
     ALIAS: str = "alias"
 
 
-class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):  # noqa: WPS215
+class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):
     """An abstract class representing a Python object.
 
     Attributes:
@@ -374,19 +378,16 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     @property
     def has_docstring(self) -> bool:
         """Tell if this object has a non-empty docstring."""
-        return bool(self.docstring)  # noqa: DAR201
+        return bool(self.docstring)
 
     @property
     def has_docstrings(self) -> bool:
         """Tell if this object or any of its members has a non-empty docstring."""
-        if self.has_docstring:  # noqa: DAR201
+        if self.has_docstring:
             return True
-        for member in self.members.values():
-            if member.has_docstrings:  # type: ignore[union-attr]
-                return True
-        return False
+        return any(member.has_docstrings for member in self.members.values())
 
-    def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:
+    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:
         """Tell if a member of this object is "exported".
 
         By exported, we mean that the object is included in the `__all__` attribute
@@ -423,7 +424,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         if isinstance(kind, set):
             if not kind:
                 raise ValueError("kind must not be an empty set")
-            return self.kind in (knd if isinstance(knd, Kind) else Kind(knd) for knd in kind)  # noqa: WPS509,WPS510
+            return self.kind in (knd if isinstance(knd, Kind) else Kind(knd) for knd in kind)
         if isinstance(kind, str):
             kind = Kind(kind)
         return self.kind is kind
@@ -431,22 +432,22 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     @property
     def is_module(self) -> bool:
         """Tell if this object is a module."""
-        return self.kind is Kind.MODULE  # noqa: DAR201
+        return self.kind is Kind.MODULE
 
     @property
     def is_class(self) -> bool:
         """Tell if this object is a class."""
-        return self.kind is Kind.CLASS  # noqa: DAR201
+        return self.kind is Kind.CLASS
 
     @property
     def is_function(self) -> bool:
         """Tell if this object is a function."""
-        return self.kind is Kind.FUNCTION  # noqa: DAR201
+        return self.kind is Kind.FUNCTION
 
     @property
     def is_attribute(self) -> bool:
         """Tell if this object is an attribute."""
-        return self.kind is Kind.ATTRIBUTE  # noqa: DAR201
+        return self.kind is Kind.ATTRIBUTE
 
     def has_labels(self, labels: set[str]) -> bool:
         """Tell if this object has all the given labels.
@@ -549,8 +550,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         return self.module.filepath
 
-    @cached_property  # noqa: WPS231
-    def relative_filepath(self) -> Path:  # noqa: WPS231
+    @cached_property
+    def relative_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the top module path.
 
         Raises:
@@ -567,12 +568,12 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
                         with suppress(ValueError):
                             return self_path.relative_to(pkg_path.parent)
             else:
-                for self_path in self.module.filepath:  # noqa: WPS440
+                for self_path in self.module.filepath:
                     with suppress(ValueError):
                         return self_path.relative_to(package_path.parent.parent)
             raise ValueError
         if isinstance(package_path, list):
-            for pkg_path in package_path:  # noqa: WPS440
+            for pkg_path in package_path:
                 with suppress(ValueError):
                     return self.module.filepath.relative_to(pkg_path.parent)
             raise ValueError
@@ -694,7 +695,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return self.parent.path
         return self.parent.resolve(name)
 
-    def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
         Parameters:
@@ -715,7 +716,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
                     "path": self.path,
                     "filepath": self.filepath,
                     "relative_filepath": self.relative_filepath,
-                }
+                },
             )
 
         if self.lineno:
@@ -749,7 +750,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return blockfinder.last
 
 
-class Alias(ObjectAliasMixin):  # noqa: WPS338
+class Alias(ObjectAliasMixin):
     """This class represents an alias, or indirection, to an object declared in another module.
 
     Aliases represent objects that are in the scope of a module or class,
@@ -812,11 +813,11 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     def __repr__(self) -> str:
         return f"<Alias({self.name!r}, {self.target_path!r})>"
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str | tuple[str, ...]):
         # not handled by __getattr__
         return self.target[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str | tuple[str, ...], value: Object | Alias):
         # not handled by __getattr__
         self.target[key] = value
 
@@ -863,12 +864,12 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     @property
     def has_docstring(self) -> bool:
         """Tell if this alias' target has a non-empty docstring."""
-        return self.resolved and self.target.has_docstring  # noqa: DAR201
+        return self.resolved and self.target.has_docstring
 
     @property
     def has_docstrings(self) -> bool:
         """Tell if this alias' target or any of its members has a non-empty docstring."""
-        return self.resolved and self.target.has_docstrings  # noqa: DAR201
+        return self.resolved and self.target.has_docstrings
 
     @property
     def parent(self) -> Module | Class | None:
@@ -906,49 +907,49 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     # GENERIC OBJECT PROXIES --------------------------------
 
     @property
-    def docstring(self):  # noqa: D102
+    def docstring(self) -> Docstring | None:  # noqa: D102
         return self.target.docstring
 
     @property
-    def members(self):  # noqa: D102
+    def members(self) -> dict[str, Object | Alias]:  # noqa: D102
         return self.target.members
 
     @property
-    def labels(self):  # noqa: D102
+    def labels(self) -> set[str]:  # noqa: D102
         return self.target.labels
 
     @property
-    def imports(self):  # noqa: D102
+    def imports(self) -> dict[str, str]:  # noqa: D102
         return self.target.imports
 
     @property
-    def exports(self):  # noqa: D102
+    def exports(self) -> set[str] | list[str | Name] | None:  # noqa: D102
         return self.target.exports
 
     @property
-    def aliases(self):  # noqa: D102
+    def aliases(self) -> dict[str, Alias]:  # noqa: D102
         return self.target.aliases
 
-    def member_is_exported(self, member: Object | Alias, explicitely: bool = True) -> bool:  # noqa: D102
-        return self.target.member_is_exported(member, explicitely)
+    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
+        return self.target.member_is_exported(member, explicitely=explicitely)
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
         return self.target.is_kind(kind)
 
     @property
-    def is_module(self):  # noqa: D102
+    def is_module(self) -> bool:  # noqa: D102
         return self.target.is_module
 
     @property
-    def is_class(self):  # noqa: D102
+    def is_class(self) -> bool:  # noqa: D102
         return self.target.is_class
 
     @property
-    def is_function(self):  # noqa: D102
+    def is_function(self) -> bool:  # noqa: D102
         return self.target.is_function
 
     @property
-    def is_attribute(self):  # noqa: D102
+    def is_attribute(self) -> bool:  # noqa: D102
         return self.target.is_attribute
 
     def has_labels(self, labels: set[str]) -> bool:  # noqa: D102
@@ -958,51 +959,51 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         return self.target.filter_members(*predicates)
 
     @property
-    def modules(self):  # noqa: D102
+    def modules(self) -> dict[str, Module]:  # noqa: D102
         return self.target.modules
 
     @property
-    def classes(self):  # noqa: D102
+    def classes(self) -> dict[str, Class]:  # noqa: D102
         return self.target.classes
 
     @property
-    def functions(self):  # noqa: D102
+    def functions(self) -> dict[str, Function]:  # noqa: D102
         return self.target.functions
 
     @property
-    def attributes(self):  # noqa: D102
+    def attributes(self) -> dict[str, Attribute]:  # noqa: D102
         return self.target.attributes
 
     @property
-    def module(self):  # noqa: D102
+    def module(self) -> Module:  # noqa: D102
         return self.target.module
 
     @property
-    def package(self):  # noqa: D102
+    def package(self) -> Module:  # noqa: D102
         return self.target.package
 
     @property
-    def filepath(self):  # noqa: D102
+    def filepath(self) -> Path | list[Path]:  # noqa: D102
         return self.target.filepath
 
     @property
-    def relative_filepath(self):  # noqa: D102
+    def relative_filepath(self) -> Path:  # noqa: D102
         return self.target.relative_filepath
 
     @property
-    def canonical_path(self):  # noqa: D102
+    def canonical_path(self) -> str:  # noqa: D102
         return self.target.canonical_path
 
     @property
-    def lines_collection(self):  # noqa: D102
+    def lines_collection(self) -> LinesCollection:  # noqa: D102
         return self.target.lines_collection
 
     @property
-    def lines(self):  # noqa: D102
+    def lines(self) -> list[str]:  # noqa: D102
         return self.target.lines
 
     @property
-    def source(self):  # noqa: D102
+    def source(self) -> str:  # noqa: D102
         return self.target.source
 
     def resolve(self, name: str) -> str:  # noqa: D102
@@ -1011,8 +1012,8 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
 
     @property
-    def _filepath(self) -> Path | list[Path] | None:  # noqa: D102
-        return cast(Module, self.target)._filepath  # noqa: WPS437
+    def _filepath(self) -> Path | list[Path] | None:
+        return cast(Module, self.target)._filepath
 
     @property
     def bases(self) -> list[Name | Expression | str]:  # noqa: D102
@@ -1087,7 +1088,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         if self.parent is not None:
             self._target.aliases[self.path] = self
 
-    def resolve_target(self) -> None:  # noqa: WPS231,WPS238
+    def resolve_target(self) -> None:
         """Resolve the target.
 
         Raises:
@@ -1101,7 +1102,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         if self._passed_through:
             raise CyclicAliasError([self.target_path])
         self._passed_through = True
-        try:  # noqa: WPS501
+        try:
             self._resolve_target()
         finally:
             self._passed_through = False
@@ -1116,8 +1117,8 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         if resolved.is_alias and not resolved.resolved:
             try:
                 resolved.resolve_target()
-            except CyclicAliasError as error:  # noqa: WPS440
-                raise CyclicAliasError([self.target_path] + error.chain)
+            except CyclicAliasError as error:
+                raise CyclicAliasError([self.target_path, *error.chain]) from error
         self._target = resolved
         if self.parent is not None:
             self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
@@ -1146,7 +1147,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
             return self.target_path
         return None
 
-    def as_dict(self, full: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this alias' data as a dictionary.
 
         Parameters:
@@ -1326,7 +1327,7 @@ class Class(Object):
                     *[
                         Parameter(attr.name, annotation=attr.annotation, default=attr.value)
                         for attr in self.attributes.values()
-                    ]
+                    ],
                 )
             return Parameters()
 

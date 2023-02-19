@@ -5,8 +5,10 @@ from __future__ import annotations
 import sys
 from contextlib import contextmanager
 from importlib import import_module
-from pathlib import Path
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @contextmanager
@@ -31,7 +33,7 @@ def sys_path(*paths: str | Path) -> Iterator[None]:
         sys.path = old_path
 
 
-def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> Any:  # noqa: WPS231
+def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> Any:
     """Dynamically import the specified object.
 
     It can be a module, class, method, function, attribute,
@@ -55,7 +57,7 @@ def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> 
     with sys_path(*(import_paths or ())):
         while True:
             module_path = ".".join(module_parts)
-            try:  # noqa: WPS503 (false-positive)
+            try:
                 module = import_module(module_path)
             except ModuleNotFoundError as error:
                 if len(module_parts) == 1:
@@ -76,6 +78,6 @@ def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> 
     for part in object_parts:
         try:
             value = getattr(value, part)
-        except AttributeError as error:  # noqa: WPS440
+        except AttributeError as error:
             raise ImportError("\n".join(errors)) from error
     return value

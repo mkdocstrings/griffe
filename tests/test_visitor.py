@@ -1,5 +1,7 @@
 """Test visit mechanisms."""
 
+from __future__ import annotations
+
 from textwrap import dedent
 
 import pytest
@@ -7,10 +9,6 @@ import pytest
 from griffe.loader import GriffeLoader
 from tests.helpers import temporary_pypackage, temporary_visited_module
 
-# import sys
-# import hypothesmith as hs
-# import libcst
-# from hypothesis import given, settings
 # @given(hs.from_node(node=libcst.Module))
 # @pytest.mark.skipif(sys.version_info >= (3, 11, 0), reason="Too slow on Python 3.11?")
 # def test_visit_arbitrary_code(code: str):
@@ -18,7 +16,7 @@ from tests.helpers import temporary_pypackage, temporary_visited_module
 #         ...
 
 
-def test_not_defined_at_runtime():
+def test_not_defined_at_runtime() -> None:
     """Assert that objects not defined at runtime are not added to wildcards expansions."""
     with temporary_pypackage("package", ["module_a.py", "module_b.py", "module_c.py"]) as tmp_package:
         tmp_package.path.joinpath("__init__.py").write_text("from package.module_a import *")
@@ -35,8 +33,8 @@ def test_not_defined_at_runtime():
                     from package.module_b import TYPE_B
                 if TYPE_CHECKING:  # always false
                     from package.module_c import TYPE_C
-                """
-            )
+                """,
+            ),
         )
         tmp_package.path.joinpath("module_b.py").write_text("CONST_B = 'hi'\nTYPE_B = str")
         tmp_package.path.joinpath("module_c.py").write_text("CONST_C = 'ho'\nTYPE_C = str")
@@ -69,7 +67,7 @@ def test_not_defined_at_runtime():
         ("dataclass", {"dataclass"}),
     ],
 )
-def test_set_function_labels_using_decorators(decorator, labels):
+def test_set_function_labels_using_decorators(decorator: str, labels: set[str]) -> None:
     """Assert decorators are used to set labels on functions.
 
     Parameters:
@@ -100,7 +98,7 @@ def test_set_function_labels_using_decorators(decorator, labels):
         ("dataclass", {"dataclass"}),
     ],
 )
-def test_set_class_labels_using_decorators(decorator, labels):
+def test_set_class_labels_using_decorators(decorator: str, labels: set[str]) -> None:
     """Assert decorators are used to set labels on classes.
 
     Parameters:
@@ -118,7 +116,7 @@ def test_set_class_labels_using_decorators(decorator, labels):
         assert module["A"].has_labels(labels)
 
 
-def test_handle_property_setter_and_deleter():
+def test_handle_property_setter_and_deleter() -> None:
     """Assert property setters and deleters are supported."""
     code = """
         class A:
@@ -146,7 +144,7 @@ def test_handle_property_setter_and_deleter():
         "typing.overload",
     ],
 )
-def test_handle_typing_overaload(decorator):
+def test_handle_typing_overaload(decorator: str) -> None:
     """Assert `typing.overload` is supported.
 
     Parameters:
@@ -172,8 +170,8 @@ def test_handle_typing_overaload(decorator):
     with temporary_visited_module(code) as module:
         overloads = module["A.absolute"].overloads
         assert len(overloads) == 2
-        assert overloads[0].parameters["path"].annotation.source == "str"  # noqa: WPS219
-        assert overloads[1].parameters["path"].annotation.source == "Path"  # noqa: WPS219
+        assert overloads[0].parameters["path"].annotation.source == "str"
+        assert overloads[1].parameters["path"].annotation.source == "Path"
         assert overloads[0].returns.source == "str"
         assert overloads[1].returns.source == "Path"
 
@@ -198,7 +196,7 @@ def test_handle_typing_overaload(decorator):
         """,
     ],
 )
-def test_parse_complex__all__assignments(statements):
+def test_parse_complex__all__assignments(statements: str) -> None:
     """Check our ability to expand exports based on `__all__` [augmented] assignments.
 
     Parameters:
@@ -227,7 +225,7 @@ def test_parse_complex__all__assignments(statements):
         assert package.exports == {"CONST_INIT", "CONST_A", "CONST_B", "CONST_C"}
 
 
-def test_dont_crash_on_nested_functions_in_init():
+def test_dont_crash_on_nested_functions_in_init() -> None:
     """Assert we don't crash when visiting a nested function in `__init__` methods."""
     with temporary_visited_module(
         """
@@ -235,12 +233,12 @@ def test_dont_crash_on_nested_functions_in_init():
             def __init__(self):
                 def pl(i: int):
                     return i + 1
-        """
+        """,
     ) as module:
         assert module
 
 
-def test_get_correct_docstring_starting_line_number():
+def test_get_correct_docstring_starting_line_number() -> None:
     """Assert we get the correct line numbers for docstring, even on Python 3.7."""
     with temporary_visited_module(
         """
@@ -255,14 +253,14 @@ def test_get_correct_docstring_starting_line_number():
                 '''
                 Method docstring.
                 '''
-        """
+        """,
     ) as module:
-        assert module.docstring.lineno == 2
+        assert module.docstring.lineno == 2  # type: ignore[union-attr]
         assert module["C"].docstring.lineno == 6
         assert module["C.method"].docstring.lineno == 10
 
 
-def test_visit_properties_as_attributes():
+def test_visit_properties_as_attributes() -> None:
     """Assert properties are created as attributes and not functions."""
     with temporary_visited_module(
         """
@@ -275,7 +273,7 @@ def test_visit_properties_as_attributes():
             @cached_property
             def cached_prop(self) -> int:
                 return 0
-        """
+        """,
     ) as module:
         assert module["C.prop"].is_attribute
         assert "property" in module["C.prop"].labels

@@ -10,7 +10,7 @@ from griffe.agents.extensions.base import (
     load_extensions,
 )
 
-__all__ = [  # noqa: WPS410
+__all__ = [
     "Extensions",
     "Extension",
     "InspectorExtension",

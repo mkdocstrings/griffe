@@ -1,14 +1,19 @@
 """Tests for creating a griffe Module from specific commits in a git repository."""
 
+from __future__ import annotations
+
 import shutil
-from pathlib import Path
-from subprocess import run  # noqa: S404
+from subprocess import run
+from typing import TYPE_CHECKING
 
 import pytest
 
 from griffe.dataclasses import Module
 from griffe.git import load_git
 from tests import FIXTURES_DIR
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 REPO_NAME = "my-repo"
 REPO_SOURCE = FIXTURES_DIR / "_repo"
@@ -53,19 +58,19 @@ def git_repo(tmp_path: Path) -> Path:
     """
     repo_path = tmp_path / REPO_NAME
     repo_path.mkdir()
-    run(["git", "-C", str(repo_path), "init"])  # noqa: S603,S607
-    run(["git", "-C", str(repo_path), "config", "user.name", "Name"])  # noqa: S603,S607
-    run(["git", "-C", str(repo_path), "config", "user.email", "my@email.com"])  # noqa: S603,S607
+    run(["git", "-C", str(repo_path), "init"])
+    run(["git", "-C", str(repo_path), "config", "user.name", "Name"])
+    run(["git", "-C", str(repo_path), "config", "user.email", "my@email.com"])
     for tagdir in REPO_SOURCE.iterdir():
         ver = tagdir.name
         _copy_contents(tagdir, repo_path)
-        run(["git", "-C", str(repo_path), "add", "."])  # noqa: S603,S607
-        run(["git", "-C", str(repo_path), "commit", "-m", f"feat: {ver} stuff"])  # noqa: S603,S607
-        run(["git", "-C", str(repo_path), "tag", ver])  # noqa: S603,S607
+        run(["git", "-C", str(repo_path), "add", "."])
+        run(["git", "-C", str(repo_path), "commit", "-m", f"feat: {ver} stuff"])
+        run(["git", "-C", str(repo_path), "tag", ver])
     return repo_path
 
 
-def test_load_git(git_repo: Path):  # noqa: WPS442
+def test_load_git(git_repo: Path) -> None:
     """Test that we can load modules from different commits from a git repo.
 
     Parameters:
@@ -79,7 +84,7 @@ def test_load_git(git_repo: Path):  # noqa: WPS442
     assert v2.attributes["__version__"].value == "'0.2.0'"
 
 
-def test_load_git_errors(git_repo: Path):  # noqa: WPS442
+def test_load_git_errors(git_repo: Path) -> None:
     """Test that we get informative errors for various invalid inputs.
 
     Parameters:

@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import json
 from contextlib import suppress
-from typing import Any, Sequence, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 
 from griffe.exceptions import AliasResolutionError, CyclicAliasError
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
+
+if TYPE_CHECKING:
+    from griffe.dataclasses import Alias, Object
 
 logger = get_logger(__name__)
 _ObjType = TypeVar("_ObjType")
@@ -43,13 +46,13 @@ def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
 class DelMembersMixin:
     """This mixin adds a `__delitem__` method to a class."""
 
-    def __delitem__(self, key: str | Sequence[str]) -> None:  # noqa: WPS603
+    def __delitem__(self, key: str | Sequence[str]) -> None:
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
-            del self.members[name]  # type: ignore[attr-defined]  # noqa: WPS420
+            del self.members[name]  # type: ignore[attr-defined]
         else:
-            del self.members[parts[0]][parts[1:]]  # type: ignore[attr-defined]  # noqa: WPS420
+            del self.members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
 
 
 class SetMembersMixin(DelMembersMixin):
@@ -60,7 +63,7 @@ class SetMembersMixin(DelMembersMixin):
     Each time a member is set, its `parent` attribute is set as well.
     """
 
-    def __setitem__(self, key: str | Sequence[str], value) -> None:  # noqa: WPS231
+    def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
@@ -75,15 +78,15 @@ class SetMembersMixin(DelMembersMixin):
                             if value.is_module and value.filepath != member.filepath:
                                 logger.debug(f"Trying to merge {member.filepath} and {value.filepath}")
                                 with suppress(ValueError):
-                                    value = merge_stubs(member, value)
+                                    value = merge_stubs(member, value)  # type: ignore[arg-type]
                     for alias in member.aliases.values():
                         with suppress(CyclicAliasError):
                             alias.target = value
             self.members[name] = value  # type: ignore[attr-defined]
             if self.is_collection:  # type: ignore[attr-defined]
-                value._modules_collection = self  # noqa: WPS437
+                value._modules_collection = self  # type: ignore[union-attr]
             else:
-                value.parent = self
+                value.parent = self  # type: ignore[assignment]
         else:
             self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
 
@@ -91,7 +94,7 @@ class SetMembersMixin(DelMembersMixin):
 class ObjectAliasMixin:
     """A mixin for methods that appear both in objects and aliases, unchanged."""
 
-    def is_exported(self, explicitely: bool = True) -> bool:
+    def is_exported(self, *, explicitely: bool = True) -> bool:
         """Tell if this object/alias is implicitely exported by its parent.
 
         Parameters:
@@ -124,7 +127,7 @@ class ObjectAliasMixin:
 class SerializationMixin:
     """A mixin that adds de/serialization conveniences."""
 
-    def as_json(self, full: bool = False, **kwargs: Any) -> str:
+    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
         """Return this object's data as a JSON string.
 
         Parameters:
@@ -139,7 +142,7 @@ class SerializationMixin:
         return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
 
     @classmethod
-    def from_json(cls: Type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:
+    def from_json(cls: type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:
         """Create an instance of this class from a JSON string.
 
         Parameters:

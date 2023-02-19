@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable, FrozenSet
+from typing import TYPE_CHECKING, Any, Callable
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
@@ -24,10 +24,10 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionText,
 )
 from griffe.docstrings.utils import warning
-from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
+    from griffe.expressions import Expression, Name
 
 _warn = warning(__name__)
 
@@ -45,7 +45,7 @@ EXCEPTION_NAMES = frozenset(("raises", "raise", "except", "exception"))
 class FieldType:
     """Maps directive names to parser functions."""
 
-    names: FrozenSet[str]
+    names: frozenset[str]
     reader: Callable[[Docstring, int, ParsedValues], int]
 
     def matches(self, line: str) -> bool:
@@ -85,7 +85,7 @@ class ParsedValues:
     return_type: str | None = None
 
 
-def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:
+def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:  # noqa: ARG001
     """Parse a Sphinx-styled docstring.
 
     Parameters:
@@ -121,10 +121,10 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
         return parsed_directive.next_index
 
     directive_type = None
-    if len(parsed_directive.directive_parts) == 2:
+    if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         # no type info
         name = parsed_directive.directive_parts[1]
-    elif len(parsed_directive.directive_parts) == 3:
+    elif len(parsed_directive.directive_parts) == 3:  # noqa: PLR2004
         directive_type = parsed_directive.directive_parts[1]
         name = parsed_directive.directive_parts[2]
     else:
@@ -156,7 +156,10 @@ def _determine_param_default(docstring: Docstring, name: str) -> str | None:
 
 
 def _determine_param_annotation(
-    docstring: Docstring, name: str, directive_type: str | None, parsed_values: ParsedValues
+    docstring: Docstring,
+    name: str,
+    directive_type: str | None,
+    parsed_values: ParsedValues,
 ) -> Any:
     # Annotation precedence:
     # - in-line directive type
@@ -190,7 +193,7 @@ def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: Parse
         return parsed_directive.next_index
     param_type = _consolidate_descriptive_type(parsed_directive.value.strip())
 
-    if len(parsed_directive.directive_parts) == 2:
+    if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         param_name = parsed_directive.directive_parts[1]
     else:
         _warn(docstring, 0, f"Failed to get parameter name from '{parsed_directive.line}'")
@@ -211,7 +214,7 @@ def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValu
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
-    if len(parsed_directive.directive_parts) == 2:
+    if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         name = parsed_directive.directive_parts[1]
     else:
         _warn(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
@@ -249,7 +252,7 @@ def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: Parse
         return parsed_directive.next_index
     attribute_type = _consolidate_descriptive_type(parsed_directive.value.strip())
 
-    if len(parsed_directive.directive_parts) == 2:
+    if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         attribute_name = parsed_directive.directive_parts[1]
     else:
         _warn(docstring, 0, f"Failed to get attribute name from '{parsed_directive.line}'")
@@ -270,7 +273,7 @@ def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValu
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
-    if len(parsed_directive.directive_parts) == 2:
+    if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         ex_type = parsed_directive.directive_parts[1]
         parsed_values.exceptions.append(DocstringRaise(annotation=ex_type, description=parsed_directive.value))
     else:

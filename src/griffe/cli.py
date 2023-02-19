@@ -17,29 +17,32 @@ import argparse
 import json
 import logging
 import os
-import subprocess  # noqa: S404
+import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import IO, Any, Callable, Sequence, Type
+from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
 import colorama
 
-from griffe.agents.extensions import Extension, Extensions
 from griffe.agents.extensions.base import load_extensions
 from griffe.diff import ExplanationStyle, find_breaking_changes
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
 from griffe.exceptions import ExtensionError
 from griffe.git import load_git
-from griffe.loader import GriffeLoader, load  # noqa: WPS347
+from griffe.loader import GriffeLoader, load
 from griffe.logger import get_logger
+
+if TYPE_CHECKING:
+    from griffe.agents.extensions import Extension, Extensions
+
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 logger = get_logger(__name__)
 
 
-def _print_data(data: str, output_file: str | IO | None):
+def _print_data(data: str, output_file: str | IO | None) -> None:
     if isinstance(output_file, str):
         with open(output_file, "w") as fd:
             print(data, file=fd)
@@ -54,7 +57,7 @@ def _get_latest_tag(path: str | Path) -> str:
         path = Path(path)
     if not path.is_dir():
         path = path.parent
-    output = subprocess.check_output(  # noqa: S603,S607
+    output = subprocess.check_output(
         ["git", "describe", "--tags", "--abbrev=0"],
         cwd=path,
     )
@@ -66,14 +69,14 @@ def _get_repo_root(path: str | Path) -> str:
         path = Path(path)
     if not path.is_dir():
         path = path.parent
-    output = subprocess.check_output(  # noqa: S603,S607
+    output = subprocess.check_output(
         ["git", "rev-parse", "--show-toplevel"],
         cwd=path,
     )
     return output.decode().strip()
 
 
-def _stats(stats):
+def _stats(stats: dict) -> str:
     lines = []
     packages = stats["packages"]
     modules = stats["modules"]
@@ -123,15 +126,15 @@ def _stats(stats):
     lines.append("")
     lines.append(
         f"Time spent visiting modules ({regular}): "
-        f"{visit_time}ms, {visit_time_per_module:.02f}ms/module ({visit_percent:.02f}%)"
+        f"{visit_time}ms, {visit_time_per_module:.02f}ms/module ({visit_percent:.02f}%)",
     )
     lines.append(
         f"Time spent inspecting modules ({inspected_modules}): "
-        f"{inspect_time}ms, {inspect_time_per_module:.02f}ms/module ({inspect_percent:.02f}%)"
+        f"{inspect_time}ms, {inspect_time_per_module:.02f}ms/module ({inspect_percent:.02f}%)",
     )
     serialize_time = stats["time_spent_serializing"] / 1000
     serialize_time_per_module = serialize_time / modules
-    lines.append(f"Time spent serializing: " f"{serialize_time}ms, {serialize_time_per_module:.02f}ms/module")
+    lines.append(f"Time spent serializing: {serialize_time}ms, {serialize_time_per_module:.02f}ms/module")
     return "\n".join(lines)
 
 
@@ -162,9 +165,9 @@ def _load_packages(
         try:
             loader.load_module(package)
         except ModuleNotFoundError as error:
-            logger.error(f"Could not find package {package}: {error}")
+            logger.exception(f"Could not find package {package}: {error}")
         except ImportError as error:
-            logger.error(f"Tried but could not import package {package}: {error}")
+            logger.exception(f"Tried but could not import package {package}: {error}")
     logger.info("Finished loading packages")
     if resolve_aliases:
         logger.info("Starting alias resolution")
@@ -185,7 +188,7 @@ def get_parser() -> argparse.ArgumentParser:
     Returns:
         An argparse parser.
     """
-    usage = "%(prog)s [GLOBAL_OPTS...] COMMAND [COMMAND_OPTS...]"  # noqa: WPS323 (%-formatting)
+    usage = "%(prog)s [GLOBAL_OPTS...] COMMAND [COMMAND_OPTS...]"
     description = "Signatures for entire Python programs. "
     "Extract the structure, the frame, the skeleton of your project, "
     "to generate API documentation or find breaking changes in your API."
@@ -197,7 +200,7 @@ def get_parser() -> argparse.ArgumentParser:
     global_options = parser.add_argument_group(title="Global options")
     global_options.add_argument("-h", "--help", action="help", help=main_help)
 
-    def add_common_options(subparser):  # noqa: WPS430
+    def add_common_options(subparser: argparse.ArgumentParser) -> None:
         common_options = subparser.add_argument_group(title="Common options")
         common_options.add_argument("-h", "--help", action="help", help=subcommand_help)
         search_options = subparser.add_argument_group(title="Search options")
@@ -238,10 +241,14 @@ def get_parser() -> argparse.ArgumentParser:
 
     # ========= SUBPARSERS ========= #
     subparsers = parser.add_subparsers(
-        dest="subcommand", title="Commands", metavar="COMMAND", prog="griffe", required=True
+        dest="subcommand",
+        title="Commands",
+        metavar="COMMAND",
+        prog="griffe",
+        required=True,
     )
 
-    def add_subparser(command: str, text: str, **kwargs) -> argparse.ArgumentParser:  # noqa: WPS430 (nested function)
+    def add_subparser(command: str, text: str, **kwargs: Any) -> argparse.ArgumentParser:
         return subparsers.add_parser(command, add_help=False, help=text, description=text, **kwargs)
 
     # ========= DUMP PARSER ========= #
@@ -340,7 +347,7 @@ def dump(
     full: bool = False,
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
-    extensions: Sequence[str | dict[str, Any] | Extension | Type[Extension]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
     resolve_aliases: bool = False,
     resolve_implicit: bool = False,
     resolve_external: bool = False,
@@ -380,7 +387,7 @@ def dump(
     try:
         loaded_extensions = load_extensions(extensions or ())
     except ExtensionError as error:
-        logger.error(error)
+        logger.exception(error)
         return 1
 
     loader = _load_packages(
@@ -396,7 +403,7 @@ def dump(
     )
     data_packages = loader.modules_collection.members
 
-    started = datetime.now()
+    started = datetime.now(tz=timezone.utc)
     if per_package_output:
         for package_name, data in data_packages.items():
             serialized = data.as_json(indent=2, full=full)
@@ -404,7 +411,7 @@ def dump(
     else:
         serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full)
         _print_data(serialized, output)
-    elapsed = datetime.now() - started
+    elapsed = datetime.now(tz=timezone.utc) - started
 
     if stats:
         logger.info(_stats({"time_spent_serializing": elapsed.microseconds, **loader.stats()}))
@@ -418,7 +425,7 @@ def check(
     against_path: str | Path | None = None,
     *,
     base_ref: str | None = None,
-    extensions: Sequence[str | dict[str, Any] | Extension | Type[Extension]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
     allow_inspection: bool = True,
     verbose: bool = False,
@@ -450,7 +457,7 @@ def check(
     try:
         loaded_extensions = load_extensions(extensions or ())
     except ExtensionError as error:
-        logger.error(error)
+        logger.exception(error)
         return 1
 
     old_package = load_git(
@@ -479,10 +486,7 @@ def check(
             allow_inspection=allow_inspection,
         )
 
-    if verbose:
-        style = ExplanationStyle.VERBOSE
-    else:
-        style = ExplanationStyle.ONE_LINE
+    style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     breakages = list(find_breaking_changes(old_package, new_package))
     for breakage in breakages:
         print(breakage.explain(style=style), file=sys.stderr)
@@ -491,7 +495,7 @@ def check(
     return 0
 
 
-def main(args: list[str] | None = None) -> int:  # noqa: WPS231
+def main(args: list[str] | None = None) -> int:
     """Run the main program.
 
     This function is executed when you type `griffe` or `python -m griffe`.
@@ -518,7 +522,7 @@ def main(args: list[str] | None = None) -> int:  # noqa: WPS231
         )
         return 1
     else:
-        logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)  # noqa: WPS323
+        logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)
 
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
     return commands[subcommand](**opts_dict)
