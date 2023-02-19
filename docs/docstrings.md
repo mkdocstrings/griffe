@@ -187,6 +187,7 @@ def foo(a: int, b: str):
 ```python
 from dataclasses import dataclass
 
+
 @dataclass
 class Foo:
     """Foo.
@@ -255,6 +256,7 @@ def foo(a, b):
         c (int): Here's c.
         d (bool): Here's d.
     """
+
     def inner(c, d):
         ...
 
@@ -353,7 +355,7 @@ def foo() -> Generator[int, tuple[str, bool], None]:
     Receives:
         mode: Some mode.
         flag: Some flag.
-    
+
     ...
     """
     ...
@@ -406,7 +408,7 @@ def foo() -> tuple[bool, float]:
     Returns:
         success: Whether it succeeded.
         precision: Final precision.
-    
+
     ...
     """
     ...
@@ -496,7 +498,7 @@ def foo() -> Iterator[tuple[float, float, datetime]]:
         x: Absissa.
         y: Ordinate.
         t: Time.
-    
+
     ...
     """
     ...
@@ -512,6 +514,7 @@ Yields:
     x (int): Absissa.
     y (int): Ordinate.
     t (int): Timestamp.
+"""
 ```
 
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  

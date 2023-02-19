@@ -30,7 +30,7 @@ function = Function(
     parameters=Parameters(
         Parameter("param1", annotation="str", kind=ParameterKind.positional_or_keyword),
         Parameter("param2", annotation="int", kind=ParameterKind.keyword_only),
-    )
+    ),
 )
 text = """
 Hello I'm a docstring!

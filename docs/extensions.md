@@ -59,7 +59,7 @@ class MyExtension(Extension):
 
         self.visitor  # the main visitor
         self.visitor.current  # the current data object
-        self.visitor.current.kind  # the kind of object: module, class, function, attribute 
+        self.visitor.current.kind  # the kind of object: module, class, function, attribute
 ```
 
 See the data classes ([`Module`][griffe.dataclasses.Module],
