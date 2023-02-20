@@ -295,7 +295,7 @@ class GriffeLoader:
                 except KeyError:
                     logger.debug(
                         f"Could not expand wildcard import {member.name} in {obj.path}: "
-                        f"{member.target_path} not found in modules collection"
+                        f"{cast(Alias, member).target_path} not found in modules collection"
                     )
                     continue
                 if target.path not in seen:
