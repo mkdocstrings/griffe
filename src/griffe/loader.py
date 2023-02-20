@@ -290,7 +290,14 @@ class GriffeLoader:
                     except ImportError as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
+                try:
                 target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
+                except KeyError:
+                    logger.debug(
+                        f"Could not expand wildcard import {member.name} in {obj.path}: "
+                        f"{member.target_path} not found in modules collection"
+                    )
+                    continue
                 if target.path not in seen:
                     try:
                         self.expand_wildcards(target, external, seen)  # type: ignore[union-attr]
