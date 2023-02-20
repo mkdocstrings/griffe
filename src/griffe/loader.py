@@ -291,7 +291,7 @@ class GriffeLoader:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
                 try:
-                target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
+                    target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
                 except KeyError:
                     logger.debug(
                         f"Could not expand wildcard import {member.name} in {obj.path}: "
@@ -365,7 +365,7 @@ class GriffeLoader:
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:  # noqa: WPS440
-                    target = error.target_path  # type: ignore[union-attr]  # noqa: WPS437
+                    target = error.alias.target_path  # type: ignore[union-attr]  # noqa: WPS437
                     unresolved.add(member.path)
                     package = target.split(".", 1)[0]
                     load_module = (

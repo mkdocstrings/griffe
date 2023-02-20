@@ -1110,7 +1110,7 @@ class Alias(ObjectAliasMixin):  # noqa: WPS338
         try:
             resolved = self.modules_collection[self.target_path]
         except KeyError as error:
-            raise AliasResolutionError(self.target_path) from error
+            raise AliasResolutionError(self) from error
         if resolved is self:
             raise CyclicAliasError([self.target_path])
         if resolved.is_alias and not resolved.resolved:
