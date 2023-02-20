@@ -43,7 +43,7 @@ def test_handle_aliases_chain_in_has_docstrings():
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load_module(tmp_package.name)
         assert not package.has_docstrings
-        loader.resolve_aliases(only_exported=False)
+        loader.resolve_aliases(implicit=True)
         assert not package.has_docstrings
 
 
