@@ -550,7 +550,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return self.module.filepath
 
     @cached_property  # noqa: WPS231
-    def relative_filepath(self) -> Path:  # noqa: WPS231
+    def relative_package_filepath(self) -> Path:  # noqa: WPS231
         """Return the file path where this object was defined, relative to the top module path.
 
         Raises:
@@ -560,23 +560,23 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             A file path.
         """
         package_path = self.package.filepath
-        if isinstance(self.module.filepath, list):
+        if isinstance(self.filepath, list):
             if isinstance(package_path, list):
                 for pkg_path in package_path:
-                    for self_path in self.module.filepath:
+                    for self_path in self.filepath:
                         with suppress(ValueError):
                             return self_path.relative_to(pkg_path.parent)
             else:
-                for self_path in self.module.filepath:  # noqa: WPS440
+                for self_path in self.filepath:  # noqa: WPS440
                     with suppress(ValueError):
                         return self_path.relative_to(package_path.parent.parent)
             raise ValueError
         if isinstance(package_path, list):
             for pkg_path in package_path:  # noqa: WPS440
                 with suppress(ValueError):
-                    return self.module.filepath.relative_to(pkg_path.parent)
+                    return self.filepath.relative_to(pkg_path.parent)
             raise ValueError
-        return self.module.filepath.relative_to(package_path.parent.parent)
+        return self.filepath.relative_to(package_path.parent.parent)
 
     @cached_property
     def path(self) -> str:
