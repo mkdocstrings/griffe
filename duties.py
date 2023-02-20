@@ -274,6 +274,7 @@ def profile(ctx, browser: bool = False, **opts):
     packages = ctx.run(
         "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",  # noqa: P103
         title="Finding packages",
+        allow_overrides=False,
     ).split("\n")
     ctx.run(
         [
@@ -282,6 +283,7 @@ def profile(ctx, browser: bool = False, **opts):
             "-oprofile.pstats",
             "-m",
             "griffe",
+            "dump",
             "-o/dev/null",
             "-LDEBUG",
             *griffe_opts,
@@ -290,6 +292,6 @@ def profile(ctx, browser: bool = False, **opts):
         title=f"Profiling in {'async' if async_loader else 'sync'} mode on {len(packages)} packages",
         pty=False,
     )
-    ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
+    ctx.run("gprof2dot -z cli:494:main profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
     if browser:
         os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
