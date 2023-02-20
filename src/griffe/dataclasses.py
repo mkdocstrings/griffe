@@ -578,6 +578,29 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError
         return self.filepath.relative_to(package_path.parent.parent)
 
+    @cached_property  # noqa: WPS231
+    def relative_filepath(self) -> Path:  # noqa: WPS231
+        """Return the file path where this object was defined, relative to the current working directory.
+
+        If this object's file path is not relative to the current working directory, return its absolute path.
+
+        Raises:
+            ValueError: When the relative path could not be computed.
+
+        Returns:
+            A file path.
+        """
+        cwd = Path.cwd()
+        if isinstance(self.filepath, list):
+            for self_path in self.filepath:
+                with suppress(ValueError):
+                    return self_path.relative_to(cwd)
+            raise ValueError(f"No directory in {self.filepath!r} is relative to the current working directory {cwd}")
+        try:
+            return self.filepath.relative_to(cwd)
+        except ValueError:
+            return self.filepath
+
     @cached_property
     def path(self) -> str:
         """Return the dotted path of this object.
@@ -715,6 +738,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
                     "path": self.path,
                     "filepath": self.filepath,
                     "relative_filepath": self.relative_filepath,
+                    "relative_package_filepath": self.relative_package_filepath,
                 }
             )
 
