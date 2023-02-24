@@ -122,7 +122,7 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
 
     try:
         child_module = getmodule(child_obj)
-    except Exception:  # getmodule can trigger exceptions
+    except Exception:  # noqa: BLE001
         return None
     if not child_module:
         return None
@@ -457,7 +457,10 @@ class Inspector(BaseInspector):
             value = repr(node.obj)
         except Exception:  # noqa: BLE001
             value = None
-        docstring = self._get_docstring(node)
+        try:
+            docstring = self._get_docstring(node)
+        except Exception:  # noqa: BLE001
+            docstring = None
 
         attribute = Attribute(
             name=node.name,
