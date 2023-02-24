@@ -120,7 +120,10 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
     if isinstance(child_obj, cached_property):
         child_obj = child_obj.func
 
-    child_module = getmodule(child_obj)
+    try:
+        child_module = getmodule(child_obj)
+    except Exception:  # getmodule can trigger exceptions
+        return None
     if not child_module:
         return None
 
@@ -187,8 +190,11 @@ class Inspector(BaseInspector):
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
-        # access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class
-        value = getattr(node.obj, "__doc__", None)
+        try:
+            # access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class
+            value = getattr(node.obj, "__doc__", None)
+        except Exception:  # getattr can trigger exceptions
+            return None
         if value is None:
             return None
         try:

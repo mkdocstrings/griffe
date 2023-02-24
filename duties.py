@@ -254,6 +254,7 @@ def profile(ctx: Context, *, browser: bool = False, **opts: str) -> None:
     packages = ctx.run(
         "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
         title="Finding packages",
+        allow_overrides=False,
     ).split("\n")
     ctx.run(
         [
@@ -270,6 +271,6 @@ def profile(ctx: Context, *, browser: bool = False, **opts: str) -> None:
         title=f"Profiling on {len(packages)} packages",
         pty=False,
     )
-    ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
+    ctx.run("gprof2dot -z cli:494:main profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
     if browser:
         os.system("/usr/bin/firefox profile.svg 2>/dev/null &")

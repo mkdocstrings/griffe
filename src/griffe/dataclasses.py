@@ -551,7 +551,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return self.module.filepath
 
     @cached_property
-    def relative_filepath(self) -> Path:
+    def relative_package_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the top module path.
 
         Raises:
@@ -561,23 +561,46 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             A file path.
         """
         package_path = self.package.filepath
-        if isinstance(self.module.filepath, list):
+        if isinstance(self.filepath, list):
             if isinstance(package_path, list):
                 for pkg_path in package_path:
-                    for self_path in self.module.filepath:
+                    for self_path in self.filepath:
                         with suppress(ValueError):
                             return self_path.relative_to(pkg_path.parent)
             else:
-                for self_path in self.module.filepath:
+                for self_path in self.filepath:
                     with suppress(ValueError):
                         return self_path.relative_to(package_path.parent.parent)
             raise ValueError
         if isinstance(package_path, list):
             for pkg_path in package_path:
                 with suppress(ValueError):
-                    return self.module.filepath.relative_to(pkg_path.parent)
+                    return self.filepath.relative_to(pkg_path.parent)
             raise ValueError
-        return self.module.filepath.relative_to(package_path.parent.parent)
+        return self.filepath.relative_to(package_path.parent.parent)
+
+    @cached_property
+    def relative_filepath(self) -> Path:
+        """Return the file path where this object was defined, relative to the current working directory.
+
+        If this object's file path is not relative to the current working directory, return its absolute path.
+
+        Raises:
+            ValueError: When the relative path could not be computed.
+
+        Returns:
+            A file path.
+        """
+        cwd = Path.cwd()
+        if isinstance(self.filepath, list):
+            for self_path in self.filepath:
+                with suppress(ValueError):
+                    return self_path.relative_to(cwd)
+            raise ValueError(f"No directory in {self.filepath!r} is relative to the current working directory {cwd}")
+        try:
+            return self.filepath.relative_to(cwd)
+        except ValueError:
+            return self.filepath
 
     @cached_property
     def path(self) -> str:
@@ -716,7 +739,8 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
                     "path": self.path,
                     "filepath": self.filepath,
                     "relative_filepath": self.relative_filepath,
-                },
+                    "relative_package_filepath": self.relative_package_filepath,
+                }
             )
 
         if self.lineno:
@@ -1111,7 +1135,7 @@ class Alias(ObjectAliasMixin):
         try:
             resolved = self.modules_collection[self.target_path]
         except KeyError as error:
-            raise AliasResolutionError(self.target_path) from error
+            raise AliasResolutionError(self) from error
         if resolved is self:
             raise CyclicAliasError([self.target_path])
         if resolved.is_alias and not resolved.resolved:

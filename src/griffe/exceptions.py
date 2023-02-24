@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griffe.dataclasses import Alias
+
 
 class GriffeError(Exception):
     """The base exception for all Griffe errors."""
@@ -26,14 +31,21 @@ class UnimportableModuleError(GriffeError):
 class AliasResolutionError(GriffeError):
     """Exception for alias that cannot be resolved."""
 
-    def __init__(self, target_path: str) -> None:
+    def __init__(self, alias: Alias) -> None:
         """Initialize the exception.
 
         Parameters:
-            target_path: The problematic target path.
+            alias: The alias that could not be resolved.
         """
-        self.target_path: str = target_path
-        super().__init__(f"Could not resolve {self.target_path}")
+        self.alias: Alias = alias
+        message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
+        try:
+            filepath = alias.parent.relative_filepath  # type: ignore[union-attr]
+        except BuiltinModuleError:
+            pass  # noqa: WPS420
+        else:
+            message += f" (in {filepath}:{alias.lineno})"
+        super().__init__(message)
 
 
 class CyclicAliasError(GriffeError):

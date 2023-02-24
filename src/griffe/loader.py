@@ -265,7 +265,14 @@ class GriffeLoader:
                     except ImportError as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
-                target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
+                try:
+                    target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
+                except KeyError:
+                    logger.debug(
+                        f"Could not expand wildcard import {member.name} in {obj.path}: "
+                        f"{cast(Alias, member).target_path} not found in modules collection"
+                    )
+                    continue
                 if target.path not in seen:
                     try:
                         self.expand_wildcards(target, external=external, seen=seen)  # type: ignore[union-attr]
@@ -334,7 +341,7 @@ class GriffeLoader:
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:
-                    target = error.target_path  # type: ignore[union-attr]
+                    target = error.alias.target_path  # type: ignore[union-attr]
                     unresolved.add(member.path)
                     package = target.split(".", 1)[0]
                     load_module = (
