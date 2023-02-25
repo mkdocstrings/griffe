@@ -38,7 +38,7 @@ class When(enum.Enum):
 class VisitorExtension(BaseVisitor):
     """The node visitor extension base class, to inherit from."""
 
-    when: When
+    when: When = When.after_all
 
     def __init__(self) -> None:
         """Initialize the visitor extension."""
@@ -65,7 +65,7 @@ class VisitorExtension(BaseVisitor):
 class InspectorExtension(BaseInspector):
     """The object inspector extension base class, to inherit from."""
 
-    when: When
+    when: When = When.after_all
 
     def __init__(self) -> None:
         """Initialize the inspector extension."""
