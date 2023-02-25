@@ -42,7 +42,7 @@ class AliasResolutionError(GriffeError):
         try:
             filepath = alias.parent.relative_filepath  # type: ignore[union-attr]
         except BuiltinModuleError:
-            pass  # noqa: WPS420
+            pass
         else:
             message += f" (in {filepath}:{alias.lineno})"
         super().__init__(message)

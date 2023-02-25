@@ -248,7 +248,7 @@ def _read_parameters(
                 with suppress(AttributeError, KeyError):
                     annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
                     break
-            else:  # noqa: PLW0120 (false-positive)
+            else:
                 _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
             annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
@@ -586,8 +586,8 @@ def _read_examples_section(
 
         elif in_code_example:
             if trim_doctest_flags:
-                line = _RE_DOCTEST_FLAGS.sub("", line)
-                line = _RE_DOCTEST_BLANKLINE.sub("", line)
+                line = _RE_DOCTEST_FLAGS.sub("", line)  # noqa: PLW2901
+                line = _RE_DOCTEST_BLANKLINE.sub("", line)  # noqa: PLW2901
             current_example.append(line)
 
         elif line.startswith("```"):
@@ -604,7 +604,7 @@ def _read_examples_section(
             in_code_example = True
 
             if trim_doctest_flags:
-                line = _RE_DOCTEST_FLAGS.sub("", line)
+                line = _RE_DOCTEST_FLAGS.sub("", line)  # noqa: PLW2901
             current_example.append(line)
 
         else:

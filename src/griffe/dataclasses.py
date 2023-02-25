@@ -11,6 +11,7 @@ import inspect
 import sys
 from collections import defaultdict
 from contextlib import suppress
+from pathlib import Path
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 
@@ -19,8 +20,6 @@ from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAl
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from griffe.collections import LinesCollection, ModulesCollection
     from griffe.docstrings.dataclasses import DocstringSection
     from griffe.expressions import Expression, Name
@@ -740,7 +739,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
                     "filepath": self.filepath,
                     "relative_filepath": self.relative_filepath,
                     "relative_package_filepath": self.relative_package_filepath,
-                }
+                },
             )
 
         if self.lineno:

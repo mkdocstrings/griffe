@@ -330,7 +330,7 @@ def _handle_pth_file(path: Path) -> list[Path]:
     # Lines starting with import (followed by space or tab) are executed.
     directories = []
     for line in path.read_text(encoding="utf8").strip().splitlines(keepends=False):
-        line = line.strip()
+        line = line.strip()  # noqa: PLW2901
         if line and not line.startswith("#") and not _re_import_line.search(line) and os.path.exists(line):
             directories.append(Path(line))
     return directories

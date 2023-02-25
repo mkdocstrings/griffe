@@ -193,7 +193,7 @@ class Inspector(BaseInspector):
         try:
             # access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class
             value = getattr(node.obj, "__doc__", None)
-        except Exception:  # getattr can trigger exceptions
+        except Exception:  # noqa: BLE001  # getattr can trigger exceptions
             return None
         if value is None:
             return None

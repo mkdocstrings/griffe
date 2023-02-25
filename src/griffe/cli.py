@@ -165,9 +165,9 @@ def _load_packages(
         try:
             loader.load_module(package)
         except ModuleNotFoundError as error:
-            logger.exception(f"Could not find package {package}: {error}")
+            logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
         except ImportError as error:
-            logger.exception(f"Tried but could not import package {package}: {error}")
+            logger.exception(f"Tried but could not import package {package}: {error}")  # noqa: TRY401
     logger.info("Finished loading packages")
     if resolve_aliases:
         logger.info("Starting alias resolution")
@@ -387,7 +387,7 @@ def dump(
     try:
         loaded_extensions = load_extensions(extensions or ())
     except ExtensionError as error:
-        logger.exception(error)
+        logger.exception(str(error))  # noqa: TRY401
         return 1
 
     loader = _load_packages(
@@ -457,7 +457,7 @@ def check(
     try:
         loaded_extensions = load_extensions(extensions or ())
     except ExtensionError as error:
-        logger.exception(error)
+        logger.exception(str(error))  # noqa: TRY401
         return 1
 
     old_package = load_git(
