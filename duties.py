@@ -243,13 +243,12 @@ def test(ctx: Context, match: str = "") -> None:
 
 
 @duty
-def profile(ctx: Context, *, browser: bool = False, **opts: str) -> None:
+def profile(ctx: Context, *, browser: bool = False) -> None:
     """Run the test suite.
 
     Parameters:
         ctx: The context instance (passed automatically).
         browser: Whether to open the SVG file in the browser at the end.
-        **opts: Additional options: async.
     """
     packages = ctx.run(
         "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
