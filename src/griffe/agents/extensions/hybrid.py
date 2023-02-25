@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+import re
+from typing import TYPE_CHECKING, Any, Pattern, Sequence
 
 from griffe.agents.extensions.base import InspectorExtension, VisitorExtension, When, load_extension
 from griffe.agents.nodes import ObjectNode
@@ -33,32 +34,44 @@ class HybridExtension(VisitorExtension):
 
     when = When.after_all
 
-    def __init__(self, extension: str | dict[str, Any]) -> None:
+    def __init__(
+        self,
+        extensions: Sequence[str | dict[str, Any] | InspectorExtension | type[Extension]],
+        object_paths: Sequence[str | Pattern] | None = None,
+    ) -> None:
         """Initialize the extension.
 
         Parameters:
-            extension: The name or configuration of another extension.
+            extensions: The names or configurations of other inspector extensions.
+            object_paths: Optional list of regular expressions to match against objects paths,
+                to select which objects to inspect.
 
         Raises:
             ExtensionError: When the passed extension is not an inspector extension.
         """
-        self._extension: InspectorExtension = load_extension(extension)  # type: ignore[assignment]
-        if not isinstance(self._extension, InspectorExtension):
-            raise ExtensionError(
-                "the 'hybrid' extension only accepts inspector extensions. "
-                "If you want to use a visitor extension, just add it normally "
-                "to your extensions configuration, without using 'hybrid'.",
-            )
+        self._extensions: list[InspectorExtension] = [load_extension(ext) for ext in extensions]  # type: ignore[misc]
+        for extension in self._extensions:
+            if not isinstance(extension, InspectorExtension):
+                raise ExtensionError(
+                    f"Extension '{extension}' is not an inspector extension. "
+                    "The 'hybrid' extension only accepts inspector extensions. "
+                    "If you want to use a visitor extension, just add it normally "
+                    "to your extensions configuration, without using 'hybrid'.",
+                )
+        self.object_paths = [re.compile(op) if isinstance(op, str) else op for op in object_paths or []]
         super().__init__()
 
     def attach(self, visitor: Visitor) -> None:  # noqa: D102
         super().attach(visitor)
-        self._extension.attach(visitor)  # type: ignore[arg-type]  # tolerate hybrid behavior
+        for extension in self._extensions:
+            extension.attach(visitor)  # type: ignore[arg-type]  # tolerate hybrid behavior
 
     def visit(self, node: ast.AST) -> None:  # noqa: D102
         try:
             just_visited = self.visitor.current[node.name]  # type: ignore[attr-defined]
         except (KeyError, AttributeError, TypeError):
+            return
+        if self.object_paths and not any(op.search(just_visited.path) for op in self.object_paths):
             return
         if just_visited.is_alias:
             return
@@ -68,8 +81,12 @@ class HybridExtension(VisitorExtension):
             # can happen when an object is defined conditionally,
             # for example based on the Python version
             return
-        object_node = ObjectNode(value, name=node.name)  # type: ignore[attr-defined]
-        self._extension.inspect(object_node)
+        parent = None
+        for part in just_visited.path.split(".")[:-1]:
+            parent = ObjectNode(None, name=part, parent=parent)
+        object_node = ObjectNode(value, name=node.name, parent=parent)  # type: ignore[attr-defined]
+        for extension in self._extensions:
+            extension.inspect(object_node)
 
 
 # make it available
