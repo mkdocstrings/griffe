@@ -17,13 +17,13 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Sequence, cast
 from warnings import warn
 
-from griffe.agents.extensions import Extensions
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import patch_ast, visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import Name
+from griffe.extensions import Extensions
 from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs

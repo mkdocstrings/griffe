@@ -79,7 +79,7 @@ Extensions are run at certain moments while walking the Abstract Syntax Tree (AS
   Children **have** now been visited/inspected.
 - after the visit/inspection: `When.after_all`
 
-See [the `When` enumeration][griffe.agents.extensions.When].
+See [the `When` enumeration][griffe.extensions.When].
 
 To tell the main visitor to run your extension at a certain time,
 set its `when` attribute:

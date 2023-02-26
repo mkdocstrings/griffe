@@ -269,7 +269,7 @@ def load_extension(extension: str | dict[str, Any] | Extension | type[Extension]
         options = {}
 
     if import_path in builtin_extensions:
-        import_path = f"griffe.agents.extensions.{import_path}"
+        import_path = f"griffe.extensions.{import_path}"
     elif os.path.exists(import_path):
         try:
             ext_object = _load_extension_path(import_path)

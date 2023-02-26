@@ -15,7 +15,6 @@ from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Iterable
 
 from griffe.agents.base import BaseVisitor
-from griffe.agents.extensions import Extensions
 from griffe.agents.nodes import (
     ASTNode,
     get_annotation,
@@ -43,6 +42,7 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.exceptions import LastNodeError, NameResolutionError
+from griffe.extensions import Extensions
 
 if TYPE_CHECKING:
     from pathlib import Path

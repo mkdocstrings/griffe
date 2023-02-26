@@ -5,9 +5,9 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, Pattern, Sequence
 
-from griffe.agents.extensions.base import InspectorExtension, VisitorExtension, When, load_extension
 from griffe.agents.nodes import ObjectNode
 from griffe.exceptions import ExtensionError
+from griffe.extensions.base import InspectorExtension, VisitorExtension, When, load_extension
 from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 

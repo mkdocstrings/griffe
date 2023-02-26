@@ -30,7 +30,6 @@ from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any
 
 from griffe.agents.base import BaseInspector
-from griffe.agents.extensions import Extensions
 from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
 from griffe.collections import LinesCollection
 from griffe.dataclasses import (
@@ -44,6 +43,7 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
+from griffe.extensions import Extensions
 from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:

@@ -20,10 +20,10 @@ from typing import TYPE_CHECKING, Any, Iterator, Sequence
 from griffe import loader
 
 if TYPE_CHECKING:
-    from griffe.agents.extensions import Extensions
     from griffe.collections import LinesCollection, ModulesCollection
     from griffe.dataclasses import Module
     from griffe.docstrings.parsers import Parser
+    from griffe.extensions import Extensions
 
 
 def _assert_git_repo(repo: str) -> None:

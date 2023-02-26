@@ -25,17 +25,17 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
 import colorama
 
-from griffe.agents.extensions.base import load_extensions
 from griffe.diff import ExplanationStyle, find_breaking_changes
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
 from griffe.exceptions import ExtensionError
+from griffe.extensions.base import load_extensions
 from griffe.git import load_git
 from griffe.loader import GriffeLoader, load
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from griffe.agents.extensions import Extension, Extensions
+    from griffe.extensions import Extension, Extensions
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
