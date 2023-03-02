@@ -279,3 +279,21 @@ def test_visit_properties_as_attributes() -> None:
         assert "property" in module["C.prop"].labels
         assert module["C.cached_prop"].is_attribute
         assert "cached" in module["C.cached_prop"].labels
+
+
+def test_forward_docstrings() -> None:
+    """Assert docstrings of class attributes are forwarded to instance assignments.
+
+    This is a regression test for https://github.com/mkdocstrings/griffe/issues/128.
+    """
+    with temporary_visited_module(
+        '''
+        class C:
+            attr: int
+            """This is a non-empty docstring."""
+
+            def __init__(self, attr: int) -> None:
+                self.attr = attr
+        '''
+    ) as module:
+        assert module["C.attr"].docstring
