@@ -590,6 +590,12 @@ class Visitor(BaseVisitor):
                 if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
                     continue  # prefer "no-exception" case
 
+                parent.members[name].labels |= labels
+
+                # forward previous docstring instead of erasing it
+                if parent.members[name].docstring and not docstring:
+                    docstring = parent.members[name].docstring
+
             attribute = Attribute(
                 name=name,
                 value=value,
