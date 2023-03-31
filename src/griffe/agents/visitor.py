@@ -584,13 +584,13 @@ class Visitor(BaseVisitor):
             if "." in name:
                 continue
 
-            if name in parent.members:  # noqa: SIM102
+            if name in parent.members:
                 # assigning multiple times
                 # TODO: might be better to inspect
                 if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
                     continue  # prefer "no-exception" case
 
-                parent.members[name].labels |= labels
+                parent.members[name].labels |= labels  # type: ignore[misc]
 
                 # forward previous docstring instead of erasing it
                 if parent.members[name].docstring and not docstring:
@@ -664,7 +664,7 @@ _patched = False
 
 def patch_ast() -> None:
     """Extend the base `ast.AST` class to provide more functionality."""
-    global _patched
+    global _patched  # noqa: PLW0603
     if _patched:
         return
     for name, member in inspect.getmembers(ast):

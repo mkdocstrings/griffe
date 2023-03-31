@@ -44,7 +44,7 @@ def test_relative_to_absolute_imports(code: str, path: str, is_package: bool, ex
         is_package: Whether the module is a package (or subpackage) (parametrized).
         expected: The parametrized expected absolute path.
     """
-    node = compile(code, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0]
+    node = compile(code, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0]  # type: ignore[attr-defined]
     module = module_vtree(path, leaf_package=is_package, return_leaf=True)
     for name in node.names:
         assert relative_to_absolute(node, name, module) == expected
@@ -199,7 +199,7 @@ def test_building_value_from_nodes(expression: str) -> None:
     Parameters:
         expression: An expression (parametrized).
     """
-    node = compile(expression, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0].value
+    node = compile(expression, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0].value  # type: ignore[attr-defined]
     value = get_value(node)
 
     # make space after comma non-significant

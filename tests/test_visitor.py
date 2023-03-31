@@ -294,6 +294,6 @@ def test_forward_docstrings() -> None:
 
             def __init__(self, attr: int) -> None:
                 self.attr = attr
-        '''
+        ''',
     ) as module:
         assert module["C.attr"].docstring

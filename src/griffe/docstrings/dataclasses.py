@@ -6,9 +6,15 @@ import enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any, Literal  # type: ignore[attr-defined]
+    import sys
+    from typing import Any
 
     from griffe.dataclasses import Expression, Name
+
+    if sys.version_info < (3, 8):
+        from typing_extensions import Literal
+    else:
+        from typing import Literal
 
 
 # Elements -----------------------------------------------

@@ -63,9 +63,9 @@ def parse_annotation(
         SyntaxError,  # annotation contains syntax errors
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-        if code.body:
+        if code.body:  # type: ignore[attr-defined]
             name_or_expr = safe_get_annotation(
-                code.body,
+                code.body,  # type: ignore[attr-defined]
                 parent=docstring.parent,  # type: ignore[arg-type]
                 log_level=log_level,
             )

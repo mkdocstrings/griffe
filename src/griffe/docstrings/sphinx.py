@@ -375,7 +375,7 @@ def _strip_blank_lines(lines: list[str]) -> list[str]:
     initial_content = 0
     final_content = 0
     for index, line in enumerate(lines):
-        if line == "" or line.isspace():
+        if not line or line.isspace():
             if not content_found:
                 initial_content += 1
         else:

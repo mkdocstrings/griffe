@@ -56,7 +56,7 @@ def test_parse_partially_indented_lines(parse_google: ParserType) -> None:
         The available formats are:
            - JSON
 
-        The unavailable formats are:  
+        The unavailable formats are:
            - YAML
     """
     sections, warnings = parse_google(docstring)

@@ -511,4 +511,4 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Nam
         annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
-    return safe_get_annotation(annotation_node.body, parent=parent)
+    return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]

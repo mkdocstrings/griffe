@@ -70,9 +70,16 @@ from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Pattern  # type: ignore[attr-defined]
+    import sys
+    from typing import Any, Pattern
 
     from griffe.dataclasses import Docstring
+
+    if sys.version_info < (3, 8):
+        from typing_extensions import Literal
+    else:
+        from typing import Literal
+
 
 _warn = warning(__name__)
 
