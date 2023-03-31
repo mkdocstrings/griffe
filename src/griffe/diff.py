@@ -9,6 +9,7 @@ from typing import Any, Iterable, Iterator
 from colorama import Fore, Style
 
 from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
+from griffe.exceptions import AliasResolutionError
 from griffe.logger import get_logger
 
 POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
@@ -388,6 +389,24 @@ def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attrib
         yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
 
 
+def _alias_incompatibilities(
+        old_obj: Object | Alias,
+        new_obj: Object | Alias,
+        *,
+        ignore_private: bool,
+) -> Iterable[Breakage]:
+    if not ignore_private:
+        return
+    try:
+        old_member = old_obj.target if old_obj.is_alias else old_obj  # type: ignore[union-attr]
+        new_member = new_obj.target if new_obj.is_alias else new_obj  # type: ignore[union-attr]
+    except AliasResolutionError:
+        logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
+        return
+
+    yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private)
+
+
 def _member_incompatibilities(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
@@ -399,10 +418,6 @@ def _member_incompatibilities(
             logger.debug(f"API check: {old_obj.path}.{name}: skip private object")
             continue
 
-        if old_member.is_alias:
-            logger.debug(f"API check: {old_obj.path}.{name}: skip alias")
-            continue  # TODO
-
         logger.debug(f"API check: {old_obj.path}.{name}")
         try:
             new_member = new_obj.members[name]
@@ -411,16 +426,29 @@ def _member_incompatibilities(
                 yield ObjectRemovedBreakage(old_member, old_member, None)  # type: ignore[arg-type]
             continue
 
-        if new_member.kind != old_member.kind:
-            yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # type: ignore[arg-type]
-        elif old_member.is_module:
-            yield from _member_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
-        elif old_member.is_class:
-            yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
-        elif old_member.is_function:
-            yield from _function_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
-        elif old_member.is_attribute:
-            yield from _attribute_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
+        yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private)
+
+
+def _type_based_yield(
+        old_member: Object | Alias,
+        new_member: Object | Alias,
+        *,
+        ignore_private: bool,
+) -> Iterator[Breakage]:
+    if old_member.is_alias or new_member.is_alias:
+        # Should be first, since there can be the case where there is an alias and another kind of object, which may
+        # not be a breaking change
+        yield from _alias_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+    elif new_member.kind != old_member.kind:
+        yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # type: ignore[arg-type]
+    elif old_member.is_module:
+        yield from _member_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+    elif old_member.is_class:
+        yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+    elif old_member.is_function:
+        yield from _function_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
+    elif old_member.is_attribute:
+        yield from _attribute_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
 
 
 def _returns_are_compatible(old_function: Function, new_function: Function) -> bool:
