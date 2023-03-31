@@ -41,7 +41,7 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
-from griffe.exceptions import LastNodeError, NameResolutionError
+from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError, NameResolutionError
 from griffe.extensions import Extensions
 
 if TYPE_CHECKING:
@@ -590,11 +590,11 @@ class Visitor(BaseVisitor):
                 if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
                     continue  # prefer "no-exception" case
 
-                parent.members[name].labels |= labels  # type: ignore[misc]
-
-                # forward previous docstring instead of erasing it
-                if parent.members[name].docstring and not docstring:
-                    docstring = parent.members[name].docstring
+                with suppress(AliasResolutionError, CyclicAliasError):
+                    labels |= parent.members[name].labels  # type: ignore[misc]
+                    # forward previous docstring instead of erasing it
+                    if parent.members[name].docstring and not docstring:
+                        docstring = parent.members[name].docstring
 
             attribute = Attribute(
                 name=name,
