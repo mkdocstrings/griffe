@@ -62,7 +62,7 @@ def test_parse_partially_indented_lines(parse_google: ParserType) -> None:
     sections, warnings = parse_google(docstring)
     assert len(sections) == 2
     assert sections[0].kind is DocstringSectionKind.admonition
-    assert sections[1].kind is DocstringSectionKind.text
+    assert sections[1].kind is DocstringSectionKind.admonition
     assert not warnings
 
 
