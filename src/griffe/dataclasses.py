@@ -1111,6 +1111,20 @@ class Alias(ObjectAliasMixin):
         if self.parent is not None:
             self._target.aliases[self.path] = self
 
+    @property
+    def final_target(self) -> Object:
+        """Resolve and return the final target, if possible.
+
+        This will iterate through the targets until a non-alias object is found.
+
+        Returns:
+            The final target.
+        """
+        target = self.target
+        while target.is_alias:
+            target = target.target  # type: ignore[union-attr]
+        return target  # type: ignore[return-value]
+
     def resolve_target(self) -> None:
         """Resolve the target.
 

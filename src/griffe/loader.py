@@ -13,6 +13,7 @@ fastapi = griffe.load_module("fastapi")
 from __future__ import annotations
 
 import sys
+from contextlib import suppress
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Sequence, cast
 from warnings import warn
@@ -296,13 +297,24 @@ class GriffeLoader:
                 old_lineno = getattr(old_member, "alias_lineno", old_member.lineno or 0)
                 overwrite = alias_lineno > old_lineno  # type: ignore[operator]
             if not self_alias and (not already_present or overwrite):
-                obj[new_member.name] = Alias(
+                alias = Alias(
                     new_member.name,
                     new_member,
                     lineno=alias_lineno,
                     endlineno=alias_endlineno,
                     parent=obj,  # type: ignore[arg-type]
                 )
+                if already_present:
+                    prev_member = obj[new_member.name]
+                    with suppress(AliasResolutionError):
+                        if prev_member.is_module:
+                            if prev_member.is_alias:
+                                prev_member = prev_member.final_target
+                            if alias.final_target is prev_member:
+                                # alias named after the module it targets:
+                                # skip to avoid cyclic aliases
+                                continue
+                obj[new_member.name] = alias
 
     def resolve_module_aliases(
         self,
