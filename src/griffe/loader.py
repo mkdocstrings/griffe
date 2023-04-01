@@ -372,7 +372,7 @@ class GriffeLoader:
                 except CyclicAliasError as error:
                     logger.debug(str(error))
                 else:
-                    logger.debug(f"Alias {member.path} was resolved to {member.target.path}")  # type: ignore[union-attr]
+                    logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
                     resolved.add(member.path)
             elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
                 sub_resolved, sub_unresolved = self.resolve_module_aliases(
