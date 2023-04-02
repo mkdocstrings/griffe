@@ -20,6 +20,9 @@ if TYPE_CHECKING:
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
 logger = get_logger(__name__)
+editable_editables_prefixes = ("__editables_", "_editable_impl_")
+editable_setuptools_prefixes = ("__editable__",)
+editable_prefixes = (*editable_editables_prefixes, *editable_setuptools_prefixes)
 
 
 class Package:
@@ -271,7 +274,7 @@ class ModuleFinder:
     def _extend_from_editable_modules(self) -> None:
         for path in self.search_paths:
             for item in self._contents(path):
-                if item.stem.startswith(("__editables_", "__editable__")) and item.suffix == ".py":
+                if item.stem.startswith(editable_prefixes) and item.suffix == ".py":
                     with suppress(UnhandledEditableModuleError):
                         for editable_path in _handle_editable_module(item):
                             self._append_search_path(editable_path)
@@ -341,15 +344,15 @@ def _handle_editable_module(path: Path) -> list[Path]:
         editable_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
     except FileNotFoundError as error:
         raise UnhandledEditableModuleError(path) from error
-    if path.name.startswith("__editables_"):
-        # support for how 'editables' writes these files:
+    if path.name.startswith(editable_editables_prefixes):
+        # support for how 'editables' write these files:
         # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
         new_path = Path(editable_lines[-1].split("'")[3])
         if new_path.exists():  # TODO: could remove existence check
             if new_path.name.startswith("__init__"):
                 return [new_path.parent.parent]
             return [new_path]
-    elif path.name.startswith("__editable__"):
+    elif path.name.startswith(editable_setuptools_prefixes):
         # support for how 'setuptools' writes these files:
         # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}
         parsed_module = ast.parse(path.read_text())

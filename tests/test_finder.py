@@ -94,13 +94,14 @@ def test_pth_file_handling(tmp_path: Path) -> None:
     assert directories == [Path("tests")]
 
 
-def test_editables_file_handling(tmp_path: Path) -> None:
+@pytest.mark.parametrize("editable_file_name", ["__editables_whatever.py", "_editable_impl_whatever.py"])
+def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> None:
     """Assert editable modules by `editables` are handled.
 
     Parameters:
         tmp_path: Pytest fixture.
     """
-    pth_file = tmp_path / "__editables_whatever.py"
+    pth_file = tmp_path / editable_file_name
     pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')")
     assert _handle_editable_module(pth_file) == [Path("src")]
 
