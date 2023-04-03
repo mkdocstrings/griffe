@@ -5,6 +5,49 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.26.0](https://github.com/mkdocstrings/griffe/releases/tag/0.26.0) - 2023-04-03
+
+<small>[Compare with 0.25.5](https://github.com/mkdocstrings/griffe/compare/0.25.5...0.26.0)</small>
+
+### Breaking changes
+
+- `AliasResolutionError` instances don't have a `target_path` attribute anymore.
+    It is instead replaced by an `alias` attribute which is a reference to an `Alias` instance.
+- Lots of positional-or-keyword parameters were changed to keyword-only parameters.
+
+### Deprecations
+
+- The `griffe.agents.extensions` module was moved to `griffe.extensions`.
+    The old path is deprecated.
+
+### Features
+
+- Support newer versions of `editables` ([ab7a3be](https://github.com/mkdocstrings/griffe/commit/ab7a3be3902af5f4af1d1e762b2b6e532826569f) by Timothée Mazzucotelli): the names of editable modules have changed from `__editables_*` to `_editable_impl_*`.
+- Provide a JSON schema ([7dfed39](https://github.com/mkdocstrings/griffe/commit/7dfed391c7714a9d1aea9223e1f8c9403d47e8bb) by Timothée Mazzucotelli).
+- Allow hybrid extension to filter objects and run multiple inspectors ([f8ff53a](https://github.com/mkdocstrings/griffe/commit/f8ff53a69a3a131998649d1a9ba272827b7f2adc) by Timothée Mazzucotelli).
+- Allow loading extension from file path ([131454e](https://github.com/mkdocstrings/griffe/commit/131454eece81da33cd7f1a8bf2ae030950df8441) by Timothée Mazzucotelli).
+- Add back `relative_filepath` which now really returns the filepath relative to the current working directory ([40fe0c5](https://github.com/mkdocstrings/griffe/commit/40fe0c53be8ff72f254bd88e9c9cf6df36d3bcb9) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Fix JSON schema for ending line numbers (and add test) ([318c6b4](https://github.com/mkdocstrings/griffe/commit/318c6b41c0160070de1b10118d210cacd5f2e711) by Timothée Mazzucotelli).
+- Prevent cyclic aliases by not overwriting a module member with an indirect alias to itself ([c188a95](https://github.com/mkdocstrings/griffe/commit/c188a95b823e876f89ba9046df2cb06348f92459) by Timothée Mazzucotelli). [Issue #122](https://github.com/mkdocstrings/griffe/issues/122)
+- Prevent alias resolution errors when copying docstring or labels from previously existing attribute ([48747b6](https://github.com/mkdocstrings/griffe/commit/48747b6d14bdf1be03cfa5bbf849771e3e6801b0) by Timothée Mazzucotelli).
+- Fix Google admonition regular expression ([ef0be5f](https://github.com/mkdocstrings/griffe/commit/ef0be5f8f276a5ef2397ad89c0cfce0e1b41020e) by Timothée Mazzucotelli).
+- Add back `griffe.agents.extensions` module (deprecated) ([7129477](https://github.com/mkdocstrings/griffe/commit/7129477184f0b88d3bf165dfe8e1f6158c30914a) by Timothée Mazzucotelli).
+- Forward class attribute docstrings to instances ([7bf4952](https://github.com/mkdocstrings/griffe/commit/7bf49528541e211af37c2ac5c1a74a4523699c65) by Rodrigo Girão Serrão). [Issue #128](https://github.com/mkdocstrings/griffe/issues/128), [PR #135](https://github.com/mkdocstrings/griffe/pull/135)
+- Prevent errors related to getting attributes in the inspector ([5d15d27](https://github.com/mkdocstrings/griffe/commit/5d15d276259a4b9a70fbe490d86234e667711180) by Timothée Mazzucotelli).
+- Catch "member does not exist" errors while expanding wildcards ([a966022](https://github.com/mkdocstrings/griffe/commit/a9660220c0b5e9e786877efa228452a643e93c76) by Timothée Mazzucotelli).
+- Catch more inspection errors ([4f6eef9](https://github.com/mkdocstrings/griffe/commit/4f6eef9b0fbcdf56d61ac4bec9dc4ef3b90dd116) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Log final path after resolving alias ([c7ec7f7](https://github.com/mkdocstrings/griffe/commit/c7ec7f7ca029492ced68737851d66256c5035f70) by Timothée Mazzucotelli).
+- Move extensions one level up ([67ebd71](https://github.com/mkdocstrings/griffe/commit/67ebd71f9b0933f08b263d0b21520dc0b1a5c4ff) by Timothée Mazzucotelli).
+- Set default `when` value on extension base classes ([e8ad889](https://github.com/mkdocstrings/griffe/commit/e8ad8893aaad2549bff134a7bf3dfe5a86bfc960) by Timothée Mazzucotelli).
+- Rename `relative_filepath` to `relative_package_filepath` to better express what it does ([6148f85](https://github.com/mkdocstrings/griffe/commit/6148f85c56848c6bb3e7df8986f1bb208e7083cf) by Timothée Mazzucotelli).
+- Show file name and line number in alias resolution error messages ([c48928d](https://github.com/mkdocstrings/griffe/commit/c48928df4a75be35771d39bf96699d801485b31d) by Timothée Mazzucotelli).
+
 ## [0.25.5](https://github.com/mkdocstrings/griffe/releases/tag/0.25.5) - 2023-02-16
 
 <small>[Compare with 0.25.4](https://github.com/mkdocstrings/griffe/compare/0.25.4...0.25.5)</small>
