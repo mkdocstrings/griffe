@@ -36,7 +36,7 @@ def test_minimal_data_is_enough() -> None:
 
 
 # use this function in test_json_schema to ease schema debugging
-def _validate(obj: dict, schema: dict):
+def _validate(obj: dict, schema: dict) -> None:
     if "members" in obj:
         for member in obj["members"]:
             _validate(member, schema)
@@ -44,7 +44,7 @@ def _validate(obj: dict, schema: dict):
     try:
         validate(obj, schema)
     except ValidationError:
-        print(obj["path"])
+        print(obj["path"])  # noqa: T201
         raise
 
 
