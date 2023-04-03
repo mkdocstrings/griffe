@@ -12,6 +12,7 @@ profile_args = async browser
 
 BASIC_DUTIES = \
 	changelog \
+	check-api \
 	check-dependencies \
 	clean \
 	coverage \
@@ -44,7 +45,7 @@ setup:
 .PHONY: check
 check:
 	@pdm multirun duty check-quality check-types check-docs
-	@$(DUTY) check-dependencies
+	@$(DUTY) check-api check-dependencies
 
 .PHONY: $(BASIC_DUTIES)
 $(BASIC_DUTIES):

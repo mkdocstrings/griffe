@@ -56,13 +56,26 @@ def changelog(ctx: Context) -> None:
     )
 
 
-@duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies"])
+@duty(pre=["check_api", "check_quality", "check_types", "check_docs", "check_dependencies"])
 def check(ctx: Context) -> None:  # noqa: ARG001
     """Check it all!
 
     Parameters:
         ctx: The context instance (passed automatically).
     """
+
+
+@duty
+def check_api(ctx: Context) -> None:
+    """Check for API breaking changes.
+
+    Parameters:
+        ctx: The context instance (passed automatically).
+    """
+    from griffe.cli import check
+
+    griffe_check = lazy("griffe.check")(check)
+    ctx.run(griffe_check("griffe", search_paths=["src"]), title="Checking API", nofail=True)
 
 
 @duty
