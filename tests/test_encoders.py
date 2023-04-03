@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
+from jsonschema import ValidationError, validate
 
 from griffe.dataclasses import Function, Module, Object
 from griffe.loader import GriffeLoader
@@ -30,3 +33,27 @@ def test_minimal_data_is_enough() -> None:
     with pytest.raises(TypeError) as err:
         Function.from_json(minimal)
     assert "provided JSON object is not of type" in str(err.value)
+
+
+# use this function in test_json_schema to ease schema debugging
+def _validate(obj: dict, schema: dict):
+    if "members" in obj:
+        for member in obj["members"]:
+            _validate(member, schema)
+
+    try:
+        validate(obj, schema)
+    except ValidationError:
+        print(obj["path"])
+        raise
+
+
+def test_json_schema() -> None:
+    """Assert that our serialized data matches our JSON schema."""
+    loader = GriffeLoader()
+    module = loader.load_module("griffe")
+    loader.resolve_aliases()
+    data = json.loads(module.as_json(full=True))
+    with open("docs/schema.json") as f:
+        schema = json.load(f)
+    validate(data, schema)

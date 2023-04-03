@@ -90,6 +90,7 @@ tests = [
     "pytest-randomly>=3.10",
     "pytest-xdist>=2.4",
     "hypothesmith>=0.2.0",
+    "jsonschema>=4.17.3",
 ]
 typing = [
     "mypy>=0.910",

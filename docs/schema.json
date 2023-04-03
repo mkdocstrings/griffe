@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema",
+  "$schema": "http://json-schema.org/draft-07/schema",
   "title": "Griffe object.",
   "oneOf": [
     {
@@ -26,9 +26,17 @@
           "type": "string"
         },
         "lineno": {
-          "title": "For aliases, the line number in their own module.",
+          "title": "For aliases, the import starting line number in their own module.",
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.lineno",
           "type": "integer"
+        },
+        "endlineno": {
+          "title": "For aliases, the import ending line number in their own module.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.endlineno",
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       },
       "additionalProperties": false,
@@ -101,7 +109,10 @@
             "endlineno": {
               "title": "The docstring ending line number.",
               "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.endlineno",
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "parsed": {
               "title": "The parsed docstring (list of docstring sections).",
@@ -162,7 +173,10 @@
         "endlineno": {
           "title": "The docstring ending line number.",
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.endlineno",
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "bases": true,
         "decorators": true,
@@ -221,7 +235,10 @@
                     "endlineno": {
                       "title": "The decorator ending line number.",
                       "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Decorator.endlineno",
-                      "type": "integer"
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
                     }
                   },
                   "additionalProperties": false,
