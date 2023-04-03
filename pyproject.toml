@@ -1,6 +1,6 @@
 [build-system]
-requires = ["pdm-pep517"]
-build-backend = "pdm.pep517.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "griffe"
@@ -8,7 +8,7 @@ description = """Signatures for entire Python programs. \
 Extract the structure, the frame, the skeleton of your project, \
 to generate API documentation or find breaking changes in your API."""
 authors = [{name = "Timothée Mazzucotelli", email = "pawamoy@pm.me"}]
-license = "ISC"
+license = {text = "ISC"}
 readme = "README.md"
 requires-python = ">=3.7"
 keywords = []
