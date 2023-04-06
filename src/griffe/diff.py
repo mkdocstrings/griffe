@@ -14,6 +14,7 @@ from griffe.logger import get_logger
 POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
 KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
 POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
+VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
 
 logger = get_logger(__name__)
 
@@ -360,12 +361,15 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
 
         # checking if parameter changed default
         breakage = ParameterChangedDefaultBreakage(new_function, old_param, new_param)
-        try:
-            if old_param.default is not None and old_param.default != new_param.default:
+        non_required = not old_param.required and not new_param.required
+        non_variadic = old_param.kind not in VARIADIC and new_param.kind not in VARIADIC
+        if non_required and non_variadic:
+            try:
+                if old_param.default != new_param.default:
+                    yield breakage
+            except Exception:  # noqa: BLE001 (equality checks sometimes fail, e.g. numpy arrays)
+                # TODO: emitting breakage on a failed comparison could be a preference
                 yield breakage
-        except Exception:  # noqa: BLE001 (equality checks sometimes fail, e.g. numpy arrays)
-            # TODO: emitting breakage on a failed comparison could be a preference
-            yield breakage
 
     # checking if required parameters were added
     for new_param in new_function.parameters:

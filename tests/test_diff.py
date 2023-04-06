@@ -151,7 +151,7 @@ from tests.helpers import temporary_visited_module
         (
             "def a(x, y): ...",
             "def a(y, x): ...",
-            [BreakageKind.PARAMETER_MOVED],
+            [BreakageKind.PARAMETER_MOVED, BreakageKind.PARAMETER_MOVED],
         ),
         (
             "def a(x, y): ...",
@@ -161,7 +161,7 @@ from tests.helpers import temporary_visited_module
         (
             "def a() -> int: ...",
             "def a() -> str: ...",
-            [BreakageKind.RETURN_CHANGED_TYPE],
+            [],  # not supported yet: BreakageKind.RETURN_CHANGED_TYPE
         ),
     ],
 )
@@ -175,7 +175,6 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
     """
     with temporary_visited_module(old_code) as old_module, temporary_visited_module(new_code) as new_module:
         breaking = list(find_breaking_changes(old_module, new_module))
-    if not expected_breakages:
-        assert not breaking
+    assert len(breaking) == len(expected_breakages)
     for breakage, expected_kind in zip(breaking, expected_breakages):
         assert breakage.kind is expected_kind
