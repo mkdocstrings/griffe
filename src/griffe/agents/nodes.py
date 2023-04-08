@@ -675,7 +675,7 @@ def _get_name_annotation(node: NodeName, parent: Module | Class) -> Name:
 
 def _get_subscript_annotation(node: NodeSubscript, parent: Module | Class) -> Expression:
     left = _get_annotation(node.value, parent)
-    if left.full == "typing.Literal":  # type: ignore[union-attr]
+    if left.full in {"typing.Literal", "typing_extensions.Literal"}:  # type: ignore[union-attr]
         _node_annotation_map[NodeConstant] = _get_literal_annotation
         subscript = _get_annotation(node.slice, parent)
         _node_annotation_map[NodeConstant] = _get_constant_annotation

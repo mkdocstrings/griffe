@@ -95,6 +95,8 @@ def _flat(expression: str | Name | Expression) -> list[str | Name]:
     [
         ("import typing\nclass A: ...\na: typing.Literal['A']", False),
         ("from typing import Literal\nclass A: ...\na: Literal['A']", False),
+        ("import typing_extensions\nclass A: ...\na: typing.Literal['A']", False),
+        ("from typing_extensions import Literal\nclass A: ...\na: Literal['A']", False),
         ("from mod import A\na: 'A'", True),
         ("from mod import A\na: list['A']", True),
     ],
