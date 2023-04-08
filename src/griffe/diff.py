@@ -390,10 +390,10 @@ def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attrib
 
 
 def _alias_incompatibilities(
-        old_obj: Object | Alias,
-        new_obj: Object | Alias,
-        *,
-        ignore_private: bool,
+    old_obj: Object | Alias,
+    new_obj: Object | Alias,
+    *,
+    ignore_private: bool,
 ) -> Iterable[Breakage]:
     if not ignore_private:
         return
@@ -430,10 +430,10 @@ def _member_incompatibilities(
 
 
 def _type_based_yield(
-        old_member: Object | Alias,
-        new_member: Object | Alias,
-        *,
-        ignore_private: bool,
+    old_member: Object | Alias,
+    new_member: Object | Alias,
+    *,
+    ignore_private: bool,
 ) -> Iterator[Breakage]:
     if old_member.is_alias or new_member.is_alias:
         # Should be first, since there can be the case where there is an alias and another kind of object, which may
