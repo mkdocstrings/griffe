@@ -5,7 +5,7 @@ DUTY = $(shell [ -n "${VIRTUAL_ENV}" ] || echo pdm run) duty
 
 args = $(foreach a,$($(subst -,_,$1)_args),$(if $(value $a),$a="$($a)"))
 check_quality_args = files
-docs_serve_args = host port
+docs_args = host port
 release_args = version
 test_args = match
 profile_args = async browser
@@ -18,8 +18,6 @@ BASIC_DUTIES = \
 	coverage \
 	docs \
 	docs-deploy \
-	docs-regen \
-	docs-serve \
 	format \
 	release \
 	profile
@@ -45,7 +43,7 @@ setup:
 .PHONY: check
 check:
 	@pdm multirun duty check-quality check-types check-docs
-	@$(DUTY) check-api check-dependencies
+	@$(DUTY) check-dependencies check-api
 
 .PHONY: $(BASIC_DUTIES)
 $(BASIC_DUTIES):

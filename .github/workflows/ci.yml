@@ -53,6 +53,9 @@ jobs:
     - name: Check for breaking changes in the API
       run: pdm run duty check-api
 
+    - name: Check for breaking changes in the API
+      run: pdm run duty check-api
+
   tests:
 
     strategy:

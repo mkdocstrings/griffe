@@ -39,7 +39,7 @@ def changelog(ctx: Context) -> None:
     """
     from git_changelog.cli import build_and_render
 
-    git_changelog = lazy("git_changelog")(build_and_render)
+    git_changelog = lazy(build_and_render, name="git_changelog")
     ctx.run(
         git_changelog(
             repository=".",
@@ -48,7 +48,7 @@ def changelog(ctx: Context) -> None:
             template="keepachangelog",
             parse_trailers=True,
             parse_refs=False,
-            sections=("build", "deps", "feat", "fix", "refactor"),
+            sections=["build", "deps", "feat", "fix", "refactor"],
             bump_latest=True,
             in_place=True,
         ),
@@ -56,26 +56,13 @@ def changelog(ctx: Context) -> None:
     )
 
 
-@duty(pre=["check_api", "check_quality", "check_types", "check_docs", "check_dependencies"])
+@duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies", "check-api"])
 def check(ctx: Context) -> None:  # noqa: ARG001
     """Check it all!
 
     Parameters:
         ctx: The context instance (passed automatically).
     """
-
-
-@duty
-def check_api(ctx: Context) -> None:
-    """Check for API breaking changes.
-
-    Parameters:
-        ctx: The context instance (passed automatically).
-    """
-    from griffe.cli import check
-
-    griffe_check = lazy("griffe.check")(check)
-    ctx.run(griffe_check("griffe", search_paths=["src"]), title="Checking API", nofail=True)
 
 
 @duty
@@ -133,6 +120,19 @@ def check_types(ctx: Context) -> None:
     )
 
 
+@duty
+def check_api(ctx: Context) -> None:
+    """Check for API breaking changes.
+
+    Parameters:
+        ctx: The context instance (passed automatically).
+    """
+    from griffe.cli import check
+
+    griffe_check = lazy(check, name="griffe.check")
+    ctx.run(griffe_check("griffe", search_paths=["src"]), title="Checking API", nofail=True)
+
+
 @duty(silent=True)
 def clean(ctx: Context) -> None:
     """Delete temporary files.
@@ -154,17 +154,7 @@ def clean(ctx: Context) -> None:
 
 
 @duty
-def docs(ctx: Context) -> None:
-    """Build the documentation locally.
-
-    Parameters:
-        ctx: The context instance (passed automatically).
-    """
-    ctx.run(mkdocs.build, title="Building documentation")
-
-
-@duty
-def docs_serve(ctx: Context, host: str = "127.0.0.1", port: int = 8000) -> None:
+def docs(ctx: Context, host: str = "127.0.0.1", port: int = 8000) -> None:
     """Serve the documentation (localhost:8000).
 
     Parameters:

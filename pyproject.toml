@@ -61,7 +61,7 @@ package-dir = "src"
 editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
-duty = ["duty>=0.8"]
+duty = ["duty>=0.10"]
 docs = [
     "black>=23.1",
     "mkdocs>=1.3",
