@@ -9,11 +9,12 @@ from contextlib import contextmanager
 from importlib import invalidate_caches
 from pathlib import Path
 from textwrap import dedent
-from typing import Iterator
+from typing import Iterator, Mapping, Sequence
 
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import visit
 from griffe.dataclasses import Module, Object
+from griffe.loader import GriffeLoader
 
 TMPDIR_PREFIX = "griffe_"
 
@@ -39,24 +40,35 @@ TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
 
 
 @contextmanager
-def temporary_pypackage(package: str, modules: list[str] | None = None, *, init: bool = True) -> Iterator[TmpPackage]:
-    """Create a module.py file containing the given code in a temporary directory.
+def temporary_pypackage(
+    package: str,
+    modules: Sequence[str] | Mapping[str, str] | None = None,
+    *,
+    init: bool = True,
+) -> Iterator[TmpPackage]:
+    """Create a package containing the given modules in a temporary directory.
 
     Parameters:
         package: The package name. Example: `"a"` gives
             a package named `a`, while `"a/b"` gives a namespace package
             named `a` with a package inside named `b`.
             If `init` is false, then `b` is also a namespace package.
-        modules: Additional modules to create in the package,
-            like '["b.py", "c/d.py", "e/f"]`.
+        modules: Additional modules to create in the package.
+            If a list, simply touch the files: `["b.py", "c/d.py", "e/f"]`.
+            If a dict, keys are the file names and values their contents:
+            `{"b.py": "b = 1", "c/d.py": "print('hey from c')"}`.
         init: Whether to create an `__init__` module in the leaf package.
 
     Yields:
-        tmp_dir: The temporary directory containing the package.
-        package_name: The package name, as to dynamically import it.
-        package_path: The package path.
+        A named tuple with the following fields:
+
+            - `tmp_dir`: The temporary directory containing the package.
+            - `name`: The package name, as to dynamically import it.
+            - `path`: The package path.
     """
-    modules = modules or []
+    modules = modules or {}
+    if isinstance(modules, list):
+        modules = {mod: "" for mod in modules}
     mkdir_kwargs = {"parents": True, "exist_ok": True}
     with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
         tmpdirpath = Path(tmpdir)
@@ -65,16 +77,44 @@ def temporary_pypackage(package: str, modules: list[str] | None = None, *, init:
         package_path.mkdir(**mkdir_kwargs)
         if init:
             package_path.joinpath("__init__.py").touch()
-        for module in modules:
+        for module_name, module_contents in modules.items():  # type: ignore[union-attr]
             current_path = package_path
-            for part in Path(module).parts:
+            for part in Path(module_name).parts:
                 if part.endswith((".py", ".pyi")):
-                    current_path.joinpath(part).touch()
+                    current_path.joinpath(part).write_text(dedent(module_contents))
                 else:
                     current_path /= part
                     current_path.mkdir(**mkdir_kwargs)
                     current_path.joinpath("__init__.py").touch()
         yield TmpPackage(tmpdirpath, package_name, package_path)
+
+
+@contextmanager
+def temporary_visited_package(
+    package: str,
+    modules: Sequence[str] | Mapping[str, str] | None = None,
+    *,
+    init: bool = True,
+) -> Iterator[Module]:
+    """Create and visit a temporary package.
+
+    Parameters:
+        package: The package name. Example: `"a"` gives
+            a package named `a`, while `"a/b"` gives a namespace package
+            named `a` with a package inside named `b`.
+            If `init` is false, then `b` is also a namespace package.
+        modules: Additional modules to create in the package.
+            If a list, simply touch the files: `["b.py", "c/d.py", "e/f"]`.
+            If a dict, keys are the file names and values their contents:
+            `{"b.py": "b = 1", "c/d.py": "print('hey from c')"}`.
+        init: Whether to create an `__init__` module in the leaf package.
+
+    Yields:
+        A module.
+    """
+    with temporary_pypackage(package, modules, init=init) as tmp_package:
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        yield loader.load_module(tmp_package.name)
 
 
 @contextmanager

@@ -7,27 +7,26 @@ import sys
 import pytest
 
 from griffe.diff import Breakage, BreakageKind, find_breaking_changes
-from tests.helpers import temporary_visited_module
+from tests.helpers import temporary_visited_module, temporary_visited_package
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="no positional-only parameters on Python 3.7")
 @pytest.mark.parametrize(
     ("old_code", "new_code", "expected_breakages"),
     [
-        # ),
         (
             "a = True",
             "a = False",
             [BreakageKind.ATTRIBUTE_CHANGED_VALUE],
         ),
         (
-            "class A(int, str): ...",
-            "class A(int): ...",
+            "class a(int, str): ...",
+            "class a(int): ...",
             [BreakageKind.CLASS_REMOVED_BASE],
         ),
         (
-            "A = 0",
-            "class A: ...",
+            "a = 0",
+            "class a: ...",
             [BreakageKind.OBJECT_CHANGED_KIND],
         ),
         (
@@ -173,8 +172,19 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
         new_code: Parametrized code of the new module version.
         expected_breakages: A list of breakage kinds to expect.
     """
-    with temporary_visited_module(old_code) as old_module, temporary_visited_module(new_code) as new_module:
-        breaking = list(find_breaking_changes(old_module, new_module))
+    # check without any alias
+    with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
+        breaking = list(find_breaking_changes(old_package, new_package))
+    assert len(breaking) == len(expected_breakages)
+    for breakage, expected_kind in zip(breaking, expected_breakages):
+        assert breakage.kind is expected_kind
+    # check with aliases
+    import_a = "from ._mod_a import a"
+    old_modules = {"__init__.py": import_a, "_mod_a.py": old_code}
+    new_modules = {"__init__.py": new_code and import_a, "_mod_a.py": new_code}
+    with temporary_visited_package("package_old", old_modules) as old_package:  # noqa: SIM117
+        with temporary_visited_package("package_new", new_modules) as new_package:
+            breaking = list(find_breaking_changes(old_package, new_package))
     assert len(breaking) == len(expected_breakages)
     for breakage, expected_kind in zip(breaking, expected_breakages):
         assert breakage.kind is expected_kind
