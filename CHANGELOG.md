@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.27.0](https://github.com/mkdocstrings/griffe/releases/tag/0.27.0) - 2023-04-10
+
+<small>[Compare with 0.26.0](https://github.com/mkdocstrings/griffe/compare/0.26.0...0.27.0)</small>
+
+### Features
+
+- Implement basic handling of Alias for breaking changes ([aa8ce00](https://github.com/mkdocstrings/griffe/commit/aa8ce009c8d69f7830bc46bc80dac34907b8ae83) by Yurii). [PR #140](https://github.com/mkdocstrings/griffe/pull/140), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+
+### Bug Fixes
+
+- Support `Literal` imported from `typing_extensions` ([3a16e58](https://github.com/mkdocstrings/griffe/commit/3a16e5858649f7d786ef8a60b9dfd588f406cd9d) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#545](https://github.com/mkdocstrings/mkdocstrings/issues/545)
+- Fix parameter default checking logic and diff tests ([1b940fd](https://github.com/mkdocstrings/griffe/commit/1b940fd270b3e51dc0f62edb500a6a3e85908953) by Timothée Mazzucotelli).
+
 ## [0.26.0](https://github.com/mkdocstrings/griffe/releases/tag/0.26.0) - 2023-04-03
 
 <small>[Compare with 0.25.5](https://github.com/mkdocstrings/griffe/compare/0.25.5...0.26.0)</small>
