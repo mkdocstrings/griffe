@@ -436,6 +436,7 @@ multiple items.
 
 #### Warns
 
+- Aliases: Warnings
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code.

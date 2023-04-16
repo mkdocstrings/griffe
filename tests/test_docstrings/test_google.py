@@ -187,6 +187,7 @@ def test_empty_indented_lines_in_section_with_items(parse_google: ParserType) ->
         "Raises",
         "Receives",
         "Returns",
+        "Warns",
         "Yields",
     ],
 )
