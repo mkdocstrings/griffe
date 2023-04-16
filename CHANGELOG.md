@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.27.1](https://github.com/mkdocstrings/griffe/releases/tag/0.27.1) - 2023-04-16
+
+<small>[Compare with 0.27.0](https://github.com/mkdocstrings/griffe/compare/0.27.0...0.27.1)</small>
+
+### Bug Fixes
+
+- Actually parse warnings sections ([bc00da5](https://github.com/mkdocstrings/griffe/commit/bc00da5e9dfe4b2aee906000759e0c1e0a2f893b) by Timothée Mazzucotelli).
+- Allow Raises and Warns items to start with a newline ([f3b088c](https://github.com/mkdocstrings/griffe/commit/f3b088c02b3be86934125b142876b0dfb3702677) by Victor Westerhuis). [PR #149](https://github.com/mkdocstrings/griffe/pull/149), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+
 ## [0.27.0](https://github.com/mkdocstrings/griffe/releases/tag/0.27.0) - 2023-04-10
 
 <small>[Compare with 0.26.0](https://github.com/mkdocstrings/griffe/compare/0.26.0...0.27.0)</small>
