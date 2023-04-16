@@ -178,6 +178,32 @@ def test_empty_indented_lines_in_section_with_items(parse_google: ParserType) ->
     assert len(sections[0].value) == 1
 
 
+@pytest.mark.parametrize(
+    "section",
+    [
+        "Attributes",
+        "Other Parameters",
+        "Parameters",
+        "Raises",
+        "Receives",
+        "Returns",
+        "Yields",
+    ],
+)
+def test_starting_item_description_on_new_line(parse_google: ParserType, section: str) -> None:
+    """In sections with items, allow starting item descriptions on a new (indented) line.
+
+    Parameters:
+        parse_google: Fixture parser.
+        section: A parametrized section name.
+    """
+    docstring = f"\n{section}:\n    only_item:\n        Description."
+    sections, _ = parse_google(docstring)
+    assert len(sections) == 1
+    assert len(sections[0].value) == 1
+    assert sections[0].value[0].description.strip() == "Description."
+
+
 # =============================================================================================
 def test_parse_without_parent(parse_google: ParserType) -> None:
     """Parse a docstring without a parent function.
