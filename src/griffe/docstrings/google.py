@@ -310,7 +310,7 @@ def _read_raises_section(
     annotation: str | Name | Expression
     for line_number, exception_lines in block:
         try:
-            annotation, description = exception_lines[0].split(": ", 1)
+            annotation, description = exception_lines[0].split(":", 1)
         except ValueError:
             _warn(docstring, line_number, f"Failed to get 'exception: description' pair from '{exception_lines[0]}'")
         else:
@@ -337,7 +337,7 @@ def _read_warns_section(
 
     for line_number, warning_lines in block:
         try:
-            annotation, description = warning_lines[0].split(": ", 1)
+            annotation, description = warning_lines[0].split(":", 1)
         except ValueError:
             _warn(docstring, line_number, f"Failed to get 'warning: description' pair from '{warning_lines[0]}'")
         else:
