@@ -206,6 +206,7 @@ def test_starting_item_description_on_new_line(parse_google: ParserType, section
 
 
 # =============================================================================================
+# Annotations
 def test_parse_without_parent(parse_google: ParserType) -> None:
     """Parse a docstring without a parent function.
 
@@ -305,6 +306,7 @@ def test_parse_with_annotations(parse_google: ParserType) -> None:
 
 
 # =============================================================================================
+# Sections
 def test_parse_attributes_section(parse_google: ParserType) -> None:
     """Parse Attributes sections.
 
@@ -864,7 +866,6 @@ def test_dataclass_uses_attributes(parse_google: ParserType) -> None:
 #         Parameters:
 #             x: Integer.
 #     """
-
 #     assert not warnings
 
 

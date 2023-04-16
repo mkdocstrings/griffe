@@ -110,6 +110,7 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
 
 
 # =============================================================================================
+# Annotations
 def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
     """Prefer the type written in the docstring over the annotation in the parent.
 
@@ -224,6 +225,7 @@ def test_dont_crash_on_text_annotations(parse_numpy: ParserType, caplog: pytest.
 
 
 # =============================================================================================
+# Sections
 def test_parameters_section(parse_numpy: ParserType) -> None:
     """Parse parameters section.
 
