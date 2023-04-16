@@ -35,11 +35,6 @@ dependencies = [
     "colorama>=0.4",
 ]
 
-[project.optional-dependencies]
-async = [
-    "aiofiles~=0.7",
-]
-
 [project.urls]
 Homepage = "https://mkdocstrings.github.io/griffe"
 Documentation = "https://mkdocstrings.github.io/griffe"
@@ -94,7 +89,6 @@ tests = [
 ]
 typing = [
     "mypy>=0.910",
-    "types-aiofiles~=0.7",
     "types-markdown>=3.3",
     "types-toml>=0.10",
 ]
