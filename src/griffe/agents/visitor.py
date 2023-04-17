@@ -42,13 +42,14 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError, NameResolutionError
+from griffe.expressions import Expression
 from griffe.extensions import Extensions
 
 if TYPE_CHECKING:
     from pathlib import Path
 
     from griffe.docstrings.parsers import Parser
-    from griffe.expressions import Expression, Name
+    from griffe.expressions import Name
 
 
 builtin_decorators = {
@@ -557,7 +558,15 @@ class Visitor(BaseVisitor):
                 names = get_names(node)
             except KeyError:  # unsupported nodes, like subscript
                 return
-            labels.add("class-attribute")
+
+            if isinstance(annotation, Expression) and annotation.is_classvar:
+                annotation = annotation[2]
+                labels.add("class-attribute")
+            elif node.value:
+                labels.add("class-attribute")
+            else:
+                labels.add("instance-attribute")
+
         elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
@@ -592,9 +601,11 @@ class Visitor(BaseVisitor):
 
                 with suppress(AliasResolutionError, CyclicAliasError):
                     labels |= parent.members[name].labels  # type: ignore[misc]
-                    # forward previous docstring instead of erasing it
+                    # forward previous docstring and annotation instead of erasing them
                     if parent.members[name].docstring and not docstring:
                         docstring = parent.members[name].docstring
+                    if parent.attributes[name].annotation and not annotation:
+                        annotation = parent.attributes[name].annotation
 
             attribute = Attribute(
                 name=name,

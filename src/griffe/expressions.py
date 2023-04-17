@@ -162,6 +162,15 @@ class Expression(list):
         """
         return self.kind == "generator"
 
+    @property
+    def is_classvar(self) -> bool:
+        """Tell whether this expression represents a ClassVar.
+
+        Returns:
+            True or False.
+        """
+        return isinstance(self[0], Name) and self[0].full == "typing.ClassVar"
+
     @cached_property
     def non_optional(self) -> Expression:
         """Return the same expression as non-optional.

@@ -297,3 +297,45 @@ def test_forward_docstrings() -> None:
         ''',
     ) as module:
         assert module["C.attr"].docstring
+
+
+def test_classvar_annotations() -> None:
+    """Assert class variable and instance variable annotations are correctly parsed and merged."""
+    with temporary_visited_module(
+        """
+        from typing import ClassVar
+
+        class C:
+            w: ClassVar[str] = "foo"
+            x: ClassVar[int]
+            y: str
+            z: int = 5
+
+            def __init__(self) -> None:
+                self.a: ClassVar[float]
+                self.y = ""
+                self.b: bytes
+        """,
+    ) as module:
+        assert module["C.w"].annotation.full == "str"
+        assert module["C.w"].labels == {"class-attribute"}
+        assert module["C.w"].value == "'foo'"
+
+        assert module["C.x"].annotation.full == "int"
+        assert module["C.x"].labels == {"class-attribute"}
+
+        assert module["C.y"].annotation.full == "str"
+        assert module["C.y"].labels == {"instance-attribute"}
+        assert module["C.y"].value == "''"
+
+        assert module["C.z"].annotation.full == "int"
+        assert module["C.z"].labels == {"class-attribute"}
+        assert module["C.z"].value == "5"
+
+        # This is syntactically valid, but semantically invalid
+        assert module["C.a"].annotation[0].full == "typing.ClassVar"
+        assert module["C.a"].annotation[2].full == "float"
+        assert module["C.a"].labels == {"instance-attribute"}
+
+        assert module["C.b"].annotation.full == "bytes"
+        assert module["C.b"].labels == {"instance-attribute"}
