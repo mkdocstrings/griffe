@@ -2,7 +2,6 @@
 set -e
 
 PYTHON_VERSIONS="${PYTHON_VERSIONS-3.7 3.8 3.9 3.10 3.11}"
-DEPGROUPS="-G async"
 
 if ! command -v pdm &>/dev/null; then
     if ! command -v pipx &>/dev/null; then
@@ -15,7 +14,7 @@ if ! pdm self list 2>/dev/null | grep -q pdm-multirun; then
 fi
 
 if [ -n "${PYTHON_VERSIONS}" ]; then
-    pdm multirun -vi ${PYTHON_VERSIONS// /,} pdm install ${DEPGROUPS}
+    pdm multirun -vi ${PYTHON_VERSIONS// /,} pdm install -G:all
 else
-    pdm install ${DEPGROUPS}
+    pdm install -G:all
 fi

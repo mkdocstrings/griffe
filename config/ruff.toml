@@ -63,6 +63,7 @@ ignore = [
     "D105",  # Missing docstring in magic method
     "D417",  # Missing argument description in the docstring
     "E501",  # Line too long
+    "ERA001",  # Commented out code
     "G004",  # Logging statement uses f-string
     "PLR0911",  # Too many return statements
     "PLR0912",  # Too many branches

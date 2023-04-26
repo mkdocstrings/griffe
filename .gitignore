@@ -15,6 +15,7 @@ pdm.toml
 .pdm-python
 __pypackages__/
 .venv/
+.cache/
 profile.pstats
 profile.svg
 .hypothesis/

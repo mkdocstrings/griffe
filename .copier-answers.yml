@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier
-_commit: 0.12.0
+_commit: 0.14.1
 _src_path: gh:pawamoy/copier-pdm
 author_email: pawamoy@pm.me
 author_fullname: Timothée Mazzucotelli
@@ -8,6 +8,7 @@ copyright_date: '2021'
 copyright_holder: Timothée Mazzucotelli
 copyright_holder_email: pawamoy@pm.me
 copyright_license: ISC License
+insiders: false
 project_description: Signatures for entire Python programs. Extract the structure,
     the frame, the skeleton of your project, to generate API documentation or find
     breaking changes in your API.

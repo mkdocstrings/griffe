@@ -10,13 +10,18 @@ from typing import TYPE_CHECKING
 from duty import duty
 from duty.callables import black, blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
 
+if sys.version_info < (3, 8):
+    from importlib_metadata import version as pkgversion
+else:
+    from importlib.metadata import version as pkgversion
+
+
 if TYPE_CHECKING:
     from duty.context import Context
 
 PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "duties.py", "scripts"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
 PY_SRC = " ".join(PY_SRC_LIST)
-TESTING = os.environ.get("TESTING", "0") in {"1", "true"}
 CI = os.environ.get("CI", "0") in {"1", "true", "yes", ""}
 WINDOWS = os.name == "nt"
 PTY = not WINDOWS and not CI
@@ -28,6 +33,12 @@ def pyprefix(title: str) -> str:  # noqa: D103
         prefix = f"(python{sys.version_info.major}.{sys.version_info.minor})"
         return f"{prefix:14}{title}"
     return title
+
+
+def mkdocs_config() -> str:  # noqa: D103
+    if "+insiders" in pkgversion("mkdocs-material"):
+        return "mkdocs.insiders.yml"
+    return "mkdocs.yml"
 
 
 @duty
@@ -104,7 +115,7 @@ def check_docs(ctx: Context) -> None:
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
-    ctx.run(mkdocs.build(strict=True), title=pyprefix("Building documentation"))
+    ctx.run(mkdocs.build(strict=True, config_file=mkdocs_config()), title=pyprefix("Building documentation"))
 
 
 @duty
@@ -127,10 +138,14 @@ def check_api(ctx: Context) -> None:
     Parameters:
         ctx: The context instance (passed automatically).
     """
-    from griffe.cli import check
+    from griffe.cli import check as g_check
 
-    griffe_check = lazy(check, name="griffe.check")
-    ctx.run(griffe_check("griffe", search_paths=["src"]), title="Checking API", nofail=True)
+    griffe_check = lazy(g_check, name="griffe.check")
+    ctx.run(
+        griffe_check("griffe", search_paths=["src"]),
+        title="Checking for API breaking changes",
+        nofail=True,
+    )
 
 
 @duty(silent=True)
@@ -163,7 +178,7 @@ def docs(ctx: Context, host: str = "127.0.0.1", port: int = 8000) -> None:
         port: The port to serve the docs on.
     """
     ctx.run(
-        mkdocs.serve(dev_addr=f"{host}:{port}"),
+        mkdocs.serve(dev_addr=f"{host}:{port}", config_file=mkdocs_config()),
         title="Serving documentation",
         capture=False,
     )
@@ -176,7 +191,11 @@ def docs_deploy(ctx: Context) -> None:
     Parameters:
         ctx: The context instance (passed automatically).
     """
-    ctx.run(mkdocs.gh_deploy, title="Deploying documentation")
+    os.environ["DEPLOY"] = "true"
+    config_file = mkdocs_config()
+    if config_file == "mkdocs.yml":
+        ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
+    ctx.run(mkdocs.gh_deploy(config_file=config_file), title="Deploying documentation")
 
 
 @duty
@@ -198,7 +217,7 @@ def format(ctx: Context) -> None:
     )
 
 
-@duty
+@duty(post=["docs-deploy"])
 def release(ctx: Context, version: str) -> None:
     """Release a new Python package.
 
@@ -209,12 +228,10 @@ def release(ctx: Context, version: str) -> None:
     ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
     ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
     ctx.run(f"git tag {version}", title="Tagging commit", pty=PTY)
-    if not TESTING:
-        ctx.run("git push", title="Pushing commits", pty=False)
-        ctx.run("git push --tags", title="Pushing tags", pty=False)
-        ctx.run("pdm build", title="Building dist/wheel", pty=PTY)
-        ctx.run("twine upload --skip-existing dist/*", title="Publishing version", pty=PTY)
-        docs_deploy.run()
+    ctx.run("git push", title="Pushing commits", pty=False)
+    ctx.run("git push --tags", title="Pushing tags", pty=False)
+    ctx.run("pdm build", title="Building dist/wheel", pty=PTY)
+    ctx.run("twine upload --skip-existing dist/*", title="Publishing version", pty=PTY)
 
 
 @duty(silent=True, aliases=["coverage"])
