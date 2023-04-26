@@ -222,7 +222,7 @@ for example `Optional[Union[int, Tuple[float, float]]]`.
 
 #### Other Parameters
 
-- Aliases: Keyword Args, Keyword Arguments, Other Params
+- Aliases: Keyword Args, Keyword Arguments, Other Args, Other Arguments, Other Params
 - Multiple items allowed
 
 Other parameters sections allow to document secondary parameters such as variadic keyword arguments,
