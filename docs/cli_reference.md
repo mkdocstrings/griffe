@@ -1,11 +1,6 @@
----
-hide:
-- toc
----
-
 # CLI reference
 
-```python exec="true"
+```python exec="true" idprefix=""
 import argparse
 import sys
 
