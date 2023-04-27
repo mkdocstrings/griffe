@@ -7,13 +7,14 @@ from griffe.git import load_git
 old_api = load_git("my_module", commit="v0.1.0", repo="path/to/repo")
 ```
 """
+
 from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import DEVNULL, CalledProcessError, run
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Any, Iterator, Sequence
 
@@ -31,14 +32,38 @@ def _assert_git_repo(repo: str) -> None:
         raise RuntimeError("Could not find git executable. Please install git.")
 
     try:
-        run(
+        subprocess.run(
             ["git", "-C", repo, "rev-parse", "--is-inside-work-tree"],
             check=True,
-            stdout=DEVNULL,
-            stderr=DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
-    except CalledProcessError as err:
+    except subprocess.CalledProcessError as err:
         raise OSError(f"Not a git repository: {repo!r}") from err
+
+
+def _get_latest_tag(path: str | Path) -> str:
+    if isinstance(path, str):
+        path = Path(path)
+    if not path.is_dir():
+        path = path.parent
+    output = subprocess.check_output(
+        ["git", "describe", "--tags", "--abbrev=0"],
+        cwd=path,
+    )
+    return output.decode().strip()
+
+
+def _get_repo_root(path: str | Path) -> str:
+    if isinstance(path, str):
+        path = Path(path)
+    if not path.is_dir():
+        path = path.parent
+    output = subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=path,
+    )
+    return output.decode().strip()
 
 
 @contextmanager
@@ -61,7 +86,7 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     with TemporaryDirectory(prefix="griffe-worktree-") as td:
         uid = f"griffe_{ref}"
         target = os.path.join(td, uid)
-        retval = run(
+        retval = subprocess.run(
             ["git", "-C", repo, "worktree", "add", "-b", uid, target, ref],
             capture_output=True,
         )
@@ -71,9 +96,9 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         try:
             yield Path(target)
         finally:
-            run(["git", "-C", repo, "worktree", "remove", uid], stdout=DEVNULL)
-            run(["git", "-C", repo, "worktree", "prune"], stdout=DEVNULL)
-            run(["git", "-C", repo, "branch", "-d", uid], stdout=DEVNULL)
+            subprocess.run(["git", "-C", repo, "worktree", "remove", uid], stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", repo, "branch", "-d", uid], stdout=subprocess.DEVNULL)
 
 
 def load_git(

@@ -17,7 +17,6 @@ import argparse
 import json
 import logging
 import os
-import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,9 +29,10 @@ from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
 from griffe.exceptions import ExtensionError
 from griffe.extensions.base import load_extensions
-from griffe.git import load_git
+from griffe.git import _get_latest_tag, _get_repo_root, load_git
 from griffe.loader import GriffeLoader, load
 from griffe.logger import get_logger
+from griffe.stats import _format_stats
 
 if TYPE_CHECKING:
     from griffe.extensions import Extension, Extensions
@@ -50,92 +50,6 @@ def _print_data(data: str, output_file: str | IO | None) -> None:
         if output_file is None:
             output_file = sys.stdout
         print(data, file=output_file)
-
-
-def _get_latest_tag(path: str | Path) -> str:
-    if isinstance(path, str):
-        path = Path(path)
-    if not path.is_dir():
-        path = path.parent
-    output = subprocess.check_output(
-        ["git", "describe", "--tags", "--abbrev=0"],
-        cwd=path,
-    )
-    return output.decode().strip()
-
-
-def _get_repo_root(path: str | Path) -> str:
-    if isinstance(path, str):
-        path = Path(path)
-    if not path.is_dir():
-        path = path.parent
-    output = subprocess.check_output(
-        ["git", "rev-parse", "--show-toplevel"],
-        cwd=path,
-    )
-    return output.decode().strip()
-
-
-def _stats(stats: dict) -> str:
-    lines = []
-    packages = stats["packages"]
-    modules = stats["modules"]
-    classes = stats["classes"]
-    functions = stats["functions"]
-    attributes = stats["attributes"]
-    objects = sum((modules, classes, functions, attributes))
-    lines.append("Statistics")
-    lines.append("---------------------")
-    lines.append("Number of loaded objects")
-    lines.append(f"  Modules: {modules}")
-    lines.append(f"  Classes: {classes}")
-    lines.append(f"  Functions: {functions}")
-    lines.append(f"  Attributes: {attributes}")
-    lines.append(f"  Total: {objects} across {packages} packages")
-    per_ext = stats["modules_by_extension"]
-    builtin = per_ext[""]
-    regular = per_ext[".py"]
-    stubs = per_ext[".pyi"]
-    compiled = modules - builtin - regular - stubs
-    lines.append("")
-    lines.append(f"Total number of lines: {stats['lines']}")
-    lines.append("")
-    lines.append("Modules")
-    lines.append(f"  Builtin: {builtin}")
-    lines.append(f"  Compiled: {compiled}")
-    lines.append(f"  Regular: {regular}")
-    lines.append(f"  Stubs: {stubs}")
-    lines.append("  Per extension:")
-    for ext, number in sorted(per_ext.items()):
-        if ext:
-            lines.append(f"    {ext}: {number}")
-    visit_time = stats["time_spent_visiting"] / 1000
-    inspect_time = stats["time_spent_inspecting"] / 1000
-    total_time = visit_time + inspect_time
-    visit_percent = visit_time / total_time * 100
-    inspect_percent = inspect_time / total_time * 100
-    try:
-        visit_time_per_module = visit_time / regular
-    except ZeroDivisionError:
-        visit_time_per_module = 0
-    inspected_modules = builtin + compiled
-    try:
-        inspect_time_per_module = visit_time / inspected_modules
-    except ZeroDivisionError:
-        inspect_time_per_module = 0
-    lines.append("")
-    lines.append(
-        f"Time spent visiting modules ({regular}): "
-        f"{visit_time}ms, {visit_time_per_module:.02f}ms/module ({visit_percent:.02f}%)",
-    )
-    lines.append(
-        f"Time spent inspecting modules ({inspected_modules}): "
-        f"{inspect_time}ms, {inspect_time_per_module:.02f}ms/module ({inspect_percent:.02f}%)",
-    )
-    serialize_time = stats["time_spent_serializing"] / 1000
-    serialize_time_per_module = serialize_time / modules
-    lines.append(f"Time spent serializing: {serialize_time}ms, {serialize_time_per_module:.02f}ms/module")
-    return "\n".join(lines)
 
 
 def _load_packages(
@@ -414,7 +328,7 @@ def dump(
     elapsed = datetime.now(tz=timezone.utc) - started
 
     if stats:
-        logger.info(_stats({"time_spent_serializing": elapsed.microseconds, **loader.stats()}))
+        logger.info(_format_stats({"time_spent_serializing": elapsed.microseconds, **loader.stats()}))
 
     return 0 if len(data_packages) == len(packages) else 1
 

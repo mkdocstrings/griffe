@@ -107,3 +107,65 @@ def stats(loader: GriffeLoader) -> dict:
         "modules_by_extension": modules_by_extension,
         "lines": n_lines,
     }
+
+
+def _format_stats(stats: dict) -> str:
+    lines = []
+    packages = stats["packages"]
+    modules = stats["modules"]
+    classes = stats["classes"]
+    functions = stats["functions"]
+    attributes = stats["attributes"]
+    objects = sum((modules, classes, functions, attributes))
+    lines.append("Statistics")
+    lines.append("---------------------")
+    lines.append("Number of loaded objects")
+    lines.append(f"  Modules: {modules}")
+    lines.append(f"  Classes: {classes}")
+    lines.append(f"  Functions: {functions}")
+    lines.append(f"  Attributes: {attributes}")
+    lines.append(f"  Total: {objects} across {packages} packages")
+    per_ext = stats["modules_by_extension"]
+    builtin = per_ext[""]
+    regular = per_ext[".py"]
+    stubs = per_ext[".pyi"]
+    compiled = modules - builtin - regular - stubs
+    lines.append("")
+    lines.append(f"Total number of lines: {stats['lines']}")
+    lines.append("")
+    lines.append("Modules")
+    lines.append(f"  Builtin: {builtin}")
+    lines.append(f"  Compiled: {compiled}")
+    lines.append(f"  Regular: {regular}")
+    lines.append(f"  Stubs: {stubs}")
+    lines.append("  Per extension:")
+    for ext, number in sorted(per_ext.items()):
+        if ext:
+            lines.append(f"    {ext}: {number}")
+    visit_time = stats["time_spent_visiting"] / 1000
+    inspect_time = stats["time_spent_inspecting"] / 1000
+    total_time = visit_time + inspect_time
+    visit_percent = visit_time / total_time * 100
+    inspect_percent = inspect_time / total_time * 100
+    try:
+        visit_time_per_module = visit_time / regular
+    except ZeroDivisionError:
+        visit_time_per_module = 0
+    inspected_modules = builtin + compiled
+    try:
+        inspect_time_per_module = visit_time / inspected_modules
+    except ZeroDivisionError:
+        inspect_time_per_module = 0
+    lines.append("")
+    lines.append(
+        f"Time spent visiting modules ({regular}): "
+        f"{visit_time}ms, {visit_time_per_module:.02f}ms/module ({visit_percent:.02f}%)",
+    )
+    lines.append(
+        f"Time spent inspecting modules ({inspected_modules}): "
+        f"{inspect_time}ms, {inspect_time_per_module:.02f}ms/module ({inspect_percent:.02f}%)",
+    )
+    serialize_time = stats["time_spent_serializing"] / 1000
+    serialize_time_per_module = serialize_time / modules
+    lines.append(f"Time spent serializing: {serialize_time}ms, {serialize_time_per_module:.02f}ms/module")
+    return "\n".join(lines)
