@@ -77,6 +77,14 @@ ignore = [
 "src/*/cli.py" = [
     "T201",  # Print statement
 ]
+"src/*/git.py" = [
+    "S603",  # `subprocess` call: check for execution of untrusted input
+    "S607",  # Starting a process with a partial executable path
+]
+"tests/test_git.py" = [
+    "S603",  # `subprocess` call: check for execution of untrusted input
+    "S607",  # Starting a process with a partial executable path
+]
 "src/*/*/nodes.py" = [
     "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
 ]

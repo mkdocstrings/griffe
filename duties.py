@@ -292,4 +292,4 @@ def profile(ctx: Context, *, browser: bool = False) -> None:
     )
     ctx.run("gprof2dot -z cli:494:main profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
     if browser:
-        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")
+        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
