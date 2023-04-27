@@ -560,11 +560,15 @@ class Visitor(BaseVisitor):
                 return
 
             if isinstance(annotation, Expression) and annotation.is_classvar:
+                # explicit classvar: class attribute only
                 annotation = annotation[2]
                 labels.add("class-attribute")
             elif node.value:
+                # attribute assigned at class-level: available in instances as well
                 labels.add("class-attribute")
+                labels.add("instance-attribute")
             else:
+                # annotated attribute only: not available at class-level
                 labels.add("instance-attribute")
 
         elif parent.kind is Kind.FUNCTION:

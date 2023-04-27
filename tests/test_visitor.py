@@ -329,7 +329,7 @@ def test_classvar_annotations() -> None:
         assert module["C.y"].value == "''"
 
         assert module["C.z"].annotation.full == "int"
-        assert module["C.z"].labels == {"class-attribute"}
+        assert module["C.z"].labels == {"class-attribute", "instance-attribute"}
         assert module["C.z"].value == "5"
 
         # This is syntactically valid, but semantically invalid
