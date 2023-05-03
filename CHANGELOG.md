@@ -5,6 +5,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.27.2](https://github.com/mkdocstrings/griffe/releases/tag/0.27.2) - 2023-05-03
+
+<small>[Compare with 0.27.1](https://github.com/mkdocstrings/griffe/compare/0.27.1...0.27.2)</small>
+
+### Dependencies
+
+- Remove async extra (aiofiles) ([70d9b93](https://github.com/mkdocstrings/griffe/commit/70d9b9305370f03c221876838aaad9b72dc388d3) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Support walrus operator ([bf721f4](https://github.com/mkdocstrings/griffe/commit/bf721f4dd2bb7f1a6695b5c880df821920b994a6) by Timothée Mazzucotelli). [Issue #152](https://github.com/mkdocstrings/griffe/issues/152)
+- Respect `ClassVar` annotation ([60e01c1](https://github.com/mkdocstrings/griffe/commit/60e01c126df4e0529fe3806f9c2637a5a45dd138) by Victor Westerhuis). [PR #150](https://github.com/mkdocstrings/griffe/pull/150), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+- Add missing "other args" section aliases ([f5c0a0e](https://github.com/mkdocstrings/griffe/commit/f5c0a0ee70c34063ea38a8e76dcba4923f9673cb) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Move utils from cli to respective modules ([c6ce49e](https://github.com/mkdocstrings/griffe/commit/c6ce49eb75c1799982b40a7862a1a7888f0fab93) by Timothée Mazzucotelli).
+
 ## [0.27.1](https://github.com/mkdocstrings/griffe/releases/tag/0.27.1) - 2023-04-16
 
 <small>[Compare with 0.27.0](https://github.com/mkdocstrings/griffe/compare/0.27.0...0.27.1)</small>
