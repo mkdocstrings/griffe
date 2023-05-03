@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from ast import PyCF_ONLY_AST
 
 import pytest
@@ -193,6 +194,8 @@ def test_default_value_from_nodes(default: str) -> None:
         "o[x:y]",
         "o[x:y,z]",
         "o[x, y(z)]",
+        # walrus operator
+        "a if (a := b) else c",
     ],
 )
 def test_building_value_from_nodes(expression: str) -> None:
@@ -201,7 +204,19 @@ def test_building_value_from_nodes(expression: str) -> None:
     Parameters:
         expression: An expression (parametrized).
     """
-    node = compile(expression, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0].value  # type: ignore[attr-defined]
+    try:
+        node = (
+            compile(  # type: ignore[attr-defined]
+                expression,
+                mode="exec",
+                filename="<>",
+                flags=PyCF_ONLY_AST,
+            )
+            .body[0]
+            .value
+        )
+    except SyntaxError:
+        pytest.skip(reason=f"Unsupported expression '{expression}' on Python {sys.version}")
     value = get_value(node)
 
     # make space after comma non-significant

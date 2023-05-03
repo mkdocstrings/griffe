@@ -87,6 +87,10 @@ if TYPE_CHECKING:
 
 logger = get_logger(__name__)
 
+# TODO: remove condition once Python 3.7 support is dropped
+if sys.version_info >= (3, 8):
+    from ast import NamedExpr as NodeNamedExpr
+
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
     from ast import Bytes as NodeBytes
@@ -1173,6 +1177,14 @@ _node_value_map: dict[type, Callable[[Any], str]] = {
     NodeUSub: _get_usub_value,
     NodeYield: _get_yield_value,
 }
+
+# TODO: remove condition once Python 3.7 support is dropped
+if sys.version_info >= (3, 8):
+
+    def _get_named_expr_value(node: NodeNamedExpr) -> str:
+        return f"({_get_value(node.target)} := {_get_value(node.value)})"
+
+    _node_value_map[NodeNamedExpr] = _get_named_expr_value
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
