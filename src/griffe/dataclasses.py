@@ -933,6 +933,10 @@ class Alias(ObjectAliasMixin):
     def docstring(self) -> Docstring | None:  # noqa: D102
         return self.target.docstring
 
+    @docstring.setter
+    def docstring(self, docstring: Docstring | None) -> None:
+        self.target.docstring = docstring
+
     @property
     def members(self) -> dict[str, Object | Alias]:  # noqa: D102
         return self.target.members
