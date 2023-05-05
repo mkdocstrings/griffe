@@ -603,13 +603,15 @@ class Visitor(BaseVisitor):
                 if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
                     continue  # prefer "no-exception" case
 
+                existing_member = parent.members[name]
                 with suppress(AliasResolutionError, CyclicAliasError):
-                    labels |= parent.members[name].labels  # type: ignore[misc]
+                    labels |= existing_member.labels  # type: ignore[misc]
                     # forward previous docstring and annotation instead of erasing them
-                    if parent.members[name].docstring and not docstring:
-                        docstring = parent.members[name].docstring
-                    if parent.attributes[name].annotation and not annotation:
-                        annotation = parent.attributes[name].annotation
+                    if existing_member.docstring and not docstring:
+                        docstring = existing_member.docstring
+                    with suppress(AttributeError):
+                        if existing_member.annotation and not annotation:  # type: ignore[union-attr]
+                            annotation = existing_member.annotation  # type: ignore[union-attr]
 
             attribute = Attribute(
                 name=name,
