@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.27.3](https://github.com/mkdocstrings/griffe/releases/tag/0.27.3) - 2023-05-05
+
+<small>[Compare with 0.27.2](https://github.com/mkdocstrings/griffe/compare/0.27.2...0.27.3)</small>
+
+### Bug Fixes
+
+- Allow setting doctring through alias ([2e0f553](https://github.com/mkdocstrings/griffe/commit/2e0f553c833e9b27f5e97c05065c2127212b603c) by Timothée Mazzucotelli).
+- Prevent infinite recursion ([0e98546](https://github.com/mkdocstrings/griffe/commit/0e985460eb886ea832e7cbefca261620eedb0e56) by Timothée Mazzucotelli). [Issue #155](https://github.com/mkdocstrings/griffe/issues/155)
+
 ## [0.27.2](https://github.com/mkdocstrings/griffe/releases/tag/0.27.2) - 2023-05-03
 
 <small>[Compare with 0.27.1](https://github.com/mkdocstrings/griffe/compare/0.27.1...0.27.2)</small>
