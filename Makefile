@@ -8,7 +8,7 @@ check_quality_args = files
 docs_args = host port
 release_args = version
 test_args = match
-profile_args = async browser
+fuzz_args = pdm profile browser
 
 BASIC_DUTIES = \
 	changelog \
@@ -20,7 +20,7 @@ BASIC_DUTIES = \
 	docs-deploy \
 	format \
 	release \
-	profile
+	fuzz
 
 QUALITY_DUTIES = \
 	check-quality \

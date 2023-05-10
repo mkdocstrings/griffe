@@ -263,33 +263,56 @@ def test(ctx: Context, match: str = "") -> None:
 
 
 @duty
-def profile(ctx: Context, *, browser: bool = False) -> None:
+def fuzz(ctx: Context, *, pdm: bool = False, profile: bool = False, browser: bool = False) -> None:
     """Run the test suite.
 
     Parameters:
         ctx: The context instance (passed automatically).
+        profile: Whether to profile the run.
         browser: Whether to open the SVG file in the browser at the end.
     """
+    import logging
+
+    from griffe.cli import _load_packages as load_packages
+
     packages = ctx.run(
         "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
         title="Finding packages",
         allow_overrides=False,
     ).split("\n")
-    ctx.run(
-        [
-            sys.executable,
-            "-mcProfile",
-            "-oprofile.pstats",
-            "-m",
-            "griffe",
-            "dump",
-            "-o/dev/null",
-            "-LDEBUG",
-            *packages,
-        ],
-        title=f"Profiling on {len(packages)} packages",
-        pty=False,
-    )
-    ctx.run("gprof2dot -z cli:494:main profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
-    if browser:
-        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
+
+    if not profile:
+        logging.basicConfig(level=logging.DEBUG)
+        griffe_load = lazy(load_packages, name="griffe.load")
+        # fuzz on standard lib
+        ctx.run(
+            griffe_load(["griffe"], resolve_aliases=True, resolve_implicit=True, resolve_external=True),
+            title="Fuzz on standard library",
+            capture=None,
+        )
+        # fuzz on all PDM cached packages
+        if pdm:
+            ctx.run(
+                griffe_load(packages, resolve_aliases=True),
+                title=f"Loading {len(packages)} packages",
+                capture=None,
+            )
+    else:
+        ctx.run(
+            [
+                sys.executable,
+                "-mcProfile",
+                "-oprofile.pstats",
+                "-m",
+                "griffe",
+                "dump",
+                "-rIUSo/dev/null",
+                "-LDEBUG",
+                *packages,
+            ],
+            title=f"Profiling on {len(packages)} packages",
+            pty=False,
+        )
+        ctx.run("gprof2dot -z cli:494:main profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
+        if browser:
+            os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
