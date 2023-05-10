@@ -33,7 +33,7 @@ jobs:
         python-version: "3.8"
 
     - name: Resolving dependencies
-      run: pdm lock -v
+      run: pdm lock -v --no-cross-platform
 
     - name: Install dependencies
       run: pdm install -G duty -G docs -G quality -G typing -G security
@@ -83,7 +83,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Resolving dependencies
-      run: pdm lock -v
+      run: pdm lock -v --no-cross-platform
 
     - name: Install dependencies
       run: pdm install --no-editable -G duty -G tests

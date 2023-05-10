@@ -99,17 +99,17 @@ markdown_extensions:
     permalink: "¤"
 
 plugins:
-  search: {}
-  markdown-exec: {}
-  gen-files:
+- search
+- markdown-exec
+- gen-files:
     scripts:
     - scripts/gen_ref_nav.py
     - scripts/gen_griffe_json.py
     - scripts/redirects.py
-  literate-nav:
+- literate-nav:
     nav_file: SUMMARY.txt
-  coverage: {}
-  mkdocstrings:
+- coverage
+- mkdocstrings:
     handlers:
       python:
         import:
@@ -124,10 +124,10 @@ plugins:
           separate_signature: true
           show_category_heading: no
           show_submodules: no
-  git-committers:
+- git-committers:
     enabled: !ENV [DEPLOY, false]
     repository: mkdocstrings/griffe
-  minify:
+- minify:
     minify_html: !ENV [DEPLOY, false]
 
 extra:
