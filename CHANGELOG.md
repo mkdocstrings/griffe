@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.27.4](https://github.com/mkdocstrings/griffe/releases/tag/0.27.4) - 2023-05-10
+
+<small>[Compare with 0.27.3](https://github.com/mkdocstrings/griffe/compare/0.27.3...0.27.4)</small>
+
+### Bug Fixes
+
+- Don't recurse through targets, get directly to final target and handle alias-related errors ([c5bc197](https://github.com/mkdocstrings/griffe/commit/c5bc1973975951389501addf567622c0e3eb71c6) by Timothée Mazzucotelli). [Issue #155](https://github.com/mkdocstrings/griffe/issues/155)
+
+### Code Refactoring
+
+- Follow `.pth` files to extend search paths with editable modules ([79bf724](https://github.com/mkdocstrings/griffe/commit/79bf72498150588d05ccdfc80a898c0330e08247) by Timothée Mazzucotelli). [Issue #154](https://github.com/mkdocstrings/griffe/issues/154)
+- Add default values to `_load_packages` helper ([f104c20](https://github.com/mkdocstrings/griffe/commit/f104c20304dcf24c5d2e39220302a941db4161eb) by Timothée Mazzucotelli).
+
 ## [0.27.3](https://github.com/mkdocstrings/griffe/releases/tag/0.27.3) - 2023-05-05
 
 <small>[Compare with 0.27.2](https://github.com/mkdocstrings/griffe/compare/0.27.2...0.27.3)</small>
