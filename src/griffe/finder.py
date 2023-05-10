@@ -14,15 +14,26 @@ from griffe.exceptions import UnhandledEditableModuleError
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
+    from typing import Pattern
+
     from griffe.dataclasses import Module
 
 
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
 logger = get_logger(__name__)
-editable_editables_prefixes = ("__editables_", "_editable_impl_")
-editable_setuptools_prefixes = ("__editable__",)
-editable_prefixes = (*editable_editables_prefixes, *editable_setuptools_prefixes)
+_editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", "^_editable_impl_\\w+\\.py$")]
+_editable_setuptools_patterns = [re.compile(pat) for pat in ("^__editable__\\w+\\.py$",)]
+_editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
+_editable_patterns = (
+    *_editable_editables_patterns,
+    *_editable_setuptools_patterns,
+    *_editable_scikit_build_core_patterns,
+)
+
+
+def _match_pattern(string: str, patterns: Sequence[Pattern]) -> bool:
+    return any(pattern.match(string) for pattern in patterns)
 
 
 class Package:
@@ -70,10 +81,7 @@ class ModuleFinder:
         self._paths_contents: dict[Path, list[Path]] = {}
         # optimization: pre-compute Paths to relieve CPU when joining paths
         self.search_paths = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
-        if bool(search_paths):
-            # without custom search paths, sys.path is used, and is already extended from .pth files
-            self._extend_from_pth_files()
-        self._extend_from_editable_modules()
+        self._extend_from_pth_files()
 
     def find_spec(
         self,
@@ -271,14 +279,6 @@ class ModuleFinder:
                     for directory in _handle_pth_file(item):
                         self._append_search_path(directory)
 
-    def _extend_from_editable_modules(self) -> None:
-        for path in self.search_paths:
-            for item in self._contents(path):
-                if item.stem.startswith(editable_prefixes) and item.suffix == ".py":
-                    with suppress(UnhandledEditableModuleError):
-                        for editable_path in _handle_editable_module(item):
-                            self._append_search_path(editable_path)
-
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
         for root, dirs, files in os.walk(path, topdown=True):
             # optimization: modify dirs in-place to exclude __pycache__ directories
@@ -306,7 +306,7 @@ class ModuleFinder:
 
 _re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")
 _re_pkgutil = re.compile(r"(?:__path__ = __import__\([\"']pkgutil[\"']\).extend_path\(__path__, __name__\))")
-_re_import_line = re.compile(r"^import[ \t]")
+_re_import_line = re.compile(r"^import[ \t]+\w+$")
 
 
 # TODO: for better robustness, we should load and minify the AST
@@ -334,25 +334,31 @@ def _handle_pth_file(path: Path) -> list[Path]:
     directories = []
     for line in path.read_text(encoding="utf8").strip().splitlines(keepends=False):
         line = line.strip()  # noqa: PLW2901
-        if line and not line.startswith("#") and not _re_import_line.search(line) and os.path.exists(line):
+        if _re_import_line.match(line):
+            editable_module = path.parent / f"{line[len('import'):].lstrip()}.py"
+            with suppress(UnhandledEditableModuleError):
+                return _handle_editable_module(editable_module)
+        if line and not line.startswith("#") and ";" not in line and os.path.exists(line):
             directories.append(Path(line))
     return directories
 
 
 def _handle_editable_module(path: Path) -> list[Path]:
     try:
-        editable_lines = path.read_text(encoding="utf8").splitlines(keepends=False)
+        editable_lines = path.read_text(encoding="utf8").strip().splitlines(keepends=False)
     except FileNotFoundError as error:
         raise UnhandledEditableModuleError(path) from error
-    if path.name.startswith(editable_editables_prefixes):
+    if _match_pattern(path.name, (*_editable_editables_patterns, *_editable_scikit_build_core_patterns)):
         # support for how 'editables' write these files:
         # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
+        # and how 'scikit-build-core' writes these files:
+        # example line: install({'griffe': '/media/data/dev/griffe/src/griffe/__init__.py'}, {'cmake_example': ...}, None, False, True)
         new_path = Path(editable_lines[-1].split("'")[3])
         if new_path.exists():  # TODO: could remove existence check
             if new_path.name.startswith("__init__"):
                 return [new_path.parent.parent]
             return [new_path]
-    elif path.name.startswith(editable_setuptools_prefixes):
+    elif _match_pattern(path.name, _editable_setuptools_patterns):
         # support for how 'setuptools' writes these files:
         # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}
         parsed_module = ast.parse(path.read_text())
