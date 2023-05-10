@@ -44,7 +44,7 @@ class AliasResolutionError(GriffeError):
         except BuiltinModuleError:
             pass
         else:
-            message += f" (in {filepath}:{alias.lineno})"
+            message += f" (in {filepath}:{alias.alias_lineno})"
         super().__init__(message)
 
 

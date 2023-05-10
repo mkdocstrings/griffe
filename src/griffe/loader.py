@@ -294,8 +294,8 @@ class GriffeLoader:
             self_alias = new_member.is_alias and cast(Alias, new_member).target_path == f"{obj.path}.{new_member.name}"
             if already_present:
                 old_member = obj[new_member.name]
-                old_lineno = getattr(old_member, "alias_lineno", old_member.lineno or 0)
-                overwrite = alias_lineno > old_lineno  # type: ignore[operator]
+                old_lineno = old_member.alias_lineno if old_member.is_alias else old_member.lineno
+                overwrite = alias_lineno > (old_lineno or 0)  # type: ignore[operator]
             if not self_alias and (not already_present or overwrite):
                 alias = Alias(
                     new_member.name,
@@ -306,7 +306,7 @@ class GriffeLoader:
                 )
                 if already_present:
                     prev_member = obj[new_member.name]
-                    with suppress(AliasResolutionError):
+                    with suppress(AliasResolutionError, CyclicAliasError):
                         if prev_member.is_module:
                             if prev_member.is_alias:
                                 prev_member = prev_member.final_target

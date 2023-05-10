@@ -858,7 +858,7 @@ class Alias(ObjectAliasMixin):
         """
         # custom behavior to avoid raising exceptions
         try:
-            return self.target.kind
+            return self.final_target.kind
         except (AliasResolutionError, CyclicAliasError):
             return Kind.ALIAS
 
@@ -869,9 +869,7 @@ class Alias(ObjectAliasMixin):
         Returns:
             The target lineno or the alias lineno.
         """
-        if self.resolved:
-            return self.target.lineno
-        return self.alias_lineno
+        return self.final_target.lineno
 
     @property
     def endlineno(self) -> int | None:
@@ -880,19 +878,23 @@ class Alias(ObjectAliasMixin):
         Returns:
             The target endlineno or the alias endlineno.
         """
-        if self.resolved:
-            return self.target.endlineno
-        return self.alias_endlineno
+        return self.final_target.endlineno
 
     @property
     def has_docstring(self) -> bool:
         """Tell if this alias' target has a non-empty docstring."""
-        return self.resolved and self.target.has_docstring
+        try:
+            return self.final_target.has_docstring
+        except (AliasResolutionError, CyclicAliasError):
+            return False
 
     @property
     def has_docstrings(self) -> bool:
         """Tell if this alias' target or any of its members has a non-empty docstring."""
-        return self.resolved and self.target.has_docstrings
+        try:
+            return self.final_target.has_docstrings
+        except (AliasResolutionError, CyclicAliasError):
+            return False
 
     @property
     def parent(self) -> Module | Class | None:
@@ -931,110 +933,110 @@ class Alias(ObjectAliasMixin):
 
     @property
     def docstring(self) -> Docstring | None:  # noqa: D102
-        return self.target.docstring
+        return self.final_target.docstring
 
     @docstring.setter
     def docstring(self, docstring: Docstring | None) -> None:
-        self.target.docstring = docstring
+        self.final_target.docstring = docstring
 
     @property
     def members(self) -> dict[str, Object | Alias]:  # noqa: D102
-        return self.target.members
+        return self.final_target.members
 
     @property
     def labels(self) -> set[str]:  # noqa: D102
-        return self.target.labels
+        return self.final_target.labels
 
     @property
     def imports(self) -> dict[str, str]:  # noqa: D102
-        return self.target.imports
+        return self.final_target.imports
 
     @property
     def exports(self) -> set[str] | list[str | Name] | None:  # noqa: D102
-        return self.target.exports
+        return self.final_target.exports
 
     @property
     def aliases(self) -> dict[str, Alias]:  # noqa: D102
-        return self.target.aliases
+        return self.final_target.aliases
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
-        return self.target.member_is_exported(member, explicitely=explicitely)
+        return self.final_target.member_is_exported(member, explicitely=explicitely)
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
-        return self.target.is_kind(kind)
+        return self.final_target.is_kind(kind)
 
     @property
     def is_module(self) -> bool:  # noqa: D102
-        return self.target.is_module
+        return self.final_target.is_module
 
     @property
     def is_class(self) -> bool:  # noqa: D102
-        return self.target.is_class
+        return self.final_target.is_class
 
     @property
     def is_function(self) -> bool:  # noqa: D102
-        return self.target.is_function
+        return self.final_target.is_function
 
     @property
     def is_attribute(self) -> bool:  # noqa: D102
-        return self.target.is_attribute
+        return self.final_target.is_attribute
 
     def has_labels(self, labels: set[str]) -> bool:  # noqa: D102
-        return self.target.has_labels(labels)
+        return self.final_target.has_labels(labels)
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:  # noqa: D102
-        return self.target.filter_members(*predicates)
+        return self.final_target.filter_members(*predicates)
 
     @property
     def modules(self) -> dict[str, Module]:  # noqa: D102
-        return self.target.modules
+        return self.final_target.modules
 
     @property
     def classes(self) -> dict[str, Class]:  # noqa: D102
-        return self.target.classes
+        return self.final_target.classes
 
     @property
     def functions(self) -> dict[str, Function]:  # noqa: D102
-        return self.target.functions
+        return self.final_target.functions
 
     @property
     def attributes(self) -> dict[str, Attribute]:  # noqa: D102
-        return self.target.attributes
+        return self.final_target.attributes
 
     @property
     def module(self) -> Module:  # noqa: D102
-        return self.target.module
+        return self.final_target.module
 
     @property
     def package(self) -> Module:  # noqa: D102
-        return self.target.package
+        return self.final_target.package
 
     @property
     def filepath(self) -> Path | list[Path]:  # noqa: D102
-        return self.target.filepath
+        return self.final_target.filepath
 
     @property
     def relative_filepath(self) -> Path:  # noqa: D102
-        return self.target.relative_filepath
+        return self.final_target.relative_filepath
 
     @property
     def canonical_path(self) -> str:  # noqa: D102
-        return self.target.canonical_path
+        return self.final_target.canonical_path
 
     @property
     def lines_collection(self) -> LinesCollection:  # noqa: D102
-        return self.target.lines_collection
+        return self.final_target.lines_collection
 
     @property
     def lines(self) -> list[str]:  # noqa: D102
-        return self.target.lines
+        return self.final_target.lines
 
     @property
     def source(self) -> str:  # noqa: D102
-        return self.target.source
+        return self.final_target.source
 
     def resolve(self, name: str) -> str:  # noqa: D102
-        return self.target.resolve(name)
+        return self.final_target.resolve(name)
 
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
 
@@ -1124,9 +1126,14 @@ class Alias(ObjectAliasMixin):
         Returns:
             The final target.
         """
-        target = self.target
+        # using a dict as an ordered set
+        paths_seen: dict[str, None] = {}
+        target = self
         while target.is_alias:
-            target = target.target  # type: ignore[union-attr]
+            if target.path in paths_seen:
+                raise CyclicAliasError([*paths_seen, target.path])
+            paths_seen[target.path] = None
+            target = target.target  # type: ignore[assignment,union-attr]
         return target  # type: ignore[return-value]
 
     def resolve_target(self) -> None:
@@ -1207,10 +1214,10 @@ class Alias(ObjectAliasMixin):
         if full:
             base["path"] = self.path
 
-        if self.lineno:
-            base["lineno"] = self.lineno
-        if self.endlineno:
-            base["endlineno"] = self.endlineno
+        if self.alias_lineno:
+            base["lineno"] = self.alias_lineno
+        if self.alias_endlineno:
+            base["endlineno"] = self.alias_endlineno
 
         return base
 
