@@ -83,3 +83,10 @@ def test_inspecting_module_importing_other_module() -> None:
     with temporary_inspected_module("import itertools as it") as module:
         assert module["it"].is_alias
         assert module["it"].target_path == "itertools"
+
+
+def test_inspecting_parameters_with_functions_as_default_values() -> None:
+    """Assert functions as default parameter values are serialized with their name."""
+    with temporary_inspected_module("def func(): ...\ndef other_func(f=func): ...") as module:
+        default = module["other_func"].parameters["f"].default
+    assert default == "func"

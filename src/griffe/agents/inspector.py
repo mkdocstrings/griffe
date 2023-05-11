@@ -490,7 +490,13 @@ def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) ->
         None if parameter.annotation is empty else _convert_object_to_annotation(parameter.annotation, parent=parent)
     )
     kind = _kind_map[parameter.kind]
-    default = None if parameter.default is empty else repr(parameter.default)
+    if parameter.default is empty:
+        default = None
+    elif hasattr(parameter.default, "__name__"):
+        # avoid repr containing chevrons and memory addresses
+        default = parameter.default.__name__
+    else:
+        default = repr(parameter.default)
     return Parameter(name, annotation=annotation, kind=kind, default=default)
 
 
