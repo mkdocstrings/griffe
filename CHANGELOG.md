@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.27.5](https://github.com/mkdocstrings/griffe/releases/tag/0.27.5) - 2023-05-12
+
+<small>[Compare with 0.27.4](https://github.com/mkdocstrings/griffe/compare/0.27.4...0.27.5)</small>
+
+### Code Refactoring
+
+- Represent function using their names when inspecting default values ([9116c1f](https://github.com/mkdocstrings/griffe/commit/9116c1fbb562c894547d72207921c02259147958) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#180](https://github.com/mkdocstrings/mkdocstrings/issues/180)
+
 ## [0.27.4](https://github.com/mkdocstrings/griffe/releases/tag/0.27.4) - 2023-05-10
 
 <small>[Compare with 0.27.3](https://github.com/mkdocstrings/griffe/compare/0.27.3...0.27.4)</small>
