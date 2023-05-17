@@ -128,3 +128,20 @@ def test_setuptools_file_handling_multiple_paths(tmp_path: Path) -> None:
         "hello=1\nMAPPING = {\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}\ndef printer():\n  print(hello)",
     )
     assert _handle_editable_module(pth_file) == [Path("src1"), Path("src2")]
+
+
+def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
+    """Assert editable modules by `scikit-build-core` are handled.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    pth_file = tmp_path / "_whatever_editable.py"
+    pth_file.write_text(
+        "hello=1\ninstall({'whatever': '/path/to/whatever'}, {'whatever.else': '/else'}, None, False, True)",
+    )
+    # the second dict is not handled: scikit-build-core puts these files
+    # in a location that Griffe won't be able to discover anyway
+    # (they don't respect standard package or namespace package layouts,
+    # and rely on dynamic meta path finder stuff)
+    assert _handle_editable_module(pth_file) == [Path("/path/to/whatever")]

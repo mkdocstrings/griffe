@@ -344,21 +344,20 @@ def _handle_pth_file(path: Path) -> list[Path]:
 
 
 def _handle_editable_module(path: Path) -> list[Path]:
-    try:
-        editable_lines = path.read_text(encoding="utf8").strip().splitlines(keepends=False)
-    except FileNotFoundError as error:
-        raise UnhandledEditableModuleError(path) from error
     if _match_pattern(path.name, (*_editable_editables_patterns, *_editable_scikit_build_core_patterns)):
         # support for how 'editables' write these files:
         # example line: F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')
         # and how 'scikit-build-core' writes these files:
         # example line: install({'griffe': '/media/data/dev/griffe/src/griffe/__init__.py'}, {'cmake_example': ...}, None, False, True)
+        try:
+            editable_lines = path.read_text(encoding="utf8").strip().splitlines(keepends=False)
+        except FileNotFoundError as error:
+            raise UnhandledEditableModuleError(path) from error
         new_path = Path(editable_lines[-1].split("'")[3])
-        if new_path.exists():  # TODO: could remove existence check
-            if new_path.name.startswith("__init__"):
-                return [new_path.parent.parent]
-            return [new_path]
-    elif _match_pattern(path.name, _editable_setuptools_patterns):
+        if new_path.name.startswith("__init__"):
+            return [new_path.parent.parent]
+        return [new_path]
+    if _match_pattern(path.name, _editable_setuptools_patterns):
         # support for how 'setuptools' writes these files:
         # example line: MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}
         parsed_module = ast.parse(path.read_text())
