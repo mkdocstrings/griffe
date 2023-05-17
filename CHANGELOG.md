@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.28.0](https://github.com/mkdocstrings/griffe/releases/tag/0.28.0) - 2023-05-17
+
+<small>[Compare with 0.27.5](https://github.com/mkdocstrings/griffe/compare/0.27.5...0.28.0)</small>
+
+### Features
+
+- Support scikit-build-core editable modules (partially) ([eb64779](https://github.com/mkdocstrings/griffe/commit/eb64779cb5408553bd4923ab9cdfc72d0b5e6103) by Timothée Mazzucotelli). [Issue #154](https://github.com/mkdocstrings/griffe/issues/154)
+
+### Bug Fixes
+
+- Parse complex, stringified annotations ([f743616](https://github.com/mkdocstrings/griffe/commit/f74361684a2cd5db153875b8880788c254828e95) by Timothée Mazzucotelli). [Issue #159](https://github.com/mkdocstrings/griffe/issues/159)
+
 ## [0.27.5](https://github.com/mkdocstrings/griffe/releases/tag/0.27.5) - 2023-05-12
 
 <small>[Compare with 0.27.4](https://github.com/mkdocstrings/griffe/compare/0.27.4...0.27.5)</small>
