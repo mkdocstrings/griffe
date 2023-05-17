@@ -224,3 +224,28 @@ def test_building_value_from_nodes(expression: str) -> None:
     expression = expression.replace(", ", ",")
 
     assert value == expression
+
+
+# https://github.com/mkdocstrings/griffe/issues/159
+def test_parsing_complex_string_annotations() -> None:
+    """Test parsing of complex, stringified annotations."""
+    with temporary_visited_module(
+        """
+        class ArgsKwargs:
+            def __init__(self, args: 'tuple[Any, ...]', kwargs: 'dict[str, Any] | None' = None) -> None:
+                ...
+
+            @property
+            def args(self) -> 'tuple[Any, ...]':
+                ...
+
+            @property
+            def kwargs(self) -> 'dict[str, Any] | None':
+                ...
+        """,
+    ) as module:
+        init_args_annotation = module["ArgsKwargs.__init__"].parameters["args"].annotation
+        assert isinstance(init_args_annotation, Expression)
+        assert init_args_annotation.is_tuple
+        kwargs_return_annotation = module["ArgsKwargs.kwargs"].annotation
+        assert isinstance(kwargs_return_annotation, Expression)

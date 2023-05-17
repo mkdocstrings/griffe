@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 import inspect
 import sys
-from ast import AST
+from ast import AST, PyCF_ONLY_AST
 from ast import Add as NodeAdd
 from ast import And as NodeAnd
 from ast import AnnAssign as NodeAnnAssign
@@ -636,10 +636,12 @@ def _get_call_annotation(node: NodeCall, parent: Module | Class) -> Expression:
     return Expression(_get_annotation(node.func, parent), "(", args, ")")
 
 
-def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str | Name:
+def _get_constant_annotation(node: NodeConstant, parent: Module | Class) -> str | Name | Expression:
     if isinstance(node.value, str):
-        node.id = node.value  # type: ignore[attr-defined]  # fake node as Name
-        return _get_name_annotation(node, parent)  # type: ignore[arg-type]
+        # a string in an annotation is a stringified annotation: we parse it again
+        # literal strings must be wrapped in Literal[...] to be picked up as such
+        parsed = compile(node.value, mode="eval", filename="<string-annotation>", flags=PyCF_ONLY_AST, optimize=1)
+        return _get_annotation(parsed.body, parent=parent)  # type: ignore[attr-defined]
     return _get_literal_annotation(node, parent)
 
 
