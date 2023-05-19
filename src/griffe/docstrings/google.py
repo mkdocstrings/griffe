@@ -63,8 +63,8 @@ _section_kind = {
     "receives": DocstringSectionKind.receives,
     "examples": DocstringSectionKind.examples,
     "attributes": DocstringSectionKind.attributes,
-    "warns": DocstringSectionKind.attributes,
-    "warnings": DocstringSectionKind.attributes,
+    "warns": DocstringSectionKind.warns,
+    "warnings": DocstringSectionKind.warns,
 }
 
 BlockItem = Tuple[int, List[str]]
