@@ -39,8 +39,10 @@ class Name:
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, str):
             return self.full == other or self.brief == other
-        if isinstance(other, (Name, Expression)):
+        if isinstance(other, Name):
             return self.full == other.full
+        if isinstance(other, Expression):
+            return self.full == other.source
         raise NotImplementedError(f"uncomparable types: {type(self)} and {type(other)}")
 
     def __repr__(self) -> str:
@@ -48,6 +50,15 @@ class Name:
 
     def __str__(self) -> str:
         return self.source
+
+    @property
+    def brief(self) -> str:
+        """Return the brief source name.
+
+        Returns:
+            The last part of the source name.
+        """
+        return self.source.rsplit(".", 1)[-1]
 
     @property
     def full(self) -> str:
@@ -69,13 +80,13 @@ class Name:
         return self._full
 
     @property
-    def brief(self) -> str:
-        """Return the brief source name.
+    def canonical(self) -> str:
+        """Return the canonical name (resolved one, not alias name).
 
         Returns:
-            The last part of the source name.
+            The canonical name.
         """
-        return self.source.rsplit(".", 1)[-1]
+        return self.full.rsplit(".", 1)[-1]
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this name's data as a dictionary.
@@ -109,22 +120,37 @@ class Expression(list):
         """
         super().__init__()
         self.extend(values)
-        # for value in values:
-        #     if isinstance(value, Expression):
 
     def __str__(self):
         return "".join(str(element) for element in self)
 
     @property
-    def full(self) -> str:
-        """Return self as a string.
+    def source(self) -> str:
+        """Return the expression as written in the source.
 
         This property is only useful to the AST utils.
 
         Returns:
-            Self as a string.
+            The expression as a string.
         """
         return str(self)
+
+    @property
+    def full(self) -> str:
+        """Return the full expression as a string with canonical names (imported ones, not aliases).
+
+        This property is only useful to the AST utils.
+
+        Returns:
+            The expression as a string.
+        """
+        parts = []
+        for element in self:
+            if isinstance(element, str):
+                parts.append(element)
+            else:
+                parts.append(element.canonical)
+        return "".join(parts)
 
     @property
     def kind(self) -> str:
