@@ -339,3 +339,16 @@ def test_classvar_annotations() -> None:
 
         assert module["C.b"].annotation.full == "bytes"
         assert module["C.b"].labels == {"instance-attribute"}
+
+
+def test_visiting_if_statement_in_class_for_type_guards() -> None:
+    """Don't fail on various if statements when checking for type-guards."""
+    with temporary_visited_module(
+        """
+        class A:
+            if something("string1 string2"):
+                class B:
+                    pass
+        """,
+    ) as module:
+        assert module["A.B"].runtime

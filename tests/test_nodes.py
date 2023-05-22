@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import sys
 from ast import PyCF_ONLY_AST
 
@@ -249,3 +250,20 @@ def test_parsing_complex_string_annotations() -> None:
         assert init_args_annotation.is_tuple
         kwargs_return_annotation = module["ArgsKwargs.kwargs"].annotation
         assert isinstance(kwargs_return_annotation, Expression)
+
+
+def test_parsing_dynamic_base_classes(caplog: pytest.LogCaptureFixture) -> None:
+    """Assert parsing dynamic base classes does not trigger errors.
+
+    Parameters:
+        caplog: Pytest fixture to capture logs.
+    """
+    with caplog.at_level(logging.ERROR), temporary_visited_module(
+        """
+            from collections import namedtuple
+            class Thing(namedtuple('Thing', 'attr1 attr2')):
+                ...
+            """,
+    ):
+        pass
+    assert not caplog.records

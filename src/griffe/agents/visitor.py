@@ -17,14 +17,15 @@ from typing import TYPE_CHECKING, Any, Iterable
 from griffe.agents.base import BaseVisitor
 from griffe.agents.nodes import (
     ASTNode,
-    get_annotation,
     get_docstring,
     get_instance_names,
     get_names,
     get_parameter_default,
-    parse__all__,
     relative_to_absolute,
+    safe_get__all__,
     safe_get_annotation,
+    safe_get_base_class,
+    safe_get_condition,
     safe_get_value,
 )
 from griffe.collections import LinesCollection, ModulesCollection
@@ -246,7 +247,7 @@ class Visitor(BaseVisitor):
         bases = []
         if node.bases:
             for base in node.bases:
-                bases.append(safe_get_annotation(base, parent=self.current))
+                bases.append(safe_get_base_class(base, parent=self.current))
 
         class_ = Class(
             name=node.name,
@@ -627,7 +628,7 @@ class Visitor(BaseVisitor):
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = parse__all__(node, self.current)  # type: ignore[assignment,arg-type]
+                    parent.exports = safe_get__all__(node, self.current)  # type: ignore[assignment,arg-type]
 
     def visit_assign(self, node: ast.Assign) -> None:
         """Visit an assignment node.
@@ -659,7 +660,7 @@ class Visitor(BaseVisitor):
             )
             if all_augment:
                 # we assume exports is not None at this point
-                self.current.exports.extend(parse__all__(node, self.current))  # type: ignore[arg-type,union-attr]
+                self.current.exports.extend(safe_get__all__(node, self.current))  # type: ignore[arg-type,union-attr]
 
     def visit_if(self, node: ast.If) -> None:
         """Visit an "if" node.
@@ -668,10 +669,9 @@ class Visitor(BaseVisitor):
             node: The node to visit.
         """
         if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # type: ignore[attr-defined]
-            with suppress(KeyError):  # unhandled AST nodes
-                condition = get_annotation(node.test, parent=self.current)
-                if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
-                    self.type_guarded = True
+            condition = safe_get_condition(node.test, parent=self.current, log_level=None)
+            if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
+                self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
 
