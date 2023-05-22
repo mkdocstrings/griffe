@@ -8,7 +8,7 @@ check_quality_args = files
 docs_args = host port
 release_args = version
 test_args = match
-fuzz_args = pdm profile browser
+fuzz_args = level pdm profile browser
 
 BASIC_DUTIES = \
 	changelog \

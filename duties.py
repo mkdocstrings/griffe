@@ -284,12 +284,21 @@ def test(ctx: Context, match: str = "") -> None:
     )
 
 
-@duty
-def fuzz(ctx: Context, *, pdm: bool = False, profile: bool = False, browser: bool = False) -> None:
+@duty(skip_if=sys.version_info < (3, 10), skip_reason="Python less than 3.10 does not have sys.stdlib_module_names")
+def fuzz(
+    ctx: Context,
+    *,
+    level: str = "DEBUG",
+    pdm: bool = False,
+    profile: bool = False,
+    browser: bool = False,
+) -> None:
     """Run the test suite.
 
     Parameters:
         ctx: The context instance (passed automatically).
+        level: Log level to use when fuzzing.
+        pdm: Whether to fuzz on PDM's cached packages.
         profile: Whether to profile the run.
         browser: Whether to open the SVG file in the browser at the end.
     """
@@ -297,29 +306,33 @@ def fuzz(ctx: Context, *, pdm: bool = False, profile: bool = False, browser: boo
 
     from griffe.cli import _load_packages as load_packages
 
-    packages = ctx.run(
-        "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
-        title="Finding packages",
-        allow_overrides=False,
-    ).split("\n")
+    def find_pdm_packages() -> list[str]:
+        return ctx.run(
+            "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
+            title="Finding packages",
+            allow_overrides=False,
+        ).split("\n")
 
     if not profile:
-        logging.basicConfig(level=logging.DEBUG)
+        stblib_packages = sorted([m for m in sys.stdlib_module_names if not m.startswith("_")])  # type: ignore[attr-defined]
+        logging.basicConfig(level=getattr(logging, level))
         griffe_load = lazy(load_packages, name="griffe.load")
         # fuzz on standard lib
         ctx.run(
-            griffe_load(["griffe"], resolve_aliases=True, resolve_implicit=True, resolve_external=True),
+            griffe_load(stblib_packages, resolve_aliases=True, resolve_implicit=True, resolve_external=False),
             title="Fuzz on standard library",
             capture=None,
         )
         # fuzz on all PDM cached packages
         if pdm:
+            packages = find_pdm_packages()
             ctx.run(
                 griffe_load(packages, resolve_aliases=True),
                 title=f"Loading {len(packages)} packages",
                 capture=None,
             )
     else:
+        packages = find_pdm_packages()
         ctx.run(
             [
                 sys.executable,
