@@ -526,7 +526,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return self
         if self.parent is not None:
             return self.parent.module
-        raise ValueError
+        raise ValueError(f"Object {self.name} does not have a parent module")
 
     @cached_property
     def package(self) -> Module:
@@ -1258,6 +1258,19 @@ class Module(Object):
         if self._filepath is None:
             raise BuiltinModuleError(self.name)
         return self._filepath
+
+    @cached_property
+    def imports_future_annotations(self) -> bool:
+        """Tell whether this module import future annotations.
+
+        Returns:
+            True or false.
+        """
+        return (
+            "annotations" in self.members
+            and self.members["annotations"].is_alias
+            and self.members["annotations"].target_path == "__future__.annotations"  # type: ignore[union-attr]
+        )
 
     @cached_property
     def is_init_module(self) -> bool:
