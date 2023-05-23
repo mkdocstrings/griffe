@@ -148,6 +148,8 @@ class Expression(list):
         for element in self:
             if isinstance(element, str):
                 parts.append(element)
+            elif isinstance(element, Expression):
+                parts.append(element.full)
             else:
                 parts.append(element.canonical)
         return "".join(parts)
