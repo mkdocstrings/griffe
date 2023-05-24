@@ -51,10 +51,25 @@ def test_explode_return_annotations(annotation: str, items: int) -> None:
         "Optional[tuple[int, float]]",
     ],
 )
-def test_full(annotation: str) -> None:
-    """Assert we can transform expressions to their full form."""
+def test_full_expressions(annotation: str) -> None:
+    """Assert we can transform expressions to their full form without errors."""
     code = f"x: {annotation}"
     with temporary_visited_module(code) as module:
         obj = module["x"]
         res = obj.annotation.full
         assert res == "".join(annotation)
+
+
+def test_resolving_full_names() -> None:
+    """Assert expressions are correctly transformed to their fully-resolved form."""
+    with temporary_visited_module(
+        """
+        from package import module
+        attribute1: module.Class
+
+        from package import module as mod
+        attribute2: mod.Class
+        """,
+    ) as module:
+        assert module["attribute1"].annotation.full == "package.module.Class"
+        assert module["attribute2"].annotation.full == "package.module.Class"

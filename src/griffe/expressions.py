@@ -21,12 +21,14 @@ class Name:
         source: The name as written in the source code.
     """
 
-    def __init__(self, source: str, full: str | Callable) -> None:
+    def __init__(self, source: str, full: str | Callable, *, first_attr_name: bool = True) -> None:
         """Initialize the name.
 
         Parameters:
             source: The name as written in the source code.
             full: The full, resolved name in the given scope, or a callable to resolve it later.
+            first_attr_name: Whether this name is the first in a chain of names representing
+                an attribute (dot separated strings).
         """
         self.source: str = source
         if isinstance(full, str):
@@ -35,6 +37,7 @@ class Name:
         else:
             self._full = ""
             self._resolver = full
+        self.first_attr_name: bool = first_attr_name
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, str):
@@ -148,10 +151,10 @@ class Expression(list):
         for element in self:
             if isinstance(element, str):
                 parts.append(element)
-            elif isinstance(element, Expression):
-                parts.append(element.full)
+            elif isinstance(element, Name):
+                parts.append(element.full if element.first_attr_name else element.canonical)
             else:
-                parts.append(element.canonical)
+                parts.append(element.full)
         return "".join(parts)
 
     @property

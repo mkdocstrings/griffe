@@ -683,9 +683,9 @@ class _ExpressionBuilder:
         left = self._build(node.value)
 
         def resolver() -> str:
-            return f"{left.source}.{node.attr}"  # type: ignore[union-attr]
+            return f"{left.full}.{node.attr}"  # type: ignore[union-attr]
 
-        right = Name(node.attr, resolver)
+        right = Name(node.attr, resolver, first_attr_name=False)
         return Expression(left, ".", right)
 
     def _build_binop(self, node: NodeBinOp) -> Expression:
