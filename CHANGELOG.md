@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.28.2](https://github.com/mkdocstrings/griffe/releases/tag/0.28.2) - 2023-05-24
+
+<small>[Compare with 0.28.1](https://github.com/mkdocstrings/griffe/compare/0.28.1...0.28.2)</small>
+
+### Bug Fixes
+
+- Correctly resolve full expressions ([fa57f4f](https://github.com/mkdocstrings/griffe/commit/fa57f4ff6495679b4e7e70d72d5adb80bd8ebc56) by Timothée Mazzucotelli). [Issue mkdocstrings/autorefs#23](https://github.com/mkdocstrings/autorefs/issues/23)
+- Use `full` attribute instead of `canonical` for expressions ([4338ccc](https://github.com/mkdocstrings/griffe/commit/4338ccc9234f0c4df0ea302a81092a4f3d29f0bf) by Michael Chow). [Issue #163](https://github.com/mkdocstrings/griffe/issues/163), [PR #164](https://github.com/mkdocstrings/griffe/pull/164)
+
 ## [0.28.1](https://github.com/mkdocstrings/griffe/releases/tag/0.28.1) - 2023-05-22
 
 <small>[Compare with 0.28.0](https://github.com/mkdocstrings/griffe/compare/0.28.0...0.28.1)</small>
