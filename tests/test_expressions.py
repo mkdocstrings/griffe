@@ -40,3 +40,21 @@ def test_explode_return_annotations(annotation: str, items: int) -> None:
     with temporary_visited_module(code) as module:
         sections = module["function"].docstring.parse(Parser.google)
         assert sections[1].value
+
+
+@pytest.mark.parametrize(
+    "annotation",
+    [
+        "int",
+        "tuple[int]",
+        "dict[str, str]",
+        "Optional[tuple[int, float]]",
+    ],
+)
+def test_full(annotation: str) -> None:
+    """Assert we can transform expressions to their full form."""
+    code = f"x: {annotation}"
+    with temporary_visited_module(code) as module:
+        obj = module["x"]
+        res = obj.annotation.full
+        assert res == "".join(annotation)
