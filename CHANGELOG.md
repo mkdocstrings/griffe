@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.29.0](https://github.com/mkdocstrings/griffe/releases/tag/0.29.0) - 2023-05-26
+
+<small>[Compare with 0.28.2](https://github.com/mkdocstrings/griffe/compare/0.28.2...0.29.0)</small>
+
+### Features
+
+- Provide test helpers and pytest fixtures ([611ed58](https://github.com/mkdocstrings/griffe/commit/611ed5868e22ac3ada6467ba25c6dab606f5dee7) by Timothée Mazzucotelli).
+
 ## [0.28.2](https://github.com/mkdocstrings/griffe/releases/tag/0.28.2) - 2023-05-24
 
 <small>[Compare with 0.28.1](https://github.com/mkdocstrings/griffe/compare/0.28.1...0.28.2)</small>
