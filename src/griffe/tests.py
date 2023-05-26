@@ -1,4 +1,14 @@
-"""General helpers for tests."""
+"""Test helpers and pytest fixtures.
+
+Load fixtures in your own tests by adding `griffe.tests`
+to the [`pytest_plugins`][pytest_plugins] list:
+
+```python title="conftest.py"
+pytest_plugins = ["griffe.tests"]
+```
+
+[pytest_plugins]: https://docs.pytest.org/en/7.1.x/how-to/plugins.html#requiring-loading-plugins-in-a-test-module-or-conftest-file
+"""
 
 from __future__ import annotations
 
@@ -12,11 +22,22 @@ from textwrap import dedent
 from typing import Iterator, Mapping, Sequence
 
 from griffe.agents.inspector import inspect
-from griffe.agents.visitor import visit
+from griffe.agents.visitor import patch_ast, visit
 from griffe.dataclasses import Module, Object
 from griffe.loader import GriffeLoader
 
 TMPDIR_PREFIX = "griffe_"
+
+
+try:
+    import pytest
+
+    @pytest.fixture(scope="session", autouse=True)
+    def _fixture_patch_ast() -> None:
+        patch_ast()
+
+except ImportError:
+    pass
 
 
 @contextmanager

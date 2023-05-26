@@ -2,6 +2,4 @@
 
 from __future__ import annotations
 
-from griffe.agents.visitor import patch_ast
-
-patch_ast()
+pytest_plugins = ["griffe.tests"]

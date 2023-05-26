@@ -5,7 +5,7 @@ from __future__ import annotations
 from textwrap import dedent
 
 from griffe.loader import GriffeLoader
-from tests.helpers import temporary_pypackage
+from griffe.tests import temporary_pypackage
 
 
 def test_dont_trigger_alias_resolution_when_merging_stubs() -> None:

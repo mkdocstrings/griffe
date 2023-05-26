@@ -9,7 +9,7 @@ import pytest
 
 from griffe.agents.inspector import inspect
 from griffe.expressions import Name
-from tests.helpers import temporary_inspected_module, temporary_pypackage
+from griffe.tests import temporary_inspected_module, temporary_pypackage
 
 
 def test_annotations_from_builtin_types() -> None:

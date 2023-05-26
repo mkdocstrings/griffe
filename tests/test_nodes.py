@@ -10,7 +10,7 @@ import pytest
 
 from griffe.agents.nodes import get_value, relative_to_absolute
 from griffe.expressions import Expression, Name
-from tests.helpers import module_vtree, temporary_visited_module
+from griffe.tests import module_vtree, temporary_visited_module
 
 
 @pytest.mark.parametrize(

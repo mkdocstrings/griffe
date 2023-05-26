@@ -8,7 +8,7 @@ from textwrap import dedent
 import pytest
 
 from griffe.finder import ModuleFinder, NamespacePackage, _handle_editable_module, _handle_pth_file
-from tests.helpers import temporary_pypackage
+from griffe.tests import temporary_pypackage
 
 
 @pytest.mark.parametrize(

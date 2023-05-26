@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from griffe.expressions import Name
 from griffe.loader import GriffeLoader
-from tests.helpers import temporary_pyfile, temporary_pypackage
+from griffe.tests import temporary_pyfile, temporary_pypackage
 
 if TYPE_CHECKING:
     import pytest

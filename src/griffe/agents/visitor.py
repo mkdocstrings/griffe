@@ -326,6 +326,8 @@ class Visitor(BaseVisitor):
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
                 decorator_value = safe_get_value(decorator_node, self.filepath)
+                if decorator_value is None:
+                    continue
                 overload = (
                     decorator_value in typing_overload
                     or decorator_value == "overload"

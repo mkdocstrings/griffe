@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from griffe.docstrings.parsers import Parser
-from tests.helpers import temporary_visited_module
+from griffe.tests import temporary_visited_module
 
 
 @pytest.mark.parametrize(

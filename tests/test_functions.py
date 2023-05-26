@@ -7,7 +7,7 @@ import sys
 import pytest
 
 from griffe.dataclasses import ParameterKind
-from tests.helpers import temporary_visited_module
+from griffe.tests import temporary_visited_module
 
 
 def test_visit_simple_function() -> None:

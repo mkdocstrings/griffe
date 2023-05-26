@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tests.helpers import module_vtree
+from griffe.tests import module_vtree
 
 
 def test_access_members_using_string_and_tuples() -> None:

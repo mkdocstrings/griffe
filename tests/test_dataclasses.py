@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
-from tests.helpers import module_vtree, temporary_pypackage
+from griffe.tests import module_vtree, temporary_pypackage
 
 
 def test_submodule_exports() -> None:

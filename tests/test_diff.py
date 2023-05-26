@@ -7,7 +7,7 @@ import sys
 import pytest
 
 from griffe.diff import Breakage, BreakageKind, find_breaking_changes
-from tests.helpers import temporary_visited_module, temporary_visited_package
+from griffe.tests import temporary_visited_module, temporary_visited_package
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="no positional-only parameters on Python 3.7")

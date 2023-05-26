@@ -7,7 +7,7 @@ from textwrap import dedent
 import pytest
 
 from griffe.loader import GriffeLoader
-from tests.helpers import temporary_pypackage, temporary_visited_module
+from griffe.tests import temporary_pypackage, temporary_visited_module
 
 # @given(hs.from_node(node=libcst.Module))
 # @pytest.mark.skipif(sys.version_info >= (3, 11, 0), reason="Too slow on Python 3.11?")
