@@ -150,9 +150,9 @@ def _read_block_items(docstring: Docstring, *, offset: int) -> tuple[list[list[s
             previous_was_empty = True
 
         else:
-            if previous_was_empty:
-                break
             # new item
+            if new_offset+1 < len(lines) and lines[new_offset+1].startswith("---"):
+                break
             items.append(current_item)
             current_item = [line]
             previous_was_empty = False
