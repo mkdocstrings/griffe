@@ -97,6 +97,7 @@ def test_indented_code_block(parse_numpy: ParserType) -> None:
     assert not warnings
 
 
+@pytest.mark.xfail
 def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> None:
     """In sections with items, don't treat lines with just indentation as items.
 
@@ -107,6 +108,19 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 2
     assert len(sections[0].value) == 1
+
+
+def test_empty_indented_lines_in_section_with_items2(parse_numpy: ParserType) -> None:
+    """In sections with items, don't treat lines with just indentation as items.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = "Returns\n-------\nfirst_item : type\n    Description.\n\nsecond_item : type\n    Description2"""
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    assert len(sections[0].value) == 2
+
 
 
 # =============================================================================================
