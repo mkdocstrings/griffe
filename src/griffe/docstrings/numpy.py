@@ -105,7 +105,13 @@ def _is_dash_line(line: str) -> bool:
     return not _is_empty_line(line) and _is_empty_line(line.replace("-", ""))
 
 
-def _read_block_items(docstring: Docstring, *, offset: int, allow_block_breaks:bool, **options) -> tuple[list[list[str]], int]:
+def _read_block_items(
+    docstring: Docstring,
+    *,
+    offset: int,
+    allow_block_breaks:bool,
+    **options: Any,                      # noqa: ARG001
+) -> tuple[list[list[str]], int]:
     lines = docstring.lines
     if offset >= len(lines):
         return [], offset
@@ -236,7 +242,7 @@ def _read_parameters(
     *,
     offset: int,
     warn_unknown_params: bool = True,
-    **options,
+    **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
     parameters = []
     annotation: str | Name | Expression | None
@@ -299,7 +305,7 @@ def _read_parameters_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionParameters | None, int]:
     parameters, new_offset = _read_parameters(docstring, offset=offset, **options)
 
@@ -314,7 +320,7 @@ def _read_other_parameters_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
     parameters, new_offset = _read_parameters(docstring, offset=offset, warn_unknown_params=False, **options)
 
@@ -329,7 +335,7 @@ def _read_deprecated_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionDeprecated | None, int]:
     # deprecated
     # SINCE_VERSION
@@ -353,7 +359,7 @@ def _read_returns_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionReturns | None, int]:
     # (NAME : )?TYPE
     #     TEXT?
@@ -408,7 +414,7 @@ def _read_yields_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionYields | None, int]:
     # yields
     # (NAME : )?TYPE
@@ -456,7 +462,7 @@ def _read_receives_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionReceives | None, int]:
     # receives
     # (NAME : )?TYPE
@@ -499,7 +505,7 @@ def _read_raises_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionRaises | None, int]:
     # raises
     # EXCEPTION
@@ -522,7 +528,7 @@ def _read_warns_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionWarns | None, int]:
     # warns
     # WARNING
@@ -545,7 +551,7 @@ def _read_attributes_section(
     docstring: Docstring,
     *,
     offset: int,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionAttributes | None, int]:
     # attributes (for classes)
     # NAME( : TYPE)?
