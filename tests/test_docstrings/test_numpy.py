@@ -113,7 +113,7 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
     sections2, _ = parse_numpy(docstring, allow_block_breaks = True)
     assert len(sections2) == 1
     assert len(sections2[0].value) == 2
-    
+
 
 
 # =============================================================================================
