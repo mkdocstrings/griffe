@@ -677,6 +677,9 @@ def parse(
         docstring: The docstring to parse.
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
+        allow_block_breaks: Whether to consider an empty line between items in a section
+            with a formatted block, like Parameters or Returns, to be the end of the section.
+            If False, you can create a section using two empty lines.
         **options: Additional parsing options.
 
     Returns:
