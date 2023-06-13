@@ -952,6 +952,37 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_google: ParserType, r
     assert yields[1].annotation.source == "float"
 
 
+@pytest.mark.parametrize(
+    "return_annotation",
+    [
+        "Iterator[int]",
+        "Generator[int, None, None]",
+    ],
+)
+def test_extract_yielded_type_with_single_return_item(parse_google: ParserType, return_annotation: str) -> None:
+    """Extract main type annotation from Iterator or Generator.
+
+    Parameters:
+        parse_google: Fixture parser.
+        return_annotation: Parametrized return annotation as a string.
+    """
+    docstring = """
+        Summary.
+
+        Yields:
+            A number.
+    """
+    sections, _ = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+        ),
+    )
+    yields = sections[1].value
+    assert yields[0].annotation.source == "int"
+
+
 # =============================================================================================
 # Receives sections
 def test_parse_receives_tuple_in_generator(parse_google: ParserType) -> None:
@@ -979,6 +1010,36 @@ def test_parse_receives_tuple_in_generator(parse_google: ParserType) -> None:
     assert receives[0].annotation.source == "int"
     assert receives[1].name == "b"
     assert receives[1].annotation.source == "float"
+
+
+@pytest.mark.parametrize(
+    "return_annotation",
+    [
+        "Generator[int, float, None]",
+    ],
+)
+def test_extract_received_type_with_single_return_item(parse_google: ParserType, return_annotation: str) -> None:
+    """Extract main type annotation from Iterator or Generator.
+
+    Parameters:
+        parse_google: Fixture parser.
+        return_annotation: Parametrized return annotation as a string.
+    """
+    docstring = """
+        Summary.
+
+        Receives:
+            A floating point number.
+    """
+    sections, _ = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+        ),
+    )
+    receives = sections[1].value
+    assert receives[0].annotation.source == "float"
 
 
 # =============================================================================================

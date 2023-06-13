@@ -440,19 +440,18 @@ def _read_yields_section(
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
-                if len(block) > 1:
-                    if annotation.is_iterator:
-                        yield_item = annotation.iterator_item()
-                    elif annotation.is_generator:
-                        yield_item, _, _ = annotation.generator_items()
-                    else:
-                        raise ValueError
-                    if isinstance(yield_item, Name):
-                        annotation = yield_item
-                    elif yield_item.is_tuple:
-                        annotation = yield_item.tuple_item(index)
-                    else:
-                        annotation = yield_item
+                if annotation.is_iterator:
+                    yield_item = annotation.iterator_item()
+                elif annotation.is_generator:
+                    yield_item, _, _ = annotation.generator_items()
+                else:
+                    raise ValueError
+                if isinstance(yield_item, Name):
+                    annotation = yield_item
+                elif yield_item.is_tuple:
+                    annotation = yield_item.tuple_item(index)
+                else:
+                    annotation = yield_item
 
             if annotation is None:
                 yielded_value = repr(name) if name else index + 1
@@ -492,7 +491,7 @@ def _read_receives_section(
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
-                if len(block) > 1 and annotation.is_generator:
+                if annotation.is_generator:
                     _, receives_item, _ = annotation.generator_items()
                     if isinstance(receives_item, Name):
                         annotation = receives_item
