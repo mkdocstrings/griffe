@@ -96,10 +96,6 @@ See [the Loading data section](https://mkdocstrings.github.io/griffe/loading/) f
 
 ## Todo
 
-- Visitor/Inspector:
-    - Merging inherited members into class.
-        Needs to be able to post-process classes,
-        and to compute their MRO (C3Linearization, see docspec/pydocspec issues).
 - Extensions
     - Post-processing extensions
     - Third-party libraries we could provide support for:
@@ -111,7 +107,6 @@ See [the Loading data section](https://mkdocstrings.github.io/griffe/loading/) f
     - New Markdown-based format? For graceful degradation
 - Serializer:
     - Flat JSON
-    - JSON schema
 - API diff:
     - [ ] Mechanism to cache APIs? Should users version them, or store them somewhere (docs)?
     - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)

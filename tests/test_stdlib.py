@@ -20,7 +20,7 @@ def _access_inherited_members(obj: Object | Alias) -> None:
     except Exception:  # noqa: BLE001
         return
     if is_class:
-        assert obj.inherited_members is not None  # type: ignore[union-attr]
+        assert obj.inherited_members is not None
     else:
         for cls in obj.classes.values():
             _access_inherited_members(cls)
@@ -37,6 +37,5 @@ def test_fuzzing_on_stdlib() -> None:
             loader.load_module(package)
 
     loader.resolve_aliases(implicit=True, external=True)
-    # TODO: uncomment once inheritance feature is merged
-    # for module in loader.modules_collection.members.values():
-    #     _access_inherited_members(module)
+    for module in loader.modules_collection.members.values():
+        _access_inherited_members(module)

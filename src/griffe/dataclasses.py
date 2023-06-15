@@ -13,23 +13,28 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Sequence, Union, cast
 
+from griffe.c3linear import c3linear_merge
 from griffe.docstrings.parsers import Parser, parse
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
+from griffe.expressions import Name
+from griffe.logger import get_logger
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
     from griffe.docstrings.dataclasses import DocstringSection
-    from griffe.expressions import Expression, Name
-
+    from griffe.expressions import Expression
 
 # TODO: remove once Python 3.7 support is dropped
 if sys.version_info < (3, 8):
     from cached_property import cached_property
 else:
     from functools import cached_property
+
+
+logger = get_logger(__name__)
 
 
 class ParameterKind(enum.Enum):
@@ -322,6 +327,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     kind: Kind
     is_alias: bool = False
     is_collection: bool = False
+    inherited: bool = False
 
     def __init__(
         self,
@@ -428,6 +434,23 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             kind = Kind(kind)
         return self.kind is kind
 
+    @cached_property
+    def inherited_members(self) -> dict[str, Alias]:
+        """Members that are inherited from base classes."""
+        if not isinstance(self, Class):
+            return {}
+        inherited_members = {}
+        for base in reversed(self.mro()):
+            for name, member in base.members.items():
+                if name not in self.members:
+                    inherited_members[name] = Alias(name, member, parent=self, inherited=True)  # type: ignore[arg-type]
+        return inherited_members
+
+    @property
+    def all_members(self) -> dict[str, Object | Alias]:
+        """All members (declared and inherited)."""
+        return {**self.inherited_members, **self.members}
+
     @property
     def is_module(self) -> bool:
         """Tell if this object is a module."""
@@ -483,7 +506,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         Returns:
             A dictionary of modules.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
 
     @property
     def classes(self) -> dict[str, Class]:
@@ -492,7 +515,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         Returns:
             A dictionary of classes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
 
     @property
     def functions(self) -> dict[str, Function]:
@@ -501,7 +524,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         Returns:
             A dictionary of functions.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
 
     @property
     def attributes(self) -> dict[str, Attribute]:
@@ -510,7 +533,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         Returns:
             A dictionary of attributes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
     @cached_property
     def module(self) -> Module:
@@ -807,6 +830,7 @@ class Alias(ObjectAliasMixin):
         endlineno: int | None = None,
         runtime: bool = True,
         parent: Module | Class | None = None,
+        inherited: bool = False,
     ) -> None:
         """Initialize the alias.
 
@@ -818,11 +842,13 @@ class Alias(ObjectAliasMixin):
             endlineno: The alias ending line number.
             runtime: Whether this alias is present at runtime or not.
             parent: The alias parent.
+            inherited: Whether this alias wraps an inherited member.
         """
         self.name: str = name
         self.alias_lineno: int | None = lineno
         self.alias_endlineno: int | None = endlineno
         self.runtime: bool = runtime
+        self.inherited: bool = inherited
         self._parent: Module | Class | None = parent
         self._passed_through: bool = False
         if isinstance(target, str):
@@ -962,6 +988,14 @@ class Alias(ObjectAliasMixin):
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
         return self.final_target.member_is_exported(member, explicitely=explicitely)
 
+    @property
+    def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
+        return self.final_target.inherited_members
+
+    @property
+    def all_members(self) -> dict[str, Object | Alias]:  # noqa: D102
+        return self.final_target.all_members
+
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
         return self.final_target.is_kind(kind)
 
@@ -1091,6 +1125,13 @@ class Alias(ObjectAliasMixin):
     @annotation.setter
     def annotation(self, annotation: str | Name | Expression | None) -> None:
         cast(Attribute, self.target).annotation = annotation
+
+    @property
+    def resolved_bases(self) -> list[Object]:  # noqa: D102
+        return cast(Class, self.final_target).resolved_bases
+
+    def mro(self) -> list[Class]:  # noqa: D102
+        return cast(Class, self.final_target).mro()
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
 
@@ -1356,7 +1397,7 @@ class Class(Object):
     def __init__(
         self,
         *args: Any,
-        bases: list[Name | Expression | str] | None = None,
+        bases: Sequence[Name | Expression | str] | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1369,7 +1410,7 @@ class Class(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.bases: list[Name | Expression | str] = bases or []
+        self.bases: list[Name | Expression | str] = list(bases) if bases else []
         self.decorators: list[Decorator] = decorators or []
         self.overloads: dict[str, list[Function]] = defaultdict(list)
 
@@ -1391,6 +1432,42 @@ class Class(Object):
                     ],
                 )
             return Parameters()
+
+    @cached_property
+    def resolved_bases(self) -> list[Object]:
+        """Resolved class bases."""
+        resolved_bases = []
+        for base in self.bases:
+            if isinstance(base, str):
+                base_path = base
+            elif isinstance(base, Name):
+                base_path = base.full
+            else:
+                base_path = base.without_subscript.full
+            try:
+                resolved_base = self.modules_collection[base_path]
+                if resolved_base.is_alias:
+                    resolved_base = resolved_base.final_target
+            except (AliasResolutionError, CyclicAliasError, KeyError):
+                logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
+            else:
+                resolved_bases.append(resolved_base)
+        return resolved_bases
+
+    def _mro(self, seen: tuple[str, ...] = ()) -> list[Class]:
+        seen = (*seen, self.path)
+        bases: list[Class] = [base for base in self.resolved_bases if base.is_class]  # type: ignore[misc]
+        if not bases:
+            return [self]
+        for base in bases:
+            if base.path in seen:
+                cycle = " -> ".join(seen) + f" -> {base.path}"
+                raise ValueError(f"Cannot compute C3 linearization, inheritance cycle detected: {cycle}")
+        return [self, *c3linear_merge(*[base._mro(seen) for base in bases], bases)]
+
+    def mro(self) -> list[Class]:
+        """Return a list of classes in order corresponding to Python's MRO."""
+        return self._mro()[1:]  # remove self
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
         """Return this class' data as a dictionary.

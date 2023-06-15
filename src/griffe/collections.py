@@ -89,3 +89,7 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin):
 
     def __contains__(self, item: Any) -> bool:
         return item in self.members
+
+    @property
+    def all_members(self) -> dict[str, Module]:  # noqa: D102
+        return self.members
