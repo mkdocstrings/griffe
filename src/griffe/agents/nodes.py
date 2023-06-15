@@ -318,6 +318,13 @@ class ObjectNode:
         return f"ObjectNode(name={self.name!r})"
 
     @cached_property
+    def path(self) -> str:
+        """The object's (Python) path."""
+        if self.parent is None:
+            return self.name
+        return f"{self.parent.path}.{self.name}"
+
+    @cached_property
     def kind(self) -> ObjectKind:
         """Return the kind of this node.
 
@@ -508,6 +515,7 @@ class ObjectNode:
             and member is not type
             and member is not object
             and id(member) not in self._ids
+            and name in vars(self.obj)
         )
 
 

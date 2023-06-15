@@ -167,6 +167,19 @@ class Expression(list):
         return str(self.non_optional).split("[", 1)[0].rsplit(".", 1)[-1].lower()
 
     @property
+    def without_subscript(self) -> Expression:
+        """The expression without the subscript part (if any).
+
+        For example, `Generic[T]` becomes `Generic`.
+        """
+        parts = []
+        for element in self:
+            if isinstance(element, str) and element == "[":
+                break
+            parts.append(element)
+        return Expression(*parts)
+
+    @property
     def is_tuple(self) -> bool:
         """Tell whether this expression represents a tuple.
 
