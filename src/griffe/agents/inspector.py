@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Any
 
 from griffe.agents.base import BaseInspector
 from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
-from griffe.collections import LinesCollection
+from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
     Alias,
     Attribute,
@@ -71,6 +71,7 @@ def inspect(
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
 ) -> Module:
     """Inspect a module.
 
@@ -83,6 +84,7 @@ def inspect(
         docstring_parser: The docstring parser to use. By default, no parsing is done.
         docstring_options: Additional docstring parsing options.
         lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
 
     Returns:
         The module, with its members populated.
@@ -98,6 +100,7 @@ def inspect(
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
         lines_collection=lines_collection,
+        modules_collection=modules_collection,
     ).get_module(import_paths)
 
 
@@ -168,6 +171,7 @@ class Inspector(BaseInspector):
         docstring_parser: Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
+        modules_collection: ModulesCollection | None = None,
     ) -> None:
         """Initialize the inspector.
 
@@ -179,6 +183,7 @@ class Inspector(BaseInspector):
             docstring_parser: The docstring parser to use.
             docstring_options: The docstring parsing options.
             lines_collection: A collection of source code lines.
+            modules_collection: A collection of modules.
         """
         super().__init__()
         self.module_name: str = module_name
@@ -189,6 +194,7 @@ class Inspector(BaseInspector):
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
         try:
@@ -279,6 +285,7 @@ class Inspector(BaseInspector):
             parent=self.parent,
             docstring=self._get_docstring(node),
             lines_collection=self.lines_collection,
+            modules_collection=self.modules_collection,
         )
         self.generic_inspect(node)
 
