@@ -87,8 +87,9 @@ def inspect(
     Returns:
         The module, with its members populated.
     """
-    if not import_paths and filepath:
-        import_paths = [filepath.parent]
+    import_paths = import_paths or []
+    if filepath and filepath.parent not in import_paths:
+        import_paths.insert(0, filepath.parent)
     return Inspector(
         module_name,
         filepath,
