@@ -19,12 +19,17 @@ from contextlib import contextmanager
 from importlib import invalidate_caches
 from pathlib import Path
 from textwrap import dedent
-from typing import Iterator, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
 
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import patch_ast, visit
 from griffe.dataclasses import Module, Object
 from griffe.loader import GriffeLoader
+
+if TYPE_CHECKING:
+    from griffe.collections import LinesCollection, ModulesCollection
+    from griffe.docstrings.parsers import Parser
+    from griffe.extensions import Extensions
 
 TMPDIR_PREFIX = "griffe_"
 
@@ -40,24 +45,25 @@ except ImportError:
     pass
 
 
+TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
+
+
 @contextmanager
-def temporary_pyfile(code: str) -> Iterator[tuple[str, Path]]:
-    """Create a module.py file containing the given code in a temporary directory.
+def temporary_pyfile(code: str, *, module_name: str = "module") -> Iterator[tuple[str, Path]]:
+    """Create a Python file containing the given code in a temporary directory.
 
     Parameters:
         code: The code to write to the temporary file.
+        module_name: The name of the temporary module.
 
     Yields:
         module_name: The module name, as to dynamically import it.
         module_path: The module path.
     """
     with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
-        tmpfile = Path(tmpdir) / "module.py"
+        tmpfile = Path(tmpdir) / f"{module_name}.py"
         tmpfile.write_text(dedent(code))
-        yield "module", tmpfile
-
-
-TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
+        yield module_name, tmpfile
 
 
 @contextmanager
@@ -139,33 +145,91 @@ def temporary_visited_package(
 
 
 @contextmanager
-def temporary_visited_module(code: str) -> Iterator[Module]:
+def temporary_visited_module(
+    code: str,
+    *,
+    module_name: str = "module",
+    extensions: Extensions | None = None,
+    parent: Module | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+) -> Iterator[Module]:
     """Create and visit a temporary module with the given code.
 
     Parameters:
         code: The code of the module.
+        module_name: The name of the temporary module.
+        extensions: The extensions to use when visiting the AST.
+        parent: The optional parent of this module.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
 
     Yields:
         The visited module.
     """
-    yield visit("module", filepath=Path("/fake/module.py"), code=dedent(code))
+    with temporary_pyfile(code, module_name=module_name) as (_, path):
+        yield visit(
+            module_name,
+            filepath=path,
+            code=dedent(code),
+            extensions=extensions,
+            parent=parent,
+            docstring_parser=docstring_parser,
+            docstring_options=docstring_options,
+            lines_collection=lines_collection,
+            modules_collection=modules_collection,
+        )
 
 
 @contextmanager
-def temporary_inspected_module(code: str) -> Iterator[Module]:
+def temporary_inspected_module(
+    code: str,
+    *,
+    module_name: str = "module",
+    import_paths: list[Path] | None = None,
+    extensions: Extensions | None = None,
+    parent: Module | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+) -> Iterator[Module]:
     """Create and inspect a temporary module with the given code.
 
     Parameters:
         code: The code of the module.
+        module_name: The name of the temporary module.
+        import_paths: Paths to import the module from.
+        extensions: The extensions to use when visiting the AST.
+        parent: The optional parent of this module.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
 
     Yields:
         The inspected module.
     """
-    with temporary_pyfile(code) as (name, path):
+    with temporary_pyfile(code, module_name=module_name) as (_, path):
         try:
-            yield inspect(name, filepath=path)
+            yield inspect(
+                module_name,
+                filepath=path,
+                import_paths=import_paths,
+                extensions=extensions,
+                parent=parent,
+                docstring_parser=docstring_parser,
+                docstring_options=docstring_options,
+                lines_collection=lines_collection,
+                modules_collection=modules_collection,
+            )
         finally:
-            del sys.modules["module"]
+            if module_name in sys.modules:
+                del sys.modules[module_name]
             invalidate_caches()
 
 
