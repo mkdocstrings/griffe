@@ -24,7 +24,8 @@ nav:
     - Supported styles: docstrings.md
     - Parsing docstrings in Python: parsing_docstrings.md
 # defer to gen-files + literate-nav
-- Code Reference: reference/
+- API reference:
+  - Griffe: reference/
 - Development:
   - Contributing: contributing.md
   - Code of Conduct: code_of_conduct.md
@@ -118,6 +119,7 @@ plugins:
           docstring_options:
             ignore_init_summary: true
           docstring_section_style: list
+          heading_level: 1
           merge_init_into_class: true
           separate_signature: true
           show_root_heading: true

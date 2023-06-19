@@ -279,7 +279,7 @@ def test(ctx: Context, match: str = "") -> None:
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
     ctx.run(
-        pytest.run("-n", "auto", "tests", config_file="config/pytest.ini", select=match),
+        pytest.run("-n", "auto", "tests", config_file="config/pytest.ini", select=match, color="yes"),
         title=pyprefix("Running tests"),
     )
 
