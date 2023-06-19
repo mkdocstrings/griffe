@@ -62,8 +62,13 @@ def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> 
             except ModuleNotFoundError as error:
                 if len(module_parts) == 1:
                     raise
-                errors.append(str(error))
+                errors.append(f"{error.__class__.__name__}: {error}")
                 object_parts.insert(0, module_parts.pop(-1))
+            except (Exception, BaseException) as error:
+                # pyo3's PanicException can only be caught with BaseException.
+                # We do want to catch base exceptions anyway (exit, interrupt, etc.),
+                errors.append(f"{error.__class__.__name__}: {error}")
+                raise ImportError("\n".join(errors)) from error
             else:
                 break
 
