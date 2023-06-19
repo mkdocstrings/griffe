@@ -696,6 +696,28 @@ def test_class_uses_init_parameters(parse_numpy: ParserType) -> None:
     assert argx.description == "X value."
 
 
+def test_detect_optional_flag(parse_numpy: ParserType) -> None:
+    """Detect the optional part of a parameter docstring.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        a : str, optional
+        g, h : bytes, optional, default=b''
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    assert sections[0].value[0].annotation == "str"
+    assert sections[0].value[1].annotation == "bytes"
+    assert sections[0].value[1].default == "b''"
+    assert sections[0].value[2].annotation == "bytes"
+    assert sections[0].value[2].default == "b''"
+
+
 # =============================================================================================
 # Yields sections
 @pytest.mark.parametrize(
