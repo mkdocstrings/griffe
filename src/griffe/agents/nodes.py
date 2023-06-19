@@ -715,10 +715,25 @@ class _ExpressionBuilder:
 
     def _build_constant(self, node: NodeConstant) -> str | Name | Expression:
         if self._parse_strings and isinstance(node.value, str) and not self._literal_strings:
-            # a string in an annotation is a stringified annotation: we build it again
-            # literal strings must be wrapped in Literal[...] to be picked up as such
-            parsed = compile(node.value, mode="eval", filename="<string-annotation>", flags=PyCF_ONLY_AST, optimize=1)
-            return self._build(parsed.body)  # type: ignore[attr-defined]
+            # A string in an annotation is a stringified annotation: we parse and build it again.
+            # If we fail to parse it (syntax errors), we consider it's a literal string and log a message.
+            # Literal strings must be wrapped in Literal[...] to be picked up as such.
+            try:
+                parsed = compile(
+                    node.value,
+                    mode="eval",
+                    filename="<string-annotation>",
+                    flags=PyCF_ONLY_AST,
+                    optimize=1,
+                )
+            except SyntaxError:
+                logger.debug(
+                    f"Tried and failed to parse {node.value!r} as Python code, "
+                    "falling back to using it as a string literal "
+                    "(postponed annotations might help: https://peps.python.org/pep-0563/)",
+                )
+            else:
+                return self._build(parsed.body)  # type: ignore[attr-defined]
         return self._build_literal(node)
 
     def _build_literal(self, node: NodeConstant) -> str:

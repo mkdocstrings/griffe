@@ -64,6 +64,7 @@ def test_relative_to_absolute_imports(code: str, path: str, is_package: bool, ex
         "A[[B, C], D]",
         "A(b=c, d=1)",
         "A[-1, +2.3]",
+        "A[B, C.D(e='syntax error')]",
     ],
 )
 def test_building_annotations_from_nodes(expression: str) -> None:
