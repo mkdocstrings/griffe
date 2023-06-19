@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.29.1](https://github.com/mkdocstrings/griffe/releases/tag/0.29.1) - 2023-06-19
+
+<small>[Compare with 0.29.0](https://github.com/mkdocstrings/griffe/compare/0.29.0...0.29.1)</small>
+
+### Bug Fixes
+
+- Fix detection of optional and default in Numpydoc-style parameters ([3509106](https://github.com/mkdocstrings/griffe/commit/3509106399c5475ef71bb074dfa8f885e6759058) by Timothée Mazzucotelli). [Issue #165](https://github.com/mkdocstrings/griffe/issues/165)
+- Fallback to string literal when parsing fails with syntax error ([53827c8](https://github.com/mkdocstrings/griffe/commit/53827c8c073e55a7f6d8ef61b36e9baf51f1c2bc) by Timothée Mazzucotelli). [Issue mkdocstrings/python#80](https://github.com/mkdocstrings/python/issues/80)
+- Don't mutate finder's import paths ([a9e025a](https://github.com/mkdocstrings/griffe/commit/a9e025a16571b83713ce44f2be2356e498a847a2) by Timothée Mazzucotelli).
+- Respect `external` when expanding wildcards ([8ef92c8](https://github.com/mkdocstrings/griffe/commit/8ef92c873db175dbd35e6d09277f6023a8fde32d) by Timothée Mazzucotelli).
+- Extract actual type for yielded/received values ([3ea37ba](https://github.com/mkdocstrings/griffe/commit/3ea37ba2bcafea47f4b28bab6ae916ecb921b5ce) by Timothée Mazzucotelli). [Issue mkdocstrings/python#75](https://github.com/mkdocstrings/python/issues/75)
+
+### Code Refactoring
+
+- Improve error handling when importing a module ([a732e21](https://github.com/mkdocstrings/griffe/commit/a732e217622cc5ab2161479b9dde0ce59e2361af) by Timothée Mazzucotelli).
+- Improve tests helpers (accept all visit/inspection parameters) ([6da5869](https://github.com/mkdocstrings/griffe/commit/6da586963cddff4dceadcd4b485dbb805830b6ea) by Timothée Mazzucotelli).
+- Allow passing a modules collection to the inspector, for consistency with the visitor ([5f73a28](https://github.com/mkdocstrings/griffe/commit/5f73a28a09a4b445fa253356034c5ef40b9ecfec) by Timothée Mazzucotelli).
+- Always add import path of module to inspect when it has a file path ([4021e6f](https://github.com/mkdocstrings/griffe/commit/4021e6fe9f5e06543f9709e7ae42f6ad8cd0b093) by Timothée Mazzucotelli).
+
 ## [0.29.0](https://github.com/mkdocstrings/griffe/releases/tag/0.29.0) - 2023-05-26
 
 <small>[Compare with 0.28.2](https://github.com/mkdocstrings/griffe/compare/0.28.2...0.29.0)</small>
