@@ -89,7 +89,7 @@ def inspect(
     Returns:
         The module, with its members populated.
     """
-    import_paths = import_paths or []
+    import_paths = list(import_paths) if import_paths else []
     if filepath and filepath.parent not in import_paths:
         import_paths.insert(0, filepath.parent)
     return Inspector(
