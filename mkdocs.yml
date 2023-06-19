@@ -118,12 +118,14 @@ plugins:
           docstring_options:
             ignore_init_summary: true
           docstring_section_style: list
-          docstring_style: google
-          members_order: alphabetical
           merge_init_into_class: true
           separate_signature: true
-          show_category_heading: no
-          show_submodules: no
+          show_root_heading: true
+          show_root_full_path: false
+          show_signature_annotations: true
+          show_symbol_type_heading: true
+          show_symbol_type_toc: true
+          signature_crossrefs: true
 - git-committers:
     enabled: !ENV [DEPLOY, false]
     repository: mkdocstrings/griffe

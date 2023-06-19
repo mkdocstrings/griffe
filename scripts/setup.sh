@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PYTHON_VERSIONS="${PYTHON_VERSIONS-3.7 3.8 3.9 3.10 3.11}"
+PYTHON_VERSIONS="${PYTHON_VERSIONS-3.8 3.9 3.10 3.11 3.12}"
 
 if ! command -v pdm &>/dev/null; then
     if ! command -v pipx &>/dev/null; then

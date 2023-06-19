@@ -24,6 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
@@ -42,7 +43,7 @@ Changelog = "https://mkdocstrings.github.io/griffe/changelog"
 Repository = "https://github.com/mkdocstrings/griffe"
 Issues = "https://github.com/mkdocstrings/griffe/issues"
 Discussions = "https://github.com/mkdocstrings/griffe/discussions"
-Gitter = "https://gitter.im/griffe/community"
+Gitter = "https://gitter.im/mkdocstrings/griffe"
 Funding = "https://github.com/sponsors/pawamoy"
 
 [project.scripts]
@@ -60,6 +61,8 @@ editable-backend = "editables"
 
 [tool.pdm.dev-dependencies]
 duty = ["duty>=0.10"]
+ci-quality = ["griffe[duty,docs,quality,typing,security]"]
+ci-tests = ["griffe[duty,tests]"]
 docs = [
     "black>=23.1",
     "markdown-callouts>=0.2",
@@ -97,4 +100,6 @@ typing = [
     "types-pyyaml>=6.0",
     "types-toml>=0.10",
 ]
-security = ["safety>=2"]
+security = [
+    "safety>=2",
+]
