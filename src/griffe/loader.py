@@ -183,7 +183,7 @@ class GriffeLoader:
         for exports_module in list(collection.values()):
             self.expand_exports(exports_module)
         for wildcards_module in list(collection.values()):
-            self.expand_wildcards(wildcards_module)
+            self.expand_wildcards(wildcards_module, external=external)
         load_failures: set[str] = set()
         while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
             prev_unresolved = unresolved - {"0"}
