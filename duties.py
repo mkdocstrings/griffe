@@ -279,17 +279,15 @@ def test(ctx: Context, match: str = "") -> None:
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
     ctx.run(
-        pytest.run("-n", "auto", "tests", config_file="config/pytest.ini", select=match, color="yes"),
+        pytest.run("-n", "auto", "tests", config_file="config/pytest.ini", select=match, color="yes", verbosity=10),
         title=pyprefix("Running tests"),
     )
 
 
-@duty(skip_if=sys.version_info < (3, 10), skip_reason="Python less than 3.10 does not have sys.stdlib_module_names")
+@duty
 def fuzz(
     ctx: Context,
     *,
-    level: str = "DEBUG",
-    pdm: bool = False,
     profile: bool = False,
     browser: bool = False,
 ) -> None:
@@ -302,8 +300,6 @@ def fuzz(
         profile: Whether to profile the run.
         browser: Whether to open the SVG file in the browser at the end.
     """
-    import logging
-
     from griffe.cli import _load_packages as load_packages
 
     def find_pdm_packages() -> list[str]:
@@ -313,41 +309,31 @@ def fuzz(
             allow_overrides=False,
         ).split("\n")
 
+    packages = find_pdm_packages()
+
     if not profile:
-        stblib_packages = sorted([m for m in sys.stdlib_module_names if not m.startswith("_")])  # type: ignore[attr-defined]
-        logging.basicConfig(level=getattr(logging, level))
         griffe_load = lazy(load_packages, name="griffe.load")
-        # fuzz on standard lib
         ctx.run(
-            griffe_load(stblib_packages, resolve_aliases=True, resolve_implicit=True, resolve_external=False),
-            title="Fuzz on standard library",
-            capture=None,
+            griffe_load(packages, resolve_aliases=True),
+            title=f"Fuzzing on {len(packages)} packages from PDM cache",
         )
-        # fuzz on all PDM cached packages
-        if pdm:
-            packages = find_pdm_packages()
-            ctx.run(
-                griffe_load(packages, resolve_aliases=True),
-                title=f"Loading {len(packages)} packages",
-                capture=None,
-            )
-    else:
-        packages = find_pdm_packages()
-        ctx.run(
-            [
-                sys.executable,
-                "-mcProfile",
-                "-oprofile.pstats",
-                "-m",
-                "griffe",
-                "dump",
-                "-rIUSo/dev/null",
-                "-LDEBUG",
-                *packages,
-            ],
-            title=f"Profiling on {len(packages)} packages",
-            pty=False,
-        )
-        ctx.run("gprof2dot -z cli:494:main profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
-        if browser:
-            os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
+        return
+
+    ctx.run(
+        [
+            sys.executable,
+            "-mcProfile",
+            "-oprofile.pstats",
+            "-m",
+            "griffe",
+            "dump",
+            "-rIUSo/dev/null",
+            "-LDEBUG",
+            *packages,
+        ],
+        title=f"Profiling on {len(packages)} packages",
+        pty=False,
+    )
+    ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
+    if browser:
+        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
