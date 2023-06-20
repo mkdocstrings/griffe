@@ -109,7 +109,7 @@ def _read_block_items(
     docstring: Docstring,
     *,
     offset: int,
-    allow_block_breaks:bool,
+    allow_section_blank_line:bool,
     **options: Any,                      # noqa: ARG001
 ) -> tuple[list[list[str]], int]:
     lines = docstring.lines
@@ -162,7 +162,7 @@ def _read_block_items(
         else:
             # preserve original behavior, that a single line break between block
             # items triggers a new section
-            if not allow_block_breaks and previous_was_empty:
+            if not allow_section_blank_line and previous_was_empty:
                 break
 
             # detect the start of a new section
@@ -665,7 +665,7 @@ def parse(
     *,
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
-    allow_block_breaks: bool = False,
+    allow_section_blank_line: bool = False,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -677,9 +677,9 @@ def parse(
         docstring: The docstring to parse.
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
-        allow_block_breaks: Whether to consider an empty line between items in a section
-            with a formatted block, like Parameters or Returns, to be the end of the section.
-            If False, you can create a section using two empty lines.
+        allow_section_blank_line: Whether to continue a section if there's an empty line
+            between items in a formatted block, like Parameters or Returns.
+            If True, you can still create a new section using two empty lines.
         **options: Additional parsing options.
 
     Returns:
@@ -694,7 +694,7 @@ def parse(
     options = {
         "trim_doctest_flags": trim_doctest_flags,
         "ignore_init_summary": ignore_init_summary,
-        "allow_block_breaks": allow_block_breaks,
+        "allow_section_blank_line": allow_section_blank_line,
         **options,
     }
 

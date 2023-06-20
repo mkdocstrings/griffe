@@ -109,8 +109,8 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
     assert len(sections[0].value) == 1
 
 
-    # allow_block_breaks requires at least 2 newlines to create a new section
-    sections2, _ = parse_numpy(docstring, allow_block_breaks = True)
+    # allow_section_blank_line requires at least 2 newlines to create a new section
+    sections2, _ = parse_numpy(docstring, allow_section_blank_line = True)
     assert len(sections2) == 1
     assert len(sections2[0].value) == 2
 
