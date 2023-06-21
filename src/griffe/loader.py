@@ -15,7 +15,7 @@ from __future__ import annotations
 import sys
 from contextlib import suppress
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Sequence, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 from warnings import warn
 
 from griffe.agents.inspector import inspect
@@ -42,7 +42,7 @@ _builtin_modules: set[str] = set(sys.builtin_module_names)
 class GriffeLoader:
     """The Griffe loader, allowing to load data from modules."""
 
-    ignored_modules = {"debugpy", "_pydev"}
+    ignored_modules: ClassVar[set[str]] = {"debugpy", "_pydev"}
 
     def __init__(
         self,

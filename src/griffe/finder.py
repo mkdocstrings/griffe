@@ -8,7 +8,7 @@ import re
 import sys
 from contextlib import suppress
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, Sequence, Tuple
+from typing import TYPE_CHECKING, ClassVar, Iterator, Sequence, Tuple
 
 from griffe.exceptions import UnhandledEditableModuleError
 from griffe.logger import get_logger
@@ -69,8 +69,8 @@ class NamespacePackage:
 class ModuleFinder:
     """The Griffe finder, allowing to find modules on the file system."""
 
-    accepted_py_module_extensions = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
-    extensions_set = set(accepted_py_module_extensions)
+    accepted_py_module_extensions: ClassVar[list[str]] = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
+    extensions_set: ClassVar[set[str]] = set(accepted_py_module_extensions)
 
     def __init__(self, search_paths: Sequence[str | Path] | None = None) -> None:
         """Initialize the finder.

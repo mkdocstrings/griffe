@@ -33,7 +33,7 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 
 class LogLevel(Enum):
@@ -50,7 +50,7 @@ class LogLevel(Enum):
 
 class _Logger:
     _default_logger: Any = logging.getLogger
-    _instances: dict[str, _Logger] = {}
+    _instances: ClassVar[dict[str, _Logger]] = {}
 
     def __init__(self, name: str) -> None:
         # default logger that can be patched by third-party

@@ -73,7 +73,7 @@ from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
 from contextlib import contextmanager, suppress
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Iterator, Sequence
 
 from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
@@ -291,7 +291,7 @@ class ObjectNode:
     """
 
     # low level stuff known to cause issues when resolving aliases
-    exclude_specials = {"__builtins__", "__loader__", "__spec__"}
+    exclude_specials: ClassVar[set[str]] = {"__builtins__", "__loader__", "__spec__"}
 
     def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
         """Initialize the object.
