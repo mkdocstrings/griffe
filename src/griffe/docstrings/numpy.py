@@ -109,8 +109,8 @@ def _read_block_items(
     docstring: Docstring,
     *,
     offset: int,
-    allow_section_blank_line:bool,
-    **options: Any,                      # noqa: ARG001
+    allow_section_blank_line: bool,
+    **options: Any,  # noqa: ARG001
 ) -> tuple[list[list[str]], int]:
     lines = docstring.lines
     if offset >= len(lines):
@@ -166,7 +166,7 @@ def _read_block_items(
                 break
 
             # detect the start of a new section
-            if new_offset+1 < len(lines) and lines[new_offset+1].startswith("---"):
+            if new_offset + 1 < len(lines) and lines[new_offset + 1].startswith("---"):
                 break
 
             items.append(current_item)
