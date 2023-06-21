@@ -614,11 +614,12 @@ Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]
 
 ### Parsing options
 
-Option                     | Google | Numpy | Sphinx
--------------------------- | ------ | ----- | ------
-Ignore `__init__` summary  | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
-Trim doctest flags         | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
-Warn about unknown params  | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
+Option                       | Google | Numpy | Sphinx
+---------------------------- | ------ | ----- | ------
+Ignore `__init__` summary    | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
+Trim doctest flags           | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
+Warn about unknown params    | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
+Allow blank line in sections | /      | ✅    | /
 
 [issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
 [issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
