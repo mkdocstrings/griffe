@@ -390,7 +390,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """Tell if a member of this object is "exported".
 
         By exported, we mean that the object is included in the `__all__` attribute
-        of its parent module or class. When `_all__` is not defined,
+        of its parent module or class. When `__all__` is not defined,
         we consider the member to be *implicitely* exported,
         unless it's a module and it was not imported,
         and unless it's not defined at runtime.
