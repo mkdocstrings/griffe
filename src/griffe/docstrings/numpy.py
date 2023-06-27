@@ -209,7 +209,7 @@ def _read_block(docstring: Docstring, *, offset: int) -> tuple[str, int]:
 _RE_OB: str = r"\{"  # opening bracket
 _RE_CB: str = r"\}"  # closing bracket
 _RE_NAME: str = r"\*{0,2}[_a-z][_a-z0-9]*"
-_RE_TYPE: str = r".+"
+_RE_TYPE: str = r"[^:\s].*"
 _RE_RETURNS: Pattern = re.compile(
     rf"""
     (?:
@@ -217,9 +217,9 @@ _RE_RETURNS: Pattern = re.compile(
         |  # or
         (?P<name>{_RE_NAME})\s*:\s*  # just name
         |  # or
-        \s*:$  # no name, no type
-        |
-        :?\s*(?P<type>{_RE_TYPE})\s*  # just type
+        (?::\s*)?(?P<type>{_RE_TYPE})\s*  # just type
+        |  # or
+        \s*:\s*  # no name, no type
     )
     """,
     re.IGNORECASE | re.VERBOSE,
