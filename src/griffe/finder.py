@@ -332,13 +332,13 @@ def _handle_pth_file(path: Path) -> list[Path]:
     # Blank lines and lines beginning with # are skipped.
     # Lines starting with import (followed by space or tab) are executed.
     directories = []
-    for line in path.read_text(encoding="utf8").strip().splitlines(keepends=False):
+    for line in path.read_text(encoding="utf8").strip().replace(";", "\n").splitlines(keepends=False):
         line = line.strip()  # noqa: PLW2901
         if _re_import_line.match(line):
             editable_module = path.parent / f"{line[len('import'):].lstrip()}.py"
             with suppress(UnhandledEditableModuleError):
                 return _handle_editable_module(editable_module)
-        if line and not line.startswith("#") and ";" not in line and os.path.exists(line):
+        if line and not line.startswith("#") and os.path.exists(line):
             directories.append(Path(line))
     return directories
 
