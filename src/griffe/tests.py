@@ -251,7 +251,7 @@ def vtree(*objects: Object, return_leaf: bool = False) -> Object:
     top = objects[0]
     leaf = top
     for obj in objects[1:]:
-        leaf[obj.name] = obj
+        leaf.set_member(obj.name, obj)
         leaf = obj
     return leaf if return_leaf else top
 
@@ -272,7 +272,7 @@ def htree(*objects: Object) -> Object:
         raise ValueError("At least one object must be provided")
     top = objects[0]
     for obj in objects[1:]:
-        top[obj.name] = obj
+        top.set_member(obj.name, obj)
     return top
 
 

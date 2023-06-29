@@ -141,7 +141,7 @@ def _load_parameter(obj_dict: dict[str, Any]) -> Parameter:
 def _load_module(obj_dict: dict[str, Any]) -> Module:
     module = Module(name=obj_dict["name"], filepath=Path(obj_dict["filepath"]), docstring=_load_docstring(obj_dict))
     for module_member in obj_dict.get("members", []):
-        module[module_member.name] = module_member
+        module.set_member(module_member.name, module_member)
     module.labels |= set(obj_dict.get("labels", ()))
     return module
 
@@ -156,7 +156,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         bases=[_load_annotation(_) for _ in obj_dict["bases"]],
     )
     for class_member in obj_dict.get("members", []):
-        class_[class_member.name] = class_member
+        class_.set_member(class_member.name, class_member)
     class_.labels |= set(obj_dict.get("labels", ()))
     return class_
 
