@@ -436,7 +436,11 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @cached_property
     def inherited_members(self) -> dict[str, Alias]:
-        """Members that are inherited from base classes."""
+        """Members that are inherited from base classes.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
         if not isinstance(self, Class):
             return {}
         inherited_members = {}
@@ -448,7 +452,11 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def all_members(self) -> dict[str, Object | Alias]:
-        """All members (declared and inherited)."""
+        """All members (declared and inherited).
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
         return {**self.inherited_members, **self.members}
 
     @property
@@ -503,6 +511,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     def modules(self) -> dict[str, Module]:
         """Return the module members.
 
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
             A dictionary of modules.
         """
@@ -511,6 +522,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     @property
     def classes(self) -> dict[str, Class]:
         """Return the class members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
 
         Returns:
             A dictionary of classes.
@@ -521,6 +535,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     def functions(self) -> dict[str, Function]:
         """Return the function members.
 
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
             A dictionary of functions.
         """
@@ -529,6 +546,9 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     @property
     def attributes(self) -> dict[str, Attribute]:
         """Return the attribute members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
 
         Returns:
             A dictionary of attributes.
@@ -870,6 +890,10 @@ class Alias(ObjectAliasMixin):
         # not handled by __getattr__
         self.target[key] = value
 
+    def __delitem__(self, key: str | tuple[str, ...]):
+        # not handled by __getattr__
+        del self.target[key]
+
     def __len__(self) -> int:
         return 1
 
@@ -1072,6 +1096,15 @@ class Alias(ObjectAliasMixin):
     def resolve(self, name: str) -> str:  # noqa: D102
         return self.final_target.resolve(name)
 
+    def get_member(self, key: str | Sequence[str]) -> Object | Alias:  # noqa: D102
+        return self.final_target.get_member(key)
+
+    def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:  # noqa: D102
+        return self.final_target.set_member(key, value)
+
+    def del_member(self, key: str | Sequence[str]) -> None:  # noqa: D102
+        return self.final_target.del_member(key)
+
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
 
     @property
@@ -1198,7 +1231,7 @@ class Alias(ObjectAliasMixin):
 
     def _resolve_target(self) -> None:
         try:
-            resolved = self.modules_collection[self.target_path]
+            resolved = self.modules_collection.get_member(self.target_path)
         except KeyError as error:
             raise AliasResolutionError(self) from error
         if resolved is self:
@@ -1435,7 +1468,11 @@ class Class(Object):
 
     @cached_property
     def resolved_bases(self) -> list[Object]:
-        """Resolved class bases."""
+        """Resolved class bases.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
         resolved_bases = []
         for base in self.bases:
             if isinstance(base, str):

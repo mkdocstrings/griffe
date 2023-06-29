@@ -259,7 +259,7 @@ class Visitor(BaseVisitor):
             runtime=not self.type_guarded,
         )
         class_.labels |= self.decorators_to_labels(decorators)
-        self.current[node.name] = class_
+        self.current.set_member(node.name, class_)
         self.current = class_
         self.generic_visit(node)
         self.current = self.current.parent  # type: ignore[assignment]
@@ -304,10 +304,10 @@ class Visitor(BaseVisitor):
                 property_setter_or_deleter = (
                     base_function in {"setter", "deleter"}
                     and base_name in self.current.members
-                    and self.current[base_name].has_labels({"property"})
+                    and self.current.get_member(base_name).has_labels({"property"})
                 )
                 if property_setter_or_deleter:
-                    return self.current[base_name], base_function
+                    return self.current.get_member(base_name), base_function
         return None, None
 
     def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None) -> None:
@@ -356,7 +356,7 @@ class Visitor(BaseVisitor):
                 runtime=not self.type_guarded,
             )
             attribute.labels |= labels
-            self.current[node.name] = attribute
+            self.current.set_member(node.name, attribute)
             return
 
         base_property, property_function = self.get_base_property(decorators)
@@ -461,7 +461,7 @@ class Visitor(BaseVisitor):
                 base_property.deleter = function
                 base_property.labels.add("deletable")
         else:
-            self.current[node.name] = function
+            self.current.set_member(node.name, function)
             if self.current.kind in {Kind.MODULE, Kind.CLASS} and self.current.overloads[function.name]:
                 function.overloads = self.current.overloads[function.name]
                 del self.current.overloads[function.name]
@@ -499,12 +499,15 @@ class Visitor(BaseVisitor):
             alias_path = name.name
             alias_name = name.asname or alias_path.split(".", 1)[0]
             self.current.imports[alias_name] = alias_path
-            self.current[alias_name] = Alias(
+            self.current.set_member(
                 alias_name,
-                alias_path,
-                lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[attr-defined]
-                runtime=not self.type_guarded,
+                Alias(
+                    alias_name,
+                    alias_path,
+                    lineno=node.lineno,
+                    endlineno=node.end_lineno,  # type: ignore[attr-defined]
+                    runtime=not self.type_guarded,
+                ),
             )
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:
@@ -528,12 +531,15 @@ class Visitor(BaseVisitor):
             else:
                 alias_name = name.asname or name.name
                 self.current.imports[alias_name] = alias_path
-            self.current[alias_name] = Alias(
+            self.current.set_member(
                 alias_name,
-                alias_path,  # type: ignore[arg-type]
-                lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[attr-defined]
-                runtime=not self.type_guarded,
+                Alias(
+                    alias_name,
+                    alias_path,  # type: ignore[arg-type]
+                    lineno=node.lineno,
+                    endlineno=node.end_lineno,  # type: ignore[attr-defined]
+                    runtime=not self.type_guarded,
+                ),
             )
 
     def handle_attribute(
@@ -626,7 +632,7 @@ class Visitor(BaseVisitor):
                 runtime=not self.type_guarded,
             )
             attribute.labels |= labels
-            parent[name] = attribute
+            parent.set_member(name, attribute)
 
             if name == "__all__":
                 with suppress(AttributeError):
