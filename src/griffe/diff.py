@@ -466,4 +466,29 @@ def _returns_are_compatible(old_function: Function, new_function: Function) -> b
     return True
 
 
-find_breaking_changes = _member_incompatibilities
+def find_breaking_changes(
+    old_obj: Object | Alias,
+    new_obj: Object | Alias,
+    *,
+    ignore_private: bool = True,
+) -> Iterator[Breakage]:
+    """Find breaking changes between two versions of the same API.
+
+    The function will iterate recursively on all objects
+    and yield breaking changes with detailed information.
+
+    Parameters:
+        old_obj: The old version of an object.
+        new_obj: The new version of an object.
+
+    Yields:
+        Breaking changes.
+
+    Examples:
+        >>> import sys, griffe
+        >>> new = griffe.load("pkg")
+        >>> old = griffe.load_git("pkg", "1.2.3")
+        >>> for breakage in griffe.find_breaking_changes(old, new)
+        ...     print(breakage.explain(style=style), file=sys.stderr)
+    """
+    yield from _member_incompatibilities(old_obj, new_obj, ignore_private=ignore_private)
