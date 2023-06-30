@@ -26,6 +26,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Set up PDM
       uses: pdm-project/setup-pdm@v3
@@ -49,9 +51,6 @@ jobs:
 
     - name: Check for vulnerabilities in dependencies
       run: pdm run duty check-dependencies
-
-    - name: Check for breaking changes in the API
-      run: pdm run duty check-api
 
     - name: Check for breaking changes in the API
       run: pdm run duty check-api
