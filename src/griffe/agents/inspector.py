@@ -266,7 +266,7 @@ class Inspector(BaseInspector):
                 else:
                     child_name = getattr(child.obj, "__name__", child.name)
                     target_path = f"{child_module_path}.{child_name}"
-                self.current[child.name] = Alias(child.name, target_path)
+                self.current.set_member(child.name, Alias(child.name, target_path))
             else:
                 self.inspect(child)
 
@@ -295,14 +295,18 @@ class Inspector(BaseInspector):
         Parameters:
             node: The node to inspect.
         """
-        bases = [base.__name__ for base in node.obj.__bases__ if base is not object]
+        bases = []
+        for base in node.obj.__bases__:
+            if base is object:
+                continue
+            bases.append(f"{base.__module__}.{base.__qualname__}")
 
         class_ = Class(
             name=node.name,
             docstring=self._get_docstring(node),
             bases=bases,
         )
-        self.current[node.name] = class_
+        self.current.set_member(node.name, class_)
         self.current = class_
         self.generic_inspect(node)
         self.current = self.current.parent  # type: ignore[assignment]
@@ -430,7 +434,7 @@ class Inspector(BaseInspector):
                 docstring=self._get_docstring(node),
             )
         obj.labels |= labels
-        self.current[node.name] = obj
+        self.current.set_member(node.name, obj)
 
     def inspect_attribute(self, node: ObjectNode) -> None:
         """Inspect an attribute.
@@ -477,7 +481,7 @@ class Inspector(BaseInspector):
             docstring=docstring,
         )
         attribute.labels |= labels
-        parent[node.name] = attribute
+        parent.set_member(node.name, attribute)
 
         if node.name == "__all__":
             parent.exports = set(node.obj)

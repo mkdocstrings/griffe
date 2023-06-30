@@ -68,7 +68,7 @@ class HybridExtension(VisitorExtension):
 
     def visit(self, node: ast.AST) -> None:  # noqa: D102
         try:
-            just_visited = self.visitor.current[node.name]  # type: ignore[attr-defined]
+            just_visited = self.visitor.current.get_member(node.name)  # type: ignore[attr-defined]
         except (KeyError, AttributeError, TypeError):
             return
         if self.object_paths and not any(op.search(just_visited.path) for op in self.object_paths):
