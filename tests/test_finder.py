@@ -112,6 +112,7 @@ def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
     directories = _handle_pth_file(pth_file)
     assert directories == [Path("tests")]
 
+
 @pytest.mark.parametrize("editable_file_name", ["__editables_whatever.py", "_editable_impl_whatever.py"])
 def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> None:
     """Assert editable modules by `editables` are handled.
