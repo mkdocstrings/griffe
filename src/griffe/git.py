@@ -48,10 +48,11 @@ def _get_latest_tag(path: str | Path) -> str:
     if not path.is_dir():
         path = path.parent
     output = subprocess.check_output(
-        ["git", "describe", "--tags", "--abbrev=0"],
+        ["git", "tag", "-l", "--sort=-committerdate"],
         cwd=path,
+        text=True,
     )
-    return output.decode().strip()
+    return output.strip().split("\n", 1)[0]
 
 
 def _get_repo_root(path: str | Path) -> str:
