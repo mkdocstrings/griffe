@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.30.0](https://github.com/mkdocstrings/griffe/releases/tag/0.30.0) - 2023-06-30
+
+<small>[Compare with 0.29.1](https://github.com/mkdocstrings/griffe/compare/0.29.1...0.30.0)</small>
+
+### Features
+
+- Add `allow_section_blank_line` option to the Numpy parser ([245845e](https://github.com/mkdocstrings/griffe/commit/245845ecaabedf4abb0af80d783702e55ea83883) by Michael Chow). [Issue #167](https://github.com/mkdocstrings/griffe/issues/167), [PR #168](https://github.com/mkdocstrings/griffe/pull/168)
+- Support inheritance ([08bbe09](https://github.com/mkdocstrings/griffe/commit/08bbe09879dfa5440a359c8b2ad0b896c20c1dfc) by Timothée Mazzucotelli). [PR #170](https://github.com/mkdocstrings/griffe/pull/170)
+
+### Bug Fixes
+
+- Handle semi-colons in pth files ([e2ec661](https://github.com/mkdocstrings/griffe/commit/e2ec661e614df6c5f4fda1444468363777985b7c) by Michael Chow). [Issue #172](https://github.com/mkdocstrings/griffe/issues/172), [PR #175](https://github.com/mkdocstrings/griffe/pull/175)
+
+### Code Refactoring
+
+- Split members API in two parts: producer and consumer ([2269449](https://github.com/mkdocstrings/griffe/commit/226944983a9073d643ed09b47e7d3f99c76d3d5e) by Timothée Mazzucotelli). [PR #170](https://github.com/mkdocstrings/griffe/pull/170)
+
 ## [0.29.1](https://github.com/mkdocstrings/griffe/releases/tag/0.29.1) - 2023-06-19
 
 <small>[Compare with 0.29.0](https://github.com/mkdocstrings/griffe/compare/0.29.0...0.29.1)</small>
