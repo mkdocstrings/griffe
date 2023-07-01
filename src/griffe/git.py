@@ -99,7 +99,7 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         finally:
             subprocess.run(["git", "-C", repo, "worktree", "remove", uid], stdout=subprocess.DEVNULL)
             subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL)
-            subprocess.run(["git", "-C", repo, "branch", "-d", uid], stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", repo, "branch", "-D", uid], stdout=subprocess.DEVNULL)
 
 
 def load_git(
