@@ -323,7 +323,13 @@ class ClassRemovedBaseBreakage(Breakage):
 
 
 # TODO: decorators!
-def _class_incompatibilities(old_class: Class, new_class: Class, *, ignore_private: bool = True) -> Iterable[Breakage]:
+def _class_incompatibilities(
+    old_class: Class,
+    new_class: Class,
+    *,
+    ignore_private: bool = True,
+    seen_paths: set[str],
+) -> Iterable[Breakage]:
     yield from ()
     if new_class.bases != old_class.bases:
         if len(new_class.bases) < len(old_class.bases):
@@ -331,7 +337,7 @@ def _class_incompatibilities(old_class: Class, new_class: Class, *, ignore_priva
         else:
             # TODO: check mro
             ...
-    yield from _member_incompatibilities(old_class, new_class, ignore_private=ignore_private)
+    yield from _member_incompatibilities(old_class, new_class, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
 # TODO: decorators!
@@ -422,6 +428,7 @@ def _alias_incompatibilities(
     new_obj: Object | Alias,
     *,
     ignore_private: bool,
+    seen_paths: set[str],
 ) -> Iterable[Breakage]:
     if not ignore_private:
         return
@@ -432,7 +439,7 @@ def _alias_incompatibilities(
         logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
         return
 
-    yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private)
+    yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
 def _member_incompatibilities(
@@ -440,7 +447,9 @@ def _member_incompatibilities(
     new_obj: Object | Alias,
     *,
     ignore_private: bool = True,
+    seen_paths: set[str] | None = None,
 ) -> Iterator[Breakage]:
+    seen_paths = set() if seen_paths is None else seen_paths
     for name, old_member in old_obj.members.items():
         if ignore_private and name.startswith("_"):
             logger.debug(f"API check: {old_obj.path}.{name}: skip private object")
@@ -454,7 +463,7 @@ def _member_incompatibilities(
                 yield ObjectRemovedBreakage(old_member, old_member, None)  # type: ignore[arg-type]
             continue
 
-        yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private)
+        yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
 def _type_based_yield(
@@ -462,17 +471,21 @@ def _type_based_yield(
     new_member: Object | Alias,
     *,
     ignore_private: bool,
+    seen_paths: set[str],
 ) -> Iterator[Breakage]:
+    if old_member.path in seen_paths:
+        return
+    seen_paths.add(old_member.path)
     if old_member.is_alias or new_member.is_alias:
         # Should be first, since there can be the case where there is an alias and another kind of object, which may
         # not be a breaking change
-        yield from _alias_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+        yield from _alias_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
     elif new_member.kind != old_member.kind:
         yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # type: ignore[arg-type]
     elif old_member.is_module:
-        yield from _member_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+        yield from _member_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
     elif old_member.is_class:
-        yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+        yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
     elif old_member.is_function:
         yield from _function_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
     elif old_member.is_attribute:
