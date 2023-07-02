@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.30.1](https://github.com/mkdocstrings/griffe/releases/tag/0.30.1) - 2023-07-02
+
+<small>[Compare with 0.30.0](https://github.com/mkdocstrings/griffe/compare/0.30.0...0.30.1)</small>
+
+### Bug Fixes
+
+- Prevent duplicate yields of breaking changes ([9edef90](https://github.com/mkdocstrings/griffe/commit/9edef90d6c54b330046582e2a52ad88b5798d32c) by Timothée Mazzucotelli). [Issue #162](https://github.com/mkdocstrings/griffe/issues/162)
+- Prevent alias resolution errors when checking for API breaking changes ([93c964a](https://github.com/mkdocstrings/griffe/commit/93c964a4cc3f759d101db45af5816a4d3b07c85e) by Timothée Mazzucotelli). [Issue #145](https://github.com/mkdocstrings/griffe/issues/145)
+- Handle Git errors when checking for API breaking changes ([f9e8ba3](https://github.com/mkdocstrings/griffe/commit/f9e8ba381b75f650cfeb7bc96c976fec2251ac7a) by Timothée Mazzucotelli). [Issue #144](https://github.com/mkdocstrings/griffe/issues/144)
+
+### Code Refactoring
+
+- Force remove worktree branch when done checking ([45332ba](https://github.com/mkdocstrings/griffe/commit/45332ba89e213b4f9490ea7d2507d972267bed73) by Timothée Mazzucotelli).
+- Change command to obtain latest tag ([f70f630](https://github.com/mkdocstrings/griffe/commit/f70f630ef7c67589d60c17ef4fb19c90127b2e06) by Timothée Mazzucotelli).
+
 ## [0.30.0](https://github.com/mkdocstrings/griffe/releases/tag/0.30.0) - 2023-06-30
 
 <small>[Compare with 0.29.1](https://github.com/mkdocstrings/griffe/compare/0.29.1...0.30.0)</small>
