@@ -79,3 +79,7 @@ class ExtensionError(GriffeError):
 
 class ExtensionNotLoadedError(ExtensionError):
     """Exception raised when an extension could not be loaded."""
+
+
+class GitError(GriffeError):
+    """Exception raised for errors related to Git."""

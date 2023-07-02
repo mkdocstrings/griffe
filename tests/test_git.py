@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from griffe.cli import check
 from griffe.dataclasses import Module
 from griffe.git import load_git
 from tests import FIXTURES_DIR
@@ -98,3 +99,8 @@ def test_load_git_errors(git_repo: Path) -> None:
 
     with pytest.raises(ModuleNotFoundError, match="No module named 'not_a_real_module'"):
         load_git("not_a_real_module", ref="v0.2.0", repo=git_repo)
+
+
+def test_git_failures(tmp_path: Path) -> None:
+    """Test failures to use Git."""
+    assert check(tmp_path) == 2

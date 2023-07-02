@@ -19,6 +19,7 @@ from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Any, Iterator, Sequence
 
 from griffe import loader
+from griffe.exceptions import GitError
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
@@ -47,12 +48,17 @@ def _get_latest_tag(path: str | Path) -> str:
         path = Path(path)
     if not path.is_dir():
         path = path.parent
-    output = subprocess.check_output(
+    process = subprocess.run(
         ["git", "tag", "-l", "--sort=-committerdate"],
         cwd=path,
         text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
-    return output.strip().split("\n", 1)[0]
+    output = process.stdout.strip()
+    if process.returncode != 0 or not output:
+        raise GitError(f"Cannot list Git tags in {path}: {output or 'no tags'}")
+    return output.split("\n", 1)[0]
 
 
 def _get_repo_root(path: str | Path) -> str:

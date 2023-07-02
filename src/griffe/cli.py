@@ -27,7 +27,7 @@ import colorama
 from griffe.diff import ExplanationStyle, find_breaking_changes
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
-from griffe.exceptions import ExtensionError
+from griffe.exceptions import ExtensionError, GitError
 from griffe.extensions.base import load_extensions
 from griffe.git import _get_latest_tag, _get_repo_root, load_git
 from griffe.loader import GriffeLoader, load
@@ -364,7 +364,11 @@ def check(
 
     search_paths = list(search_paths) if search_paths else []
 
-    against = against or _get_latest_tag(package)
+    try:
+        against = against or _get_latest_tag(package)
+    except GitError as error:
+        print(f"griffe: error: {error}", file=sys.stderr)
+        return 2
     against_path = against_path or package
     repository = _get_repo_root(against_path)
 
