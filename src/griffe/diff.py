@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import contextlib
 import enum
-from typing import Any, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
 from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
 from griffe.exceptions import AliasResolutionError
 from griffe.logger import get_logger
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
 KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
@@ -97,14 +100,39 @@ class Breakage:
         """
         return getattr(self, f"_explain_{style.value}")()
 
+    @property
+    def _filepath(self) -> Path:
+        if self.obj.is_alias:
+            return self.obj.parent.filepath  # type: ignore[union-attr,return-value]
+        return self.obj.filepath  # type: ignore[union-attr,return-value]
+
+    @property
+    def _canonical_path(self) -> str:
+        if self.obj.is_alias:
+            return self.obj.path
+        return self.obj.canonical_path
+
+    @property
+    def _module_path(self) -> str:
+        if self.obj.is_alias:
+            return self.obj.parent.module.path  # type: ignore[union-attr]
+        return self.obj.module.path
+
+    @property
     def _relative_path(self) -> str:
-        return self.obj.canonical_path[len(self.obj.module.canonical_path) + 1 :]
+        return self._canonical_path[len(self._module_path) + 1 :]
+
+    @property
+    def _lineno(self) -> int:
+        if self.obj.is_alias:
+            return self.obj.alias_lineno or 0  # type: ignore[attr-defined]
+        return self.obj.lineno or 0
 
     def _format_location(self) -> str:
-        return f"{Style.BRIGHT}{self.obj.filepath}{Style.RESET_ALL}:{self.obj.lineno}"
+        return f"{Style.BRIGHT}{self._filepath}{Style.RESET_ALL}:{self._lineno}"
 
     def _format_title(self) -> str:
-        return self._relative_path()
+        return self._relative_path
 
     def _format_kind(self) -> str:
         return f"{Fore.YELLOW}{self.kind.value}{Fore.RESET}"
@@ -156,7 +184,7 @@ class ParameterMovedBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_MOVED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -171,7 +199,7 @@ class ParameterRemovedBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_REMOVED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -186,7 +214,7 @@ class ParameterChangedKindBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_KIND
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return str(self.old_value.kind.value)
@@ -201,7 +229,7 @@ class ParameterChangedDefaultBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_DEFAULT
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return str(self.old_value.default)
@@ -216,7 +244,7 @@ class ParameterChangedRequiredBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_REQUIRED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -231,7 +259,7 @@ class ParameterAddedRequiredBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_ADDED_REQUIRED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
