@@ -291,12 +291,10 @@ def fuzz(
     profile: bool = False,
     browser: bool = False,
 ) -> None:
-    """Run the test suite.
+    """Fuzz Griffe against PDM cached packages.
 
     Parameters:
         ctx: The context instance (passed automatically).
-        level: Log level to use when fuzzing.
-        pdm: Whether to fuzz on PDM's cached packages.
         profile: Whether to profile the run.
         browser: Whether to open the SVG file in the browser at the end.
     """
