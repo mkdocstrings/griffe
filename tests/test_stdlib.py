@@ -29,7 +29,7 @@ def _access_inherited_members(obj: Object | Alias) -> None:
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Python less than 3.10 does not have sys.stdlib_module_names")
 def test_fuzzing_on_stdlib() -> None:
     """Run Griffe on the standard library."""
-    stblib_packages = sorted([m for m in sys.stdlib_module_names if not m.startswith("_")])  # type: ignore[attr-defined]
+    stblib_packages = sorted([m for m in sys.stdlib_module_names if not m.startswith("_")])  # type: ignore[attr-defined,unused-ignore]
 
     loader = GriffeLoader()
     for package in stblib_packages:

@@ -119,14 +119,14 @@ class ModuleFinder:
         """
         module_path: Path | list[Path]
         if isinstance(module, Path):
-            module_name, module_path = self._module_name_path(module)  # type: ignore[arg-type]
+            module_name, module_path = self._module_name_path(module)
             top_module_name = self._top_module_name(module_path)
         elif try_relative_path:
             try:
                 module_name, module_path = self._module_name_path(Path(module))
             except FileNotFoundError:
-                module_name = module  # type: ignore[assignment]
-                top_module_name = module.split(".", 1)[0]  # type: ignore[union-attr]
+                module_name = module
+                top_module_name = module.split(".", 1)[0]
             else:
                 top_module_name = self._top_module_name(module_path)
         else:

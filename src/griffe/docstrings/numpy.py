@@ -70,15 +70,9 @@ from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel
 
 if TYPE_CHECKING:
-    import sys
-    from typing import Any, Pattern
+    from typing import Any, Literal, Pattern
 
     from griffe.dataclasses import Docstring
-
-    if sys.version_info < (3, 8):
-        from typing_extensions import Literal
-    else:
-        from typing import Literal
 
 
 _warn = warning(__name__)
@@ -284,7 +278,7 @@ def _read_parameters(
             else:
                 _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
 
         if default is None:
             for name in names:
@@ -415,7 +409,7 @@ def _read_returns_section(
                         else:
                             annotation = return_item
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReturns(returns), new_offset
 
@@ -463,7 +457,7 @@ def _read_yields_section(
                 else:
                     annotation = yield_item
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
     return DocstringSectionYields(yields), new_offset
 
@@ -507,7 +501,7 @@ def _read_receives_section(
                     else:
                         annotation = receives_item
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReceives(receives), new_offset
 
@@ -588,7 +582,7 @@ def _read_attributes_section(
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)  # type: ignore[arg-type]
+            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
     return DocstringSectionAttributes(attributes), new_offset

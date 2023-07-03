@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-import sys
+from importlib.metadata import PackageNotFoundError, metadata
 from itertools import chain
 from pathlib import Path
 from textwrap import dedent
@@ -12,11 +12,6 @@ from typing import Mapping, cast
 import toml
 from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
-
-if sys.version_info < (3, 8):
-    from importlib_metadata import PackageNotFoundError, metadata
-else:
-    from importlib.metadata import PackageNotFoundError, metadata
 
 project_dir = Path(".")
 pyproject = toml.load(project_dir / "pyproject.toml")

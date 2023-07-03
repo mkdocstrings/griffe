@@ -48,10 +48,10 @@ from ast import MatMult as NodeMatMult
 from ast import Mod as NodeMod
 from ast import Mult as NodeMult
 from ast import Name as NodeName
+from ast import NamedExpr as NodeNamedExpr
 from ast import Not as NodeNot
 from ast import NotEq as NodeNotEq
 from ast import NotIn as NodeNotIn
-from ast import Num as NodeNum
 from ast import Or as NodeOr
 from ast import Pow as NodePow
 from ast import RShift as NodeRShift
@@ -72,25 +72,12 @@ from ast import arguments as NodeArguments
 from ast import comprehension as NodeComprehension
 from ast import keyword as NodeKeyword
 from contextlib import contextmanager, suppress
-from functools import partial
+from functools import cached_property, partial
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, Iterator, Sequence
 
 from griffe.exceptions import LastNodeError, RootNodeError
 from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel, get_logger
-
-# TODO: remove condition once Python 3.7 support is dropped
-if sys.version_info >= (3, 8):
-    from ast import NamedExpr as NodeNamedExpr
-
-# TODO: remove once Python 3.7 support is dropped
-if sys.version_info < (3, 8):
-    from ast import Bytes as NodeBytes
-    from ast import NameConstant as NodeNameConstant
-
-    from cached_property import cached_property
-else:
-    from functools import cached_property
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
@@ -111,10 +98,6 @@ class ASTNode:
     """This class is dynamically added to the bases of each AST node class."""
 
     parent: ASTNode
-
-    # TODO: remove once Python 3.7 support is dropped
-    if sys.version_info < (3, 8):
-        end_lineno = property(lambda _: None)
 
     @cached_property
     def kind(self) -> str:
@@ -544,16 +527,8 @@ class _AllExtractor:
             NodeBinOp: self._extract_binop,
         }
 
-        # TODO: remove once Python 3.7 support is dropped
-        if sys.version_info < (3, 8):
-            self._node_map[NodeNameConstant] = self._extract_nameconstant  # type: ignore[assignment]
-            self._node_map[NodeStr] = self._extract_str  # type: ignore[assignment]
-
     def _extract_constant(self, node: NodeConstant) -> list[str]:
-        try:
-            return [node.value]
-        except AttributeError:
-            return [node.s]  # TODO: remove once Python 3.7 is dropped
+        return [node.value]
 
     def _extract_name(self, node: NodeName) -> list[Name]:
         return [Name(node.id, partial(self.parent.resolve, node.id))]
@@ -571,15 +546,6 @@ class _AllExtractor:
         left = self._extract(node.left)
         right = self._extract(node.right)
         return left + right
-
-    # TODO: remove once Python 3.7 support is dropped
-    if sys.version_info < (3, 8):
-
-        def _extract_nameconstant(self, node: NodeNameConstant) -> list[Name]:
-            return [node.value]
-
-        def _extract_str(self, node: NodeStr) -> list[str]:
-            return [node.s]
 
     def _extract(self, node: AST) -> list[str | Name]:
         return self._node_map[type(node)](node)
@@ -621,7 +587,7 @@ def safe_get__all__(
     except Exception as error:  # noqa: BLE001
         message = f"Failed to extract `__all__` value: {get_value(node.value)}"
         with suppress(Exception):
-            message += f" at {parent.relative_filepath}:{node.lineno}"  # type: ignore[union-attr]
+            message += f" at {parent.relative_filepath}:{node.lineno}"
         if isinstance(error, KeyError):
             message += f": unsupported node {error}"
         else:
@@ -671,13 +637,6 @@ class _ExpressionBuilder:
         # TODO: remove once Python 3.8 support is dropped
         if sys.version_info < (3, 9):
             self._node_map[NodeIndex] = self._build_index
-
-        # TODO: remove once Python 3.7 support is dropped
-        if sys.version_info < (3, 8):
-            self._node_map[NodeBytes] = self._build_bytes
-            self._node_map[NodeNameConstant] = self._build_nameconstant
-            self._node_map[NodeNum] = self._build_num
-            self._node_map[NodeStr] = self._build_str
 
     @contextmanager
     def literal_strings(self) -> Iterator[None]:
@@ -798,22 +757,6 @@ class _ExpressionBuilder:
         def _build_index(self, node: NodeIndex) -> str | Name | Expression:
             return self._build(node.value)
 
-    # TODO: remove once Python 3.7 support is dropped
-    if sys.version_info < (3, 8):
-
-        def _build_bytes(self, node: NodeBytes) -> str:
-            return repr(node.s)
-
-        def _build_nameconstant(self, node: NodeNameConstant) -> str:
-            return repr(node.value)
-
-        def _build_num(self, node: NodeNum) -> str:
-            return repr(node.n)
-
-        def _build_str(self, node: NodeStr) -> str | Name:
-            node.value = node.s  # type: ignore[attr-defined]  # fake node as constant
-            return self._node_map[NodeConstant](node)  # type: ignore[return-value]
-
     def _build(self, node: AST) -> str | Name | Expression:
         return self._node_map[type(node)](node)
 
@@ -922,16 +865,10 @@ def get_docstring(
     else:
         return None, None, None
     if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
-        return doc.value, doc.lineno, doc.end_lineno  # type: ignore[attr-defined]
+        return doc.value, doc.lineno, doc.end_lineno
     if isinstance(doc, NodeStr):
-        # TODO: remove once Python 3.7 support is dropped
-        # on Python 3.7, lineno seems to be the ending line of the string
-        # rather than the starting one, so we substract the number of newlines
         lineno = doc.lineno
-        if sys.version_info < (3, 8):
-            lineno -= doc.s.count("\n")
-
-        return doc.s, lineno, doc.end_lineno  # type: ignore[attr-defined]
+        return doc.s, lineno, doc.end_lineno
     return None, None, None
 
 
@@ -1001,21 +938,12 @@ class _ValueExtractor:
             NodeYield: self._extract_yield,
         }
 
-        # TODO: remove condition once Python 3.7 support is dropped
-        if sys.version_info >= (3, 8):
-            self._node_map[NodeNamedExpr] = self._extract_named_expr
+        self._node_map[NodeNamedExpr] = self._extract_named_expr
 
         # TODO: remove once Python 3.8 support is dropped
         if sys.version_info < (3, 9):
             self._node_map[NodeExtSlice] = self._extract_extslice
             self._node_map[NodeIndex] = self._extract_index
-
-        # TODO: remove once Python 3.7 support is dropped
-        if sys.version_info < (3, 8):
-            self._node_map[NodeBytes] = self._extract_bytes
-            self._node_map[NodeNameConstant] = self._extract_nameconstant
-            self._node_map[NodeNum] = self._extract_num
-            self._node_map[NodeStr] = self._extract_str
 
     def _extract_add(self, node: NodeAdd) -> str:  # noqa: ARG002
         return "+"
@@ -1237,13 +1165,10 @@ class _ValueExtractor:
             return repr(None)
         return self._extract(node.value)
 
-    # TODO: remove condition once Python 3.7 support is dropped
-    if sys.version_info >= (3, 8):
+    def _extract_named_expr(self, node: NodeNamedExpr) -> str:
+        return f"({self._extract(node.target)} := {self._extract(node.value)})"
 
-        def _extract_named_expr(self, node: NodeNamedExpr) -> str:
-            return f"({self._extract(node.target)} := {self._extract(node.value)})"
-
-    # TODO: remove once Python 3.8 support is dropped
+    # TODO: remove once Python 3.8 support is
     if sys.version_info < (3, 9):
 
         def _extract_extslice(self, node: NodeExtSlice) -> str:
@@ -1251,21 +1176,6 @@ class _ValueExtractor:
 
         def _extract_index(self, node: NodeIndex) -> str:
             return self._extract(node.value)
-
-    # TODO: remove once Python 3.7 support is dropped
-    if sys.version_info < (3, 8):
-
-        def _extract_bytes(self, node: NodeBytes) -> str:
-            return repr(node.s)
-
-        def _extract_nameconstant(self, node: NodeNameConstant) -> str:
-            return repr(node.value)
-
-        def _extract_num(self, node: NodeNum) -> str:
-            return repr(node.n)
-
-        def _extract_str(self, node: NodeStr) -> str:
-            return repr(node.s)
 
     def _extract(self, node: AST) -> str:
         return self._node_map[type(node)](node)
@@ -1394,8 +1304,8 @@ def get_parameter_default(node: AST | None, filepath: Path, lines_collection: Li
     default = safe_get_value(node)
     if default is not None:
         return default
-    if node.lineno == node.end_lineno:  # type: ignore[attr-defined]
-        return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]  # type: ignore[attr-defined]
+    if node.lineno == node.end_lineno:
+        return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]
     # TODO: handle multiple line defaults
     return None
 

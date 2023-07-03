@@ -108,7 +108,7 @@ class GriffeLoader:
                 module_name = module  # type: ignore[assignment]
                 top_module = self._inspect_module(module)  # type: ignore[arg-type]
                 self.modules_collection.set_member(top_module.path, top_module)
-                return self.modules_collection.get_member(module_name)  # type: ignore[index]
+                return self.modules_collection.get_member(module_name)
             raise LoadingError("Cannot load builtin module without inspection")
         try:
             module_name, package = self.finder.find_spec(module, try_relative_path=try_relative_path)
@@ -128,7 +128,7 @@ class GriffeLoader:
             except LoadingError as error:
                 logger.exception(str(error))  # noqa: TRY401
                 raise
-        return self.modules_collection.get_member(module_name)  # type: ignore[index]
+        return self.modules_collection.get_member(module_name)
 
     def resolve_aliases(
         self,
@@ -276,7 +276,7 @@ class GriffeLoader:
                     continue
                 if target.path not in seen:
                     try:
-                        self.expand_wildcards(target, external=external, seen=seen)  # type: ignore[union-attr]
+                        self.expand_wildcards(target, external=external, seen=seen)
                     except (AliasResolutionError, CyclicAliasError) as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
@@ -353,7 +353,7 @@ class GriffeLoader:
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:
-                    target = error.alias.target_path  # type: ignore[union-attr]
+                    target = error.alias.target_path
                     unresolved.add(member.path)
                     package = target.split(".", 1)[0]
                     load_module = (
@@ -380,7 +380,7 @@ class GriffeLoader:
                     implicit=implicit,
                     external=external,
                     seen=seen,
-                    load_failures=load_failures,  # type: ignore[arg-type]
+                    load_failures=load_failures,
                 )
                 resolved |= sub_resolved
                 unresolved |= sub_unresolved

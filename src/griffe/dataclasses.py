@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import enum
 import inspect
-import sys
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
@@ -27,12 +26,7 @@ if TYPE_CHECKING:
     from griffe.docstrings.dataclasses import DocstringSection
     from griffe.expressions import Expression
 
-# TODO: remove once Python 3.7 support is dropped
-if sys.version_info < (3, 8):
-    from cached_property import cached_property
-else:
-    from functools import cached_property
-
+from functools import cached_property
 
 logger = get_logger(__name__)
 
@@ -447,7 +441,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         for base in reversed(self.mro()):
             for name, member in base.members.items():
                 if name not in self.members:
-                    inherited_members[name] = Alias(name, member, parent=self, inherited=True)  # type: ignore[arg-type]
+                    inherited_members[name] = Alias(name, member, parent=self, inherited=True)
         return inherited_members
 
     @property
@@ -714,10 +708,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         if isinstance(filepath, list):
             return []
 
-        # TODO: remove once Python 3.7 support is dropped
-        if self.lineno and self.endlineno is None and sys.version_info < (3, 8):
-            self.endlineno = self._endlineno
-
         try:
             lines = self.lines_collection[filepath]
         except KeyError:
@@ -797,23 +787,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
 
         return base
-
-    # TODO: remove once Python 3.7 support is dropped
-    @property
-    def _endlineno(self) -> int | None:
-        if self.kind is Kind.MODULE:
-            if isinstance(self.filepath, list):
-                return 0
-            return len(self.lines_collection[self.filepath])
-        if isinstance(self.filepath, list):
-            return None
-        tokens, tokens_by_line = self.lines_collection.tokens(self.filepath)
-        first_token_index = tokens_by_line[self.lineno][0]
-        blockfinder = inspect.BlockFinder()
-        with suppress(inspect.EndOfBlock, IndentationError):
-            for token in tokens[first_token_index:]:
-                blockfinder.tokeneater(*token)
-        return blockfinder.last
 
 
 class Alias(ObjectAliasMixin):
@@ -1207,7 +1180,7 @@ class Alias(ObjectAliasMixin):
             if target.path in paths_seen:
                 raise CyclicAliasError([*paths_seen, target.path])
             paths_seen[target.path] = None
-            target = target.target  # type: ignore[assignment,union-attr]
+            target = target.target  # type: ignore[assignment]
         return target  # type: ignore[return-value]
 
     def resolve_target(self) -> None:
@@ -1256,7 +1229,7 @@ class Alias(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        return self._target is not None  # type: ignore[union-attr]
+        return self._target is not None
 
     @cached_property
     def wildcard(self) -> str | None:
@@ -1408,7 +1381,7 @@ class Module(Object):
         except BuiltinModuleError:
             return False
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this module's data as a dictionary.
 
         Parameters:
@@ -1506,7 +1479,7 @@ class Class(Object):
         """Return a list of classes in order corresponding to Python's MRO."""
         return self._mro()[1:]  # remove self
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this class' data as a dictionary.
 
         Parameters:
@@ -1560,7 +1533,7 @@ class Function(Object):
         """
         return self.returns
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 
         Parameters:
@@ -1600,7 +1573,7 @@ class Attribute(Object):
         self.value: str | None = value
         self.annotation: str | Name | Expression | None = annotation
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 
         Parameters:

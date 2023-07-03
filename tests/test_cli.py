@@ -6,7 +6,7 @@ import sys
 
 import pytest
 
-from griffe import cli  # type: ignore[attr-defined]
+from griffe import cli
 
 
 def test_main() -> None:

@@ -237,7 +237,7 @@ class Visitor(BaseVisitor):
                     Decorator(
                         safe_get_value(decorator_node, self.current.relative_filepath),  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
-                        endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
+                        endlineno=decorator_node.end_lineno,
                     ),
                 )
         else:
@@ -252,7 +252,7 @@ class Visitor(BaseVisitor):
         class_ = Class(
             name=node.name,
             lineno=lineno,
-            endlineno=node.end_lineno,  # type: ignore[attr-defined]
+            endlineno=node.end_lineno,
             docstring=self._get_docstring(node),
             decorators=decorators,
             bases=bases,  # type: ignore[arg-type]
@@ -335,9 +335,9 @@ class Visitor(BaseVisitor):
                 )
                 decorators.append(
                     Decorator(
-                        decorator_value,  # type: ignore[arg-type]
+                        decorator_value,
                         lineno=decorator_node.lineno,
-                        endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
+                        endlineno=decorator_node.end_lineno,
                     ),
                 )
         else:
@@ -351,7 +351,7 @@ class Visitor(BaseVisitor):
                 value=None,
                 annotation=safe_get_annotation(node.returns, parent=self.current),
                 lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[union-attr]
+                endlineno=node.end_lineno,
                 docstring=self._get_docstring(node),
                 runtime=not self.type_guarded,
             )
@@ -365,11 +365,7 @@ class Visitor(BaseVisitor):
         parameters = Parameters()
         annotation: str | Name | Expression | None
 
-        # TODO: remove once Python 3.7 support is dropped
-        try:
-            posonlyargs = node.args.posonlyargs  # type: ignore[attr-defined]
-        except AttributeError:
-            posonlyargs = []
+        posonlyargs = node.args.posonlyargs
 
         # TODO: probably some optimizations to do here
         args_kinds_defaults: Iterable = reversed(
@@ -378,7 +374,7 @@ class Visitor(BaseVisitor):
                     reversed(
                         (
                             *zip_longest(
-                                posonlyargs,  # type: ignore[attr-defined]
+                                posonlyargs,
                                 [],
                                 fillvalue=ParameterKind.positional_only,
                             ),
@@ -442,7 +438,7 @@ class Visitor(BaseVisitor):
         function = Function(
             name=node.name,
             lineno=lineno,
-            endlineno=node.end_lineno,  # type: ignore[union-attr]
+            endlineno=node.end_lineno,
             parameters=parameters,
             returns=safe_get_annotation(node.returns, parent=self.current),
             decorators=decorators,
@@ -505,7 +501,7 @@ class Visitor(BaseVisitor):
                     alias_name,
                     alias_path,
                     lineno=node.lineno,
-                    endlineno=node.end_lineno,  # type: ignore[attr-defined]
+                    endlineno=node.end_lineno,
                     runtime=not self.type_guarded,
                 ),
             )
@@ -526,7 +522,7 @@ class Visitor(BaseVisitor):
 
             alias_path = relative_to_absolute(node, name, self.current.module)
             if name.name == "*":
-                alias_name = alias_path.replace(".", "/")  # type: ignore[union-attr]
+                alias_name = alias_path.replace(".", "/")
                 alias_path = alias_path.replace(".*", "")
             else:
                 alias_name = name.asname or name.name
@@ -535,9 +531,9 @@ class Visitor(BaseVisitor):
                 alias_name,
                 Alias(
                     alias_name,
-                    alias_path,  # type: ignore[arg-type]
+                    alias_path,
                     lineno=node.lineno,
-                    endlineno=node.end_lineno,  # type: ignore[attr-defined]
+                    endlineno=node.end_lineno,
                     runtime=not self.type_guarded,
                 ),
             )
@@ -593,7 +589,7 @@ class Visitor(BaseVisitor):
         if not names:
             return
 
-        value = safe_get_value(node.value, self.filepath)  # type: ignore[arg-type]
+        value = safe_get_value(node.value, self.filepath)
 
         try:
             docstring = self._get_docstring(node.next, strict=True)  # type: ignore[union-attr]
@@ -614,7 +610,7 @@ class Visitor(BaseVisitor):
 
                 existing_member = parent.members[name]
                 with suppress(AliasResolutionError, CyclicAliasError):
-                    labels |= existing_member.labels  # type: ignore[misc]
+                    labels |= existing_member.labels
                     # forward previous docstring and annotation instead of erasing them
                     if existing_member.docstring and not docstring:
                         docstring = existing_member.docstring
@@ -627,7 +623,7 @@ class Visitor(BaseVisitor):
                 value=value,
                 annotation=annotation,
                 lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[union-attr]
+                endlineno=node.end_lineno,
                 docstring=docstring,
                 runtime=not self.type_guarded,
             )
@@ -636,7 +632,7 @@ class Visitor(BaseVisitor):
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = safe_get__all__(node, self.current)  # type: ignore[assignment,arg-type]
+                    parent.exports = safe_get__all__(node, self.current)  # type: ignore[arg-type]
 
     def visit_assign(self, node: ast.Assign) -> None:
         """Visit an assignment node.
@@ -662,7 +658,7 @@ class Visitor(BaseVisitor):
         """
         with suppress(AttributeError):
             all_augment = (
-                node.target.id == "__all__"  # type: ignore[attr-defined,union-attr]
+                node.target.id == "__all__"  # type: ignore[union-attr]
                 and self.current.is_module
                 and isinstance(node.op, ast.Add)
             )

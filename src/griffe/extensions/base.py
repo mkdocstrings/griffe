@@ -258,8 +258,8 @@ def load_extension(extension: str | dict[str, Any] | Extension | type[Extension]
     if isinstance(extension, (VisitorExtension, InspectorExtension)):
         return extension
 
-    if isclass(extension) and issubclass(extension, (VisitorExtension, InspectorExtension)):  # type: ignore[arg-type]
-        return extension()  # type: ignore[operator]
+    if isclass(extension) and issubclass(extension, (VisitorExtension, InspectorExtension)):
+        return extension()
 
     if isinstance(extension, dict):
         import_path, options = next(iter(extension.items()))

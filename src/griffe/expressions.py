@@ -2,16 +2,10 @@
 
 from __future__ import annotations
 
-import sys
+from functools import cached_property
 from typing import Any, Callable
 
 from griffe.exceptions import NameResolutionError
-
-# TODO: remove once Python 3.7 support is dropped
-if sys.version_info < (3, 8):
-    from cached_property import cached_property
-else:
-    from functools import cached_property
 
 
 class Name:

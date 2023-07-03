@@ -33,15 +33,9 @@ from griffe.docstrings.utils import parse_annotation, warning
 from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
-    import sys
-    from typing import Any, Pattern
+    from typing import Any, Literal, Pattern
 
     from griffe.dataclasses import Docstring
-
-    if sys.version_info < (3, 8):
-        from typing_extensions import Literal
-    else:
-        from typing import Literal
 
 _warn = warning(__name__)
 
@@ -679,40 +673,37 @@ def parse(
             in_code_block = True
             current_section.append(lines[offset])
 
-        else:
-            # TODO: once Python 3.7 is dropped, use walrus operator
-            match = _RE_ADMONITION.match(lines[offset])
-            if match:
-                groups = match.groupdict()
-                title = groups["title"]
-                admonition_type = groups["type"]
-                if admonition_type.lower() in _section_kind:
+        elif match := _RE_ADMONITION.match(lines[offset]):
+            groups = match.groupdict()
+            title = groups["title"]
+            admonition_type = groups["type"]
+            if admonition_type.lower() in _section_kind:
+                if current_section:
+                    if any(current_section):
+                        sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
+                    current_section = []
+                reader = _section_reader[_section_kind[admonition_type.lower()]]
+                section, offset = reader(docstring, offset=offset + 1, **options)  # type: ignore[operator]
+                if section:
+                    section.title = title
+                    sections.append(section)
+
+            else:
+                contents, offset = _read_block(docstring, offset=offset + 1)
+                if contents:
                     if current_section:
                         if any(current_section):
                             sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                         current_section = []
-                    reader = _section_reader[_section_kind[admonition_type.lower()]]
-                    section, offset = reader(docstring, offset=offset + 1, **options)  # type: ignore[operator]
-                    if section:
-                        section.title = title
-                        sections.append(section)
-
+                    if title is None:
+                        title = admonition_type
+                    admonition_type = admonition_type.lower().replace(" ", "-")
+                    sections.append(DocstringSectionAdmonition(kind=admonition_type, text=contents, title=title))
                 else:
-                    contents, offset = _read_block(docstring, offset=offset + 1)
-                    if contents:
-                        if current_section:
-                            if any(current_section):
-                                sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
-                            current_section = []
-                        if title is None:
-                            title = admonition_type
-                        admonition_type = admonition_type.lower().replace(" ", "-")
-                        sections.append(DocstringSectionAdmonition(kind=admonition_type, text=contents, title=title))
-                    else:
-                        with suppress(IndexError):
-                            current_section.append(lines[offset])
-            else:
-                current_section.append(lines[offset])
+                    with suppress(IndexError):
+                        current_section.append(lines[offset])
+        else:
+            current_section.append(lines[offset])
 
         offset += 1
 

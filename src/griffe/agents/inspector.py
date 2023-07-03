@@ -23,7 +23,6 @@ and recursively handle its members.
 from __future__ import annotations
 
 import ast
-import sys
 from inspect import Parameter as SignatureParameter
 from inspect import Signature, cleandoc, getmodule, ismodule
 from inspect import signature as getsignature
@@ -53,10 +52,7 @@ if TYPE_CHECKING:
     from griffe.expressions import Expression, Name
 
 
-if sys.version_info < (3, 8):
-    from cached_property import cached_property
-else:
-    from functools import cached_property
+from functools import cached_property
 
 empty = Signature.empty
 

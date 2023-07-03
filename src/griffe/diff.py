@@ -104,7 +104,7 @@ class Breakage:
     def _filepath(self) -> Path:
         if self.obj.is_alias:
             return self.obj.parent.filepath  # type: ignore[union-attr,return-value]
-        return self.obj.filepath  # type: ignore[union-attr,return-value]
+        return self.obj.filepath  # type: ignore[return-value]
 
     @property
     def _canonical_path(self) -> str:
@@ -479,11 +479,21 @@ def _type_based_yield(
     if old_member.is_alias or new_member.is_alias:
         # Should be first, since there can be the case where there is an alias and another kind of object, which may
         # not be a breaking change
-        yield from _alias_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
+        yield from _alias_incompatibilities(
+            old_member,
+            new_member,
+            ignore_private=ignore_private,
+            seen_paths=seen_paths,
+        )
     elif new_member.kind != old_member.kind:
         yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # type: ignore[arg-type]
     elif old_member.is_module:
-        yield from _member_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
+        yield from _member_incompatibilities(
+            old_member,
+            new_member,
+            ignore_private=ignore_private,
+            seen_paths=seen_paths,
+        )
     elif old_member.is_class:
         yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
     elif old_member.is_function:
