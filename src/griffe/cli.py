@@ -248,6 +248,20 @@ def get_parser() -> argparse.ArgumentParser:
         metavar="BASE_REF",
         help="Git reference (commit, branch, tag) to check. Default: load current code.",
     )
+    check_options.add_argument(
+        "--color",
+        dest="color",
+        action="store_true",
+        default=None,
+        help="Force enable colors in the output.",
+    )
+    check_options.add_argument(
+        "--no-color",
+        dest="color",
+        action="store_false",
+        default=None,
+        help="Force disable colors in the output.",
+    )
     check_options.add_argument("-v", "--verbose", action="store_true", help="Verbose output.")
     add_common_options(check_parser)
 
@@ -343,6 +357,7 @@ def check(
     search_paths: Sequence[str | Path] | None = None,
     allow_inspection: bool = True,
     verbose: bool = False,
+    color: bool | None = None,
 ) -> int:
     """Load packages data and dump it as JSON.
 
@@ -359,9 +374,6 @@ def check(
     Returns:
         `0` for success, `1` for failure.
     """
-    colorama.deinit()
-    colorama.init()
-
     search_paths = list(search_paths) if search_paths else []
 
     try:
@@ -404,10 +416,14 @@ def check(
             allow_inspection=allow_inspection,
         )
 
-    style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     breakages = list(find_breaking_changes(old_package, new_package))
+
+    colorama.deinit()
+    colorama.init(strip=color if color is None else not color)
+    style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     for breakage in breakages:
         print(breakage.explain(style=style), file=sys.stderr)
+
     if breakages:
         return 1
     return 0
