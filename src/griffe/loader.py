@@ -16,7 +16,6 @@ import sys
 from contextlib import suppress
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
-from warnings import warn
 
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import patch_ast, visit
@@ -133,11 +132,9 @@ class GriffeLoader:
     def resolve_aliases(
         self,
         *,
-        implicit: bool | None = None,
-        external: bool | None = None,
+        implicit: bool = False,
+        external: bool = False,
         max_iterations: int | None = None,
-        only_exported: bool | None = None,
-        only_known_modules: bool | None = None,
     ) -> tuple[set[str], int]:
         """Resolve aliases.
 
@@ -145,35 +142,10 @@ class GriffeLoader:
             implicit: When false, only try to resolve an alias if it is explicitely exported.
             external: When false, don't try to load unspecified modules to resolve aliases.
             max_iterations: Maximum number of iterations on the loader modules collection.
-            only_exported: Deprecated. Use the `implicit` parameter instead (inverting the value).
-            only_known_modules: Deprecated. Use the `external` parameter instead (inverting the value).
 
         Returns:
             The unresolved aliases and the number of iterations done.
         """
-        # TODO: remove deprecated params at some point
-        if only_exported is not None and implicit is None:
-            warn(
-                "Parameter `only_exported` is deprecated, use `implicit` instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            implicit = not only_exported
-
-        if only_known_modules is not None and external is None:
-            warn(
-                "Parameter `only_known_modules` is deprecated, use `external` instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            external = not only_known_modules
-
-        # TODO: set as param defaults once deprecated params are dropped
-        if implicit is None:
-            implicit = False
-        if external is None:
-            external = False
-
         if max_iterations is None:
             max_iterations = float("inf")  # type: ignore[assignment]
         prev_unresolved: set[str] = set()
