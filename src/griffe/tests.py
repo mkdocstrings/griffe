@@ -174,7 +174,7 @@ def temporary_visited_module(
     """
     patch_ast()
     with temporary_pyfile(code, module_name=module_name) as (_, path):
-        yield visit(
+        module = visit(
             module_name,
             filepath=path,
             code=dedent(code),
@@ -185,6 +185,8 @@ def temporary_visited_module(
             lines_collection=lines_collection,
             modules_collection=modules_collection,
         )
+        module.modules_collection[module_name] = module
+        yield module
 
 
 @contextmanager
@@ -218,7 +220,7 @@ def temporary_inspected_module(
     """
     with temporary_pyfile(code, module_name=module_name) as (_, path):
         try:
-            yield inspect(
+            module = inspect(
                 module_name,
                 filepath=path,
                 import_paths=import_paths,
@@ -229,6 +231,8 @@ def temporary_inspected_module(
                 lines_collection=lines_collection,
                 modules_collection=modules_collection,
             )
+            module.modules_collection[module_name] = module
+            yield module
         finally:
             if module_name in sys.modules:
                 del sys.modules[module_name]

@@ -56,9 +56,6 @@ def test_loading_inherited_members(agent1: Callable, agent2: Callable) -> None:
             inspection_options["import_paths"] = [module1.filepath.parent]
 
         with agent2(code2, module_name="module2", modules_collection=collection, **inspection_options) as module2:
-            collection["module1"] = module1
-            collection["module2"] = module2
-
             classa = module1["A"]
             classb = module1["B"]
             classc = module2["C"]
@@ -102,9 +99,7 @@ def test_nested_class_inheritance(agent: Callable) -> None:
         class C(A.B):
             attr_from_c = 1
     """
-    collection = ModulesCollection()
-    with agent(code, modules_collection=collection) as module:
-        collection["module"] = module
+    with agent(code) as module:
         assert "attr_from_b" in module["C"].inherited_members
 
     code = """
@@ -117,9 +112,7 @@ def test_nested_class_inheritance(agent: Callable) -> None:
         class OuterD(OuterC):
             class Inner(OuterC.Inner, OuterB.Inner): ...
     """
-    collection = ModulesCollection()
-    with temporary_visited_module(code, modules_collection=collection) as module:
-        collection["module"] = module
+    with temporary_visited_module(code) as module:
         assert _mro_paths(module["OuterD.Inner"]) == [
             "module.OuterC.Inner",
             "module.OuterB.Inner",
@@ -149,9 +142,7 @@ def test_computing_mro(classes: list[str], cls: str, expected_mro: list[str]) ->
         expected_mro: The expected computed MRO.
     """
     code = "class " + ": ...\nclass ".join(classes) + ": ..."
-    collection = ModulesCollection()
-    with temporary_visited_module(code, modules_collection=collection) as module:
-        collection["module"] = module
+    with temporary_visited_module(code) as module:
         assert _mro_paths(module[cls]) == [f"module.{base}" for base in expected_mro]
 
 
@@ -170,11 +161,8 @@ def test_uncomputable_mro(classes: list[str], cls: str) -> None:
         cls: The class to compute the MRO of.
     """
     code = "class " + ": ...\nclass ".join(classes) + ": ..."
-    collection = ModulesCollection()
-    with temporary_visited_module(code, modules_collection=collection) as module:
-        collection["module"] = module
-        with pytest.raises(ValueError, match="Cannot compute C3 linearization"):
-            _mro_paths(module[cls])
+    with temporary_visited_module(code) as module, pytest.raises(ValueError, match="Cannot compute C3 linearization"):
+        _mro_paths(module[cls])
 
 
 def test_dynamic_base_classes() -> None:
@@ -184,12 +172,8 @@ def test_dynamic_base_classes() -> None:
         class A(namedtuple("B", "attrb")):
             attra = 0
     """
-    collection = ModulesCollection()
-    with temporary_visited_module(code, modules_collection=collection) as module:
-        collection["module"] = module
+    with temporary_visited_module(code) as module:
         assert _mro_paths(module["A"]) == []  # not supported
 
-    collection = ModulesCollection()
-    with temporary_inspected_module(code, modules_collection=collection) as module:
-        collection["module"] = module
+    with temporary_inspected_module(code) as module:
         assert _mro_paths(module["A"]) == []  # not supported either
