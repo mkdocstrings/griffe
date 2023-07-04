@@ -139,6 +139,7 @@ def temporary_visited_package(
     Yields:
         A module.
     """
+    patch_ast()
     with temporary_pypackage(package, modules, init=init) as tmp_package:
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         yield loader.load_module(tmp_package.name)
@@ -171,6 +172,7 @@ def temporary_visited_module(
     Yields:
         The visited module.
     """
+    patch_ast()
     with temporary_pyfile(code, module_name=module_name) as (_, path):
         yield visit(
             module_name,
