@@ -5,6 +5,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.31.0](https://github.com/mkdocstrings/griffe/releases/tag/0.31.0) - 2023-07-04
+
+<small>[Compare with 0.30.1](https://github.com/mkdocstrings/griffe/compare/0.30.1...0.31.0)</small>
+
+### Breaking Changes
+
+- Drop support for Python 3.7
+- API changes:
+    - [`GriffeLoader.resolve_aliases(only_exported)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
+    - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
+    - [`LinesCollection.tokens`][griffe.collections.LinesCollection]: Public object was removed (Python 3.7)
+    - [`ASTNode.end_lineno`][griffe.agents.nodes.ASTNode]: Public object was removed (Python 3.7)
+    - [`griffe.agents.extensions`][griffe.agents] Deprecated module was removed and replaced by [`griffe.extensions`][]
+
+### Features
+
+- Add `--color`, `--no-color` options to check subcommand ([eac783c](https://github.com/mkdocstrings/griffe/commit/eac783c2df5a0ba57612b71b0797a74cf7fc8e39) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Report removed public modules ([68906cb](https://github.com/mkdocstrings/griffe/commit/68906cb6083e5f7cad3a1cb5a74878d6e74f9c69) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Improve check output ([6b0a1f0](https://github.com/mkdocstrings/griffe/commit/6b0a1f0397d153a95d1b6c69d109ce141e39e1f1) by Timothée Mazzucotelli).
+- Remove deprecated `griffe.agents.extensions` module ([b555c78](https://github.com/mkdocstrings/griffe/commit/b555c788b624fa5aa0c871e2c199079868252f22) by Timothée Mazzucotelli).
+- Remove deprecated parameters from loader's `resolve_aliases` method ([dd98acd](https://github.com/mkdocstrings/griffe/commit/dd98acd5f0c85661c7a00002805c92caa4c11a21) by Timothée Mazzucotelli).
+- Drop Python 3.7 support ([e4be30a](https://github.com/mkdocstrings/griffe/commit/e4be30a4c1025fd2f99f088c76f8e263714d8e33) by Timothée Mazzucotelli).
+
 ## [0.30.1](https://github.com/mkdocstrings/griffe/releases/tag/0.30.1) - 2023-07-02
 
 <small>[Compare with 0.30.0](https://github.com/mkdocstrings/griffe/compare/0.30.0...0.30.1)</small>
