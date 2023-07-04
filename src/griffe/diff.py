@@ -459,7 +459,8 @@ def _member_incompatibilities(
         try:
             new_member = new_obj.members[name]
         except KeyError:
-            if old_member.is_exported(explicitely=False):
+            is_module = not old_member.is_alias and old_member.is_module
+            if is_module or old_member.is_exported(explicitely=False):
                 yield ObjectRemovedBreakage(old_member, old_member, None)  # type: ignore[arg-type]
             continue
 
