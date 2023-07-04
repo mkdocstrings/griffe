@@ -4,16 +4,15 @@ from __future__ import annotations
 
 import contextlib
 import enum
-from typing import TYPE_CHECKING, Any, Iterable, Iterator
+from pathlib import Path
+from typing import Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
 from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
 from griffe.exceptions import AliasResolutionError
+from griffe.git import WORKTREE_PREFIX
 from griffe.logger import get_logger
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
 KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
@@ -107,6 +106,27 @@ class Breakage:
         return self.obj.filepath  # type: ignore[return-value]
 
     @property
+    def _relative_filepath(self) -> Path:
+        if self.obj.is_alias:
+            return self.obj.parent.relative_filepath  # type: ignore[union-attr]
+        return self.obj.relative_filepath
+
+    @property
+    def _relative_package_filepath(self) -> Path:
+        if self.obj.is_alias:
+            return self.obj.parent.relative_package_filepath  # type: ignore[union-attr]
+        return self.obj.relative_package_filepath
+
+    @property
+    def _location(self) -> Path:
+        if self._relative_filepath.is_absolute():
+            parts = self._relative_filepath.parts
+            for index, part in enumerate(parts):
+                if part.startswith(WORKTREE_PREFIX):
+                    return Path(*parts[index + 3 :])
+        return self._relative_filepath
+
+    @property
     def _canonical_path(self) -> str:
         if self.obj.is_alias:
             return self.obj.path
@@ -120,7 +140,7 @@ class Breakage:
 
     @property
     def _relative_path(self) -> str:
-        return self._canonical_path[len(self._module_path) + 1 :]
+        return self._canonical_path[len(self._module_path) + 1 :] or "<module>"
 
     @property
     def _lineno(self) -> int:
@@ -129,7 +149,7 @@ class Breakage:
         return self.obj.lineno or 0
 
     def _format_location(self) -> str:
-        return f"{Style.BRIGHT}{self._filepath}{Style.RESET_ALL}:{self._lineno}"
+        return f"{Style.BRIGHT}{self._location}{Style.RESET_ALL}:{self._lineno}"
 
     def _format_title(self) -> str:
         return self._relative_path
