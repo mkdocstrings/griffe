@@ -28,7 +28,6 @@ from inspect import Signature, cleandoc, getmodule, ismodule
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any
 
-from griffe.agents.base import BaseInspector
 from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -152,7 +151,7 @@ def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_p
     return None
 
 
-class Inspector(BaseInspector):
+class Inspector:
     """This class is used to instantiate an inspector.
 
     Inspectors iterate on objects members to extract data from them.
@@ -241,7 +240,7 @@ class Inspector(BaseInspector):
         """
         for before_inspector in self.extensions.before_inspection:
             before_inspector.inspect(node)
-        super().inspect(node)
+        getattr(self, f"inspect_{node.kind}", self.generic_inspect)(node)
         for after_inspector in self.extensions.after_inspection:
             after_inspector.inspect(node)
 

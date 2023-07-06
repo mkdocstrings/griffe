@@ -10,7 +10,6 @@ from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from typing import TYPE_CHECKING, Any, Sequence, Union
 
-from griffe.agents.base import BaseInspector, BaseVisitor
 from griffe.exceptions import ExtensionNotLoadedError
 from griffe.importer import dynamic_import
 
@@ -39,7 +38,7 @@ class When(enum.Enum):
     after_all: int = 4
 
 
-class VisitorExtension(BaseVisitor):
+class VisitorExtension:
     """The node visitor extension base class, to inherit from."""
 
     when: When = When.after_all
@@ -66,7 +65,7 @@ class VisitorExtension(BaseVisitor):
         getattr(self, f"visit_{node.kind}", lambda _: None)(node)  # type: ignore[attr-defined]
 
 
-class InspectorExtension(BaseInspector):
+class InspectorExtension:
     """The object inspector extension base class, to inherit from."""
 
     when: When = When.after_all

@@ -14,7 +14,6 @@ from contextlib import suppress
 from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Iterable
 
-from griffe.agents.base import BaseVisitor
 from griffe.agents.nodes import (
     ASTNode,
     get_docstring,
@@ -111,7 +110,7 @@ def visit(
     ).get_module()
 
 
-class Visitor(BaseVisitor):
+class Visitor:
     """This class is used to instantiate a visitor.
 
     Visitors iterate on AST nodes to extract data from them.
@@ -189,7 +188,7 @@ class Visitor(BaseVisitor):
         """
         for before_visitor in self.extensions.before_visit:
             before_visitor.visit(node)
-        super().visit(node)
+        getattr(self, f"visit_{node.kind}", self.generic_visit)(node)
         for after_visitor in self.extensions.after_visit:
             after_visitor.visit(node)
 
