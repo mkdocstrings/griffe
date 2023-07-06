@@ -358,6 +358,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         self.exports: set[str] | list[str | Name] | None = None
         self.aliases: dict[str, Alias] = {}
         self.runtime: bool = runtime
+        self.extra: dict[str, dict[str, Any]] = defaultdict(dict)
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
