@@ -125,7 +125,7 @@ class Docstring:
     def __bool__(self) -> bool:
         return bool(self.value)
 
-    @cached_property
+    @property
     def lines(self) -> list[str]:
         """Returns the lines of the docstring.
 
@@ -550,7 +550,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
-    @cached_property
+    @property
     def module(self) -> Module:
         """Return the parent module of this object.
 
@@ -566,7 +566,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return self.parent.module
         raise ValueError(f"Object {self.name} does not have a parent module")
 
-    @cached_property
+    @property
     def package(self) -> Module:
         """Return the absolute top module (the package) of this object.
 
@@ -578,7 +578,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             module = module.parent  # type: ignore[assignment]  # always a module
         return module
 
-    @cached_property
+    @property
     def filepath(self) -> Path | list[Path]:
         """Return the file path where this object was defined.
 
@@ -587,7 +587,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         return self.module.filepath
 
-    @cached_property
+    @property
     def relative_package_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the top module path.
 
@@ -616,7 +616,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError
         return self.filepath.relative_to(package_path.parent.parent)
 
-    @cached_property
+    @property
     def relative_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the current working directory.
 
@@ -639,7 +639,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         except ValueError:
             return self.filepath
 
-    @cached_property
+    @property
     def path(self) -> str:
         """Return the dotted path of this object.
 
@@ -650,7 +650,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         return self.canonical_path
 
-    @cached_property
+    @property
     def canonical_path(self) -> str:
         """Return the full dotted path of this object.
 
@@ -663,7 +663,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return self.name
         return ".".join((self.parent.path, self.name))
 
-    @cached_property
+    @property
     def modules_collection(self) -> ModulesCollection:
         """Return the modules collection attached to this object or its parents.
 
@@ -679,7 +679,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError("no modules collection in this object or its parents")
         return self.parent.modules_collection
 
-    @cached_property
+    @property
     def lines_collection(self) -> LinesCollection:
         """Return the lines collection attached to this object or its parents.
 
@@ -695,7 +695,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError("no lines collection in this object or its parents")
         return self.parent.lines_collection
 
-    @cached_property
+    @property
     def lines(self) -> list[str]:
         """Return the lines containing the source of this object.
 
@@ -717,7 +717,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return lines
         return lines[self.lineno - 1 : self.endlineno]
 
-    @cached_property
+    @property
     def source(self) -> str:
         """Return the source code of this object.
 
@@ -934,7 +934,7 @@ class Alias(ObjectAliasMixin):
         self._parent = value
         self._update_target_aliases()
 
-    @cached_property
+    @property
     def path(self) -> str:
         """Return the dotted path / import path of this object.
 
@@ -943,7 +943,7 @@ class Alias(ObjectAliasMixin):
         """
         return ".".join((self.parent.path, self.name))  # type: ignore[union-attr]  # we assume there's always a parent
 
-    @cached_property
+    @property
     def modules_collection(self) -> ModulesCollection:
         """Return the modules collection attached to the alias parents.
 
@@ -1232,7 +1232,7 @@ class Alias(ObjectAliasMixin):
         """
         return self._target is not None
 
-    @cached_property
+    @property
     def wildcard(self) -> str | None:
         """Return the module on which the wildcard import is performed (if any).
 
@@ -1307,7 +1307,7 @@ class Module(Object):
             raise BuiltinModuleError(self.name)
         return self._filepath
 
-    @cached_property
+    @property
     def imports_future_annotations(self) -> bool:
         """Tell whether this module import future annotations.
 
@@ -1320,7 +1320,7 @@ class Module(Object):
             and self.members["annotations"].target_path == "__future__.annotations"  # type: ignore[union-attr]
         )
 
-    @cached_property
+    @property
     def is_init_module(self) -> bool:
         """Tell if this module is an `__init__.py` module.
 
@@ -1334,7 +1334,7 @@ class Module(Object):
         except BuiltinModuleError:
             return False
 
-    @cached_property
+    @property
     def is_package(self) -> bool:
         """Tell if this module is a package (top module).
 
@@ -1343,7 +1343,7 @@ class Module(Object):
         """
         return not bool(self.parent) and self.is_init_module
 
-    @cached_property
+    @property
     def is_subpackage(self) -> bool:
         """Tell if this module is a subpackage.
 
@@ -1352,7 +1352,7 @@ class Module(Object):
         """
         return bool(self.parent) and self.is_init_module
 
-    @cached_property
+    @property
     def is_namespace_package(self) -> bool:
         """Tell if this module is a namespace package (top folder, no `__init__.py`).
 
@@ -1364,7 +1364,7 @@ class Module(Object):
         except BuiltinModuleError:
             return False
 
-    @cached_property
+    @property
     def is_namespace_subpackage(self) -> bool:
         """Tell if this module is a namespace subpackage.
 
