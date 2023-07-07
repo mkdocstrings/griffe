@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     - [`GriffeLoader.resolve_aliases(only_exported)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
     - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
     - [`LinesCollection.tokens`][griffe.collections.LinesCollection]: Public object was removed (Python 3.7)
-    - [`ASTNode.end_lineno`][griffe.agents.nodes.ASTNode]: Public object was removed (Python 3.7)
+    - `ASTNode.end_lineno`: Public object was removed (Python 3.7)
     - [`griffe.agents.extensions`][griffe.agents] Deprecated module was removed and replaced by [`griffe.extensions`][]
 
 ### Features

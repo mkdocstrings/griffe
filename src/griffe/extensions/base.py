@@ -10,11 +10,12 @@ from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from typing import TYPE_CHECKING, Any, Sequence, Union
 
+from griffe.agents.nodes import ast_children, ast_kind
 from griffe.exceptions import ExtensionNotLoadedError
 from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:
-    import ast
+    from ast import AST
     from types import ModuleType
 
     from griffe.agents.inspector import Inspector
@@ -56,13 +57,13 @@ class VisitorExtension:
         """
         self.visitor = visitor
 
-    def visit(self, node: ast.AST) -> None:
+    def visit(self, node: AST) -> None:
         """Visit a node.
 
         Parameters:
             node: The node to visit.
         """
-        getattr(self, f"visit_{node.kind}", lambda _: None)(node)  # type: ignore[attr-defined]
+        getattr(self, f"visit_{ast_kind(node)}", lambda _: None)(node)
 
 
 class InspectorExtension:

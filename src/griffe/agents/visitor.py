@@ -9,13 +9,14 @@ populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-
 from __future__ import annotations
 
 import ast
-import inspect
 from contextlib import suppress
 from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Iterable
 
 from griffe.agents.nodes import (
-    ASTNode,
+    ast_children,
+    ast_kind,
+    ast_next,
     get_docstring,
     get_instance_names,
     get_names,
@@ -188,7 +189,7 @@ class Visitor:
         """
         for before_visitor in self.extensions.before_visit:
             before_visitor.visit(node)
-        getattr(self, f"visit_{node.kind}", self.generic_visit)(node)
+        getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
         for after_visitor in self.extensions.after_visit:
             after_visitor.visit(node)
 
@@ -200,7 +201,7 @@ class Visitor:
         """
         for before_visitor in self.extensions.before_children_visit:
             before_visitor.visit(node)
-        for child in node.children:  # type: ignore[attr-defined]
+        for child in ast_children(node):
             self.visit(child)
         for after_visitor in self.extensions.after_children_visit:
             after_visitor.visit(node)
@@ -211,7 +212,7 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        self.current = Module(
+        module = Module(
             name=self.module_name,
             filepath=self.filepath,
             parent=self.parent,
@@ -219,6 +220,7 @@ class Visitor:
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
+        self.current = module
         self.generic_visit(node)
 
     def visit_classdef(self, node: ast.ClassDef) -> None:
@@ -591,7 +593,7 @@ class Visitor:
         value = safe_get_value(node.value, self.filepath)
 
         try:
-            docstring = self._get_docstring(node.next, strict=True)  # type: ignore[union-attr]
+            docstring = self._get_docstring(ast_next(node), strict=True)
         except (LastNodeError, AttributeError):
             docstring = None
 
@@ -677,17 +679,3 @@ class Visitor:
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
-
-
-_patched = False
-
-
-def patch_ast() -> None:
-    """Extend the base `ast.AST` class to provide more functionality."""
-    global _patched  # noqa: PLW0603
-    if _patched:
-        return
-    for name, member in inspect.getmembers(ast):
-        if name != "AST" and inspect.isclass(member) and ast.AST in member.__bases__:
-            member.__bases__ = (*member.__bases__, ASTNode)
-    _patched = True

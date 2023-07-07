@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 
 from griffe.agents.inspector import inspect
-from griffe.agents.visitor import patch_ast, visit
+from griffe.agents.visitor import visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
@@ -76,7 +76,6 @@ class GriffeLoader:
             "time_spent_visiting": 0,
             "time_spent_inspecting": 0,
         }
-        patch_ast()
 
     def load_module(
         self,

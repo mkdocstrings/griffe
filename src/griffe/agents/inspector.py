@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import ast
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, cleandoc, getmodule, ismodule
+from inspect import Signature, cleandoc
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any
 
@@ -50,8 +50,6 @@ if TYPE_CHECKING:
     from griffe.docstrings.parsers import Parser
     from griffe.expressions import Expression, Name
 
-
-from functools import cached_property
 
 empty = Signature.empty
 
@@ -97,58 +95,6 @@ def inspect(
         lines_collection=lines_collection,
         modules_collection=modules_collection,
     ).get_module(import_paths)
-
-
-_cyclic_relationships = {
-    ("os", "nt"),
-    ("os", "posix"),
-    ("numpy.core._multiarray_umath", "numpy.core.multiarray"),
-    ("pymmcore._pymmcore_swig", "pymmcore.pymmcore_swig"),
-}
-
-
-def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_path: str) -> str | None:
-    # the whole point of the following logic is to deal with these cases:
-    # - parent object has a module member
-    # - if this module is not a submodule of the parent, alias it
-    # - but break special cycles coming from builtin modules
-    #   like ast -> _ast -> ast (here we inspect _ast)
-    #   or os -> posix/nt -> os (here we inspect posix/nt)
-
-    child_obj = child.obj
-    if isinstance(child_obj, cached_property):
-        child_obj = child_obj.func
-
-    try:
-        child_module = getmodule(child_obj)
-    except Exception:  # noqa: BLE001
-        return None
-    if not child_module:
-        return None
-
-    if ismodule(parent.obj):
-        parent_module = parent.obj
-    else:
-        parent_module = getmodule(parent.obj)  # type: ignore[assignment]
-        if not parent_module:
-            return None
-
-    parent_module_path = getattr(parent_module.__spec__, "name", parent_module.__name__)
-    child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
-    parent_base_name = parent_module_path.split(".")[-1]
-    child_base_name = child_module_path.split(".")[-1]
-
-    # special cases: inspect.getmodule does not return the real modules
-    # for those, but rather the "user-facing" ones - we prevent that
-    # and use the real parent module
-    if (parent_module_path, child_module_path) in _cyclic_relationships or parent_base_name == f"_{child_base_name}":
-        child_module = parent_module
-        child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
-
-    is_submodule = child_module_path == current_module_path or child_module_path.startswith(current_module_path + ".")
-    if not is_submodule:
-        return child_module_path.lstrip("_")
-    return None
 
 
 class Inspector:
@@ -254,13 +200,8 @@ class Inspector:
             before_inspector.inspect(node)
 
         for child in node.children:
-            child_module_path = _should_create_alias(node, child, self.current.module.path)
-            if child_module_path:
-                if child.kind is ObjectKind.MODULE:
-                    target_path = child_module_path
-                else:
-                    child_name = getattr(child.obj, "__name__", child.name)
-                    target_path = f"{child_module_path}.{child_name}"
+            target_path = child.alias_target_path
+            if target_path:
                 self.current.set_member(child.name, Alias(child.name, target_path))
             else:
                 self.inspect(child)

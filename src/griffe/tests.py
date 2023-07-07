@@ -1,14 +1,4 @@
-"""Test helpers and pytest fixtures.
-
-Load fixtures in your own tests by adding `griffe.tests`
-to the [`pytest_plugins`][pytest_plugins] list:
-
-```python title="conftest.py"
-pytest_plugins = ["griffe.tests"]
-```
-
-[pytest_plugins]: https://docs.pytest.org/en/7.1.x/how-to/plugins.html#requiring-loading-plugins-in-a-test-module-or-conftest-file
-"""
+"""Test helpers and pytest fixtures."""
 
 from __future__ import annotations
 
@@ -22,7 +12,7 @@ from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
 
 from griffe.agents.inspector import inspect
-from griffe.agents.visitor import patch_ast, visit
+from griffe.agents.visitor import visit
 from griffe.dataclasses import Module, Object
 from griffe.loader import GriffeLoader
 
@@ -32,17 +22,6 @@ if TYPE_CHECKING:
     from griffe.extensions import Extensions
 
 TMPDIR_PREFIX = "griffe_"
-
-
-try:
-    import pytest
-
-    @pytest.fixture(scope="session", autouse=True)
-    def _fixture_patch_ast() -> None:
-        patch_ast()
-
-except ImportError:
-    pass
 
 
 TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
@@ -139,7 +118,6 @@ def temporary_visited_package(
     Yields:
         A module.
     """
-    patch_ast()
     with temporary_pypackage(package, modules, init=init) as tmp_package:
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         yield loader.load_module(tmp_package.name)
@@ -172,7 +150,6 @@ def temporary_visited_module(
     Yields:
         The visited module.
     """
-    patch_ast()
     with temporary_pyfile(code, module_name=module_name) as (_, path):
         module = visit(
             module_name,
