@@ -123,7 +123,7 @@ class Breakage:
             parts = self._relative_filepath.parts
             for index, part in enumerate(parts):
                 if part.startswith(WORKTREE_PREFIX):
-                    return Path(*parts[index + 3 :])
+                    return Path(*parts[index + 2 :])
         return self._relative_filepath
 
     @property
