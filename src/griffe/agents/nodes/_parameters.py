@@ -2,39 +2,27 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from griffe.agents.nodes._values import safe_get_value
+from griffe.agents.nodes._expressions import safe_get_expression
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from ast import AST
-    from pathlib import Path
+    from ast import Call
 
-    from griffe.collections import LinesCollection
+    from griffe.dataclasses import Class, Module
 
 
 logger = get_logger(__name__)
 
 
-def get_parameter_default(node: AST | None, filepath: Path, lines_collection: LinesCollection) -> str | None:
-    """Extract the default value of a function parameter.
+def get_call_keyword_arguments(node: Call, parent: Module | Class) -> dict[str, Any]:
+    """Get the list of keyword argument names and values from a Call node.
 
     Parameters:
-        node: The node to extract the default value from.
-        filepath: The filepath in which the parameter is written.
-            It allows to retrieve the actual code directly from the lines collection.
-        lines_collection: A collection of source code lines.
+        node: The node to extract the keyword arguments from.
 
     Returns:
-        The default value as a string.
+        The keyword argument names and values.
     """
-    if node is None:
-        return None
-    default = safe_get_value(node)
-    if default is not None:
-        return default
-    if node.lineno == node.end_lineno:
-        return lines_collection[filepath][node.lineno - 1][node.col_offset : node.end_col_offset]
-    # TODO: handle multiple line defaults
-    return None
+    return {kw.arg: safe_get_expression(kw.value, parent) for kw in node.keywords if kw.arg}

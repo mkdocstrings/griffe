@@ -59,9 +59,9 @@ from ast import UAdd as NodeUAdd
 from ast import UnaryOp as NodeUnaryOp
 from ast import USub as NodeUSub
 from ast import Yield as NodeYield
-from ast import arguments as NodeArguments  # noqa: N812
-from ast import comprehension as NodeComprehension  # noqa: N812
-from ast import keyword as NodeKeyword  # noqa: N812
+from ast import arguments as NodeArguments
+from ast import comprehension as NodeComprehension
+from ast import keyword as NodeKeyword
 from typing import TYPE_CHECKING, Any, Callable
 
 from griffe.logger import get_logger
@@ -78,67 +78,67 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def _extract_add(node: NodeAdd) -> str:  # noqa: ARG001
+def _extract_add(node: NodeAdd, **kwargs: Any) -> str:
     return "+"
 
 
-def _extract_and(node: NodeAnd) -> str:  # noqa: ARG001
-    return " and "
+def _extract_and(node: NodeAnd, **kwargs: Any) -> str:
+    return "and"
 
 
-def _extract_arguments(node: NodeArguments) -> str:
+def _extract_arguments(node: NodeArguments, **kwargs: Any) -> str:
     return ", ".join(arg.arg for arg in node.args)
 
 
-def _extract_attribute(node: NodeAttribute) -> str:
-    return f"{_extract(node.value)}.{node.attr}"
+def _extract_attribute(node: NodeAttribute, **kwargs: Any) -> str:
+    return f"{_extract(node.value, **kwargs)}.{node.attr}"
 
 
-def _extract_binop(node: NodeBinOp) -> str:
-    return f"{_extract(node.left)} {_extract(node.op)} {_extract(node.right)}"
+def _extract_binop(node: NodeBinOp, **kwargs: Any) -> str:
+    return f"{_extract(node.left, **kwargs)} {_extract(node.op, **kwargs)} {_extract(node.right, **kwargs)}"
 
 
-def _extract_bitor(node: NodeBitOr) -> str:  # noqa: ARG001
+def _extract_bitor(node: NodeBitOr, **kwargs: Any) -> str:
     return "|"
 
 
-def _extract_bitand(node: NodeBitAnd) -> str:  # noqa: ARG001
+def _extract_bitand(node: NodeBitAnd, **kwargs: Any) -> str:
     return "&"
 
 
-def _extract_bitxor(node: NodeBitXor) -> str:  # noqa: ARG001
+def _extract_bitxor(node: NodeBitXor, **kwargs: Any) -> str:
     return "^"
 
 
-def _extract_boolop(node: NodeBoolOp) -> str:
-    return _extract(node.op).join(_extract(value) for value in node.values)
+def _extract_boolop(node: NodeBoolOp, **kwargs: Any) -> str:
+    return f" {_extract(node.op, **kwargs)} ".join(_extract(value, **kwargs) for value in node.values)
 
 
-def _extract_call(node: NodeCall) -> str:
-    posargs = ", ".join(_extract(arg) for arg in node.args)
-    kwargs = ", ".join(_extract(kwarg) for kwarg in node.keywords)
-    if posargs and kwargs:
-        args = f"{posargs}, {kwargs}"
-    elif posargs:
-        args = posargs
-    elif kwargs:
-        args = kwargs
+def _extract_call(node: NodeCall, **kwargs: Any) -> str:
+    positional_args = ", ".join(_extract(arg, **kwargs) for arg in node.args)
+    keyword_args = ", ".join(_extract(kwarg, **kwargs) for kwarg in node.keywords)
+    if positional_args and keyword_args:
+        args = f"{positional_args}, {keyword_args}"
+    elif positional_args:
+        args = positional_args
+    elif keyword_args:
+        args = keyword_args
     else:
         args = ""
-    return f"{_extract(node.func)}({args})"
+    return f"{_extract(node.func, **kwargs)}({args})"
 
 
-def _extract_compare(node: NodeCompare) -> str:
-    left = _extract(node.left)
-    ops = [_extract(op) for op in node.ops]
-    comparators = [_extract(comparator) for comparator in node.comparators]
+def _extract_compare(node: NodeCompare, **kwargs: Any) -> str:
+    left = _extract(node.left, **kwargs)
+    ops = [_extract(op, **kwargs) for op in node.ops]
+    comparators = [_extract(comparator, **kwargs) for comparator in node.comparators]
     return f"{left} " + " ".join(f"{op} {comp}" for op, comp in zip(ops, comparators))
 
 
-def _extract_comprehension(node: NodeComprehension) -> str:
-    target = _extract(node.target)
-    iterable = _extract(node.iter)
-    conditions = [_extract(condition) for condition in node.ifs]
+def _extract_comprehension(node: NodeComprehension, **kwargs: Any) -> str:
+    target = _extract(node.target, **kwargs)
+    iterable = _extract(node.iter, **kwargs)
+    conditions = [_extract(condition, **kwargs) for condition in node.ifs]
     value = f"for {target} in {iterable}"
     if conditions:
         value = f"{value} if " + " if ".join(conditions)
@@ -147,217 +147,219 @@ def _extract_comprehension(node: NodeComprehension) -> str:
     return value
 
 
-def _extract_constant(node: NodeConstant) -> str:
-    return repr(node.value)
-
-
-def _extract_constant_no_string_repr(node: NodeConstant) -> str:
-    if isinstance(node.value, str):
+def _extract_constant(
+    node: NodeConstant,
+    *,
+    in_formatted_str: bool = False,
+    in_joined_str: bool = False,
+    **kwargs: Any,
+) -> str:
+    if in_joined_str and not in_formatted_str and isinstance(node.value, str):
         return node.value
-    return repr(node.value)
+    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
-def _extract_dict(node: NodeDict) -> str:
+def _extract_dict(node: NodeDict, **kwargs: Any) -> str:
     pairs = zip(node.keys, node.values)
-    gen = (f"{'None' if key is None else _extract(key)}: {_extract(value)}" for key, value in pairs)
+    gen = (f"{'None' if key is None else _extract(key, **kwargs)}: {_extract(value, **kwargs)}" for key, value in pairs)
     return "{" + ", ".join(gen) + "}"
 
 
-def _extract_dictcomp(node: NodeDictComp) -> str:
-    key = _extract(node.key)
-    value = _extract(node.value)
-    generators = [_extract(gen) for gen in node.generators]
+def _extract_dictcomp(node: NodeDictComp, **kwargs: Any) -> str:
+    key = _extract(node.key, **kwargs)
+    value = _extract(node.value, **kwargs)
+    generators = [_extract(gen, **kwargs) for gen in node.generators]
     return f"{{{key}: {value} " + " ".join(generators) + "}"
 
 
-def _extract_div(node: NodeDiv) -> str:  # noqa: ARG001
+def _extract_div(node: NodeDiv, **kwargs: Any) -> str:
     return "/"
 
 
-def _extract_ellipsis(node: NodeEllipsis) -> str:  # noqa: ARG001
+def _extract_ellipsis(node: NodeEllipsis, **kwargs: Any) -> str:
     return "..."
 
 
-def _extract_eq(node: NodeEq) -> str:  # noqa: ARG001
+def _extract_eq(node: NodeEq, **kwargs: Any) -> str:
     return "=="
 
 
-def _extract_floordiv(node: NodeFloorDiv) -> str:  # noqa: ARG001
+def _extract_floordiv(node: NodeFloorDiv, **kwargs: Any) -> str:
     return "//"
 
 
-def _extract_formatted(node: NodeFormattedValue) -> str:
-    return f"{{{_extract(node.value)}}}"
+def _extract_formatted(node: NodeFormattedValue, **kwargs: Any) -> str:
+    return f"{{{_extract(node.value, in_formatted_str=True, **kwargs)}}}"
 
 
-def _extract_generatorexp(node: NodeGeneratorExp) -> str:
-    element = _extract(node.elt)
-    generators = [_extract(gen) for gen in node.generators]
+def _extract_generatorexp(node: NodeGeneratorExp, **kwargs: Any) -> str:
+    element = _extract(node.elt, **kwargs)
+    generators = [_extract(gen, **kwargs) for gen in node.generators]
     return f"{element} " + " ".join(generators)
 
 
-def _extract_gte(node: NodeNotEq) -> str:  # noqa: ARG001
+def _extract_gte(node: NodeNotEq, **kwargs: Any) -> str:
     return ">="
 
 
-def _extract_gt(node: NodeNotEq) -> str:  # noqa: ARG001
+def _extract_gt(node: NodeNotEq, **kwargs: Any) -> str:
     return ">"
 
 
-def _extract_ifexp(node: NodeIfExp) -> str:
-    return f"{_extract(node.body)} if {_extract(node.test)} else {_extract(node.orelse)}"
+def _extract_ifexp(node: NodeIfExp, **kwargs: Any) -> str:
+    return f"{_extract(node.body, **kwargs)} if {_extract(node.test, **kwargs)} else {_extract(node.orelse, **kwargs)}"
 
 
-def _extract_invert(node: NodeInvert) -> str:  # noqa: ARG001
+def _extract_invert(node: NodeInvert, **kwargs: Any) -> str:
     return "~"
 
 
-def _extract_in(node: NodeIn) -> str:  # noqa: ARG001
+def _extract_in(node: NodeIn, **kwargs: Any) -> str:
     return "in"
 
 
-def _extract_is(node: NodeIs) -> str:  # noqa: ARG001
+def _extract_is(node: NodeIs, **kwargs: Any) -> str:
     return "is"
 
 
-def _extract_isnot(node: NodeIsNot) -> str:  # noqa: ARG001
+def _extract_isnot(node: NodeIsNot, **kwargs: Any) -> str:
     return "is not"
 
 
-def _extract_joinedstr(node: NodeJoinedStr) -> str:
-    _node_map[NodeConstant] = _extract_constant_no_string_repr
-    try:
-        return "f" + repr("".join(_extract(value) for value in node.values))
-    finally:
-        _node_map[NodeConstant] = _extract_constant
+def _extract_joinedstr(node: NodeJoinedStr, **kwargs: Any) -> str:
+    return "f" + repr("".join(_extract(value, in_joined_str=True, **kwargs) for value in node.values))
 
 
-def _extract_keyword(node: NodeKeyword) -> str:
-    return f"{node.arg}={_extract(node.value)}"
+def _extract_keyword(node: NodeKeyword, **kwargs: Any) -> str:
+    if node.arg is None:
+        return f"**{_extract(node.value, **kwargs)}"
+    return f"{node.arg}={_extract(node.value, **kwargs)}"
 
 
-def _extract_lambda(node: NodeLambda) -> str:
-    return f"lambda {_extract(node.args)}: {_extract(node.body)}"
+def _extract_lambda(node: NodeLambda, **kwargs: Any) -> str:
+    return f"lambda {_extract(node.args, **kwargs)}: {_extract(node.body, **kwargs)}"
 
 
-def _extract_list(node: NodeList) -> str:
-    return "[" + ", ".join(_extract(el) for el in node.elts) + "]"
+def _extract_list(node: NodeList, **kwargs: Any) -> str:
+    return "[" + ", ".join(_extract(el, **kwargs) for el in node.elts) + "]"
 
 
-def _extract_listcomp(node: NodeListComp) -> str:
-    element = _extract(node.elt)
-    generators = [_extract(gen) for gen in node.generators]
+def _extract_listcomp(node: NodeListComp, **kwargs: Any) -> str:
+    element = _extract(node.elt, **kwargs)
+    generators = [_extract(gen, **kwargs) for gen in node.generators]
     return f"[{element} " + " ".join(generators) + "]"
 
 
-def _extract_lshift(node: NodeLShift) -> str:  # noqa: ARG001
+def _extract_lshift(node: NodeLShift, **kwargs: Any) -> str:
     return "<<"
 
 
-def _extract_lte(node: NodeNotEq) -> str:  # noqa: ARG001
+def _extract_lte(node: NodeNotEq, **kwargs: Any) -> str:
     return "<="
 
 
-def _extract_lt(node: NodeNotEq) -> str:  # noqa: ARG001
+def _extract_lt(node: NodeNotEq, **kwargs: Any) -> str:
     return "<"
 
 
-def _extract_matmult(node: NodeMatMult) -> str:  # noqa: ARG001
+def _extract_matmult(node: NodeMatMult, **kwargs: Any) -> str:
     return "@"
 
 
-def _extract_mod(node: NodeMod) -> str:  # noqa: ARG001
+def _extract_mod(node: NodeMod, **kwargs: Any) -> str:
     return "%"
 
 
-def _extract_mult(node: NodeMult) -> str:  # noqa: ARG001
+def _extract_mult(node: NodeMult, **kwargs: Any) -> str:
     return "*"
 
 
-def _extract_name(node: NodeName) -> str:
+def _extract_name(node: NodeName, **kwargs: Any) -> str:
     return node.id
 
 
-def _extract_not(node: NodeNot) -> str:  # noqa: ARG001
+def _extract_named_expr(node: NodeNamedExpr, **kwargs: Any) -> str:
+    return f"({_extract(node.target, **kwargs)} := {_extract(node.value, **kwargs)})"
+
+
+def _extract_not(node: NodeNot, **kwargs: Any) -> str:
     return "not "
 
 
-def _extract_noteq(node: NodeNotEq) -> str:  # noqa: ARG001
+def _extract_noteq(node: NodeNotEq, **kwargs: Any) -> str:
     return "!="
 
 
-def _extract_notin(node: NodeNotIn) -> str:  # noqa: ARG001
+def _extract_notin(node: NodeNotIn, **kwargs: Any) -> str:
     return "not in"
 
 
-def _extract_or(node: NodeOr) -> str:  # noqa: ARG001
-    return " or "
+def _extract_or(node: NodeOr, **kwargs: Any) -> str:
+    return "or"
 
 
-def _extract_pow(node: NodePow) -> str:  # noqa: ARG001
+def _extract_pow(node: NodePow, **kwargs: Any) -> str:
     return "**"
 
 
-def _extract_rshift(node: NodeRShift) -> str:  # noqa: ARG001
+def _extract_rshift(node: NodeRShift, **kwargs: Any) -> str:
     return ">>"
 
 
-def _extract_set(node: NodeSet) -> str:
-    return "{" + ", ".join(_extract(el) for el in node.elts) + "}"
+def _extract_set(node: NodeSet, **kwargs: Any) -> str:
+    return "{" + ", ".join(_extract(el, **kwargs) for el in node.elts) + "}"
 
 
-def _extract_setcomp(node: NodeSetComp) -> str:
-    element = _extract(node.elt)
-    generators = [_extract(gen) for gen in node.generators]
+def _extract_setcomp(node: NodeSetComp, **kwargs: Any) -> str:
+    element = _extract(node.elt, **kwargs)
+    generators = [_extract(gen, **kwargs) for gen in node.generators]
     return f"{{{element} " + " ".join(generators) + "}"
 
 
-def _extract_slice(node: NodeSlice) -> str:
-    value = f"{_extract(node.lower) if node.lower else ''}:{_extract(node.upper) if node.upper else ''}"
+def _extract_slice(node: NodeSlice, **kwargs: Any) -> str:
+    lower = _extract(node.lower, **kwargs) if node.lower else ""
+    upper = _extract(node.upper, **kwargs) if node.upper else ""
+    value = f"{lower}:{upper}"
     if node.step:
-        return f"{value}:{_extract(node.step)}"
+        return f"{value}:{_extract(node.step, **kwargs)}"
     return value
 
 
-def _extract_starred(node: NodeStarred) -> str:
-    return _extract(node.value)
+def _extract_starred(node: NodeStarred, **kwargs: Any) -> str:
+    return f"*{_extract(node.value, **kwargs)}"
 
 
-def _extract_sub(node: NodeSub) -> str:  # noqa: ARG001
+def _extract_sub(node: NodeSub, **kwargs: Any) -> str:
     return "-"
 
 
-def _extract_subscript(node: NodeSubscript) -> str:
-    subscript = _extract(node.slice)
+def _extract_subscript(node: NodeSubscript, **kwargs: Any) -> str:
+    subscript = _extract(node.slice, **kwargs)
     if isinstance(subscript, str) and subscript.startswith("(") and subscript.endswith(")"):
         subscript = subscript[1:-1]
-    return f"{_extract(node.value)}[{subscript}]"
+    return f"{_extract(node.value, **kwargs)}[{subscript}]"
 
 
-def _extract_tuple(node: NodeTuple) -> str:
-    return "(" + ", ".join(_extract(el) for el in node.elts) + ")"
+def _extract_tuple(node: NodeTuple, **kwargs: Any) -> str:
+    return "(" + ", ".join(_extract(el, **kwargs) for el in node.elts) + ")"
 
 
-def _extract_uadd(node: NodeUAdd) -> str:  # noqa: ARG001
+def _extract_uadd(node: NodeUAdd, **kwargs: Any) -> str:
     return "+"
 
 
-def _extract_unaryop(node: NodeUnaryOp) -> str:
-    return f"{_extract(node.op)}{_extract(node.operand)}"
+def _extract_unaryop(node: NodeUnaryOp, **kwargs: Any) -> str:
+    return f"{_extract(node.op, **kwargs)}{_extract(node.operand, **kwargs)}"
 
 
-def _extract_usub(node: NodeUSub) -> str:  # noqa: ARG001
+def _extract_usub(node: NodeUSub, **kwargs: Any) -> str:
     return "-"
 
 
-def _extract_yield(node: NodeYield) -> str:
+def _extract_yield(node: NodeYield, **kwargs: Any) -> str:
     if node.value is None:
         return repr(None)
-    return _extract(node.value)
-
-
-def _extract_named_expr(node: NodeNamedExpr) -> str:
-    return f"({_extract(node.target)} := {_extract(node.value)})"
+    return _extract(node.value, **kwargs)
 
 
 _node_map: dict[type, Callable[[Any], str]] = {
@@ -424,18 +426,18 @@ _node_map: dict[type, Callable[[Any], str]] = {
 # TODO: remove once Python 3.8 support is
 if sys.version_info < (3, 9):
 
-    def _extract_extslice(node: NodeExtSlice) -> str:
-        return ",".join(_extract(dim) for dim in node.dims)
+    def _extract_extslice(node: NodeExtSlice, **kwargs: Any) -> str:
+        return ",".join(_extract(dim, **kwargs) for dim in node.dims)
 
-    def _extract_index(node: NodeIndex) -> str:
-        return _extract(node.value)
+    def _extract_index(node: NodeIndex, **kwargs: Any) -> str:
+        return _extract(node.value, **kwargs)
 
     _node_map[NodeExtSlice] = _extract_extslice
     _node_map[NodeIndex] = _extract_index
 
 
-def _extract(node: AST) -> str:
-    return _node_map[type(node)](node)
+def _extract(node: AST, **kwargs: Any) -> str:
+    return _node_map[type(node)](node, **kwargs)
 
 
 def get_value(node: AST | None) -> str | None:

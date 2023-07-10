@@ -20,13 +20,12 @@ from griffe.agents.nodes import (
     get_docstring,
     get_instance_names,
     get_names,
-    get_parameter_default,
     relative_to_absolute,
     safe_get__all__,
     safe_get_annotation,
     safe_get_base_class,
     safe_get_condition,
-    safe_get_value,
+    safe_get_expression,
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -42,7 +41,7 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
-from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError, NameResolutionError
+from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
 from griffe.expressions import Expression
 from griffe.extensions import Extensions
 
@@ -236,7 +235,7 @@ class Visitor:
             for decorator_node in node.decorator_list:
                 decorators.append(
                     Decorator(
-                        safe_get_value(decorator_node, self.current.relative_filepath),  # type: ignore[arg-type]
+                        safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
                         endlineno=decorator_node.end_lineno,
                     ),
@@ -276,19 +275,14 @@ class Visitor:
         """
         labels = set()
         for decorator in decorators:
-            decorator_value = decorator.value.split("(", 1)[0]
-            if decorator_value in builtin_decorators:
-                labels.add(builtin_decorators[decorator_value])
-            else:
-                names = decorator_value.split(".")
-                with suppress(NameResolutionError):
-                    resolved_first = self.current.resolve(names[0])
-                    resolved_name = ".".join([resolved_first, *names[1:]])
-                    if resolved_name in stdlib_decorators:
-                        labels |= stdlib_decorators[resolved_name]
+            callable_path = decorator.callable_path
+            if callable_path in builtin_decorators:
+                labels.add(builtin_decorators[callable_path])
+            elif callable_path in stdlib_decorators:
+                labels |= stdlib_decorators[callable_path]
         return labels
 
-    def get_base_property(self, decorators: list[Decorator]) -> tuple[Function | None, str | None]:
+    def get_base_property(self, decorators: list[Decorator], function: Function) -> str | None:
         """Check decorators to return the base property in case of setters and deleters.
 
         Parameters:
@@ -299,17 +293,18 @@ class Visitor:
             property_function: Either `"setter"` or `"deleter"`.
         """
         for decorator in decorators:
-            names = decorator.value.split(".")
-            with suppress(ValueError):
-                base_name, base_function = names
-                property_setter_or_deleter = (
-                    base_function in {"setter", "deleter"}
-                    and base_name in self.current.members
-                    and self.current.get_member(base_name).has_labels({"property"})
-                )
-                if property_setter_or_deleter:
-                    return self.current.get_member(base_name), base_function
-        return None, None
+            try:
+                path, prop_function = decorator.callable_path.rsplit(".", 1)
+            except ValueError:
+                continue
+            property_setter_or_deleter = (
+                prop_function in {"setter", "deleter"}
+                and path == function.path
+                and self.current.get_member(function.name).has_labels({"property"})
+            )
+            if property_setter_or_deleter:
+                return prop_function
+        return None
 
     def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None) -> None:
         """Handle a function definition node.
@@ -326,21 +321,16 @@ class Visitor:
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
-                decorator_value = safe_get_value(decorator_node, self.filepath)
+                decorator_value = safe_get_expression(decorator_node, parent=self.current, parse_strings=False)
                 if decorator_value is None:
                     continue
-                overload = (
-                    decorator_value in typing_overload
-                    or decorator_value == "overload"
-                    and self.current.resolve("overload") in typing_overload
+                decorator = Decorator(
+                    decorator_value,
+                    lineno=decorator_node.lineno,
+                    endlineno=decorator_node.end_lineno,
                 )
-                decorators.append(
-                    Decorator(
-                        decorator_value,
-                        lineno=decorator_node.lineno,
-                        endlineno=decorator_node.end_lineno,
-                    ),
-                )
+                decorators.append(decorator)
+                overload |= decorator.callable_path in typing_overload
         else:
             lineno = node.lineno
 
@@ -359,8 +349,6 @@ class Visitor:
             attribute.labels |= labels
             self.current.set_member(node.name, attribute)
             return
-
-        base_property, property_function = self.get_base_property(decorators)
 
         # handle parameters
         parameters = Parameters()
@@ -392,7 +380,7 @@ class Visitor:
         arg_default: ast.AST | None
         for (arg, kind), arg_default in args_kinds_defaults:
             annotation = safe_get_annotation(arg.annotation, parent=self.current)
-            default = get_parameter_default(arg_default, self.filepath, self.lines_collection)
+            default = safe_get_expression(arg_default, parent=self.current, parse_strings=False)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
@@ -420,7 +408,7 @@ class Visitor:
         kwarg_default: ast.AST | None
         for kwarg, kwarg_default in kwargs_defaults:
             annotation = safe_get_annotation(kwarg.annotation, parent=self.current)
-            default = get_parameter_default(kwarg_default, self.filepath, self.lines_collection)
+            default = safe_get_expression(kwarg_default, parent=self.current, parse_strings=False)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default),
             )
@@ -448,9 +436,12 @@ class Visitor:
             parent=self.current,
         )
 
+        property_function = self.get_base_property(decorators, function)
+
         if overload:
             self.current.overloads[function.name].append(function)
-        elif base_property is not None:
+        elif property_function:
+            base_property: Function = self.current.members[node.name]  # type: ignore[assignment]
             if property_function == "setter":
                 base_property.setter = function
                 base_property.labels.add("writable")
@@ -590,7 +581,7 @@ class Visitor:
         if not names:
             return
 
-        value = safe_get_value(node.value, self.filepath)
+        value = safe_get_expression(node.value, parent=self.current, parse_strings=False)
 
         try:
             docstring = self._get_docstring(ast_next(node), strict=True)

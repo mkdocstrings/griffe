@@ -1,35 +1,76 @@
-"""This module contains utilities for extracting information from nodes."""
+"""This module contains utilities for building information from nodes."""
 
 from __future__ import annotations
 
 import sys
 from ast import AST, PyCF_ONLY_AST
+from ast import Add as NodeAdd
+from ast import And as NodeAnd
 from ast import Attribute as NodeAttribute
 from ast import BinOp as NodeBinOp
 from ast import BitAnd as NodeBitAnd
 from ast import BitOr as NodeBitOr
+from ast import BitXor as NodeBitXor
+from ast import BoolOp as NodeBoolOp
 from ast import Call as NodeCall
+from ast import Compare as NodeCompare
 from ast import Constant as NodeConstant
+from ast import Dict as NodeDict
+from ast import DictComp as NodeDictComp
+from ast import Div as NodeDiv
 from ast import Ellipsis as NodeEllipsis
+from ast import Eq as NodeEq
+from ast import FloorDiv as NodeFloorDiv
+from ast import FormattedValue as NodeFormattedValue
+from ast import GeneratorExp as NodeGeneratorExp
+from ast import Gt as NodeGt
+from ast import GtE as NodeGtE
 from ast import IfExp as NodeIfExp
+from ast import In as NodeIn
 from ast import Invert as NodeInvert
+from ast import Is as NodeIs
+from ast import IsNot as NodeIsNot
+from ast import JoinedStr as NodeJoinedStr
+from ast import Lambda as NodeLambda
 from ast import List as NodeList
+from ast import ListComp as NodeListComp
+from ast import LShift as NodeLShift
+from ast import Lt as NodeLt
+from ast import LtE as NodeLtE
+from ast import MatMult as NodeMatMult
+from ast import Mod as NodeMod
+from ast import Mult as NodeMult
 from ast import Name as NodeName
+from ast import NamedExpr as NodeNamedExpr
+from ast import Not as NodeNot
+from ast import NotEq as NodeNotEq
+from ast import NotIn as NodeNotIn
+from ast import Or as NodeOr
+from ast import Pow as NodePow
+from ast import RShift as NodeRShift
+from ast import Set as NodeSet
+from ast import SetComp as NodeSetComp
+from ast import Slice as NodeSlice
+from ast import Starred as NodeStarred
+from ast import Sub as NodeSub
 from ast import Subscript as NodeSubscript
 from ast import Tuple as NodeTuple
 from ast import UAdd as NodeUAdd
 from ast import UnaryOp as NodeUnaryOp
 from ast import USub as NodeUSub
-from ast import keyword as NodeKeyword  # noqa: N812
-from contextlib import contextmanager
+from ast import Yield as NodeYield
+from ast import arguments as NodeArguments
+from ast import comprehension as NodeComprehension
+from ast import keyword as NodeKeyword
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Sequence
 
 from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel, get_logger
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
+    from ast import ExtSlice as NodeExtSlice
     from ast import Index as NodeIndex
 
 if TYPE_CHECKING:
@@ -41,7 +82,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def _join(sequence: Sequence, item: str) -> list:
+def _join(sequence: Sequence, item: str | Name | Expression) -> list:
     if not sequence:
         return []
     new_sequence = [sequence[0]]
@@ -51,83 +92,109 @@ def _join(sequence: Sequence, item: str) -> list:
     return new_sequence
 
 
-class _ExpressionBuilder:
-    __slots__ = ("parent", "_node_map", "_literal_strings")
+def _build_add(node: NodeAdd, parent: Module | Class, **kwargs: Any) -> str:
+    return "+"
 
-    def __init__(self, parent: Module | Class) -> None:
-        self.parent = parent
-        self._literal_strings = False
-        self._node_map: dict[type, Callable[[Any], str | Name | Expression]] = {
-            NodeAttribute: self._build_attribute,
-            NodeBinOp: self._build_binop,
-            NodeBitAnd: self._build_bitand,
-            NodeBitOr: self._build_bitor,
-            NodeCall: self._build_call,
-            NodeConstant: self._build_constant,
-            NodeEllipsis: self._build_ellipsis,
-            NodeIfExp: self._build_ifexp,
-            NodeInvert: self._build_invert,
-            NodeKeyword: self._build_keyword,
-            NodeList: self._build_list,
-            NodeName: self._build_name,
-            NodeSubscript: self._build_subscript,
-            NodeTuple: self._build_tuple,
-            NodeUnaryOp: self._build_unaryop,
-            NodeUAdd: self._build_uadd,
-            NodeUSub: self._build_usub,
-        }
 
-        # TODO: remove once Python 3.8 support is dropped
-        if sys.version_info < (3, 9):
-            self._node_map[NodeIndex] = self._build_index
+def _build_and(node: NodeAnd, parent: Module | Class, **kwargs: Any) -> str:
+    return "and"
 
-    @contextmanager
-    def literal_strings(self) -> Iterator[None]:
-        self._literal_strings = True
-        try:
-            yield
-        finally:
-            self._literal_strings = False
 
-    def _build_attribute(self, node: NodeAttribute) -> Expression:
-        left = self._build(node.value)
+def _build_arguments(node: NodeArguments, parent: Module | Class, **kwargs: Any) -> str:
+    return ", ".join(arg.arg for arg in node.args)
 
-        def resolver() -> str:
-            return f"{left.full}.{node.attr}"  # type: ignore[union-attr]
 
-        right = Name(node.attr, resolver, first_attr_name=False)
-        return Expression(left, ".", right)
+def _build_attribute(node: NodeAttribute, parent: Module | Class, **kwargs: Any) -> Expression:
+    left = _build(node.value, parent, **kwargs)
 
-    def _build_binop(self, node: NodeBinOp) -> Expression:
-        left = self._build(node.left)
-        right = self._build(node.right)
-        return Expression(left, self._build(node.op), right)
+    if isinstance(left, str):
+        resolver = f"str.{node.attr}"
+    else:
 
-    def _build_bitand(self, node: NodeBitAnd) -> str:  # noqa: ARG002
-        return " & "
+        def resolver() -> str:  # type: ignore[misc]
+            return f"{left.full}.{node.attr}"
 
-    def _build_bitor(self, node: NodeBitOr) -> str:  # noqa: ARG002
-        return " | "
+    right = Name(node.attr, resolver, first_attr_name=False)
+    return Expression(left, ".", right)
 
-    def _build_call(self, node: NodeCall) -> Expression:
-        posargs = Expression(*_join([self._build(arg) for arg in node.args], ", "))
-        kwargs = Expression(*_join([self._build(kwarg) for kwarg in node.keywords], ", "))
-        args: Expression | str
-        if posargs and kwargs:
-            args = Expression(posargs, ", ", kwargs)
-        elif posargs:
-            args = posargs
-        elif kwargs:
-            args = kwargs
-        else:
-            args = ""
-        return Expression(self._build(node.func), "(", args, ")")
 
-    def _build_constant(self, node: NodeConstant) -> str | Name | Expression:
-        if isinstance(node.value, str) and not self._literal_strings:
-            # A string in an annotation is a stringified annotation: we parse and build it again.
+def _build_binop(node: NodeBinOp, parent: Module | Class, **kwargs: Any) -> Expression:
+    left = _build(node.left, parent, **kwargs)
+    right = _build(node.right, parent, **kwargs)
+    return Expression(left, " ", _build(node.op, parent, **kwargs), " ", right)
+
+
+def _build_bitand(node: NodeBitAnd, parent: Module | Class, **kwargs: Any) -> str:
+    return "&"
+
+
+def _build_bitor(node: NodeBitOr, parent: Module | Class, **kwargs: Any) -> str:
+    return "|"
+
+
+def _build_bitxor(node: NodeBitXor, parent: Module | Class, **kwargs: Any) -> str:
+    return "^"
+
+
+def _build_boolop(node: NodeBoolOp, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression(
+        *_join([_build(value, parent, **kwargs) for value in node.values], f" {_build(node.op, parent, **kwargs)} "),
+    )
+
+
+def _build_call(node: NodeCall, parent: Module | Class, **kwargs: Any) -> Expression:
+    positional_args = Expression(*_join([_build(arg, parent, **kwargs) for arg in node.args], ", "))
+    keyword_args = Expression(*_join([_build(kwarg, parent, **kwargs) for kwarg in node.keywords], ", "))
+    args: Expression | str
+    if positional_args and keyword_args:
+        args = Expression(positional_args, ", ", keyword_args)
+    elif positional_args:
+        args = positional_args
+    elif keyword_args:
+        args = keyword_args
+    else:
+        args = ""
+    return Expression(_build(node.func, parent, **kwargs), "(", args, ")")
+
+
+def _build_compare(node: NodeCompare, parent: Module | Class, **kwargs: Any) -> Expression:
+    left = _build(node.left, parent, **kwargs)
+    ops = [_build(op, parent, **kwargs) for op in node.ops]
+    comparators = [_build(comparator, parent, **kwargs) for comparator in node.comparators]
+    return Expression(left, " ", *_join([Expression(op, " ", comp) for op, comp in zip(ops, comparators)], " "))
+
+
+def _build_comprehension(node: NodeComprehension, parent: Module | Class, **kwargs: Any) -> Expression:
+    target = _build(node.target, parent, **kwargs)
+    iterable = _build(node.iter, parent, **kwargs)
+    conditions = [_build(condition, parent, **kwargs) for condition in node.ifs]
+    value = Expression("for ", target, " in ", iterable)
+    if conditions:
+        value.extend((" if ", *_join(conditions, " if ")))
+    if node.is_async:
+        value.insert(0, "async ")
+    return value
+
+
+def _build_constant(
+    node: NodeConstant,
+    parent: Module | Class,
+    *,
+    in_formatted_str: bool = False,
+    in_joined_str: bool = False,
+    parse_strings: bool = False,
+    literal_strings: bool = False,
+    **kwargs: Any,
+) -> str | Name | Expression:
+    if isinstance(node.value, str):
+        if in_joined_str and not in_formatted_str:
+            # We're in a f-string, not in a formatted value, don't keep quotes.
+            return node.value
+        if parse_strings and not literal_strings:
+            # We're in a place where a string could be a type annotation
+            # (and not in a Literal[...] type annotation).
+            # We parse the string and build from the resulting nodes again.
             # If we fail to parse it (syntax errors), we consider it's a literal string and log a message.
-            # Literal strings must be wrapped in Literal[...] to be picked up as such.
             try:
                 parsed = compile(
                     node.value,
@@ -143,200 +210,307 @@ class _ExpressionBuilder:
                     "(postponed annotations might help: https://peps.python.org/pep-0563/)",
                 )
             else:
-                return self._build(parsed.body)  # type: ignore[attr-defined]
-        return self._build_literal(node)
-
-    def _build_literal(self, node: NodeConstant) -> str:
-        return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
-
-    def _build_ellipsis(self, node: NodeEllipsis) -> str:  # noqa: ARG002
-        return "..."
-
-    def _build_ifexp(self, node: NodeIfExp) -> Expression:
-        return Expression(
-            self._build(node.body),
-            " if ",
-            self._build(node.test),
-            " else ",
-            self._build(node.orelse),
-        )
-
-    def _build_invert(self, node: NodeInvert) -> str:  # noqa: ARG002
-        return "~"
-
-    def _build_keyword(self, node: NodeKeyword) -> Expression:
-        return Expression(f"{node.arg}=", self._build(node.value))
-
-    def _build_list(self, node: NodeList) -> Expression:
-        return Expression("[", *_join([self._build(el) for el in node.elts], ", "), "]")
-
-    def _build_name(self, node: NodeName) -> Name:
-        return Name(node.id, partial(self.parent.resolve, node.id))
-
-    def _build_subscript(self, node: NodeSubscript) -> Expression:
-        left = self._build(node.value)
-        if left.full in {"typing.Literal", "typing_extensions.Literal"}:  # type: ignore[union-attr]
-            with self.literal_strings():
-                subscript = self._build(node.slice)
-        else:
-            subscript = self._build(node.slice)
-        return Expression(left, "[", subscript, "]")
-
-    def _build_tuple(self, node: NodeTuple) -> Expression:
-        return Expression(*_join([self._build(el) for el in node.elts], ", "))
-
-    def _build_unaryop(self, node: NodeUnaryOp) -> Expression:
-        return Expression(self._build(node.op), self._build(node.operand))
-
-    def _build_uadd(self, node: NodeUAdd) -> str:  # noqa: ARG002
-        return "+"
-
-    def _build_usub(self, node: NodeUSub) -> str:  # noqa: ARG002
-        return "-"
-
-    # TODO: remove once Python 3.8 support is dropped
-    if sys.version_info < (3, 9):
-
-        def _build_index(self, node: NodeIndex) -> str | Name | Expression:
-            return self._build(node.value)
-
-    def _build(self, node: AST) -> str | Name | Expression:
-        return self._node_map[type(node)](node)
-
-
-def _build_attribute(node: NodeAttribute, parent: Module | Class) -> Expression:
-    left = _build(node.value, parent)
-
-    def resolver() -> str:
-        return f"{left.full}.{node.attr}"  # type: ignore[union-attr]
-
-    right = Name(node.attr, resolver, first_attr_name=False)
-    return Expression(left, ".", right)
-
-
-def _build_binop(node: NodeBinOp, parent: Module | Class) -> Expression:
-    left = _build(node.left, parent)
-    right = _build(node.right, parent)
-    return Expression(left, _build(node.op, parent), right)
-
-
-def _build_bitand(node: NodeBitAnd, parent: Module | Class) -> str:  # noqa: ARG001
-    return " & "
-
-
-def _build_bitor(node: NodeBitOr, parent: Module | Class) -> str:  # noqa: ARG001
-    return " | "
-
-
-def _build_call(node: NodeCall, parent: Module | Class) -> Expression:
-    posargs = Expression(*_join([_build(arg, parent) for arg in node.args], ", "))
-    kwargs = Expression(*_join([_build(kwarg, parent) for kwarg in node.keywords], ", "))
-    args: Expression | str
-    if posargs and kwargs:
-        args = Expression(posargs, ", ", kwargs)
-    elif posargs:
-        args = posargs
-    elif kwargs:
-        args = kwargs
-    else:
-        args = ""
-    return Expression(_build(node.func, parent), "(", args, ")")
-
-
-def _build_constant(node: NodeConstant, parent: Module | Class) -> str | Name | Expression:
-    return _build_literal(node, parent)
-
-
-def _build_literal(node: NodeConstant, parent: Module | Class) -> str:  # noqa: ARG001
+                return _build(parsed.body, parent, **kwargs)  # type: ignore[attr-defined]
     return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
-def _build_ellipsis(node: NodeEllipsis, parent: Module | Class) -> str:  # noqa: ARG001
+def _build_dict(node: NodeDict, parent: Module | Class, **kwargs: Any) -> Expression:
+    pairs = zip(node.keys, node.values)
+    body = [
+        Expression("None" if key is None else _build(key, parent, **kwargs), ": ", _build(value, parent, **kwargs))
+        for key, value in pairs
+    ]
+    return Expression("{", Expression(*_join(body, ", ")), "}")
+
+
+def _build_dictcomp(node: NodeDictComp, parent: Module | Class, **kwargs: Any) -> Expression:
+    key = _build(node.key, parent, **kwargs)
+    value = _build(node.value, parent, **kwargs)
+    generators = [_build(gen, parent, **kwargs) for gen in node.generators]
+    return Expression("{", key, ": ", value, Expression(*_join(generators, " ")), "}")
+
+
+def _build_div(node: NodeDiv, parent: Module | Class, **kwargs: Any) -> str:
+    return "/"
+
+
+def _build_ellipsis(node: NodeEllipsis, parent: Module | Class, **kwargs: Any) -> str:
     return "..."
 
 
-def _build_ifexp(node: NodeIfExp, parent: Module | Class) -> Expression:
+def _build_eq(node: NodeEq, parent: Module | Class, **kwargs: Any) -> str:
+    return "=="
+
+
+def _build_floordiv(node: NodeFloorDiv, parent: Module | Class, **kwargs: Any) -> str:
+    return "//"
+
+
+def _build_formatted(node: NodeFormattedValue, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("{", _build(node.value, parent, in_formatted_str=True, **kwargs), "}")
+
+
+def _build_generatorexp(node: NodeGeneratorExp, parent: Module | Class, **kwargs: Any) -> Expression:
+    element = _build(node.elt, parent, **kwargs)
+    generators = [_build(gen, parent, **kwargs) for gen in node.generators]
+    return Expression(element, " ", Expression(*_join(generators, " ")))
+
+
+def _build_gte(node: NodeGtE, parent: Module | Class, **kwargs: Any) -> str:
+    return ">="
+
+
+def _build_gt(node: NodeGt, parent: Module | Class, **kwargs: Any) -> str:
+    return ">"
+
+
+def _build_ifexp(node: NodeIfExp, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression(
-        _build(node.body, parent),
+        _build(node.body, parent, **kwargs),
         " if ",
-        _build(node.test, parent),
+        _build(node.test, parent, **kwargs),
         " else ",
-        _build(node.orelse, parent),
+        _build(node.orelse, parent, **kwargs),
     )
 
 
-def _build_invert(node: NodeInvert, parent: Module | Class) -> str:  # noqa: ARG001
+def _build_invert(node: NodeInvert, parent: Module | Class, **kwargs: Any) -> str:
     return "~"
 
 
-def _build_keyword(node: NodeKeyword, parent: Module | Class) -> Expression:
-    return Expression(f"{node.arg}=", _build(node.value, parent))
+def _build_in(node: NodeIn, parent: Module | Class, **kwargs: Any) -> str:
+    return "in"
 
 
-def _build_list(node: NodeList, parent: Module | Class) -> Expression:
-    return Expression("[", *_join([_build(el, parent) for el in node.elts], ", "), "]")
+def _build_is(node: NodeIs, parent: Module | Class, **kwargs: Any) -> str:
+    return "is"
 
 
-def _build_name(node: NodeName, parent: Module | Class) -> Name:
+def _build_isnot(node: NodeIsNot, parent: Module | Class, **kwargs: Any) -> str:
+    return "is not"
+
+
+def _build_joinedstr(node: NodeJoinedStr, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("f'", *[_build(value, parent, in_joined_str=True) for value in node.values], "'")
+
+
+def _build_keyword(node: NodeKeyword, parent: Module | Class, **kwargs: Any) -> Expression:
+    if node.arg is None:
+        return Expression("**", _build(node.value, parent, **kwargs))
+    return Expression(node.arg, "=", _build(node.value, parent, **kwargs))
+
+
+def _build_lambda(node: NodeLambda, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("lambda ", _build(node.args, parent, **kwargs), ": ", _build(node.body, parent, **kwargs))
+
+
+def _build_list(node: NodeList, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("[", *_join([_build(el, parent, **kwargs) for el in node.elts], ", "), "]")
+
+
+def _build_listcomp(node: NodeListComp, parent: Module | Class, **kwargs: Any) -> Expression:
+    element = _build(node.elt, parent, **kwargs)
+    generators = [_build(gen, parent, **kwargs) for gen in node.generators]
+    return Expression("[", element, *_join(generators, " "), "]")
+
+
+def _build_lshift(node: NodeLShift, parent: Module | Class, **kwargs: Any) -> str:
+    return "<<"
+
+
+def _build_lte(node: NodeLtE, parent: Module | Class, **kwargs: Any) -> str:
+    return "<="
+
+
+def _build_lt(node: NodeLt, parent: Module | Class, **kwargs: Any) -> str:
+    return "<"
+
+
+def _build_matmult(node: NodeMatMult, parent: Module | Class, **kwargs: Any) -> str:
+    return "@"
+
+
+def _build_mod(node: NodeMod, parent: Module | Class, **kwargs: Any) -> str:
+    return "%"
+
+
+def _build_mult(node: NodeMult, parent: Module | Class, **kwargs: Any) -> str:
+    return "*"
+
+
+def _build_name(node: NodeName, parent: Module | Class, **kwargs: Any) -> Name:
     return Name(node.id, partial(parent.resolve, node.id))
 
 
-def _build_subscript(node: NodeSubscript, parent: Module | Class) -> Expression:
-    left = _build(node.value, parent)
-    if left.full in {"typing.Literal", "typing_extensions.Literal"}:  # type: ignore[union-attr]
-        subscript = _build(node.slice, parent)
-    else:
-        subscript = _build(node.slice, parent)
-    return Expression(left, "[", subscript, "]")
+def _build_named_expr(node: NodeNamedExpr, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("(", _build(node.target, parent, **kwargs), " := ", _build(node.value, parent, **kwargs), ")")
 
 
-def _build_tuple(node: NodeTuple, parent: Module | Class) -> Expression:
-    return Expression(*_join([_build(el, parent) for el in node.elts], ", "))
+def _build_not(node: NodeNot, parent: Module | Class, **kwargs: Any) -> str:
+    return "not "
 
 
-def _build_unaryop(node: NodeUnaryOp, parent: Module | Class) -> Expression:
-    return Expression(_build(node.op, parent), _build(node.operand, parent))
+def _build_noteq(node: NodeNotEq, parent: Module | Class, **kwargs: Any) -> str:
+    return "!="
 
 
-def _build_uadd(node: NodeUAdd, parent: Module | Class) -> str:  # noqa: ARG001
-    return "+"
+def _build_notin(node: NodeNotIn, parent: Module | Class, **kwargs: Any) -> str:
+    return "not in"
 
 
-def _build_usub(node: NodeUSub, parent: Module | Class) -> str:  # noqa: ARG001
+def _build_or(node: NodeOr, parent: Module | Class, **kwargs: Any) -> str:
+    return "or"
+
+
+def _build_pow(node: NodePow, parent: Module | Class, **kwargs: Any) -> str:
+    return "**"
+
+
+def _build_rshift(node: NodeRShift, parent: Module | Class, **kwargs: Any) -> str:
+    return ">>"
+
+
+def _build_set(node: NodeSet, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("{", *_join([_build(el, parent, **kwargs) for el in node.elts], ", "), "}")
+
+
+def _build_setcomp(node: NodeSetComp, parent: Module | Class, **kwargs: Any) -> Expression:
+    element = _build(node.elt, parent, **kwargs)
+    generators = [_build(gen, parent, **kwargs) for gen in node.generators]
+    return Expression("{", element, " ", *_join(generators, " "), "}")
+
+
+def _build_slice(node: NodeSlice, parent: Module | Class, **kwargs: Any) -> Expression:
+    lower = _build(node.lower, parent, **kwargs) if node.lower else ""
+    upper = _build(node.upper, parent, **kwargs) if node.upper else ""
+    value = Expression(lower, ":", upper)
+    if node.step:
+        value.extend((":", _build(node.step, parent, **kwargs)))
+    return value
+
+
+def _build_starred(node: NodeStarred, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression("*", _build(node.value, parent, **kwargs))
+
+
+def _build_sub(node: NodeSub, parent: Module | Class, **kwargs: Any) -> str:
     return "-"
 
 
+def _build_subscript(
+    node: NodeSubscript,
+    parent: Module | Class,
+    *,
+    parse_strings: bool = False,
+    **kwargs: Any,
+) -> Expression:
+    left = _build(node.value, parent, **kwargs)
+    if parse_strings:
+        literal_strings = left.full in {"typing.Literal", "typing_extensions.Literal"}  # type: ignore[union-attr]
+        subscript = _build(node.slice, parent, parse_strings=True, **{**kwargs, "literal_strings": literal_strings})
+    else:
+        subscript = _build(node.slice, parent, **kwargs)
+    return Expression(left, "[", subscript, "]")
+
+
+def _build_tuple(node: NodeTuple, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression(*_join([_build(el, parent, **kwargs) for el in node.elts], ", "))
+
+
+def _build_uadd(node: NodeUAdd, parent: Module | Class, **kwargs: Any) -> str:
+    return "+"
+
+
+def _build_unaryop(node: NodeUnaryOp, parent: Module | Class, **kwargs: Any) -> Expression:
+    return Expression(_build(node.op, parent, **kwargs), _build(node.operand, parent, **kwargs))
+
+
+def _build_usub(node: NodeUSub, parent: Module | Class, **kwargs: Any) -> str:
+    return "-"
+
+
+def _build_yield(node: NodeYield, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
+    if node.value is None:
+        return repr(None)
+    return _build(node.value, parent, **kwargs)
+
+
 _node_map: dict[type, Callable[[Any, Module | Class], str | Name | Expression]] = {
+    NodeAdd: _build_add,
+    NodeAnd: _build_and,
+    NodeArguments: _build_arguments,
     NodeAttribute: _build_attribute,
     NodeBinOp: _build_binop,
     NodeBitAnd: _build_bitand,
     NodeBitOr: _build_bitor,
+    NodeBitXor: _build_bitxor,
+    NodeBoolOp: _build_boolop,
     NodeCall: _build_call,
+    NodeCompare: _build_compare,
+    NodeComprehension: _build_comprehension,
     NodeConstant: _build_constant,
+    NodeDict: _build_dict,
+    NodeDictComp: _build_dictcomp,
+    NodeDiv: _build_div,
     NodeEllipsis: _build_ellipsis,
+    NodeEq: _build_eq,
+    NodeFloorDiv: _build_floordiv,
+    NodeFormattedValue: _build_formatted,
+    NodeGeneratorExp: _build_generatorexp,
+    NodeGt: _build_gt,
+    NodeGtE: _build_gte,
     NodeIfExp: _build_ifexp,
+    NodeIn: _build_in,
     NodeInvert: _build_invert,
+    NodeIs: _build_is,
+    NodeIsNot: _build_isnot,
+    NodeJoinedStr: _build_joinedstr,
     NodeKeyword: _build_keyword,
+    NodeLambda: _build_lambda,
     NodeList: _build_list,
+    NodeListComp: _build_listcomp,
+    NodeLShift: _build_lshift,
+    NodeLt: _build_lt,
+    NodeLtE: _build_lte,
+    NodeMatMult: _build_matmult,
+    NodeMod: _build_mod,
+    NodeMult: _build_mult,
     NodeName: _build_name,
+    NodeNamedExpr: _build_named_expr,
+    NodeNot: _build_not,
+    NodeNotEq: _build_noteq,
+    NodeNotIn: _build_notin,
+    NodeOr: _build_or,
+    NodePow: _build_pow,
+    NodeRShift: _build_rshift,
+    NodeSet: _build_set,
+    NodeSetComp: _build_setcomp,
+    NodeSlice: _build_slice,
+    NodeStarred: _build_starred,
+    NodeSub: _build_sub,
     NodeSubscript: _build_subscript,
     NodeTuple: _build_tuple,
-    NodeUnaryOp: _build_unaryop,
     NodeUAdd: _build_uadd,
+    NodeUnaryOp: _build_unaryop,
     NodeUSub: _build_usub,
+    NodeYield: _build_yield,
 }
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
 
-    def _build_index(node: NodeIndex, parent: Module | Class) -> str | Name | Expression:
-        return _build(node.value, parent)
+    def _build_extslice(node: NodeExtSlice, parent: Module | Class, **kwargs: Any) -> Expression:
+        return Expression(*_join([_build(dim, parent, **kwargs) for dim in node.dims], ","))
 
+    def _build_index(node: NodeIndex, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
+        return _build(node.value, parent, **kwargs)
+
+    _node_map[NodeExtSlice] = _build_extslice
     _node_map[NodeIndex] = _build_index
 
 
-def _build(node: AST, parent: Module | Class) -> str | Name | Expression:
-    return _node_map[type(node)](node, parent)
+def _build(node: AST, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
+    return _node_map[type(node)](node, parent, **kwargs)
 
 
 def get_expression(
@@ -364,10 +538,7 @@ def get_expression(
             parse_strings = False
         else:
             parse_strings = not module.imports_future_annotations
-    if parse_strings:
-        builder = _ExpressionBuilder(parent)
-        return builder._build(node)
-    return _build(node, parent)
+    return _build(node, parent, parse_strings=parse_strings)
 
 
 def safe_get_expression(

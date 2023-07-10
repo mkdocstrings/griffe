@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from ast import ImportFrom as NodeImportFrom
-    from ast import alias as NodeAlias  # noqa: N812
+    import ast
 
     from griffe.dataclasses import Module
 
@@ -16,7 +15,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def relative_to_absolute(node: NodeImportFrom, name: NodeAlias, current_module: Module) -> str:
+def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: Module) -> str:
     """Convert a relative import path to an absolute one.
 
     Parameters:

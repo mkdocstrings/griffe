@@ -27,7 +27,7 @@ from griffe.agents.nodes._expressions import (
 )
 from griffe.agents.nodes._imports import relative_to_absolute
 from griffe.agents.nodes._names import get_instance_names, get_name, get_names
-from griffe.agents.nodes._parameters import get_parameter_default
+from griffe.agents.nodes._parameters import get_call_keyword_arguments
 from griffe.agents.nodes._runtime import ObjectKind, ObjectNode
 from griffe.agents.nodes._values import get_value, safe_get_value
 
@@ -44,13 +44,13 @@ __all__ = [
     "get__all__",
     "get_annotation",
     "get_base_class",
+    "get_call_keyword_arguments",
     "get_condition",
     "get_docstring",
     "get_expression",
     "get_instance_names",
     "get_name",
     "get_names",
-    "get_parameter_default",
     "get_value",
     "ObjectKind",
     "ObjectNode",

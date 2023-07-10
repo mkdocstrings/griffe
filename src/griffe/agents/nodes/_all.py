@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def _extract_constant(node: NodeConstant, parent: Module) -> list[str | Name]:  # noqa: ARG001
+def _extract_constant(node: NodeConstant, parent: Module) -> list[str | Name]:
     return [node.value]
 
 

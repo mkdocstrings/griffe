@@ -57,7 +57,7 @@ class Decorator:
         endlineno: The ending line number.
     """
 
-    def __init__(self, value: str, *, lineno: int | None, endlineno: int | None) -> None:
+    def __init__(self, value: str | Name | Expression, *, lineno: int | None, endlineno: int | None) -> None:
         """Initialize the decorator.
 
         Parameters:
@@ -65,9 +65,15 @@ class Decorator:
             lineno: The starting line number.
             endlineno: The ending line number.
         """
-        self.value: str = value
+        self.value: str | Name | Expression = value
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
+
+    @property
+    def callable_path(self) -> str:
+        """The path of the callable used as decorator."""
+        value = self.value if isinstance(self.value, str) else self.value.full
+        return value.split("(", 1)[0]
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this decorator's data as a dictionary.
@@ -193,7 +199,7 @@ class Parameter:
         *,
         annotation: str | Name | Expression | None = None,
         kind: ParameterKind | None = None,
-        default: str | None = None,
+        default: str | Name | Expression | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -206,7 +212,7 @@ class Parameter:
         self.name: str = name
         self.annotation: str | Name | Expression | None = annotation
         self.kind: ParameterKind | None = kind
-        self.default: str | None = default
+        self.default: str | Name | Expression | None = default
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -1122,7 +1128,7 @@ class Alias(ObjectAliasMixin):
         return cast(Function, self.target).deleter
 
     @property
-    def value(self) -> str | None:  # noqa: D102
+    def value(self) -> str | Name | Expression | None:  # noqa: D102
         return cast(Attribute, self.target).value
 
     @property
@@ -1558,7 +1564,7 @@ class Attribute(Object):
     def __init__(
         self,
         *args: Any,
-        value: str | None = None,
+        value: str | Name | Expression | None = None,
         annotation: str | Name | Expression | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1571,7 +1577,7 @@ class Attribute(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.value: str | None = value
+        self.value: str | Name | Expression | None = value
         self.annotation: str | Name | Expression | None = annotation
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:

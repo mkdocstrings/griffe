@@ -219,14 +219,14 @@ class Expression(list):
         Returns:
             A non-optional expression.
         """
-        if self[-1] == "None" and self[-2] == " | ":
+        if self[-3:] == ["|", " ", "None"]:
             if isinstance(self[0], Expression):
                 return self[0]
             return Expression(self[0])
-        if self[0] == "None" and self[1] == " | ":
-            if isinstance(self[2], Expression):
-                return self[2]
-            return Expression(self[2])
+        if self[:3] == ["None", " ", "|"]:
+            if isinstance(self[3], Expression):
+                return self[3]
+            return Expression(self[3])
         if isinstance(self[0], Name) and self[0].full == "typing.Optional":
             if isinstance(self[2], Expression):
                 return self[2]

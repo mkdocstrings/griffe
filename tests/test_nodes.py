@@ -12,6 +12,60 @@ from griffe.agents.nodes import get_value, relative_to_absolute
 from griffe.expressions import Expression, Name
 from griffe.tests import module_vtree, temporary_visited_module
 
+syntax_examples = [
+    # operations
+    "b + c",
+    "b - c",
+    "b * c",
+    "b / c",
+    "b // c",
+    "b ** c",
+    "b ^ c",
+    "b & c",
+    "b | c",
+    "b @ c",
+    "b % c",
+    "b >> c",
+    "b << c",
+    # unary operations
+    "+b",
+    "-b",
+    "~b",
+    # comparisons
+    "b == c",
+    "b >= c",
+    "b > c",
+    "b <= c",
+    "b < c",
+    "b != c",
+    # boolean logic
+    "b and c",
+    "b or c",
+    "not b",
+    # identify
+    "b is c",
+    "b is not c",
+    # membership
+    "b in c",
+    "b not in c",
+    # calls
+    "call()",
+    "call(something)",
+    "call(something=something)",
+    # strings
+    "f'a {round(key, 2)} {z}'",
+    # slices
+    "o[x]",
+    "o[x,y]",
+    "o[x:y]",
+    "o[x:y,z]",
+    "o[x, y(z)]",
+    # walrus operator
+    "a if (a := b) else c",
+    # starred
+    "a(*b, **c)",
+]
+
 
 @pytest.mark.parametrize(
     ("code", "path", "is_package", "expected"),
@@ -81,6 +135,21 @@ def test_building_annotations_from_nodes(expression: str) -> None:
         assert str(module["y"].annotation) == expression
 
 
+@pytest.mark.parametrize("code", syntax_examples)
+def test_building_expressions_from_nodes(code: str) -> None:
+    """Test building annotations from AST nodes.
+
+    Parameters:
+        code: An expression (parametrized).
+    """
+    with temporary_visited_module(f"__z__ = {code}") as module:
+        assert "__z__" in module.members
+
+        # make space after comma non-significant
+        value = str(module["__z__"].value).replace(", ", ",")
+        assert value == code.replace(", ", ",")
+
+
 def _flat(expression: str | Name | Expression) -> list[str | Name]:
     if not isinstance(expression, Expression):
         return [expression]
@@ -143,63 +212,10 @@ def test_default_value_from_nodes(default: str) -> None:
         assert "f" in module.members
         params = module.members["f"].parameters  # type: ignore[union-attr]
         assert len(params) == 1
-        assert params[0].default == default
+        assert str(params[0].default) == default
 
 
-@pytest.mark.parametrize(
-    "expression",
-    [
-        # operations
-        "b + c",
-        "b - c",
-        "b * c",
-        "b / c",
-        "b // c",
-        "b ** c",
-        "b ^ c",
-        "b & c",
-        "b | c",
-        "b @ c",
-        "b % c",
-        "b >> c",
-        "b << c",
-        # unary operations
-        "+b",
-        "-b",
-        "~b",
-        # comparisons
-        "b == c",
-        "b >= c",
-        "b > c",
-        "b <= c",
-        "b < c",
-        "b != c",
-        # boolean logic
-        "b and c",
-        "b or c",
-        "not b",
-        # identify
-        "b is c",
-        "b is not c",
-        # membership
-        "b in c",
-        "b not in c",
-        # calls
-        "call()",
-        "call(something)",
-        "call(something=something)",
-        # strings
-        "f'{round(key, 2)}'",
-        # slices
-        "o[x]",
-        "o[x,y]",
-        "o[x:y]",
-        "o[x:y,z]",
-        "o[x, y(z)]",
-        # walrus operator
-        "a if (a := b) else c",
-    ],
-)
+@pytest.mark.parametrize("expression", syntax_examples)
 def test_building_value_from_nodes(expression: str) -> None:
     """Test building value from AST nodes.
 
