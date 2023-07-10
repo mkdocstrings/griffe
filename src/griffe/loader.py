@@ -53,6 +53,7 @@ class GriffeLoader:
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
         allow_inspection: bool = True,
+        store_source: bool = True,
     ) -> None:
         """Initialize the loader.
 
@@ -71,6 +72,7 @@ class GriffeLoader:
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         self.allow_inspection: bool = allow_inspection
+        self.store_source: bool = store_source
         self.finder: ModuleFinder = ModuleFinder(search_paths)
         self._time_stats: dict = {
             "time_spent_visiting": 0,
@@ -456,7 +458,8 @@ class GriffeLoader:
         )
 
     def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
-        self.lines_collection[module_path] = code.splitlines(keepends=False)
+        if self.store_source:
+            self.lines_collection[module_path] = code.splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
         module = visit(
             module_name,
