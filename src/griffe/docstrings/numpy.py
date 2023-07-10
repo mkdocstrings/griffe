@@ -129,7 +129,7 @@ def _read_block_items(
 
         if line.startswith(4 * " "):
             # continuation line
-            current_item.append(line.lstrip())
+            current_item.append(line[4:])
             previous_was_empty = False
 
         elif line.startswith(" "):

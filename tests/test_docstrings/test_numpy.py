@@ -114,6 +114,19 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
     assert len(sections2[0].value) == 2
 
 
+def test_doubly_indented_lines_in_section_items(parse_numpy: ParserType) -> None:
+    """In sections with items, don't remove all spaces on the left of indented lines.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = "Returns\n-------\nonly_item : type\n    Description:\n\n    - List item.\n        - Sublist item."
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    lines = sections[0].value[0].description.split("\n")
+    assert lines[-1].startswith(4 * " " + "- ")
+
+
 # =============================================================================================
 # Annotations
 def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
