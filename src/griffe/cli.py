@@ -63,6 +63,7 @@ def _load_packages(
     resolve_implicit: bool = False,
     resolve_external: bool = False,
     allow_inspection: bool = True,
+    store_source: bool = True,
 ) -> GriffeLoader:
     loader = GriffeLoader(
         extensions=extensions,
@@ -70,6 +71,7 @@ def _load_packages(
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
         allow_inspection=allow_inspection,
+        store_source=store_source,
     )
     for package in packages:
         if not package:
@@ -328,6 +330,7 @@ def dump(
         resolve_implicit=resolve_implicit,
         resolve_external=resolve_external,
         allow_inspection=allow_inspection,
+        store_source=False,
     )
     data_packages = loader.modules_collection.members
 
