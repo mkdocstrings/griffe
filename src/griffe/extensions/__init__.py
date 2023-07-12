@@ -7,7 +7,6 @@ from griffe.extensions.base import (
     InspectorExtension,
     VisitorExtension,
     When,
-    load_extension,
     load_extensions,
 )
 
@@ -16,7 +15,6 @@ __all__ = [
     "Extensions",
     "ExtensionType",
     "InspectorExtension",
-    "load_extension",
     "load_extensions",
     "VisitorExtension",
     "When",

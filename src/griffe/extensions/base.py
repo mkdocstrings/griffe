@@ -402,7 +402,7 @@ def _load_extension_path(path: str) -> ModuleType:
     return module
 
 
-def load_extension(
+def _load_extension(
     extension: str | dict[str, Any] | ExtensionType | type[ExtensionType],
 ) -> ExtensionType | list[ExtensionType]:
     """Load a configured extension.
@@ -500,7 +500,7 @@ def load_extensions(exts: Sequence[str | dict[str, Any] | ExtensionType | type[E
     """
     extensions = Extensions()
     for extension in exts:
-        ext = load_extension(extension)
+        ext = _load_extension(extension)
         if isinstance(ext, list):
             extensions.add(*ext)
         else:

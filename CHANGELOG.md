@@ -343,8 +343,8 @@ for the initial code allowing to compare two Griffe trees.
 - All parameters of the [`load_git`][griffe.git.load_git] function, except `module`, are now keyword-only.
 - Parameter `try_relative_path` of the [`load_git`][griffe.git.load_git] function was removed.
 - Parameter `commit` was renamed `ref` in the [`load_git`][griffe.git.load_git] function.
-- Parameter `commit` was renamed `ref` in the [`tmp_worktree`][griffe.git.tmp_worktree] helper, which will probably become private later.
-- Parameters `ref` and `repo` switched positions in the [`tmp_worktree`][griffe.git.tmp_worktree] helper.
+- Parameter `commit` was renamed `ref` in the `tmp_worktree` helper, which will probably become private later.
+- Parameters `ref` and `repo` switched positions in the `tmp_worktree` helper.
 - All parameters of the [`resolve_aliases`][griffe.loader.GriffeLoader.resolve_aliases] method are now keyword-only.
 - Parameters `only_exported` and `only_known_modules` of the [`resolve_module_aliases`][griffe.loader.GriffeLoader.resolve_module_aliases]
     method were removed. This method is most probably not used by anyone, and will probably be made private in the future.

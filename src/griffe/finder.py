@@ -25,11 +25,6 @@ logger = get_logger(__name__)
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", "^_editable_impl_\\w+\\.py$")]
 _editable_setuptools_patterns = [re.compile(pat) for pat in ("^__editable__\\w+\\.py$",)]
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
-_editable_patterns = (
-    *_editable_editables_patterns,
-    *_editable_setuptools_patterns,
-    *_editable_scikit_build_core_patterns,
-)
 
 
 def _match_pattern(string: str, patterns: Sequence[Pattern]) -> bool:

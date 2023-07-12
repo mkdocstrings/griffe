@@ -77,7 +77,7 @@ def _get_repo_root(path: str | Path) -> str:
 
 
 @contextmanager
-def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
+def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     """Context manager that checks out the given reference in the given repository to a temporary worktree.
 
     Parameters:
@@ -149,7 +149,7 @@ def load_git(
     Returns:
         A loaded module.
     """
-    with tmp_worktree(repo, ref) as worktree:
+    with _tmp_worktree(repo, ref) as worktree:
         search_paths = [worktree / path for path in search_paths or ["."]]
         if isinstance(module, Path):
             module = worktree / module

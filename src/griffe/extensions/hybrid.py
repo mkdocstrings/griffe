@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Pattern, Sequence
 
 from griffe.agents.nodes import ObjectNode
 from griffe.exceptions import ExtensionError
-from griffe.extensions.base import InspectorExtension, VisitorExtension, When, load_extension
+from griffe.extensions.base import InspectorExtension, VisitorExtension, When, _load_extension
 from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 
@@ -36,7 +36,7 @@ class HybridExtension(VisitorExtension):
 
     def __init__(
         self,
-        extensions: Sequence[str | dict[str, Any] | InspectorExtension | type[Extension]],
+        extensions: Sequence[str | dict[str, Any] | InspectorExtension | type[InspectorExtension]],
         object_paths: Sequence[str | Pattern] | None = None,
     ) -> None:
         """Initialize the extension.
@@ -49,7 +49,7 @@ class HybridExtension(VisitorExtension):
         Raises:
             ExtensionError: When the passed extension is not an inspector extension.
         """
-        self._extensions: list[InspectorExtension] = [load_extension(ext) for ext in extensions]  # type: ignore[misc]
+        self._extensions: list[InspectorExtension] = [_load_extension(ext) for ext in extensions]  # type: ignore[misc]
         for extension in self._extensions:
             if not isinstance(extension, InspectorExtension):
                 raise ExtensionError(
