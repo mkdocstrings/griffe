@@ -35,7 +35,7 @@ from griffe.logger import get_logger
 from griffe.stats import _format_stats
 
 if TYPE_CHECKING:
-    from griffe.extensions import Extension, Extensions
+    from griffe.extensions import Extensions, ExtensionType
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
@@ -98,6 +98,13 @@ def _load_packages(
 _level_choices = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
 
 
+def _extensions_type(value: str) -> Sequence[str | dict[str, Any]]:
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        return value.split(",")
+
+
 def get_parser() -> argparse.ArgumentParser:
     """Return the CLI argument parser.
 
@@ -133,7 +140,7 @@ def get_parser() -> argparse.ArgumentParser:
             "-e",
             "--extensions",
             default={},
-            type=json.loads,
+            type=_extensions_type,
             help="A list of extensions to use.",
         )
         loading_options.add_argument(
@@ -277,7 +284,7 @@ def dump(
     full: bool = False,
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
-    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     resolve_aliases: bool = False,
     resolve_implicit: bool = False,
     resolve_external: bool = False,
@@ -356,7 +363,7 @@ def check(
     against_path: str | Path | None = None,
     *,
     base_ref: str | None = None,
-    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
     allow_inspection: bool = True,
     verbose: bool = False,
