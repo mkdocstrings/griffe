@@ -1,4 +1,4 @@
-target-version = "py37"
+target-version = "py38"
 line-length = 132
 exclude = [
     "fixtures",
@@ -85,7 +85,8 @@ ignore = [
     "S603",  # `subprocess` call: check for execution of untrusted input
     "S607",  # Starting a process with a partial executable path
 ]
-"src/*/*/nodes.py" = [
+"src/*/*/nodes/*.py" = [
+    "ARG001",  # Unused function argument
     "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
 ]
 "scripts/*.py" = [

@@ -8,28 +8,27 @@ from __future__ import annotations
 
 import enum
 import inspect
-import sys
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Sequence, Union, cast
 
+from griffe.c3linear import c3linear_merge
 from griffe.docstrings.parsers import Parser, parse
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
+from griffe.expressions import Name
+from griffe.logger import get_logger
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
     from griffe.docstrings.dataclasses import DocstringSection
-    from griffe.expressions import Expression, Name
+    from griffe.expressions import Expression
 
+from functools import cached_property
 
-# TODO: remove once Python 3.7 support is dropped
-if sys.version_info < (3, 8):
-    from cached_property import cached_property
-else:
-    from functools import cached_property
+logger = get_logger(__name__)
 
 
 class ParameterKind(enum.Enum):
@@ -58,7 +57,7 @@ class Decorator:
         endlineno: The ending line number.
     """
 
-    def __init__(self, value: str, *, lineno: int | None, endlineno: int | None) -> None:
+    def __init__(self, value: str | Name | Expression, *, lineno: int | None, endlineno: int | None) -> None:
         """Initialize the decorator.
 
         Parameters:
@@ -66,9 +65,15 @@ class Decorator:
             lineno: The starting line number.
             endlineno: The ending line number.
         """
-        self.value: str = value
+        self.value: str | Name | Expression = value
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
+
+    @property
+    def callable_path(self) -> str:
+        """The path of the callable used as decorator."""
+        value = self.value if isinstance(self.value, str) else self.value.full
+        return value.split("(", 1)[0]
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this decorator's data as a dictionary.
@@ -126,7 +131,7 @@ class Docstring:
     def __bool__(self) -> bool:
         return bool(self.value)
 
-    @cached_property
+    @property
     def lines(self) -> list[str]:
         """Returns the lines of the docstring.
 
@@ -194,7 +199,7 @@ class Parameter:
         *,
         annotation: str | Name | Expression | None = None,
         kind: ParameterKind | None = None,
-        default: str | None = None,
+        default: str | Name | Expression | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -207,7 +212,7 @@ class Parameter:
         self.name: str = name
         self.annotation: str | Name | Expression | None = annotation
         self.kind: ParameterKind | None = kind
-        self.default: str | None = default
+        self.default: str | Name | Expression | None = default
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -322,6 +327,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     kind: Kind
     is_alias: bool = False
     is_collection: bool = False
+    inherited: bool = False
 
     def __init__(
         self,
@@ -358,6 +364,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         self.exports: set[str] | list[str | Name] | None = None
         self.aliases: dict[str, Alias] = {}
         self.runtime: bool = runtime
+        self.extra: dict[str, dict[str, Any]] = defaultdict(dict)
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
@@ -428,6 +435,31 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             kind = Kind(kind)
         return self.kind is kind
 
+    @cached_property
+    def inherited_members(self) -> dict[str, Alias]:
+        """Members that are inherited from base classes.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
+        if not isinstance(self, Class):
+            return {}
+        inherited_members = {}
+        for base in reversed(self.mro()):
+            for name, member in base.members.items():
+                if name not in self.members:
+                    inherited_members[name] = Alias(name, member, parent=self, inherited=True)
+        return inherited_members
+
+    @property
+    def all_members(self) -> dict[str, Object | Alias]:
+        """All members (declared and inherited).
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
+        return {**self.inherited_members, **self.members}
+
     @property
     def is_module(self) -> bool:
         """Tell if this object is a module."""
@@ -480,39 +512,51 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
     def modules(self) -> dict[str, Module]:
         """Return the module members.
 
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
             A dictionary of modules.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
 
     @property
     def classes(self) -> dict[str, Class]:
         """Return the class members.
 
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
             A dictionary of classes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
 
     @property
     def functions(self) -> dict[str, Function]:
         """Return the function members.
 
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
             A dictionary of functions.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
 
     @property
     def attributes(self) -> dict[str, Attribute]:
         """Return the attribute members.
 
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
             A dictionary of attributes.
         """
-        return {name: member for name, member in self.members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
-    @cached_property
+    @property
     def module(self) -> Module:
         """Return the parent module of this object.
 
@@ -528,7 +572,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return self.parent.module
         raise ValueError(f"Object {self.name} does not have a parent module")
 
-    @cached_property
+    @property
     def package(self) -> Module:
         """Return the absolute top module (the package) of this object.
 
@@ -540,7 +584,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             module = module.parent  # type: ignore[assignment]  # always a module
         return module
 
-    @cached_property
+    @property
     def filepath(self) -> Path | list[Path]:
         """Return the file path where this object was defined.
 
@@ -549,7 +593,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         return self.module.filepath
 
-    @cached_property
+    @property
     def relative_package_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the top module path.
 
@@ -578,7 +622,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError
         return self.filepath.relative_to(package_path.parent.parent)
 
-    @cached_property
+    @property
     def relative_filepath(self) -> Path:
         """Return the file path where this object was defined, relative to the current working directory.
 
@@ -601,7 +645,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         except ValueError:
             return self.filepath
 
-    @cached_property
+    @property
     def path(self) -> str:
         """Return the dotted path of this object.
 
@@ -612,7 +656,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         return self.canonical_path
 
-    @cached_property
+    @property
     def canonical_path(self) -> str:
         """Return the full dotted path of this object.
 
@@ -625,7 +669,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return self.name
         return ".".join((self.parent.path, self.name))
 
-    @cached_property
+    @property
     def modules_collection(self) -> ModulesCollection:
         """Return the modules collection attached to this object or its parents.
 
@@ -641,7 +685,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError("no modules collection in this object or its parents")
         return self.parent.modules_collection
 
-    @cached_property
+    @property
     def lines_collection(self) -> LinesCollection:
         """Return the lines collection attached to this object or its parents.
 
@@ -657,7 +701,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             raise ValueError("no lines collection in this object or its parents")
         return self.parent.lines_collection
 
-    @cached_property
+    @property
     def lines(self) -> list[str]:
         """Return the lines containing the source of this object.
 
@@ -671,10 +715,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         if isinstance(filepath, list):
             return []
 
-        # TODO: remove once Python 3.7 support is dropped
-        if self.lineno and self.endlineno is None and sys.version_info < (3, 8):
-            self.endlineno = self._endlineno
-
         try:
             lines = self.lines_collection[filepath]
         except KeyError:
@@ -683,7 +723,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             return lines
         return lines[self.lineno - 1 : self.endlineno]
 
-    @cached_property
+    @property
     def source(self) -> str:
         """Return the source code of this object.
 
@@ -755,23 +795,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
         return base
 
-    # TODO: remove once Python 3.7 support is dropped
-    @property
-    def _endlineno(self) -> int | None:
-        if self.kind is Kind.MODULE:
-            if isinstance(self.filepath, list):
-                return 0
-            return len(self.lines_collection[self.filepath])
-        if isinstance(self.filepath, list):
-            return None
-        tokens, tokens_by_line = self.lines_collection.tokens(self.filepath)
-        first_token_index = tokens_by_line[self.lineno][0]
-        blockfinder = inspect.BlockFinder()
-        with suppress(inspect.EndOfBlock, IndentationError):
-            for token in tokens[first_token_index:]:
-                blockfinder.tokeneater(*token)
-        return blockfinder.last
-
 
 class Alias(ObjectAliasMixin):
     """This class represents an alias, or indirection, to an object declared in another module.
@@ -807,6 +830,7 @@ class Alias(ObjectAliasMixin):
         endlineno: int | None = None,
         runtime: bool = True,
         parent: Module | Class | None = None,
+        inherited: bool = False,
     ) -> None:
         """Initialize the alias.
 
@@ -818,11 +842,13 @@ class Alias(ObjectAliasMixin):
             endlineno: The alias ending line number.
             runtime: Whether this alias is present at runtime or not.
             parent: The alias parent.
+            inherited: Whether this alias wraps an inherited member.
         """
         self.name: str = name
         self.alias_lineno: int | None = lineno
         self.alias_endlineno: int | None = endlineno
         self.runtime: bool = runtime
+        self.inherited: bool = inherited
         self._parent: Module | Class | None = parent
         self._passed_through: bool = False
         if isinstance(target, str):
@@ -843,6 +869,10 @@ class Alias(ObjectAliasMixin):
     def __setitem__(self, key: str | tuple[str, ...], value: Object | Alias):
         # not handled by __getattr__
         self.target[key] = value
+
+    def __delitem__(self, key: str | tuple[str, ...]):
+        # not handled by __getattr__
+        del self.target[key]
 
     def __len__(self) -> int:
         return 1
@@ -910,7 +940,7 @@ class Alias(ObjectAliasMixin):
         self._parent = value
         self._update_target_aliases()
 
-    @cached_property
+    @property
     def path(self) -> str:
         """Return the dotted path / import path of this object.
 
@@ -919,7 +949,7 @@ class Alias(ObjectAliasMixin):
         """
         return ".".join((self.parent.path, self.name))  # type: ignore[union-attr]  # we assume there's always a parent
 
-    @cached_property
+    @property
     def modules_collection(self) -> ModulesCollection:
         """Return the modules collection attached to the alias parents.
 
@@ -961,6 +991,14 @@ class Alias(ObjectAliasMixin):
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
         return self.final_target.member_is_exported(member, explicitely=explicitely)
+
+    @property
+    def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
+        return self.final_target.inherited_members
+
+    @property
+    def all_members(self) -> dict[str, Object | Alias]:  # noqa: D102
+        return self.final_target.all_members
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
         return self.final_target.is_kind(kind)
@@ -1038,6 +1076,15 @@ class Alias(ObjectAliasMixin):
     def resolve(self, name: str) -> str:  # noqa: D102
         return self.final_target.resolve(name)
 
+    def get_member(self, key: str | Sequence[str]) -> Object | Alias:  # noqa: D102
+        return self.final_target.get_member(key)
+
+    def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:  # noqa: D102
+        return self.final_target.set_member(key, value)
+
+    def del_member(self, key: str | Sequence[str]) -> None:  # noqa: D102
+        return self.final_target.del_member(key)
+
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
 
     @property
@@ -1081,7 +1128,7 @@ class Alias(ObjectAliasMixin):
         return cast(Function, self.target).deleter
 
     @property
-    def value(self) -> str | None:  # noqa: D102
+    def value(self) -> str | Name | Expression | None:  # noqa: D102
         return cast(Attribute, self.target).value
 
     @property
@@ -1091,6 +1138,13 @@ class Alias(ObjectAliasMixin):
     @annotation.setter
     def annotation(self, annotation: str | Name | Expression | None) -> None:
         cast(Attribute, self.target).annotation = annotation
+
+    @property
+    def resolved_bases(self) -> list[Object]:  # noqa: D102
+        return cast(Class, self.final_target).resolved_bases
+
+    def mro(self) -> list[Class]:  # noqa: D102
+        return cast(Class, self.final_target).mro()
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
 
@@ -1133,7 +1187,7 @@ class Alias(ObjectAliasMixin):
             if target.path in paths_seen:
                 raise CyclicAliasError([*paths_seen, target.path])
             paths_seen[target.path] = None
-            target = target.target  # type: ignore[assignment,union-attr]
+            target = target.target  # type: ignore[assignment]
         return target  # type: ignore[return-value]
 
     def resolve_target(self) -> None:
@@ -1157,7 +1211,7 @@ class Alias(ObjectAliasMixin):
 
     def _resolve_target(self) -> None:
         try:
-            resolved = self.modules_collection[self.target_path]
+            resolved = self.modules_collection.get_member(self.target_path)
         except KeyError as error:
             raise AliasResolutionError(self) from error
         if resolved is self:
@@ -1182,9 +1236,9 @@ class Alias(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        return self._target is not None  # type: ignore[union-attr]
+        return self._target is not None
 
-    @cached_property
+    @property
     def wildcard(self) -> str | None:
         """Return the module on which the wildcard import is performed (if any).
 
@@ -1259,7 +1313,7 @@ class Module(Object):
             raise BuiltinModuleError(self.name)
         return self._filepath
 
-    @cached_property
+    @property
     def imports_future_annotations(self) -> bool:
         """Tell whether this module import future annotations.
 
@@ -1272,7 +1326,7 @@ class Module(Object):
             and self.members["annotations"].target_path == "__future__.annotations"  # type: ignore[union-attr]
         )
 
-    @cached_property
+    @property
     def is_init_module(self) -> bool:
         """Tell if this module is an `__init__.py` module.
 
@@ -1286,7 +1340,7 @@ class Module(Object):
         except BuiltinModuleError:
             return False
 
-    @cached_property
+    @property
     def is_package(self) -> bool:
         """Tell if this module is a package (top module).
 
@@ -1295,7 +1349,7 @@ class Module(Object):
         """
         return not bool(self.parent) and self.is_init_module
 
-    @cached_property
+    @property
     def is_subpackage(self) -> bool:
         """Tell if this module is a subpackage.
 
@@ -1304,7 +1358,7 @@ class Module(Object):
         """
         return bool(self.parent) and self.is_init_module
 
-    @cached_property
+    @property
     def is_namespace_package(self) -> bool:
         """Tell if this module is a namespace package (top folder, no `__init__.py`).
 
@@ -1316,7 +1370,7 @@ class Module(Object):
         except BuiltinModuleError:
             return False
 
-    @cached_property
+    @property
     def is_namespace_subpackage(self) -> bool:
         """Tell if this module is a namespace subpackage.
 
@@ -1334,7 +1388,7 @@ class Module(Object):
         except BuiltinModuleError:
             return False
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this module's data as a dictionary.
 
         Parameters:
@@ -1356,7 +1410,7 @@ class Class(Object):
     def __init__(
         self,
         *args: Any,
-        bases: list[Name | Expression | str] | None = None,
+        bases: Sequence[Name | Expression | str] | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1369,7 +1423,7 @@ class Class(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.bases: list[Name | Expression | str] = bases or []
+        self.bases: list[Name | Expression | str] = list(bases) if bases else []
         self.decorators: list[Decorator] = decorators or []
         self.overloads: dict[str, list[Function]] = defaultdict(list)
 
@@ -1392,7 +1446,47 @@ class Class(Object):
                 )
             return Parameters()
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    @cached_property
+    def resolved_bases(self) -> list[Object]:
+        """Resolved class bases.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
+        resolved_bases = []
+        for base in self.bases:
+            if isinstance(base, str):
+                base_path = base
+            elif isinstance(base, Name):
+                base_path = base.full
+            else:
+                base_path = base.without_subscript.full
+            try:
+                resolved_base = self.modules_collection[base_path]
+                if resolved_base.is_alias:
+                    resolved_base = resolved_base.final_target
+            except (AliasResolutionError, CyclicAliasError, KeyError):
+                logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
+            else:
+                resolved_bases.append(resolved_base)
+        return resolved_bases
+
+    def _mro(self, seen: tuple[str, ...] = ()) -> list[Class]:
+        seen = (*seen, self.path)
+        bases: list[Class] = [base for base in self.resolved_bases if base.is_class]  # type: ignore[misc]
+        if not bases:
+            return [self]
+        for base in bases:
+            if base.path in seen:
+                cycle = " -> ".join(seen) + f" -> {base.path}"
+                raise ValueError(f"Cannot compute C3 linearization, inheritance cycle detected: {cycle}")
+        return [self, *c3linear_merge(*[base._mro(seen) for base in bases], bases)]
+
+    def mro(self) -> list[Class]:
+        """Return a list of classes in order corresponding to Python's MRO."""
+        return self._mro()[1:]  # remove self
+
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this class' data as a dictionary.
 
         Parameters:
@@ -1446,7 +1540,7 @@ class Function(Object):
         """
         return self.returns
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 
         Parameters:
@@ -1470,7 +1564,7 @@ class Attribute(Object):
     def __init__(
         self,
         *args: Any,
-        value: str | None = None,
+        value: str | Name | Expression | None = None,
         annotation: str | Name | Expression | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1483,10 +1577,10 @@ class Attribute(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.value: str | None = value
+        self.value: str | Name | Expression | None = value
         self.annotation: str | Name | Expression | None = annotation
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # type: ignore[override]
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 
         Parameters:
@@ -1501,3 +1595,20 @@ class Attribute(Object):
         if self.annotation is not None:
             base["annotation"] = self.annotation
         return base
+
+
+__all__ = [
+    "Alias",
+    "Attribute",
+    "Class",
+    "Decorator",
+    "Docstring",
+    "Function",
+    "Kind",
+    "Module",
+    "Object",
+    "Parameter",
+    "ParameterKind",
+    "ParameterKind",
+    "Parameters",
+]

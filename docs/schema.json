@@ -223,9 +223,9 @@
                   "type": "object",
                   "properties": {
                     "value": {
-                      "title": "The decorator, as a string.",
+                      "title": "The decorator value (string, name or expression).",
                       "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Decorator.value",
-                      "type": "string"
+                      "$ref": "#/$defs/annotation"
                     },
                     "lineno": {
                       "title": "The decorator starting line number.",
@@ -291,10 +291,7 @@
                     "default": {
                       "title": "The default value of the parameter.",
                       "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Parameter.default",
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "$ref": "#/$defs/annotation"
                     }
                   },
                   "required": [
@@ -328,7 +325,7 @@
               "value": {
                 "title": "For attributes, their value.",
                 "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Attribute.value",
-                "type": "string"
+                "$ref": "#/$defs/annotation"
               },
               "annotation": {
                 "title": "For attributes, their type annotation.",
@@ -342,7 +339,7 @@
     }
   ],
   "$defs": {
-    "annotation_name": {
+    "name": {
       "type": "object",
       "properties": {
         "source": {
@@ -362,7 +359,7 @@
         "full"
       ]
     },
-    "annotation_expression": {
+    "expression": {
       "type": "array",
       "items": {
         "oneOf": [
@@ -370,10 +367,10 @@
             "type": "string"
           },
           {
-            "$ref": "#/$defs/annotation_name"
+            "$ref": "#/$defs/name"
           },
           {
-            "$ref": "#/$defs/annotation_expression"
+            "$ref": "#/$defs/expression"
           }
         ]
       }
@@ -384,13 +381,13 @@
           "type": "null"
         },
         {
-          "const": "None"
+          "type": "string"
         },
         {
-          "$ref": "#/$defs/annotation_name"
+          "$ref": "#/$defs/name"
         },
         {
-          "$ref": "#/$defs/annotation_expression"
+          "$ref": "#/$defs/expression"
         }
       ]
     }

@@ -16,10 +16,9 @@ import sys
 from contextlib import suppress
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
-from warnings import warn
 
 from griffe.agents.inspector import inspect
-from griffe.agents.visitor import patch_ast, visit
+from griffe.agents.visitor import visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
@@ -54,6 +53,7 @@ class GriffeLoader:
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
         allow_inspection: bool = True,
+        store_source: bool = True,
     ) -> None:
         """Initialize the loader.
 
@@ -72,12 +72,12 @@ class GriffeLoader:
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
         self.allow_inspection: bool = allow_inspection
+        self.store_source: bool = store_source
         self.finder: ModuleFinder = ModuleFinder(search_paths)
         self._time_stats: dict = {
             "time_spent_visiting": 0,
             "time_spent_inspecting": 0,
         }
-        patch_ast()
 
     def load_module(
         self,
@@ -107,8 +107,8 @@ class GriffeLoader:
                 logger.debug(f"Inspecting {module}")
                 module_name = module  # type: ignore[assignment]
                 top_module = self._inspect_module(module)  # type: ignore[arg-type]
-                self.modules_collection[top_module.path] = top_module
-                return self.modules_collection[module_name]  # type: ignore[index]
+                self.modules_collection.set_member(top_module.path, top_module)
+                return self.modules_collection.get_member(module_name)
             raise LoadingError("Cannot load builtin module without inspection")
         try:
             module_name, package = self.finder.find_spec(module, try_relative_path=try_relative_path)
@@ -118,7 +118,7 @@ class GriffeLoader:
                 logger.debug(f"Trying inspection on {module}")
                 module_name = module  # type: ignore[assignment]
                 top_module = self._inspect_module(module)  # type: ignore[arg-type]
-                self.modules_collection[top_module.path] = top_module
+                self.modules_collection.set_member(top_module.path, top_module)
             else:
                 raise
         else:
@@ -128,16 +128,14 @@ class GriffeLoader:
             except LoadingError as error:
                 logger.exception(str(error))  # noqa: TRY401
                 raise
-        return self.modules_collection[module_name]  # type: ignore[index]
+        return self.modules_collection.get_member(module_name)
 
     def resolve_aliases(
         self,
         *,
-        implicit: bool | None = None,
-        external: bool | None = None,
+        implicit: bool = False,
+        external: bool = False,
         max_iterations: int | None = None,
-        only_exported: bool | None = None,
-        only_known_modules: bool | None = None,
     ) -> tuple[set[str], int]:
         """Resolve aliases.
 
@@ -145,35 +143,10 @@ class GriffeLoader:
             implicit: When false, only try to resolve an alias if it is explicitely exported.
             external: When false, don't try to load unspecified modules to resolve aliases.
             max_iterations: Maximum number of iterations on the loader modules collection.
-            only_exported: Deprecated. Use the `implicit` parameter instead (inverting the value).
-            only_known_modules: Deprecated. Use the `external` parameter instead (inverting the value).
 
         Returns:
             The unresolved aliases and the number of iterations done.
         """
-        # TODO: remove deprecated params at some point
-        if only_exported is not None and implicit is None:
-            warn(
-                "Parameter `only_exported` is deprecated, use `implicit` instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            implicit = not only_exported
-
-        if only_known_modules is not None and external is None:
-            warn(
-                "Parameter `only_known_modules` is deprecated, use `external` instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            external = not only_known_modules
-
-        # TODO: set as param defaults once deprecated params are dropped
-        if implicit is None:
-            implicit = False
-        if external is None:
-            external = False
-
         if max_iterations is None:
             max_iterations = float("inf")  # type: ignore[assignment]
         prev_unresolved: set[str] = set()
@@ -221,7 +194,7 @@ class GriffeLoader:
             if isinstance(export, Name):
                 module_path = export.full.rsplit(".", 1)[0]  # remove trailing .__all__
                 try:
-                    next_module = self.modules_collection[module_path]
+                    next_module = self.modules_collection.get_member(module_path)
                 except KeyError:
                     logger.debug(f"Cannot expand '{export.full}', try pre-loading corresponding package")
                     continue
@@ -267,7 +240,7 @@ class GriffeLoader:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
                 try:
-                    target = self.modules_collection[member.target_path]  # type: ignore[union-attr]
+                    target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
                 except KeyError:
                     logger.debug(
                         f"Could not expand wildcard import {member.name} in {obj.path}: "
@@ -276,7 +249,7 @@ class GriffeLoader:
                     continue
                 if target.path not in seen:
                     try:
-                        self.expand_wildcards(target, external=external, seen=seen)  # type: ignore[union-attr]
+                        self.expand_wildcards(target, external=external, seen=seen)
                     except (AliasResolutionError, CyclicAliasError) as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
@@ -286,14 +259,14 @@ class GriffeLoader:
                 self.expand_wildcards(member, external=external, seen=seen)  # type: ignore[arg-type]
 
         for name in to_remove:
-            del obj[name]
+            obj.del_member(name)
 
         for new_member, alias_lineno, alias_endlineno in expanded:
             overwrite = False
             already_present = new_member.name in obj.members
             self_alias = new_member.is_alias and cast(Alias, new_member).target_path == f"{obj.path}.{new_member.name}"
             if already_present:
-                old_member = obj[new_member.name]
+                old_member = obj.get_member(new_member.name)
                 old_lineno = old_member.alias_lineno if old_member.is_alias else old_member.lineno
                 overwrite = alias_lineno > (old_lineno or 0)  # type: ignore[operator]
             if not self_alias and (not already_present or overwrite):
@@ -305,7 +278,7 @@ class GriffeLoader:
                     parent=obj,  # type: ignore[arg-type]
                 )
                 if already_present:
-                    prev_member = obj[new_member.name]
+                    prev_member = obj.get_member(new_member.name)
                     with suppress(AliasResolutionError, CyclicAliasError):
                         if prev_member.is_module:
                             if prev_member.is_alias:
@@ -314,7 +287,7 @@ class GriffeLoader:
                                 # alias named after the module it targets:
                                 # skip to avoid cyclic aliases
                                 continue
-                obj[new_member.name] = alias
+                obj.set_member(new_member.name, alias)
 
     def resolve_module_aliases(
         self,
@@ -353,7 +326,7 @@ class GriffeLoader:
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:
-                    target = error.alias.target_path  # type: ignore[union-attr]
+                    target = error.alias.target_path
                     unresolved.add(member.path)
                     package = target.split(".", 1)[0]
                     load_module = (
@@ -380,7 +353,7 @@ class GriffeLoader:
                     implicit=implicit,
                     external=external,
                     seen=seen,
-                    load_failures=load_failures,  # type: ignore[arg-type]
+                    load_failures=load_failures,
                 )
                 resolved |= sub_resolved
                 unresolved |= sub_unresolved
@@ -397,7 +370,7 @@ class GriffeLoader:
 
     def _load_package(self, package: Package | NamespacePackage, *, submodules: bool = True) -> Module:
         top_module = self._load_module(package.name, package.path, submodules=submodules)
-        self.modules_collection[top_module.path] = top_module
+        self.modules_collection.set_member(top_module.path, top_module)
         if isinstance(package, NamespacePackage):
             return top_module
         if package.stubs:
@@ -464,11 +437,14 @@ class GriffeLoader:
             logger.debug(f"Skip {subpath}, dots in filenames are not supported")
             return
         try:
-            parent_module[submodule_name] = self._load_module(
+            parent_module.set_member(
                 submodule_name,
-                subpath,
-                submodules=False,
-                parent=parent_module,
+                self._load_module(
+                    submodule_name,
+                    subpath,
+                    submodules=False,
+                    parent=parent_module,
+                ),
             )
         except LoadingError as error:
             logger.debug(str(error))
@@ -482,7 +458,8 @@ class GriffeLoader:
         )
 
     def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
-        self.lines_collection[module_path] = code.splitlines(keepends=False)
+        if self.store_source:
+            self.lines_collection[module_path] = code.splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
         module = visit(
             module_name,
@@ -537,11 +514,11 @@ class GriffeLoader:
         for parent_offset, parent_part in enumerate(parent_parts, 2):
             module_filepath = parents[len(subparts) - parent_offset]
             try:
-                parent_module = parent_module[parent_part]
+                parent_module = parent_module.get_member(parent_part)
             except KeyError as error:
                 if parent_module.is_namespace_package or parent_module.is_namespace_subpackage:
                     next_parent_module = self._create_module(parent_part, [module_filepath])
-                    parent_module[parent_part] = next_parent_module
+                    parent_module.set_member(parent_part, next_parent_module)
                     parent_module = next_parent_module
                 else:
                     raise UnimportableModuleError(f"Skip {subpath}, it is not importable") from error
@@ -552,7 +529,7 @@ class GriffeLoader:
         return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
-        module = self.modules_collection[wildcard_obj.wildcard]  # type: ignore[index]  # we know it's a wildcard
+        module = self.modules_collection.get_member(wildcard_obj.wildcard)  # type: ignore[arg-type]  # we know it's a wildcard
         explicitely = "__all__" in module.members
         return [
             (imported_member, wildcard_obj.alias_lineno, wildcard_obj.alias_endlineno)
@@ -622,3 +599,6 @@ def load(
         submodules=submodules,
         try_relative_path=try_relative_path,
     )
+
+
+__all__ = ["GriffeLoader", "load"]

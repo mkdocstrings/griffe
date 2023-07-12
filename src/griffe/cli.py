@@ -27,7 +27,7 @@ import colorama
 from griffe.diff import ExplanationStyle, find_breaking_changes
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
-from griffe.exceptions import ExtensionError
+from griffe.exceptions import ExtensionError, GitError
 from griffe.extensions.base import load_extensions
 from griffe.git import _get_latest_tag, _get_repo_root, load_git
 from griffe.loader import GriffeLoader, load
@@ -35,7 +35,7 @@ from griffe.logger import get_logger
 from griffe.stats import _format_stats
 
 if TYPE_CHECKING:
-    from griffe.extensions import Extension, Extensions
+    from griffe.extensions import Extensions, ExtensionType
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
@@ -63,6 +63,7 @@ def _load_packages(
     resolve_implicit: bool = False,
     resolve_external: bool = False,
     allow_inspection: bool = True,
+    store_source: bool = True,
 ) -> GriffeLoader:
     loader = GriffeLoader(
         extensions=extensions,
@@ -70,6 +71,7 @@ def _load_packages(
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
         allow_inspection=allow_inspection,
+        store_source=store_source,
     )
     for package in packages:
         if not package:
@@ -94,6 +96,13 @@ def _load_packages(
 
 
 _level_choices = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
+def _extensions_type(value: str) -> Sequence[str | dict[str, Any]]:
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        return value.split(",")
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -131,7 +140,7 @@ def get_parser() -> argparse.ArgumentParser:
             "-e",
             "--extensions",
             default={},
-            type=json.loads,
+            type=_extensions_type,
             help="A list of extensions to use.",
         )
         loading_options.add_argument(
@@ -248,6 +257,20 @@ def get_parser() -> argparse.ArgumentParser:
         metavar="BASE_REF",
         help="Git reference (commit, branch, tag) to check. Default: load current code.",
     )
+    check_options.add_argument(
+        "--color",
+        dest="color",
+        action="store_true",
+        default=None,
+        help="Force enable colors in the output.",
+    )
+    check_options.add_argument(
+        "--no-color",
+        dest="color",
+        action="store_false",
+        default=None,
+        help="Force disable colors in the output.",
+    )
     check_options.add_argument("-v", "--verbose", action="store_true", help="Verbose output.")
     add_common_options(check_parser)
 
@@ -261,7 +284,7 @@ def dump(
     full: bool = False,
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
-    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     resolve_aliases: bool = False,
     resolve_implicit: bool = False,
     resolve_external: bool = False,
@@ -314,6 +337,7 @@ def dump(
         resolve_implicit=resolve_implicit,
         resolve_external=resolve_external,
         allow_inspection=allow_inspection,
+        store_source=False,
     )
     data_packages = loader.modules_collection.members
 
@@ -339,10 +363,11 @@ def check(
     against_path: str | Path | None = None,
     *,
     base_ref: str | None = None,
-    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
     allow_inspection: bool = True,
     verbose: bool = False,
+    color: bool | None = None,
 ) -> int:
     """Load packages data and dump it as JSON.
 
@@ -359,12 +384,13 @@ def check(
     Returns:
         `0` for success, `1` for failure.
     """
-    colorama.deinit()
-    colorama.init()
-
     search_paths = list(search_paths) if search_paths else []
 
-    against = against or _get_latest_tag(package)
+    try:
+        against = against or _get_latest_tag(package)
+    except GitError as error:
+        print(f"griffe: error: {error}", file=sys.stderr)
+        return 2
     against_path = against_path or package
     repository = _get_repo_root(against_path)
 
@@ -400,10 +426,14 @@ def check(
             allow_inspection=allow_inspection,
         )
 
-    style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     breakages = list(find_breaking_changes(old_package, new_package))
+
+    colorama.deinit()
+    colorama.init(strip=color if color is None else not color)
+    style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     for breakage in breakages:
         print(breakage.explain(style=style), file=sys.stderr)
+
     if breakages:
         return 1
     return 0
@@ -440,3 +470,6 @@ def main(args: list[str] | None = None) -> int:
 
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
     return commands[subcommand](**opts_dict)
+
+
+__all__ = ["check", "dump", "get_parser", "main"]

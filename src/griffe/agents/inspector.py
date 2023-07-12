@@ -23,13 +23,11 @@ and recursively handle its members.
 from __future__ import annotations
 
 import ast
-import sys
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, cleandoc, getmodule, ismodule
+from inspect import Signature, cleandoc
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any
 
-from griffe.agents.base import BaseInspector
 from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -52,11 +50,6 @@ if TYPE_CHECKING:
     from griffe.docstrings.parsers import Parser
     from griffe.expressions import Expression, Name
 
-
-if sys.version_info < (3, 8):
-    from cached_property import cached_property
-else:
-    from functools import cached_property
 
 empty = Signature.empty
 
@@ -104,59 +97,7 @@ def inspect(
     ).get_module(import_paths)
 
 
-_cyclic_relationships = {
-    ("os", "nt"),
-    ("os", "posix"),
-    ("numpy.core._multiarray_umath", "numpy.core.multiarray"),
-    ("pymmcore._pymmcore_swig", "pymmcore.pymmcore_swig"),
-}
-
-
-def _should_create_alias(parent: ObjectNode, child: ObjectNode, current_module_path: str) -> str | None:
-    # the whole point of the following logic is to deal with these cases:
-    # - parent object has a module member
-    # - if this module is not a submodule of the parent, alias it
-    # - but break special cycles coming from builtin modules
-    #   like ast -> _ast -> ast (here we inspect _ast)
-    #   or os -> posix/nt -> os (here we inspect posix/nt)
-
-    child_obj = child.obj
-    if isinstance(child_obj, cached_property):
-        child_obj = child_obj.func
-
-    try:
-        child_module = getmodule(child_obj)
-    except Exception:  # noqa: BLE001
-        return None
-    if not child_module:
-        return None
-
-    if ismodule(parent.obj):
-        parent_module = parent.obj
-    else:
-        parent_module = getmodule(parent.obj)  # type: ignore[assignment]
-        if not parent_module:
-            return None
-
-    parent_module_path = getattr(parent_module.__spec__, "name", parent_module.__name__)
-    child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
-    parent_base_name = parent_module_path.split(".")[-1]
-    child_base_name = child_module_path.split(".")[-1]
-
-    # special cases: inspect.getmodule does not return the real modules
-    # for those, but rather the "user-facing" ones - we prevent that
-    # and use the real parent module
-    if (parent_module_path, child_module_path) in _cyclic_relationships or parent_base_name == f"_{child_base_name}":
-        child_module = parent_module
-        child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
-
-    is_submodule = child_module_path == current_module_path or child_module_path.startswith(current_module_path + ".")
-    if not is_submodule:
-        return child_module_path.lstrip("_")
-    return None
-
-
-class Inspector(BaseInspector):
+class Inspector:
     """This class is used to instantiate an inspector.
 
     Inspectors iterate on objects members to extract data from them.
@@ -245,7 +186,7 @@ class Inspector(BaseInspector):
         """
         for before_inspector in self.extensions.before_inspection:
             before_inspector.inspect(node)
-        super().inspect(node)
+        getattr(self, f"inspect_{node.kind}", self.generic_inspect)(node)
         for after_inspector in self.extensions.after_inspection:
             after_inspector.inspect(node)
 
@@ -259,14 +200,9 @@ class Inspector(BaseInspector):
             before_inspector.inspect(node)
 
         for child in node.children:
-            child_module_path = _should_create_alias(node, child, self.current.module.path)
-            if child_module_path:
-                if child.kind is ObjectKind.MODULE:
-                    target_path = child_module_path
-                else:
-                    child_name = getattr(child.obj, "__name__", child.name)
-                    target_path = f"{child_module_path}.{child_name}"
-                self.current[child.name] = Alias(child.name, target_path)
+            target_path = child.alias_target_path
+            if target_path:
+                self.current.set_member(child.name, Alias(child.name, target_path))
             else:
                 self.inspect(child)
 
@@ -279,7 +215,9 @@ class Inspector(BaseInspector):
         Parameters:
             node: The node to inspect.
         """
-        self.current = Module(
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_module_node", node=node)
+        self.current = module = Module(
             name=self.module_name,
             filepath=self.filepath,
             parent=self.parent,
@@ -287,7 +225,11 @@ class Inspector(BaseInspector):
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
+        self.extensions.call("on_instance", node=node, obj=module)
+        self.extensions.call("on_module_instance", node=node, mod=module)
         self.generic_inspect(node)
+        self.extensions.call("on_members", node=node, obj=module)
+        self.extensions.call("on_module_members", node=node, mod=module)
 
     def inspect_class(self, node: ObjectNode) -> None:
         """Inspect a class.
@@ -295,16 +237,27 @@ class Inspector(BaseInspector):
         Parameters:
             node: The node to inspect.
         """
-        bases = [base.__name__ for base in node.obj.__bases__ if base is not object]
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_class_node", node=node)
+
+        bases = []
+        for base in node.obj.__bases__:
+            if base is object:
+                continue
+            bases.append(f"{base.__module__}.{base.__qualname__}")
 
         class_ = Class(
             name=node.name,
             docstring=self._get_docstring(node),
             bases=bases,
         )
-        self.current[node.name] = class_
+        self.current.set_member(node.name, class_)
         self.current = class_
+        self.extensions.call("on_instance", node=node, obj=class_)
+        self.extensions.call("on_class_instance", node=node, cls=class_)
         self.generic_inspect(node)
+        self.extensions.call("on_members", node=node, obj=class_)
+        self.extensions.call("on_class_members", node=node, cls=class_)
         self.current = self.current.parent  # type: ignore[assignment]
 
     def inspect_staticmethod(self, node: ObjectNode) -> None:
@@ -395,6 +348,9 @@ class Inspector(BaseInspector):
             node: The node to inspect.
             labels: Labels to add to the data object.
         """
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_function_node", node=node)
+
         try:
             signature = getsignature(node.obj)
         except Exception:  # noqa: BLE001
@@ -430,7 +386,12 @@ class Inspector(BaseInspector):
                 docstring=self._get_docstring(node),
             )
         obj.labels |= labels
-        self.current[node.name] = obj
+        self.current.set_member(node.name, obj)
+        self.extensions.call("on_instance", node=node, obj=obj)
+        if obj.is_attribute:
+            self.extensions.call("on_attribute_instance", node=node, attr=obj)
+        else:
+            self.extensions.call("on_function_instance", node=node, func=obj)
 
     def inspect_attribute(self, node: ObjectNode) -> None:
         """Inspect an attribute.
@@ -447,6 +408,9 @@ class Inspector(BaseInspector):
             node: The node to inspect.
             annotation: A potentiel annotation.
         """
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_attribute_node", node=node)
+
         # TODO: to improve
         parent = self.current
         labels: set[str] = set()
@@ -477,10 +441,12 @@ class Inspector(BaseInspector):
             docstring=docstring,
         )
         attribute.labels |= labels
-        parent[node.name] = attribute
+        parent.set_member(node.name, attribute)
 
         if node.name == "__all__":
             parent.exports = set(node.obj)
+        self.extensions.call("on_instance", node=node, obj=attribute)
+        self.extensions.call("on_attribute_instance", node=node, attr=attribute)
 
 
 _kind_map = {
@@ -526,3 +492,6 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Nam
     except SyntaxError:
         return obj
     return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]
+
+
+__all__ = ["inspect", "Inspector"]

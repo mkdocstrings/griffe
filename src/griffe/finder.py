@@ -25,11 +25,6 @@ logger = get_logger(__name__)
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", "^_editable_impl_\\w+\\.py$")]
 _editable_setuptools_patterns = [re.compile(pat) for pat in ("^__editable__\\w+\\.py$",)]
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
-_editable_patterns = (
-    *_editable_editables_patterns,
-    *_editable_setuptools_patterns,
-    *_editable_scikit_build_core_patterns,
-)
 
 
 def _match_pattern(string: str, patterns: Sequence[Pattern]) -> bool:
@@ -119,14 +114,14 @@ class ModuleFinder:
         """
         module_path: Path | list[Path]
         if isinstance(module, Path):
-            module_name, module_path = self._module_name_path(module)  # type: ignore[arg-type]
+            module_name, module_path = self._module_name_path(module)
             top_module_name = self._top_module_name(module_path)
         elif try_relative_path:
             try:
                 module_name, module_path = self._module_name_path(Path(module))
             except FileNotFoundError:
-                module_name = module  # type: ignore[assignment]
-                top_module_name = module.split(".", 1)[0]  # type: ignore[union-attr]
+                module_name = module
+                top_module_name = module.split(".", 1)[0]
             else:
                 top_module_name = self._top_module_name(module_path)
         else:
@@ -332,13 +327,13 @@ def _handle_pth_file(path: Path) -> list[Path]:
     # Blank lines and lines beginning with # are skipped.
     # Lines starting with import (followed by space or tab) are executed.
     directories = []
-    for line in path.read_text(encoding="utf8").strip().splitlines(keepends=False):
+    for line in path.read_text(encoding="utf8").strip().replace(";", "\n").splitlines(keepends=False):
         line = line.strip()  # noqa: PLW2901
         if _re_import_line.match(line):
             editable_module = path.parent / f"{line[len('import'):].lstrip()}.py"
             with suppress(UnhandledEditableModuleError):
                 return _handle_editable_module(editable_module)
-        if line and not line.startswith("#") and ";" not in line and os.path.exists(line):
+        if line and not line.startswith("#") and os.path.exists(line):
             directories.append(Path(line))
     return directories
 
@@ -369,3 +364,6 @@ def _handle_editable_module(path: Path) -> list[Path]:
             ) and isinstance(node.value, ast.Dict):
                 return [Path(constant.s).parent for constant in node.value.values if isinstance(constant, ast.Str)]
     raise UnhandledEditableModuleError(path)
+
+
+__all__ = ["ModuleFinder", "NamespacePackage", "Package"]

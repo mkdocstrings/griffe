@@ -50,3 +50,6 @@ def parse(docstring: Docstring, parser: Parser | None, **options: Any) -> list[D
     if parser:
         return parsers[parser](docstring, **options)  # type: ignore[operator]
     return [DocstringSectionText(docstring.value)]
+
+
+__all__ = ["parse", "Parser", "parsers"]

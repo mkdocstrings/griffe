@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-import tokenize
-from collections import defaultdict
-from functools import lru_cache
-from io import BytesIO
 from typing import TYPE_CHECKING, Any, ItemsView, KeysView, ValuesView
 
 from griffe.mixins import GetMembersMixin, SetMembersMixin
@@ -56,24 +52,6 @@ class LinesCollection:
         """
         return self._data.items()
 
-    # TODO: remove once Python 3.7 support is dropped
-    @lru_cache(maxsize=None)  # noqa: B019
-    def tokens(self, path: Path) -> tuple[list[tokenize.TokenInfo], defaultdict]:
-        """Tokenize the code.
-
-        Parameters:
-            path: The filepath to get the tokens of.
-
-        Returns:
-            A token list and a mapping of tokens by line number.
-        """
-        readline = BytesIO("\n".join(self[path]).encode()).readline
-        tokens = list(tokenize.tokenize(readline))
-        token_table = defaultdict(list)  # mapping line numbers to token numbers
-        for index, token in enumerate(tokens):
-            token_table[token.start[0]].append(index)
-        return tokens, token_table
-
 
 class ModulesCollection(GetMembersMixin, SetMembersMixin):
     """A collection of modules, allowing easy access to members."""
@@ -89,3 +67,10 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin):
 
     def __contains__(self, item: Any) -> bool:
         return item in self.members
+
+    @property
+    def all_members(self) -> dict[str, Module]:  # noqa: D102
+        return self.members
+
+
+__all__ = ["LinesCollection", "ModulesCollection"]

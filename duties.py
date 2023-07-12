@@ -4,17 +4,12 @@ from __future__ import annotations
 
 import os
 import sys
+from importlib.metadata import version as pkgversion
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from duty import duty
 from duty.callables import black, blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
-
-if sys.version_info < (3, 8):
-    from importlib_metadata import version as pkgversion
-else:
-    from importlib.metadata import version as pkgversion
-
 
 if TYPE_CHECKING:
     from duty.context import Context
@@ -291,12 +286,10 @@ def fuzz(
     profile: bool = False,
     browser: bool = False,
 ) -> None:
-    """Run the test suite.
+    """Fuzz Griffe against PDM cached packages.
 
     Parameters:
         ctx: The context instance (passed automatically).
-        level: Log level to use when fuzzing.
-        pdm: Whether to fuzz on PDM's cached packages.
         profile: Whether to profile the run.
         browser: Whether to open the SVG file in the browser at the end.
     """

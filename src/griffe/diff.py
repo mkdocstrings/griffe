@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import contextlib
 import enum
+from pathlib import Path
 from typing import Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
 from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
 from griffe.exceptions import AliasResolutionError
+from griffe.git import WORKTREE_PREFIX
 from griffe.logger import get_logger
 
 POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
@@ -97,14 +99,60 @@ class Breakage:
         """
         return getattr(self, f"_explain_{style.value}")()
 
+    @property
+    def _filepath(self) -> Path:
+        if self.obj.is_alias:
+            return self.obj.parent.filepath  # type: ignore[union-attr,return-value]
+        return self.obj.filepath  # type: ignore[return-value]
+
+    @property
+    def _relative_filepath(self) -> Path:
+        if self.obj.is_alias:
+            return self.obj.parent.relative_filepath  # type: ignore[union-attr]
+        return self.obj.relative_filepath
+
+    @property
+    def _relative_package_filepath(self) -> Path:
+        if self.obj.is_alias:
+            return self.obj.parent.relative_package_filepath  # type: ignore[union-attr]
+        return self.obj.relative_package_filepath
+
+    @property
+    def _location(self) -> Path:
+        if self._relative_filepath.is_absolute():
+            parts = self._relative_filepath.parts
+            for index, part in enumerate(parts):
+                if part.startswith(WORKTREE_PREFIX):
+                    return Path(*parts[index + 2 :])
+        return self._relative_filepath
+
+    @property
+    def _canonical_path(self) -> str:
+        if self.obj.is_alias:
+            return self.obj.path
+        return self.obj.canonical_path
+
+    @property
+    def _module_path(self) -> str:
+        if self.obj.is_alias:
+            return self.obj.parent.module.path  # type: ignore[union-attr]
+        return self.obj.module.path
+
+    @property
     def _relative_path(self) -> str:
-        return self.obj.canonical_path[len(self.obj.module.canonical_path) + 1 :]
+        return self._canonical_path[len(self._module_path) + 1 :] or "<module>"
+
+    @property
+    def _lineno(self) -> int:
+        if self.obj.is_alias:
+            return self.obj.alias_lineno or 0  # type: ignore[attr-defined]
+        return self.obj.lineno or 0
 
     def _format_location(self) -> str:
-        return f"{Style.BRIGHT}{self.obj.filepath}{Style.RESET_ALL}:{self.obj.lineno}"
+        return f"{Style.BRIGHT}{self._location}{Style.RESET_ALL}:{self._lineno}"
 
     def _format_title(self) -> str:
-        return self._relative_path()
+        return self._relative_path
 
     def _format_kind(self) -> str:
         return f"{Fore.YELLOW}{self.kind.value}{Fore.RESET}"
@@ -156,7 +204,7 @@ class ParameterMovedBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_MOVED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -171,7 +219,7 @@ class ParameterRemovedBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_REMOVED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -186,7 +234,7 @@ class ParameterChangedKindBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_KIND
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return str(self.old_value.kind.value)
@@ -201,7 +249,7 @@ class ParameterChangedDefaultBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_DEFAULT
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return str(self.old_value.default)
@@ -216,7 +264,7 @@ class ParameterChangedRequiredBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_REQUIRED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -231,7 +279,7 @@ class ParameterAddedRequiredBreakage(Breakage):
     kind: BreakageKind = BreakageKind.PARAMETER_ADDED_REQUIRED
 
     def _format_title(self) -> str:
-        return f"{self._relative_path()}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
+        return f"{self._relative_path}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -295,7 +343,13 @@ class ClassRemovedBaseBreakage(Breakage):
 
 
 # TODO: decorators!
-def _class_incompatibilities(old_class: Class, new_class: Class, *, ignore_private: bool = True) -> Iterable[Breakage]:
+def _class_incompatibilities(
+    old_class: Class,
+    new_class: Class,
+    *,
+    ignore_private: bool = True,
+    seen_paths: set[str],
+) -> Iterable[Breakage]:
     yield from ()
     if new_class.bases != old_class.bases:
         if len(new_class.bases) < len(old_class.bases):
@@ -303,7 +357,7 @@ def _class_incompatibilities(old_class: Class, new_class: Class, *, ignore_priva
         else:
             # TODO: check mro
             ...
-    yield from _member_incompatibilities(old_class, new_class, ignore_private=ignore_private)
+    yield from _member_incompatibilities(old_class, new_class, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
 # TODO: decorators!
@@ -394,6 +448,7 @@ def _alias_incompatibilities(
     new_obj: Object | Alias,
     *,
     ignore_private: bool,
+    seen_paths: set[str],
 ) -> Iterable[Breakage]:
     if not ignore_private:
         return
@@ -404,7 +459,7 @@ def _alias_incompatibilities(
         logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
         return
 
-    yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private)
+    yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
 def _member_incompatibilities(
@@ -412,7 +467,9 @@ def _member_incompatibilities(
     new_obj: Object | Alias,
     *,
     ignore_private: bool = True,
+    seen_paths: set[str] | None = None,
 ) -> Iterator[Breakage]:
+    seen_paths = set() if seen_paths is None else seen_paths
     for name, old_member in old_obj.members.items():
         if ignore_private and name.startswith("_"):
             logger.debug(f"API check: {old_obj.path}.{name}: skip private object")
@@ -422,11 +479,12 @@ def _member_incompatibilities(
         try:
             new_member = new_obj.members[name]
         except KeyError:
-            if old_member.is_exported(explicitely=False):
+            is_module = not old_member.is_alias and old_member.is_module
+            if is_module or old_member.is_exported(explicitely=False):
                 yield ObjectRemovedBreakage(old_member, old_member, None)  # type: ignore[arg-type]
             continue
 
-        yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private)
+        yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
 def _type_based_yield(
@@ -434,17 +492,31 @@ def _type_based_yield(
     new_member: Object | Alias,
     *,
     ignore_private: bool,
+    seen_paths: set[str],
 ) -> Iterator[Breakage]:
+    if old_member.path in seen_paths:
+        return
+    seen_paths.add(old_member.path)
     if old_member.is_alias or new_member.is_alias:
         # Should be first, since there can be the case where there is an alias and another kind of object, which may
         # not be a breaking change
-        yield from _alias_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+        yield from _alias_incompatibilities(
+            old_member,
+            new_member,
+            ignore_private=ignore_private,
+            seen_paths=seen_paths,
+        )
     elif new_member.kind != old_member.kind:
         yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # type: ignore[arg-type]
     elif old_member.is_module:
-        yield from _member_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+        yield from _member_incompatibilities(
+            old_member,
+            new_member,
+            ignore_private=ignore_private,
+            seen_paths=seen_paths,
+        )
     elif old_member.is_class:
-        yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private)  # type: ignore[arg-type]
+        yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
     elif old_member.is_function:
         yield from _function_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
     elif old_member.is_attribute:
@@ -466,4 +538,49 @@ def _returns_are_compatible(old_function: Function, new_function: Function) -> b
     return True
 
 
-find_breaking_changes = _member_incompatibilities
+def find_breaking_changes(
+    old_obj: Object | Alias,
+    new_obj: Object | Alias,
+    *,
+    ignore_private: bool = True,
+) -> Iterator[Breakage]:
+    """Find breaking changes between two versions of the same API.
+
+    The function will iterate recursively on all objects
+    and yield breaking changes with detailed information.
+
+    Parameters:
+        old_obj: The old version of an object.
+        new_obj: The new version of an object.
+
+    Yields:
+        Breaking changes.
+
+    Examples:
+        >>> import sys, griffe
+        >>> new = griffe.load("pkg")
+        >>> old = griffe.load_git("pkg", "1.2.3")
+        >>> for breakage in griffe.find_breaking_changes(old, new)
+        ...     print(breakage.explain(style=style), file=sys.stderr)
+    """
+    yield from _member_incompatibilities(old_obj, new_obj, ignore_private=ignore_private)
+
+
+__all__ = [
+    "AttributeChangedTypeBreakage",
+    "AttributeChangedValueBreakage",
+    "Breakage",
+    "BreakageKind",
+    "ClassRemovedBaseBreakage",
+    "ExplanationStyle",
+    "find_breaking_changes",
+    "ObjectChangedKindBreakage",
+    "ObjectRemovedBreakage",
+    "ParameterAddedRequiredBreakage",
+    "ParameterChangedDefaultBreakage",
+    "ParameterChangedKindBreakage",
+    "ParameterChangedRequiredBreakage",
+    "ParameterMovedBreakage",
+    "ParameterRemovedBreakage",
+    "ReturnChangedTypeBreakage",
+]

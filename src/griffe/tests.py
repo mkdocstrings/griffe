@@ -1,14 +1,4 @@
-"""Test helpers and pytest fixtures.
-
-Load fixtures in your own tests by adding `griffe.tests`
-to the [`pytest_plugins`][pytest_plugins] list:
-
-```python title="conftest.py"
-pytest_plugins = ["griffe.tests"]
-```
-
-[pytest_plugins]: https://docs.pytest.org/en/7.1.x/how-to/plugins.html#requiring-loading-plugins-in-a-test-module-or-conftest-file
-"""
+"""Test helpers and pytest fixtures."""
 
 from __future__ import annotations
 
@@ -22,7 +12,7 @@ from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
 
 from griffe.agents.inspector import inspect
-from griffe.agents.visitor import patch_ast, visit
+from griffe.agents.visitor import visit
 from griffe.dataclasses import Module, Object
 from griffe.loader import GriffeLoader
 
@@ -32,17 +22,6 @@ if TYPE_CHECKING:
     from griffe.extensions import Extensions
 
 TMPDIR_PREFIX = "griffe_"
-
-
-try:
-    import pytest
-
-    @pytest.fixture(scope="session", autouse=True)
-    def _fixture_patch_ast() -> None:
-        patch_ast()
-
-except ImportError:
-    pass
 
 
 TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
@@ -172,7 +151,7 @@ def temporary_visited_module(
         The visited module.
     """
     with temporary_pyfile(code, module_name=module_name) as (_, path):
-        yield visit(
+        module = visit(
             module_name,
             filepath=path,
             code=dedent(code),
@@ -183,6 +162,8 @@ def temporary_visited_module(
             lines_collection=lines_collection,
             modules_collection=modules_collection,
         )
+        module.modules_collection[module_name] = module
+        yield module
 
 
 @contextmanager
@@ -216,7 +197,7 @@ def temporary_inspected_module(
     """
     with temporary_pyfile(code, module_name=module_name) as (_, path):
         try:
-            yield inspect(
+            module = inspect(
                 module_name,
                 filepath=path,
                 import_paths=import_paths,
@@ -227,6 +208,8 @@ def temporary_inspected_module(
                 lines_collection=lines_collection,
                 modules_collection=modules_collection,
             )
+            module.modules_collection[module_name] = module
+            yield module
         finally:
             if module_name in sys.modules:
                 del sys.modules[module_name]
@@ -251,7 +234,7 @@ def vtree(*objects: Object, return_leaf: bool = False) -> Object:
     top = objects[0]
     leaf = top
     for obj in objects[1:]:
-        leaf[obj.name] = obj
+        leaf.set_member(obj.name, obj)
         leaf = obj
     return leaf if return_leaf else top
 
@@ -272,7 +255,7 @@ def htree(*objects: Object) -> Object:
         raise ValueError("At least one object must be provided")
     top = objects[0]
     for obj in objects[1:]:
-        top[obj.name] = obj
+        top.set_member(obj.name, obj)
     return top
 
 
@@ -294,8 +277,21 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
     modules = [Module(name, filepath=Path(*parts[:index], "__init__.py")) for index, name in enumerate(parts)]
     if not leaf_package:
         try:
-            filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[attr-defined,union-attr]
+            filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[union-attr]
         except AttributeError:  # TODO: remove once Python 3.8 is dropped
             filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")  # type: ignore[union-attr]
         modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]
+
+
+__all__ = [
+    "htree",
+    "module_vtree",
+    "temporary_inspected_module",
+    "temporary_pyfile",
+    "temporary_pypackage",
+    "temporary_visited_module",
+    "temporary_visited_package",
+    "TmpPackage",
+    "vtree",
+]

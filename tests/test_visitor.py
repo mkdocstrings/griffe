@@ -239,7 +239,7 @@ def test_dont_crash_on_nested_functions_in_init() -> None:
 
 
 def test_get_correct_docstring_starting_line_number() -> None:
-    """Assert we get the correct line numbers for docstring, even on Python 3.7."""
+    """Assert we get the correct line numbers for docstring."""
     with temporary_visited_module(
         """
         '''

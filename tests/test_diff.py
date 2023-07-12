@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-import sys
-
 import pytest
 
 from griffe.diff import Breakage, BreakageKind, find_breaking_changes
 from griffe.tests import temporary_visited_module, temporary_visited_package
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="no positional-only parameters on Python 3.7")
 @pytest.mark.parametrize(
     ("old_code", "new_code", "expected_breakages"),
     [

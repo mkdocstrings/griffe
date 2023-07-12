@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import sys
-from typing import TYPE_CHECKING, Any, Iterator, List, Tuple, Union
+from typing import TYPE_CHECKING, Any, Iterator, List, Protocol, Tuple, Union
 
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module
 from griffe.docstrings.dataclasses import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
@@ -11,11 +10,6 @@ from griffe.docstrings.dataclasses import DocstringAttribute, DocstringElement, 
 if TYPE_CHECKING:
     from types import ModuleType
 
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Protocol
-else:
-    from typing import Protocol
 
 ParentType = Union[Module, Class, Function, Attribute, None]
 ParseResultType = Tuple[List[DocstringSection], List[str]]
@@ -63,7 +57,7 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
         sections = parser_module.parse(docstring_object, **parser_opts)
         return sections, warnings
 
-    yield parse  # type: ignore[misc]
+    yield parse
 
     parser_module._warn = original_warn  # type: ignore[attr-defined]
 

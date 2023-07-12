@@ -169,3 +169,6 @@ def _format_stats(stats: dict) -> str:
     serialize_time_per_module = serialize_time / modules
     lines.append(f"Time spent serializing: {serialize_time}ms, {serialize_time_per_module:.02f}ms/module")
     return "\n".join(lines)
+
+
+__all__ = ["stats"]

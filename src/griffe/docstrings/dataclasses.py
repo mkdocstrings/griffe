@@ -6,15 +6,9 @@ import enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import sys
-    from typing import Any
+    from typing import Any, Literal
 
     from griffe.dataclasses import Expression, Name
-
-    if sys.version_info < (3, 8):
-        from typing_extensions import Literal
-    else:
-        from typing import Literal
 
 
 # Elements -----------------------------------------------
@@ -223,10 +217,10 @@ class DocstringSection:
         Returns:
             A dictionary.
         """
-        if hasattr(self.value, "as_dict"):  # type: ignore[attr-defined]  # noqa: SIM108
-            serialized_value = self.value.as_dict(**kwargs)  # type: ignore[attr-defined]
+        if hasattr(self.value, "as_dict"):  # noqa: SIM108
+            serialized_value = self.value.as_dict(**kwargs)
         else:
-            serialized_value = self.value  # type: ignore[attr-defined]
+            serialized_value = self.value
         base = {"kind": self.kind.value, "value": serialized_value}
         if self.title:
             base["title"] = self.title
@@ -421,3 +415,32 @@ class DocstringSectionAdmonition(DocstringSection):
         """
         super().__init__(title)
         self.value: DocstringAdmonition = DocstringAdmonition(annotation=kind, description=text)
+
+
+__all__ = [
+    "DocstringAdmonition",
+    "DocstringAttribute",
+    "DocstringDeprecated",
+    "DocstringElement",
+    "DocstringNamedElement",
+    "DocstringParameter",
+    "DocstringRaise",
+    "DocstringReceive",
+    "DocstringReturn",
+    "DocstringSection",
+    "DocstringSectionAdmonition",
+    "DocstringSectionAttributes",
+    "DocstringSectionDeprecated",
+    "DocstringSectionExamples",
+    "DocstringSectionKind",
+    "DocstringSectionOtherParameters",
+    "DocstringSectionParameters",
+    "DocstringSectionRaises",
+    "DocstringSectionReceives",
+    "DocstringSectionReturns",
+    "DocstringSectionText",
+    "DocstringSectionWarns",
+    "DocstringSectionYields",
+    "DocstringWarn",
+    "DocstringYield",
+]

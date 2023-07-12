@@ -10,8 +10,8 @@ to generate API documentation or find breaking changes in your API."""
 authors = [{name = "Timothée Mazzucotelli", email = "pawamoy@pm.me"}]
 license = {text = "ISC"}
 readme = "README.md"
-requires-python = ">=3.7"
-keywords = []
+requires-python = ">=3.8"
+keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
 dynamic = ["version"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -19,7 +19,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -32,7 +31,6 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "cached-property; python_version < '3.8'",
     "colorama>=0.4",
 ]
 

@@ -105,7 +105,7 @@ def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:  # no
         for field_type in field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
-                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values)  # type: ignore[misc,operator]
+                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values)
                 break
         else:
             parsed_values.description.append(line)
@@ -393,3 +393,6 @@ field_types = [
     FieldType(RETURN_NAMES, _read_return),
     FieldType(RETURN_TYPE_NAMES, _read_return_type),
 ]
+
+
+__all__ = ["parse"]

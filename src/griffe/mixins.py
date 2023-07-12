@@ -17,20 +17,6 @@ logger = get_logger(__name__)
 _ObjType = TypeVar("_ObjType")
 
 
-class GetMembersMixin:
-    """This mixin adds a `__getitem__` method to a class.
-
-    It makes it easier to access members of an object.
-    The method expects a `members` attribute/property to be available on the instance.
-    """
-
-    def __getitem__(self, key: str | Sequence[str]) -> Any:
-        parts = _get_parts(key)
-        if len(parts) == 1:
-            return self.members[parts[0]]  # type: ignore[attr-defined]
-        return self.members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
-
-
 def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
     if isinstance(key, str):
         if not key:
@@ -43,27 +29,154 @@ def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
     return parts
 
 
+class GetMembersMixin:
+    """Mixin class to share methods for accessing members."""
+
+    def __getitem__(self, key: str | Sequence[str]) -> Any:
+        """Get a member with its name or path.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Members will be looked up in both declared members and inherited ones,
+        triggering computation of the latter.
+
+        Parameters:
+            key: The name or path of the member.
+
+        Examples:
+            >>> foo = griffe_object["foo"]
+            >>> bar = griffe_object["path.to.bar"]
+            >>> qux = griffe_object[("path", "to", "qux")]
+        """
+        parts = _get_parts(key)
+        if len(parts) == 1:
+            return self.all_members[parts[0]]  # type: ignore[attr-defined]
+        return self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+
+    def get_member(self, key: str | Sequence[str]) -> Any:
+        """Get a member with its name or path.
+
+        This method is part of the producer API:
+        you can use it safely while building Griffe trees
+        (for example in Griffe extensions).
+
+        Members will be looked up in declared members only, not inherited ones.
+
+        Parameters:
+            key: The name or path of the member.
+
+        Examples:
+            >>> foo = griffe_object["foo"]
+            >>> bar = griffe_object["path.to.bar"]
+            >>> bar = griffe_object[("path", "to", "bar")]
+        """
+        parts = _get_parts(key)
+        if len(parts) == 1:
+            return self.members[parts[0]]  # type: ignore[attr-defined]
+        return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
+
+
 class DelMembersMixin:
-    """This mixin adds a `__delitem__` method to a class."""
+    """Mixin class to share methods for deleting members."""
 
     def __delitem__(self, key: str | Sequence[str]) -> None:
+        """Delete a member with its name or path.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Members will be looked up in both declared members and inherited ones,
+        triggering computation of the latter.
+
+        Parameters:
+            key: The name or path of the member.
+
+        Examples:
+            >>> del griffe_object["foo"]
+            >>> del griffe_object["path.to.bar"]
+            >>> del griffe_object[("path", "to", "qux")]
+        """
+        parts = _get_parts(key)
+        if len(parts) == 1:
+            name = parts[0]
+            try:
+                del self.members[name]  # type: ignore[attr-defined]
+            except KeyError:
+                del self.inherited_members[name]  # type: ignore[attr-defined]
+        else:
+            del self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+
+    def del_member(self, key: str | Sequence[str]) -> None:
+        """Delete a member with its name or path.
+
+        This method is part of the producer API:
+        you can use it safely while building Griffe trees
+        (for example in Griffe extensions).
+
+        Members will be looked up in declared members only, not inherited ones.
+
+        Parameters:
+            key: The name or path of the member.
+
+        Examples:
+            >>> griffe_object.del_member("foo")
+            >>> griffe_object.del_member("path.to.bar")
+            >>> griffe_object.del_member(("path", "to", "qux"))
+        """
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
             del self.members[name]  # type: ignore[attr-defined]
         else:
-            del self.members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+            self.members[parts[0]].del_member(parts[1:])  # type: ignore[attr-defined]
 
 
 class SetMembersMixin(DelMembersMixin):
-    """This mixin adds a `__setitem__` method to a class.
-
-    It makes it easier to set members of an object.
-    The method expects a `members` attribute/property to be available on the instance.
-    Each time a member is set, its `parent` attribute is set as well.
-    """
+    """Mixin class to share methods for setting members."""
 
     def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
+        """Set a member with its name or path.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Parameters:
+            key: The name or path of the member.
+            value: The member.
+
+        Examples:
+            >>> griffe_object["foo"] = foo
+            >>> griffe_object["path.to.bar"] = bar
+            >>> griffe_object[("path", "to", "qux")] = qux
+        """
+        parts = _get_parts(key)
+        if len(parts) == 1:
+            name = parts[0]
+            self.members[name] = value  # type: ignore[attr-defined]
+            if self.is_collection:  # type: ignore[attr-defined]
+                value._modules_collection = self  # type: ignore[union-attr]
+            else:
+                value.parent = self  # type: ignore[assignment]
+        else:
+            self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
+
+    def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
+        """Set a member with its name or path.
+
+        This method is part of the producer API:
+        you can use it safely while building Griffe trees
+        (for example in Griffe extensions).
+
+        Parameters:
+            key: The name or path of the member.
+            value: The member.
+
+        Examples:
+            >>> griffe_object.set_member("foo", foo)
+            >>> griffe_object.set_member("path.to.bar", bar)
+            >>> griffe_object.set_member(("path", "to", "qux", qux)
+        """
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
@@ -88,7 +201,7 @@ class SetMembersMixin(DelMembersMixin):
             else:
                 value.parent = self  # type: ignore[assignment]
         else:
-            self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
+            self.members[parts[0]].set_member(parts[1:], value)  # type: ignore[attr-defined]
 
 
 class ObjectAliasMixin:
@@ -163,3 +276,12 @@ class SerializationMixin:
         if not isinstance(obj, cls):
             raise TypeError(f"provided JSON object is not of type {cls}")
         return obj
+
+
+__all__ = [
+    "DelMembersMixin",
+    "GetMembersMixin",
+    "ObjectAliasMixin",
+    "SerializationMixin",
+    "SetMembersMixin",
+]

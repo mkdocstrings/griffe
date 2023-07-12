@@ -19,6 +19,7 @@ from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Any, Iterator, Sequence
 
 from griffe import loader
+from griffe.exceptions import GitError
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
@@ -27,19 +28,22 @@ if TYPE_CHECKING:
     from griffe.extensions import Extensions
 
 
-def _assert_git_repo(repo: str) -> None:
+WORKTREE_PREFIX = "griffe-worktree-"
+
+
+def _assert_git_repo(repo: str | Path) -> None:
     if not shutil.which("git"):
         raise RuntimeError("Could not find git executable. Please install git.")
 
     try:
         subprocess.run(
-            ["git", "-C", repo, "rev-parse", "--is-inside-work-tree"],
+            ["git", "-C", str(repo), "rev-parse", "--is-inside-work-tree"],
             check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
     except subprocess.CalledProcessError as err:
-        raise OSError(f"Not a git repository: {repo!r}") from err
+        raise OSError(f"Not a git repository: {repo}") from err
 
 
 def _get_latest_tag(path: str | Path) -> str:
@@ -47,11 +51,17 @@ def _get_latest_tag(path: str | Path) -> str:
         path = Path(path)
     if not path.is_dir():
         path = path.parent
-    output = subprocess.check_output(
-        ["git", "describe", "--tags", "--abbrev=0"],
+    process = subprocess.run(
+        ["git", "tag", "-l", "--sort=-committerdate"],
         cwd=path,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
-    return output.decode().strip()
+    output = process.stdout.strip()
+    if process.returncode != 0 or not output:
+        raise GitError(f"Cannot list Git tags in {path}: {output or 'no tags'}")
+    return output.split("\n", 1)[0]
 
 
 def _get_repo_root(path: str | Path) -> str:
@@ -67,7 +77,7 @@ def _get_repo_root(path: str | Path) -> str:
 
 
 @contextmanager
-def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
+def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     """Context manager that checks out the given reference in the given repository to a temporary worktree.
 
     Parameters:
@@ -81,24 +91,24 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         OSError: If `repo` is not a valid `.git` repository
         RuntimeError: If the `git` executable is unavailable, or if it cannot create a worktree
     """
-    repo = str(repo)
     _assert_git_repo(repo)
-    with TemporaryDirectory(prefix="griffe-worktree-") as td:
-        uid = f"griffe_{ref}"
-        target = os.path.join(td, uid)
-        retval = subprocess.run(
-            ["git", "-C", repo, "worktree", "add", "-b", uid, target, ref],
+    repo_name = Path(repo).resolve().name
+    with TemporaryDirectory(prefix=f"{WORKTREE_PREFIX}{repo_name}-{ref}-") as tmp_dir:
+        branch = f"griffe_{ref}"
+        location = os.path.join(tmp_dir, branch)
+        process = subprocess.run(
+            ["git", "-C", repo, "worktree", "add", "-b", branch, location, ref],
             capture_output=True,
         )
-        if retval.returncode:
-            raise RuntimeError(f"Could not create git worktree: {retval.stderr.decode()}")
+        if process.returncode:
+            raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
 
         try:
-            yield Path(target)
+            yield Path(location)
         finally:
-            subprocess.run(["git", "-C", repo, "worktree", "remove", uid], stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", repo, "worktree", "remove", branch], stdout=subprocess.DEVNULL)
             subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL)
-            subprocess.run(["git", "-C", repo, "branch", "-d", uid], stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", repo, "branch", "-D", branch], stdout=subprocess.DEVNULL)
 
 
 def load_git(
@@ -139,7 +149,7 @@ def load_git(
     Returns:
         A loaded module.
     """
-    with tmp_worktree(repo, ref) as worktree:
+    with _tmp_worktree(repo, ref) as worktree:
         search_paths = [worktree / path for path in search_paths or ["."]]
         if isinstance(module, Path):
             module = worktree / module
@@ -155,3 +165,6 @@ def load_git(
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
         )
+
+
+__all__ = ["load_git"]

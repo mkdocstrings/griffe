@@ -2,16 +2,10 @@
 
 from __future__ import annotations
 
-import sys
+from functools import cached_property
 from typing import Any, Callable
 
 from griffe.exceptions import NameResolutionError
-
-# TODO: remove once Python 3.7 support is dropped
-if sys.version_info < (3, 8):
-    from cached_property import cached_property
-else:
-    from functools import cached_property
 
 
 class Name:
@@ -167,6 +161,19 @@ class Expression(list):
         return str(self.non_optional).split("[", 1)[0].rsplit(".", 1)[-1].lower()
 
     @property
+    def without_subscript(self) -> Expression:
+        """The expression without the subscript part (if any).
+
+        For example, `Generic[T]` becomes `Generic`.
+        """
+        parts = []
+        for element in self:
+            if isinstance(element, str) and element == "[":
+                break
+            parts.append(element)
+        return Expression(*parts)
+
+    @property
     def is_tuple(self) -> bool:
         """Tell whether this expression represents a tuple.
 
@@ -212,14 +219,14 @@ class Expression(list):
         Returns:
             A non-optional expression.
         """
-        if self[-1] == "None" and self[-2] == " | ":
+        if self[-3:] == ["|", " ", "None"]:
             if isinstance(self[0], Expression):
                 return self[0]
             return Expression(self[0])
-        if self[0] == "None" and self[1] == " | ":
-            if isinstance(self[2], Expression):
-                return self[2]
-            return Expression(self[2])
+        if self[:3] == ["None", " ", "|"]:
+            if isinstance(self[3], Expression):
+                return self[3]
+            return Expression(self[3])
         if isinstance(self[0], Name) and self[0].full == "typing.Optional":
             if isinstance(self[2], Expression):
                 return self[2]
@@ -265,3 +272,6 @@ class Expression(list):
             The return type.
         """
         return self.non_optional[2][0], self[2][2], self[2][4]
+
+
+__all__ = ["Expression", "Name"]

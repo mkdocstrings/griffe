@@ -49,14 +49,14 @@ def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
     for function_name, overloads in list(stubs.overloads.items()):
         if overloads:
             with suppress(KeyError):
-                obj[function_name].overloads = overloads
+                obj.get_member(function_name).overloads = overloads
         del stubs.overloads[function_name]
 
 
 def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
     for member_name, stub_member in stubs.members.items():
         if member_name in obj.members:
-            obj_member = obj[member_name]
+            obj_member = obj.get_member(member_name)
             with suppress(AliasResolutionError, CyclicAliasError):
                 if obj_member.kind is not stub_member.kind:
                     logger.debug(f"Cannot merge stubs of kind {stub_member.kind} into object of kind {obj_member.kind}")
@@ -68,7 +68,7 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                     _merge_attribute_stubs(obj_member, stub_member)  # type: ignore[arg-type]
         else:
             stub_member.runtime = False
-            obj[member_name] = stub_member
+            obj.set_member(member_name, stub_member)
 
 
 def merge_stubs(mod1: Module, mod2: Module) -> Module:
@@ -95,3 +95,6 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
         raise ValueError("cannot merge regular (non-stubs) modules together")
     _merge_module_stubs(module, stubs)
     return module
+
+
+__all__ = ["merge_stubs"]

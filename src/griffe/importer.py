@@ -86,3 +86,6 @@ def dynamic_import(import_path: str, import_paths: list[Path] | None = None) -> 
         except AttributeError as error:
             raise ImportError("\n".join(errors)) from error
     return value
+
+
+__all__ = ["dynamic_import", "sys_path"]

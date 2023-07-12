@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import sys
-
 import pytest
 
 from griffe.dataclasses import ParameterKind
@@ -22,7 +20,6 @@ def test_visit_simple_function() -> None:
         assert param.default == "'<>'"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_visit_function_positional_only_param() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly, /): ...") as module:
@@ -35,7 +32,6 @@ def test_visit_function_positional_only_param() -> None:
         assert param.default is None
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_visit_function_positional_only_param_with_default() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly=0, /): ...") as module:
@@ -48,7 +44,6 @@ def test_visit_function_positional_only_param_with_default() -> None:
         assert param.default == "0"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_visit_function_positional_or_keyword_param() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly, /, poskw): ...") as module:
@@ -61,7 +56,6 @@ def test_visit_function_positional_or_keyword_param() -> None:
         assert param.default is None
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_visit_function_positional_or_keyword_param_with_default() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(posonly, /, poskw=0): ...") as module:
@@ -86,8 +80,6 @@ def test_visit_function_keyword_only_param() -> None:
         assert param.default is None
 
 
-# TODO: is it possible to support that?
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="kwonly params defaults not supported on Python 3.7 (ast nodes)")
 def test_visit_function_keyword_only_param_with_default() -> None:
     """Test functions parameters loading."""
     with temporary_visited_module("def f(*, kwonly=0): ...") as module:
@@ -100,7 +92,6 @@ def test_visit_function_keyword_only_param_with_default() -> None:
         assert param.default == "0"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="posonly syntax not supported on Python 3.7")
 def test_visit_function_syntax_error() -> None:
     """Test functions parameters loading."""
     with pytest.raises(SyntaxError), temporary_visited_module("def f(/, poskw=0): ..."):

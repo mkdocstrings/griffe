@@ -9,24 +9,23 @@ populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-
 from __future__ import annotations
 
 import ast
-import inspect
 from contextlib import suppress
 from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Iterable
 
-from griffe.agents.base import BaseVisitor
 from griffe.agents.nodes import (
-    ASTNode,
+    ast_children,
+    ast_kind,
+    ast_next,
     get_docstring,
     get_instance_names,
     get_names,
-    get_parameter_default,
     relative_to_absolute,
     safe_get__all__,
     safe_get_annotation,
     safe_get_base_class,
     safe_get_condition,
-    safe_get_value,
+    safe_get_expression,
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -42,7 +41,7 @@ from griffe.dataclasses import (
     ParameterKind,
     Parameters,
 )
-from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError, NameResolutionError
+from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
 from griffe.expressions import Expression
 from griffe.extensions import Extensions
 
@@ -111,7 +110,7 @@ def visit(
     ).get_module()
 
 
-class Visitor(BaseVisitor):
+class Visitor:
     """This class is used to instantiate a visitor.
 
     Visitors iterate on AST nodes to extract data from them.
@@ -189,7 +188,7 @@ class Visitor(BaseVisitor):
         """
         for before_visitor in self.extensions.before_visit:
             before_visitor.visit(node)
-        super().visit(node)
+        getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
         for after_visitor in self.extensions.after_visit:
             after_visitor.visit(node)
 
@@ -201,7 +200,7 @@ class Visitor(BaseVisitor):
         """
         for before_visitor in self.extensions.before_children_visit:
             before_visitor.visit(node)
-        for child in node.children:  # type: ignore[attr-defined]
+        for child in ast_children(node):
             self.visit(child)
         for after_visitor in self.extensions.after_children_visit:
             after_visitor.visit(node)
@@ -212,7 +211,9 @@ class Visitor(BaseVisitor):
         Parameters:
             node: The node to visit.
         """
-        self.current = Module(
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_module_node", node=node)
+        self.current = module = Module(
             name=self.module_name,
             filepath=self.filepath,
             parent=self.parent,
@@ -220,7 +221,11 @@ class Visitor(BaseVisitor):
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
+        self.extensions.call("on_instance", node=node, obj=module)
+        self.extensions.call("on_module_instance", node=node, mod=module)
         self.generic_visit(node)
+        self.extensions.call("on_members", node=node, obj=module)
+        self.extensions.call("on_module_members", node=node, mod=module)
 
     def visit_classdef(self, node: ast.ClassDef) -> None:
         """Visit a class definition node.
@@ -228,6 +233,9 @@ class Visitor(BaseVisitor):
         Parameters:
             node: The node to visit.
         """
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_class_node", node=node)
+
         # handle decorators
         decorators = []
         if node.decorator_list:
@@ -235,9 +243,9 @@ class Visitor(BaseVisitor):
             for decorator_node in node.decorator_list:
                 decorators.append(
                     Decorator(
-                        safe_get_value(decorator_node, self.current.relative_filepath),  # type: ignore[arg-type]
+                        safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # type: ignore[arg-type]
                         lineno=decorator_node.lineno,
-                        endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
+                        endlineno=decorator_node.end_lineno,
                     ),
                 )
         else:
@@ -252,16 +260,20 @@ class Visitor(BaseVisitor):
         class_ = Class(
             name=node.name,
             lineno=lineno,
-            endlineno=node.end_lineno,  # type: ignore[attr-defined]
+            endlineno=node.end_lineno,
             docstring=self._get_docstring(node),
             decorators=decorators,
             bases=bases,  # type: ignore[arg-type]
             runtime=not self.type_guarded,
         )
         class_.labels |= self.decorators_to_labels(decorators)
-        self.current[node.name] = class_
+        self.current.set_member(node.name, class_)
         self.current = class_
+        self.extensions.call("on_instance", node=node, obj=class_)
+        self.extensions.call("on_class_instance", node=node, cls=class_)
         self.generic_visit(node)
+        self.extensions.call("on_members", node=node, obj=class_)
+        self.extensions.call("on_class_members", node=node, cls=class_)
         self.current = self.current.parent  # type: ignore[assignment]
 
     def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:
@@ -275,19 +287,14 @@ class Visitor(BaseVisitor):
         """
         labels = set()
         for decorator in decorators:
-            decorator_value = decorator.value.split("(", 1)[0]
-            if decorator_value in builtin_decorators:
-                labels.add(builtin_decorators[decorator_value])
-            else:
-                names = decorator_value.split(".")
-                with suppress(NameResolutionError):
-                    resolved_first = self.current.resolve(names[0])
-                    resolved_name = ".".join([resolved_first, *names[1:]])
-                    if resolved_name in stdlib_decorators:
-                        labels |= stdlib_decorators[resolved_name]
+            callable_path = decorator.callable_path
+            if callable_path in builtin_decorators:
+                labels.add(builtin_decorators[callable_path])
+            elif callable_path in stdlib_decorators:
+                labels |= stdlib_decorators[callable_path]
         return labels
 
-    def get_base_property(self, decorators: list[Decorator]) -> tuple[Function | None, str | None]:
+    def get_base_property(self, decorators: list[Decorator], function: Function) -> str | None:
         """Check decorators to return the base property in case of setters and deleters.
 
         Parameters:
@@ -298,17 +305,18 @@ class Visitor(BaseVisitor):
             property_function: Either `"setter"` or `"deleter"`.
         """
         for decorator in decorators:
-            names = decorator.value.split(".")
-            with suppress(ValueError):
-                base_name, base_function = names
-                property_setter_or_deleter = (
-                    base_function in {"setter", "deleter"}
-                    and base_name in self.current.members
-                    and self.current[base_name].has_labels({"property"})
-                )
-                if property_setter_or_deleter:
-                    return self.current[base_name], base_function
-        return None, None
+            try:
+                path, prop_function = decorator.callable_path.rsplit(".", 1)
+            except ValueError:
+                continue
+            property_setter_or_deleter = (
+                prop_function in {"setter", "deleter"}
+                and path == function.path
+                and self.current.get_member(function.name).has_labels({"property"})
+            )
+            if property_setter_or_deleter:
+                return prop_function
+        return None
 
     def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None) -> None:
         """Handle a function definition node.
@@ -317,6 +325,9 @@ class Visitor(BaseVisitor):
             node: The node to visit.
             labels: Labels to add to the data object.
         """
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_function_node", node=node)
+
         labels = labels or set()
 
         # handle decorators
@@ -325,21 +336,16 @@ class Visitor(BaseVisitor):
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
             for decorator_node in node.decorator_list:
-                decorator_value = safe_get_value(decorator_node, self.filepath)
+                decorator_value = safe_get_expression(decorator_node, parent=self.current, parse_strings=False)
                 if decorator_value is None:
                     continue
-                overload = (
-                    decorator_value in typing_overload
-                    or decorator_value == "overload"
-                    and self.current.resolve("overload") in typing_overload
+                decorator = Decorator(
+                    decorator_value,
+                    lineno=decorator_node.lineno,
+                    endlineno=decorator_node.end_lineno,
                 )
-                decorators.append(
-                    Decorator(
-                        decorator_value,  # type: ignore[arg-type]
-                        lineno=decorator_node.lineno,
-                        endlineno=decorator_node.end_lineno,  # type: ignore[attr-defined]
-                    ),
-                )
+                decorators.append(decorator)
+                overload |= decorator.callable_path in typing_overload
         else:
             lineno = node.lineno
 
@@ -351,25 +357,21 @@ class Visitor(BaseVisitor):
                 value=None,
                 annotation=safe_get_annotation(node.returns, parent=self.current),
                 lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[union-attr]
+                endlineno=node.end_lineno,
                 docstring=self._get_docstring(node),
                 runtime=not self.type_guarded,
             )
             attribute.labels |= labels
-            self.current[node.name] = attribute
+            self.current.set_member(node.name, attribute)
+            self.extensions.call("on_instance", node=node, obj=attribute)
+            self.extensions.call("on_attribute_instance", node=node, attr=attribute)
             return
-
-        base_property, property_function = self.get_base_property(decorators)
 
         # handle parameters
         parameters = Parameters()
         annotation: str | Name | Expression | None
 
-        # TODO: remove once Python 3.7 support is dropped
-        try:
-            posonlyargs = node.args.posonlyargs  # type: ignore[attr-defined]
-        except AttributeError:
-            posonlyargs = []
+        posonlyargs = node.args.posonlyargs
 
         # TODO: probably some optimizations to do here
         args_kinds_defaults: Iterable = reversed(
@@ -378,7 +380,7 @@ class Visitor(BaseVisitor):
                     reversed(
                         (
                             *zip_longest(
-                                posonlyargs,  # type: ignore[attr-defined]
+                                posonlyargs,
                                 [],
                                 fillvalue=ParameterKind.positional_only,
                             ),
@@ -395,7 +397,7 @@ class Visitor(BaseVisitor):
         arg_default: ast.AST | None
         for (arg, kind), arg_default in args_kinds_defaults:
             annotation = safe_get_annotation(arg.annotation, parent=self.current)
-            default = get_parameter_default(arg_default, self.filepath, self.lines_collection)
+            default = safe_get_expression(arg_default, parent=self.current, parse_strings=False)
             parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
 
         if node.args.vararg:
@@ -423,7 +425,7 @@ class Visitor(BaseVisitor):
         kwarg_default: ast.AST | None
         for kwarg, kwarg_default in kwargs_defaults:
             annotation = safe_get_annotation(kwarg.annotation, parent=self.current)
-            default = get_parameter_default(kwarg_default, self.filepath, self.lines_collection)
+            default = safe_get_expression(kwarg_default, parent=self.current, parse_strings=False)
             parameters.add(
                 Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default),
             )
@@ -442,7 +444,7 @@ class Visitor(BaseVisitor):
         function = Function(
             name=node.name,
             lineno=lineno,
-            endlineno=node.end_lineno,  # type: ignore[union-attr]
+            endlineno=node.end_lineno,
             parameters=parameters,
             returns=safe_get_annotation(node.returns, parent=self.current),
             decorators=decorators,
@@ -451,9 +453,12 @@ class Visitor(BaseVisitor):
             parent=self.current,
         )
 
+        property_function = self.get_base_property(decorators, function)
+
         if overload:
             self.current.overloads[function.name].append(function)
-        elif base_property is not None:
+        elif property_function:
+            base_property: Function = self.current.members[node.name]  # type: ignore[assignment]
             if property_function == "setter":
                 base_property.setter = function
                 base_property.labels.add("writable")
@@ -461,13 +466,15 @@ class Visitor(BaseVisitor):
                 base_property.deleter = function
                 base_property.labels.add("deletable")
         else:
-            self.current[node.name] = function
+            self.current.set_member(node.name, function)
             if self.current.kind in {Kind.MODULE, Kind.CLASS} and self.current.overloads[function.name]:
                 function.overloads = self.current.overloads[function.name]
                 del self.current.overloads[function.name]
 
         function.labels |= labels
 
+        self.extensions.call("on_instance", node=node, obj=function)
+        self.extensions.call("on_function_instance", node=node, func=function)
         if self.current.kind is Kind.CLASS and function.name == "__init__":
             self.current = function  # type: ignore[assignment]  # temporary assign a function
             self.generic_visit(node)
@@ -499,12 +506,15 @@ class Visitor(BaseVisitor):
             alias_path = name.name
             alias_name = name.asname or alias_path.split(".", 1)[0]
             self.current.imports[alias_name] = alias_path
-            self.current[alias_name] = Alias(
+            self.current.set_member(
                 alias_name,
-                alias_path,
-                lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[attr-defined]
-                runtime=not self.type_guarded,
+                Alias(
+                    alias_name,
+                    alias_path,
+                    lineno=node.lineno,
+                    endlineno=node.end_lineno,
+                    runtime=not self.type_guarded,
+                ),
             )
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:
@@ -523,17 +533,20 @@ class Visitor(BaseVisitor):
 
             alias_path = relative_to_absolute(node, name, self.current.module)
             if name.name == "*":
-                alias_name = alias_path.replace(".", "/")  # type: ignore[union-attr]
+                alias_name = alias_path.replace(".", "/")
                 alias_path = alias_path.replace(".*", "")
             else:
                 alias_name = name.asname or name.name
                 self.current.imports[alias_name] = alias_path
-            self.current[alias_name] = Alias(
+            self.current.set_member(
                 alias_name,
-                alias_path,  # type: ignore[arg-type]
-                lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[attr-defined]
-                runtime=not self.type_guarded,
+                Alias(
+                    alias_name,
+                    alias_path,
+                    lineno=node.lineno,
+                    endlineno=node.end_lineno,
+                    runtime=not self.type_guarded,
+                ),
             )
 
     def handle_attribute(
@@ -547,6 +560,8 @@ class Visitor(BaseVisitor):
             node: The node to visit.
             annotation: A potential annotation.
         """
+        self.extensions.call("on_node", node=node)
+        self.extensions.call("on_attribute_node", node=node)
         parent = self.current
         labels = set()
 
@@ -587,10 +602,10 @@ class Visitor(BaseVisitor):
         if not names:
             return
 
-        value = safe_get_value(node.value, self.filepath)  # type: ignore[arg-type]
+        value = safe_get_expression(node.value, parent=self.current, parse_strings=False)
 
         try:
-            docstring = self._get_docstring(node.next, strict=True)  # type: ignore[union-attr]
+            docstring = self._get_docstring(ast_next(node), strict=True)
         except (LastNodeError, AttributeError):
             docstring = None
 
@@ -608,7 +623,7 @@ class Visitor(BaseVisitor):
 
                 existing_member = parent.members[name]
                 with suppress(AliasResolutionError, CyclicAliasError):
-                    labels |= existing_member.labels  # type: ignore[misc]
+                    labels |= existing_member.labels
                     # forward previous docstring and annotation instead of erasing them
                     if existing_member.docstring and not docstring:
                         docstring = existing_member.docstring
@@ -621,16 +636,18 @@ class Visitor(BaseVisitor):
                 value=value,
                 annotation=annotation,
                 lineno=node.lineno,
-                endlineno=node.end_lineno,  # type: ignore[union-attr]
+                endlineno=node.end_lineno,
                 docstring=docstring,
                 runtime=not self.type_guarded,
             )
             attribute.labels |= labels
-            parent[name] = attribute
+            parent.set_member(name, attribute)
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = safe_get__all__(node, self.current)  # type: ignore[assignment,arg-type]
+                    parent.exports = safe_get__all__(node, self.current)  # type: ignore[arg-type]
+            self.extensions.call("on_instance", node=node, obj=attribute)
+            self.extensions.call("on_attribute_instance", node=node, attr=attribute)
 
     def visit_assign(self, node: ast.Assign) -> None:
         """Visit an assignment node.
@@ -656,7 +673,7 @@ class Visitor(BaseVisitor):
         """
         with suppress(AttributeError):
             all_augment = (
-                node.target.id == "__all__"  # type: ignore[attr-defined,union-attr]
+                node.target.id == "__all__"  # type: ignore[union-attr]
                 and self.current.is_module
                 and isinstance(node.op, ast.Add)
             )
@@ -678,15 +695,4 @@ class Visitor(BaseVisitor):
         self.type_guarded = False
 
 
-_patched = False
-
-
-def patch_ast() -> None:
-    """Extend the base `ast.AST` class to provide more functionality."""
-    global _patched  # noqa: PLW0603
-    if _patched:
-        return
-    for name, member in inspect.getmembers(ast):
-        if name != "AST" and inspect.isclass(member) and ast.AST in member.__bases__:
-            member.__bases__ = (*member.__bases__, ASTNode)
-    _patched = True
+__all__ = ["visit", "Visitor"]

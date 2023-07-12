@@ -1,4 +1,4 @@
-"""This extension provides an hybrid behavior while loading data."""
+"""Deprecated. This extension provides an hybrid behavior while loading data."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Pattern, Sequence
 
 from griffe.agents.nodes import ObjectNode
 from griffe.exceptions import ExtensionError
-from griffe.extensions.base import InspectorExtension, VisitorExtension, When, load_extension
+from griffe.extensions.base import InspectorExtension, VisitorExtension, When, _load_extension
 from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 
@@ -36,7 +36,7 @@ class HybridExtension(VisitorExtension):
 
     def __init__(
         self,
-        extensions: Sequence[str | dict[str, Any] | InspectorExtension | type[Extension]],
+        extensions: Sequence[str | dict[str, Any] | InspectorExtension | type[InspectorExtension]],
         object_paths: Sequence[str | Pattern] | None = None,
     ) -> None:
         """Initialize the extension.
@@ -49,7 +49,7 @@ class HybridExtension(VisitorExtension):
         Raises:
             ExtensionError: When the passed extension is not an inspector extension.
         """
-        self._extensions: list[InspectorExtension] = [load_extension(ext) for ext in extensions]  # type: ignore[misc]
+        self._extensions: list[InspectorExtension] = [_load_extension(ext) for ext in extensions]  # type: ignore[misc]
         for extension in self._extensions:
             if not isinstance(extension, InspectorExtension):
                 raise ExtensionError(
@@ -68,7 +68,7 @@ class HybridExtension(VisitorExtension):
 
     def visit(self, node: ast.AST) -> None:  # noqa: D102
         try:
-            just_visited = self.visitor.current[node.name]  # type: ignore[attr-defined]
+            just_visited = self.visitor.current.get_member(node.name)  # type: ignore[attr-defined]
         except (KeyError, AttributeError, TypeError):
             return
         if self.object_paths and not any(op.search(just_visited.path) for op in self.object_paths):
@@ -89,5 +89,4 @@ class HybridExtension(VisitorExtension):
             extension.inspect(object_node)
 
 
-# make it available
-Extension = HybridExtension
+__all__ = ["HybridExtension"]

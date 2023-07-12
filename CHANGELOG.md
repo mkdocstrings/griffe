@@ -5,6 +5,67 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.31.0](https://github.com/mkdocstrings/griffe/releases/tag/0.31.0) - 2023-07-04
+
+<small>[Compare with 0.30.1](https://github.com/mkdocstrings/griffe/compare/0.30.1...0.31.0)</small>
+
+### Breaking Changes
+
+- Drop support for Python 3.7
+- API changes:
+    - [`GriffeLoader.resolve_aliases(only_exported)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
+    - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
+    - [`LinesCollection.tokens`][griffe.collections.LinesCollection]: Public object was removed (Python 3.7)
+    - `ASTNode.end_lineno`: Public object was removed (Python 3.7)
+    - [`griffe.agents.extensions`][griffe.agents] Deprecated module was removed and replaced by [`griffe.extensions`][]
+
+### Features
+
+- Add `--color`, `--no-color` options to check subcommand ([eac783c](https://github.com/mkdocstrings/griffe/commit/eac783c2df5a0ba57612b71b0797a74cf7fc8e39) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Report removed public modules ([68906cb](https://github.com/mkdocstrings/griffe/commit/68906cb6083e5f7cad3a1cb5a74878d6e74f9c69) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Improve check output ([6b0a1f0](https://github.com/mkdocstrings/griffe/commit/6b0a1f0397d153a95d1b6c69d109ce141e39e1f1) by Timothée Mazzucotelli).
+- Remove deprecated `griffe.agents.extensions` module ([b555c78](https://github.com/mkdocstrings/griffe/commit/b555c788b624fa5aa0c871e2c199079868252f22) by Timothée Mazzucotelli).
+- Remove deprecated parameters from loader's `resolve_aliases` method ([dd98acd](https://github.com/mkdocstrings/griffe/commit/dd98acd5f0c85661c7a00002805c92caa4c11a21) by Timothée Mazzucotelli).
+- Drop Python 3.7 support ([e4be30a](https://github.com/mkdocstrings/griffe/commit/e4be30a4c1025fd2f99f088c76f8e263714d8e33) by Timothée Mazzucotelli).
+
+## [0.30.1](https://github.com/mkdocstrings/griffe/releases/tag/0.30.1) - 2023-07-02
+
+<small>[Compare with 0.30.0](https://github.com/mkdocstrings/griffe/compare/0.30.0...0.30.1)</small>
+
+### Bug Fixes
+
+- Prevent duplicate yields of breaking changes ([9edef90](https://github.com/mkdocstrings/griffe/commit/9edef90d6c54b330046582e2a52ad88b5798d32c) by Timothée Mazzucotelli). [Issue #162](https://github.com/mkdocstrings/griffe/issues/162)
+- Prevent alias resolution errors when checking for API breaking changes ([93c964a](https://github.com/mkdocstrings/griffe/commit/93c964a4cc3f759d101db45af5816a4d3b07c85e) by Timothée Mazzucotelli). [Issue #145](https://github.com/mkdocstrings/griffe/issues/145)
+- Handle Git errors when checking for API breaking changes ([f9e8ba3](https://github.com/mkdocstrings/griffe/commit/f9e8ba381b75f650cfeb7bc96c976fec2251ac7a) by Timothée Mazzucotelli). [Issue #144](https://github.com/mkdocstrings/griffe/issues/144)
+
+### Code Refactoring
+
+- Force remove worktree branch when done checking ([45332ba](https://github.com/mkdocstrings/griffe/commit/45332ba89e213b4f9490ea7d2507d972267bed73) by Timothée Mazzucotelli).
+- Change command to obtain latest tag ([f70f630](https://github.com/mkdocstrings/griffe/commit/f70f630ef7c67589d60c17ef4fb19c90127b2e06) by Timothée Mazzucotelli).
+
+## [0.30.0](https://github.com/mkdocstrings/griffe/releases/tag/0.30.0) - 2023-06-30
+
+<small>[Compare with 0.29.1](https://github.com/mkdocstrings/griffe/compare/0.29.1...0.30.0)</small>
+
+### Features
+
+- Add `allow_section_blank_line` option to the Numpy parser ([245845e](https://github.com/mkdocstrings/griffe/commit/245845ecaabedf4abb0af80d783702e55ea83883) by Michael Chow). [Issue #167](https://github.com/mkdocstrings/griffe/issues/167), [PR #168](https://github.com/mkdocstrings/griffe/pull/168)
+- Support inheritance ([08bbe09](https://github.com/mkdocstrings/griffe/commit/08bbe09879dfa5440a359c8b2ad0b896c20c1dfc) by Timothée Mazzucotelli). [PR #170](https://github.com/mkdocstrings/griffe/pull/170)
+
+### Bug Fixes
+
+- Handle semi-colons in pth files ([e2ec661](https://github.com/mkdocstrings/griffe/commit/e2ec661e614df6c5f4fda1444468363777985b7c) by Michael Chow). [Issue #172](https://github.com/mkdocstrings/griffe/issues/172), [PR #175](https://github.com/mkdocstrings/griffe/pull/175)
+
+### Code Refactoring
+
+- Split members API in two parts: producer and consumer ([2269449](https://github.com/mkdocstrings/griffe/commit/226944983a9073d643ed09b47e7d3f99c76d3d5e) by Timothée Mazzucotelli). [PR #170](https://github.com/mkdocstrings/griffe/pull/170)
+
 ## [0.29.1](https://github.com/mkdocstrings/griffe/releases/tag/0.29.1) - 2023-06-19
 
 <small>[Compare with 0.29.0](https://github.com/mkdocstrings/griffe/compare/0.29.0...0.29.1)</small>
@@ -282,8 +343,8 @@ for the initial code allowing to compare two Griffe trees.
 - All parameters of the [`load_git`][griffe.git.load_git] function, except `module`, are now keyword-only.
 - Parameter `try_relative_path` of the [`load_git`][griffe.git.load_git] function was removed.
 - Parameter `commit` was renamed `ref` in the [`load_git`][griffe.git.load_git] function.
-- Parameter `commit` was renamed `ref` in the [`tmp_worktree`][griffe.git.tmp_worktree] helper, which will probably become private later.
-- Parameters `ref` and `repo` switched positions in the [`tmp_worktree`][griffe.git.tmp_worktree] helper.
+- Parameter `commit` was renamed `ref` in the `tmp_worktree` helper, which will probably become private later.
+- Parameters `ref` and `repo` switched positions in the `tmp_worktree` helper.
 - All parameters of the [`resolve_aliases`][griffe.loader.GriffeLoader.resolve_aliases] method are now keyword-only.
 - Parameters `only_exported` and `only_known_modules` of the [`resolve_module_aliases`][griffe.loader.GriffeLoader.resolve_module_aliases]
     method were removed. This method is most probably not used by anyone, and will probably be made private in the future.
