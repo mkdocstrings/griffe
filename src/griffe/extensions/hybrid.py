@@ -1,4 +1,4 @@
-"""This extension provides an hybrid behavior while loading data."""
+"""Deprecated. This extension provides an hybrid behavior while loading data."""
 
 from __future__ import annotations
 

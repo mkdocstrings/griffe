@@ -42,7 +42,7 @@ class When(enum.Enum):
 
 
 class VisitorExtension:
-    """The node visitor extension base class, to inherit from."""
+    """Deprecated in favor of `Extension`. The node visitor extension base class, to inherit from."""
 
     when: When = When.after_all
 
@@ -74,7 +74,7 @@ class VisitorExtension:
 
 
 class InspectorExtension:
-    """The object inspector extension base class, to inherit from."""
+    """Deprecated in favor of `Extension`. The object inspector extension base class, to inherit from."""
 
     when: When = When.after_all
 
