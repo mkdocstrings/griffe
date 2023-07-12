@@ -470,3 +470,6 @@ def main(args: list[str] | None = None) -> int:
 
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
     return commands[subcommand](**opts_dict)
+
+
+__all__ = ["check", "dump", "get_parser", "main"]

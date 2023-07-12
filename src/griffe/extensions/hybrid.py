@@ -89,5 +89,4 @@ class HybridExtension(VisitorExtension):
             extension.inspect(object_node)
 
 
-# make it available
-Extension = HybridExtension
+__all__ = ["HybridExtension"]

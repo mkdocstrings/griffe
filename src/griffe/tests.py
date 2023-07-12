@@ -282,3 +282,16 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
             filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")  # type: ignore[union-attr]
         modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]
+
+
+__all__ = [
+    "htree",
+    "module_vtree",
+    "temporary_inspected_module",
+    "temporary_pyfile",
+    "temporary_pypackage",
+    "temporary_visited_module",
+    "temporary_visited_package",
+    "TmpPackage",
+    "vtree",
+]

@@ -169,3 +169,16 @@ def ast_last_child(node: AST) -> AST:
     except ValueError as error:
         raise LastNodeError("there are no children node") from error
     return last
+
+
+__all__ = [
+    "ast_children",
+    "ast_first_child",
+    "ast_kind",
+    "ast_last_child",
+    "ast_next",
+    "ast_next_siblings",
+    "ast_previous",
+    "ast_previous_siblings",
+    "ast_siblings",
+]

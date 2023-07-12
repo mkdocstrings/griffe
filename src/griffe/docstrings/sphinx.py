@@ -393,3 +393,6 @@ field_types = [
     FieldType(RETURN_NAMES, _read_return),
     FieldType(RETURN_TYPE_NAMES, _read_return_type),
 ]
+
+
+__all__ = ["parse"]

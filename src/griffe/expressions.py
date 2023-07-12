@@ -272,3 +272,6 @@ class Expression(list):
             The return type.
         """
         return self.non_optional[2][0], self[2][2], self[2][4]
+
+
+__all__ = ["Expression", "Name"]

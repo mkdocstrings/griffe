@@ -359,3 +359,6 @@ class ObjectNode:
             return child_module_path
         child_name = getattr(self.obj, "__name__", self.name)
         return f"{child_module_path}.{child_name}"
+
+
+__all__ = ["ObjectKind", "ObjectNode"]

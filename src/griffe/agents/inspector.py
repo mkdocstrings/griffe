@@ -492,3 +492,6 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Nam
     except SyntaxError:
         return obj
     return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]
+
+
+__all__ = ["inspect", "Inspector"]

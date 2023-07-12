@@ -165,3 +165,6 @@ def load_git(
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
         )
+
+
+__all__ = ["load_git"]

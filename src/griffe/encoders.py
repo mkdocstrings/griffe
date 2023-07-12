@@ -229,3 +229,6 @@ def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | 
             return _load_parameter(obj_dict)
         return _loader_map[kind](obj_dict)
     return obj_dict
+
+
+__all__ = ["JSONEncoder", "json_decoder"]

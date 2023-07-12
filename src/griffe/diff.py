@@ -564,3 +564,23 @@ def find_breaking_changes(
         ...     print(breakage.explain(style=style), file=sys.stderr)
     """
     yield from _member_incompatibilities(old_obj, new_obj, ignore_private=ignore_private)
+
+
+__all__ = [
+    "AttributeChangedTypeBreakage",
+    "AttributeChangedValueBreakage",
+    "Breakage",
+    "BreakageKind",
+    "ClassRemovedBaseBreakage",
+    "ExplanationStyle",
+    "find_breaking_changes",
+    "ObjectChangedKindBreakage",
+    "ObjectRemovedBreakage",
+    "ParameterAddedRequiredBreakage",
+    "ParameterChangedDefaultBreakage",
+    "ParameterChangedKindBreakage",
+    "ParameterChangedRequiredBreakage",
+    "ParameterMovedBreakage",
+    "ParameterRemovedBreakage",
+    "ReturnChangedTypeBreakage",
+]

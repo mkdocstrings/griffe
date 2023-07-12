@@ -369,3 +369,6 @@ def _handle_editable_module(path: Path) -> list[Path]:
             ) and isinstance(node.value, ast.Dict):
                 return [Path(constant.s).parent for constant in node.value.values if isinstance(constant, ast.Str)]
     raise UnhandledEditableModuleError(path)
+
+
+__all__ = ["ModuleFinder", "NamespacePackage", "Package"]

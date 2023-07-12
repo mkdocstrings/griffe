@@ -693,3 +693,6 @@ class Visitor:
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
+
+
+__all__ = ["visit", "Visitor"]

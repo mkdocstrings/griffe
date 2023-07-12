@@ -506,3 +506,15 @@ def load_extensions(exts: Sequence[str | dict[str, Any] | ExtensionType | type[E
         else:
             extensions.add(ext)
     return extensions
+
+
+__all__ = [
+    "builtin_extensions",
+    "Extension",
+    "Extensions",
+    "ExtensionType",
+    "InspectorExtension",
+    "load_extensions",
+    "VisitorExtension",
+    "When",
+]

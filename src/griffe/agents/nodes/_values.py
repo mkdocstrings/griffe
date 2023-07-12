@@ -473,3 +473,6 @@ def safe_get_value(node: AST | None, filepath: str | Path | None = None) -> str 
         message += f": {error}"
         logger.exception(message)
         return None
+
+
+__all__ = ["get_value", "safe_get_value"]

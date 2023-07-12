@@ -1595,3 +1595,20 @@ class Attribute(Object):
         if self.annotation is not None:
             base["annotation"] = self.annotation
         return base
+
+
+__all__ = [
+    "Alias",
+    "Attribute",
+    "Class",
+    "Decorator",
+    "Docstring",
+    "Function",
+    "Kind",
+    "Module",
+    "Object",
+    "Parameter",
+    "ParameterKind",
+    "ParameterKind",
+    "Parameters",
+]

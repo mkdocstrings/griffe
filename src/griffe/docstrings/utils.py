@@ -71,3 +71,6 @@ def parse_annotation(
             )
             return name_or_expr or annotation
     return annotation
+
+
+__all__ = ["parse_annotation", "warning"]

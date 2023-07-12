@@ -597,3 +597,15 @@ safe_get_condition = partial(
     parse_strings=False,
     msg_format=_msg_format % "condition",
 )
+
+
+__all__ = [
+    "get_annotation",
+    "get_base_class",
+    "get_condition",
+    "get_expression",
+    "safe_get_annotation",
+    "safe_get_base_class",
+    "safe_get_condition",
+    "safe_get_expression",
+]

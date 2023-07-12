@@ -12,12 +12,12 @@ from griffe.extensions.base import (
 )
 
 __all__ = [
-    "Extensions",
     "Extension",
+    "Extensions",
     "ExtensionType",
     "InspectorExtension",
-    "VisitorExtension",
-    "When",
     "load_extension",
     "load_extensions",
+    "VisitorExtension",
+    "When",
 ]

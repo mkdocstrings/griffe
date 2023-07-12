@@ -599,3 +599,6 @@ def load(
         submodules=submodules,
         try_relative_path=try_relative_path,
     )
+
+
+__all__ = ["GriffeLoader", "load"]

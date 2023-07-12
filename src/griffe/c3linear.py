@@ -115,3 +115,6 @@ def c3linear_merge(*lists: list[T]) -> list[T]:
         else:
             # Loop never broke, no linearization could possibly be found.
             raise ValueError("Cannot compute C3 linearization")
+
+
+__all__ = ["c3linear_merge"]

@@ -71,3 +71,6 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin):
     @property
     def all_members(self) -> dict[str, Module]:  # noqa: D102
         return self.members
+
+
+__all__ = ["LinesCollection", "ModulesCollection"]

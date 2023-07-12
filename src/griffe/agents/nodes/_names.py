@@ -78,3 +78,6 @@ def get_instance_names(node: AST) -> list[str]:
         A list of names.
     """
     return [name.split(".", 1)[1] for name in get_names(node) if name.startswith("self.")]
+
+
+__all__ = ["get_instance_names", "get_name", "get_names"]

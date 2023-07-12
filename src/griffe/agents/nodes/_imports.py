@@ -35,3 +35,6 @@ def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: 
     base = current_module.path + "." if node.level > 0 else ""
     node_module = node.module + "." if node.module else ""
     return base + node_module + name.name
+
+
+__all__ = ["relative_to_absolute"]

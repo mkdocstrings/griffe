@@ -39,3 +39,6 @@ def get_docstring(
         lineno = doc.lineno
         return doc.s, lineno, doc.end_lineno
     return None, None, None
+
+
+__all__ = ["get_docstring"]

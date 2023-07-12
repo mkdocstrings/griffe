@@ -745,3 +745,6 @@ def parse(
         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
 
     return sections
+
+
+__all__ = ["parse"]

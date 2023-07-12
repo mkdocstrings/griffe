@@ -95,3 +95,6 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
         raise ValueError("cannot merge regular (non-stubs) modules together")
     _merge_module_stubs(module, stubs)
     return module
+
+
+__all__ = ["merge_stubs"]
