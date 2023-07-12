@@ -23,6 +23,8 @@ nav:
   - Docstrings:
     - Supported styles: docstrings.md
     - Parsing docstrings in Python: parsing_docstrings.md
+  - Try it out!:
+    - Run Griffe in your browser: try_it_out.md
 # defer to gen-files + literate-nav
 - API reference:
   - Griffe: reference/
@@ -85,6 +87,7 @@ markdown_extensions:
 - pymdownx.emoji:
     emoji_index: !!python/name:materialx.emoji.twemoji
     emoji_generator: !!python/name:materialx.emoji.to_svg
+- pymdownx.keys
 - pymdownx.magiclink
 - pymdownx.snippets:
     check_paths: true
