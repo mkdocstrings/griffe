@@ -2,11 +2,9 @@ name: ci
 
 on:
   push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+    - main
 
 defaults:
   run:
@@ -78,11 +76,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Fetch all tags
+      run: git fetch --depth=1 --tags
+
     - name: Set up PDM
       uses: pdm-project/setup-pdm@v3
       with:
         python-version: ${{ matrix.python-version }}
-        prerelease: true
+        allow-python-prereleases: true
 
     - name: Resolving dependencies
       run: pdm lock -v --no-cross-platform -G ci-tests
