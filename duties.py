@@ -76,7 +76,7 @@ def changelog(ctx: Context) -> None:
             template="keepachangelog",
             parse_trailers=True,
             parse_refs=False,
-            sections=["build", "deps", "feat", "fix", "refactor"],
+            sections=["build", "deps", "feat", "fix", "perf", "refactor"],
             bump_latest=True,
             in_place=True,
         ),
