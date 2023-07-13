@@ -92,5 +92,10 @@ def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -
         actual: The actual element.
         expected: The expected element.
     """
-    assert actual.annotation == expected.annotation
-    assert actual.description == expected.description
+    assert isinstance(actual, type(expected))
+
+    for k in actual.as_dict():
+        src = getattr(actual, k)
+        dst = getattr(expected, k)
+
+        assert src == dst, f"attribute {k!r}, {src!r} != {dst!r}"

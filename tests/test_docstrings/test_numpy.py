@@ -367,6 +367,12 @@ def test_returns_section(parse_numpy: ParserType) -> None:
         flag : bool
             Some kind
             of flag.
+        x :
+            Name only
+        :
+            No name or annotation
+        : int
+            Only annotation
     """
 
     sections, _ = parse_numpy(docstring)
@@ -377,7 +383,22 @@ def test_returns_section(parse_numpy: ParserType) -> None:
     )
     assert_element_equal(
         sections[0].value[1],
-        DocstringReturn(name="", annotation="bool", description="Some kind\nof flag."),
+        DocstringReturn(name="flag", annotation="bool", description="Some kind\nof flag."),
+    )
+
+    assert_element_equal(
+        sections[0].value[2],
+        DocstringReturn(name="x", annotation=None, description="Name only"),
+    )
+
+    assert_element_equal(
+        sections[0].value[3],
+        DocstringReturn(name="", annotation=None, description="No name or annotation"),
+    )
+
+    assert_element_equal(
+        sections[0].value[4],
+        DocstringReturn(name="", annotation="int", description="Only annotation"),
     )
 
 
@@ -405,7 +426,7 @@ def test_yields_section(parse_numpy: ParserType) -> None:
     )
     assert_element_equal(
         sections[0].value[1],
-        DocstringYield(name="", annotation="bool", description="Some kind\nof flag."),
+        DocstringYield(name="flag", annotation="bool", description="Some kind\nof flag."),
     )
 
 
@@ -433,7 +454,7 @@ def test_receives_section(parse_numpy: ParserType) -> None:
     )
     assert_element_equal(
         sections[0].value[1],
-        DocstringReceive(name="", annotation="bool", description="Some kind\nof flag."),
+        DocstringReceive(name="flag", annotation="bool", description="Some kind\nof flag."),
     )
 
 

@@ -211,7 +211,9 @@ _RE_RETURNS: Pattern = re.compile(
         |  # or
         (?P<name>{_RE_NAME})\s*:\s*  # just name
         |  # or
-        (?P<type>{_RE_TYPE})\s*  # just type
+        \s*:\s*$  # no name, no type
+        |  # or
+        (?::\s*)?(?P<type>{_RE_TYPE})\s*  # just type
     )
     """,
     re.IGNORECASE | re.VERBOSE,
