@@ -5,6 +5,57 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.32.0](https://github.com/mkdocstrings/griffe/releases/tag/0.32.0) - 2023-07-13
+
+<small>[Compare with 0.31.0](https://github.com/mkdocstrings/griffe/compare/0.31.0...0.32.0)</small>
+
+### Deprecations
+
+- Classes [`InspectorExtension`][griffe.extensions.base.InspectorExtension]
+    and [`VisitorExtension`][griffe.extensions.base.VisitorExtension]
+    are deprecated in favor of [`Extension`][griffe.extensions.base.Extension].
+    As a side-effect, the [`hybrid`][griffe.extensions.hybrid.HybridExtension] extension
+    is also deprecated. See [how to use and write extensions](extensions.md).
+
+### Breaking Changes
+
+- Module `griffe.agents.base` was removed
+- Module `griffe.docstrings.markdown` was removed
+- Class `ASTNode` was removed
+- Class `BaseInspector` was removed
+- Class `BaseVisitor` was removed
+- Fucntion `get_parameter_default` was removed
+- Function `load_extension` was removed (made private)
+- Function `patch_ast` was removed
+- Function `tmp_worktree` was removed (made private)
+- Type [`Extension`][griffe.extensions.base.Extension] is now a class
+
+### Features
+
+- Numpy parser: handle return section items with just type, or no name and no type ([bdec37d](https://github.com/mkdocstrings/griffe/commit/bdec37dd32a5d4e089ee5e14e5a66be645bb8360) by Michael Chow). [Issue #173](https://github.com/mkdocstrings/griffe/issues/173), [PR #174](https://github.com/mkdocstrings/griffe/pull/174), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+- Rework extension system ([dea4c83](https://github.com/mkdocstrings/griffe/commit/dea4c830e3bfa0bf7c9f307975cb53e1314c50eb) by Timothée Mazzucotelli).
+- Parse attribute values, parameter defaults and decorators as expressions ([7b653b3](https://github.com/mkdocstrings/griffe/commit/7b653b31bd9c38bf8d960baa5ab75dd56c62fbcb) by Timothée Mazzucotelli).
+- Add loader option to avoid storing source code, reducing memory footprint ([d592edf](https://github.com/mkdocstrings/griffe/commit/d592edf477d9e7a5f9723c96cc259db65b1cae71) by Timothée Mazzucotelli).
+- Add `extra` attribute to objects ([707a348](https://github.com/mkdocstrings/griffe/commit/707a34833f56cf4a1aa302cb1201ad96ff361252) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Numpy-style: don't strip spaces from the left of indented lines ([f13fc0a](https://github.com/mkdocstrings/griffe/commit/f13fc0a7edc7c8ac14c8c482b58735a5f7301bd6) by Timothée Mazzucotelli). [Discussion #587](https://github.com/mkdocstrings/mkdocstrings/discussions/587)
+- Fix relative paths for old versions when checking API ([96fd45b](https://github.com/mkdocstrings/griffe/commit/96fd45b41186eb503d6a2ff4e587cae427aea013) by Timothée Mazzucotelli).
+
+### Performance Improvements
+
+- Don't store source when dumping as JSON ([d7f314a](https://github.com/mkdocstrings/griffe/commit/d7f314a62dd40c38c8c76ec7102233a588c1e64a) by Timothée Mazzucotelli).
+- Stop caching properties on Object methods ([15bdd74](https://github.com/mkdocstrings/griffe/commit/15bdd744db1f089f4448b952f9acf184c43289ea) by Timothée Mazzucotelli).
+- Stop patching AST, use functions instead ([7302f17](https://github.com/mkdocstrings/griffe/commit/7302f178392c70890d083a1617f1cf4e72395be3) by Timothée Mazzucotelli). [Issue #171](https://github.com/mkdocstrings/griffe/issues/171)
+
+### Code Refactoring
+
+- Privatize/remove objects ([fdeb16f](https://github.com/mkdocstrings/griffe/commit/fdeb16f61cb5ae7db2394ef2a8ec31843b7ae85b) by Timothée Mazzucotelli).
+- Document public objects with `__all__` ([db0e0e3](https://github.com/mkdocstrings/griffe/commit/db0e0e340efcd48904f448a6e4397a9df36ac50f) by Timothée Mazzucotelli).
+- Remove base visitor and inspector ([bc446e4](https://github.com/mkdocstrings/griffe/commit/bc446e4ac9445636be7fdadbfc0b056cbc1d73e3) by Timothée Mazzucotelli).
+- Auto-register module in collection within loading helpers ([591bacc](https://github.com/mkdocstrings/griffe/commit/591bacc6c46d91beb30f6e01e0ae96f8e3102cf8) by Timothée Mazzucotelli). [Issue #177](https://github.com/mkdocstrings/griffe/issues/177)
+
 ## [0.31.0](https://github.com/mkdocstrings/griffe/releases/tag/0.31.0) - 2023-07-04
 
 <small>[Compare with 0.30.1](https://github.com/mkdocstrings/griffe/compare/0.30.1...0.31.0)</small>
