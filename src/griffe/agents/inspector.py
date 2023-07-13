@@ -26,7 +26,7 @@ import ast
 from inspect import Parameter as SignatureParameter
 from inspect import Signature, cleandoc
 from inspect import signature as getsignature
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Sequence
 
 from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
 from griffe.collections import LinesCollection, ModulesCollection
@@ -58,7 +58,7 @@ def inspect(
     module_name: str,
     *,
     filepath: Path | None = None,
-    import_paths: list[Path] | None = None,
+    import_paths: Sequence[str | Path] | None = None,
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: Parser | None = None,
@@ -159,7 +159,7 @@ class Inspector:
             parser_options=self.docstring_options,
         )
 
-    def get_module(self, import_paths: list[Path] | None = None) -> Module:
+    def get_module(self, import_paths: Sequence[str | Path] | None = None) -> Module:
         """Build and return the object representing the module attached to this inspector.
 
         This method triggers a complete inspection of the module members.
