@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.32.1](https://github.com/mkdocstrings/griffe/releases/tag/0.32.1) - 2023-07-15
+
+<small>[Compare with 0.32.0](https://github.com/mkdocstrings/griffe/compare/0.32.0...0.32.1)</small>
+
+### Bug Fixes
+
+- Fix aliases for direct nested imports ([e9867f7](https://github.com/mkdocstrings/griffe/commit/e9867f78044a2a33b575e274224d3a4c16b62439) by Timothée Mazzucotelli). [Issue mkdocstrings/python#32](https://github.com/mkdocstrings/python/issues/32)
+
+### Code Refactoring
+
+- Simplify AST imports, stop using deprecated code from `ast` ([21d5832](https://github.com/mkdocstrings/griffe/commit/21d5832ba6db051b9754f515f1d7125126dd801f) by Timothée Mazzucotelli). [Issue #179](https://github.com/mkdocstrings/griffe/issues/179)
+
 ## [0.32.0](https://github.com/mkdocstrings/griffe/releases/tag/0.32.0) - 2023-07-13
 
 <small>[Compare with 0.31.0](https://github.com/mkdocstrings/griffe/compare/0.31.0...0.32.0)</small>
