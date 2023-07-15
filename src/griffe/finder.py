@@ -362,7 +362,7 @@ def _handle_editable_module(path: Path) -> list[Path]:
                 and isinstance(node.targets[0], ast.Name)
                 and node.targets[0].id == "MAPPING"
             ) and isinstance(node.value, ast.Dict):
-                return [Path(constant.s).parent for constant in node.value.values if isinstance(constant, ast.Str)]
+                return [Path(cst.value).parent for cst in node.value.values if isinstance(cst, ast.Constant)]
     raise UnhandledEditableModuleError(path)
 
 

@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from ast import AST
-from ast import Constant as NodeConstant
-from ast import Expr as NodeExpr
-from ast import Str as NodeStr
+import ast
 
 from griffe.logger import get_logger
 
@@ -13,7 +10,7 @@ logger = get_logger(__name__)
 
 
 def get_docstring(
-    node: AST,
+    node: ast.AST,
     *,
     strict: bool = False,
 ) -> tuple[str | None, int | None, int | None]:
@@ -27,17 +24,14 @@ def get_docstring(
         A tuple with the value and line numbers of the docstring.
     """
     # TODO: possible optimization using a type map
-    if isinstance(node, NodeExpr):
+    if isinstance(node, ast.Expr):
         doc = node.value
-    elif node.body and isinstance(node.body[0], NodeExpr) and not strict:  # type: ignore[attr-defined]
+    elif node.body and isinstance(node.body[0], ast.Expr) and not strict:  # type: ignore[attr-defined]
         doc = node.body[0].value  # type: ignore[attr-defined]
     else:
         return None, None, None
-    if isinstance(doc, NodeConstant) and isinstance(doc.value, str):
+    if isinstance(doc, ast.Constant) and isinstance(doc.value, str):
         return doc.value, doc.lineno, doc.end_lineno
-    if isinstance(doc, NodeStr):
-        lineno = doc.lineno
-        return doc.s, lineno, doc.end_lineno
     return None, None, None
 
 

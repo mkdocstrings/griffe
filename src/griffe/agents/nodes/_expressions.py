@@ -2,76 +2,13 @@
 
 from __future__ import annotations
 
+import ast
 import sys
-from ast import AST, PyCF_ONLY_AST
-from ast import Add as NodeAdd
-from ast import And as NodeAnd
-from ast import Attribute as NodeAttribute
-from ast import BinOp as NodeBinOp
-from ast import BitAnd as NodeBitAnd
-from ast import BitOr as NodeBitOr
-from ast import BitXor as NodeBitXor
-from ast import BoolOp as NodeBoolOp
-from ast import Call as NodeCall
-from ast import Compare as NodeCompare
-from ast import Constant as NodeConstant
-from ast import Dict as NodeDict
-from ast import DictComp as NodeDictComp
-from ast import Div as NodeDiv
-from ast import Ellipsis as NodeEllipsis
-from ast import Eq as NodeEq
-from ast import FloorDiv as NodeFloorDiv
-from ast import FormattedValue as NodeFormattedValue
-from ast import GeneratorExp as NodeGeneratorExp
-from ast import Gt as NodeGt
-from ast import GtE as NodeGtE
-from ast import IfExp as NodeIfExp
-from ast import In as NodeIn
-from ast import Invert as NodeInvert
-from ast import Is as NodeIs
-from ast import IsNot as NodeIsNot
-from ast import JoinedStr as NodeJoinedStr
-from ast import Lambda as NodeLambda
-from ast import List as NodeList
-from ast import ListComp as NodeListComp
-from ast import LShift as NodeLShift
-from ast import Lt as NodeLt
-from ast import LtE as NodeLtE
-from ast import MatMult as NodeMatMult
-from ast import Mod as NodeMod
-from ast import Mult as NodeMult
-from ast import Name as NodeName
-from ast import NamedExpr as NodeNamedExpr
-from ast import Not as NodeNot
-from ast import NotEq as NodeNotEq
-from ast import NotIn as NodeNotIn
-from ast import Or as NodeOr
-from ast import Pow as NodePow
-from ast import RShift as NodeRShift
-from ast import Set as NodeSet
-from ast import SetComp as NodeSetComp
-from ast import Slice as NodeSlice
-from ast import Starred as NodeStarred
-from ast import Sub as NodeSub
-from ast import Subscript as NodeSubscript
-from ast import Tuple as NodeTuple
-from ast import UAdd as NodeUAdd
-from ast import UnaryOp as NodeUnaryOp
-from ast import USub as NodeUSub
-from ast import Yield as NodeYield
-from ast import arguments as NodeArguments
-from ast import comprehension as NodeComprehension
-from ast import keyword as NodeKeyword
 from functools import partial
 from typing import TYPE_CHECKING, Any, Callable, Sequence
 
 from griffe.expressions import Expression, Name
 from griffe.logger import LogLevel, get_logger
-
-# TODO: remove once Python 3.8 support is dropped
-if sys.version_info < (3, 9):
-    from ast import ExtSlice as NodeExtSlice
-    from ast import Index as NodeIndex
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -92,19 +29,19 @@ def _join(sequence: Sequence, item: str | Name | Expression) -> list:
     return new_sequence
 
 
-def _build_add(node: NodeAdd, parent: Module | Class, **kwargs: Any) -> str:
+def _build_add(node: ast.Add, parent: Module | Class, **kwargs: Any) -> str:
     return "+"
 
 
-def _build_and(node: NodeAnd, parent: Module | Class, **kwargs: Any) -> str:
+def _build_and(node: ast.And, parent: Module | Class, **kwargs: Any) -> str:
     return "and"
 
 
-def _build_arguments(node: NodeArguments, parent: Module | Class, **kwargs: Any) -> str:
+def _build_arguments(node: ast.arguments, parent: Module | Class, **kwargs: Any) -> str:
     return ", ".join(arg.arg for arg in node.args)
 
 
-def _build_attribute(node: NodeAttribute, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_attribute(node: ast.Attribute, parent: Module | Class, **kwargs: Any) -> Expression:
     left = _build(node.value, parent, **kwargs)
 
     if isinstance(left, str):
@@ -118,31 +55,31 @@ def _build_attribute(node: NodeAttribute, parent: Module | Class, **kwargs: Any)
     return Expression(left, ".", right)
 
 
-def _build_binop(node: NodeBinOp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_binop(node: ast.BinOp, parent: Module | Class, **kwargs: Any) -> Expression:
     left = _build(node.left, parent, **kwargs)
     right = _build(node.right, parent, **kwargs)
     return Expression(left, " ", _build(node.op, parent, **kwargs), " ", right)
 
 
-def _build_bitand(node: NodeBitAnd, parent: Module | Class, **kwargs: Any) -> str:
+def _build_bitand(node: ast.BitAnd, parent: Module | Class, **kwargs: Any) -> str:
     return "&"
 
 
-def _build_bitor(node: NodeBitOr, parent: Module | Class, **kwargs: Any) -> str:
+def _build_bitor(node: ast.BitOr, parent: Module | Class, **kwargs: Any) -> str:
     return "|"
 
 
-def _build_bitxor(node: NodeBitXor, parent: Module | Class, **kwargs: Any) -> str:
+def _build_bitxor(node: ast.BitXor, parent: Module | Class, **kwargs: Any) -> str:
     return "^"
 
 
-def _build_boolop(node: NodeBoolOp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_boolop(node: ast.BoolOp, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression(
         *_join([_build(value, parent, **kwargs) for value in node.values], f" {_build(node.op, parent, **kwargs)} "),
     )
 
 
-def _build_call(node: NodeCall, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_call(node: ast.Call, parent: Module | Class, **kwargs: Any) -> Expression:
     positional_args = Expression(*_join([_build(arg, parent, **kwargs) for arg in node.args], ", "))
     keyword_args = Expression(*_join([_build(kwarg, parent, **kwargs) for kwarg in node.keywords], ", "))
     args: Expression | str
@@ -157,14 +94,14 @@ def _build_call(node: NodeCall, parent: Module | Class, **kwargs: Any) -> Expres
     return Expression(_build(node.func, parent, **kwargs), "(", args, ")")
 
 
-def _build_compare(node: NodeCompare, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_compare(node: ast.Compare, parent: Module | Class, **kwargs: Any) -> Expression:
     left = _build(node.left, parent, **kwargs)
     ops = [_build(op, parent, **kwargs) for op in node.ops]
     comparators = [_build(comparator, parent, **kwargs) for comparator in node.comparators]
     return Expression(left, " ", *_join([Expression(op, " ", comp) for op, comp in zip(ops, comparators)], " "))
 
 
-def _build_comprehension(node: NodeComprehension, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_comprehension(node: ast.comprehension, parent: Module | Class, **kwargs: Any) -> Expression:
     target = _build(node.target, parent, **kwargs)
     iterable = _build(node.iter, parent, **kwargs)
     conditions = [_build(condition, parent, **kwargs) for condition in node.ifs]
@@ -177,7 +114,7 @@ def _build_comprehension(node: NodeComprehension, parent: Module | Class, **kwar
 
 
 def _build_constant(
-    node: NodeConstant,
+    node: ast.Constant,
     parent: Module | Class,
     *,
     in_formatted_str: bool = False,
@@ -200,7 +137,7 @@ def _build_constant(
                     node.value,
                     mode="eval",
                     filename="<string-annotation>",
-                    flags=PyCF_ONLY_AST,
+                    flags=ast.PyCF_ONLY_AST,
                     optimize=1,
                 )
             except SyntaxError:
@@ -214,7 +151,7 @@ def _build_constant(
     return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
-def _build_dict(node: NodeDict, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expression:
     pairs = zip(node.keys, node.values)
     body = [
         Expression("None" if key is None else _build(key, parent, **kwargs), ": ", _build(value, parent, **kwargs))
@@ -223,48 +160,44 @@ def _build_dict(node: NodeDict, parent: Module | Class, **kwargs: Any) -> Expres
     return Expression("{", Expression(*_join(body, ", ")), "}")
 
 
-def _build_dictcomp(node: NodeDictComp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_dictcomp(node: ast.DictComp, parent: Module | Class, **kwargs: Any) -> Expression:
     key = _build(node.key, parent, **kwargs)
     value = _build(node.value, parent, **kwargs)
     generators = [_build(gen, parent, **kwargs) for gen in node.generators]
     return Expression("{", key, ": ", value, Expression(*_join(generators, " ")), "}")
 
 
-def _build_div(node: NodeDiv, parent: Module | Class, **kwargs: Any) -> str:
+def _build_div(node: ast.Div, parent: Module | Class, **kwargs: Any) -> str:
     return "/"
 
 
-def _build_ellipsis(node: NodeEllipsis, parent: Module | Class, **kwargs: Any) -> str:
-    return "..."
-
-
-def _build_eq(node: NodeEq, parent: Module | Class, **kwargs: Any) -> str:
+def _build_eq(node: ast.Eq, parent: Module | Class, **kwargs: Any) -> str:
     return "=="
 
 
-def _build_floordiv(node: NodeFloorDiv, parent: Module | Class, **kwargs: Any) -> str:
+def _build_floordiv(node: ast.FloorDiv, parent: Module | Class, **kwargs: Any) -> str:
     return "//"
 
 
-def _build_formatted(node: NodeFormattedValue, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_formatted(node: ast.FormattedValue, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("{", _build(node.value, parent, in_formatted_str=True, **kwargs), "}")
 
 
-def _build_generatorexp(node: NodeGeneratorExp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_generatorexp(node: ast.GeneratorExp, parent: Module | Class, **kwargs: Any) -> Expression:
     element = _build(node.elt, parent, **kwargs)
     generators = [_build(gen, parent, **kwargs) for gen in node.generators]
     return Expression(element, " ", Expression(*_join(generators, " ")))
 
 
-def _build_gte(node: NodeGtE, parent: Module | Class, **kwargs: Any) -> str:
+def _build_gte(node: ast.GtE, parent: Module | Class, **kwargs: Any) -> str:
     return ">="
 
 
-def _build_gt(node: NodeGt, parent: Module | Class, **kwargs: Any) -> str:
+def _build_gt(node: ast.Gt, parent: Module | Class, **kwargs: Any) -> str:
     return ">"
 
 
-def _build_ifexp(node: NodeIfExp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_ifexp(node: ast.IfExp, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression(
         _build(node.body, parent, **kwargs),
         " if ",
@@ -274,113 +207,113 @@ def _build_ifexp(node: NodeIfExp, parent: Module | Class, **kwargs: Any) -> Expr
     )
 
 
-def _build_invert(node: NodeInvert, parent: Module | Class, **kwargs: Any) -> str:
+def _build_invert(node: ast.Invert, parent: Module | Class, **kwargs: Any) -> str:
     return "~"
 
 
-def _build_in(node: NodeIn, parent: Module | Class, **kwargs: Any) -> str:
+def _build_in(node: ast.In, parent: Module | Class, **kwargs: Any) -> str:
     return "in"
 
 
-def _build_is(node: NodeIs, parent: Module | Class, **kwargs: Any) -> str:
+def _build_is(node: ast.Is, parent: Module | Class, **kwargs: Any) -> str:
     return "is"
 
 
-def _build_isnot(node: NodeIsNot, parent: Module | Class, **kwargs: Any) -> str:
+def _build_isnot(node: ast.IsNot, parent: Module | Class, **kwargs: Any) -> str:
     return "is not"
 
 
-def _build_joinedstr(node: NodeJoinedStr, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_joinedstr(node: ast.JoinedStr, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("f'", *[_build(value, parent, in_joined_str=True) for value in node.values], "'")
 
 
-def _build_keyword(node: NodeKeyword, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_keyword(node: ast.keyword, parent: Module | Class, **kwargs: Any) -> Expression:
     if node.arg is None:
         return Expression("**", _build(node.value, parent, **kwargs))
     return Expression(node.arg, "=", _build(node.value, parent, **kwargs))
 
 
-def _build_lambda(node: NodeLambda, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_lambda(node: ast.Lambda, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("lambda ", _build(node.args, parent, **kwargs), ": ", _build(node.body, parent, **kwargs))
 
 
-def _build_list(node: NodeList, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_list(node: ast.List, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("[", *_join([_build(el, parent, **kwargs) for el in node.elts], ", "), "]")
 
 
-def _build_listcomp(node: NodeListComp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_listcomp(node: ast.ListComp, parent: Module | Class, **kwargs: Any) -> Expression:
     element = _build(node.elt, parent, **kwargs)
     generators = [_build(gen, parent, **kwargs) for gen in node.generators]
     return Expression("[", element, *_join(generators, " "), "]")
 
 
-def _build_lshift(node: NodeLShift, parent: Module | Class, **kwargs: Any) -> str:
+def _build_lshift(node: ast.LShift, parent: Module | Class, **kwargs: Any) -> str:
     return "<<"
 
 
-def _build_lte(node: NodeLtE, parent: Module | Class, **kwargs: Any) -> str:
+def _build_lte(node: ast.LtE, parent: Module | Class, **kwargs: Any) -> str:
     return "<="
 
 
-def _build_lt(node: NodeLt, parent: Module | Class, **kwargs: Any) -> str:
+def _build_lt(node: ast.Lt, parent: Module | Class, **kwargs: Any) -> str:
     return "<"
 
 
-def _build_matmult(node: NodeMatMult, parent: Module | Class, **kwargs: Any) -> str:
+def _build_matmult(node: ast.MatMult, parent: Module | Class, **kwargs: Any) -> str:
     return "@"
 
 
-def _build_mod(node: NodeMod, parent: Module | Class, **kwargs: Any) -> str:
+def _build_mod(node: ast.Mod, parent: Module | Class, **kwargs: Any) -> str:
     return "%"
 
 
-def _build_mult(node: NodeMult, parent: Module | Class, **kwargs: Any) -> str:
+def _build_mult(node: ast.Mult, parent: Module | Class, **kwargs: Any) -> str:
     return "*"
 
 
-def _build_name(node: NodeName, parent: Module | Class, **kwargs: Any) -> Name:
+def _build_name(node: ast.Name, parent: Module | Class, **kwargs: Any) -> Name:
     return Name(node.id, partial(parent.resolve, node.id))
 
 
-def _build_named_expr(node: NodeNamedExpr, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_named_expr(node: ast.NamedExpr, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("(", _build(node.target, parent, **kwargs), " := ", _build(node.value, parent, **kwargs), ")")
 
 
-def _build_not(node: NodeNot, parent: Module | Class, **kwargs: Any) -> str:
+def _build_not(node: ast.Not, parent: Module | Class, **kwargs: Any) -> str:
     return "not "
 
 
-def _build_noteq(node: NodeNotEq, parent: Module | Class, **kwargs: Any) -> str:
+def _build_noteq(node: ast.NotEq, parent: Module | Class, **kwargs: Any) -> str:
     return "!="
 
 
-def _build_notin(node: NodeNotIn, parent: Module | Class, **kwargs: Any) -> str:
+def _build_notin(node: ast.NotIn, parent: Module | Class, **kwargs: Any) -> str:
     return "not in"
 
 
-def _build_or(node: NodeOr, parent: Module | Class, **kwargs: Any) -> str:
+def _build_or(node: ast.Or, parent: Module | Class, **kwargs: Any) -> str:
     return "or"
 
 
-def _build_pow(node: NodePow, parent: Module | Class, **kwargs: Any) -> str:
+def _build_pow(node: ast.Pow, parent: Module | Class, **kwargs: Any) -> str:
     return "**"
 
 
-def _build_rshift(node: NodeRShift, parent: Module | Class, **kwargs: Any) -> str:
+def _build_rshift(node: ast.RShift, parent: Module | Class, **kwargs: Any) -> str:
     return ">>"
 
 
-def _build_set(node: NodeSet, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_set(node: ast.Set, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("{", *_join([_build(el, parent, **kwargs) for el in node.elts], ", "), "}")
 
 
-def _build_setcomp(node: NodeSetComp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_setcomp(node: ast.SetComp, parent: Module | Class, **kwargs: Any) -> Expression:
     element = _build(node.elt, parent, **kwargs)
     generators = [_build(gen, parent, **kwargs) for gen in node.generators]
     return Expression("{", element, " ", *_join(generators, " "), "}")
 
 
-def _build_slice(node: NodeSlice, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_slice(node: ast.Slice, parent: Module | Class, **kwargs: Any) -> Expression:
     lower = _build(node.lower, parent, **kwargs) if node.lower else ""
     upper = _build(node.upper, parent, **kwargs) if node.upper else ""
     value = Expression(lower, ":", upper)
@@ -389,16 +322,16 @@ def _build_slice(node: NodeSlice, parent: Module | Class, **kwargs: Any) -> Expr
     return value
 
 
-def _build_starred(node: NodeStarred, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_starred(node: ast.Starred, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression("*", _build(node.value, parent, **kwargs))
 
 
-def _build_sub(node: NodeSub, parent: Module | Class, **kwargs: Any) -> str:
+def _build_sub(node: ast.Sub, parent: Module | Class, **kwargs: Any) -> str:
     return "-"
 
 
 def _build_subscript(
-    node: NodeSubscript,
+    node: ast.Subscript,
     parent: Module | Class,
     *,
     parse_strings: bool = False,
@@ -413,108 +346,107 @@ def _build_subscript(
     return Expression(left, "[", subscript, "]")
 
 
-def _build_tuple(node: NodeTuple, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_tuple(node: ast.Tuple, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression(*_join([_build(el, parent, **kwargs) for el in node.elts], ", "))
 
 
-def _build_uadd(node: NodeUAdd, parent: Module | Class, **kwargs: Any) -> str:
+def _build_uadd(node: ast.UAdd, parent: Module | Class, **kwargs: Any) -> str:
     return "+"
 
 
-def _build_unaryop(node: NodeUnaryOp, parent: Module | Class, **kwargs: Any) -> Expression:
+def _build_unaryop(node: ast.UnaryOp, parent: Module | Class, **kwargs: Any) -> Expression:
     return Expression(_build(node.op, parent, **kwargs), _build(node.operand, parent, **kwargs))
 
 
-def _build_usub(node: NodeUSub, parent: Module | Class, **kwargs: Any) -> str:
+def _build_usub(node: ast.USub, parent: Module | Class, **kwargs: Any) -> str:
     return "-"
 
 
-def _build_yield(node: NodeYield, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
+def _build_yield(node: ast.Yield, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
     if node.value is None:
         return repr(None)
     return _build(node.value, parent, **kwargs)
 
 
 _node_map: dict[type, Callable[[Any, Module | Class], str | Name | Expression]] = {
-    NodeAdd: _build_add,
-    NodeAnd: _build_and,
-    NodeArguments: _build_arguments,
-    NodeAttribute: _build_attribute,
-    NodeBinOp: _build_binop,
-    NodeBitAnd: _build_bitand,
-    NodeBitOr: _build_bitor,
-    NodeBitXor: _build_bitxor,
-    NodeBoolOp: _build_boolop,
-    NodeCall: _build_call,
-    NodeCompare: _build_compare,
-    NodeComprehension: _build_comprehension,
-    NodeConstant: _build_constant,
-    NodeDict: _build_dict,
-    NodeDictComp: _build_dictcomp,
-    NodeDiv: _build_div,
-    NodeEllipsis: _build_ellipsis,
-    NodeEq: _build_eq,
-    NodeFloorDiv: _build_floordiv,
-    NodeFormattedValue: _build_formatted,
-    NodeGeneratorExp: _build_generatorexp,
-    NodeGt: _build_gt,
-    NodeGtE: _build_gte,
-    NodeIfExp: _build_ifexp,
-    NodeIn: _build_in,
-    NodeInvert: _build_invert,
-    NodeIs: _build_is,
-    NodeIsNot: _build_isnot,
-    NodeJoinedStr: _build_joinedstr,
-    NodeKeyword: _build_keyword,
-    NodeLambda: _build_lambda,
-    NodeList: _build_list,
-    NodeListComp: _build_listcomp,
-    NodeLShift: _build_lshift,
-    NodeLt: _build_lt,
-    NodeLtE: _build_lte,
-    NodeMatMult: _build_matmult,
-    NodeMod: _build_mod,
-    NodeMult: _build_mult,
-    NodeName: _build_name,
-    NodeNamedExpr: _build_named_expr,
-    NodeNot: _build_not,
-    NodeNotEq: _build_noteq,
-    NodeNotIn: _build_notin,
-    NodeOr: _build_or,
-    NodePow: _build_pow,
-    NodeRShift: _build_rshift,
-    NodeSet: _build_set,
-    NodeSetComp: _build_setcomp,
-    NodeSlice: _build_slice,
-    NodeStarred: _build_starred,
-    NodeSub: _build_sub,
-    NodeSubscript: _build_subscript,
-    NodeTuple: _build_tuple,
-    NodeUAdd: _build_uadd,
-    NodeUnaryOp: _build_unaryop,
-    NodeUSub: _build_usub,
-    NodeYield: _build_yield,
+    ast.Add: _build_add,
+    ast.And: _build_and,
+    ast.arguments: _build_arguments,
+    ast.Attribute: _build_attribute,
+    ast.BinOp: _build_binop,
+    ast.BitAnd: _build_bitand,
+    ast.BitOr: _build_bitor,
+    ast.BitXor: _build_bitxor,
+    ast.BoolOp: _build_boolop,
+    ast.Call: _build_call,
+    ast.Compare: _build_compare,
+    ast.comprehension: _build_comprehension,
+    ast.Constant: _build_constant,
+    ast.Dict: _build_dict,
+    ast.DictComp: _build_dictcomp,
+    ast.Div: _build_div,
+    ast.Eq: _build_eq,
+    ast.FloorDiv: _build_floordiv,
+    ast.FormattedValue: _build_formatted,
+    ast.GeneratorExp: _build_generatorexp,
+    ast.Gt: _build_gt,
+    ast.GtE: _build_gte,
+    ast.IfExp: _build_ifexp,
+    ast.In: _build_in,
+    ast.Invert: _build_invert,
+    ast.Is: _build_is,
+    ast.IsNot: _build_isnot,
+    ast.JoinedStr: _build_joinedstr,
+    ast.keyword: _build_keyword,
+    ast.Lambda: _build_lambda,
+    ast.List: _build_list,
+    ast.ListComp: _build_listcomp,
+    ast.LShift: _build_lshift,
+    ast.Lt: _build_lt,
+    ast.LtE: _build_lte,
+    ast.MatMult: _build_matmult,
+    ast.Mod: _build_mod,
+    ast.Mult: _build_mult,
+    ast.Name: _build_name,
+    ast.NamedExpr: _build_named_expr,
+    ast.Not: _build_not,
+    ast.NotEq: _build_noteq,
+    ast.NotIn: _build_notin,
+    ast.Or: _build_or,
+    ast.Pow: _build_pow,
+    ast.RShift: _build_rshift,
+    ast.Set: _build_set,
+    ast.SetComp: _build_setcomp,
+    ast.Slice: _build_slice,
+    ast.Starred: _build_starred,
+    ast.Sub: _build_sub,
+    ast.Subscript: _build_subscript,
+    ast.Tuple: _build_tuple,
+    ast.UAdd: _build_uadd,
+    ast.UnaryOp: _build_unaryop,
+    ast.USub: _build_usub,
+    ast.Yield: _build_yield,
 }
 
 # TODO: remove once Python 3.8 support is dropped
 if sys.version_info < (3, 9):
 
-    def _build_extslice(node: NodeExtSlice, parent: Module | Class, **kwargs: Any) -> Expression:
+    def _build_extslice(node: ast.ExtSlice, parent: Module | Class, **kwargs: Any) -> Expression:
         return Expression(*_join([_build(dim, parent, **kwargs) for dim in node.dims], ","))
 
-    def _build_index(node: NodeIndex, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
+    def _build_index(node: ast.Index, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
         return _build(node.value, parent, **kwargs)
 
-    _node_map[NodeExtSlice] = _build_extslice
-    _node_map[NodeIndex] = _build_index
+    _node_map[ast.ExtSlice] = _build_extslice
+    _node_map[ast.Index] = _build_index
 
 
-def _build(node: AST, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
+def _build(node: ast.AST, parent: Module | Class, **kwargs: Any) -> str | Name | Expression:
     return _node_map[type(node)](node, parent, **kwargs)
 
 
 def get_expression(
-    node: AST | None,
+    node: ast.AST | None,
     parent: Module | Class,
     *,
     parse_strings: bool | None = None,
@@ -542,7 +474,7 @@ def get_expression(
 
 
 def safe_get_expression(
-    node: AST | None,
+    node: ast.AST | None,
     parent: Module | Class,
     *,
     parse_strings: bool | None = None,
