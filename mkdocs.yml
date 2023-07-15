@@ -6,6 +6,7 @@ repo_name: "mkdocstrings/griffe"
 site_dir: "site"
 watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/griffe]
 copyright: Copyright &copy; 2021 Timothée Mazzucotelli
+edit_uri: edit/main/docs/
 
 nav:
 - Home:
