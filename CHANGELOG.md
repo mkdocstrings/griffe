@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.32.2](https://github.com/mkdocstrings/griffe/releases/tag/0.32.2) - 2023-07-17
+
+<small>[Compare with 0.32.1](https://github.com/mkdocstrings/griffe/compare/0.32.1...0.32.2)</small>
+
+### Bug Fixes
+
+- Keep parentheses around tuples, except within subscripts ([df6e636](https://github.com/mkdocstrings/griffe/commit/df6e636c3ecfaa6befdfdaf26e898e1a71218675) by Timothée Mazzucotelli). [Issue mkdocstrings/python#88](https://github.com/mkdocstrings/python/issues/88)
+
 ## [0.32.1](https://github.com/mkdocstrings/griffe/releases/tag/0.32.1) - 2023-07-15
 
 <small>[Compare with 0.32.0](https://github.com/mkdocstrings/griffe/compare/0.32.0...0.32.1)</small>
