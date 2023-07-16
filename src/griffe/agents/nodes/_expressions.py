@@ -335,19 +335,38 @@ def _build_subscript(
     parent: Module | Class,
     *,
     parse_strings: bool = False,
+    literal_strings: bool = False,
+    in_subscript: bool = False,
     **kwargs: Any,
 ) -> Expression:
     left = _build(node.value, parent, **kwargs)
     if parse_strings:
-        literal_strings = left.full in {"typing.Literal", "typing_extensions.Literal"}  # type: ignore[union-attr]
-        subscript = _build(node.slice, parent, parse_strings=True, **{**kwargs, "literal_strings": literal_strings})
+        if left.full in {"typing.Literal", "typing_extensions.Literal"}:  # type: ignore[union-attr]
+            literal_strings = True
+        subscript = _build(
+            node.slice,
+            parent,
+            parse_strings=True,
+            literal_strings=literal_strings,
+            in_subscript=True,
+            **kwargs,
+        )
     else:
-        subscript = _build(node.slice, parent, **kwargs)
+        subscript = _build(node.slice, parent, in_subscript=True, **kwargs)
     return Expression(left, "[", subscript, "]")
 
 
-def _build_tuple(node: ast.Tuple, parent: Module | Class, **kwargs: Any) -> Expression:
-    return Expression(*_join([_build(el, parent, **kwargs) for el in node.elts], ", "))
+def _build_tuple(
+    node: ast.Tuple,
+    parent: Module | Class,
+    *,
+    in_subscript: bool = False,
+    **kwargs: Any,
+) -> Expression:
+    values = _join([_build(el, parent, **kwargs) for el in node.elts], ", ")
+    if in_subscript:
+        return Expression(*values)
+    return Expression("(", *values, ")")
 
 
 def _build_uadd(node: ast.UAdd, parent: Module | Class, **kwargs: Any) -> str:

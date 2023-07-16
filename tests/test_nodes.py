@@ -64,6 +64,11 @@ syntax_examples = [
     "a if (a := b) else c",
     # starred
     "a(*b, **c)",
+    # structs
+    "(a, b, c)",
+    "{a, b, c}",
+    "{a: b, c: d}",
+    "[a, b, c]",
 ]
 
 
