@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.32.3](https://github.com/mkdocstrings/griffe/releases/tag/0.32.3) - 2023-07-17
+
+<small>[Compare with 0.32.2](https://github.com/mkdocstrings/griffe/compare/0.32.2...0.32.3)</small>
+
+### Bug Fixes
+
+- Fix detecting whether an object should be an alias during inspection ([6a63b37](https://github.com/mkdocstrings/griffe/commit/6a63b375db7d639dd05589c56a2f89d1be9d66a8) by Timothée Mazzucotelli). [Issue #180](https://github.com/mkdocstrings/griffe/issues/180)
+
+### Code Refactoring
+
+- Improve log message when trying to stubs-merge objects of different kinds ([d34a3ba](https://github.com/mkdocstrings/griffe/commit/d34a3ba4bbd15c3fafe9cc5e2e82a2281cf3e094) by Timothée Mazzucotelli).
+- De-duplicate stubs merging log message ([cedc062](https://github.com/mkdocstrings/griffe/commit/cedc062cd4035a4ad0f3a14b4ef31bea4e39374d) by Timothée Mazzucotelli).
+
 ## [0.32.2](https://github.com/mkdocstrings/griffe/releases/tag/0.32.2) - 2023-07-17
 
 <small>[Compare with 0.32.1](https://github.com/mkdocstrings/griffe/compare/0.32.1...0.32.2)</small>
