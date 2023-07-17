@@ -174,8 +174,12 @@ class Inspector:
         if self.parent is not None:
             import_path = f"{self.parent.path}.{import_path}"
         value = dynamic_import(import_path, import_paths)
-        top_node = ObjectNode(value, self.module_name)
-        self.inspect(top_node)
+        parent = None
+        if self.parent is not None:
+            for part in self.parent.path.split("."):
+                parent = ObjectNode(None, name=part, parent=parent)
+        module_node = ObjectNode(value, self.module_name, parent=parent)
+        self.inspect(module_node)
         return self.current.module
 
     def inspect(self, node: ObjectNode) -> None:

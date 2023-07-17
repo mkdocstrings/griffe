@@ -314,6 +314,8 @@ class ObjectNode:
         # - but break special cycles coming from builtin modules
         #   like ast -> _ast -> ast (here we inspect _ast)
         #   or os -> posix/nt -> os (here we inspect posix/nt)
+        if self.parent is None:
+            return None
 
         obj = self.obj
         if isinstance(obj, cached_property):
@@ -324,9 +326,6 @@ class ObjectNode:
         except Exception:  # noqa: BLE001
             return None
         if not child_module:
-            return None
-
-        if self.parent is None:
             return None
 
         if self.parent.is_module:
