@@ -52,7 +52,7 @@ griffe dump griffe -e pydantic,scripts/exts.py:DynamicDocstrings,griffe_attrs
 griffe check --search src griffe -e '[
   {"pydantic": {"schema": true}},
   {
-    "scripts/exts.py:DynamicDoctrings": {
+    "scripts/exts.py:DynamicDocstrings": {
       "paths": ["mypkg.mymod.myobj"]
     }
   },
@@ -89,7 +89,7 @@ from mypackage.extensions import ThisExtension, ThisOtherExtension
 extensions = griffe.load_extensions(
     [
         {"pydantic": {"schema": true}},
-        {"scripts/exts.py:DynamicDoctrings": {"paths": ["mypkg.mymod.myobj"]}},
+        {"scripts/exts.py:DynamicDocstrings": {"paths": ["mypkg.mymod.myobj"]}},
         "griffe_attrs",
         ThisExtension(option="value"),
         ThisOtherExtension,
@@ -111,7 +111,7 @@ plugins:
         options:
           extensions:
           - pydantic: {schema: true}
-          - scripts/exts.py:DynamicDoctrings:
+          - scripts/exts.py:DynamicDocstrings:
               paths: [mypkg.mymod.myobj]
           - griffe_attrs
 ```
