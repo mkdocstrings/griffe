@@ -19,6 +19,7 @@ import logging
 import os
 import sys
 from datetime import datetime, timezone
+from importlib.metadata import version as get_version
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
@@ -33,6 +34,8 @@ from griffe.git import _get_latest_tag, _get_repo_root, load_git
 from griffe.loader import GriffeLoader, load
 from griffe.logger import get_logger
 from griffe.stats import _format_stats
+
+version = get_version("griffe")
 
 if TYPE_CHECKING:
     from griffe.extensions import Extensions, ExtensionType
@@ -122,6 +125,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     global_options = parser.add_argument_group(title="Global options")
     global_options.add_argument("-h", "--help", action="help", help=main_help)
+    global_options.add_argument("-V", "--version", action="version", version="%(prog)s " + version)
 
     def add_common_options(subparser: argparse.ArgumentParser) -> None:
         common_options = subparser.add_argument_group(title="Common options")
