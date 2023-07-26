@@ -25,7 +25,7 @@ class _Dependency(Deque[T]):
 
     @property
     def tail(self) -> islice:
-        """Tail od the dependency.
+        """Tail of the dependency.
 
         The `islice` object is sufficient for iteration or testing membership (`in`).
         """
