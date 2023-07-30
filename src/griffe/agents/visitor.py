@@ -475,7 +475,7 @@ class Visitor:
 
         self.extensions.call("on_instance", node=node, obj=function)
         self.extensions.call("on_function_instance", node=node, func=function)
-        if self.current.kind is Kind.CLASS and function.name == "__init__":
+        if self.current.kind is Kind.CLASS and function.name in ["__init__","__post_init__"]:
             self.current = function  # type: ignore[assignment]  # temporary assign a function
             self.generic_visit(node)
             self.current = self.current.parent  # type: ignore[assignment]
@@ -590,7 +590,7 @@ class Visitor:
                 labels.add("instance-attribute")
 
         elif parent.kind is Kind.FUNCTION:
-            if parent.name != "__init__":
+            if parent.name not in ["__init__","__post_init__"]:
                 return
             try:
                 names = get_instance_names(node)
