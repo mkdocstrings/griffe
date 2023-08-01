@@ -49,7 +49,7 @@ def test_missing_dependency() -> None:
     with temporary_pypackage("package", ["module.py"]) as tmp_package:
         filepath = Path(tmp_package.path, "module.py")
         filepath.write_text("import missing")
-        with pytest.raises(ImportError):  # noqa: PT012,SIM117
+        with pytest.raises(ImportError):  # noqa: SIM117
             with suppress(ModuleNotFoundError):
                 inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
 
