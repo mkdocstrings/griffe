@@ -1,7 +1,0 @@
-diff a/docs/css/mkdocstrings.css b/docs/css/mkdocstrings.css	(rejected hunks)
-@@ -3,4 +3,3 @@ div.doc-contents:not(.first) {
-   padding-left: 25px;
--  border-left: 4px solid rgba(230, 230, 230);
--  margin-bottom: 80px;
-+  border-left: .05rem solid var(--md-typeset-table-color);
- }
