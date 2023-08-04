@@ -170,10 +170,10 @@ def test_handle_typing_overaload(decorator: str) -> None:
     with temporary_visited_module(code) as module:
         overloads = module["A.absolute"].overloads
         assert len(overloads) == 2
-        assert overloads[0].parameters["path"].annotation.source == "str"
-        assert overloads[1].parameters["path"].annotation.source == "Path"
-        assert overloads[0].returns.source == "str"
-        assert overloads[1].returns.source == "Path"
+        assert overloads[0].parameters["path"].annotation.name == "str"
+        assert overloads[1].parameters["path"].annotation.name == "Path"
+        assert overloads[0].returns.name == "str"
+        assert overloads[1].returns.name == "Path"
 
 
 @pytest.mark.parametrize(
@@ -317,27 +317,27 @@ def test_classvar_annotations() -> None:
                 self.b: bytes
         """,
     ) as module:
-        assert module["C.w"].annotation.full == "str"
+        assert module["C.w"].annotation.canonical_path == "str"
         assert module["C.w"].labels == {"class-attribute"}
         assert module["C.w"].value == "'foo'"
 
-        assert module["C.x"].annotation.full == "int"
+        assert module["C.x"].annotation.canonical_path == "int"
         assert module["C.x"].labels == {"class-attribute"}
 
-        assert module["C.y"].annotation.full == "str"
+        assert module["C.y"].annotation.canonical_path == "str"
         assert module["C.y"].labels == {"instance-attribute"}
         assert module["C.y"].value == "''"
 
-        assert module["C.z"].annotation.full == "int"
+        assert module["C.z"].annotation.canonical_path == "int"
         assert module["C.z"].labels == {"class-attribute", "instance-attribute"}
         assert module["C.z"].value == "5"
 
         # This is syntactically valid, but semantically invalid
-        assert module["C.a"].annotation[0].full == "typing.ClassVar"
-        assert module["C.a"].annotation[2].full == "float"
+        assert module["C.a"].annotation.canonical_path == "typing.ClassVar"
+        assert module["C.a"].annotation.slice.canonical_path == "float"
         assert module["C.a"].labels == {"instance-attribute"}
 
-        assert module["C.b"].annotation.full == "bytes"
+        assert module["C.b"].annotation.canonical_path == "bytes"
         assert module["C.b"].labels == {"instance-attribute"}
 
 

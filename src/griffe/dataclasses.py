@@ -6,7 +6,6 @@ The different objects are modules, classes, functions, and attribute
 
 from __future__ import annotations
 
-import enum
 import inspect
 from collections import defaultdict
 from contextlib import suppress
@@ -16,37 +15,20 @@ from typing import TYPE_CHECKING, Any, Callable, Sequence, Union, cast
 
 from griffe.c3linear import c3linear_merge
 from griffe.docstrings.parsers import Parser, parse
+from griffe.enumerations import Kind, ParameterKind
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
-from griffe.expressions import Name
+from griffe.expressions import ExprCall, ExprName
 from griffe.logger import get_logger
 from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
     from griffe.docstrings.dataclasses import DocstringSection
-    from griffe.expressions import Expression
+    from griffe.expressions import Expr
 
 from functools import cached_property
 
 logger = get_logger(__name__)
-
-
-class ParameterKind(enum.Enum):
-    """Enumeration of the different parameter kinds.
-
-    Attributes:
-        positional_only: Positional-only parameter.
-        positional_or_keyword: Positional or keyword parameter.
-        var_positional: Variadic positional parameter.
-        keyword_only: Keyword-only parameter.
-        var_keyword: Variadic keyword parameter.
-    """
-
-    positional_only: str = "positional-only"
-    positional_or_keyword: str = "positional or keyword"
-    var_positional: str = "variadic positional"
-    keyword_only: str = "keyword-only"
-    var_keyword: str = "variadic keyword"
 
 
 class Decorator:
@@ -57,7 +39,7 @@ class Decorator:
         endlineno: The ending line number.
     """
 
-    def __init__(self, value: str | Name | Expression, *, lineno: int | None, endlineno: int | None) -> None:
+    def __init__(self, value: str | Expr, *, lineno: int | None, endlineno: int | None) -> None:
         """Initialize the decorator.
 
         Parameters:
@@ -65,15 +47,15 @@ class Decorator:
             lineno: The starting line number.
             endlineno: The ending line number.
         """
-        self.value: str | Name | Expression = value
+        self.value: str | Expr = value
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
 
     @property
     def callable_path(self) -> str:
         """The path of the callable used as decorator."""
-        value = self.value if isinstance(self.value, str) else self.value.full
-        return value.split("(", 1)[0]
+        value = self.value.function if isinstance(self.value, ExprCall) else self.value
+        return value if isinstance(value, str) else value.canonical_path
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this decorator's data as a dictionary.
@@ -197,9 +179,9 @@ class Parameter:
         self,
         name: str,
         *,
-        annotation: str | Name | Expression | None = None,
+        annotation: str | Expr | None = None,
         kind: ParameterKind | None = None,
-        default: str | Name | Expression | None = None,
+        default: str | Expr | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -210,9 +192,9 @@ class Parameter:
             default: The parameter default, if any.
         """
         self.name: str = name
-        self.annotation: str | Name | Expression | None = annotation
+        self.annotation: str | Expr | None = annotation
         self.kind: ParameterKind | None = kind
-        self.default: str | Name | Expression | None = default
+        self.default: str | Expr | None = default
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -293,23 +275,6 @@ class Parameters:
             raise ValueError(f"parameter {parameter.name} already present")
 
 
-class Kind(enum.Enum):
-    """Enumeration of the different objects kinds.
-
-    Attributes:
-        MODULE: The module kind.
-        CLASS: The class kind.
-        FUNCTION: The function kind.
-        ATTRIBUTE: The attribute kind.
-    """
-
-    MODULE: str = "module"
-    CLASS: str = "class"
-    FUNCTION: str = "function"
-    ATTRIBUTE: str = "attribute"
-    ALIAS: str = "alias"
-
-
 class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):
     """An abstract class representing a Python object.
 
@@ -361,7 +326,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         self.members: dict[str, Object | Alias] = {}
         self.labels: set[str] = set()
         self.imports: dict[str, str] = {}
-        self.exports: set[str] | list[str | Name] | None = None
+        self.exports: set[str] | list[str | ExprName] | None = None
         self.aliases: dict[str, Alias] = {}
         self.runtime: bool = runtime
         self.extra: dict[str, dict[str, Any]] = defaultdict(dict)
@@ -982,7 +947,7 @@ class Alias(ObjectAliasMixin):
         return self.final_target.imports
 
     @property
-    def exports(self) -> set[str] | list[str | Name] | None:  # noqa: D102
+    def exports(self) -> set[str] | list[str | ExprName] | None:  # noqa: D102
         return self.final_target.exports
 
     @property
@@ -1092,7 +1057,7 @@ class Alias(ObjectAliasMixin):
         return cast(Module, self.target)._filepath
 
     @property
-    def bases(self) -> list[Name | Expression | str]:  # noqa: D102
+    def bases(self) -> list[Expr | str]:  # noqa: D102
         return cast(Class, self.target).bases
 
     @property
@@ -1112,11 +1077,11 @@ class Alias(ObjectAliasMixin):
         return cast(Function, self.target).parameters
 
     @property
-    def returns(self) -> str | Name | Expression | None:  # noqa: D102
+    def returns(self) -> str | Expr | None:  # noqa: D102
         return cast(Function, self.target).returns
 
     @returns.setter
-    def returns(self, returns: str | Name | Expression | None) -> None:
+    def returns(self, returns: str | Expr | None) -> None:
         cast(Function, self.target).returns = returns
 
     @property
@@ -1128,15 +1093,15 @@ class Alias(ObjectAliasMixin):
         return cast(Function, self.target).deleter
 
     @property
-    def value(self) -> str | Name | Expression | None:  # noqa: D102
+    def value(self) -> str | Expr | None:  # noqa: D102
         return cast(Attribute, self.target).value
 
     @property
-    def annotation(self) -> str | Name | Expression | None:  # noqa: D102
+    def annotation(self) -> str | Expr | None:  # noqa: D102
         return cast(Attribute, self.target).annotation
 
     @annotation.setter
-    def annotation(self, annotation: str | Name | Expression | None) -> None:
+    def annotation(self, annotation: str | Expr | None) -> None:
         cast(Attribute, self.target).annotation = annotation
 
     @property
@@ -1410,7 +1375,7 @@ class Class(Object):
     def __init__(
         self,
         *args: Any,
-        bases: Sequence[Name | Expression | str] | None = None,
+        bases: Sequence[Expr | str] | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1423,7 +1388,7 @@ class Class(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.bases: list[Name | Expression | str] = list(bases) if bases else []
+        self.bases: list[Expr | str] = list(bases) if bases else []
         self.decorators: list[Decorator] = decorators or []
         self.overloads: dict[str, list[Function]] = defaultdict(list)
 
@@ -1455,12 +1420,7 @@ class Class(Object):
         """
         resolved_bases = []
         for base in self.bases:
-            if isinstance(base, str):
-                base_path = base
-            elif isinstance(base, Name):
-                base_path = base.full
-            else:
-                base_path = base.without_subscript.full
+            base_path = base if isinstance(base, str) else base.canonical_path
             try:
                 resolved_base = self.modules_collection[base_path]
                 if resolved_base.is_alias:
@@ -1510,7 +1470,7 @@ class Function(Object):
         self,
         *args: Any,
         parameters: Parameters | None = None,
-        returns: str | Name | Expression | None = None,
+        returns: str | Expr | None = None,
         decorators: list[Decorator] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1525,14 +1485,14 @@ class Function(Object):
         """
         super().__init__(*args, **kwargs)
         self.parameters: Parameters = parameters or Parameters()
-        self.returns: str | Name | Expression | None = returns
+        self.returns: str | Expr | None = returns
         self.decorators: list[Decorator] = decorators or []
         self.setter: Function | None = None
         self.deleter: Function | None = None
         self.overloads: list[Function] | None = None
 
     @property
-    def annotation(self) -> str | Name | Expression | None:
+    def annotation(self) -> str | Expr | None:
         """Return the return annotation.
 
         Returns:
@@ -1564,8 +1524,8 @@ class Attribute(Object):
     def __init__(
         self,
         *args: Any,
-        value: str | Name | Expression | None = None,
-        annotation: str | Name | Expression | None = None,
+        value: str | Expr | None = None,
+        annotation: str | Expr | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the function.
@@ -1577,8 +1537,8 @@ class Attribute(Object):
             **kwargs: See [`griffe.dataclasses.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.value: str | Name | Expression | None = value
-        self.annotation: str | Name | Expression | None = annotation
+        self.value: str | Expr | None = value
+        self.annotation: str | Expr | None = annotation
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.

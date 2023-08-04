@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import contextlib
-import enum
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
 from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
+from griffe.enumerations import BreakageKind, ExplanationStyle
 from griffe.exceptions import AliasResolutionError
 from griffe.git import WORKTREE_PREFIX
 from griffe.logger import get_logger
@@ -20,30 +20,6 @@ POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKin
 VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
 
 logger = get_logger(__name__)
-
-
-class ExplanationStyle(enum.Enum):
-    """An enumeration of the possible styles for explanations."""
-
-    ONE_LINE: str = "oneline"
-    VERBOSE: str = "verbose"
-
-
-class BreakageKind(enum.Enum):
-    """An enumeration of the possible breakages."""
-
-    PARAMETER_MOVED: str = "Positional parameter was moved"
-    PARAMETER_REMOVED: str = "Parameter was removed"
-    PARAMETER_CHANGED_KIND: str = "Parameter kind was changed"
-    PARAMETER_CHANGED_DEFAULT: str = "Parameter default was changed"
-    PARAMETER_CHANGED_REQUIRED: str = "Parameter is now required"
-    PARAMETER_ADDED_REQUIRED: str = "Parameter was added as required"
-    RETURN_CHANGED_TYPE: str = "Return types are incompatible"
-    OBJECT_REMOVED: str = "Public object was removed"
-    OBJECT_CHANGED_KIND: str = "Public object points to a different kind of object"
-    ATTRIBUTE_CHANGED_TYPE: str = "Attribute types are incompatible"
-    ATTRIBUTE_CHANGED_VALUE: str = "Attribute value was changed"
-    CLASS_REMOVED_BASE: str = "Base class was removed"
 
 
 class Breakage:
@@ -336,10 +312,10 @@ class ClassRemovedBaseBreakage(Breakage):
     kind: BreakageKind = BreakageKind.CLASS_REMOVED_BASE
 
     def _format_old_value(self) -> str:
-        return "[" + ", ".join(base.full for base in self.old_value) + "]"
+        return "[" + ", ".join(base.canonical_path for base in self.old_value) + "]"
 
     def _format_new_value(self) -> str:
-        return "[" + ", ".join(base.full for base in self.new_value) + "]"
+        return "[" + ", ".join(base.canonical_path for base in self.new_value) + "]"
 
 
 # TODO: decorators!

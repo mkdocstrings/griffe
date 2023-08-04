@@ -9,7 +9,7 @@ from ast import PyCF_ONLY_AST
 import pytest
 
 from griffe.agents.nodes import get_value, relative_to_absolute
-from griffe.expressions import Expression, Name
+from griffe.expressions import Expr, ExprName
 from griffe.tests import module_vtree, temporary_visited_module
 
 syntax_examples = [
@@ -56,9 +56,9 @@ syntax_examples = [
     "f'a {round(key, 2)} {z}'",
     # slices
     "o[x]",
-    "o[x,y]",
+    "o[x, y]",
     "o[x:y]",
-    "o[x:y,z]",
+    "o[x:y, z]",
     "o[x, y(z)]",
     # walrus operator
     "a if (a := b) else c",
@@ -155,18 +155,6 @@ def test_building_expressions_from_nodes(code: str) -> None:
         assert value == code.replace(", ", ",")
 
 
-def _flat(expression: str | Name | Expression) -> list[str | Name]:
-    if not isinstance(expression, Expression):
-        return [expression]
-    items = []
-    for item in expression:
-        if isinstance(item, Expression):
-            items.extend(_flat(item))
-        else:
-            items.append(item)
-    return items
-
-
 @pytest.mark.parametrize(
     ("code", "has_name"),
     [
@@ -186,13 +174,13 @@ def test_forward_references(code: str, has_name: bool) -> None:
         has_name: Whether the annotation should contain a Name rather than a string.
     """
     with temporary_visited_module(code) as module:
-        flat = _flat(module["a"].annotation)
+        annotation = module["a"].annotation
         if has_name:
-            assert any(isinstance(item, Name) and item.source == "A" for item in flat)
-            assert all(not (isinstance(item, str) and item == "A") for item in flat)
+            assert any(isinstance(item, ExprName) and item.name == "A" for item in annotation)
+            assert all(not (isinstance(item, str) and item == "A") for item in annotation)
         else:
-            assert any(isinstance(item, str) and item == "'A'" for item in flat)
-            assert all(not (isinstance(item, Name) and item.source == "A") for item in flat)
+            assert "A" in annotation
+            assert all(not (isinstance(item, ExprName) and item.name == "A") for item in annotation)
 
 
 @pytest.mark.parametrize(
@@ -268,10 +256,10 @@ def test_parsing_complex_string_annotations() -> None:
         """,
     ) as module:
         init_args_annotation = module["ArgsKwargs.__init__"].parameters["args"].annotation
-        assert isinstance(init_args_annotation, Expression)
+        assert isinstance(init_args_annotation, Expr)
         assert init_args_annotation.is_tuple
         kwargs_return_annotation = module["ArgsKwargs.kwargs"].annotation
-        assert isinstance(kwargs_return_annotation, Expression)
+        assert isinstance(kwargs_return_annotation, Expr)
 
 
 def test_parsing_dynamic_base_classes(caplog: pytest.LogCaptureFixture) -> None:

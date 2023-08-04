@@ -66,13 +66,14 @@ from griffe.docstrings.dataclasses import (
     DocstringYield,
 )
 from griffe.docstrings.utils import parse_annotation, warning
-from griffe.expressions import Expression, Name
+from griffe.expressions import ExprName
 from griffe.logger import LogLevel
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern
 
     from griffe.dataclasses import Docstring
+    from griffe.expressions import Expr
 
 
 _warn = warning(__name__)
@@ -245,7 +246,7 @@ def _read_parameters(
     **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
     parameters = []
-    annotation: str | Name | Expression | None
+    annotation: str | Expr | None
 
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
@@ -396,18 +397,18 @@ def _read_returns_section(
                     raise ValueError
                 if len(items) > 1:
                     if annotation.is_tuple:
-                        annotation = annotation.tuple_item(index)
+                        annotation = annotation.slice.elements[index]
                     else:
                         if annotation.is_iterator:
-                            return_item = annotation.iterator_item()
+                            return_item = annotation.slice
                         elif annotation.is_generator:
-                            _, _, return_item = annotation.generator_items()
+                            return_item = annotation.slice.elements[2]
                         else:
                             raise ValueError
-                        if isinstance(return_item, Name):
+                        if isinstance(return_item, ExprName):
                             annotation = return_item
                         elif return_item.is_tuple:
-                            annotation = return_item.tuple_item(index)
+                            annotation = return_item.slice.elements[index]
                         else:
                             annotation = return_item
         else:
@@ -447,15 +448,15 @@ def _read_yields_section(
             with suppress(AttributeError, KeyError, ValueError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
                 if annotation.is_iterator:
-                    yield_item = annotation.iterator_item()
+                    yield_item = annotation.slice
                 elif annotation.is_generator:
-                    yield_item, _, _ = annotation.generator_items()
+                    yield_item = annotation.slice.elements[0]
                 else:
                     raise ValueError
-                if isinstance(yield_item, Name):
+                if isinstance(yield_item, ExprName):
                     annotation = yield_item
                 elif yield_item.is_tuple:
-                    annotation = yield_item.tuple_item(index)
+                    annotation = yield_item.slice.elements[index]
                 else:
                     annotation = yield_item
         else:
@@ -495,11 +496,11 @@ def _read_receives_section(
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
                 if annotation.is_generator:
-                    _, receives_item, _ = annotation.generator_items()
-                    if isinstance(receives_item, Name):
+                    receives_item = annotation.slice.elements[1]
+                    if isinstance(receives_item, ExprName):
                         annotation = receives_item
                     elif receives_item.is_tuple:
-                        annotation = receives_item.tuple_item(index)
+                        annotation = receives_item.slice.elements[index]
                     else:
                         annotation = receives_item
         else:
@@ -569,7 +570,7 @@ def _read_attributes_section(
         _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
         return None, new_offset
 
-    annotation: str | Name | Expression | None
+    annotation: str | Expr | None
     attributes = []
     for item in items:
         name_type = item[0]

@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-import enum
 from typing import TYPE_CHECKING
+
+from griffe.enumerations import DocstringSectionKind
 
 if TYPE_CHECKING:
     from typing import Any, Literal
 
-    from griffe.dataclasses import Expression, Name
+    from griffe.expressions import Expr
 
 
 # Elements -----------------------------------------------
@@ -20,7 +21,7 @@ class DocstringElement:
         description: The element description.
     """
 
-    def __init__(self, *, description: str, annotation: str | Name | Expression | None = None) -> None:
+    def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
         """Initialize the element.
 
         Parameters:
@@ -28,7 +29,7 @@ class DocstringElement:
             description: The element description.
         """
         self.description: str = description
-        self.annotation: str | Name | Expression | None = annotation
+        self.annotation: str | Expr | None = annotation
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this element's data as a dictionary.
@@ -58,7 +59,7 @@ class DocstringNamedElement(DocstringElement):
         name: str,
         *,
         description: str,
-        annotation: str | Name | Expression | None = None,
+        annotation: str | Expr | None = None,
         value: str | None = None,
     ) -> None:
         """Initialize the element.
@@ -92,7 +93,7 @@ class DocstringAdmonition(DocstringElement):
     """This class represents an admonition."""
 
     @property
-    def kind(self) -> str | Name | Expression | None:
+    def kind(self) -> str | Expr | None:
         """Return the kind of this admonition.
 
         Returns:
@@ -101,7 +102,7 @@ class DocstringAdmonition(DocstringElement):
         return self.annotation
 
     @kind.setter
-    def kind(self, value: str | Name | Expression) -> None:
+    def kind(self, value: str | Expr) -> None:
         self.annotation = value
 
     @property
@@ -177,23 +178,6 @@ class DocstringAttribute(DocstringNamedElement):
 
 
 # Sections -----------------------------------------------
-class DocstringSectionKind(enum.Enum):
-    """The possible section kinds."""
-
-    text = "text"
-    parameters = "parameters"
-    other_parameters = "other parameters"
-    raises = "raises"
-    warns = "warns"
-    returns = "returns"
-    yields = "yields"
-    receives = "receives"
-    examples = "examples"
-    attributes = "attributes"
-    deprecated = "deprecated"
-    admonition = "admonition"
-
-
 class DocstringSection:
     """This class represents a docstring section."""
 

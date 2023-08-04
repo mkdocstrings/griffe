@@ -8,7 +8,6 @@ from pathlib import Path
 import pytest
 
 from griffe.agents.inspector import inspect
-from griffe.expressions import Name
 from griffe.tests import temporary_inspected_module, temporary_pypackage
 
 
@@ -17,8 +16,8 @@ def test_annotations_from_builtin_types() -> None:
     with temporary_inspected_module("def func(a: int) -> str: pass") as module:
         func = module["func"]
         assert func.parameters[0].name == "a"
-        assert func.parameters[0].annotation == Name("int", full="int")
-        assert func.returns == Name("str", full="str")
+        assert func.parameters[0].annotation.name == "int"
+        assert func.returns.name == "str"
 
 
 def test_annotations_from_classes() -> None:
@@ -26,8 +25,12 @@ def test_annotations_from_classes() -> None:
     with temporary_inspected_module("class A: pass\ndef func(a: A) -> A: pass") as module:
         func = module["func"]
         assert func.parameters[0].name == "a"
-        assert func.parameters[0].annotation == Name("A", full=f"{module.name}.A")
-        assert func.returns == Name("A", full=f"{module.name}.A")
+        param = func.parameters[0].annotation
+        assert param.name == "A"
+        assert param.canonical_path == f"{module.name}.A"
+        returns = func.returns
+        assert returns.name == "A"
+        assert returns.canonical_path == f"{module.name}.A"
 
 
 def test_class_level_imports() -> None:
@@ -41,7 +44,9 @@ def test_class_level_imports() -> None:
         """,
     ) as module:
         method = module["A.method"]
-        assert method.parameters["p"].annotation == Name("StringIO", full="io.StringIO")
+        name = method.parameters["p"].annotation
+        assert name.name == "StringIO"
+        assert name.canonical_path == "io.StringIO"
 
 
 def test_missing_dependency() -> None:

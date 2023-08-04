@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import enum
 import os
 import sys
 import warnings
@@ -12,6 +11,7 @@ from inspect import isclass
 from typing import TYPE_CHECKING, Any, Sequence, Union
 
 from griffe.agents.nodes import ast_children, ast_kind
+from griffe.enumerations import When
 from griffe.exceptions import ExtensionNotLoadedError
 from griffe.importer import dynamic_import
 
@@ -23,22 +23,6 @@ if TYPE_CHECKING:
     from griffe.agents.nodes import ObjectNode
     from griffe.agents.visitor import Visitor
     from griffe.dataclasses import Attribute, Class, Function, Module, Object
-
-
-class When(enum.Enum):
-    """This enumeration contains the different times at which an extension is used.
-
-    Attributes:
-        before_all: For each node, before the visit/inspection.
-        before_children: For each node, after the visit has started, and before the children visit/inspection.
-        after_children: For each node, after the children have been visited/inspected, and before finishing the visit/inspection.
-        after_all: For each node, after the visit/inspection.
-    """
-
-    before_all: int = 1
-    before_children: int = 2
-    after_children: int = 3
-    after_all: int = 4
 
 
 class VisitorExtension:

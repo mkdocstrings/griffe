@@ -26,13 +26,12 @@ def test_minimal_data_is_enough() -> None:
     assert reloaded.as_json(full=False) == minimal
     assert reloaded.as_json(full=True) == full
 
-    # also works (but will result in a different type hint)
+    # Also works (but will result in a different type hint).
     assert Object.from_json(minimal)
 
     # Won't work if the JSON doesn't represent the type requested.
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match="provided JSON object is not of type"):
         Function.from_json(minimal)
-    assert "provided JSON object is not of type" in str(err.value)
 
 
 # use this function in test_json_schema to ease schema debugging

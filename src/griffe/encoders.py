@@ -11,6 +11,7 @@ import json
 from pathlib import Path, PosixPath, WindowsPath
 from typing import TYPE_CHECKING, Any, Callable
 
+from griffe import expressions
 from griffe.dataclasses import (
     Alias,
     Attribute,
@@ -26,7 +27,6 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.docstrings.dataclasses import DocstringSectionKind
-from griffe.expressions import Expression, Name
 
 if TYPE_CHECKING:
     from enum import Enum
@@ -116,32 +116,64 @@ def _load_decorators(obj_dict: dict) -> list[Decorator]:
     return [Decorator(**dec) for dec in obj_dict.get("decorators", [])]
 
 
-_annotation_loader_map = {
-    str: lambda _: _,
-    dict: lambda dct: Name(dct["source"], dct["full"]),
-    list: lambda lst: Expression(*[_load_annotation(_) for _ in lst]),
-}
-
-
-def _load_annotation(annotation: str | dict | list) -> str | Name | Expression:
-    if annotation is None:
-        return None
-    return _annotation_loader_map[type(annotation)](annotation)
+def _load_expression(expression: dict) -> expressions.Expr:
+    cls = getattr(expressions, expression.pop("cls"))
+    expr = cls(**expression)
+    if cls is expressions.ExprAttribute:
+        previous = None
+        for value in expr.values:
+            if previous is not None:
+                value.parent = previous
+            if isinstance(value, expressions.ExprName):
+                previous = value
+    return expr
 
 
 def _load_parameter(obj_dict: dict[str, Any]) -> Parameter:
     return Parameter(
         obj_dict["name"],
-        annotation=_load_annotation(obj_dict["annotation"]),
+        annotation=obj_dict["annotation"],
         kind=ParameterKind(obj_dict["kind"]),
         default=obj_dict["default"],
     )
+
+
+def _attach_parent_to_expr(expr: expressions.Expr | str | None, parent: Module | Class) -> None:
+    if not isinstance(expr, expressions.Expr):
+        return
+    for elem in expr:
+        if isinstance(elem, expressions.ExprName):
+            elem.parent = parent
+        elif isinstance(elem, expressions.ExprAttribute) and isinstance(elem.first, expressions.ExprName):
+            elem.first.parent = parent
+
+
+def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | Class) -> None:
+    if isinstance(obj, Class):
+        if obj.docstring:
+            _attach_parent_to_expr(obj.docstring.value, parent)
+        for decorator in obj.decorators:
+            _attach_parent_to_expr(decorator.value, parent)
+    elif isinstance(obj, Function):
+        if obj.docstring:
+            _attach_parent_to_expr(obj.docstring.value, parent)
+        for decorator in obj.decorators:
+            _attach_parent_to_expr(decorator.value, parent)
+        for param in obj.parameters:
+            _attach_parent_to_expr(param.annotation, parent)
+            _attach_parent_to_expr(param.default, parent)
+        _attach_parent_to_expr(obj.returns, parent)
+    elif isinstance(obj, Attribute):
+        if obj.docstring:
+            _attach_parent_to_expr(obj.docstring.value, parent)
+        _attach_parent_to_expr(obj.value, parent)
 
 
 def _load_module(obj_dict: dict[str, Any]) -> Module:
     module = Module(name=obj_dict["name"], filepath=Path(obj_dict["filepath"]), docstring=_load_docstring(obj_dict))
     for module_member in obj_dict.get("members", []):
         module.set_member(module_member.name, module_member)
+        _attach_parent_to_exprs(module_member, module)
     module.labels |= set(obj_dict.get("labels", ()))
     return module
 
@@ -153,11 +185,13 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         endlineno=obj_dict.get("endlineno", None),
         docstring=_load_docstring(obj_dict),
         decorators=_load_decorators(obj_dict),
-        bases=[_load_annotation(_) for _ in obj_dict["bases"]],
+        bases=obj_dict["bases"],
     )
     for class_member in obj_dict.get("members", []):
         class_.set_member(class_member.name, class_member)
+        _attach_parent_to_exprs(class_member, class_)
     class_.labels |= set(obj_dict.get("labels", ()))
+    _attach_parent_to_exprs(class_, class_)
     return class_
 
 
@@ -165,7 +199,7 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
     function = Function(
         name=obj_dict["name"],
         parameters=Parameters(*obj_dict["parameters"]),
-        returns=_load_annotation(obj_dict["returns"]),
+        returns=obj_dict["returns"],
         decorators=_load_decorators(obj_dict),
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno", None),
@@ -182,7 +216,7 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
         endlineno=obj_dict.get("endlineno", None),
         docstring=_load_docstring(obj_dict),
         value=obj_dict.get("value", None),
-        annotation=_load_annotation(obj_dict.get("annotation", None)),
+        annotation=obj_dict.get("annotation", None),
     )
     attribute.labels |= set(obj_dict.get("labels", ()))
     return attribute
@@ -206,7 +240,7 @@ _loader_map: dict[Kind, Callable[[dict[str, Any]], Module | Class | Function | A
 }
 
 
-def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | Parameter:
+def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | Parameter | str | expressions.Expr:
     """Decode dictionaries as data classes.
 
     The [`json.loads`][] method walks the tree from bottom to top.
@@ -222,6 +256,8 @@ def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | 
     Returns:
         An instance of a data class.
     """
+    if "cls" in obj_dict:
+        return _load_expression(obj_dict)
     if "kind" in obj_dict:
         try:
             kind = Kind(obj_dict["kind"])

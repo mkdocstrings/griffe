@@ -10,7 +10,7 @@ import pytest
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.docstrings.dataclasses import DocstringSectionKind
 from griffe.docstrings.utils import parse_annotation
-from griffe.expressions import Name
+from griffe.expressions import ExprName
 
 if TYPE_CHECKING:
     from tests.test_docstrings.helpers import ParserType
@@ -580,19 +580,19 @@ def test_parse_types_in_docstring(parse_google: ParserType) -> None:
     (returns,) = sections[2].value
 
     assert argx.name == "x"
-    assert argx.annotation.source == "int"
-    assert argx.annotation.full == "int"
+    assert argx.annotation.name == "int"
+    assert argx.annotation.canonical_path == "int"
     assert argx.description == "X value."
     assert argx.value is None
 
     assert argy.name == "y"
-    assert argy.annotation.source == "int"
-    assert argy.annotation.full == "int"
+    assert argy.annotation.name == "int"
+    assert argy.annotation.canonical_path == "int"
     assert argy.description == "Y value."
     assert argy.value is None
 
-    assert returns.annotation.source == "int"
-    assert returns.annotation.full == "int"
+    assert returns.annotation.name == "int"
+    assert returns.annotation.canonical_path == "int"
     assert returns.description == "Sum X + Y + Z."
 
 
@@ -632,20 +632,20 @@ def test_parse_optional_type_in_docstring(parse_google: ParserType) -> None:
     (argz,) = sections[1].value
 
     assert argx.name == "x"
-    assert argx.annotation.source == "int"
-    assert argx.annotation.full == "int"
+    assert argx.annotation.name == "int"
+    assert argx.annotation.canonical_path == "int"
     assert argx.description == "X value."
     assert argx.value == "1"
 
     assert argy.name == "y"
-    assert argy.annotation.source == "int"
-    assert argy.annotation.full == "int"
+    assert argy.annotation.name == "int"
+    assert argy.annotation.canonical_path == "int"
     assert argy.description == "Y value."
     assert argy.value == "None"
 
     assert argz.name == "z"
-    assert argz.annotation.source == "int"
-    assert argz.annotation.full == "int"
+    assert argz.annotation.name == "int"
+    assert argz.annotation.canonical_path == "int"
     assert argz.description == "Z value."
     assert argz.value == "None"
 
@@ -690,17 +690,17 @@ def test_prefer_docstring_types_over_annotations(parse_google: ParserType) -> No
     (returns,) = sections[2].value
 
     assert argx.name == "x"
-    assert argx.annotation.source == "str"
-    assert argx.annotation.full == "str"
+    assert argx.annotation.name == "str"
+    assert argx.annotation.canonical_path == "str"
     assert argx.description == "X value."
 
     assert argy.name == "y"
-    assert argy.annotation.source == "str"
-    assert argy.annotation.full == "str"
+    assert argy.annotation.name == "str"
+    assert argy.annotation.canonical_path == "str"
     assert argy.description == "Y value."
 
-    assert returns.annotation.source == "str"
-    assert returns.annotation.full == "str"
+    assert returns.annotation.name == "str"
+    assert returns.annotation.canonical_path == "str"
     assert returns.description == "Sum X + Y + Z."
 
 
@@ -885,14 +885,14 @@ def test_retrieve_attributes_annotation_from_parent(parse_google: ParserType) ->
             b: Whatever.
     """
     parent = Class("cls")
-    parent["a"] = Attribute("a", annotation=Name("int", "int"))
-    parent["b"] = Attribute("b", annotation=Name("str", "str"))
+    parent["a"] = Attribute("a", annotation=ExprName("int"))
+    parent["b"] = Attribute("b", annotation=ExprName("str"))
     sections, _ = parse_google(docstring, parent=parent)
     attributes = sections[1].value
     assert attributes[0].name == "a"
-    assert attributes[0].annotation.source == "int"
+    assert attributes[0].annotation.name == "int"
     assert attributes[1].name == "b"
-    assert attributes[1].annotation.source == "str"
+    assert attributes[1].annotation.name == "str"
 
 
 # =============================================================================================
@@ -947,9 +947,9 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_google: ParserType, r
     )
     yields = sections[1].value
     assert yields[0].name == "a"
-    assert yields[0].annotation.source == "int"
+    assert yields[0].annotation.name == "int"
     assert yields[1].name == "b"
-    assert yields[1].annotation.source == "float"
+    assert yields[1].annotation.name == "float"
 
 
 @pytest.mark.parametrize(
@@ -980,7 +980,7 @@ def test_extract_yielded_type_with_single_return_item(parse_google: ParserType, 
         ),
     )
     yields = sections[1].value
-    assert yields[0].annotation.source == "int"
+    assert yields[0].annotation.name == "int"
 
 
 # =============================================================================================
@@ -1007,9 +1007,9 @@ def test_parse_receives_tuple_in_generator(parse_google: ParserType) -> None:
     )
     receives = sections[1].value
     assert receives[0].name == "a"
-    assert receives[0].annotation.source == "int"
+    assert receives[0].annotation.name == "int"
     assert receives[1].name == "b"
-    assert receives[1].annotation.source == "float"
+    assert receives[1].annotation.name == "float"
 
 
 @pytest.mark.parametrize(
@@ -1039,7 +1039,7 @@ def test_extract_received_type_with_single_return_item(parse_google: ParserType,
         ),
     )
     receives = sections[1].value
-    assert receives[0].annotation.source == "float"
+    assert receives[0].annotation.name == "float"
 
 
 # =============================================================================================
@@ -1066,9 +1066,9 @@ def test_parse_returns_tuple_in_generator(parse_google: ParserType) -> None:
     )
     returns = sections[1].value
     assert returns[0].name == "a"
-    assert returns[0].annotation.source == "int"
+    assert returns[0].annotation.name == "int"
     assert returns[1].name == "b"
-    assert returns[1].annotation.source == "float"
+    assert returns[1].annotation.name == "float"
 
 
 # =============================================================================================

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from griffe.agents.nodes._expressions import safe_get_expression
+from griffe.expressions import safe_get_expression
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from ast import Call
+    import ast
 
     from griffe.dataclasses import Class, Module
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def get_call_keyword_arguments(node: Call, parent: Module | Class) -> dict[str, Any]:
+def get_call_keyword_arguments(node: ast.Call, parent: Module | Class) -> dict[str, Any]:
     """Get the list of keyword argument names and values from a Call node.
 
     Parameters:
