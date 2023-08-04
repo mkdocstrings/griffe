@@ -247,7 +247,7 @@ class SerializationMixin:
             **kwargs: Additional serialization options passed to encoder.
 
         Returns:
-            A string.
+            A JSON string.
         """
         from griffe.encoders import JSONEncoder  # avoid circular import
 

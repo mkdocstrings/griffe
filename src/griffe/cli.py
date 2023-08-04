@@ -19,6 +19,8 @@ import logging
 import os
 import sys
 from datetime import datetime, timezone
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as get_dist_version
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
@@ -40,6 +42,13 @@ if TYPE_CHECKING:
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 logger = get_logger(__name__)
+
+
+def _get_griffe_version() -> str:
+    try:
+        return get_dist_version("griffe")
+    except PackageNotFoundError:
+        return "0.0.0"
 
 
 def _print_data(data: str, output_file: str | IO | None) -> None:
@@ -122,6 +131,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     global_options = parser.add_argument_group(title="Global options")
     global_options.add_argument("-h", "--help", action="help", help=main_help)
+    global_options.add_argument("-V", "--version", action="version", version="%(prog)s " + _get_griffe_version())
 
     def add_common_options(subparser: argparse.ArgumentParser) -> None:
         common_options = subparser.add_argument_group(title="Common options")
