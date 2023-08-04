@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from griffe.docstrings.parsers import Parser
-    from griffe.expressions import Expression, Name
+    from griffe.expressions import Expr
 
 
 empty = Signature.empty
@@ -405,7 +405,7 @@ class Inspector:
         """
         self.handle_attribute(node)
 
-    def handle_attribute(self, node: ObjectNode, annotation: str | Name | Expression | None = None) -> None:
+    def handle_attribute(self, node: ObjectNode, annotation: str | Expr | None = None) -> None:
         """Handle an attribute.
 
         Parameters:
@@ -478,7 +478,7 @@ def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) ->
     return Parameter(name, annotation=annotation, kind=kind, default=default)
 
 
-def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Name | Expression | None:
+def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Expr | None:
     # even when *we* import future annotations,
     # the object from which we get a signature
     # can come from modules which did *not* import them,

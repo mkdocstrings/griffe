@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+import ast
+
 import pytest
 
+from griffe.dataclasses import Module
 from griffe.docstrings.parsers import Parser
+from griffe.expressions import get_expression
 from griffe.tests import temporary_visited_module
+from tests.test_nodes import syntax_examples
 
 
 @pytest.mark.parametrize(
@@ -55,9 +60,7 @@ def test_full_expressions(annotation: str) -> None:
     """Assert we can transform expressions to their full form without errors."""
     code = f"x: {annotation}"
     with temporary_visited_module(code) as module:
-        obj = module["x"]
-        res = obj.annotation.full
-        assert res == "".join(annotation)
+        assert str(module["x"].annotation) == annotation
 
 
 def test_resolving_full_names() -> None:
@@ -71,5 +74,17 @@ def test_resolving_full_names() -> None:
         attribute2: mod.Class
         """,
     ) as module:
-        assert module["attribute1"].annotation.full == "package.module.Class"
-        assert module["attribute2"].annotation.full == "package.module.Class"
+        assert module["attribute1"].annotation.canonical_path == "package.module.Class"
+        assert module["attribute2"].annotation.canonical_path == "package.module.Class"
+
+
+@pytest.mark.parametrize("code", syntax_examples)
+def test_expressions(code: str) -> None:
+    """Test building annotations from AST nodes.
+
+    Parameters:
+        code: An expression (parametrized).
+    """
+    top_node = compile(code, filename="<>", mode="eval", flags=ast.PyCF_ONLY_AST, optimize=2)
+    expression = get_expression(top_node.body, parent=Module("module"))  # type: ignore[attr-defined]
+    assert str(expression) == code

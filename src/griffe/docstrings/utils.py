@@ -11,7 +11,7 @@ from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
-    from griffe.expressions import Expression, Name
+    from griffe.expressions import Expr
 
 
 def warning(name: str) -> Callable[[Docstring, int, str], None]:
@@ -46,7 +46,7 @@ def parse_annotation(
     annotation: str,
     docstring: Docstring,
     log_level: LogLevel = LogLevel.error,
-) -> str | Name | Expression:
+) -> str | Expr:
     """Parse a string into a true name or expression that can be resolved later.
 
     Parameters:

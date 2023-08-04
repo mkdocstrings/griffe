@@ -339,41 +339,9 @@
     }
   ],
   "$defs": {
-    "name": {
-      "type": "object",
-      "properties": {
-        "source": {
-          "title": "The annotation as written in the source code.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.expressions.Name",
-          "type": "string"
-        },
-        "full": {
-          "title": "The full path of the .",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.expressions.Name",
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "required": [
-        "source",
-        "full"
-      ]
-    },
     "expression": {
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {
-            "type": "string"
-          },
-          {
-            "$ref": "#/$defs/name"
-          },
-          {
-            "$ref": "#/$defs/expression"
-          }
-        ]
-      }
+      "type": "object",
+      "additionalProperties": true
     },
     "annotation": {
       "oneOf": [
@@ -382,9 +350,6 @@
         },
         {
           "type": "string"
-        },
-        {
-          "$ref": "#/$defs/name"
         },
         {
           "$ref": "#/$defs/expression"

@@ -9,18 +9,10 @@ import pytest
 
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.docstrings.dataclasses import (
-    DocstringAttribute,
-    DocstringParameter,
-    DocstringRaise,
-    DocstringReceive,
-    DocstringReturn,
     DocstringSectionKind,
-    DocstringWarn,
-    DocstringYield,
 )
 from griffe.docstrings.utils import parse_annotation
-from griffe.expressions import Name
-from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
+from griffe.expressions import ExprName
 
 if TYPE_CHECKING:
     from tests.test_docstrings.helpers import ParserType
@@ -146,7 +138,10 @@ def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
         parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))),
     )
     assert len(sections) == 1
-    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation=Name("int", "int")))
+    param = sections[0].value[0]
+    assert param.name == "a"
+    assert param.description == ""
+    assert param.annotation.name == "int"
 
 
 def test_parse_complex_annotations(parse_numpy: ParserType) -> None:
@@ -201,7 +196,7 @@ def test_parse_annotations_in_all_sections(parse_numpy: ParserType, docstring: s
     docstring = docstring.format(name=name)
     sections, _ = parse_numpy(docstring, parent=Function("f"))
     assert len(sections) == 1
-    assert sections[0].value[0].annotation == Name(name, name)
+    assert sections[0].value[0].annotation.name == name
 
 
 def test_dont_crash_on_text_annotations(parse_numpy: ParserType, caplog: pytest.LogCaptureFixture) -> None:
@@ -330,7 +325,10 @@ def test_retrieve_annotation_from_parent(parse_numpy: ParserType) -> None:
         parent=Function("func", parameters=Parameters(Parameter("a", annotation="str"))),
     )
     assert len(sections) == 1
-    assert_parameter_equal(sections[0].value[0], DocstringParameter("a", description="", annotation="str"))
+    param = sections[0].value[0]
+    assert param.name == "a"
+    assert param.description == ""
+    assert param.annotation == "str"
 
 
 def test_deprecated_section(parse_numpy: ParserType) -> None:
@@ -377,29 +375,31 @@ def test_returns_section(parse_numpy: ParserType) -> None:
 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
-    assert_element_equal(
-        sections[0].value[0],
-        DocstringReturn(name="", annotation="list of int", description="A list of integers."),
-    )
-    assert_element_equal(
-        sections[0].value[1],
-        DocstringReturn(name="flag", annotation="bool", description="Some kind\nof flag."),
-    )
 
-    assert_element_equal(
-        sections[0].value[2],
-        DocstringReturn(name="x", annotation=None, description="Name only"),
-    )
+    param = sections[0].value[0]
+    assert param.name == ""
+    assert param.description == "A list of integers."
+    assert param.annotation == "list of int"
 
-    assert_element_equal(
-        sections[0].value[3],
-        DocstringReturn(name="", annotation=None, description="No name or annotation"),
-    )
+    param = sections[0].value[1]
+    assert param.name == "flag"
+    assert param.description == "Some kind\nof flag."
+    assert param.annotation == "bool"
 
-    assert_element_equal(
-        sections[0].value[4],
-        DocstringReturn(name="", annotation="int", description="Only annotation"),
-    )
+    param = sections[0].value[2]
+    assert param.name == "x"
+    assert param.description == "Name only"
+    assert param.annotation is None
+
+    param = sections[0].value[3]
+    assert param.name == ""
+    assert param.description == "No name or annotation"
+    assert param.annotation is None
+
+    param = sections[0].value[4]
+    assert param.name == ""
+    assert param.description == "Only annotation"
+    assert param.annotation == "int"
 
 
 def test_yields_section(parse_numpy: ParserType) -> None:
@@ -420,14 +420,15 @@ def test_yields_section(parse_numpy: ParserType) -> None:
 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
-    assert_element_equal(
-        sections[0].value[0],
-        DocstringYield(name="", annotation="list of int", description="A list of integers."),
-    )
-    assert_element_equal(
-        sections[0].value[1],
-        DocstringYield(name="flag", annotation="bool", description="Some kind\nof flag."),
-    )
+    param = sections[0].value[0]
+    assert param.name == ""
+    assert param.description == "A list of integers."
+    assert param.annotation == "list of int"
+
+    param = sections[0].value[1]
+    assert param.name == "flag"
+    assert param.description == "Some kind\nof flag."
+    assert param.annotation == "bool"
 
 
 def test_receives_section(parse_numpy: ParserType) -> None:
@@ -448,14 +449,14 @@ def test_receives_section(parse_numpy: ParserType) -> None:
 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
-    assert_element_equal(
-        sections[0].value[0],
-        DocstringReceive(name="", annotation="list of int", description="A list of integers."),
-    )
-    assert_element_equal(
-        sections[0].value[1],
-        DocstringReceive(name="flag", annotation="bool", description="Some kind\nof flag."),
-    )
+    param = sections[0].value[0]
+    assert param.name == ""
+    assert param.description == "A list of integers."
+    assert param.annotation == "list of int"
+    param = sections[0].value[1]
+    assert param.name == "flag"
+    assert param.description == "Some kind\nof flag."
+    assert param.annotation == "bool"
 
 
 def test_raises_section(parse_numpy: ParserType) -> None:
@@ -473,10 +474,9 @@ def test_raises_section(parse_numpy: ParserType) -> None:
 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
-    assert_element_equal(
-        sections[0].value[0],
-        DocstringRaise(annotation="RuntimeError", description="There was an issue."),
-    )
+    param = sections[0].value[0]
+    assert param.description == "There was an issue."
+    assert param.annotation == "RuntimeError"
 
 
 def test_warns_section(parse_numpy: ParserType) -> None:
@@ -494,7 +494,9 @@ def test_warns_section(parse_numpy: ParserType) -> None:
 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
-    assert_element_equal(sections[0].value[0], DocstringWarn(annotation="ResourceWarning", description="Heads up."))
+    param = sections[0].value[0]
+    assert param.description == "Heads up."
+    assert param.annotation == "ResourceWarning"
 
 
 def test_attributes_section(parse_numpy: ParserType) -> None:
@@ -515,9 +517,20 @@ def test_attributes_section(parse_numpy: ParserType) -> None:
 
     sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
-    assert_attribute_equal(sections[0].value[0], DocstringAttribute(name="a", annotation=None, description="Hello."))
-    assert_attribute_equal(sections[0].value[1], DocstringAttribute(name="m", annotation=None, description=""))
-    assert_attribute_equal(sections[0].value[2], DocstringAttribute(name="z", annotation="int", description="Bye."))
+    param = sections[0].value[0]
+    assert param.name == "a"
+    assert param.description == "Hello."
+    assert param.annotation is None
+
+    param = sections[0].value[1]
+    assert param.name == "m"
+    assert param.description == ""
+    assert param.annotation is None
+
+    param = sections[0].value[2]
+    assert param.name == "z"
+    assert param.description == "Bye."
+    assert param.annotation == "int"
 
 
 def test_examples_section(parse_numpy: ParserType) -> None:
@@ -624,14 +637,14 @@ def test_retrieve_attributes_annotation_from_parent(parse_numpy: ParserType) -> 
             Whatever.
     """
     parent = Class("cls")
-    parent["a"] = Attribute("a", annotation=Name("int", "int"))
-    parent["b"] = Attribute("b", annotation=Name("str", "str"))
+    parent["a"] = Attribute("a", annotation=ExprName("int"))
+    parent["b"] = Attribute("b", annotation=ExprName("str"))
     sections, _ = parse_numpy(docstring, parent=parent)
     attributes = sections[1].value
     assert attributes[0].name == "a"
-    assert attributes[0].annotation.source == "int"
+    assert attributes[0].annotation.name == "int"
     assert attributes[1].name == "b"
-    assert attributes[1].annotation.source == "str"
+    assert attributes[1].annotation.name == "str"
 
 
 # =============================================================================================
@@ -792,9 +805,9 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_numpy: ParserType, re
     )
     yields = sections[1].value
     assert yields[0].name == "a"
-    assert yields[0].annotation.source == "int"
+    assert yields[0].annotation.name == "int"
     assert yields[1].name == "b"
-    assert yields[1].annotation.source == "float"
+    assert yields[1].annotation.name == "float"
 
 
 @pytest.mark.parametrize(
@@ -827,7 +840,7 @@ def test_extract_yielded_type_with_single_return_item(parse_numpy: ParserType, r
         ),
     )
     yields = sections[1].value
-    assert yields[0].annotation.source == "int"
+    assert yields[0].annotation.name == "int"
 
 
 # =============================================================================================
@@ -857,9 +870,9 @@ def test_parse_receives_tuple_in_generator(parse_numpy: ParserType) -> None:
     )
     receives = sections[1].value
     assert receives[0].name == "a"
-    assert receives[0].annotation.source == "int"
+    assert receives[0].annotation.name == "int"
     assert receives[1].name == "b"
-    assert receives[1].annotation.source == "float"
+    assert receives[1].annotation.name == "float"
 
 
 @pytest.mark.parametrize(
@@ -891,7 +904,7 @@ def test_extract_received_type_with_single_return_item(parse_numpy: ParserType, 
         ),
     )
     receives = sections[1].value
-    assert receives[0].annotation.source == "float"
+    assert receives[0].annotation.name == "float"
 
 
 # =============================================================================================
@@ -921,9 +934,9 @@ def test_parse_returns_tuple_in_generator(parse_numpy: ParserType) -> None:
     )
     returns = sections[1].value
     assert returns[0].name == "a"
-    assert returns[0].annotation.source == "int"
+    assert returns[0].annotation.name == "int"
     assert returns[1].name == "b"
-    assert returns[1].annotation.source == "float"
+    assert returns[1].annotation.name == "float"
 
 
 # =============================================================================================

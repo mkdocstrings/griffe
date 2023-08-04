@@ -22,7 +22,7 @@ from griffe.agents.visitor import visit
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Kind, Module, Object
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
-from griffe.expressions import Name
+from griffe.expressions import ExprName
 from griffe.extensions import Extensions
 from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.logger import get_logger
@@ -191,12 +191,12 @@ class GriffeLoader:
             return
         expanded = set()
         for export in module.exports:
-            if isinstance(export, Name):
-                module_path = export.full.rsplit(".", 1)[0]  # remove trailing .__all__
+            if isinstance(export, ExprName):
+                module_path = export.canonical_path.rsplit(".", 1)[0]  # remove trailing .__all__
                 try:
                     next_module = self.modules_collection.get_member(module_path)
                 except KeyError:
-                    logger.debug(f"Cannot expand '{export.full}', try pre-loading corresponding package")
+                    logger.debug(f"Cannot expand '{export.canonical_path}', try pre-loading corresponding package")
                     continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)

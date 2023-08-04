@@ -15,7 +15,12 @@ from griffe.agents.nodes._ast import (
     ast_siblings,
 )
 from griffe.agents.nodes._docstrings import get_docstring
-from griffe.agents.nodes._expressions import (
+from griffe.agents.nodes._imports import relative_to_absolute
+from griffe.agents.nodes._names import get_instance_names, get_name, get_names
+from griffe.agents.nodes._parameters import get_call_keyword_arguments
+from griffe.agents.nodes._runtime import ObjectKind, ObjectNode
+from griffe.agents.nodes._values import get_value, safe_get_value
+from griffe.expressions import (
     get_annotation,
     get_base_class,
     get_condition,
@@ -25,11 +30,6 @@ from griffe.agents.nodes._expressions import (
     safe_get_condition,
     safe_get_expression,
 )
-from griffe.agents.nodes._imports import relative_to_absolute
-from griffe.agents.nodes._names import get_instance_names, get_name, get_names
-from griffe.agents.nodes._parameters import get_call_keyword_arguments
-from griffe.agents.nodes._runtime import ObjectKind, ObjectNode
-from griffe.agents.nodes._values import get_value, safe_get_value
 
 __all__ = [
     "ast_children",

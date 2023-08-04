@@ -105,14 +105,14 @@ def test_visit_function_variadic_params() -> None:
         assert len(function.parameters) == 3
         param = function.parameters[0]
         assert param.name == "args"
-        assert param.annotation.source == "str"
-        assert param.annotation.full == "str"
+        assert param.annotation.name == "str"
+        assert param.annotation.canonical_path == "str"
         param = function.parameters[1]
         assert param.annotation is None
         param = function.parameters[2]
         assert param.name == "kwargs"
-        assert param.annotation.source == "int"
-        assert param.annotation.full == "int"
+        assert param.annotation.name == "int"
+        assert param.annotation.canonical_path == "int"
 
 
 def test_visit_function_params_annotations() -> None:
@@ -132,11 +132,11 @@ def test_visit_function_params_annotations() -> None:
         function = module["f_annorations"]
         assert len(function.parameters) == 4
         param = function.parameters[0]
-        assert param.annotation.source == "str"
-        assert param.annotation.full == "str"
+        assert param.annotation.name == "str"
+        assert param.annotation.canonical_path == "str"
         param = function.parameters[1]
-        assert param.annotation.source == "Any"
-        assert param.annotation.full == "typing.Any"
+        assert param.annotation.name == "Any"
+        assert param.annotation.canonical_path == "typing.Any"
         param = function.parameters[2]
         assert str(param.annotation) == "typing.Optional[typing.List[int]]"
         param = function.parameters[3]

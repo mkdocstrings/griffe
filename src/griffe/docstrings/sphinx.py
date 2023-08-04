@@ -27,7 +27,7 @@ from griffe.docstrings.utils import warning
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Docstring
-    from griffe.expressions import Expression, Name
+    from griffe.expressions import Expr
 
 _warn = warning(__name__)
 
@@ -166,7 +166,7 @@ def _determine_param_annotation(
     # - "type" directive type
     # - signature annotation
     # - none
-    annotation: str | Name | Expression | None = None
+    annotation: str | Expr | None = None
 
     parsed_param_type = parsed_values.param_types.get(name)
     if parsed_param_type is not None:
@@ -220,7 +220,7 @@ def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValu
         _warn(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
         return parsed_directive.next_index
 
-    annotation: str | Name | Expression | None = None
+    annotation: str | Expr | None = None
 
     # Annotation precedence:
     # - "vartype" directive type
@@ -291,7 +291,7 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
     # - "rtype" directive type
     # - signature annotation
     # - None
-    annotation: str | Name | Expression | None
+    annotation: str | Expr | None
     if parsed_values.return_type is not None:
         annotation = parsed_values.return_type
     else:

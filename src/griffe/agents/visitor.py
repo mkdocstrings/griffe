@@ -25,7 +25,6 @@ from griffe.agents.nodes import (
     safe_get_annotation,
     safe_get_base_class,
     safe_get_condition,
-    safe_get_expression,
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import (
@@ -42,14 +41,13 @@ from griffe.dataclasses import (
     Parameters,
 )
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
-from griffe.expressions import Expression
+from griffe.expressions import Expr, safe_get_expression
 from griffe.extensions import Extensions
 
 if TYPE_CHECKING:
     from pathlib import Path
 
     from griffe.docstrings.parsers import Parser
-    from griffe.expressions import Name
 
 
 builtin_decorators = {
@@ -369,7 +367,7 @@ class Visitor:
 
         # handle parameters
         parameters = Parameters()
-        annotation: str | Name | Expression | None
+        annotation: str | Expr | None
 
         posonlyargs = node.args.posonlyargs
 
@@ -552,7 +550,7 @@ class Visitor:
     def handle_attribute(
         self,
         node: ast.Assign | ast.AnnAssign,
-        annotation: str | Name | Expression | None = None,
+        annotation: str | Expr | None = None,
     ) -> None:
         """Handle an attribute (assignment) node.
 
@@ -577,9 +575,9 @@ class Visitor:
             except KeyError:  # unsupported nodes, like subscript
                 return
 
-            if isinstance(annotation, Expression) and annotation.is_classvar:
+            if isinstance(annotation, Expr) and annotation.is_classvar:
                 # explicit classvar: class attribute only
-                annotation = annotation[2]
+                annotation = annotation.slice  # type: ignore[attr-defined]
                 labels.add("class-attribute")
             elif node.value:
                 # attribute assigned at class-level: available in instances as well

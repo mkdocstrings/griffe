@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import enum
 import inspect
 from functools import cached_property
 from inspect import getmodule
 from typing import Any, ClassVar, Sequence
 
+from griffe.enumerations import ObjectKind
 from griffe.logger import get_logger
 
 logger = get_logger(__name__)
@@ -18,40 +18,6 @@ _cyclic_relationships = {
     ("numpy.core._multiarray_umath", "numpy.core.multiarray"),
     ("pymmcore._pymmcore_swig", "pymmcore.pymmcore_swig"),
 }
-
-
-class ObjectKind(enum.Enum):
-    """Enumeration for the different kinds of objects."""
-
-    MODULE: str = "module"
-    """Modules."""
-    CLASS: str = "class"
-    """Classes."""
-    STATICMETHOD: str = "staticmethod"
-    """Static methods."""
-    CLASSMETHOD: str = "classmethod"
-    """Class methods."""
-    METHOD_DESCRIPTOR: str = "method_descriptor"
-    """Method descriptors."""
-    METHOD: str = "method"
-    """Methods."""
-    BUILTIN_METHOD: str = "builtin_method"
-    """Built-in ethods."""
-    COROUTINE: str = "coroutine"
-    """Coroutines"""
-    FUNCTION: str = "function"
-    """Functions."""
-    BUILTIN_FUNCTION: str = "builtin_function"
-    """Built-in functions."""
-    CACHED_PROPERTY: str = "cached_property"
-    """Cached properties."""
-    PROPERTY: str = "property"
-    """Properties."""
-    ATTRIBUTE: str = "attribute"
-    """Attributes."""
-
-    def __str__(self) -> str:
-        return self.value
 
 
 class ObjectNode:

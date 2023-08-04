@@ -6,7 +6,7 @@ import logging
 from textwrap import dedent
 from typing import TYPE_CHECKING
 
-from griffe.expressions import Name
+from griffe.expressions import ExprName
 from griffe.loader import GriffeLoader
 from griffe.tests import temporary_pyfile, temporary_pypackage
 
@@ -70,9 +70,9 @@ def test_dont_shortcut_alias_chain_after_expanding_wildcards() -> None:
         child = package["mod_a.Child"]
         assert child.bases
         base = child.bases[0]
-        assert isinstance(base, Name)
-        assert base.source == "Base"
-        assert base.full == "package.mod_b.Base"
+        assert isinstance(base, ExprName)
+        assert base.name == "Base"
+        assert base.canonical_path == "package.mod_b.Base"
 
 
 def test_dont_overwrite_lower_member_when_expanding_wildcard() -> None:
@@ -182,7 +182,7 @@ def test_load_from_both_py_and_pyi_files() -> None:
         assert "CONST" in mod.members
         const = mod["CONST"]
         assert const.value == "0"
-        assert const.annotation.source == "int"
+        assert const.annotation.name == "int"
 
         assert "Class" in mod.members
         class_ = mod["Class"]
@@ -190,7 +190,7 @@ def test_load_from_both_py_and_pyi_files() -> None:
         assert "class_attr" in class_.members
         class_attr = class_["class_attr"]
         assert class_attr.value == "True"
-        assert class_attr.annotation.source == "bool"
+        assert class_attr.annotation.name == "bool"
 
         assert "function1" in class_.members
         function1 = class_["function1"]
@@ -198,8 +198,8 @@ def test_load_from_both_py_and_pyi_files() -> None:
 
         assert "function2" in class_.members
         function2 = class_["function2"]
-        assert function2.returns.source == "float"
-        assert function2.parameters["arg1"].annotation.source == "float"
+        assert function2.returns.name == "float"
+        assert function2.parameters["arg1"].annotation.name == "float"
         assert function2.parameters["arg1"].default == "2.2"
 
 
