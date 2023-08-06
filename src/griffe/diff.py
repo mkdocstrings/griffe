@@ -66,10 +66,10 @@ class Breakage:
         self.details = details
 
     def __str__(self) -> str:
-        return f"{self.kind.value}"
+        return self.kind.value
 
     def __repr__(self) -> str:
-        return f"<{self.kind.name}>"
+        return self.kind.name
 
     def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this object's data as a dictionary.

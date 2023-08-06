@@ -373,7 +373,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             docstring.parent = self
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})>"
+        return f"{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})"
 
     def __bool__(self) -> bool:
         return True
@@ -860,7 +860,7 @@ class Alias(ObjectAliasMixin):
             self._update_target_aliases()
 
     def __repr__(self) -> str:
-        return f"<Alias({self.name!r}, {self.target_path!r})>"
+        return f"Alias({self.name!r}, {self.target_path!r})"
 
     def __getitem__(self, key: str | tuple[str, ...]):
         # not handled by __getattr__
@@ -1295,9 +1295,9 @@ class Module(Object):
 
     def __repr__(self) -> str:
         try:
-            return f"<Module({self.filepath!r})>"
+            return f"Module({self.filepath!r})"
         except BuiltinModuleError:
-            return f"<Module({self.name!r})>"
+            return f"Module({self.name!r})"
 
     @property
     def filepath(self) -> Path | list[Path]:
