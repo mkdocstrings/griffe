@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
-from griffe.docstrings.dataclasses import DocstringSectionKind
+from griffe.docstrings.dataclasses import DocstringReturn, DocstringSectionKind
 from griffe.docstrings.utils import parse_annotation
 from griffe.expressions import ExprName
 
@@ -1359,3 +1359,74 @@ def test_single_line_with_trailing_whitespace(parse_google: ParserType) -> None:
     assert len(sections) == 1
     assert sections[0].kind is DocstringSectionKind.text
     assert not warnings
+
+
+@pytest.mark.parametrize(
+    ("returns_multiple_items", "return_annotation", "expected"),
+    [
+        (
+            False,
+            None,
+            [DocstringReturn("", description="XXXXXXX\n    YYYYYYY\nZZZZZZZ", annotation=None)],
+        ),
+        (
+            False,
+            "tuple[int, int]",
+            [DocstringReturn("", description="XXXXXXX\n    YYYYYYY\nZZZZZZZ", annotation="tuple[int, int]")],
+        ),
+        (
+            True,
+            None,
+            [
+                DocstringReturn("", description="XXXXXXX\nYYYYYYY", annotation=None),
+                DocstringReturn("", description="ZZZZZZZ", annotation=None),
+            ],
+        ),
+        (
+            True,
+            "tuple[int,int]",
+            [
+                DocstringReturn("", description="XXXXXXX\nYYYYYYY", annotation="int"),
+                DocstringReturn("", description="ZZZZZZZ", annotation="int"),
+            ],
+        ),
+    ],
+)
+def test_parse_returns_multiple_items(
+    parse_google: ParserType,
+    returns_multiple_items: bool,
+    return_annotation: str,
+    expected: list[DocstringReturn],
+) -> None:
+    """Parse Returns section with and without multiple items.
+
+    Parameters:
+        parse_google: Fixture parser.
+        returns_multiple_items: Whether the `Returns` section has multiple items.
+        return_annotation: The return annotation of the function to parse.
+        expected: The expected value of the parsed Returns section.
+    """
+    parent = (
+        Function("func", returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))))
+        if return_annotation is not None
+        else None
+    )
+    docstring = """
+    Returns:
+        XXXXXXX
+            YYYYYYY
+        ZZZZZZZ
+"""
+    sections, _ = parse_google(
+        docstring,
+        returns_multiple_items=returns_multiple_items,
+        parent=parent,
+    )
+
+    assert len(sections) == 1
+    assert len(sections[0].value) == len(expected)
+
+    for annotated, expected_ in zip(sections[0].value, expected):
+        assert annotated.name == expected_.name
+        assert str(annotated.annotation) == str(expected_.annotation)
+        assert annotated.description == expected_.description

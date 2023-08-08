@@ -14,6 +14,12 @@
       "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/docstrings/google/#griffe.docstrings.google.parse",
       "type": "boolean",
       "default": true
+    },
+    "returns_multiple_items": {
+      "title": "Whether the `Returns` section has multiple items.",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/docstrings/google/#griffe.docstrings.google.parse",
+      "type": "boolean",
+      "default": true
     }
   },
   "additionalProperties": false
