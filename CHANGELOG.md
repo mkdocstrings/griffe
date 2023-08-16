@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.33.0](https://github.com/mkdocstrings/griffe/releases/tag/0.33.0) - 2023-08-16
+
+<small>[Compare with 0.32.3](https://github.com/mkdocstrings/griffe/compare/0.32.3...0.33.0)</small>
+
+### Features
+
+- Add `-V`, `--version` CLI flag to show version ([a41515f](https://github.com/mkdocstrings/griffe/commit/a41515f39e6e5e2e28d68980c44cc07a7e0ebbe0) by jgart). [Issue #186](https://github.com/mkdocstrings/griffe/issues/186), [PR #187](https://github.com/mkdocstrings/griffe/pull/187), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+
+### Code Refactoring
+
+- Improve expressions ([66c8ad5](https://github.com/mkdocstrings/griffe/commit/66c8ad5074e1475aa88a51d8652b5e197760d774) and [0fe8f91](https://github.com/mkdocstrings/griffe/commit/0fe8f9155b571714b0fe2a1bd7aef0b9b0738b08) by Timothée Mazzucotelli).
+
 ## [0.32.3](https://github.com/mkdocstrings/griffe/releases/tag/0.32.3) - 2023-07-17
 
 <small>[Compare with 0.32.2](https://github.com/mkdocstrings/griffe/compare/0.32.2...0.32.3)</small>
