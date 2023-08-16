@@ -600,7 +600,7 @@ def _read_examples_section(
 ) -> tuple[DocstringSectionExamples | None, int]:
     text, new_offset = _read_block(docstring, offset=offset)
 
-    sub_sections: list[tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]] = []
+    sub_sections: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = []
     in_code_example = False
     in_code_block = False
     current_text: list[str] = []

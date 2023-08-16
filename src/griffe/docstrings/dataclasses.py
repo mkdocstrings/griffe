@@ -336,7 +336,7 @@ class DocstringSectionExamples(DocstringSection):
 
     def __init__(
         self,
-        value: list[tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]],
+        value: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]],
         title: str | None = None,
     ) -> None:
         """Initialize the section.
@@ -346,9 +346,7 @@ class DocstringSectionExamples(DocstringSection):
             title: An optional title.
         """
         super().__init__(title)
-        self.value: list[
-            tuple[Literal[DocstringSectionKind.text] | Literal[DocstringSectionKind.examples], str]
-        ] = value
+        self.value: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = value
 
 
 class DocstringSectionAttributes(DocstringSection):
