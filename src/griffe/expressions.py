@@ -64,7 +64,7 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
         for field in sorted(getfields(expression), key=lambda f: f.name)
         if field.name != "parent"
     }
-    fields["cls"] = expression.__class__.__name__
+    fields["cls"] = expression.classname
     return fields
 
 
@@ -99,9 +99,9 @@ class Expr:
         return _expr_as_dict(self, **kwargs)
 
     @property
-    def kind(self) -> str:
-        """The expression kind."""
-        return self.__class__.__name__.lower()[4:]
+    def classname(self) -> str:
+        """The expression class name."""
+        return self.__class__.__name__
 
     @property
     def path(self) -> str:
@@ -1003,7 +1003,8 @@ def safe_get_expression(
         except ValueError:
             path = "<in-memory>"
         lineno = node.lineno  # type: ignore[union-attr]
-        message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error)
+        error_str = f"{error.__class__.__name__}: {error}"
+        message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
         getattr(logger, log_level.value)(message)
     return None
 
