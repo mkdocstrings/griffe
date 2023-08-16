@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <small>[Compare with 0.32.3](https://github.com/mkdocstrings/griffe/compare/0.32.3...0.33.0)</small>
 
+### Breaking Changes
+
+- Removed `griffe.expressions.Expression` in favor of [`griffe.expressions.Expr`][] and subclasses
+- Removed `griffe.expressions.Name` in favor of [`griffe.expressions.ExprName`][]
+
 ### Features
 
 - Add `-V`, `--version` CLI flag to show version ([a41515f](https://github.com/mkdocstrings/griffe/commit/a41515f39e6e5e2e28d68980c44cc07a7e0ebbe0) by jgart). [Issue #186](https://github.com/mkdocstrings/griffe/issues/186), [PR #187](https://github.com/mkdocstrings/griffe/pull/187), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
