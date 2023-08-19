@@ -9,20 +9,15 @@ from griffe.cli import get_parser
 parser = get_parser()
 
 
-def render_parser(
-    parser: argparse.ArgumentParser, title: str, heading_level: int = 2
-) -> str:
+def render_parser(parser: argparse.ArgumentParser, title: str, heading_level: int = 2) -> str:
     """Render the parser help documents as a string."""
     result = [f"{'#' * heading_level} {title}\n"]
     if parser.description and title != "pdm":
         result.append("> " + parser.description + "\n")
 
-    for group in sorted(
-        parser._action_groups, key=lambda g: g.title.lower(), reverse=True
-    ):
+    for group in sorted(parser._action_groups, key=lambda g: g.title.lower(), reverse=True):
         if not any(
-            bool(action.option_strings or action.dest)
-            or isinstance(action, argparse._SubParsersAction)
+            bool(action.option_strings or action.dest) or isinstance(action, argparse._SubParsersAction)
             for action in group._group_actions
         ):
             continue
