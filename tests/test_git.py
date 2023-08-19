@@ -59,15 +59,15 @@ def git_repo(tmp_path: Path) -> Path:
     """
     repo_path = tmp_path / REPO_NAME
     repo_path.mkdir()
-    run(["git", "-C", str(repo_path), "init"])
-    run(["git", "-C", str(repo_path), "config", "user.name", "Name"])
-    run(["git", "-C", str(repo_path), "config", "user.email", "my@email.com"])
+    run(["git", "-C", str(repo_path), "init"], check=True)
+    run(["git", "-C", str(repo_path), "config", "user.name", "Name"], check=True)
+    run(["git", "-C", str(repo_path), "config", "user.email", "my@email.com"], check=True)
     for tagdir in REPO_SOURCE.iterdir():
         ver = tagdir.name
         _copy_contents(tagdir, repo_path)
-        run(["git", "-C", str(repo_path), "add", "."])
-        run(["git", "-C", str(repo_path), "commit", "-m", f"feat: {ver} stuff"])
-        run(["git", "-C", str(repo_path), "tag", ver])
+        run(["git", "-C", str(repo_path), "add", "."], check=True)
+        run(["git", "-C", str(repo_path), "commit", "-m", f"feat: {ver} stuff"], check=True)
+        run(["git", "-C", str(repo_path), "tag", ver], check=True)
     return repo_path
 
 

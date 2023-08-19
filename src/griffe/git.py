@@ -57,6 +57,7 @@ def _get_latest_tag(path: str | Path) -> str:
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+        check=False,
     )
     output = process.stdout.strip()
     if process.returncode != 0 or not output:
@@ -99,6 +100,7 @@ def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         process = subprocess.run(
             ["git", "-C", repo, "worktree", "add", "-b", branch, location, ref],
             capture_output=True,
+            check=False,
         )
         if process.returncode:
             raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
@@ -106,9 +108,9 @@ def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         try:
             yield Path(location)
         finally:
-            subprocess.run(["git", "-C", repo, "worktree", "remove", branch], stdout=subprocess.DEVNULL)
-            subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL)
-            subprocess.run(["git", "-C", repo, "branch", "-D", branch], stdout=subprocess.DEVNULL)
+            subprocess.run(["git", "-C", repo, "worktree", "remove", branch], stdout=subprocess.DEVNULL, check=False)
+            subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL, check=False)
+            subprocess.run(["git", "-C", repo, "branch", "-D", branch], stdout=subprocess.DEVNULL, check=False)
 
 
 def load_git(
