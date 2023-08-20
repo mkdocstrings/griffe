@@ -177,6 +177,26 @@ class DocstringAttribute(DocstringNamedElement):
     """This class represents a documented module/class attribute."""
 
 
+class DocstringFunction(DocstringNamedElement):
+    """This class represents a documented function."""
+
+    @property
+    def signature(self) -> str | Expr | None:
+        return self.annotation
+
+
+class DocstringClass(DocstringNamedElement):
+    """This class represents a documented class."""
+
+    @property
+    def signature(self) -> str | Expr | None:
+        return self.annotation
+
+
+class DocstringModule(DocstringNamedElement):
+    """This class represents a documented module."""
+
+
 # Sections -----------------------------------------------
 class DocstringSection:
     """This class represents a docstring section."""
@@ -363,6 +383,54 @@ class DocstringSectionAttributes(DocstringSection):
         """
         super().__init__(title)
         self.value: list[DocstringAttribute] = value
+
+
+class DocstringSectionFunctions(DocstringSection):
+    """This class represents a functions/methods section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.functions
+
+    def __init__(self, value: list[DocstringFunction], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section functions.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringFunction] = value
+
+
+class DocstringSectionClasses(DocstringSection):
+    """This class represents a classes section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.classes
+
+    def __init__(self, value: list[DocstringClass], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section classes.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringClass] = value
+
+
+class DocstringSectionModules(DocstringSection):
+    """This class represents a modules section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.modules
+
+    def __init__(self, value: list[DocstringModule], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section modules.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringModule] = value
 
 
 class DocstringSectionDeprecated(DocstringSection):

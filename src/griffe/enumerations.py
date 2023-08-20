@@ -18,6 +18,9 @@ class DocstringSectionKind(enum.Enum):
     receives = "receives"
     examples = "examples"
     attributes = "attributes"
+    functions = "functions"
+    classes = "classes"
+    modules = "modules"
     deprecated = "deprecated"
     admonition = "admonition"
 

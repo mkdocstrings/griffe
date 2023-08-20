@@ -533,6 +533,99 @@ def test_attributes_section(parse_numpy: ParserType) -> None:
     assert param.annotation == "int"
 
 
+def test_parse_functions_section(parse_numpy: ParserType) -> None:
+    """Parse Functions/Methods sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Functions
+        ---------
+        f(a, b=2)
+            Hello.
+        g
+            Hi.
+
+        Methods
+        -------
+        f(a, b=2)
+            Hello.
+        g
+            Hi.
+    """
+
+    sections, warnings = parse_numpy(docstring)
+    assert len(sections) == 2
+    for section in sections:
+        assert section.kind is DocstringSectionKind.functions
+        func_f = section.value[0]
+        assert func_f.name == "f"
+        assert func_f.signature == "f(a, b=2)"
+        assert func_f.description == "Hello."
+        func_g = section.value[1]
+        assert func_g.name == "g"
+        assert func_g.signature is None
+        assert func_g.description == "Hi."
+    assert not warnings
+
+
+def test_parse_classes_section(parse_numpy: ParserType) -> None:
+    """Parse Classes sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Classes
+        -------
+        C(a, b=2)
+            Hello.
+        D
+            Hi.
+    """
+
+    sections, warnings = parse_numpy(docstring)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.classes
+    class_c = sections[0].value[0]
+    assert class_c.name == "C"
+    assert class_c.signature == "C(a, b=2)"
+    assert class_c.description == "Hello."
+    class_d = sections[0].value[1]
+    assert class_d.name == "D"
+    assert class_d.signature is None
+    assert class_d.description == "Hi."
+    assert not warnings
+
+
+def test_parse_modules_section(parse_numpy: ParserType) -> None:
+    """Parse Modules sections.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Modules
+        -------
+        m
+            Hello.
+        n
+            Hi.
+    """
+
+    sections, warnings = parse_numpy(docstring)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.modules
+    module_m = sections[0].value[0]
+    assert module_m.name == "m"
+    assert module_m.description == "Hello."
+    module_n = sections[0].value[1]
+    assert module_n.name == "n"
+    assert module_n.description == "Hi."
+    assert not warnings
+
+
 def test_examples_section(parse_numpy: ParserType) -> None:
     """Parse examples section.
 

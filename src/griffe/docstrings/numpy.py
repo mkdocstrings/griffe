@@ -45,15 +45,21 @@ from typing import TYPE_CHECKING
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
+    DocstringClass,
+    DocstringFunction,
+    DocstringModule,
     DocstringParameter,
     DocstringRaise,
     DocstringReceive,
     DocstringReturn,
     DocstringSection,
     DocstringSectionAttributes,
+    DocstringSectionClasses,
     DocstringSectionDeprecated,
     DocstringSectionExamples,
+    DocstringSectionFunctions,
     DocstringSectionKind,
+    DocstringSectionModules,
     DocstringSectionOtherParameters,
     DocstringSectionParameters,
     DocstringSectionRaises,
@@ -89,6 +95,10 @@ _section_kind = {
     "warns": DocstringSectionKind.warns,
     "examples": DocstringSectionKind.examples,
     "attributes": DocstringSectionKind.attributes,
+    "functions": DocstringSectionKind.functions,
+    "methods": DocstringSectionKind.functions,
+    "classes": DocstringSectionKind.classes,
+    "modules": DocstringSectionKind.modules,
 }
 
 
@@ -591,6 +601,96 @@ def _read_attributes_section(
     return DocstringSectionAttributes(attributes), new_offset
 
 
+def _read_functions_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionFunctions | None, int]:
+    # SIGNATURE
+    #    TEXT?
+    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    if not items:
+        _warn(docstring, new_offset, f"Empty functions/methods section at line {offset}")
+        return None, new_offset
+
+    functions = []
+    signature: str | Expr | None
+    for item in items:
+        name_signature = item[0]
+        if "(" in name_signature:
+            name = name_signature.split("(", 1)[0]
+            name = name.strip()
+            signature = name_signature.strip()
+        else:
+            name = name_signature
+            signature = None
+        text = dedent("\n".join(item[1:])).strip()
+        functions.append(DocstringFunction(name=name, annotation=signature, description=text))
+    return DocstringSectionFunctions(functions), new_offset
+
+
+def _read_classes_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionClasses | None, int]:
+    # SIGNATURE
+    #    TEXT?
+    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    if not items:
+        _warn(docstring, new_offset, f"Empty classes section at line {offset}")
+        return None, new_offset
+
+    classes = []
+    signature: str | Expr | None
+    for item in items:
+        name_signature = item[0]
+        if "(" in name_signature:
+            name = name_signature.split("(", 1)[0]
+            name = name.strip()
+            signature = name_signature.strip()
+        else:
+            name = name_signature
+            signature = None
+        text = dedent("\n".join(item[1:])).strip()
+        classes.append(DocstringClass(name=name, annotation=signature, description=text))
+    return DocstringSectionClasses(classes), new_offset
+
+
+def _read_modules_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionModules | None, int]:
+    # NAME
+    #    TEXT?
+    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    if not items:
+        _warn(docstring, new_offset, f"Empty modules section at line {offset}")
+        return None, new_offset
+
+    modules = []
+    signature: str | Expr | None
+    for item in items:
+        name_signature = item[0]
+        if "(" in name_signature:
+            name = name_signature.split("(", 1)[0]
+            name = name.strip()
+            signature = name_signature.strip()
+        else:
+            name = name_signature
+            signature = None
+        text = dedent("\n".join(item[1:])).strip()
+        modules.append(DocstringModule(name=name, annotation=signature, description=text))
+    return DocstringSectionModules(modules), new_offset
+
+
 def _read_examples_section(
     docstring: Docstring,
     *,
@@ -662,6 +762,9 @@ _section_reader = {
     DocstringSectionKind.warns: _read_warns_section,
     DocstringSectionKind.examples: _read_examples_section,
     DocstringSectionKind.attributes: _read_attributes_section,
+    DocstringSectionKind.functions: _read_functions_section,
+    DocstringSectionKind.classes: _read_classes_section,
+    DocstringSectionKind.modules: _read_modules_section,
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,
     DocstringSectionKind.receives: _read_receives_section,

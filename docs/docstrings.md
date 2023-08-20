@@ -123,6 +123,135 @@ For example, a type of `list[str]` will be parsed just as if it was an actual Py
 You can therefore use complex types (available in the current scope) in docstrings,
 for example `Optional[Union[int, Tuple[float, float]]]`.
 
+#### Functions/Methods
+
+- Multiple items allowed
+
+Functions or Methods sections allow to document functions of a module, or methods of a class.
+They should be used in modules and classes docstrings only.
+
+```python
+"""My module.
+
+Functions:
+    foo: Description for `foo`.
+    bar: Description for `bar`.
+"""
+
+
+def foo():
+    return "foo"
+
+
+def bar(baz: int) -> int:
+    return baz * 2
+
+
+class MyClass:
+    """My class.
+
+    Methods:
+        foofoo: Description for `foofoo`.
+        barbar: Description for `barbar`.
+    """
+
+    def foofoo(self):
+        return "foofoo"
+
+    @staticmethod
+    def barbar():
+        return "barbar"
+```
+
+It's possible to write the function/method signature as well as its name:
+
+```python
+"""
+Functions:
+    foo(): Description for `foo`.
+    bar(baz=1): Description for `bar`.
+"""
+```
+
+The signatures do not have to match the real ones:
+you can shorten them to only show the important parameters.
+
+#### Classes
+
+- Multiple items allowed
+
+Classes sections allow to document classes of a module or class.
+They should be used in modules and classes docstrings only.
+
+```python
+"""My module.
+
+Classes:
+    Foo: Description for `foo`.
+    Bar: Description for `bar`.
+"""
+
+
+class Foo:
+    ...
+
+
+class Bar:
+    def __init__(self, baz: int) -> int:
+        return baz * 2
+
+
+class MyClass:
+    """My class.
+
+    Classes:
+        FooFoo: Description for `foofoo`.
+        BarBar: Description for `barbar`.
+    """
+
+    class FooFoo:
+        ...
+
+    class BarBar:
+        ...
+```
+
+It's possible to write the class signature as well as its name:
+
+```python
+"""
+Functions:
+    Foo(): Description for `Foo`.
+    Bar(baz=1): Description for `Bar`.
+"""
+```
+
+The signatures do not have to match the real ones:
+you can shorten them to only show the important initialization parameters.
+
+#### Modules
+
+- Multiple items allowed
+
+Modules sections allow to document submodules of a module.
+They should be used in modules docstrings only.
+
+```tree
+my_pkg/
+    __init__.py
+    foo.py
+    bar.py
+```
+
+```python title="my_pkg/__init__.py"
+"""My package.
+
+Modules:
+    foo: Description for `foo`.
+    bar: Description for `bar`.
+"""
+```
+
 #### Deprecated
 
 Deprecated sections allow to document a deprecation that happened at a particular version.
@@ -294,6 +423,93 @@ You can document custom exception, using the names available in the current scop
 for example `my_exceptions.MyCustomException` or `MyCustomException` directly,
 depending on what you imported/defined in the current module.
 
+#### Warns
+
+- Aliases: Warnings
+- Multiple items allowed
+
+Warns sections allow to document warnings emitted by the following code.
+They are usually only used in functions docstrings.
+
+```python
+import warnings
+
+
+def foo():
+    """Foo.
+
+    Warns:
+        UserWarning: To annoy users.
+    """
+    warnings.warn("Just messing with you.", UserWarning)
+```
+
+TIP: **Warnings names are resolved using the function's scope.**  
+`UserWarning` and other built-in warnings are resolved as such.
+You can document custom warnings, using the names available in the current scope,
+for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly,
+depending on what you imported/defined in the current module.
+
+#### Yields
+
+- Multiple items allowed
+
+Yields sections allow to document values that generator yield.
+They should be used only in generators docstrings.
+Documented items can be given a name when it makes sense.
+
+```python
+from typing import Iterator
+
+
+def foo() -> Iterator[int]:
+    """Foo.
+
+    Yields:
+        Integers from 0 to 9.
+    """
+    for i in range(10):
+        yield i
+```
+
+Type annotations are fetched from the function return annotation
+when the annotation is `typing.Generator` or `typing.Iterator`.
+If your generator yields tuples, you can document each item of the tuple separately,
+and the type annotation will be fetched accordingly:
+
+```python
+from datetime import datetime
+
+
+def foo() -> Iterator[tuple[float, float, datetime]]:
+    """Foo.
+
+    Yields:
+        x: Absissa.
+        y: Ordinate.
+        t: Time.
+
+    ...
+    """
+    ...
+```
+
+Type annotations can as usual be overridden using types in parentheses
+in the docstring itself:
+
+```python
+"""Foo.
+
+Yields:
+    x (int): Absissa.
+    y (int): Ordinate.
+    t (int): Timestamp.
+"""
+```
+
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+See previous tips for types in docstrings.
+
 #### Receives
 
 - Multiple items allowed
@@ -434,6 +650,470 @@ Even when your function returns a single value, you must indent continuation
 lines of its description so that the parser does not think you are documenting
 multiple items.
 
+
+### Numpydoc-style
+
+Sections are written like this:
+
+```
+section identifier
+------------------
+
+section contents
+```
+
+All sections identifiers are case-insensitive.
+All sections support multiple lines in descriptions.
+
+Some sections support documenting items items.
+Item descriptions start on a new, indented line.
+When multiple items are supported, each item description can
+use multiple lines.
+
+```python
+def foo(a, b):
+    """Foo.
+
+    Parameters
+    ----------
+    a
+        Here's a.
+        Continuation line 1.
+
+        Continuation line 2.
+    b
+        Here's b.
+    """
+```
+
+For items that have an optional name and type,
+several syntaxes are supported:
+
+- specifying both the name and type:
+
+    ```python
+    """
+    name : type
+        description
+    """
+    ```
+
+- specifying just the name:
+
+    ```python
+    """
+    name
+        description
+    """
+    ```
+
+    or
+
+    ```python
+    """
+    name :
+        description
+    """
+    ```
+
+- specifying just the type:
+
+    ```python
+    """
+    : type
+        description
+    """
+    ```
+
+- specifying neither the name nor type:
+
+    ```python
+    """
+    :
+        description
+    """
+    ```
+
+#### Attributes
+
+- Multiple items allowed
+
+Attributes sections allow to document attributes of a module, class, or class instance.
+They should be used in modules and classes docstrings only.
+
+```python
+"""My module.
+
+Attributes
+----------
+foo
+    Description for `foo`.
+bar
+    Description for `bar`.
+"""
+
+foo: int = 0
+bar: bool = True
+
+
+class MyClass:
+    """My class.
+
+    Attributes
+    ----------
+    foofoo
+        Description for `foofoo`.
+    barbar
+        Description for `barbar`.
+    """
+
+    foofoo: int = 0
+
+    def __init__(self):
+        self.barbar: bool = True
+```
+
+Type annotations are fetched from the related attributes definitions.
+You can override those by adding types between parentheses before the colon:
+
+```python
+"""My module.
+
+Attributes
+----------
+foo : Integer
+    Description for `foo`.
+bar : Boolean
+    Description for `bar`.
+"""
+```
+
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+When documenting an attribute with `attr_name : attr_type`, `attr_type`
+will be resolved using the scope of the docstrings' parent object (class or module).
+For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation.
+You can therefore use complex types (available in the current scope) in docstrings,
+for example `Optional[Union[int, Tuple[float, float]]]`.
+
+#### Functions/Methods
+
+- Multiple items allowed
+
+Functions or Methods sections allow to document functions of a module, or methods of a class.
+They should be used in modules and classes docstrings only.
+
+```python
+"""My module.
+
+Functions
+---------
+foo
+    Description for `foo`.
+bar
+    Description for `bar`.
+"""
+
+
+def foo():
+    return "foo"
+
+
+def bar(baz: int) -> int:
+    return baz * 2
+
+
+class MyClass:
+    """My class.
+
+    Methods
+    -------
+    foofoo
+        Description for `foofoo`.
+    barbar
+        Description for `barbar`.
+    """
+
+    def foofoo(self):
+        return "foofoo"
+
+    @staticmethod
+    def barbar():
+        return "barbar"
+```
+
+It's possible to write the function/method signature as well as its name:
+
+```python
+"""
+Functions
+---------
+foo()
+    Description for `foo`.
+bar(baz=1)
+    Description for `bar`.
+"""
+```
+
+The signatures do not have to match the real ones:
+you can shorten them to only show the important parameters.
+
+#### Classes
+
+- Multiple items allowed
+
+Classes sections allow to document classes of a module or class.
+They should be used in modules and classes docstrings only.
+
+```python
+"""My module.
+
+Classes
+-------
+Foo
+    Description for `foo`.
+Bar
+    Description for `bar`.
+"""
+
+
+class Foo:
+    ...
+
+
+class Bar:
+    def __init__(self, baz: int) -> int:
+        return baz * 2
+
+
+class MyClass:
+    """My class.
+
+    Classes
+    -------
+    FooFoo
+        Description for `foofoo`.
+    BarBar
+        Description for `barbar`.
+    """
+
+    class FooFoo:
+        ...
+
+    class BarBar:
+        ...
+```
+
+It's possible to write the class signature as well as its name:
+
+```python
+"""
+Functions
+---------
+Foo()
+    Description for `Foo`.
+Bar(baz=1)
+    Description for `Bar`.
+"""
+```
+
+The signatures do not have to match the real ones:
+you can shorten them to only show the important initialization parameters.
+
+#### Modules
+
+- Multiple items allowed
+
+Modules sections allow to document submodules of a module.
+They should be used in modules docstrings only.
+
+```tree
+my_pkg/
+    __init__.py
+    foo.py
+    bar.py
+```
+
+```python title="my_pkg/__init__.py"
+"""My package.
+
+Modules
+-------
+foo
+    Description for `foo`.
+bar
+    Description for `bar`.
+"""
+```
+
+#### Deprecated
+
+Deprecated sections allow to document a deprecation that happened at a particular version.
+They can be used in every docstring.
+
+```python
+"""My module.
+
+Deprecated
+----------
+    1.2
+        The `foo` attribute is deprecated.
+"""
+
+foo: int = 0
+```
+
+#### Examples
+
+Examples sections allow to add examples of Python code without the use of markup code blocks.
+They are a mix of prose and interactive console snippets.
+They can be used in every docstring.
+
+```python
+"""My module.
+
+Examples
+--------
+Some explanation of what is possible.
+
+>>> print("hello!")
+hello!
+
+Blank lines delimit prose vs. console blocks.
+
+>>> a = 0
+>>> a += 1
+>>> a
+1
+"""
+```
+
+#### Parameters
+
+- Aliases: Args, Arguments, Params
+- Multiple items allowed
+
+Parameters sections allow to document parameters of a function.
+They are typically used in functions docstrings, but can also be used in dataclasses docstrings.
+
+```python
+def foo(a: int, b: str):
+    """Foo.
+
+    Parameters
+    ----------
+    a
+        Here's a.
+    b
+        Here's b.
+    """
+```
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Foo:
+    """Foo.
+
+    Parameters
+    ----------
+    a
+        Here's a.
+    b
+        Here's b.
+    """
+
+    foo: int
+    bar: str
+```
+
+Type annotations are fetched from the related parameters definitions.
+You can override those by adding types between parentheses before the colon:
+
+```python
+"""My function.
+
+Parameters
+----------
+foo : Integer
+    Description for `foo`.
+bar : String
+    Description for `bar`.
+"""
+```
+
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+When documenting a parameter with `param_name : param_type`, `param_type`
+will be resolved using the scope of the function (or class).
+For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation.
+You can therefore use complex types (available in the current scope) in docstrings,
+for example `Optional[Union[int, Tuple[float, float]]]`.
+
+#### Other Parameters
+
+- Aliases: Keyword Args, Keyword Arguments, Other Args, Other Arguments, Other Params
+- Multiple items allowed
+
+Other parameters sections allow to document secondary parameters such as variadic keyword arguments,
+or parameters that should be of lesser interest to the user.
+They are used the same way Parameters sections are.
+
+```python
+def foo(a, b, **kwargs):
+    """Foo.
+
+    Parameters
+    ----------
+    a
+        Here's a.
+    b
+        Here's b.
+
+    Other parameters
+    ----------------
+    c : int
+        Here's c.
+    d : bool
+        Here's d.
+    """
+```
+
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+See the same tip for parameters.
+
+#### Raises
+
+- Aliases: Exceptions
+- Multiple items allowed
+
+Raises sections allow to document exceptions that are raised by a function.
+They are usually only used in functions docstrings.
+
+```python
+def foo(a: int):
+    """Foo.
+
+    Parameters
+    ----------
+    a
+        A value.
+
+    Raises
+    ------
+    ValueError
+        When `a` is less than 0.
+    """
+    if a < 0:
+        raise ValueError("message")
+```
+
+TIP: **Exceptions names are resolved using the function's scope.**  
+`ValueError` and other built-in exceptions are resolved as such.
+You can document custom exception, using the names available in the current scope,
+for example `my_exceptions.MyCustomException` or `MyCustomException` directly,
+depending on what you imported/defined in the current module.
+
 #### Warns
 
 - Aliases: Warnings
@@ -449,8 +1129,10 @@ import warnings
 def foo():
     """Foo.
 
-    Warns:
-        UserWarning: To annoy users.
+    Warns
+    -----
+    UserWarning
+        To annoy users.
     """
     warnings.warn("Just messing with you.", UserWarning)
 ```
@@ -476,7 +1158,9 @@ from typing import Iterator
 def foo() -> Iterator[int]:
     """Foo.
 
-    Yields:
+    Yields
+    ------
+    :
         Integers from 0 to 9.
     """
     for i in range(10):
@@ -495,12 +1179,14 @@ from datetime import datetime
 def foo() -> Iterator[tuple[float, float, datetime]]:
     """Foo.
 
-    Yields:
-        x: Absissa.
-        y: Ordinate.
-        t: Time.
-
-    ...
+    Yields
+    ------
+    x
+        Absissa.
+    y
+        Ordinate.
+    t
+        Time.
     """
     ...
 ```
@@ -511,14 +1197,168 @@ in the docstring itself:
 ```python
 """Foo.
 
-Yields:
-    x (int): Absissa.
-    y (int): Ordinate.
-    t (int): Timestamp.
+Yields
+------
+x : int
+    Absissa.
+y : int
+    Ordinate.
+t : int
+    Timestamp.
 """
 ```
 
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+See previous tips for types in docstrings.
+
+#### Receives
+
+- Multiple items allowed
+
+Receives sections allow to document values that can be sent to generators
+using their `send` method.
+They should be used only in generators docstrings.
+Documented items can be given a name when it makes sense.
+
+```python
+from typing import Generator
+
+
+def foo() -> Generator[int, str, None]:
+    """Foo.
+
+    Receives
+    --------
+    reverse
+        Reverse the generator if `"reverse"` is received.
+
+    Yields
+    ------
+    :
+        Integers from 0 to 9.
+
+    Examples
+    --------
+    >>> gen = foo()
+    >>> next(gen)
+    0
+    >>> next(gen)
+    1
+    >>> next(gen)
+    2
+    >>> gen.send("reverse")
+    2
+    >>> next(gen)
+    1
+    >>> next(gen)
+    0
+    >>> next(gen)
+    Traceback (most recent call last):
+        File "<stdin>", line 1, in <module>
+    StopIteration
+    """
+    for i in range(10):
+        received = yield i
+        if received == "reverse":
+            for j in range(i, -1, -1):
+                yield j
+            break
+```
+
+Type annotations are fetched from the function return annotation
+when the annotation is `typing.Generator`. If your generator is able
+to receive tuples, you can document each item of the tuple separately,
+and the type annotation will be fetched accordingly:
+
+```python
+def foo() -> Generator[int, tuple[str, bool], None]:
+    """Foo.
+
+    Receives
+    --------
+    mode
+        Some mode.
+    flag
+        Some flag.
+    """
+    ...
+```
+
+Type annotations can as usual be overridden using types in parentheses
+in the docstring itself:
+
+```python
+"""Foo.
+
+Receives
+--------
+mode : ModeEnum
+    Some mode.
+flag : int
+    Some flag.
+"""
+```
+
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+See previous tips for types in docstrings.
+
+#### Returns
+
+- Multiple items allowed
+
+Returns sections allow to document values returned by functions.
+They should be used only in functions docstrings.
+Documented items can be given a name when it makes sense.
+
+```python
+import random
+
+
+def foo() -> int:
+    """Foo.
+
+    Returns
+    -------
+    :
+        A random integer.
+    """
+    return random.randint(0, 100)
+```
+
+Type annotations are fetched from the function return annotation.
+If your function returns tuples of values, you can document each item of the tuple separately,
+and the type annotation will be fetched accordingly:
+
+```python
+def foo() -> tuple[bool, float]:
+    """Foo.
+
+    Returns
+    -------
+    success
+        Whether it succeeded.
+    precision
+        Final precision.
+    """
+    ...
+```
+
+Type annotations can as usual be overridden using types in parentheses
+in the docstring itself:
+
+```python
+"""Foo.
+
+Returns
+-------
+success : int
+    Whether it succeeded.
+precision : Decimal
+    Final precision.
+"""
+```
+
+TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
 See previous tips for types in docstrings.
 
 ## Parsers features
@@ -548,15 +1388,19 @@ See previous tips for types in docstrings.
 Section          | Google | Numpy | Sphinx
 ---------------- | ------ | ----- | ------
 Attributes       | ✅     | ✅    | ✅
+Functions        | ✅     | ✅    | ❌
+Methods          | ✅     | ✅    | ❌
+Classes          | ✅     | ✅    | ❌
+Modules          | ✅     | ✅    | ❌
 Deprecated       | ✅     | ✅[^1]| [❌][issue-section-sphinx-deprecated]
 Examples         | ✅     | ✅    | [❌][issue-section-sphinx-examples]
-Other Parameters | ✅     | ✅    | [❌][issue-section-sphinx-other-parameters]
 Parameters       | ✅     | ✅    | ✅
+Other Parameters | ✅     | ✅    | [❌][issue-section-sphinx-other-parameters]
 Raises           | ✅     | ✅    | ✅
-Receives         | ✅     | ✅    | [❌][issue-section-sphinx-receives]
-Returns          | ✅     | ✅    | ✅
 Warns            | ✅     | ✅    | [❌][issue-section-sphinx-warns]
 Yields           | ✅     | ✅    | [❌][issue-section-sphinx-yields]
+Receives         | ✅     | ✅    | [❌][issue-section-sphinx-receives]
+Returns          | ✅     | ✅    | ✅
 
 [^1]: Support for a regular section instead of the RST directive specified in the [Numpydoc styleguide](https://numpydoc.readthedocs.io/en/latest/format.html#deprecation-warning).
 
@@ -573,15 +1417,19 @@ Yields           | ✅     | ✅    | [❌][issue-section-sphinx-yields]
 Section          | Google | Numpy | Sphinx
 ---------------- | ------ | ----- | ------
 Attributes       | ✅     | ✅    | [❌][issue-parent-sphinx-attributes]
+Functions        | /      | /     | /
+Methods          | /      | /     | /
+Classes          | /      | /     | /
+Modules          | /      | /     | /
 Deprecated       | /      | /     | /
 Examples         | /      | /     | /
-Other Parameters | ✅     | ✅    | [❌][issue-parent-sphinx-other-parameters]
 Parameters       | ✅     | ✅    | ✅
+Other Parameters | ✅     | ✅    | [❌][issue-parent-sphinx-other-parameters]
 Raises           | /      | /     | /
-Receives         | ✅     | ✅    | [❌][issue-parent-sphinx-receives]
-Returns          | ✅     | ✅    | ✅
 Warns            | /      | /     | /
 Yields           | ✅     | ✅    | [❌][issue-parent-sphinx-yields]
+Receives         | ✅     | ✅    | [❌][issue-parent-sphinx-receives]
+Returns          | ✅     | ✅    | ✅
 
 [issue-parent-sphinx-attributes]: https://github.com/mkdocstrings/griffe/issues/33
 [issue-parent-sphinx-other-parameters]: https://github.com/mkdocstrings/griffe/issues/34
@@ -593,15 +1441,19 @@ Yields           | ✅     | ✅    | [❌][issue-parent-sphinx-yields]
 Section          | Google | Numpy | Sphinx
 ---------------- | ------ | ----- | ------
 Attributes       | ✅     | ✅    | [❌][issue-xref-sphinx-attributes]
+Functions        | [❌][issue-xref-google-func-cls-mod] | [❌][issue-xref-numpy-func-cls-mod] | /
+Methods          | [❌][issue-xref-google-func-cls-mod] | [❌][issue-xref-numpy-func-cls-mod] | /
+Classes          | [❌][issue-xref-google-func-cls-mod] | [❌][issue-xref-numpy-func-cls-mod] | /
+Modules          | /      | /     | /
 Deprecated       | /      | /     | /
 Examples         | /      | /     | /
-Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]
 Parameters       | ✅     | ✅    | [❌][issue-xref-sphinx-parameters]
+Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]
 Raises           | ✅     | ✅    | [❌][issue-xref-sphinx-raises]
-Receives         | ✅     | ✅    | [❌][issue-xref-sphinx-receives]
-Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 Warns            | ✅     | ✅    | [❌][issue-xref-sphinx-warns]
 Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]
+Receives         | ✅     | ✅    | [❌][issue-xref-sphinx-receives]
+Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 
 [issue-xref-sphinx-attributes]: https://github.com/mkdocstrings/griffe/issues/19
 [issue-xref-sphinx-other-parameters]: https://github.com/mkdocstrings/griffe/issues/20
@@ -611,6 +1463,8 @@ Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]
 [issue-xref-sphinx-returns]: https://github.com/mkdocstrings/griffe/issues/24
 [issue-xref-sphinx-warns]: https://github.com/mkdocstrings/griffe/issues/25
 [issue-xref-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/26
+[issue-xref-numpy-func-cls-mod]: https://github.com/mkdocstrings/griffe/issues/200
+[issue-xref-google-func-cls-mod]: https://github.com/mkdocstrings/griffe/issues/199
 
 ### Parsing options
 

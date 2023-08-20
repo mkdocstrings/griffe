@@ -8,6 +8,9 @@ from typing import TYPE_CHECKING, List, Tuple
 
 from griffe.docstrings.dataclasses import (
     DocstringAttribute,
+    DocstringClass,
+    DocstringFunction,
+    DocstringModule,
     DocstringParameter,
     DocstringRaise,
     DocstringReceive,
@@ -15,9 +18,12 @@ from griffe.docstrings.dataclasses import (
     DocstringSection,
     DocstringSectionAdmonition,
     DocstringSectionAttributes,
+    DocstringSectionClasses,
     DocstringSectionDeprecated,
     DocstringSectionExamples,
+    DocstringSectionFunctions,
     DocstringSectionKind,
+    DocstringSectionModules,
     DocstringSectionOtherParameters,
     DocstringSectionParameters,
     DocstringSectionRaises,
@@ -58,6 +64,10 @@ _section_kind = {
     "receives": DocstringSectionKind.receives,
     "examples": DocstringSectionKind.examples,
     "attributes": DocstringSectionKind.attributes,
+    "functions": DocstringSectionKind.functions,
+    "methods": DocstringSectionKind.functions,
+    "classes": DocstringSectionKind.classes,
+    "modules": DocstringSectionKind.modules,
     "warns": DocstringSectionKind.warns,
     "warnings": DocstringSectionKind.warns,
 }
@@ -294,6 +304,101 @@ def _read_attributes_section(
         return DocstringSectionAttributes(attributes), new_offset
 
     _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
+    return None, new_offset
+
+
+def _read_functions_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,  # noqa: ARG001
+) -> tuple[DocstringSectionFunctions | None, int]:
+    functions = []
+    block, new_offset = _read_block_items(docstring, offset=offset)
+
+    signature: str | Expr | None = None
+    for line_number, func_lines in block:
+        try:
+            name_with_signature, description = func_lines[0].split(":", 1)
+        except ValueError:
+            _warn(docstring, line_number, f"Failed to get 'signature: description' pair from '{func_lines[0]}'")
+            continue
+
+        description = "\n".join([description.lstrip(), *func_lines[1:]]).rstrip("\n")
+
+        if "(" in name_with_signature:
+            name = name_with_signature.split("(", 1)[0]
+            signature = name_with_signature
+        else:
+            name = name_with_signature
+            signature = None
+
+        functions.append(DocstringFunction(name=name, annotation=signature, description=description))
+
+    if functions:
+        return DocstringSectionFunctions(functions), new_offset
+
+    _warn(docstring, new_offset, f"Empty functions/methods section at line {offset}")
+    return None, new_offset
+
+
+def _read_classes_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,  # noqa: ARG001
+) -> tuple[DocstringSectionClasses | None, int]:
+    classes = []
+    block, new_offset = _read_block_items(docstring, offset=offset)
+
+    signature: str | Expr | None = None
+    for line_number, class_lines in block:
+        try:
+            name_with_signature, description = class_lines[0].split(":", 1)
+        except ValueError:
+            _warn(docstring, line_number, f"Failed to get 'signature: description' pair from '{class_lines[0]}'")
+            continue
+
+        description = "\n".join([description.lstrip(), *class_lines[1:]]).rstrip("\n")
+
+        if "(" in name_with_signature:
+            name = name_with_signature.split("(", 1)[0]
+            signature = name_with_signature
+        else:
+            name = name_with_signature
+            signature = None
+
+        classes.append(DocstringClass(name=name, annotation=signature, description=description))
+
+    if classes:
+        return DocstringSectionClasses(classes), new_offset
+
+    _warn(docstring, new_offset, f"Empty classes section at line {offset}")
+    return None, new_offset
+
+
+def _read_modules_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,  # noqa: ARG001
+) -> tuple[DocstringSectionModules | None, int]:
+    modules = []
+    block, new_offset = _read_block_items(docstring, offset=offset)
+
+    for line_number, module_lines in block:
+        try:
+            name, description = module_lines[0].split(":", 1)
+        except ValueError:
+            _warn(docstring, line_number, f"Failed to get 'name: description' pair from '{module_lines[0]}'")
+            continue
+        description = "\n".join([description.lstrip(), *module_lines[1:]]).rstrip("\n")
+        modules.append(DocstringModule(name=name, description=description))
+
+    if modules:
+        return DocstringSectionModules(modules), new_offset
+
+    _warn(docstring, new_offset, f"Empty modules section at line {offset}")
     return None, new_offset
 
 
@@ -611,6 +716,9 @@ _section_reader = {
     DocstringSectionKind.warns: _read_warns_section,
     DocstringSectionKind.examples: _read_examples_section,
     DocstringSectionKind.attributes: _read_attributes_section,
+    DocstringSectionKind.functions: _read_functions_section,
+    DocstringSectionKind.classes: _read_classes_section,
+    DocstringSectionKind.modules: _read_modules_section,
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,
     DocstringSectionKind.receives: _read_receives_section,
