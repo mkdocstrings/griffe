@@ -2,19 +2,16 @@
 
 You can use Griffe to parse arbitrary docstrings.
 You don't have to load anything through the Griffe loader.
-You need to import the [`parse`][griffe.docstrings.parsers.parse] function,
-the [`Parser`][griffe.docstrings.parsers.Parser] enumeration,
-and the [`Docstring`][griffe.dataclasses.Docstring] class.
-Then you can build a `Docstring` instance and call `parse` on it,
+You just need to import the [`Docstring`][griffe.dataclasses.Docstring] class.
+Then you can build a `Docstring` instance and call its `parse` method,
 choosing the parsing-style to use:
 
 ```python
 from griffe.dataclasses import Docstring
-from griffe.docstrings.parsers import Parser, parse
 
 text = "Hello I'm a docstring!"
 docstring = Docstring(text, lineno=1)
-parsed = parse(docstring, Parser.google)
+parsed = docstring.parse("google")
 ```
 
 If you want to take advantage of the parsers ability to fetch
@@ -23,7 +20,6 @@ you can manually create the parent objects and link them to the docstring:
 
 ```python
 from griffe.dataclasses import Docstring, Function, Parameters, Parameter, ParameterKind
-from griffe.docstrings.parsers import Parser, parse
 
 function = Function(
     "func",
@@ -40,7 +36,7 @@ Parameters:
     param2: Description.
 """
 docstring = Docstring(text, lineno=1, parent=function)
-parsed = parse(docstring, Parser.google)
+parsed = docstring.parse("google")
 ```
 
 With this the parser will fetch the `str` and `int` annotations
