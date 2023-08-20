@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 from griffe.docstrings.dataclasses import DocstringSection, DocstringSectionText
 from griffe.docstrings.google import parse as parse_google
@@ -20,7 +20,11 @@ parsers = {
 }
 
 
-def parse(docstring: Docstring, parser: Parser | None, **options: Any) -> list[DocstringSection]:
+def parse(
+    docstring: Docstring,
+    parser: Literal["google", "numpy", "sphinx"] | Parser | None,
+    **options: Any,
+) -> list[DocstringSection]:
     """Parse the docstring.
 
     Parameters:
@@ -32,6 +36,8 @@ def parse(docstring: Docstring, parser: Parser | None, **options: Any) -> list[D
         A list of docstring sections.
     """
     if parser:
+        if isinstance(parser, str):
+            parser = Parser(parser)
         return parsers[parser](docstring, **options)  # type: ignore[operator]
     return [DocstringSectionText(docstring.value)]
 

@@ -11,7 +11,7 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Literal, Sequence, Union, cast
 
 from griffe.c3linear import c3linear_merge
 from griffe.docstrings.parsers import Parser, parse
@@ -90,7 +90,7 @@ class Docstring:
         lineno: int | None = None,
         endlineno: int | None = None,
         parent: Object | None = None,
-        parser: Parser | None = None,
+        parser: Literal["google", "numpy", "sphinx"] | Parser | None = None,
         parser_options: dict[str, Any] | None = None,
     ) -> None:
         """Initialize the docstring.
@@ -107,7 +107,7 @@ class Docstring:
         self.lineno: int | None = lineno
         self.endlineno: int | None = endlineno
         self.parent: Object | None = parent
-        self.parser: Parser | None = parser
+        self.parser: Literal["google", "numpy", "sphinx"] | Parser | None = parser
         self.parser_options: dict[str, Any] = parser_options or {}
 
     def __bool__(self) -> bool:
@@ -131,7 +131,11 @@ class Docstring:
         """
         return self.parse()
 
-    def parse(self, parser: Parser | None = None, **options: Any) -> list[DocstringSection]:
+    def parse(
+        self,
+        parser: Literal["google", "numpy", "sphinx"] | Parser | None = None,
+        **options: Any,
+    ) -> list[DocstringSection]:
         """Parse the docstring into structured data.
 
         Parameters:
