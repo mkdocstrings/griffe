@@ -212,6 +212,9 @@ class DocstringSection:
         self.title: str | None = title
         self.value: Any = None
 
+    def __bool__(self) -> bool:
+        return bool(self.value)
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this section's data as a dictionary.
 
