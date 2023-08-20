@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.34.0](https://github.com/mkdocstrings/griffe/releases/tag/0.34.0) - 2023-08-20
+
+<small>[Compare with 0.33.0](https://github.com/mkdocstrings/griffe/compare/0.33.0...0.34.0)</small>
+
+### Features
+
+- Allow checking if docstring section is empty or not with `if section` ([f6cf559](https://github.com/mkdocstrings/griffe/commit/f6cf559db50718e86cde40eae9d14489cabd9ed8) by Timothée Mazzucotelli).
+- Implement Functions (or Methods), Classes and Modules docstring sections ([929e615](https://github.com/mkdocstrings/griffe/commit/929e6158c093b021ba80773e17613406b38fbf0c) by Timothée Mazzucotelli).
+- Allow passing a docstring parser name instead of its enumeration value ([ce59b7d](https://github.com/mkdocstrings/griffe/commit/ce59b7dca69e3a9946a0735405535e296e0ec9c9) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Explicit checks for subprocess runs ([cc3ca2e](https://github.com/mkdocstrings/griffe/commit/cc3ca2e18877c17fe23e2ceeb1c13e10c9fe46d2) by Timothée Mazzucotelli).
+
 ## [0.33.0](https://github.com/mkdocstrings/griffe/releases/tag/0.33.0) - 2023-08-16
 
 <small>[Compare with 0.32.3](https://github.com/mkdocstrings/griffe/compare/0.32.3...0.33.0)</small>
