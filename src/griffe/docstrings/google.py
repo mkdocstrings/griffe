@@ -459,10 +459,16 @@ def _read_returns_section(
     docstring: Docstring,
     *,
     offset: int,
+    returns_multiple_items: bool,
     **options: Any,  # noqa: ARG001
 ) -> tuple[DocstringSectionReturns | None, int]:
     returns = []
-    block, new_offset = _read_block_items(docstring, offset=offset)
+
+    if returns_multiple_items:
+        block, new_offset = _read_block_items(docstring, offset=offset)
+    else:
+        one_block, new_offset = _read_block(docstring, offset=offset)
+        block = [(new_offset, one_block.splitlines())]
 
     for index, (line_number, return_lines) in enumerate(block):
         match = _RE_NAME_ANNOTATION_DESCRIPTION.match(return_lines[0])
@@ -731,6 +737,7 @@ def parse(
     *,
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
+    returns_multiple_items: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -742,6 +749,7 @@ def parse(
         docstring: The docstring to parse.
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
+        returns_multiple_items: Whether the `Returns` section has multiple items.
         **options: Additional parsing options.
 
     Returns:
@@ -756,6 +764,7 @@ def parse(
     options = {
         "ignore_init_summary": ignore_init_summary,
         "trim_doctest_flags": trim_doctest_flags,
+        "returns_multiple_items": returns_multiple_items,
         **options,
     }
 

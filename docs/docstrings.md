@@ -34,6 +34,8 @@ The parser accepts a few options:
     These flags are used to alter the behavior of [doctest][] when testing docstrings,
     and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `returns_multiple_items`: Parse Returns sections as if they contain multiple items.
+    It means that continuation lines must be indented. Default: true.
 
 Sections are written like this:
 
@@ -1497,6 +1499,7 @@ Option                     | Description                               | Google 
 `trim_doctest_flags`       | Trim doctest flags.                       | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
 `warn_unknown_params`      | Warn about unknown params.                | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
 `allow_section_blank_line` | Allow blank line in sections.             | /      | ✅    | /
+`returns_multiple_items`   | Parse multiple items in Returns sections. | ✅     | /     | /
 
 [issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
 [issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
