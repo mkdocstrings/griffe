@@ -186,7 +186,7 @@ def _read_block_items(
     return items, new_offset - 1
 
 
-def _read_block(docstring: Docstring, *, offset: int) -> tuple[str, int]:
+def _read_block(docstring: Docstring, *, offset: int, **options: Any) -> tuple[str, int]:  # noqa: ARG001
     lines = docstring.lines
     if offset >= len(lines):
         return "", offset
@@ -336,6 +336,7 @@ def _read_other_parameters_section(
     docstring: Docstring,
     *,
     offset: int,
+    warn_unknown_params: bool = True,  # noqa: ARG001
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
     parameters, new_offset = _read_parameters(docstring, offset=offset, warn_unknown_params=False, **options)
@@ -696,9 +697,9 @@ def _read_examples_section(
     *,
     offset: int,
     trim_doctest_flags: bool = True,
-    **options: Any,  # noqa: ARG001
+    **options: Any,
 ) -> tuple[DocstringSectionExamples | None, int]:
-    text, new_offset = _read_block(docstring, offset=offset)
+    text, new_offset = _read_block(docstring, offset=offset, **options)
 
     sub_sections: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = []
     in_code_example = False
@@ -777,6 +778,7 @@ def parse(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     allow_section_blank_line: bool = False,
+    warn_unknown_params: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -791,6 +793,7 @@ def parse(
         allow_section_blank_line: Whether to continue a section if there's an empty line
             between items in a formatted block, like Parameters or Returns.
             If True, you can still create a new section using two empty lines.
+        warn_unknown_params: Warn about documented parameters not appearing in the signature.
         **options: Additional parsing options.
 
     Returns:
@@ -806,6 +809,7 @@ def parse(
         "trim_doctest_flags": trim_doctest_flags,
         "ignore_init_summary": ignore_init_summary,
         "allow_section_blank_line": allow_section_blank_line,
+        "warn_unknown_params": warn_unknown_params,
         **options,
     }
 
