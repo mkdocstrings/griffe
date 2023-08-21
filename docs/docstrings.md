@@ -25,6 +25,16 @@ the text as if it is Markdown, or AsciiDoc, or reStructuredText, etc..
 
 ### Google-style
 
+The parser accepts a few options:
+
+- `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
+    Useful when merging `__init__` docstring into class' docstrings
+    with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
+- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
+    These flags are used to alter the behavior of [doctest][] when testing docstrings,
+    and should not be visible in your docs. Default: true.
+- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+
 Sections are written like this:
 
 ```
@@ -653,12 +663,25 @@ multiple items.
 
 ### Numpydoc-style
 
+The parser accepts a few options:
+
+- `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
+    Useful when merging `__init__` docstring into class' docstrings
+    with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
+- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
+    These flags are used to alter the behavior of [doctest][] when testing docstrings,
+    and should not be visible in your docs. Default: true.
+- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `allow_section_blank_line`: Allow blank lines in sections' content.
+    When false, a blank line finishes the current section.
+    When true, single blank lines are kept as part of the section.
+    You can terminate sections with double blank lines. Default: false.
+
 Sections are written like this:
 
 ```
 section identifier
 ------------------
-
 section contents
 ```
 
@@ -1441,9 +1464,9 @@ Returns          | ✅     | ✅    | ✅
 Section          | Google | Numpy | Sphinx
 ---------------- | ------ | ----- | ------
 Attributes       | ✅     | ✅    | [❌][issue-xref-sphinx-attributes]
-Functions        | [❌][issue-xref-google-func-cls-mod] | [❌][issue-xref-numpy-func-cls-mod] | /
-Methods          | [❌][issue-xref-google-func-cls-mod] | [❌][issue-xref-numpy-func-cls-mod] | /
-Classes          | [❌][issue-xref-google-func-cls-mod] | [❌][issue-xref-numpy-func-cls-mod] | /
+Functions        | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
+Methods          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
+Classes          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
 Modules          | /      | /     | /
 Deprecated       | /      | /     | /
 Examples         | /      | /     | /
@@ -1463,18 +1486,22 @@ Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 [issue-xref-sphinx-returns]: https://github.com/mkdocstrings/griffe/issues/24
 [issue-xref-sphinx-warns]: https://github.com/mkdocstrings/griffe/issues/25
 [issue-xref-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/26
-[issue-xref-numpy-func-cls-mod]: https://github.com/mkdocstrings/griffe/issues/200
-[issue-xref-google-func-cls-mod]: https://github.com/mkdocstrings/griffe/issues/199
+[issue-xref-numpy-func-cls]: https://github.com/mkdocstrings/griffe/issues/200
+[issue-xref-google-func-cls]: https://github.com/mkdocstrings/griffe/issues/199
 
 ### Parsing options
 
-Option                       | Google | Numpy | Sphinx
----------------------------- | ------ | ----- | ------
-Ignore `__init__` summary    | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
-Trim doctest flags           | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
-Warn about unknown params    | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
-Allow blank line in sections | /      | ✅    | /
+Option                     | Description                               | Google | Numpy | Sphinx
+-------------------------- | ----------------------------------------- | ------ | ----- | ------
+`ignore_init_summary`      | Ignore `__init__` summary.                | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
+`trim_doctest_flags`       | Trim doctest flags.                       | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
+`warn_unknown_params`      | Warn about unknown params.                | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
+`allow_section_blank_line` | Allow blank line in sections.             | /      | ✅    | /
 
 [issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
 [issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
 [issue-warn-unknown-params-sphinx]: https://github.com/mkdocstrings/griffe/issues/64
+
+[merge_init]: https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class
+[doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags
+[doctest]: https://docs.python.org/3/library/doctest.html#module-doctest
