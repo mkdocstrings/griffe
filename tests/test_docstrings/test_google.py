@@ -1412,11 +1412,11 @@ def test_parse_returns_multiple_items(
         else None
     )
     docstring = """
-    Returns:
-        XXXXXXX
-            YYYYYYY
-        ZZZZZZZ
-"""
+        Returns:
+            XXXXXXX
+                YYYYYYY
+            ZZZZZZZ
+    """
     sections, _ = parse_google(
         docstring,
         returns_multiple_items=returns_multiple_items,
