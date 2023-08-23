@@ -334,6 +334,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         self.aliases: dict[str, Alias] = {}
         self.runtime: bool = runtime
         self.extra: dict[str, dict[str, Any]] = defaultdict(dict)
+        self.public: bool | None = None
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
@@ -761,6 +762,7 @@ class Alias(ObjectAliasMixin):
         self.alias_endlineno: int | None = endlineno
         self.runtime: bool = runtime
         self.inherited: bool = inherited
+        self.public: bool | None = None
         self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False
         if isinstance(target, str):

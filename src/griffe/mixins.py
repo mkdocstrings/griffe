@@ -293,6 +293,39 @@ class ObjectAliasMixin:
         """
         return self.parent.exports is None  # type: ignore[attr-defined]
 
+    def is_public(
+        self,
+        *,
+        strict: bool = False,
+        check_name: bool = True,
+    ) -> bool:
+        """Whether this object is considered public.
+
+        In modules, developers can mark objects as public thanks to the `__all__` variable.
+        In classes however, there is no convention or standard to do so.
+
+        Therefore, to decide whether an object is public, we follow this algorithm:
+
+        - If the object's `public` attribute is set (boolean), return its value.
+        - In strict mode, the object is public only if it is explicitely exported (listed in `__all__`).
+            Strict mode should only be used for module members.
+        - Otherwise, if name checks are enabled, the object is private if its name starts with an underscore.
+        - Otherwise, if the object is an alias, and is neither inherited from a base class,
+            nor a member of a parent alias, it is not public.
+        - Otherwise, the object is public.
+        """
+        if self.public is not None:  # type: ignore[attr-defined]
+            return self.public  # type: ignore[attr-defined]
+        if self.is_explicitely_exported:
+            return True
+        if strict:
+            return False
+        if check_name and self.name.startswith("_"):  # type: ignore[attr-defined]
+            return False
+        if self.is_alias and not (self.inherited or self.parent.is_alias):  # type: ignore[attr-defined]
+            return False
+        return True
+
 
 class SerializationMixin:
     """A mixin that adds de/serialization conveniences."""
