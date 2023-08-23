@@ -6,12 +6,13 @@ import json
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 
+from griffe.enumerations import Kind
 from griffe.exceptions import AliasResolutionError, CyclicAliasError
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Alias, Object
+    from griffe.dataclasses import Alias, Attribute, Class, Function, Module, Object
 
 logger = get_logger(__name__)
 _ObjType = TypeVar("_ObjType")
@@ -205,6 +206,63 @@ class SetMembersMixin(DelMembersMixin):
 
 class ObjectAliasMixin:
     """A mixin for methods that appear both in objects and aliases, unchanged."""
+
+    @property
+    def all_members(self) -> dict[str, Object | Alias]:
+        """All members (declared and inherited).
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
+        return {**self.inherited_members, **self.members}  # type: ignore[attr-defined]
+
+    @property
+    def modules(self) -> dict[str, Module]:
+        """Return the module members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Returns:
+            A dictionary of modules.
+        """
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
+
+    @property
+    def classes(self) -> dict[str, Class]:
+        """Return the class members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Returns:
+            A dictionary of classes.
+        """
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
+
+    @property
+    def functions(self) -> dict[str, Function]:
+        """Return the function members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Returns:
+            A dictionary of functions.
+        """
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
+
+    @property
+    def attributes(self) -> dict[str, Attribute]:
+        """Return the attribute members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+
+        Returns:
+            A dictionary of attributes.
+        """
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
     def is_exported(self, *, explicitely: bool = True) -> bool:
         """Tell if this object/alias is implicitely exported by its parent.

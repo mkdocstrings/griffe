@@ -421,15 +421,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return inherited_members
 
     @property
-    def all_members(self) -> dict[str, Object | Alias]:
-        """All members (declared and inherited).
-
-        This method is part of the consumer API:
-        do not use when producing Griffe trees!
-        """
-        return {**self.inherited_members, **self.members}
-
-    @property
     def is_module(self) -> bool:
         """Tell if this object is a module."""
         return self.kind is Kind.MODULE
@@ -476,54 +467,6 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             if all(predicate(member) for predicate in predicates):
                 members[name] = member
         return members
-
-    @property
-    def modules(self) -> dict[str, Module]:
-        """Return the module members.
-
-        This method is part of the consumer API:
-        do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of modules.
-        """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
-
-    @property
-    def classes(self) -> dict[str, Class]:
-        """Return the class members.
-
-        This method is part of the consumer API:
-        do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of classes.
-        """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
-
-    @property
-    def functions(self) -> dict[str, Function]:
-        """Return the function members.
-
-        This method is part of the consumer API:
-        do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of functions.
-        """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
-
-    @property
-    def attributes(self) -> dict[str, Attribute]:
-        """Return the attribute members.
-
-        This method is part of the consumer API:
-        do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of attributes.
-        """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
     @property
     def module(self) -> Module:
@@ -798,7 +741,7 @@ class Alias(ObjectAliasMixin):
         lineno: int | None = None,
         endlineno: int | None = None,
         runtime: bool = True,
-        parent: Module | Class | None = None,
+        parent: Module | Class | Alias | None = None,
         inherited: bool = False,
     ) -> None:
         """Initialize the alias.
@@ -818,7 +761,7 @@ class Alias(ObjectAliasMixin):
         self.alias_endlineno: int | None = endlineno
         self.runtime: bool = runtime
         self.inherited: bool = inherited
-        self._parent: Module | Class | None = parent
+        self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False
         if isinstance(target, str):
             self._target: Object | Alias | None = None
@@ -896,7 +839,7 @@ class Alias(ObjectAliasMixin):
             return False
 
     @property
-    def parent(self) -> Module | Class | None:
+    def parent(self) -> Module | Class | Alias | None:
         """Return the parent of this alias.
 
         Returns:
@@ -905,7 +848,7 @@ class Alias(ObjectAliasMixin):
         return self._parent
 
     @parent.setter
-    def parent(self, value: Module | Class) -> None:
+    def parent(self, value: Module | Class | Alias) -> None:
         self._parent = value
         self._update_target_aliases()
 
@@ -938,9 +881,10 @@ class Alias(ObjectAliasMixin):
     def docstring(self, docstring: Docstring | None) -> None:
         self.final_target.docstring = docstring
 
-    @property
+    @cached_property
     def members(self) -> dict[str, Object | Alias]:  # noqa: D102
-        return self.final_target.members
+        final_target = self.final_target
+        return {name: Alias(name, target=member, parent=self) for name, member in final_target.members.items()}
 
     @property
     def labels(self) -> set[str]:  # noqa: D102
@@ -961,13 +905,12 @@ class Alias(ObjectAliasMixin):
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
         return self.final_target.member_is_exported(member, explicitely=explicitely)
 
-    @property
+    @cached_property
     def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
-        return self.final_target.inherited_members
-
-    @property
-    def all_members(self) -> dict[str, Object | Alias]:  # noqa: D102
-        return self.final_target.all_members
+        final_target = self.final_target
+        return {
+            name: Alias(name, target=member, parent=self) for name, member in final_target.inherited_members.items()
+        }
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
         return self.final_target.is_kind(kind)
@@ -993,22 +936,6 @@ class Alias(ObjectAliasMixin):
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:  # noqa: D102
         return self.final_target.filter_members(*predicates)
-
-    @property
-    def modules(self) -> dict[str, Module]:  # noqa: D102
-        return self.final_target.modules
-
-    @property
-    def classes(self) -> dict[str, Class]:  # noqa: D102
-        return self.final_target.classes
-
-    @property
-    def functions(self) -> dict[str, Function]:  # noqa: D102
-        return self.final_target.functions
-
-    @property
-    def attributes(self) -> dict[str, Attribute]:  # noqa: D102
-        return self.final_target.attributes
 
     @property
     def module(self) -> Module:  # noqa: D102
