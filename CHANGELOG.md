@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.35.0](https://github.com/mkdocstrings/griffe/releases/tag/0.35.0) - 2023-08-24
+
+<small>[Compare with 0.34.0](https://github.com/mkdocstrings/griffe/compare/0.34.0...0.35.0)</small>
+
+### Features
+
+- Add an `is_public` helper method to guess if an object is public ([b823639](https://github.com/mkdocstrings/griffe/commit/b8236391f4ac8b16e9ee861c322e75ea10d6a39b) by Timothée Mazzucotelli).
+- Add option to Google parser allowing to parse Returns sections with or without multiple items ([65fee70](https://github.com/mkdocstrings/griffe/commit/65fee70cf87399b7da92f054180791de0eb4f22d) by Antoine Dechaume). [PR #196](https://github.com/mkdocstrings/griffe/pull/196)
+
+### Bug Fixes
+
+- Allow passing `warn_unknown_params` option to Google and Numpy parsers ([5bf0746](https://github.com/mkdocstrings/griffe/commit/5bf07468d38a158f8e58e3e1c562e8d886d83321) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Preserve alias members path by re-aliasing members instead of returning target's members ([d400cb1](https://github.com/mkdocstrings/griffe/commit/d400cb13c8b7c250ff1e6b6c8ec9be1c7b6ff989) by Timothée Mazzucotelli).
+
 ## [0.34.0](https://github.com/mkdocstrings/griffe/releases/tag/0.34.0) - 2023-08-20
 
 <small>[Compare with 0.33.0](https://github.com/mkdocstrings/griffe/compare/0.33.0...0.34.0)</small>
