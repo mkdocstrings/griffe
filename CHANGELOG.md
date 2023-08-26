@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.35.1](https://github.com/mkdocstrings/griffe/releases/tag/0.35.1) - 2023-08-26
+
+<small>[Compare with 0.35.0](https://github.com/mkdocstrings/griffe/compare/0.35.0...0.35.1)</small>
+
+### Bug Fixes
+
+- Preserve inherited attribute on alias inherited members ([1e19e7b](https://github.com/mkdocstrings/griffe/commit/1e19e7b2c3f2bb10c822c7d8b63b04a76024b4f7) by Timothée Mazzucotelli). [Issue mkdocstrings/python#102](https://github.com/mkdocstrings/python/issues/102)
+
 ## [0.35.0](https://github.com/mkdocstrings/griffe/releases/tag/0.35.0) - 2023-08-24
 
 <small>[Compare with 0.34.0](https://github.com/mkdocstrings/griffe/compare/0.34.0...0.35.0)</small>
