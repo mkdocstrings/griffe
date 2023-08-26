@@ -886,7 +886,10 @@ class Alias(ObjectAliasMixin):
     @cached_property
     def members(self) -> dict[str, Object | Alias]:  # noqa: D102
         final_target = self.final_target
-        return {name: Alias(name, target=member, parent=self) for name, member in final_target.members.items()}
+        return {
+            name: Alias(name, target=member, parent=self, inherited=False)
+            for name, member in final_target.members.items()
+        }
 
     @property
     def labels(self) -> set[str]:  # noqa: D102
@@ -911,7 +914,8 @@ class Alias(ObjectAliasMixin):
     def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
         final_target = self.final_target
         return {
-            name: Alias(name, target=member, parent=self) for name, member in final_target.inherited_members.items()
+            name: Alias(name, target=member, parent=self, inherited=True)
+            for name, member in final_target.inherited_members.items()
         }
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
