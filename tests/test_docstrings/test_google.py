@@ -515,7 +515,7 @@ def test_parse_yields_section(parse_google: ParserType) -> None:
 
 
 def test_invalid_sections(parse_google: ParserType) -> None:
-    """Warn on invalid (empty) sections.
+    """Warn on invalid sections.
 
     Parameters:
         parse_google: Fixture parser.
@@ -533,39 +533,7 @@ def test_invalid_sections(parse_google: ParserType) -> None:
 
     sections, warnings = parse_google(docstring)
     assert len(sections) == 1
-    for warning in warnings[:3]:
-        assert "Empty" in warning
-    assert "Empty returns section at line" in warnings[3]
-    assert "Empty" in warnings[-1]
-
-
-def test_close_sections(parse_google: ParserType) -> None:
-    """Parse sections without blank lines in between.
-
-    Parameters:
-        parse_google: Fixture parser.
-    """
-    docstring = """
-        Parameters:
-            x: X.
-        Parameters:
-            y: Y.
-
-        Parameters:
-            z: Z.
-        Exceptions:
-            Error2: error.
-        Exceptions:
-            Error1: error.
-        Returns:
-            1.
-        Returns:
-            2.
-    """
-
-    sections, warnings = parse_google(docstring)
-    assert len(sections) == 7
-    assert len(warnings) == 5  # no type or annotations
+    assert not warnings
 
 
 # =============================================================================================
@@ -797,10 +765,9 @@ def test_parameter_line_without_colon(parse_google: ParserType) -> None:
     """
 
     sections, warnings = parse_google(docstring)
-    assert not sections  # getting x fails, so the section is empty and discarded
-    assert len(warnings) == 2
+    assert len(sections) == 0  # empty sections are discarded
+    assert len(warnings) == 1
     assert "pair" in warnings[0]
-    assert "Empty" in warnings[1]
 
 
 def test_parameter_line_without_colon_keyword_only(parse_google: ParserType) -> None:
@@ -815,10 +782,9 @@ def test_parameter_line_without_colon_keyword_only(parse_google: ParserType) -> 
     """
 
     sections, warnings = parse_google(docstring)
-    assert not sections  # getting x fails, so the section is empty and discarded
-    assert len(warnings) == 2
+    assert len(sections) == 0  # empty sections are discarded
+    assert len(warnings) == 1
     assert "pair" in warnings[0]
-    assert "Empty" in warnings[1]
 
 
 def test_warn_about_unknown_parameters(parse_google: ParserType) -> None:
@@ -1285,7 +1251,6 @@ def test_ignore_init_summary(parse_google: ParserType, docstring: str) -> None:
         """,
         r"""
         Examples:
-
             Base case 2. We have a blankline test.
             >>> print("a\n\nb")
             a
@@ -1320,7 +1285,6 @@ def test_trim_doctest_flags_multi_example(parse_google: ParserType) -> None:
     """
     docstring = r"""
     Examples:
-
         Test multiline example blocks.
         We want to skip the following test.
         >>> 1 + 1 == 3  # doctest: +SKIP
@@ -1430,3 +1394,49 @@ def test_parse_returns_multiple_items(
         assert annotated.name == expected_.name
         assert str(annotated.annotation) == str(expected_.annotation)
         assert annotated.description == expected_.description
+
+
+def test_avoid_false_positive_sections(parse_google: ParserType) -> None:
+    """Avoid false positive when parsing sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+        Modules:
+            Not a modules section.
+        No blank line before title:
+            Not an admonition.
+
+        Blank line after title:
+
+            Not an admonition.
+
+        Modules:
+
+            Not a modules section.
+        Modules:
+
+            Not a modules section.
+        No blank line before and blank line after:
+
+            Not an admonition.
+
+        Classes:
+
+        - Text.
+    """
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 1
+    assert "Classes" in sections[0].value
+    assert "Text" in sections[0].value
+    assert len(warnings) == 6
+    assert warnings == [
+        "Possible section skipped, reasons: Missing blank line above section",
+        "Possible admonition skipped, reasons: Missing blank line above admonition",
+        "Possible admonition skipped, reasons: Extraneous blank line below admonition title",
+        "Possible section skipped, reasons: Extraneous blank line below section title",
+        "Possible section skipped, reasons: Missing blank line above section; Extraneous blank line below section title",
+        "Possible admonition skipped, reasons: Missing blank line above admonition; Extraneous blank line below admonition title",
+    ]

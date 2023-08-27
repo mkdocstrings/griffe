@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ast import PyCF_ONLY_AST
 from contextlib import suppress
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Protocol
 
 from griffe.agents.nodes import safe_get_annotation
 from griffe.logger import LogLevel, get_logger
@@ -14,7 +14,12 @@ if TYPE_CHECKING:
     from griffe.expressions import Expr
 
 
-def warning(name: str) -> Callable[[Docstring, int, str], None]:
+class WarningCallable(Protocol):
+    def __call__(self, docstring: Docstring, offset: int, message: str, log_level: LogLevel = ...) -> None:
+        ...
+
+
+def warning(name: str) -> WarningCallable:
     """Create and return a warn function.
 
     Parameters:
@@ -32,12 +37,13 @@ def warning(name: str) -> Callable[[Docstring, int, str], None]:
     """
     logger = get_logger(name)
 
-    def warn(docstring: Docstring, offset: int, message: str) -> None:
+    def warn(docstring: Docstring, offset: int, message: str, log_level: LogLevel = LogLevel.warning) -> None:
         try:
             prefix = docstring.parent.relative_filepath  # type: ignore[union-attr]
         except (AttributeError, ValueError):
             prefix = "<module>"
-        logger.warning(f"{prefix}:{(docstring.lineno or 0)+offset}: {message}")
+        log = getattr(logger, log_level.value)
+        log(f"{prefix}:{(docstring.lineno or 0)+offset}: {message}")
 
     return warn
 

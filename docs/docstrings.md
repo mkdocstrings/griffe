@@ -46,9 +46,55 @@ section identifier: optional section title
 
 All sections identifiers are case-insensitive.
 All sections support multiple lines in descriptions,
-as well as blank lines.
+as well as blank lines. The first line must not be blank.
+Each section must be separated from contents above by a blank line.
 
-Some sections also support documenting multiple items.
+❌ This is **invalid** and will be parsed as regular markup:
+
+```python
+Some text.
+Note: # (1)!
+    Some information.
+
+    Blank lines allowed.
+```
+
+1. Missing blank line above.
+
+❌ This is **invalid** and will be parsed as regular markup:
+
+```python
+Some text.
+
+Note: # (1)!
+
+    Some information.
+
+    Blank lines allowed.
+```
+
+1. Extraneous blank line below.
+
+✅ This is **valid** and will parsed as a text section followed by a note admonition:
+
+```python
+Some text.
+
+Note:
+    Some information.
+
+    Blank lines allowed.
+```
+
+Find out possibly invalid section syntax by grepping for "reasons" in Griffe debug logs:
+
+```bash
+griffe dump -Ldebug -o/dev/null \
+    -fdgoogle -D '{"strict_sections": true}' \
+    your_package 2>&1 | grep reasons
+```
+
+Some sections support documenting multiple items (attributes, parameters, etc.).
 When multiple items are supported, each item description can
 use multiple lines, and continuation lines must be indented once
 more so that the parser is able to differentiate items.

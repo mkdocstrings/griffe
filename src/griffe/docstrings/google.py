@@ -37,6 +37,7 @@ from griffe.docstrings.dataclasses import (
 )
 from griffe.docstrings.utils import parse_annotation, warning
 from griffe.expressions import ExprName
+from griffe.logger import LogLevel
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern
@@ -245,12 +246,7 @@ def _read_parameters_section(
     **options: Any,
 ) -> tuple[DocstringSectionParameters | None, int]:
     parameters, new_offset = _read_parameters(docstring, offset=offset, **options)
-
-    if parameters:
-        return DocstringSectionParameters(parameters), new_offset
-
-    _warn(docstring, new_offset, f"Empty parameters section at line {offset}")
-    return None, new_offset
+    return DocstringSectionParameters(parameters), new_offset
 
 
 def _read_other_parameters_section(
@@ -261,12 +257,7 @@ def _read_other_parameters_section(
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
     parameters, new_offset = _read_parameters(docstring, offset=offset, warn_unknown_params=False, **options)
-
-    if parameters:
-        return DocstringSectionOtherParameters(parameters), new_offset
-
-    _warn(docstring, new_offset, f"Empty other parameters section at line {offset}")
-    return None, new_offset
+    return DocstringSectionOtherParameters(parameters), new_offset
 
 
 def _read_attributes_section(
@@ -302,11 +293,7 @@ def _read_attributes_section(
 
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=description))
 
-    if attributes:
-        return DocstringSectionAttributes(attributes), new_offset
-
-    _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
-    return None, new_offset
+    return DocstringSectionAttributes(attributes), new_offset
 
 
 def _read_functions_section(
@@ -337,11 +324,7 @@ def _read_functions_section(
 
         functions.append(DocstringFunction(name=name, annotation=signature, description=description))
 
-    if functions:
-        return DocstringSectionFunctions(functions), new_offset
-
-    _warn(docstring, new_offset, f"Empty functions/methods section at line {offset}")
-    return None, new_offset
+    return DocstringSectionFunctions(functions), new_offset
 
 
 def _read_classes_section(
@@ -372,11 +355,7 @@ def _read_classes_section(
 
         classes.append(DocstringClass(name=name, annotation=signature, description=description))
 
-    if classes:
-        return DocstringSectionClasses(classes), new_offset
-
-    _warn(docstring, new_offset, f"Empty classes section at line {offset}")
-    return None, new_offset
+    return DocstringSectionClasses(classes), new_offset
 
 
 def _read_modules_section(
@@ -397,11 +376,7 @@ def _read_modules_section(
         description = "\n".join([description.lstrip(), *module_lines[1:]]).rstrip("\n")
         modules.append(DocstringModule(name=name, description=description))
 
-    if modules:
-        return DocstringSectionModules(modules), new_offset
-
-    _warn(docstring, new_offset, f"Empty modules section at line {offset}")
-    return None, new_offset
+    return DocstringSectionModules(modules), new_offset
 
 
 def _read_raises_section(
@@ -425,11 +400,7 @@ def _read_raises_section(
             annotation = parse_annotation(annotation, docstring)
             exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
-    if exceptions:
-        return DocstringSectionRaises(exceptions), new_offset
-
-    _warn(docstring, new_offset, f"Empty exceptions section at line {offset}")
-    return None, new_offset
+    return DocstringSectionRaises(exceptions), new_offset
 
 
 def _read_warns_section(
@@ -450,11 +421,7 @@ def _read_warns_section(
             description = "\n".join([description.lstrip(), *warning_lines[1:]]).rstrip("\n")
             warns.append(DocstringWarn(annotation=annotation, description=description))
 
-    if warns:
-        return DocstringSectionWarns(warns), new_offset
-
-    _warn(docstring, new_offset, f"Empty warns section at line {offset}")
-    return None, new_offset
+    return DocstringSectionWarns(warns), new_offset
 
 
 def _read_returns_section(
@@ -516,11 +483,7 @@ def _read_returns_section(
 
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=description))
 
-    if returns:
-        return DocstringSectionReturns(returns), new_offset
-
-    _warn(docstring, new_offset, f"Empty returns section at line {offset}")
-    return None, new_offset
+    return DocstringSectionReturns(returns), new_offset
 
 
 def _read_yields_section(
@@ -567,11 +530,7 @@ def _read_yields_section(
 
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=description))
 
-    if yields:
-        return DocstringSectionYields(yields), new_offset
-
-    _warn(docstring, new_offset, f"Empty yields section at line {offset}")
-    return None, new_offset
+    return DocstringSectionYields(yields), new_offset
 
 
 def _read_receives_section(
@@ -614,11 +573,7 @@ def _read_receives_section(
 
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=description))
 
-    if receives:
-        return DocstringSectionReceives(receives), new_offset
-
-    _warn(docstring, new_offset, f"Empty receives section at line {offset}")
-    return None, new_offset
+    return DocstringSectionReceives(receives), new_offset
 
 
 def _read_examples_section(
@@ -677,11 +632,7 @@ def _read_examples_section(
     elif current_example:
         sub_sections.append((DocstringSectionKind.examples, "\n".join(current_example)))
 
-    if sub_sections:
-        return DocstringSectionExamples(sub_sections), new_offset
-
-    _warn(docstring, new_offset, f"Empty examples section at line {offset}")
-    return None, new_offset
+    return DocstringSectionExamples(sub_sections), new_offset
 
 
 def _read_deprecated_section(
@@ -691,11 +642,6 @@ def _read_deprecated_section(
     **options: Any,
 ) -> tuple[DocstringSectionDeprecated | None, int]:
     text, new_offset = _read_block(docstring, offset=offset, **options)
-
-    # early exit if there is no text in the yield section
-    if not text:
-        _warn(docstring, new_offset, f"Empty deprecated section at line {offset}")
-        return None, new_offset
 
     # check the presence of a name and description, separated by a semi-colon
     try:
@@ -732,6 +678,8 @@ _section_reader = {
     DocstringSectionKind.receives: _read_receives_section,
     DocstringSectionKind.deprecated: _read_deprecated_section,
 }
+
+_sentinel = object()
 
 
 def parse(
@@ -800,7 +748,41 @@ def parse(
             groups = match.groupdict()
             title = groups["title"]
             admonition_type = groups["type"]
-            if admonition_type.lower() in _section_kind:
+            is_section = admonition_type.lower() in _section_kind
+
+            has_previous_line = offset > 0
+            blank_line_above = not has_previous_line or _is_empty_line(lines[offset - 1])
+            has_next_line = offset < len(lines) - 1
+            has_next_lines = offset < len(lines) - 2
+            blank_line_below = has_next_line and _is_empty_line(lines[offset + 1])
+            blank_lines_below = has_next_lines and _is_empty_line(lines[offset + 2])
+            indented_line_below = has_next_line and not blank_line_below and lines[offset + 1].startswith(" ")
+            indented_lines_below = has_next_lines and not blank_lines_below and lines[offset + 2].startswith(" ")
+            if not (indented_line_below or indented_lines_below):
+                # Do not warn when there are no contents,
+                # this is most probably not a section or admonition.
+                current_section.append(lines[offset])
+                offset += 1
+                continue
+            reasons = []
+            kind = "section" if is_section else "admonition"
+            if (indented_line_below or indented_lines_below) and not blank_line_above:
+                reasons.append(f"Missing blank line above {kind}")
+            if indented_lines_below and blank_line_below:
+                reasons.append(f"Extraneous blank line below {kind} title")
+            if reasons:
+                reasons_string = "; ".join(reasons)
+                _warn(
+                    docstring,
+                    offset,
+                    f"Possible {kind} skipped, reasons: {reasons_string}",
+                    LogLevel.debug,
+                )
+                current_section.append(lines[offset])
+                offset += 1
+                continue
+
+            if is_section:
                 if current_section:
                     if any(current_section):
                         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))

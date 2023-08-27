@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Iterator, List, Protocol, Tuple, Union
 
 from griffe.dataclasses import Attribute, Class, Docstring, Function, Module
 from griffe.docstrings.dataclasses import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
+from griffe.logger import LogLevel
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -53,7 +54,7 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
             docstring_object.parent = parent
             parent.docstring = docstring_object
         warnings = []
-        parser_module._warn = lambda _docstring, _offset, message: warnings.append(message)  # type: ignore[attr-defined]
+        parser_module._warn = lambda _docstring, _offset, message, log_level=LogLevel.warning: warnings.append(message)  # type: ignore[attr-defined]
         sections = parser_module.parse(docstring_object, **parser_opts)
         return sections, warnings
 
