@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.35.2](https://github.com/mkdocstrings/griffe/releases/tag/0.35.2) - 2023-08-27
+
+<small>[Compare with 0.35.1](https://github.com/mkdocstrings/griffe/compare/0.35.1...0.35.2)</small>
+
+### Code Refactoring
+
+- Be more strict when parsing sections in Google docstrings ([6a8a228](https://github.com/mkdocstrings/griffe/commit/6a8a2280f8910d4268380400d7888cb8d72b4296) by Timothée Mazzucotelli). [Issue #204](https://github.com/mkdocstrings/griffe/issues/204)
+
 ## [0.35.1](https://github.com/mkdocstrings/griffe/releases/tag/0.35.1) - 2023-08-26
 
 <small>[Compare with 0.35.0](https://github.com/mkdocstrings/griffe/compare/0.35.0...0.35.1)</small>
