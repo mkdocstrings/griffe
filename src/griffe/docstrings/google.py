@@ -699,6 +699,7 @@ def parse(
     returns_multiple_items: bool = True,
     warn_unknown_params: bool = True,
     returns_named_value: bool = True,
+    returns_type_in_property_summary: bool = False,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -715,6 +716,8 @@ def parse(
         returns_named_value: Whether to parse `thing: Description` in returns sections as a name and description,
             rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
             When false, parentheses are optional but the items cannot be named: `int: Description`.
+        returns_type_in_property_summary: Whether to parse the return type of properties
+            at the beginning of their summary: `str: Summary of the property`.
         **options: Additional parsing options.
 
     Returns:
@@ -732,6 +735,7 @@ def parse(
         "returns_multiple_items": returns_multiple_items,
         "warn_unknown_params": warn_unknown_params,
         "returns_named_value": returns_named_value,
+        "returns_type_in_property_summary": returns_type_in_property_summary,
         **options,
     }
 
@@ -828,6 +832,24 @@ def parse(
 
     if current_section:
         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
+
+    if (
+        returns_type_in_property_summary
+        and sections
+        and docstring.parent
+        and docstring.parent.is_attribute
+        and "property" in docstring.parent.labels
+    ):
+        lines = sections[0].value.lstrip().split("\n")
+        if ":" in lines[0]:
+            annotation, line = lines[0].split(":", 1)
+            lines = [line, *lines[1:]]
+            sections[0].value = "\n".join(lines)
+            sections.append(
+                DocstringSectionReturns(
+                    [DocstringReturn("", description="", annotation=parse_annotation(annotation, docstring))],
+                ),
+            )
 
     return sections
 
