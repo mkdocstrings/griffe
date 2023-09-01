@@ -133,7 +133,8 @@ The parser accepts a few options:
 - `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#returns) as a name and description,
     rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
     When false, parentheses are optional but the items cannot be named: `int: Description`.
-
+- `returns_type_in_property_summary`: Whether to parse the return type of properties
+    at the beginning of their summary: `str: Summary of the property`.
 
 #### Attributes
 
