@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.36.0](https://github.com/mkdocstrings/griffe/releases/tag/0.36.0) - 2023-09-01
+
+<small>[Compare with 0.35.2](https://github.com/mkdocstrings/griffe/compare/0.35.2...0.36.0)</small>
+
+### Features
+
+- Add option to read return type of properties in their summary (Google-style) ([096970f](https://github.com/mkdocstrings/griffe/commit/096970ffa66f491ef34ae1121e8b907f2da4c742) by Timothée Mazzucotelli). [Issue #137](https://github.com/mkdocstrings/griffe/issues/137), [PR #206](https://github.com/mkdocstrings/griffe/pull/206)
+- Add option to make parentheses around the type of returned values optional (Google-style) ([b0620f8](https://github.com/mkdocstrings/griffe/commit/b0620f86e1767183d776771992ce12f961efe395) by Timothée Mazzucotelli). [Issue #137](https://github.com/mkdocstrings/griffe/issues/137)
+- Get class parameters from parent's `__init__` method ([e8a9fdc](https://github.com/mkdocstrings/griffe/commit/e8a9fdcce1cffdc7db5a216f833d10da6116db5a) by Timothée Mazzucotelli). [Issue #205](https://github.com/mkdocstrings/griffe/issues/205)
+
+### Bug Fixes
+
+- Use all members (declared and inherited) when checking for breakages, avoid false-positives when a member of a class is moved into a parent class ([1c4340b](https://github.com/mkdocstrings/griffe/commit/1c4340b09b111313a5a242caa986a2fa3fdef852) by Timothée Mazzucotelli). [Issue #203](https://github.com/mkdocstrings/griffe/issues/203)
+- Skip early submodules with dots in their path ([5e81b8a](https://github.com/mkdocstrings/griffe/commit/5e81b8afef4e6ce8294cdbaf348f4f1a05add1d8) by Timothée Mazzucotelli). [Issue #185](https://github.com/mkdocstrings/griffe/issues/185)
+
+### Code Refactoring
+
+- Allow iterating on expressions in both flat and nested ways ([3957fa7](https://github.com/mkdocstrings/griffe/commit/3957fa70abf3f2d8af1a4ab4b1041b873bc724e0) by Timothée Mazzucotelli).
+
 ## [0.35.2](https://github.com/mkdocstrings/griffe/releases/tag/0.35.2) - 2023-08-27
 
 <small>[Compare with 0.35.1](https://github.com/mkdocstrings/griffe/compare/0.35.1...0.35.2)</small>
