@@ -122,19 +122,19 @@ def foo(a, b):
 The parser accepts a few options:
 
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
-    Useful when merging `__init__` docstring into class' docstrings
+    Useful when merging `__init__` docstring into class' docstrings. Default: false.
     with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
-- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
-    These flags are used to alter the behavior of [doctest][] when testing docstrings,
-    and should not be visible in your docs. Default: true.
-- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 - `returns_multiple_items`: Parse [Returns sections](#returns) as if they contain multiple items.
     It means that continuation lines must be indented. Default: true.
 - `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#returns) as a name and description,
     rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
-    When false, parentheses are optional but the items cannot be named: `int: Description`.
+    When false, parentheses are optional but the items cannot be named: `int: Description`. Default: true.
 - `returns_type_in_property_summary`: Whether to parse the return type of properties
-    at the beginning of their summary: `str: Summary of the property`.
+    at the beginning of their summary: `str: Summary of the property`. Default: false.
+- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
+    These flags are used to alter the behavior of [doctest][] when testing docstrings,
+    and should not be visible in your docs. Default: true.
+- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 
 #### Attributes
 
