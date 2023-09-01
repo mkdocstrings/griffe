@@ -1576,3 +1576,7 @@ Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 [issue-xref-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/26
 [issue-xref-numpy-func-cls]: https://github.com/mkdocstrings/griffe/issues/200
 [issue-xref-google-func-cls]: https://github.com/mkdocstrings/griffe/issues/199
+
+[merge_init]: https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class
+[doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags
+[doctest]: https://docs.python.org/3/library/doctest.html#module-doctest
