@@ -425,6 +425,10 @@ class GriffeLoader:
             self._load_submodule(module, subparts, subpath)
 
     def _load_submodule(self, module: Module, subparts: tuple[str, ...], subpath: Path) -> None:
+        for subpart in subparts:
+            if "." in subpart:
+                logger.debug(f"Skip {subpath}, dots in filenames are not supported")
+                return
         try:
             parent_module = self._get_or_create_parent_module(module, subparts, subpath)
         except UnimportableModuleError as error:
@@ -433,9 +437,6 @@ class GriffeLoader:
             logger.debug(f"{error}. Missing __init__ module?")
             return
         submodule_name = subparts[-1]
-        if "." in submodule_name:
-            logger.debug(f"Skip {subpath}, dots in filenames are not supported")
-            return
         try:
             parent_module.set_member(
                 submodule_name,
