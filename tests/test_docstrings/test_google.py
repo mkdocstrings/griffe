@@ -1440,3 +1440,40 @@ def test_avoid_false_positive_sections(parse_google: ParserType) -> None:
         "Possible section skipped, reasons: Missing blank line above section; Extraneous blank line below section title",
         "Possible admonition skipped, reasons: Missing blank line above admonition; Extraneous blank line below admonition title",
     ]
+
+
+def test_type_in_returns_without_parentheses(parse_google: ParserType) -> None:
+    """Assert we can parse the return type without parentheses.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Returns:
+            int: Description
+                on several lines.
+    """
+    sections, warnings = parse_google(docstring, returns_named_value=False)
+    assert len(sections) == 2
+    assert not warnings
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation == "int"
+    assert retval.description == "Description\non several lines."
+
+    docstring = """
+        Summary.
+
+        Returns:
+            Description
+                on several lines.
+    """
+    sections, warnings = parse_google(docstring, returns_named_value=False)
+    assert len(sections) == 2
+    assert len(warnings) == 1
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation is None
+    assert retval.description == "Description\non several lines."

@@ -428,7 +428,8 @@ def _read_returns_section(
     docstring: Docstring,
     *,
     offset: int,
-    returns_multiple_items: bool,
+    returns_multiple_items: bool = True,
+    returns_named_value: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReturns | None, int]:
     returns = []
@@ -440,12 +441,20 @@ def _read_returns_section(
         block = [(new_offset, one_block.splitlines())]
 
     for index, (line_number, return_lines) in enumerate(block):
-        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(return_lines[0])
-        if not match:
-            _warn(docstring, line_number, f"Failed to get name, annotation or description from '{return_lines[0]}'")
-            continue
-
-        name, annotation, description = match.groups()
+        if returns_named_value:
+            match = _RE_NAME_ANNOTATION_DESCRIPTION.match(return_lines[0])
+            if not match:
+                _warn(docstring, line_number, f"Failed to get name, annotation or description from '{return_lines[0]}'")
+                continue
+            name, annotation, description = match.groups()
+        else:
+            name = None
+            if ":" in return_lines[0]:
+                annotation, description = return_lines[0].split(":", 1)
+                annotation = annotation.lstrip("(").rstrip(")")
+            else:
+                annotation = None
+                description = return_lines[0]
         description = "\n".join([description.lstrip(), *return_lines[1:]]).rstrip("\n")
 
         if annotation:
@@ -689,6 +698,7 @@ def parse(
     trim_doctest_flags: bool = True,
     returns_multiple_items: bool = True,
     warn_unknown_params: bool = True,
+    returns_named_value: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring.
@@ -702,6 +712,9 @@ def parse(
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
         returns_multiple_items: Whether the `Returns` section has multiple items.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        returns_named_value: Whether to parse `thing: Description` in returns sections as a name and description,
+            rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
+            When false, parentheses are optional but the items cannot be named: `int: Description`.
         **options: Additional parsing options.
 
     Returns:
@@ -718,6 +731,7 @@ def parse(
         "trim_doctest_flags": trim_doctest_flags,
         "returns_multiple_items": returns_multiple_items,
         "warn_unknown_params": warn_unknown_params,
+        "returns_named_value": returns_named_value,
         **options,
     }
 

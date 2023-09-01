@@ -25,18 +25,6 @@ the text as if it is Markdown, or AsciiDoc, or reStructuredText, etc..
 
 ### Google-style
 
-The parser accepts a few options:
-
-- `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
-    Useful when merging `__init__` docstring into class' docstrings
-    with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
-- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
-    These flags are used to alter the behavior of [doctest][] when testing docstrings,
-    and should not be visible in your docs. Default: true.
-- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
-- `returns_multiple_items`: Parse Returns sections as if they contain multiple items.
-    It means that continuation lines must be indented. Default: true.
-
 Sections are written like this:
 
 ```
@@ -128,6 +116,24 @@ def foo(a, b):
         b: Here's b.
     """
 ```
+
+#### Parser options
+
+The parser accepts a few options:
+
+- `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
+    Useful when merging `__init__` docstring into class' docstrings
+    with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
+- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
+    These flags are used to alter the behavior of [doctest][] when testing docstrings,
+    and should not be visible in your docs. Default: true.
+- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `returns_multiple_items`: Parse [Returns sections](#returns) as if they contain multiple items.
+    It means that continuation lines must be indented. Default: true.
+- `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#returns) as a name and description,
+    rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
+    When false, parentheses are optional but the items cannot be named: `int: Description`.
+
 
 #### Attributes
 
@@ -688,6 +694,22 @@ def foo() -> tuple[bool, float]:
     ...
 ```
 
+You have to indent each continuation line when documenting returned values,
+even if there's only one value returned:
+
+```python
+"""Foo.
+
+Returns:
+    success: Whether it succeeded.
+        A longer description of what is considered success,
+        and what is considered failure.
+"""
+```
+
+If you don't want to indent continuation lines for the only returned value,
+use the [`returns_multiple_items=False`](#parser-options) parser option.
+
 Type annotations can as usual be overridden using types in parentheses
 in the docstring itself:
 
@@ -700,6 +722,21 @@ Returns:
 """
 ```
 
+If you want to specify the type without a name, you still have to wrap the type in parentheses:
+
+```python
+"""Foo.
+
+Returns:
+    (int): Whether it succeeded.
+    (Decimal): Final precision.
+"""
+```
+
+If you don't want to wrap the type in parentheses,
+use the [`returns_named_value=False`](#parser-options) parser option.
+Setting it to false will disallow specifying a name.
+
 TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
 See previous tips for types in docstrings.
 
@@ -710,20 +747,6 @@ multiple items.
 
 
 ### Numpydoc-style
-
-The parser accepts a few options:
-
-- `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
-    Useful when merging `__init__` docstring into class' docstrings
-    with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
-- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
-    These flags are used to alter the behavior of [doctest][] when testing docstrings,
-    and should not be visible in your docs. Default: true.
-- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
-- `allow_section_blank_line`: Allow blank lines in sections' content.
-    When false, a blank line finishes the current section.
-    When true, single blank lines are kept as part of the section.
-    You can terminate sections with double blank lines. Default: false.
 
 Sections are written like this:
 
@@ -804,6 +827,22 @@ several syntaxes are supported:
         description
     """
     ```
+
+#### Parser options
+
+The parser accepts a few options:
+
+- `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
+    Useful when merging `__init__` docstring into class' docstrings
+    with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
+- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
+    These flags are used to alter the behavior of [doctest][] when testing docstrings,
+    and should not be visible in your docs. Default: true.
+- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `allow_section_blank_line`: Allow blank lines in sections' content.
+    When false, a blank line finishes the current section.
+    When true, single blank lines are kept as part of the section.
+    You can terminate sections with double blank lines. Default: false.
 
 #### Attributes
 
