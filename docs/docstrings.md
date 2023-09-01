@@ -122,18 +122,19 @@ def foo(a, b):
 The parser accepts a few options:
 
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
-    Useful when merging `__init__` docstring into class' docstrings
+    Useful when merging `__init__` docstring into class' docstrings. Default: false.
     with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
-- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
-    These flags are used to alter the behavior of [doctest][] when testing docstrings,
-    and should not be visible in your docs. Default: true.
-- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 - `returns_multiple_items`: Parse [Returns sections](#returns) as if they contain multiple items.
     It means that continuation lines must be indented. Default: true.
 - `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#returns) as a name and description,
     rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
-    When false, parentheses are optional but the items cannot be named: `int: Description`.
-
+    When false, parentheses are optional but the items cannot be named: `int: Description`. Default: true.
+- `returns_type_in_property_summary`: Whether to parse the return type of properties
+    at the beginning of their summary: `str: Summary of the property`. Default: false.
+- `trim_doctest_flags`: Remove the [doctest flags][] written as comments in `pycon` snippets within a docstring.
+    These flags are used to alter the behavior of [doctest][] when testing docstrings,
+    and should not be visible in your docs. Default: true.
+- `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 
 #### Attributes
 
@@ -1575,21 +1576,3 @@ Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 [issue-xref-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/26
 [issue-xref-numpy-func-cls]: https://github.com/mkdocstrings/griffe/issues/200
 [issue-xref-google-func-cls]: https://github.com/mkdocstrings/griffe/issues/199
-
-### Parsing options
-
-Option                     | Description                               | Google | Numpy | Sphinx
--------------------------- | ----------------------------------------- | ------ | ----- | ------
-`ignore_init_summary`      | Ignore `__init__` summary.                | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
-`trim_doctest_flags`       | Trim doctest flags.                       | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
-`warn_unknown_params`      | Warn about unknown params.                | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
-`allow_section_blank_line` | Allow blank line in sections.             | /      | ✅    | /
-`returns_multiple_items`   | Parse multiple items in Returns sections. | ✅     | /     | /
-
-[issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
-[issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
-[issue-warn-unknown-params-sphinx]: https://github.com/mkdocstrings/griffe/issues/64
-
-[merge_init]: https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class
-[doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags
-[doctest]: https://docs.python.org/3/library/doctest.html#module-doctest

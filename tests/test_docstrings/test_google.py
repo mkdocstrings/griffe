@@ -1477,3 +1477,22 @@ def test_type_in_returns_without_parentheses(parse_google: ParserType) -> None:
     assert retval.name == ""
     assert retval.annotation is None
     assert retval.description == "Description\non several lines."
+
+
+def test_reading_property_type_in_summary(parse_google: ParserType) -> None:
+    """Assert we can parse the return type of properties in their summary.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = "str: Description of the property."
+    parent = Attribute("prop")
+    parent.labels.add("property")
+    sections, warnings = parse_google(docstring, returns_type_in_property_summary=True, parent=parent)
+    assert len(sections) == 2
+    assert sections[0].kind is DocstringSectionKind.text
+    assert sections[1].kind is DocstringSectionKind.returns
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation.name == "str"
+    assert retval.description == ""
