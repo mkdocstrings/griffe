@@ -23,28 +23,32 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def _yield(element: str | Expr | tuple[str | Expr, ...]) -> Iterator[str | ExprName | ExprAttribute]:
-    if isinstance(element, (str, ExprAttribute)):
+def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True) -> Iterator[str | Expr]:
+    if isinstance(element, str):
         yield element
     elif isinstance(element, tuple):
         for elem in element:
-            yield from _yield(elem)
+            yield from _yield(elem, flat=flat)
+    elif flat:
+        yield from element.iterate(flat=True)
     else:
-        yield from element
+        yield element
 
 
 def _join(
     elements: Iterable[str | Expr | tuple[str | Expr, ...]],
     joint: str | Expr,
-) -> Iterator[str | ExprName | ExprAttribute]:
+    *,
+    flat: bool = True,
+) -> Iterator[str | Expr]:
     it = iter(elements)
     try:
-        yield from _yield(next(it))
+        yield from _yield(next(it), flat=flat)
     except StopIteration:
         return
     for element in it:
-        yield from _yield(joint)
-        yield from _yield(element)
+        yield from _yield(joint, flat=flat)
+        yield from _yield(element, flat=flat)
 
 
 def _field_as_dict(
@@ -79,11 +83,28 @@ class Expr:
     """Base class for expressions."""
 
     def __str__(self) -> str:
-        return "".join(
-            elem if isinstance(elem, str) else elem.name if isinstance(elem, ExprName) else str(elem) for elem in self
-        )
+        return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # type: ignore[attr-defined]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def __iter__(self) -> Iterator[str | Expr]:
+        yield from self.iterate(flat=False)
+
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
+        """Iterate on the expression elements.
+
+        Parameters:
+            flat: Expressions are trees.
+
+                When flat is false, this method iterates only on the first layer of the tree.
+                To iterate on all the subparts of the expression, you have to do so recursively.
+                It allows to handle each subpart specifically (for example subscripts, attribute, etc.),
+                without them getting rendered as strings.
+
+                On the contrary, when flat is true, the whole tree is flattened as a sequence
+                of strings and instances of [Names][griffe.expressions.ExprName].
+
+        Yields:
+            Strings and names when flat, strings and expressions otherwise.
+        """
         yield from ()
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -145,8 +166,8 @@ class ExprAttribute(Expr):
 
     values: list[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _join(self.values, ".")
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _join(self.values, ".", flat=flat)
 
     def append(self, value: ExprName) -> None:
         """Append a name to this attribute.
@@ -189,10 +210,10 @@ class ExprBinOp(Expr):
     operator: str
     right: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _yield(self.left)
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _yield(self.left, flat=flat)
         yield f" {self.operator} "
-        yield from _yield(self.right)
+        yield from _yield(self.right, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -202,8 +223,8 @@ class ExprBoolOp(Expr):
     operator: str
     values: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _join(self.values, f" {self.operator} ")
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _join(self.values, f" {self.operator} ", flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -213,10 +234,10 @@ class ExprCall(Expr):
     function: Expr
     arguments: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from self.function
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from self.function.iterate(flat=flat)
         yield "("
-        yield from _join(self.arguments, ", ")
+        yield from _join(self.arguments, ", ", flat=flat)
         yield ")"
 
 
@@ -228,10 +249,10 @@ class ExprCompare(Expr):
     operators: Sequence[str]
     comparators: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _yield(self.left)
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _yield(self.left, flat=flat)
         yield " "
-        yield from _join(zip_longest(self.operators, [], self.comparators, fillvalue=" "), " ")
+        yield from _join(zip_longest(self.operators, [], self.comparators, fillvalue=" "), " ", flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -243,16 +264,16 @@ class ExprComprehension(Expr):
     conditions: Sequence[str | Expr]
     is_async: bool = False
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         if self.is_async:
             yield "async "
         yield "for "
-        yield from _yield(self.target)
+        yield from _yield(self.target, flat=flat)
         yield " in "
-        yield from _yield(self.iterable)
+        yield from _yield(self.iterable, flat=flat)
         if self.conditions:
             yield " if "
-            yield from _join(self.conditions, " if ")
+            yield from _join(self.conditions, " if ", flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -261,7 +282,7 @@ class ExprConstant(Expr):
 
     value: str
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002,D102
         yield self.value
 
 
@@ -272,7 +293,7 @@ class ExprDict(Expr):
     keys: Sequence[str | Expr | None]
     values: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002,D102
         yield "{"
         yield from _join(
             (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
@@ -289,12 +310,12 @@ class ExprDictComp(Expr):
     value: str | Expr
     generators: Sequence[Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
-        yield from _yield(self.key)
+        yield from _yield(self.key, flat=flat)
         yield ": "
-        yield from _yield(self.value)
-        yield from _join(self.generators, " ")
+        yield from _yield(self.value, flat=flat)
+        yield from _join(self.generators, " ", flat=flat)
         yield "}"
 
 
@@ -304,8 +325,8 @@ class ExprExtSlice(Expr):
 
     dims: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _join(self.dims, ", ")
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _join(self.dims, ", ", flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -314,9 +335,9 @@ class ExprFormatted(Expr):
 
     value: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
-        yield from _yield(self.value)
+        yield from _yield(self.value, flat=flat)
         yield "}"
 
 
@@ -327,10 +348,10 @@ class ExprGeneratorExp(Expr):
     element: str | Expr
     generators: Sequence[Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _yield(self.element)
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _yield(self.element, flat=flat)
         yield " "
-        yield from _join(self.generators, " ")
+        yield from _join(self.generators, " ", flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -341,12 +362,12 @@ class ExprIfExp(Expr):
     test: str | Expr
     orelse: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from _yield(self.body)
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from _yield(self.body, flat=flat)
         yield " if "
-        yield from _yield(self.test)
+        yield from _yield(self.test, flat=flat)
         yield " else "
-        yield from _yield(self.orelse)
+        yield from _yield(self.orelse, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -355,9 +376,9 @@ class ExprJoinedStr(Expr):
 
     values: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "f'"
-        yield from _join(self.values, "")
+        yield from _join(self.values, "", flat=flat)
         yield "'"
 
 
@@ -368,10 +389,10 @@ class ExprKeyword(Expr):
     name: str
     value: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield self.name
         yield "="
-        yield from _yield(self.value)
+        yield from _yield(self.value, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -380,9 +401,9 @@ class ExprVarPositional(Expr):
 
     value: Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "*"
-        yield from self.value
+        yield from self.value.iterate(flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -391,9 +412,9 @@ class ExprVarKeyword(Expr):
 
     value: Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "**"
-        yield from self.value
+        yield from self.value.iterate(flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -403,11 +424,11 @@ class ExprLambda(Expr):
     parameters: Sequence[ExprParameter]
     body: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "lambda "
-        yield from _join(self.parameters, ", ")
+        yield from _join(self.parameters, ", ", flat=flat)
         yield ": "
-        yield from _yield(self.body)
+        yield from _yield(self.body, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -416,9 +437,9 @@ class ExprList(Expr):
 
     elements: Sequence[Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "["
-        yield from _join(self.elements, ", ")
+        yield from _join(self.elements, ", ", flat=flat)
         yield "]"
 
 
@@ -429,11 +450,11 @@ class ExprListComp(Expr):
     element: str | Expr
     generators: Sequence[Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "["
-        yield from _yield(self.element)
+        yield from _yield(self.element, flat=flat)
         yield " "
-        yield from _join(self.generators, " ")
+        yield from _join(self.generators, " ", flat=flat)
         yield "]"
 
 
@@ -453,7 +474,7 @@ class ExprName(Expr):
             return self.name == other.name
         return NotImplemented
 
-    def __iter__(self) -> Iterator[ExprName]:
+    def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002,D102
         yield self
 
     @property
@@ -497,11 +518,11 @@ class ExprNamedExpr(Expr):
     target: Expr
     value: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "("
-        yield from self.target
+        yield from self.target.iterate(flat=flat)
         yield " := "
-        yield from _yield(self.value)
+        yield from _yield(self.value, flat=flat)
         yield ")"
 
 
@@ -521,9 +542,9 @@ class ExprSet(Expr):
 
     elements: Sequence[str | Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
-        yield from _join(self.elements, ", ")
+        yield from _join(self.elements, ", ", flat=flat)
         yield "}"
 
 
@@ -534,11 +555,11 @@ class ExprSetComp(Expr):
     element: str | Expr
     generators: Sequence[Expr]
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
-        yield from _yield(self.element)
+        yield from _yield(self.element, flat=flat)
         yield " "
-        yield from _join(self.generators, " ")
+        yield from _join(self.generators, " ", flat=flat)
         yield "}"
 
 
@@ -550,15 +571,15 @@ class ExprSlice(Expr):
     upper: str | Expr | None = None
     step: str | Expr | None = None
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         if self.lower is not None:
-            yield from _yield(self.lower)
+            yield from _yield(self.lower, flat=flat)
         yield ":"
         if self.upper is not None:
-            yield from _yield(self.upper)
+            yield from _yield(self.upper, flat=flat)
         if self.step is not None:
             yield ":"
-            yield from _yield(self.step)
+            yield from _yield(self.step, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -568,10 +589,10 @@ class ExprSubscript(Expr):
     left: Expr
     slice: Expr  # noqa: A003
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
-        yield from self.left
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+        yield from self.left.iterate(flat=flat)
         yield "["
-        yield from self.slice
+        yield from _yield(self.slice, flat=flat)
         yield "]"
 
     @property
@@ -592,10 +613,10 @@ class ExprTuple(Expr):
     elements: Sequence[str | Expr]
     implicit: bool = False
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         if not self.implicit:
             yield "("
-        yield from _join(self.elements, ", ")
+        yield from _join(self.elements, ", ", flat=flat)
         if not self.implicit:
             yield ")"
 
@@ -607,9 +628,9 @@ class ExprUnaryOp(Expr):
     operator: str
     value: str | Expr
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield self.operator
-        yield from _yield(self.value)
+        yield from _yield(self.value, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -618,11 +639,11 @@ class ExprYield(Expr):
 
     value: str | Expr | None = None
 
-    def __iter__(self) -> Iterator[str | ExprName | ExprAttribute]:
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "yield"
         if self.value is not None:
             yield " "
-            yield from _yield(self.value)
+            yield from _yield(self.value, flat=flat)
 
 
 _unary_op_map = {

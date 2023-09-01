@@ -174,12 +174,12 @@ def test_forward_references(code: str, has_name: bool) -> None:
         has_name: Whether the annotation should contain a Name rather than a string.
     """
     with temporary_visited_module(code) as module:
-        annotation = module["a"].annotation
+        annotation = list(module["a"].annotation.iterate(flat=True))
         if has_name:
             assert any(isinstance(item, ExprName) and item.name == "A" for item in annotation)
             assert all(not (isinstance(item, str) and item == "A") for item in annotation)
         else:
-            assert "A" in annotation
+            assert "'A'" in annotation
             assert all(not (isinstance(item, ExprName) and item.name == "A") for item in annotation)
 
 
