@@ -185,3 +185,25 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
     assert len(breaking) == len(expected_breakages)
     for breakage, expected_kind in zip(breaking, expected_breakages):
         assert breakage.kind is expected_kind
+
+
+def test_moving_members_in_parent_classes() -> None:
+    """Test that moving an object from a base class to a parent class doesn't trigger a breakage."""
+    old_code = """
+        class Parent:
+            ...
+
+        class Base(Parent):
+            def method(self):
+                ...
+    """
+    new_code = """
+        class Parent:
+            def method(self):
+                ...
+
+        class Base(Parent):
+            ...
+    """
+    with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
+        assert not list(find_breaking_changes(old_package, new_package))

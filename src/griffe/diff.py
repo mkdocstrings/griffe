@@ -446,14 +446,14 @@ def _member_incompatibilities(
     seen_paths: set[str] | None = None,
 ) -> Iterator[Breakage]:
     seen_paths = set() if seen_paths is None else seen_paths
-    for name, old_member in old_obj.members.items():
+    for name, old_member in old_obj.all_members.items():
         if ignore_private and name.startswith("_"):
             logger.debug(f"API check: {old_obj.path}.{name}: skip private object")
             continue
 
         logger.debug(f"API check: {old_obj.path}.{name}")
         try:
-            new_member = new_obj.members[name]
+            new_member = new_obj.all_members[name]
         except KeyError:
             is_module = not old_member.is_alias and old_member.is_module
             if is_module or old_member.is_exported(explicitely=False):
