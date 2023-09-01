@@ -1333,11 +1333,15 @@ class Class(Object):
     def parameters(self) -> Parameters:
         """Return the parameters of this class' `__init__` method, if any.
 
+        This property fetches inherited members,
+        and therefore is part of the consumer API:
+        do not use when producing Griffe trees!
+
         Returns:
-            The parameters containter.
+            The parameters container.
         """
         try:
-            return self.members["__init__"].parameters  # type: ignore[union-attr]
+            return self.all_members["__init__"].parameters  # type: ignore[union-attr]
         except KeyError:
             if "dataclass" in self.labels:
                 return Parameters(
