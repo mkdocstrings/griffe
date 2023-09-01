@@ -1576,21 +1576,3 @@ Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 [issue-xref-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/26
 [issue-xref-numpy-func-cls]: https://github.com/mkdocstrings/griffe/issues/200
 [issue-xref-google-func-cls]: https://github.com/mkdocstrings/griffe/issues/199
-
-### Parsing options
-
-Option                     | Description                               | Google | Numpy | Sphinx
--------------------------- | ----------------------------------------- | ------ | ----- | ------
-`ignore_init_summary`      | Ignore `__init__` summary.                | ✅     | ✅    | [❌][issue-ignore-init-summary-sphinx]
-`trim_doctest_flags`       | Trim doctest flags.                       | ✅     | ✅    | [❌][issue-trim-doctest-flags-sphinx]
-`warn_unknown_params`      | Warn about unknown params.                | ✅     | ✅    | [❌][issue-warn-unknown-params-sphinx]
-`allow_section_blank_line` | Allow blank line in sections.             | /      | ✅    | /
-`returns_multiple_items`   | Parse multiple items in Returns sections. | ✅     | /     | /
-
-[issue-ignore-init-summary-sphinx]: https://github.com/mkdocstrings/griffe/issues/45
-[issue-trim-doctest-flags-sphinx]: https://github.com/mkdocstrings/griffe/issues/49
-[issue-warn-unknown-params-sphinx]: https://github.com/mkdocstrings/griffe/issues/64
-
-[merge_init]: https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class
-[doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags
-[doctest]: https://docs.python.org/3/library/doctest.html#module-doctest
