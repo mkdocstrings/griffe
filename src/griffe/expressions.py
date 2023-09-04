@@ -235,7 +235,7 @@ class ExprCall(Expr):
     arguments: Sequence[str | Expr]
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
-        yield from self.function.iterate(flat=flat)
+        yield from _yield(self.function, flat=flat)
         yield "("
         yield from _join(self.arguments, ", ", flat=flat)
         yield ")"
@@ -293,11 +293,12 @@ class ExprDict(Expr):
     keys: Sequence[str | Expr | None]
     values: Sequence[str | Expr]
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002,D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
         yield from _join(
             (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
             ", ",
+            flat=flat,
         )
         yield "}"
 
@@ -403,7 +404,7 @@ class ExprVarPositional(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "*"
-        yield from self.value.iterate(flat=flat)
+        yield from _yield(self.value, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -414,7 +415,7 @@ class ExprVarKeyword(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "**"
-        yield from self.value.iterate(flat=flat)
+        yield from _yield(self.value, flat=flat)
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -520,7 +521,7 @@ class ExprNamedExpr(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "("
-        yield from self.target.iterate(flat=flat)
+        yield from _yield(self.target, flat=flat)
         yield " := "
         yield from _yield(self.value, flat=flat)
         yield ")"
@@ -590,7 +591,7 @@ class ExprSubscript(Expr):
     slice: Expr  # noqa: A003
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
-        yield from self.left.iterate(flat=flat)
+        yield from _yield(self.left, flat=flat)
         yield "["
         yield from _yield(self.slice, flat=flat)
         yield "]"
