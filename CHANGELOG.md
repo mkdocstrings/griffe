@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.36.1](https://github.com/mkdocstrings/griffe/releases/tag/0.36.1) - 2023-09-04
+
+<small>[Compare with 0.36.0](https://github.com/mkdocstrings/griffe/compare/0.36.0...0.36.1)</small>
+
+### Bug Fixes
+
+- Fix iterating non-flat expressions (some nodes were skipped) ([3249155](https://github.com/mkdocstrings/griffe/commit/324915507c1100e04ffed6d926143f66f0016870) by Timothée Mazzucotelli).
+
 ## [0.36.0](https://github.com/mkdocstrings/griffe/releases/tag/0.36.0) - 2023-09-01
 
 <small>[Compare with 0.35.2](https://github.com/mkdocstrings/griffe/compare/0.35.2...0.36.0)</small>
