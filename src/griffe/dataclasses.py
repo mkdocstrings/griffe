@@ -1300,7 +1300,12 @@ class Module(Object):
             A dictionary.
         """
         base = super().as_dict(**kwargs)
-        base["filepath"] = str(self._filepath) if self._filepath else None
+
+        filepath = None
+        if self._filepath:
+            filepath = [str(p) for p in self._filepath] if isinstance(self._filepath, list) else str(self.filepath)
+
+        base["filepath"] = filepath
         return base
 
 
