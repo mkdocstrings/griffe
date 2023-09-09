@@ -7,6 +7,7 @@ from contextlib import suppress
 from typing import TYPE_CHECKING, Protocol
 
 from griffe.agents.nodes import safe_get_annotation
+from griffe.exceptions import BuiltinModuleError
 from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:
@@ -42,6 +43,8 @@ def warning(name: str) -> WarningCallable:
             prefix = docstring.parent.relative_filepath  # type: ignore[union-attr]
         except (AttributeError, ValueError):
             prefix = "<module>"
+        except BuiltinModuleError:
+            prefix = f"<module: {docstring.parent.module.name}>"
         log = getattr(logger, log_level.value)
         log(f"{prefix}:{(docstring.lineno or 0)+offset}: {message}")
 
