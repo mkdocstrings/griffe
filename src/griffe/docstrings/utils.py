@@ -44,7 +44,7 @@ def warning(name: str) -> WarningCallable:
         except (AttributeError, ValueError):
             prefix = "<module>"
         except BuiltinModuleError:
-            prefix = f"<module: {docstring.parent.module.name}>"
+            prefix = f"<module: {docstring.parent.module.name}>"  # type: ignore[union-attr]
         log = getattr(logger, log_level.value)
         log(f"{prefix}:{(docstring.lineno or 0)+offset}: {message}")
 
