@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.36.2](https://github.com/mkdocstrings/griffe/releases/tag/0.36.2) - 2023-09-10
+
+<small>[Compare with 0.36.1](https://github.com/mkdocstrings/griffe/compare/0.36.1...0.36.2)</small>
+
+### Bug Fixes
+
+- Fix warnings for docstrings in builtin modules ([6ba3e04](https://github.com/mkdocstrings/griffe/commit/6ba3e0461647c2c76d0fd68889d37bbada686259) by Timothée Mazzucotelli).
+- Fix dumping `filepath` to a dict when it is a list ([066a4a7](https://github.com/mkdocstrings/griffe/commit/066a4a7f22827783c930feacd6a339ed3d00ec27) by davfsa). [PR #207](https://github.com/mkdocstrings/griffe/pull/207)
+
 ## [0.36.1](https://github.com/mkdocstrings/griffe/releases/tag/0.36.1) - 2023-09-04
 
 <small>[Compare with 0.36.0](https://github.com/mkdocstrings/griffe/compare/0.36.0...0.36.1)</small>
