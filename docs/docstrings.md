@@ -122,7 +122,7 @@ def foo(a, b):
 The parser accepts a few options:
 
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
-    Useful when merging `__init__` docstring into class' docstrings. Default: false.
+    Useful when merging `__init__` docstring into class' docstrings
     with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
 - `returns_multiple_items`: Parse [Returns sections](#returns) as if they contain multiple items.
     It means that continuation lines must be indented. Default: true.
@@ -740,12 +740,6 @@ Setting it to false will disallow specifying a name.
 
 TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
 See previous tips for types in docstrings.
-
-WARNING: **Continuation lines for a single returned item must still be indented.**  
-Even when your function returns a single value, you must indent continuation
-lines of its description so that the parser does not think you are documenting
-multiple items.
-
 
 ### Numpydoc-style
 
