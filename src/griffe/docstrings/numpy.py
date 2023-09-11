@@ -9,31 +9,12 @@ Rejected as non particularly Pythonic or useful as sections:
 
 - See also: this section feels too subjective (specially crafted as a standard for Numpy itself),
     and there are may ways to reference related items in a docstring, depending on the chosen markup.
-- Methods: with a good documentation renderer, methods are easily made accessible or hidden.
-    Griffe also has a goal of making the merging of inherited methods configurable (on/off).
 
 Rejected as naturally handled by the user-chosen markup:
 
 - Warnings: this is just markup.
 - Notes: again, just markup.
 - References: again, just markup.
-
----
-
-The following sections are supported:
-
-- Deprecated (revisited): we expect a title instead of an RST directive.
-    Python has support for deprecating things, so it feels natural
-    to structure deprecations.
-- Parameters: obviously.
-- Returns: obviously.
-- Yields: obviously.
-- Receives: less used than Yields, but very natural/Pythonic as well.
-- Other parameters: used here as documentation for keyword parameters.
-- Raises: obviously.
-- Warns: less used than Raises, but very natural/Pythonic as well.
-- Examples: obviously. Special handling for non-code-blocks `>>>`.
-- Attributes: obviously.
 """
 
 from __future__ import annotations

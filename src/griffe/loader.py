@@ -67,13 +67,21 @@ class GriffeLoader:
             allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         """
         self.extensions: Extensions = extensions or Extensions()
+        """Loaded Griffe extensions."""
         self.docstring_parser: Parser | None = docstring_parser
+        """Selected docstring parser."""
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        """Configured parsing options."""
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        """Collection of source code lines."""
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        """Collection of modules."""
         self.allow_inspection: bool = allow_inspection
+        """Whether to allow inspecting (importing) modules for which we can't find sources."""
         self.store_source: bool = store_source
+        """Whether to store source code in the lines collection."""
         self.finder: ModuleFinder = ModuleFinder(search_paths)
+        """The module source finder."""
         self._time_stats: dict = {
             "time_spent_visiting": 0,
             "time_spent_inspecting": 0,

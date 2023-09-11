@@ -218,49 +218,37 @@ class ObjectAliasMixin:
 
     @property
     def modules(self) -> dict[str, Module]:
-        """Return the module members.
+        """The module members.
 
         This method is part of the consumer API:
         do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of modules.
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # type: ignore[misc]
 
     @property
     def classes(self) -> dict[str, Class]:
-        """Return the class members.
+        """The class members.
 
         This method is part of the consumer API:
         do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of classes.
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # type: ignore[misc]
 
     @property
     def functions(self) -> dict[str, Function]:
-        """Return the function members.
+        """The function members.
 
         This method is part of the consumer API:
         do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of functions.
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # type: ignore[misc]
 
     @property
     def attributes(self) -> dict[str, Attribute]:
-        """Return the attribute members.
+        """The attribute members.
 
         This method is part of the consumer API:
         do not use when producing Griffe trees!
-
-        Returns:
-            A dictionary of attributes.
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
@@ -277,20 +265,12 @@ class ObjectAliasMixin:
 
     @property
     def is_explicitely_exported(self) -> bool:
-        """Tell if this object/alias is explicitely exported by its parent.
-
-        Returns:
-            True or False.
-        """
+        """Whether this object/alias is explicitely exported by its parent."""
         return self.is_exported(explicitely=True)
 
     @property
     def is_implicitely_exported(self) -> bool:
-        """Tell if this object/alias is implicitely exported by its parent.
-
-        Returns:
-            True or False.
-        """
+        """Whether this object/alias is implicitely exported by its parent."""
         return self.parent.exports is None  # type: ignore[attr-defined]
 
     def is_public(

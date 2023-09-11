@@ -32,12 +32,7 @@ logger = get_logger(__name__)
 
 
 class Decorator:
-    """This class represents decorators.
-
-    Attributes:
-        lineno: The starting line number.
-        endlineno: The ending line number.
-    """
+    """This class represents decorators."""
 
     def __init__(self, value: str | Expr, *, lineno: int | None, endlineno: int | None) -> None:
         """Initialize the decorator.
@@ -48,8 +43,11 @@ class Decorator:
             endlineno: The ending line number.
         """
         self.value: str | Expr = value
+        """The decorator value (as a Griffe expression or string)."""
         self.lineno: int | None = lineno
+        """The starting line number of the decorator."""
         self.endlineno: int | None = endlineno
+        """The ending line number of the decorator."""
 
     @property
     def callable_path(self) -> str:
@@ -74,14 +72,7 @@ class Decorator:
 
 
 class Docstring:
-    """This class represents docstrings.
-
-    Attributes:
-        value: The actual documentation string, cleaned up.
-        lineno: The starting line number.
-        endlineno: The ending line number.
-        parent: The parent object on which this docstring is attached.
-    """
+    """This class represents docstrings."""
 
     def __init__(
         self,
@@ -104,31 +95,29 @@ class Docstring:
             parser_options: Additional docstring parsing options.
         """
         self.value: str = inspect.cleandoc(value.rstrip())
+        """The original value of the docstring, cleaned by `inspect.cleandoc`."""
         self.lineno: int | None = lineno
+        """The starting line number of the docstring."""
         self.endlineno: int | None = endlineno
+        """The ending line number of the docstring."""
         self.parent: Object | None = parent
+        """The object this docstring is attached to."""
         self.parser: Literal["google", "numpy", "sphinx"] | Parser | None = parser
+        """The selected docstring parser."""
         self.parser_options: dict[str, Any] = parser_options or {}
+        """The configured parsing options."""
 
     def __bool__(self) -> bool:
         return bool(self.value)
 
     @property
     def lines(self) -> list[str]:
-        """Returns the lines of the docstring.
-
-        Returns:
-            The docstring's lines.
-        """
+        """The lines of the docstring."""
         return self.value.split("\n")
 
     @cached_property
     def parsed(self) -> list[DocstringSection]:
-        """Return the docstring, parsed into structured data.
-
-        Returns:
-            The parsed docstring as a list of sections.
-        """
+        """The docstring sections, parsed into structured data."""
         return self.parse()
 
     def parse(
@@ -170,14 +159,7 @@ class Docstring:
 
 
 class Parameter:
-    """This class represent a function parameter.
-
-    Attributes:
-        name: The parameter name.
-        annotation: The parameter annotation, if any.
-        kind: The parameter kind.
-        default: The parameter default, if any.
-    """
+    """This class represent a function parameter."""
 
     def __init__(
         self,
@@ -196,9 +178,13 @@ class Parameter:
             default: The parameter default, if any.
         """
         self.name: str = name
+        """The parameter name."""
         self.annotation: str | Expr | None = annotation
+        """The parameter type annotation."""
         self.kind: ParameterKind | None = kind
+        """The parameter kind."""
         self.default: str | Expr | None = default
+        """The parameter default value."""
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -208,11 +194,7 @@ class Parameter:
 
     @property
     def required(self) -> bool:
-        """Tell if this parameter is required.
-
-        Returns:
-            True or False.
-        """
+        """Whether this parameter is required."""
         return self.default is None
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -235,7 +217,13 @@ class Parameter:
 class Parameters:
     """This class is a container for parameters.
 
-    It allows to get parameters using their position (index) or their name.
+    It allows to get parameters using their position (index) or their name:
+
+    ```pycon
+    >>> parameters = Parameters(Parameter("hello"))
+    >>> parameters[0] is parameters["hello"]
+    True
+    ```
     """
 
     def __init__(self, *parameters: Parameter) -> None:
@@ -280,23 +268,19 @@ class Parameters:
 
 
 class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):
-    """An abstract class representing a Python object.
-
-    Attributes:
-        kind: The object kind.
-        name: The object name.
-        lineno: The object starting line, or None for modules. Lines start at 1.
-        endlineno: The object ending line (inclusive), or None for modules.
-        docstring: The object docstring.
-        parent: The object parent, or None if it is the top module.
-        members: The object members.
-        labels: The object labels.
-    """
+    """An abstract class representing a Python object."""
 
     kind: Kind
+    """The object kind."""
     is_alias: bool = False
+    """Whether this object is an alias."""
     is_collection: bool = False
+    """Whether this object is a (modules) collection."""
     inherited: bool = False
+    """Whether this object (alias) is inherited.
+
+    Objects can never be inherited, only aliases can.
+    """
 
     def __init__(
         self,
@@ -323,18 +307,57 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             modules_collection: A collection of modules.
         """
         self.name: str = name
+        """The object name."""
         self.lineno: int | None = lineno
+        """The starting line number of the object."""
         self.endlineno: int | None = endlineno
+        """The ending line number of the object."""
         self.docstring: Docstring | None = docstring
+        """The object docstring."""
         self.parent: Module | Class | None = parent
+        """The parent of the object (none if top module)."""
         self.members: dict[str, Object | Alias] = {}
+        """The object members (modules, classes, functions, attributes)."""
         self.labels: set[str] = set()
+        """The object labels (`property`, `dataclass`, etc.)."""
+
         self.imports: dict[str, str] = {}
+        """The other objects imported by this object.
+
+        Keys are the names within the object (`from ... import ... as AS_NAME`),
+        while the values are the actual names of the objects (`from ... import REAL_NAME as ...`).
+        """
+
         self.exports: set[str] | list[str | ExprName] | None = None
+        """The names of the objects exported by this (module) object through the `__all__` variable.
+
+        Exports can contain string (object names) or resolvable names,
+        like other lists of exports coming from submodules:
+
+        ```python
+        from .submodule import __all__ as submodule_all
+
+        __all__ = ["hello", *submodule_all]
+        ```
+
+        Exports get expanded by the loader before it expands wildcards and resolves aliases.
+        """
+
         self.aliases: dict[str, Alias] = {}
+        """The aliases pointing to this object."""
+
         self.runtime: bool = runtime
+        """Whether this object is available at runtime.
+
+        Typically, type-guarded objects (under an `if TYPE_CHECKING` condition)
+        are not available at runtime.
+        """
+
         self.extra: dict[str, dict[str, Any]] = defaultdict(dict)
+        """Namespaced dictionaries storing extra metadata for this object, used by extensions."""
         self.public: bool | None = None
+        """Whether this object is public."""
+
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
@@ -353,18 +376,18 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def has_docstring(self) -> bool:
-        """Tell if this object has a non-empty docstring."""
+        """Whether this object has a non-empty docstring."""
         return bool(self.docstring)
 
     @property
     def has_docstrings(self) -> bool:
-        """Tell if this object or any of its members has a non-empty docstring."""
+        """Whether this object or any of its members has a non-empty docstring."""
         if self.has_docstring:
             return True
         return any(member.has_docstrings for member in self.members.values())
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:
-        """Tell if a member of this object is "exported".
+        """Whether a member of this object is "exported".
 
         By exported, we mean that the object is included in the `__all__` attribute
         of its parent module or class. When `__all__` is not defined,
@@ -423,22 +446,22 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def is_module(self) -> bool:
-        """Tell if this object is a module."""
+        """Whether this object is a module."""
         return self.kind is Kind.MODULE
 
     @property
     def is_class(self) -> bool:
-        """Tell if this object is a class."""
+        """Whether this object is a class."""
         return self.kind is Kind.CLASS
 
     @property
     def is_function(self) -> bool:
-        """Tell if this object is a function."""
+        """Whether this object is a function."""
         return self.kind is Kind.FUNCTION
 
     @property
     def is_attribute(self) -> bool:
-        """Tell if this object is an attribute."""
+        """Whether this object is an attribute."""
         return self.kind is Kind.ATTRIBUTE
 
     def has_labels(self, labels: set[str]) -> bool:
@@ -471,13 +494,10 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def module(self) -> Module:
-        """Return the parent module of this object.
+        """The parent module of this object.
 
         Raises:
             ValueError: When the object is not a module and does not have a parent.
-
-        Returns:
-            The parent module.
         """
         if isinstance(self, Module):
             return self
@@ -487,11 +507,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def package(self) -> Module:
-        """Return the absolute top module (the package) of this object.
-
-        Returns:
-            The parent module.
-        """
+        """The absolute top module (the package) of this object."""
         module = self.module
         while module.parent:
             module = module.parent  # type: ignore[assignment]  # always a module
@@ -499,22 +515,15 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def filepath(self) -> Path | list[Path]:
-        """Return the file path where this object was defined.
-
-        Returns:
-            A file path or a list of directories.
-        """
+        """The file path (or directory list for namespace packages) where this object was defined."""
         return self.module.filepath
 
     @property
     def relative_package_filepath(self) -> Path:
-        """Return the file path where this object was defined, relative to the top module path.
+        """The file path where this object was defined, relative to the top module path.
 
         Raises:
             ValueError: When the relative path could not be computed.
-
-        Returns:
-            A file path.
         """
         package_path = self.package.filepath
         if isinstance(self.filepath, list):
@@ -537,15 +546,12 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def relative_filepath(self) -> Path:
-        """Return the file path where this object was defined, relative to the current working directory.
+        """The file path where this object was defined, relative to the current working directory.
 
         If this object's file path is not relative to the current working directory, return its absolute path.
 
         Raises:
             ValueError: When the relative path could not be computed.
-
-        Returns:
-            A file path.
         """
         cwd = Path.cwd()
         if isinstance(self.filepath, list):
@@ -560,23 +566,17 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def path(self) -> str:
-        """Return the dotted path of this object.
+        """The dotted path of this object.
 
         On regular objects (not aliases), the path is the canonical path.
-
-        Returns:
-            A dotted path.
         """
         return self.canonical_path
 
     @property
     def canonical_path(self) -> str:
-        """Return the full dotted path of this object.
+        """The full dotted path of this object.
 
         The canonical path is the path where the object was defined (not imported).
-
-        Returns:
-            A dotted path.
         """
         if self.parent is None:
             return self.name
@@ -584,13 +584,10 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def modules_collection(self) -> ModulesCollection:
-        """Return the modules collection attached to this object or its parents.
+        """The modules collection attached to this object or its parents.
 
         Raises:
             ValueError: When no modules collection can be found in the object or its parents.
-
-        Returns:
-            A modules collection.
         """
         if self._modules_collection is not None:
             return self._modules_collection
@@ -600,13 +597,10 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def lines_collection(self) -> LinesCollection:
-        """Return the lines collection attached to this object or its parents.
+        """The lines collection attached to this object or its parents.
 
         Raises:
             ValueError: When no modules collection can be found in the object or its parents.
-
-        Returns:
-            A lines collection.
         """
         if self._lines_collection is not None:
             return self._lines_collection
@@ -616,11 +610,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def lines(self) -> list[str]:
-        """Return the lines containing the source of this object.
-
-        Returns:
-            A list of lines.
-        """
+        """The lines containing the source of this object."""
         try:
             filepath = self.filepath
         except BuiltinModuleError:
@@ -638,11 +628,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def source(self) -> str:
-        """Return the source code of this object.
-
-        Returns:
-            The source code.
-        """
+        """The source code of this object."""
         return dedent("\n".join(self.lines))
 
     def resolve(self, name: str) -> str:
@@ -722,13 +708,6 @@ class Alias(ObjectAliasMixin):
     - the name can be different from the target's
     - if the target can be resolved, the kind is the target's kind
     - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.dataclasses.Kind]
-
-    Attributes:
-        name: The alias name.
-        lineno: The alias starting line number.
-        endlineno: The alias ending line number.
-        parent: The alias parent.
-        target_path: The alias target path.
     """
 
     is_alias: bool = True
@@ -758,16 +737,25 @@ class Alias(ObjectAliasMixin):
             inherited: Whether this alias wraps an inherited member.
         """
         self.name: str = name
+        """The alias name."""
         self.alias_lineno: int | None = lineno
+        """The starting line number of the alias."""
         self.alias_endlineno: int | None = endlineno
+        """The ending line number of the alias."""
         self.runtime: bool = runtime
+        """Whether this alias is available at runtime."""
         self.inherited: bool = inherited
+        """Whether this alias represents an inherited member."""
         self.public: bool | None = None
+        """Whether this alias is public."""
         self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False
+
+        self.target_path: str
+        """The path of this alias' target."""
         if isinstance(target, str):
             self._target: Object | Alias | None = None
-            self.target_path: str = target
+            self.target_path = target
         else:
             self._target = target
             self.target_path = target.path
@@ -795,11 +783,7 @@ class Alias(ObjectAliasMixin):
 
     @property
     def kind(self) -> Kind:
-        """Return the target's kind, or Kind.ALIAS if the target cannot be resolved.
-
-        Returns:
-            A kind.
-        """
+        """The target's kind, or `Kind.ALIAS` if the target cannot be resolved."""
         # custom behavior to avoid raising exceptions
         try:
             return self.final_target.kind
@@ -808,25 +792,17 @@ class Alias(ObjectAliasMixin):
 
     @property
     def lineno(self) -> int | None:
-        """Return the target lineno or the alias lineno.
-
-        Returns:
-            The target lineno or the alias lineno.
-        """
+        """The target lineno or the alias lineno."""
         return self.final_target.lineno
 
     @property
     def endlineno(self) -> int | None:
-        """Return the target endlineno or the alias endlineno.
-
-        Returns:
-            The target endlineno or the alias endlineno.
-        """
+        """The target endlineno or the alias endlineno."""
         return self.final_target.endlineno
 
     @property
     def has_docstring(self) -> bool:
-        """Tell if this alias' target has a non-empty docstring."""
+        """Whether this alias' target has a non-empty docstring."""
         try:
             return self.final_target.has_docstring
         except (AliasResolutionError, CyclicAliasError):
@@ -834,7 +810,7 @@ class Alias(ObjectAliasMixin):
 
     @property
     def has_docstrings(self) -> bool:
-        """Tell if this alias' target or any of its members has a non-empty docstring."""
+        """Whether this alias' target or any of its members has a non-empty docstring."""
         try:
             return self.final_target.has_docstrings
         except (AliasResolutionError, CyclicAliasError):
@@ -842,11 +818,7 @@ class Alias(ObjectAliasMixin):
 
     @property
     def parent(self) -> Module | Class | Alias | None:
-        """Return the parent of this alias.
-
-        Returns:
-            The parent.
-        """
+        """The parent of this alias."""
         return self._parent
 
     @parent.setter
@@ -856,20 +828,12 @@ class Alias(ObjectAliasMixin):
 
     @property
     def path(self) -> str:
-        """Return the dotted path / import path of this object.
-
-        Returns:
-            A dotted path.
-        """
+        """The dotted path / import path of this object."""
         return ".".join((self.parent.path, self.name))  # type: ignore[union-attr]  # we assume there's always a parent
 
     @property
     def modules_collection(self) -> ModulesCollection:
-        """Return the modules collection attached to the alias parents.
-
-        Returns:
-            A modules collection.
-        """
+        """The modules collection attached to the alias parents."""
         # no need to forward to the target
         return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
 
@@ -1052,13 +1016,10 @@ class Alias(ObjectAliasMixin):
 
     @property
     def target(self) -> Object | Alias:
-        """Resolve and return the target, if possible.
+        """The resolved target (actual object), if possible.
 
         Upon accessing this property, if the target is not already resolved,
         a lookup is done using the modules collection to find the target.
-
-        Returns:
-            The resolved target.
         """
         if not self.resolved:
             self.resolve_target()
@@ -1075,12 +1036,9 @@ class Alias(ObjectAliasMixin):
 
     @property
     def final_target(self) -> Object:
-        """Resolve and return the final target, if possible.
+        """The final, resolved target, if possible.
 
         This will iterate through the targets until a non-alias object is found.
-
-        Returns:
-            The final target.
         """
         # using a dict as an ordered set
         paths_seen: dict[str, None] = {}
@@ -1133,20 +1091,12 @@ class Alias(ObjectAliasMixin):
 
     @property
     def resolved(self) -> bool:
-        """Tell whether this alias' target is resolved.
-
-        Returns:
-            True or False.
-        """
+        """Whether this alias' target is resolved."""
         return self._target is not None
 
     @property
     def wildcard(self) -> str | None:
-        """Return the module on which the wildcard import is performed (if any).
-
-        Returns:
-            The wildcard imported module, or None.
-        """
+        """The module on which the wildcard import is performed (if any)."""
         if self.name.endswith("/*"):
             return self.target_path
         return None
@@ -1194,6 +1144,7 @@ class Module(Object):
         super().__init__(*args, **kwargs)
         self._filepath: Path | list[Path] | None = filepath
         self.overloads: dict[str, list[Function]] = defaultdict(list)
+        """The overloaded signature declared in this module."""
 
     def __repr__(self) -> str:
         try:
@@ -1203,13 +1154,10 @@ class Module(Object):
 
     @property
     def filepath(self) -> Path | list[Path]:
-        """Get the file path of this module.
+        """The file path of this module.
 
         Raises:
             BuiltinModuleError: When the instance filepath is None.
-
-        Returns:
-            The module's file path.
         """
         if self._filepath is None:
             raise BuiltinModuleError(self.name)
@@ -1217,11 +1165,7 @@ class Module(Object):
 
     @property
     def imports_future_annotations(self) -> bool:
-        """Tell whether this module import future annotations.
-
-        Returns:
-            True or false.
-        """
+        """Whether this module import future annotations."""
         return (
             "annotations" in self.members
             and self.members["annotations"].is_alias
@@ -1230,11 +1174,7 @@ class Module(Object):
 
     @property
     def is_init_module(self) -> bool:
-        """Tell if this module is an `__init__.py` module.
-
-        Returns:
-            True or False.
-        """
+        """Whether this module is an `__init__.py` module."""
         if isinstance(self.filepath, list):
             return False
         try:
@@ -1244,29 +1184,17 @@ class Module(Object):
 
     @property
     def is_package(self) -> bool:
-        """Tell if this module is a package (top module).
-
-        Returns:
-            True or False.
-        """
+        """Whether this module is a package (top module)."""
         return not bool(self.parent) and self.is_init_module
 
     @property
     def is_subpackage(self) -> bool:
-        """Tell if this module is a subpackage.
-
-        Returns:
-            True or False.
-        """
+        """Whether this module is a subpackage."""
         return bool(self.parent) and self.is_init_module
 
     @property
     def is_namespace_package(self) -> bool:
-        """Tell if this module is a namespace package (top folder, no `__init__.py`).
-
-        Returns:
-            True or False.
-        """
+        """Whether this module is a namespace package (top folder, no `__init__.py`)."""
         try:
             return self.parent is None and isinstance(self.filepath, list)
         except BuiltinModuleError:
@@ -1274,11 +1202,7 @@ class Module(Object):
 
     @property
     def is_namespace_subpackage(self) -> bool:
-        """Tell if this module is a namespace subpackage.
-
-        Returns:
-            True or False.
-        """
+        """Whether this module is a namespace subpackage."""
         try:
             return (
                 self.parent is not None
@@ -1331,19 +1255,19 @@ class Class(Object):
         """
         super().__init__(*args, **kwargs)
         self.bases: list[Expr | str] = list(bases) if bases else []
+        """The class bases."""
         self.decorators: list[Decorator] = decorators or []
+        """The class decorators."""
         self.overloads: dict[str, list[Function]] = defaultdict(list)
+        """The overloaded signatures declared in this class."""
 
     @property
     def parameters(self) -> Parameters:
-        """Return the parameters of this class' `__init__` method, if any.
+        """The parameters of this class' `__init__` method, if any.
 
         This property fetches inherited members,
         and therefore is part of the consumer API:
         do not use when producing Griffe trees!
-
-        Returns:
-            The parameters container.
         """
         try:
             return self.all_members["__init__"].parameters  # type: ignore[union-attr]
@@ -1431,19 +1355,21 @@ class Function(Object):
         """
         super().__init__(*args, **kwargs)
         self.parameters: Parameters = parameters or Parameters()
+        """The function parameters."""
         self.returns: str | Expr | None = returns
+        """The function return type annotation."""
         self.decorators: list[Decorator] = decorators or []
+        """The function decorators."""
         self.setter: Function | None = None
+        """The setter linked to this function (property)."""
         self.deleter: Function | None = None
+        """The deleter linked to this function (property)."""
         self.overloads: list[Function] | None = None
+        """The overloaded signatures of this function."""
 
     @property
     def annotation(self) -> str | Expr | None:
-        """Return the return annotation.
-
-        Returns:
-            The function return annotation.
-        """
+        """The type annotation of the returned value."""
         return self.returns
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1484,7 +1410,9 @@ class Attribute(Object):
         """
         super().__init__(*args, **kwargs)
         self.value: str | Expr | None = value
+        """The attribute value."""
         self.annotation: str | Expr | None = annotation
+        """The attribute type annotation."""
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.

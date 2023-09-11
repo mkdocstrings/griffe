@@ -9,62 +9,74 @@ class DocstringSectionKind(enum.Enum):
     """The possible section kinds."""
 
     text = "text"
+    """Text section."""
     parameters = "parameters"
+    """Parameters section."""
     other_parameters = "other parameters"
+    """Other parameters (keyword arguments) section."""
     raises = "raises"
+    """Raises (exceptions) section."""
     warns = "warns"
+    """Warnings section."""
     returns = "returns"
+    """Returned value(s) section."""
     yields = "yields"
+    """Yielded value(s) (generators) section."""
     receives = "receives"
+    """Received value(s) (generators) section."""
     examples = "examples"
+    """Examples section."""
     attributes = "attributes"
+    """Attributes section."""
     functions = "functions"
+    """Functions section."""
     classes = "classes"
+    """Classes section."""
     modules = "modules"
+    """Modules section."""
     deprecated = "deprecated"
+    """Deprecation section."""
     admonition = "admonition"
+    """Admonition block."""
 
 
 class ParameterKind(enum.Enum):
-    """Enumeration of the different parameter kinds.
-
-    Attributes:
-        positional_only: Positional-only parameter.
-        positional_or_keyword: Positional or keyword parameter.
-        var_positional: Variadic positional parameter.
-        keyword_only: Keyword-only parameter.
-        var_keyword: Variadic keyword parameter.
-    """
+    """Enumeration of the different parameter kinds."""
 
     positional_only: str = "positional-only"
+    """Positional-only parameter."""
     positional_or_keyword: str = "positional or keyword"
+    """Positional or keyword parameter."""
     var_positional: str = "variadic positional"
+    """Variadic positional parameter."""
     keyword_only: str = "keyword-only"
+    """Keyword-only parameter."""
     var_keyword: str = "variadic keyword"
+    """Variadic keyword parameter."""
 
 
 class Kind(enum.Enum):
-    """Enumeration of the different objects kinds.
-
-    Attributes:
-        MODULE: The module kind.
-        CLASS: The class kind.
-        FUNCTION: The function kind.
-        ATTRIBUTE: The attribute kind.
-    """
+    """Enumeration of the different objects kinds."""
 
     MODULE: str = "module"
+    """Modules."""
     CLASS: str = "class"
+    """Classes."""
     FUNCTION: str = "function"
+    """Functions and methods."""
     ATTRIBUTE: str = "attribute"
+    """Attributes and properties."""
     ALIAS: str = "alias"
+    """Aliases (imported objects)."""
 
 
 class ExplanationStyle(enum.Enum):
     """An enumeration of the possible styles for explanations."""
 
     ONE_LINE: str = "oneline"
+    """Explanations on one-line."""
     VERBOSE: str = "verbose"
+    """Explanations on multiple lines."""
 
 
 class BreakageKind(enum.Enum):
@@ -88,8 +100,11 @@ class Parser(enum.Enum):
     """Enumeration for the different docstring parsers."""
 
     google = "google"
+    """Google-style docstrings parser."""
     sphinx = "sphinx"
+    """Sphinx-style docstrings parser."""
     numpy = "numpy"
+    """Numpydoc-style docstrings parser."""
 
 
 class ObjectKind(enum.Enum):
@@ -127,16 +142,13 @@ class ObjectKind(enum.Enum):
 
 
 class When(enum.Enum):
-    """This enumeration contains the different times at which an extension is used.
-
-    Attributes:
-        before_all: For each node, before the visit/inspection.
-        before_children: For each node, after the visit has started, and before the children visit/inspection.
-        after_children: For each node, after the children have been visited/inspected, and before finishing the visit/inspection.
-        after_all: For each node, after the visit/inspection.
-    """
+    """This enumeration contains the different times at which an extension is used."""
 
     before_all: int = 1
+    """For each node, before the visit/inspection."""
     before_children: int = 2
+    """For each node, after the visit has started, and before the children visit/inspection."""
     after_children: int = 3
+    """For each node, after the children have been visited/inspected, and before finishing the visit/inspection."""
     after_all: int = 4
+    """For each node, after the visit/inspection."""

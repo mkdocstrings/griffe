@@ -27,11 +27,6 @@ class ObjectNode:
     each node has a reference to its parent, but not to its child (for simplicity purposes and to avoid bugs).
 
     Each node stores an object, its name, and a reference to its parent node.
-
-    Attributes:
-        obj: The actual Python object.
-        name: The Python object's name.
-        parent: The parent node.
     """
 
     # low level stuff known to cause issues when resolving aliases
@@ -40,7 +35,7 @@ class ObjectNode:
     def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
         """Initialize the object.
 
-        Arguments:
+        Parameters:
             obj: A Python object.
             name: The object's name.
             parent: The object's parent node.
@@ -55,8 +50,11 @@ class ObjectNode:
             logger.debug(f"Could not unwrap {name}: {error!r}")
 
         self.obj: Any = obj
+        """The actual Python object."""
         self.name: str = name
+        """The Python object's name."""
         self.parent: ObjectNode | None = parent
+        """The parent node."""
 
     def __repr__(self) -> str:
         return f"ObjectNode(name={self.name!r})"
@@ -79,11 +77,7 @@ class ObjectNode:
 
     @property
     def kind(self) -> ObjectKind:
-        """Return the kind of this node.
-
-        Returns:
-            The node kind.
-        """
+        """The kind of this node."""
         if self.is_module:
             return ObjectKind.MODULE
         if self.is_class:
@@ -112,11 +106,7 @@ class ObjectNode:
 
     @cached_property
     def children(self) -> Sequence[ObjectNode]:
-        """Build and return the children of this node.
-
-        Returns:
-            A list of children.
-        """
+        """The children of this node."""
         children = []
         for name, member in inspect.getmembers(self.obj):
             if self._pick_member(name, member):
@@ -125,114 +115,67 @@ class ObjectNode:
 
     @cached_property
     def is_module(self) -> bool:
-        """Tell if this node's object is a module.
-
-        Returns:
-            The root of the tree.
-        """
+        """Whether this node's object is a module."""
         return inspect.ismodule(self.obj)
 
     @cached_property
     def is_class(self) -> bool:
-        """Tell if this node's object is a class.
-
-        Returns:
-            If this node's object is a class.
-        """
+        """Whether this node's object is a class."""
         return inspect.isclass(self.obj)
 
     @cached_property
     def is_function(self) -> bool:
-        """Tell if this node's object is a function.
-
-        Returns:
-            If this node's object is a function.
-        """
+        """Whether this node's object is a function."""
         return inspect.isfunction(self.obj)
 
     @cached_property
     def is_builtin_function(self) -> bool:
-        """Tell if this node's object is a builtin function.
-
-        Returns:
-            If this node's object is a builtin function.
-        """
+        """Whether this node's object is a builtin function."""
         return inspect.isbuiltin(self.obj)
 
     @cached_property
     def is_coroutine(self) -> bool:
-        """Tell if this node's object is a coroutine.
-
-        Returns:
-            If this node's object is a coroutine.
-        """
+        """Whether this node's object is a coroutine."""
         return inspect.iscoroutinefunction(self.obj)
 
     @cached_property
     def is_property(self) -> bool:
-        """Tell if this node's object is a property.
-
-        Returns:
-            If this node's object is a property.
-        """
+        """Whether this node's object is a property."""
         return isinstance(self.obj, property) or self.is_cached_property
 
     @cached_property
     def is_cached_property(self) -> bool:
-        """Tell if this node's object is a cached property.
-
-        Returns:
-            If this node's object is a cached property.
-        """
+        """Whether this node's object is a cached property."""
         return isinstance(self.obj, cached_property)
 
     @cached_property
     def parent_is_class(self) -> bool:
-        """Tell if the object of this node's parent is a class.
-
-        Returns:
-            If the object of this node's parent is a class.
-        """
+        """Whether the object of this node's parent is a class."""
         return bool(self.parent and self.parent.is_class)
 
     @cached_property
     def is_method(self) -> bool:
-        """Tell if this node's object is a method.
-
-        Returns:
-            If this node's object is a method.
-        """
+        """Whether this node's object is a method."""
         function_type = type(lambda: None)
         return self.parent_is_class and isinstance(self.obj, function_type)
 
     @cached_property
     def is_method_descriptor(self) -> bool:
-        """Tell if this node's object is a method descriptor.
+        """Whether this node's object is a method descriptor.
 
         Built-in methods (e.g. those implemented in C/Rust) are often
         method descriptors, rather than normal methods.
-
-        Returns:
-            If this node's object is a method descriptor.
         """
         return inspect.ismethoddescriptor(self.obj)
 
     @cached_property
     def is_builtin_method(self) -> bool:
-        """Tell if this node's object is a builtin method.
-
-        Returns:
-            If this node's object is a builtin method.
-        """
+        """Whether this node's object is a builtin method."""
         return self.is_builtin_function and self.parent_is_class
 
     @cached_property
     def is_staticmethod(self) -> bool:
-        """Tell if this node's object is a staticmethod.
-
-        Returns:
-            If this node's object is a staticmethod.
-        """
+        """Whether this node's object is a staticmethod."""
         if self.parent is None:
             return False
         try:
@@ -243,11 +186,7 @@ class ObjectNode:
 
     @cached_property
     def is_classmethod(self) -> bool:
-        """Tell if this node's object is a classmethod.
-
-        Returns:
-            If this node's object is a classmethod.
-        """
+        """Whether this node's object is a classmethod."""
         if self.parent is None:
             return False
         try:

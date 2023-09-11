@@ -54,8 +54,11 @@ class Package:
             stubs: An optional path to the related stubs file (.pyi).
         """
         self.name: str = name
+        """Package name."""
         self.path: Path = path
+        """Package folder path."""
         self.stubs: Path | None = stubs
+        """Package stubs file."""
 
 
 class NamespacePackage:
@@ -69,14 +72,18 @@ class NamespacePackage:
             path: The package paths.
         """
         self.name: str = name
+        """Namespace package name."""
         self.path: list[Path] = path
+        """Namespace package folder paths."""
 
 
 class ModuleFinder:
     """The Griffe finder, allowing to find modules on the file system."""
 
     accepted_py_module_extensions: ClassVar[list[str]] = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
+    """List of extensions supported by the finder."""
     extensions_set: ClassVar[set[str]] = set(accepted_py_module_extensions)
+    """Set of extensions supported by the finder."""
 
     def __init__(self, search_paths: Sequence[str | Path] | None = None) -> None:
         """Initialize the finder.
@@ -87,6 +94,7 @@ class ModuleFinder:
         self._paths_contents: dict[Path, list[Path]] = {}
         # optimization: pre-compute Paths to relieve CPU when joining paths
         self.search_paths = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
+        """The finder search paths."""
         self._extend_from_pth_files()
 
     def find_spec(

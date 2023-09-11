@@ -14,12 +14,7 @@ if TYPE_CHECKING:
 
 # Elements -----------------------------------------------
 class DocstringElement:
-    """This base class represents annotated, nameless elements.
-
-    Attributes:
-        annotation: The element annotation, if any.
-        description: The element description.
-    """
+    """This base class represents annotated, nameless elements."""
 
     def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
         """Initialize the element.
@@ -29,7 +24,9 @@ class DocstringElement:
             description: The element description.
         """
         self.description: str = description
+        """The element description."""
         self.annotation: str | Expr | None = annotation
+        """The element annotation."""
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this element's data as a dictionary.
@@ -47,12 +44,7 @@ class DocstringElement:
 
 
 class DocstringNamedElement(DocstringElement):
-    """This base class represents annotated, named elements.
-
-    Attributes:
-        name: The element name.
-        value: The element value, as a string, if any.
-    """
+    """This base class represents annotated, named elements."""
 
     def __init__(
         self,
@@ -72,7 +64,9 @@ class DocstringNamedElement(DocstringElement):
         """
         super().__init__(description=description, annotation=annotation)
         self.name: str = name
+        """The element name."""
         self.value: str | None = value
+        """The element value, if any"""
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this element's data as a dictionary.
@@ -94,11 +88,7 @@ class DocstringAdmonition(DocstringElement):
 
     @property
     def kind(self) -> str | Expr | None:
-        """Return the kind of this admonition.
-
-        Returns:
-            The admonition's kind.
-        """
+        """The kind of this admonition."""
         return self.annotation
 
     @kind.setter
@@ -107,11 +97,7 @@ class DocstringAdmonition(DocstringElement):
 
     @property
     def contents(self) -> str:
-        """Return the contents of this admonition.
-
-        Returns:
-            The admonition's contents.
-        """
+        """The contents of this admonition."""
         return self.description
 
     @contents.setter
@@ -124,11 +110,7 @@ class DocstringDeprecated(DocstringElement):
 
     @property
     def version(self) -> str:
-        """Return the version of this deprecation.
-
-        Returns:
-            The deprecation version.
-        """
+        """The version of this deprecation."""
         return self.annotation  # type: ignore[return-value]
 
     @version.setter
@@ -161,11 +143,7 @@ class DocstringParameter(DocstringNamedElement):
 
     @property
     def default(self) -> str | None:
-        """Return the default value of this parameter.
-
-        Returns:
-            The parameter's default.
-        """
+        """The default value of this parameter."""
         return self.value
 
     @default.setter
@@ -202,6 +180,7 @@ class DocstringSection:
     """This class represents a docstring section."""
 
     kind: DocstringSectionKind
+    """The section kind."""
 
     def __init__(self, title: str | None = None) -> None:
         """Initialize the section.
@@ -210,7 +189,9 @@ class DocstringSection:
             title: An optional title.
         """
         self.title: str | None = title
+        """The section title."""
         self.value: Any = None
+        """The section value."""
 
     def __bool__(self) -> bool:
         return bool(self.value)

@@ -288,74 +288,42 @@ class Extensions:
 
     @property
     def before_visit(self) -> list[VisitorExtension]:
-        """Return the visitors that run before the visit.
-
-        Returns:
-            Visitors.
-        """
+        """The visitors that run before the visit."""
         return self._visitors[When.before_all]
 
     @property
     def before_children_visit(self) -> list[VisitorExtension]:
-        """Return the visitors that run before the children visit.
-
-        Returns:
-            Visitors.
-        """
+        """The visitors that run before the children visit."""
         return self._visitors[When.before_children]
 
     @property
     def after_children_visit(self) -> list[VisitorExtension]:
-        """Return the visitors that run after the children visit.
-
-        Returns:
-            Visitors.
-        """
+        """The visitors that run after the children visit."""
         return self._visitors[When.after_children]
 
     @property
     def after_visit(self) -> list[VisitorExtension]:
-        """Return the visitors that run after the visit.
-
-        Returns:
-            Visitors.
-        """
+        """The visitors that run after the visit."""
         return self._visitors[When.after_all]
 
     @property
     def before_inspection(self) -> list[InspectorExtension]:
-        """Return the inspectors that run before the inspection.
-
-        Returns:
-            Inspectors.
-        """
+        """The inspectors that run before the inspection."""
         return self._inspectors[When.before_all]
 
     @property
     def before_children_inspection(self) -> list[InspectorExtension]:
-        """Return the inspectors that run before the children inspection.
-
-        Returns:
-            Inspectors.
-        """
+        """The inspectors that run before the children inspection."""
         return self._inspectors[When.before_children]
 
     @property
     def after_children_inspection(self) -> list[InspectorExtension]:
-        """Return the inspectors that run after the children inspection.
-
-        Returns:
-            Inspectors.
-        """
+        """The inspectors that run after the children inspection."""
         return self._inspectors[When.after_children]
 
     @property
     def after_inspection(self) -> list[InspectorExtension]:
-        """Return the inspectors that run after the inspection.
-
-        Returns:
-            Inspectors.
-        """
+        """The inspectors that run after the inspection."""
         return self._inspectors[When.after_all]
 
     def call(self, event: str, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:

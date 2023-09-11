@@ -61,6 +61,7 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin):
     def __init__(self) -> None:
         """Initialize the collection."""
         self.members: dict[str, Module] = {}
+        """Members (modules) of the collection."""
 
     def __bool__(self) -> bool:
         return True
@@ -69,7 +70,12 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin):
         return item in self.members
 
     @property
-    def all_members(self) -> dict[str, Module]:  # noqa: D102
+    def all_members(self) -> dict[str, Module]:
+        """Members of the collection.
+
+        This property is overwritten to simply return `self.members`,
+        as `all_members` does not make sense for a modules collection.
+        """
         return self.members
 
 

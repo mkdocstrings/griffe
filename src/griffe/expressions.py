@@ -165,6 +165,7 @@ class ExprAttribute(Expr):
     """Attributes like `a.b`."""
 
     values: list[str | Expr]
+    """The different parts of the dotted chain."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _join(self.values, ".", flat=flat)
@@ -207,8 +208,11 @@ class ExprBinOp(Expr):
     """Binary operations like `a + b`."""
 
     left: str | Expr
+    """Left part."""
     operator: str
+    """Binary operator."""
     right: str | Expr
+    """Right part."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.left, flat=flat)
@@ -221,7 +225,9 @@ class ExprBoolOp(Expr):
     """Boolean operations like `a or b`."""
 
     operator: str
+    """Boolean operator."""
     values: Sequence[str | Expr]
+    """Operands."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _join(self.values, f" {self.operator} ", flat=flat)
@@ -232,7 +238,9 @@ class ExprCall(Expr):
     """Calls like `f()`."""
 
     function: Expr
+    """Function called."""
     arguments: Sequence[str | Expr]
+    """Passed arguments."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.function, flat=flat)
@@ -246,8 +254,11 @@ class ExprCompare(Expr):
     """Comparisons like `a > b`."""
 
     left: str | Expr
+    """Left part."""
     operators: Sequence[str]
+    """Comparison operators."""
     comparators: Sequence[str | Expr]
+    """Things compared."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.left, flat=flat)
@@ -260,9 +271,13 @@ class ExprComprehension(Expr):
     """Comprehensions like `a for b in c if d`."""
 
     target: str | Expr
+    """Comprehension target (value added to the result)."""
     iterable: str | Expr
+    """Value iterated on."""
     conditions: Sequence[str | Expr]
+    """Conditions to include the target in the result."""
     is_async: bool = False
+    """Async comprehension or not."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         if self.is_async:
@@ -281,6 +296,7 @@ class ExprConstant(Expr):
     """Constants like `"a"` or `1`."""
 
     value: str
+    """Constant value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002,D102
         yield self.value
@@ -291,7 +307,9 @@ class ExprDict(Expr):
     """Dictionaries like `{"a": 0}`."""
 
     keys: Sequence[str | Expr | None]
+    """Dict keys."""
     values: Sequence[str | Expr]
+    """Dict values."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
@@ -308,8 +326,11 @@ class ExprDictComp(Expr):
     """Dict comprehensions like `{k: v for k, v in a}`."""
 
     key: str | Expr
+    """Target key."""
     value: str | Expr
+    """Target value."""
     generators: Sequence[Expr]
+    """Generators iterated on."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
@@ -325,6 +346,7 @@ class ExprExtSlice(Expr):
     """Extended slice like `a[x:y, z]`."""
 
     dims: Sequence[str | Expr]
+    """Dims."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _join(self.dims, ", ", flat=flat)
@@ -335,6 +357,7 @@ class ExprFormatted(Expr):
     """Formatted string like `{1 + 1}`."""
 
     value: str | Expr
+    """Formatted value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
@@ -347,7 +370,9 @@ class ExprGeneratorExp(Expr):
     """Generator expressions like `a for b in c for d in e`."""
 
     element: str | Expr
+    """Yielded element."""
     generators: Sequence[Expr]
+    """Generators iterated on."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.element, flat=flat)
@@ -360,8 +385,11 @@ class ExprIfExp(Expr):
     """Conditions like `a if b else c`."""
 
     body: str | Expr
+    """Value if test."""
     test: str | Expr
+    """Condition."""
     orelse: str | Expr
+    """Other expression."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.body, flat=flat)
@@ -376,6 +404,7 @@ class ExprJoinedStr(Expr):
     """Joined strings like `f"a {b} c"`."""
 
     values: Sequence[str | Expr]
+    """Joined values."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "f'"
@@ -388,7 +417,9 @@ class ExprKeyword(Expr):
     """Keyword arguments like `a=b`."""
 
     name: str
+    """Name."""
     value: str | Expr
+    """Value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield self.name
@@ -401,6 +432,7 @@ class ExprVarPositional(Expr):
     """Variadic positional parameters like `*args`."""
 
     value: Expr
+    """Starred value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "*"
@@ -412,6 +444,7 @@ class ExprVarKeyword(Expr):
     """Variadic keyword parameters like `**kwargs`."""
 
     value: Expr
+    """Double-starred value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "**"
@@ -423,7 +456,9 @@ class ExprLambda(Expr):
     """Lambda expressions like `lambda a: a.b`."""
 
     parameters: Sequence[ExprParameter]
+    """Lambda's parameters."""
     body: str | Expr
+    """Lambda's body."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "lambda "
@@ -437,6 +472,7 @@ class ExprList(Expr):
     """Lists like `[0, 1, 2]`."""
 
     elements: Sequence[Expr]
+    """List elements."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "["
@@ -449,7 +485,9 @@ class ExprListComp(Expr):
     """List comprehensions like `[a for b in c]`."""
 
     element: str | Expr
+    """Target value."""
     generators: Sequence[Expr]
+    """Generators iterated on."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "["
@@ -461,14 +499,12 @@ class ExprListComp(Expr):
 
 @dataclass(eq=False, **dataclass_opts)
 class ExprName(Expr):
-    """This class represents a Python object identified by a name in a given scope.
-
-    Attributes:
-        source: The name as written in the source code.
-    """
+    """This class represents a Python object identified by a name in a given scope."""
 
     name: str
+    """Actual name."""
     parent: str | ExprName | Module | Class | None = None
+    """Parent (for resolution in its scope)."""
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ExprName):
@@ -480,14 +516,11 @@ class ExprName(Expr):
 
     @property
     def path(self) -> str:
-        """Return the full, resolved name.
+        """The full, resolved name.
 
         If it was given when creating the name, return that.
         If a callable was given, call it and return its result.
         It the name cannot be resolved, return the source.
-
-        Returns:
-            The resolved name or the source.
         """
         if isinstance(self.parent, ExprName):
             return f"{self.parent.path}.{self.name}"
@@ -495,11 +528,7 @@ class ExprName(Expr):
 
     @property
     def canonical_path(self) -> str:
-        """Return the canonical name (resolved one, not alias name).
-
-        Returns:
-            The canonical name.
-        """
+        """The canonical name (resolved one, not alias name)."""
         if self.parent is None:
             return self.name
         if isinstance(self.parent, ExprName):
@@ -517,7 +546,9 @@ class ExprNamedExpr(Expr):
     """Named/assignment expressions like `a := b`."""
 
     target: Expr
+    """Target name."""
     value: str | Expr
+    """Value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "("
@@ -532,9 +563,13 @@ class ExprParameter(Expr):
     """Parameters in function signatures like `a: int = 0`."""
 
     kind: str
+    """Parameter kind."""
     name: str | None = None
+    """Parameter name."""
     annotation: Expr | None = None
+    """Parameter type."""
     default: Expr | None = None
+    """Parameter default."""
 
 
 @dataclass(eq=True, **dataclass_opts)
@@ -542,6 +577,7 @@ class ExprSet(Expr):
     """Sets like `{0, 1, 2}`."""
 
     elements: Sequence[str | Expr]
+    """Set elements."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
@@ -554,7 +590,9 @@ class ExprSetComp(Expr):
     """Set comprehensions like `{a for b in c}`."""
 
     element: str | Expr
+    """Target value."""
     generators: Sequence[Expr]
+    """Generators iterated on."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "{"
@@ -569,8 +607,11 @@ class ExprSlice(Expr):
     """Slices like `[a:b:c]`."""
 
     lower: str | Expr | None = None
+    """Lower bound."""
     upper: str | Expr | None = None
+    """Upper bound."""
     step: str | Expr | None = None
+    """Iteration step."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         if self.lower is not None:
@@ -588,7 +629,9 @@ class ExprSubscript(Expr):
     """Subscripts like `a[b]`."""
 
     left: Expr
+    """Left part."""
     slice: Expr  # noqa: A003
+    """Slice part."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.left, flat=flat)
@@ -612,7 +655,9 @@ class ExprTuple(Expr):
     """Tuples like `(0, 1, 2)`."""
 
     elements: Sequence[str | Expr]
+    """Tuple elements."""
     implicit: bool = False
+    """Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         if not self.implicit:
@@ -627,7 +672,9 @@ class ExprUnaryOp(Expr):
     """Unary operations like `-1`."""
 
     operator: str
+    """Unary operator."""
     value: str | Expr
+    """Value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield self.operator
@@ -639,6 +686,7 @@ class ExprYield(Expr):
     """Yield statements like `yield a`."""
 
     value: str | Expr | None = None
+    """Yielded value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield "yield"
