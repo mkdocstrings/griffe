@@ -140,6 +140,7 @@ plugins:
           separate_signature: true
           show_root_heading: true
           show_root_full_path: false
+          show_source: false
           show_signature_annotations: true
           show_symbol_type_heading: true
           show_symbol_type_toc: true
