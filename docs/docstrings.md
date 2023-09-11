@@ -77,9 +77,7 @@ Note:
 Find out possibly invalid section syntax by grepping for "reasons" in Griffe debug logs:
 
 ```bash
-griffe dump -Ldebug -o/dev/null \
-    -fdgoogle -D '{"strict_sections": true}' \
-    your_package 2>&1 | grep reasons
+griffe dump -Ldebug -o/dev/null -fdgoogle your_package 2>&1 | grep reasons
 ```
 
 Some sections support documenting multiple items (attributes, parameters, etc.).
