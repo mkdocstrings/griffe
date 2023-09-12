@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 TMPDIR_PREFIX = "griffe_"
 
 
-TmpPackage = namedtuple("TmpPackage", "tmpdir name path")  # noqa: PYI024
+TmpPackage = namedtuple("TmpPackage", "tmpdir name path")
 
 
 @contextmanager

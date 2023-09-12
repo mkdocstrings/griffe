@@ -17,6 +17,8 @@ class DocstringSectionKind(enum.Enum):
     raises = "raises"
     """Raises (exceptions) section."""
     warns = "warns"
+    """Warns section."""
+    warnings = "warnings"
     """Warnings section."""
     returns = "returns"
     """Returned value(s) section."""

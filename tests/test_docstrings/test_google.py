@@ -1496,3 +1496,22 @@ def test_reading_property_type_in_summary(parse_google: ParserType) -> None:
     assert retval.name == ""
     assert retval.annotation.name == "str"
     assert retval.description == ""
+
+
+def test_parse_warnings(
+    parse_google: ParserType,
+) -> None:
+    """Parse Warnings section with and without multiple items.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Warnings:
+            A warning
+                is here.
+    """
+    sections, _ = parse_google(docstring)
+
+    assert len(sections) == 1
+    assert sections[0].value.description == "A warning\n    is here."

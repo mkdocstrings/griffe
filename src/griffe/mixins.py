@@ -325,7 +325,7 @@ class SerializationMixin:
         return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
 
     @classmethod
-    def from_json(cls: type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:  # noqa: PYI019
+    def from_json(cls: type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:
         """Create an instance of this class from a JSON string.
 
         Parameters:

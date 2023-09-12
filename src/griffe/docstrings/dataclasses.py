@@ -126,6 +126,10 @@ class DocstringWarn(DocstringElement):
     """This class represents a documented warn value."""
 
 
+class DocstringWarning(DocstringElement):
+    """This class represents a documented warning value."""
+
+
 class DocstringReturn(DocstringNamedElement):
     """This class represents a documented return value."""
 
@@ -278,11 +282,27 @@ class DocstringSectionWarns(DocstringSection):
         """Initialize the section.
 
         Parameters:
-            value: The section warnings.
+            value: The section warns.
             title: An optional title.
         """
         super().__init__(title)
         self.value: list[DocstringWarn] = value
+
+
+class DocstringSectionWarnings(DocstringSection):
+    """This class represents a warnings section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.warnings
+
+    def __init__(self, value: DocstringWarning, title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section warnings.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: DocstringWarning = value
 
 
 class DocstringSectionReturns(DocstringSection):
@@ -474,7 +494,9 @@ __all__ = [
     "DocstringSectionReturns",
     "DocstringSectionText",
     "DocstringSectionWarns",
+    "DocstringSectionWarnings",
     "DocstringSectionYields",
     "DocstringWarn",
+    "DocstringWarning",
     "DocstringYield",
 ]

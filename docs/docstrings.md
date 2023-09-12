@@ -488,7 +488,6 @@ depending on what you imported/defined in the current module.
 
 #### Warns
 
-- Aliases: Warnings
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code.
@@ -512,6 +511,19 @@ TIP: **Warnings names are resolved using the function's scope.**
 You can document custom warnings, using the names available in the current scope,
 for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly,
 depending on what you imported/defined in the current module.
+
+#### Warnings
+
+Warnings sections allow to document cautions for the user.
+
+```python
+def foo():
+    """Foo.
+
+    Warnings:
+        Use this function with caution.
+    """
+```
 
 #### Yields
 
@@ -1219,7 +1231,6 @@ depending on what you imported/defined in the current module.
 
 #### Warns
 
-- Aliases: Warnings
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code.
@@ -1245,6 +1256,20 @@ TIP: **Warnings names are resolved using the function's scope.**
 You can document custom warnings, using the names available in the current scope,
 for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly,
 depending on what you imported/defined in the current module.
+
+#### Warnings
+
+Warnings sections allow to document cautions for the user.
+
+```python
+def foo():
+    """Foo.
+
+    Warnings
+    --------
+    Use this function with caution.
+    """
+```
 
 #### Yields
 

@@ -47,9 +47,11 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionReceives,
     DocstringSectionReturns,
     DocstringSectionText,
+    DocstringSectionWarnings,
     DocstringSectionWarns,
     DocstringSectionYields,
     DocstringWarn,
+    DocstringWarning,
     DocstringYield,
 )
 from griffe.docstrings.utils import parse_annotation, warning
@@ -74,6 +76,7 @@ _section_kind = {
     "receives": DocstringSectionKind.receives,
     "raises": DocstringSectionKind.raises,
     "warns": DocstringSectionKind.warns,
+    "warnings": DocstringSectionKind.warnings,
     "examples": DocstringSectionKind.examples,
     "attributes": DocstringSectionKind.attributes,
     "functions": DocstringSectionKind.functions,
@@ -547,6 +550,19 @@ def _read_warns_section(
     return DocstringSectionWarns(warns), new_offset
 
 
+def _read_warnings_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionWarnings, int]:
+    description, new_offset = _read_block(docstring, offset=offset, **options)
+    return (
+        DocstringSectionWarnings(DocstringWarning(description=description)),
+        new_offset,
+    )
+
+
 def _read_attributes_section(
     docstring: Docstring,
     *,
@@ -742,6 +758,7 @@ _section_reader = {
     DocstringSectionKind.deprecated: _read_deprecated_section,
     DocstringSectionKind.raises: _read_raises_section,
     DocstringSectionKind.warns: _read_warns_section,
+    DocstringSectionKind.warnings: _read_warnings_section,
     DocstringSectionKind.examples: _read_examples_section,
     DocstringSectionKind.attributes: _read_attributes_section,
     DocstringSectionKind.functions: _read_functions_section,

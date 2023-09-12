@@ -30,9 +30,11 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionReceives,
     DocstringSectionReturns,
     DocstringSectionText,
+    DocstringSectionWarnings,
     DocstringSectionWarns,
     DocstringSectionYields,
     DocstringWarn,
+    DocstringWarning,
     DocstringYield,
 )
 from griffe.docstrings.utils import parse_annotation, warning
@@ -70,7 +72,7 @@ _section_kind = {
     "classes": DocstringSectionKind.classes,
     "modules": DocstringSectionKind.modules,
     "warns": DocstringSectionKind.warns,
-    "warnings": DocstringSectionKind.warns,
+    "warnings": DocstringSectionKind.warnings,
 }
 
 BlockItem = Tuple[int, List[str]]
@@ -424,6 +426,19 @@ def _read_warns_section(
     return DocstringSectionWarns(warns), new_offset
 
 
+def _read_warnings_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionWarnings, int]:
+    description, new_offset = _read_block(docstring, offset=offset, **options)
+    return (
+        DocstringSectionWarnings(DocstringWarning(description=description)),
+        new_offset,
+    )
+
+
 def _read_returns_section(
     docstring: Docstring,
     *,
@@ -677,6 +692,7 @@ _section_reader = {
     DocstringSectionKind.other_parameters: _read_other_parameters_section,
     DocstringSectionKind.raises: _read_raises_section,
     DocstringSectionKind.warns: _read_warns_section,
+    DocstringSectionKind.warnings: _read_warnings_section,
     DocstringSectionKind.examples: _read_examples_section,
     DocstringSectionKind.attributes: _read_attributes_section,
     DocstringSectionKind.functions: _read_functions_section,
