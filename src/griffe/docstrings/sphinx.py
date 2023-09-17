@@ -135,6 +135,16 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
         _warn(docstring, 0, f"Duplicate parameter entry for '{name}'")
         return parsed_directive.next_index
 
+    with suppress(AttributeError):  # for parameters sections in objects without parameters
+        params = docstring.parent.parameters  # type: ignore[union-attr]
+        if name not in params:
+            message = f"Parameter '{name}' does not appear in the function signature"
+            for starred_name in (f"*{name}", f"**{name}"):
+                if starred_name in params:
+                    message += f". Did you mean '{starred_name}'?"
+                    break
+            _warn(docstring, 0, message)
+
     annotation = _determine_param_annotation(docstring, name, directive_type, parsed_values)
     default = _determine_param_default(docstring, name)
 
