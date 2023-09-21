@@ -161,10 +161,15 @@ class GriffeLoader:
         unresolved: set[str] = set("0")  # init to enter loop
         iteration = 0
         collection = self.modules_collection.members
+
+        # We must first expand exports (`__all__` values),
+        # then expand wildcard imports (`from ... import *`),
+        # and then only we can start resolving aliases.
         for exports_module in list(collection.values()):
             self.expand_exports(exports_module)
         for wildcards_module in list(collection.values()):
             self.expand_wildcards(wildcards_module, external=external)
+
         load_failures: set[str] = set()
         while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
             prev_unresolved = unresolved - {"0"}
@@ -187,7 +192,7 @@ class GriffeLoader:
         return unresolved, iteration
 
     def expand_exports(self, module: Module, seen: set | None = None) -> None:
-        """Expand exports: try to recursively expand all module exports.
+        """Expand exports: try to recursively expand all module exports (`__all__` values).
 
         Parameters:
             module: The module to recurse on.
@@ -199,6 +204,8 @@ class GriffeLoader:
             return
         expanded = set()
         for export in module.exports:
+            # It's a name: we resolve it, get the module it comes from,
+            # recurse into it, and add its exports to the current ones.
             if isinstance(export, ExprName):
                 module_path = export.canonical_path.rsplit(".", 1)[0]  # remove trailing .__all__
                 try:
@@ -212,6 +219,7 @@ class GriffeLoader:
                         expanded |= next_module.exports
                     except TypeError:
                         logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
+            # It's a string, simply add it to the current exports.
             else:
                 expanded.add(export)
         module.exports = expanded
@@ -235,10 +243,15 @@ class GriffeLoader:
         seen = seen or set()
         seen.add(obj.path)
 
+        # First we expand wildcard imports and store the objects in a temporary `expanded` variable,
+        # while also keeping track of the members representing wildcard import, to remove them later.
         for member in obj.members.values():
+            # Handle a wildcard.
             if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
                 package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
                 not_loaded = obj.package.path != package and package not in self.modules_collection
+
+                # Try loading the (unknown) package containing the wildcard importe module (if allowed to).
                 if not_loaded:
                     if not external:
                         continue
@@ -247,6 +260,8 @@ class GriffeLoader:
                     except ImportError as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
+
+                # Try getting the module from which every public object is imported.
                 try:
                     target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
                 except KeyError:
@@ -255,28 +270,47 @@ class GriffeLoader:
                         f"{cast(Alias, member).target_path} not found in modules collection",
                     )
                     continue
+
+                # Recurse into this module, expanding wildcards there before collecting everything.
                 if target.path not in seen:
                     try:
                         self.expand_wildcards(target, external=external, seen=seen)
                     except (AliasResolutionError, CyclicAliasError) as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
+
+                # Collect every imported object.
                 expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
                 to_remove.append(member.name)
+
+            # Recurse in unseen submodules.
             elif not member.is_alias and member.is_module and member.path not in seen:
                 self.expand_wildcards(member, external=external, seen=seen)  # type: ignore[arg-type]
 
+        # Then we remove the members representing wildcard imports.
         for name in to_remove:
             obj.del_member(name)
 
+        # Finally we process the collected objects.
         for new_member, alias_lineno, alias_endlineno in expanded:
             overwrite = False
             already_present = new_member.name in obj.members
             self_alias = new_member.is_alias and cast(Alias, new_member).target_path == f"{obj.path}.{new_member.name}"
+
+            # If a member with the same name is already present in the current object,
+            # we only overwrite it if the alias is imported lower in the module
+            # (meaning that the alias takes precedence at runtime).
             if already_present:
                 old_member = obj.get_member(new_member.name)
                 old_lineno = old_member.alias_lineno if old_member.is_alias else old_member.lineno
                 overwrite = alias_lineno > (old_lineno or 0)  # type: ignore[operator]
+
+            # 1. If the expanded member is an alias with a target path equal to its own path, we stop.
+            #    This situation can arise because of Griffe's mishandling of (abusive) wildcard imports.
+            #    We have yet to check how Python handles this itself, or if there's an algorithm
+            #    that we could follow to untangle back-and-forth wildcard imports.
+            # 2. If the expanded member was already present and we decided not to overwrite it, we stop.
+            # 3. Otherwise we proceed further.
             if not self_alias and (not already_present or overwrite):
                 alias = Alias(
                     new_member.name,
@@ -285,6 +319,10 @@ class GriffeLoader:
                     endlineno=alias_endlineno,
                     parent=obj,  # type: ignore[arg-type]
                 )
+                # Special case: we avoid overwriting a submodule with an alias pointing to it.
+                # Griffe suffers from this design flaw where an object cannot store both
+                # a submodule and a member of the same name, while this poses no issue in Python.
+                # We at least prevent this case where a submodule is overwritten by an imported version of itself.
                 if already_present:
                     prev_member = obj.get_member(new_member.name)
                     with suppress(AliasResolutionError, CyclicAliasError):
@@ -292,9 +330,10 @@ class GriffeLoader:
                             if prev_member.is_alias:
                                 prev_member = prev_member.final_target
                             if alias.final_target is prev_member:
-                                # alias named after the module it targets:
-                                # skip to avoid cyclic aliases
+                                # Alias named after the module it targets: skip to avoid cyclic aliases.
                                 continue
+
+                # Everything went right (supposedly), we add the alias as a member of the current object.
                 obj.set_member(new_member.name, alias)
 
     def resolve_module_aliases(
@@ -326,11 +365,16 @@ class GriffeLoader:
         seen.add(obj.path)
 
         for member in obj.members.values():
+            # Handle aliases.
             if member.is_alias:
                 if member.wildcard or member.resolved:  # type: ignore[union-attr]
                     continue
                 if not implicit and not member.is_explicitely_exported:
                     continue
+
+                # Try resolving the alias. If it fails, check if it is because it comes
+                # from an external package, and decide if we should load that package
+                # to allow the alias to be resolved at the next iteration (maybe).
                 try:
                     member.resolve_target()  # type: ignore[union-attr]
                 except AliasResolutionError as error:
@@ -355,6 +399,8 @@ class GriffeLoader:
                 else:
                     logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
                     resolved.add(member.path)
+
+            # Recurse into unseen modules and classes.
             elif member.kind in {Kind.MODULE, Kind.CLASS} and member.path not in seen:
                 sub_resolved, sub_unresolved = self.resolve_module_aliases(
                     member,
@@ -440,8 +486,7 @@ class GriffeLoader:
         try:
             parent_module = self._get_or_create_parent_module(module, subparts, subpath)
         except UnimportableModuleError as error:
-            # TODO: maybe add option to still load them
-            # TODO: maybe increase level to WARNING
+            # TODO: Maybe add option to still load them.
             logger.debug(f"{error}. Missing __init__ module?")
             return
         submodule_name = subparts[-1]

@@ -39,6 +39,7 @@ class AliasResolutionError(GriffeError):
         """
         self.alias: Alias = alias
         """The alias that triggered the error."""
+
         message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
         try:
             filepath = alias.parent.relative_filepath  # type: ignore[union-attr]
@@ -60,6 +61,7 @@ class CyclicAliasError(GriffeError):
         """
         self.chain: list[str] = chain
         """The chain of aliases that created the cycle."""
+
         super().__init__("Cyclic aliases detected:\n  " + "\n  ".join(self.chain))
 
 

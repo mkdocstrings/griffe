@@ -74,6 +74,7 @@ def _load_packages(
     allow_inspection: bool = True,
     store_source: bool = True,
 ) -> GriffeLoader:
+    # Create a single loader.
     loader = GriffeLoader(
         extensions=extensions,
         search_paths=search_paths,
@@ -82,6 +83,8 @@ def _load_packages(
         allow_inspection=allow_inspection,
         store_source=store_source,
     )
+
+    # Load each package.
     for package in packages:
         if not package:
             logger.debug("Empty package name, continuing")
@@ -94,6 +97,8 @@ def _load_packages(
         except ImportError as error:
             logger.exception(f"Tried but could not import package {package}: {error}")  # noqa: TRY401
     logger.info("Finished loading packages")
+
+    # Resolve aliases.
     if resolve_aliases:
         logger.info("Starting alias resolution")
         unresolved, iterations = loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
@@ -323,6 +328,7 @@ def dump(
     Returns:
         `0` for success, `1` for failure.
     """
+    # Prepare options.
     per_package_output = False
     if isinstance(output, str) and output.format(package="package") != output:
         per_package_output = True
@@ -337,6 +343,7 @@ def dump(
         logger.exception(str(error))  # noqa: TRY401
         return 1
 
+    # Load packages.
     loader = _load_packages(
         packages,
         extensions=loaded_extensions,
@@ -351,6 +358,7 @@ def dump(
     )
     data_packages = loader.modules_collection.members
 
+    # Serialize and dump packages.
     started = datetime.now(tz=timezone.utc)
     if per_package_output:
         for package_name, data in data_packages.items():
@@ -394,6 +402,7 @@ def check(
     Returns:
         `0` for success, `1` for failure.
     """
+    # Prepare options.
     search_paths = list(search_paths) if search_paths else []
 
     try:
@@ -410,6 +419,7 @@ def check(
         logger.exception(str(error))  # noqa: TRY401
         return 1
 
+    # Load old and new version of the package.
     old_package = load_git(
         against_path,
         ref=against,
@@ -436,6 +446,7 @@ def check(
             allow_inspection=allow_inspection,
         )
 
+    # Find and display API breakages.
     breakages = list(find_breaking_changes(old_package, new_package))
 
     colorama.deinit()
@@ -460,11 +471,13 @@ def main(args: list[str] | None = None) -> int:
     Returns:
         An exit code.
     """
+    # Parse arguments.
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)
     opts_dict = opts.__dict__
     subcommand = opts_dict.pop("subcommand")
 
+    # Initialize logging.
     log_level = opts_dict.pop("log_level", DEFAULT_LOG_LEVEL)
     try:
         level = getattr(logging, log_level)
@@ -478,6 +491,7 @@ def main(args: list[str] | None = None) -> int:
     else:
         logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)
 
+    # Run subcommand.
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
     return commands[subcommand](**opts_dict)
 

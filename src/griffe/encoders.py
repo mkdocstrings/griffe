@@ -117,8 +117,15 @@ def _load_decorators(obj_dict: dict) -> list[Decorator]:
 
 
 def _load_expression(expression: dict) -> expressions.Expr:
+    # The expression class name is stored in the `cls` key-value.
     cls = getattr(expressions, expression.pop("cls"))
     expr = cls(**expression)
+
+    # For attributes, we need to re-attach names (`values`) together,
+    # as a single linked list, from right to left:
+    # in `a.b.c`, `c` links to `b` which links to `a`.
+    # In `(a or b).c` however, `c` does not link to `(a or b)`,
+    # as `(a or b)` is not a name and wouldn't allow to resolve `c`.
     if cls is expressions.ExprAttribute:
         previous = None
         for value in expr.values:
@@ -149,6 +156,9 @@ def _attach_parent_to_expr(expr: expressions.Expr | str | None, parent: Module |
 
 
 def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | Class) -> None:
+    # Every name and attribute expression must be reattached
+    # to its parent Griffe object (using its `parent` attribute),
+    # to allow resolving names.
     if isinstance(obj, Class):
         if obj.docstring:
             _attach_parent_to_expr(obj.docstring.value, parent)
@@ -256,14 +266,19 @@ def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | 
     Returns:
         An instance of a data class.
     """
+    # Load expressions.
     if "cls" in obj_dict:
         return _load_expression(obj_dict)
+
+    # Load objects and parameters.
     if "kind" in obj_dict:
         try:
             kind = Kind(obj_dict["kind"])
         except ValueError:
             return _load_parameter(obj_dict)
         return _loader_map[kind](obj_dict)
+
+    # Return dict as is.
     return obj_dict
 
 

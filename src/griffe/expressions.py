@@ -72,7 +72,7 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
     return fields
 
 
-# TODO: merge in decorators once Python 3.9 is dropped
+# TODO: Merge in decorators once Python 3.9 is dropped.
 dataclass_opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
     dataclass_opts["slots"] = True
@@ -876,7 +876,7 @@ def _build_keyword(node: ast.keyword, parent: Module | Class, **kwargs: Any) -> 
 
 
 def _build_lambda(node: ast.Lambda, parent: Module | Class, **kwargs: Any) -> Expr:
-    # TODO: better parameter handling
+    # FIXME: This needs better handling (all parameter kinds).
     return ExprLambda(
         [ExprParameter(ParameterKind.positional_or_keyword.value, arg.arg) for arg in node.args.args],
         _build(node.body, parent, **kwargs),

@@ -184,9 +184,9 @@ class SetMembersMixin(DelMembersMixin):
             if name in self.members:  # type: ignore[attr-defined]
                 member = self.members[name]  # type: ignore[attr-defined]
                 if not member.is_alias:
-                    # when reassigning a module to an existing one,
+                    # When reassigning a module to an existing one,
                     # try to merge them as one regular and one stubs module
-                    # (implicit support for .pyi modules)
+                    # (implicit support for .pyi modules).
                     if member.is_module and not (member.is_namespace_package or member.is_namespace_subpackage):
                         with suppress(AliasResolutionError, CyclicAliasError):
                             if value.is_module and value.filepath != member.filepath:

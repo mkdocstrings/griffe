@@ -6,7 +6,7 @@ import enum
 
 
 class DocstringSectionKind(enum.Enum):
-    """The possible section kinds."""
+    """Enumeration of the possible docstring section kinds."""
 
     text = "text"
     """Text section."""
@@ -56,7 +56,7 @@ class ParameterKind(enum.Enum):
 
 
 class Kind(enum.Enum):
-    """Enumeration of the different objects kinds."""
+    """Enumeration of the different object kinds."""
 
     MODULE: str = "module"
     """Modules."""
@@ -71,7 +71,7 @@ class Kind(enum.Enum):
 
 
 class ExplanationStyle(enum.Enum):
-    """An enumeration of the possible styles for explanations."""
+    """Enumeration of the possible styles for explanations."""
 
     ONE_LINE: str = "oneline"
     """Explanations on one-line."""
@@ -80,7 +80,7 @@ class ExplanationStyle(enum.Enum):
 
 
 class BreakageKind(enum.Enum):
-    """An enumeration of the possible breakages."""
+    """Enumeration of the possible API breakages."""
 
     PARAMETER_MOVED: str = "Positional parameter was moved"
     PARAMETER_REMOVED: str = "Parameter was removed"
@@ -97,7 +97,7 @@ class BreakageKind(enum.Enum):
 
 
 class Parser(enum.Enum):
-    """Enumeration for the different docstring parsers."""
+    """Enumeration of the different docstring parsers."""
 
     google = "google"
     """Google-style docstrings parser."""
@@ -108,7 +108,7 @@ class Parser(enum.Enum):
 
 
 class ObjectKind(enum.Enum):
-    """Enumeration for the different kinds of objects."""
+    """Enumeration of the different runtime object kinds."""
 
     MODULE: str = "module"
     """Modules."""
@@ -142,7 +142,7 @@ class ObjectKind(enum.Enum):
 
 
 class When(enum.Enum):
-    """This enumeration contains the different times at which an extension is used."""
+    """Enumeration of the different times at which an extension is used."""
 
     before_all: int = 1
     """For each node, before the visit/inspection."""

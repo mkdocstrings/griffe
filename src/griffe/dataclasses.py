@@ -526,22 +526,37 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
             ValueError: When the relative path could not be computed.
         """
         package_path = self.package.filepath
+
+        # Current "module" is a namespace package.
         if isinstance(self.filepath, list):
+            # Current package is a namespace package.
             if isinstance(package_path, list):
                 for pkg_path in package_path:
                     for self_path in self.filepath:
                         with suppress(ValueError):
                             return self_path.relative_to(pkg_path.parent)
+
+            # Current package is a regular package.
+            # NOTE: Technically it makes no sense to have a namespace package
+            # under a non-namespace one, so we should never enter this branch.
             else:
                 for self_path in self.filepath:
                     with suppress(ValueError):
                         return self_path.relative_to(package_path.parent.parent)
             raise ValueError
+
+        # Current package is a namespace package,
+        # and current module is a regular module or package.
         if isinstance(package_path, list):
             for pkg_path in package_path:
                 with suppress(ValueError):
                     return self.filepath.relative_to(pkg_path.parent)
             raise ValueError
+
+        # Current package is a regular package,
+        # and current module is a regular module or package,
+        # try to compute the path relative to the parent folder
+        # of the package (search path).
         return self.filepath.relative_to(package_path.parent.parent)
 
     @property
@@ -643,17 +658,27 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         Returns:
             The resolved name.
         """
+        # Name is a member this object.
         if name in self.members:
             if self.members[name].is_alias:
                 return self.members[name].target_path  # type: ignore[union-attr]
             return self.members[name].path
+
+        # Name was imported.
         if name in self.imports:
             return self.imports[name]
+
+        # Name unknown and no more parent scope.
         if self.parent is None:
             # could be a built-in
             raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
+
+        # Name is parent, non-module object.
+        # NOTE: possibly useless branch.
         if name == self.parent.name and not self.parent.is_module:
             return self.parent.path
+
+        # Recurse in parent.
         return self.parent.resolve(name)
 
     def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
@@ -780,6 +805,8 @@ class Alias(ObjectAliasMixin):
         return 1
 
     # SPECIAL PROXIES -------------------------------
+    # The following methods and properties exist on the target(s),
+    # but we must handle them in a special way.
 
     @property
     def kind(self) -> Kind:
@@ -789,16 +816,6 @@ class Alias(ObjectAliasMixin):
             return self.final_target.kind
         except (AliasResolutionError, CyclicAliasError):
             return Kind.ALIAS
-
-    @property
-    def lineno(self) -> int | None:
-        """The target lineno or the alias lineno."""
-        return self.final_target.lineno
-
-    @property
-    def endlineno(self) -> int | None:
-        """The target endlineno or the alias endlineno."""
-        return self.final_target.endlineno
 
     @property
     def has_docstring(self) -> bool:
@@ -837,7 +854,46 @@ class Alias(ObjectAliasMixin):
         # no need to forward to the target
         return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
 
+    @cached_property
+    def members(self) -> dict[str, Object | Alias]:  # noqa: D102
+        final_target = self.final_target
+
+        # We recreate aliases to maintain a correct hierarchy,
+        # and therefore correct paths. The path of an alias member
+        # should be the path of the alias plus the member's name,
+        # not the original member's path.
+        return {
+            name: Alias(name, target=member, parent=self, inherited=False)
+            for name, member in final_target.members.items()
+        }
+
+    @cached_property
+    def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
+        final_target = self.final_target
+
+        # We recreate aliases to maintain a correct hierarchy,
+        # and therefore correct paths. The path of an alias member
+        # should be the path of the alias plus the member's name,
+        # not the original member's path.
+        return {
+            name: Alias(name, target=member, parent=self, inherited=True)
+            for name, member in final_target.inherited_members.items()
+        }
+
     # GENERIC OBJECT PROXIES --------------------------------
+    # The following methods and properties exist on the target(s).
+    # We first try to reach the final target, trigerring alias resolution errors
+    # and cyclic aliases errors early. We avoid recursing in the alias chain.
+
+    @property
+    def lineno(self) -> int | None:
+        """The target lineno or the alias lineno."""
+        return self.final_target.lineno
+
+    @property
+    def endlineno(self) -> int | None:
+        """The target endlineno or the alias endlineno."""
+        return self.final_target.endlineno
 
     @property
     def docstring(self) -> Docstring | None:  # noqa: D102
@@ -846,14 +902,6 @@ class Alias(ObjectAliasMixin):
     @docstring.setter
     def docstring(self, docstring: Docstring | None) -> None:
         self.final_target.docstring = docstring
-
-    @cached_property
-    def members(self) -> dict[str, Object | Alias]:  # noqa: D102
-        final_target = self.final_target
-        return {
-            name: Alias(name, target=member, parent=self, inherited=False)
-            for name, member in final_target.members.items()
-        }
 
     @property
     def labels(self) -> set[str]:  # noqa: D102
@@ -873,14 +921,6 @@ class Alias(ObjectAliasMixin):
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
         return self.final_target.member_is_exported(member, explicitely=explicitely)
-
-    @cached_property
-    def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
-        final_target = self.final_target
-        return {
-            name: Alias(name, target=member, parent=self, inherited=True)
-            for name, member in final_target.inherited_members.items()
-        }
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
         return self.final_target.is_kind(kind)
@@ -952,6 +992,9 @@ class Alias(ObjectAliasMixin):
         return self.final_target.del_member(key)
 
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
+    # These methods and properties exist on targets of specific kind.
+    # We have to call the method/property on the first target, not the final one
+    # (which could be of another kind).
 
     @property
     def _filepath(self) -> Path | list[Path] | None:
@@ -1013,6 +1056,8 @@ class Alias(ObjectAliasMixin):
         return cast(Class, self.final_target).mro()
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
+    # These methods and properties do not exist on targets,
+    # they are specific to aliases.
 
     @property
     def target(self) -> Object | Alias:
@@ -1040,6 +1085,12 @@ class Alias(ObjectAliasMixin):
 
         This will iterate through the targets until a non-alias object is found.
         """
+        # Here we quickly iterate on the alias chain,
+        # remembering which path we've seen already to detect cycles.
+
+        # The cycle detection is needed because alias chains can be created
+        # as already resolved, and can contain cycles.
+
         # using a dict as an ordered set
         paths_seen: dict[str, None] = {}
         target = self
@@ -1061,6 +1112,16 @@ class Alias(ObjectAliasMixin):
                 and added to the collection.
             CyclicAliasError: When the resolved target is the alias itself.
         """
+        # Here we try to resolve the whole alias chain recursively.
+        # We detect cycles by setting a "passed through" state variable
+        # on each alias as we pass through it. Passing a second time
+        # through an alias will raise a CyclicAliasError.
+
+        # If a single link of the chain cannot be resolved,
+        # the whole chain stays unresolved. This prevents
+        # bad surprises later, in code that checks if
+        # an alias is resolved by checking only
+        # the first link of the chain.
         if self._passed_through:
             raise CyclicAliasError([self.target_path])
         self._passed_through = True
