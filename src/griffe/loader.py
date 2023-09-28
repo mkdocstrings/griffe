@@ -486,7 +486,25 @@ class GriffeLoader:
         try:
             parent_module = self._get_or_create_parent_module(module, subparts, subpath)
         except UnimportableModuleError as error:
-            # TODO: Maybe add option to still load them.
+            # NOTE: Why don't we load submodules when there's no init module in their folder?
+            # Usually when a folder with Python files does not have an __init__.py module,
+            # it's because the Python files are scripts, that should never be imported.
+            # Django has manage.py somewhere for example, in a folder without init module.
+            # This script isn't part of the Python API, as it's meant to be called on the CLI exclusively
+            # (at least it was the case a few years ago when I was still using Django).
+
+            # The other case when there's no init module is when a package is a native namespace package (PEP 420).
+            # It does not make sense to have a native namespace package inside of a regular package (having init modules above),
+            # because the regular package above blocks the namespace feature from happening, so I consider it a user error.
+            # It's true that users could have a native namespace package inside of a pkg_resources-style namespace package,
+            # but I've never seen this happen.
+
+            # It's also true that Python can actually import the module under the (wrongly declared) native namespace package,
+            # so the Griffe debug log message is a bit misleading,
+            # but that's because in that case Python acts like the whole tree is a regular package.
+            # It works when the namespace package appears in only one search path (`sys.path`),
+            # but will fail if it appears in multiple search paths: Python will only find the first occurrence.
+            # It's better to not falsely suuport this, and to warn users.
             logger.debug(f"{error}. Missing __init__ module?")
             return
         submodule_name = subparts[-1]
