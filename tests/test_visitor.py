@@ -7,7 +7,7 @@ from textwrap import dedent
 import pytest
 
 from griffe.loader import GriffeLoader
-from griffe.tests import temporary_pypackage, temporary_visited_module
+from griffe.tests import temporary_pypackage, temporary_visited_module, temporary_visited_package
 
 # @given(hs.from_node(node=libcst.Module))
 # @pytest.mark.skipif(sys.version_info >= (3, 11, 0), reason="Too slow on Python 3.11?")
@@ -352,3 +352,18 @@ def test_visiting_if_statement_in_class_for_type_guards() -> None:
         """,
     ) as module:
         assert module["A.B"].runtime
+
+
+def test_visiting_relative_imports_triggering_cyclic_aliases() -> None:
+    """Skip specific imports to avoid cyclic aliases."""
+    with temporary_visited_package(
+        "pkg",
+        {
+            "__init__.py": "from . import a",
+            "a.py": "from . import b",
+            "b.py": "",
+        },
+    ) as pkg:
+        assert "a" not in pkg.imports
+        assert "b" in pkg["a"].imports
+        assert pkg["a"].imports["b"] == "pkg.b"
