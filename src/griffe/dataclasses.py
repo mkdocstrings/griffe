@@ -192,6 +192,9 @@ class Parameter:
             return f"[{self.kind.value}] {param}"
         return param
 
+    def __repr__(self) -> str:
+        return f"Parameter(name={self.name!r}, annotation={self.annotation!r}, kind={self.kind!r}, default={self.default!r})"
+
     @property
     def required(self) -> bool:
         """Whether this parameter is required."""
@@ -236,6 +239,9 @@ class Parameters:
         self._parameters_dict: dict[str, Parameter] = {}
         for parameter in parameters:
             self.add(parameter)
+
+    def __repr__(self) -> str:
+        return f"Parameters({', '.join(repr(param) for param in self._parameters_list)})"
 
     def __getitem__(self, name_or_index: int | str) -> Parameter:
         if isinstance(name_or_index, int):
