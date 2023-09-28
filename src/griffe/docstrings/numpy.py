@@ -252,8 +252,8 @@ def _read_parameters(
         choices = match.group("choices")
         default = None
         if choices:
-            choices = choices.split(", ", 1)
-            default = choices[0]
+            annotation = choices
+            default = choices.split(", ", 1)[0]
         elif annotation:
             match = re.match(r"^(?P<annotation>.+),\s+default(?: |: |=)(?P<default>.+)$", annotation)
             if match:
