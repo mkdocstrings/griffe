@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.36.3](https://github.com/mkdocstrings/griffe/releases/tag/0.36.3) - 2023-09-28
+
+<small>[Compare with 0.36.2](https://github.com/mkdocstrings/griffe/compare/0.36.2...0.36.3)</small>
+
+### Bug Fixes
+
+- Fix parsing of choices in Numpy parameters ([5f2d997](https://github.com/mkdocstrings/griffe/commit/5f2d99776e326679d2c0d1d9cb6b06d6436971c6) by Timothée Mazzucotelli). [Issue #212](https://github.com/mkdocstrings/griffe/issues/212)
+
+### Code Refactoring
+
+- Add `repr` methods to function parameters ([9442234](https://github.com/mkdocstrings/griffe/commit/94422349483a25db627921dfe13c7a89b81e700e) by Timothée Mazzucotelli).
+
 ## [0.36.2](https://github.com/mkdocstrings/griffe/releases/tag/0.36.2) - 2023-09-10
 
 <small>[Compare with 0.36.1](https://github.com/mkdocstrings/griffe/compare/0.36.1...0.36.2)</small>
