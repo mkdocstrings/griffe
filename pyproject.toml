@@ -91,6 +91,8 @@ tests = [
     "pytest-xdist>=2.4",
     "hypothesmith>=0.2.0",
     "jsonschema>=4.17.3",
+    "pysource-codegen>=0.4.1",
+    "pysource-minimize>=0.4.0",
 ]
 typing = [
     "mypy>=0.910",
