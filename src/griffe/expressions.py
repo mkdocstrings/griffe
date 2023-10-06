@@ -628,7 +628,7 @@ class ExprSlice(Expr):
 class ExprSubscript(Expr):
     """Subscripts like `a[b]`."""
 
-    left: Expr
+    left: str | Expr
     """Left part."""
     slice: Expr  # noqa: A003
     """Slice part."""
@@ -642,11 +642,15 @@ class ExprSubscript(Expr):
     @property
     def path(self) -> str:
         """The path of this subscript's left part."""
+        if isinstance(self.left, str):
+            return self.left
         return self.left.path
 
     @property
     def canonical_path(self) -> str:
         """The canonical path of this subscript's left part."""
+        if isinstance(self.left, str):
+            return self.left
         return self.left.canonical_path
 
 
