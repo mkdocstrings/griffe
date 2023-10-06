@@ -840,7 +840,13 @@ def _build_dictcomp(node: ast.DictComp, parent: Module | Class, **kwargs: Any) -
     )
 
 
-def _build_formatted(node: ast.FormattedValue, parent: Module | Class, **kwargs: Any) -> Expr:
+def _build_formatted(
+    node: ast.FormattedValue,
+    parent: Module | Class,
+    *,
+    in_formatted_str: bool = False,  # noqa: ARG001
+    **kwargs: Any,
+) -> Expr:
     return ExprFormatted(_build(node.value, parent, in_formatted_str=True, **kwargs))
 
 
