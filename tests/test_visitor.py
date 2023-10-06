@@ -9,12 +9,6 @@ import pytest
 from griffe.loader import GriffeLoader
 from griffe.tests import temporary_pypackage, temporary_visited_module, temporary_visited_package
 
-# @given(hs.from_node(node=libcst.Module))
-# @pytest.mark.skipif(sys.version_info >= (3, 11, 0), reason="Too slow on Python 3.11?")
-# def test_visit_arbitrary_code(code: str):
-#     with temporary_visited_module(code):
-#         ...
-
 
 def test_not_defined_at_runtime() -> None:
     """Assert that objects not defined at runtime are not added to wildcards expansions."""

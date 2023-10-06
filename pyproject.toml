@@ -85,12 +85,12 @@ quality = [
     "ruff>=0.0.246",
 ]
 tests = [
+    "jsonschema>=4.17.3",
+    "pysource-codegen>=0.4.1",
     "pytest>=6.2",
     "pytest-cov>=3.0",
     "pytest-randomly>=3.10",
     "pytest-xdist>=2.4",
-    "hypothesmith>=0.2.0",
-    "jsonschema>=4.17.3",
 ]
 typing = [
     "mypy>=0.910",

@@ -292,54 +292,56 @@ def test(ctx: Context, match: str = "") -> None:
     )
 
 
+class Seeds(list):  # noqa: D101
+    def __init__(self, cli_value: str = "") -> None:  # noqa: D107
+        if cli_value:
+            self.extend(int(seed) for seed in cli_value.split(","))
+
+
 @duty
 def fuzz(
     ctx: Context,
     *,
-    profile: bool = False,
-    browser: bool = False,
+    size: int = 20,
+    min_seed: int = 0,
+    max_seed: int = 1_000_000,
+    seeds: Seeds = Seeds(),  # noqa: B008
 ) -> None:
-    """Fuzz Griffe against PDM cached packages.
+    """Fuzz Griffe against generated Python code.
 
     Parameters:
         ctx: The context instance (passed automatically).
-        profile: Whether to profile the run.
-        browser: Whether to open the SVG file in the browser at the end.
+        size: The size of the case set (number of cases to test).
+        seeds: Seeds to test or exclude.
+        min_seed: Minimum value for the seeds range.
+        max_seed: Maximum value for the seeds range.
     """
-    from griffe.cli import _load_packages as load_packages
+    import warnings
+    from random import sample
+    from tempfile import gettempdir
 
-    def find_pdm_packages() -> list[str]:
-        return ctx.run(
-            "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
-            title="Finding packages",
-            allow_overrides=False,
-        ).split("\n")
+    from pysource_codegen import generate
 
-    packages = find_pdm_packages()
+    from griffe.agents.visitor import visit
 
-    if not profile:
-        griffe_load = lazy(load_packages, name="griffe.load")
-        ctx.run(
-            griffe_load(packages, resolve_aliases=True),
-            title=f"Fuzzing on {len(packages)} packages from PDM cache",
-        )
-        return
+    warnings.simplefilter("ignore", SyntaxWarning)
 
-    ctx.run(
-        [
-            sys.executable,
-            "-mcProfile",
-            "-oprofile.pstats",
-            "-m",
-            "griffe",
-            "dump",
-            "-rIUSo/dev/null",
-            "-LDEBUG",
-            *packages,
-        ],
-        title=f"Profiling on {len(packages)} packages",
-        pty=False,
-    )
-    ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
-    if browser:
-        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
+    def test_seed(seed: int, revisit: bool = False) -> None:  # noqa: FBT001,FBT002
+        filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
+        if filepath.exists():
+            if revisit:
+                code = filepath.read_text()
+            else:
+                return
+        else:
+            try:
+                code = generate(seed)
+            except SystemError:
+                return
+            filepath.write_text(code)
+        visit(filepath.stem, filepath=filepath, code=code)
+
+    revisit = bool(seeds)
+    seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # type: ignore[assignment]
+    for seed in seeds:
+        ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")

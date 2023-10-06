@@ -8,7 +8,7 @@ check_quality_args = files
 docs_args = host port
 release_args = version
 test_args = match
-fuzz_args = profile browser
+fuzz_args = seeds min_seed max_seed size
 
 BASIC_DUTIES = \
 	changelog \
