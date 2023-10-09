@@ -334,10 +334,7 @@ def fuzz(
             else:
                 return
         else:
-            try:
-                code = generate(seed)
-            except SystemError:
-                return
+            code = generate(seed)
             filepath.write_text(code)
         visit(filepath.stem, filepath=filepath, code=code)
 
