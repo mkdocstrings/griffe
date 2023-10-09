@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.36.5](https://github.com/mkdocstrings/griffe/releases/tag/0.36.5) - 2023-10-09
+
+<small>[Compare with 0.36.4](https://github.com/mkdocstrings/griffe/compare/0.36.4...0.36.5)</small>
+
+### Bug Fixes
+
+- Force extension import path to be a string (coming from MkDocs' `!relative` tag) ([34e21a9](https://github.com/mkdocstrings/griffe/commit/34e21a9545a38b61a1b80192af312d70f6c607f2) by Timothée Mazzucotelli).
+- Fix crash when trying to get a decorator callable path (found thanks to pysource-codegen) ([e57f08e](https://github.com/mkdocstrings/griffe/commit/e57f08eb5770eb3a9ed12e97da3076b87f109224) by Timothée Mazzucotelli).
+- Fix crash when trying to get docstring after assignment (found thanks to pysource-codegen) ([fb0a0c1](https://github.com/mkdocstrings/griffe/commit/fb0a0c1a8558c9d04855b75e4a9f579b46e2edd8) by Timothée Mazzucotelli).
+- Fix type errors in expressions and value extractor, don't pass duplicate arguments (found thanks to pysource-codegen) ([7e53288](https://github.com/mkdocstrings/griffe/commit/7e53288586bd90198cfd6a898002850c67213209) by Timothée Mazzucotelli).
+
 ## [0.36.4](https://github.com/mkdocstrings/griffe/releases/tag/0.36.4) - 2023-09-28
 
 <small>[Compare with 0.36.3](https://github.com/mkdocstrings/griffe/compare/0.36.3...0.36.4)</small>
