@@ -107,9 +107,6 @@ class Docstring:
         self.parser_options: dict[str, Any] = parser_options or {}
         """The configured parsing options."""
 
-    def __bool__(self) -> bool:
-        return bool(self.value)
-
     @property
     def lines(self) -> list[str]:
         """The lines of the docstring."""
@@ -382,12 +379,12 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def has_docstring(self) -> bool:
-        """Whether this object has a non-empty docstring."""
+        """Whether this object has a docstring (empty or not)."""
         return bool(self.docstring)
 
     @property
     def has_docstrings(self) -> bool:
-        """Whether this object or any of its members has a non-empty docstring."""
+        """Whether this object or any of its members has a docstring (empty or not)."""
         if self.has_docstring:
             return True
         return any(member.has_docstrings for member in self.members.values())
