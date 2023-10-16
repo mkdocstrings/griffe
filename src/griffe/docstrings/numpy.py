@@ -34,6 +34,7 @@ from griffe.docstrings.dataclasses import (
     DocstringReceive,
     DocstringReturn,
     DocstringSection,
+    DocstringSectionAdmonition,
     DocstringSectionAttributes,
     DocstringSectionClasses,
     DocstringSectionDeprecated,
@@ -782,6 +783,7 @@ def parse(
     """
     sections: list[DocstringSection] = []
     current_section = []
+    current_title = None
 
     in_code_block = False
     lines = docstring.lines
@@ -806,6 +808,7 @@ def parse(
     offset = 2 if ignore_summary else 0
 
     while offset < len(lines):
+        is_end = offset == len(lines) - 1
         line_lower = lines[offset].lower()
 
         if in_code_block:
@@ -813,15 +816,38 @@ def parse(
                 in_code_block = False
             current_section.append(lines[offset])
 
-        elif line_lower in _section_kind and _is_dash_line(lines[offset + 1]):
+        elif is_end or (line_lower and _is_dash_line(lines[offset + 1])):
+            # handle previous section ----
+            if is_end:
+                current_section.append(lines[offset])
+
             if current_section:
-                if any(current_section):
+                if current_title is not None:
+                    # this should apply to most section, except for the initial summary,
+                    # which does not have a title. however, due to how the reader() parses
+                    # numpydoc specification sections, and when it decides to terminate,
+                    # there could be other sections without a title.
+                    sections.append(DocstringSectionAdmonition(
+                        kind=current_title.replace(" ", "-"),
+                        text="\n".join(current_section).rstrip("\n"),
+                        title=current_title
+                    ))
+                elif any(current_section):
                     sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
+                elif is_end:
+                    sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
+
                 current_section = []
-            reader = _section_reader[_section_kind[line_lower]]
-            section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
-            if section:
-                sections.append(section)
+                current_title = lines[offset].strip()
+
+            # handle new section ----
+            if line_lower in _section_kind:
+                reader = _section_reader[_section_kind[line_lower]]
+                section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
+                if section:
+                    sections.append(section)
+           
+                current_title = None
 
         elif line_lower.lstrip(" ").startswith("```"):
             in_code_block = True
