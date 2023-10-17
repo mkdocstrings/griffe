@@ -785,6 +785,7 @@ def parse(
     current_section = []
     current_title = None
 
+    in_section_marker = False
     in_code_block = False
     lines = docstring.lines
 
@@ -811,30 +812,35 @@ def parse(
         is_end = offset == len(lines) - 1
         line_lower = lines[offset].lower()
 
-        if in_code_block:
-            if line_lower.lstrip(" ").startswith("```"):
-                in_code_block = False
-            current_section.append(lines[offset])
+        # mark code blocks, since they can contain section markers
+        if line_lower.lstrip(" ").startswith("```"):
+            in_code_block = not in_code_block
 
-        elif is_end or (line_lower and _is_dash_line(lines[offset + 1])):
-            # handle previous section ----
-            if is_end:
+        if is_end or (
+            not in_code_block
+            and not in_section_marker
+            and line_lower
+            and _is_dash_line(lines[offset + 1])
+        ):
+            # create previous section ----
+            if is_end and not in_section_marker:
                 current_section.append(lines[offset])
 
-            if current_section:
+            if current_section or current_title:
+                # this should apply to most section, except for the initial summary,
+                # which does not have a title. however, due to how the reader() parses
+                # numpydoc specification sections, and when it decides to terminate,
+                # there could be other sections without a title.
                 if current_title is not None:
-                    # this should apply to most section, except for the initial summary,
-                    # which does not have a title. however, due to how the reader() parses
-                    # numpydoc specification sections, and when it decides to terminate,
-                    # there could be other sections without a title.
                     sections.append(DocstringSectionAdmonition(
                         kind=current_title.replace(" ", "-"),
                         text="\n".join(current_section).rstrip("\n"),
                         title=current_title
                     ))
-                elif any(current_section):
-                    sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
-                elif is_end:
+                # create generic text sections. note that these might include anything
+                # "between" two parsed sections. for example, if a parameters section
+                # table has free text beneath it.
+                elif any(current_section) or is_end:
                     sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
 
                 current_section = []
@@ -848,18 +854,17 @@ def parse(
                     sections.append(section)
            
                 current_title = None
+            else:
+                # ensure we don't add the dashed lines as content next loop
+                in_section_marker = True
 
-        elif line_lower.lstrip(" ").startswith("```"):
-            in_code_block = True
+        elif not in_section_marker:
             current_section.append(lines[offset])
 
         else:
-            current_section.append(lines[offset])
+            in_section_marker = False
 
         offset += 1
-
-    if current_section:
-        sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
 
     return sections
 

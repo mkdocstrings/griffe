@@ -119,6 +119,88 @@ def test_doubly_indented_lines_in_section_items(parse_numpy: ParserType) -> None
     assert lines[-1].startswith(4 * " " + "- ")
 
 
+def test_text_section_after_parameters(parse_numpy: ParserType) -> None:
+    docstring = """
+        Parameters
+        ----------
+        a:
+            Some description
+        
+        A new text section
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[1].value == "A new text section"
+
+
+def test_text_section_between_sections(parse_numpy: ParserType) -> None:
+    docstring = """
+        Parameters
+        ----------
+        a:
+            Some description
+        
+        A new text section
+
+        Returns
+        -------
+        x: int
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 3
+    assert sections[1].value == "A new text section"
+
+
+# =============================================================================================
+# Admonitions
+
+def test_admonition_see_also(parse_numpy: ParserType) -> None:
+    docstring = """
+    Summary text.
+
+    See Also
+    --------
+    some_function
+
+    more text
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text."
+    assert sections[1].title == "See Also"
+    assert sections[1].value.description == "some_function\n\nmore text"
+
+
+def test_admonition_empty(parse_numpy: ParserType) -> None:
+    docstring = """
+    Summary text.
+
+    See Also
+    --------
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text."
+    assert sections[1].title == "See Also"
+    assert sections[1].value.description == ""
+
+
+def test_admonition_empty_title_is_text_section(parse_numpy: ParserType) -> None:
+    docstring = """
+    Summary text.
+
+    ---
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    assert sections[0].value == "Summary text.\n\n---"
+
+
 # =============================================================================================
 # Annotations
 def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
