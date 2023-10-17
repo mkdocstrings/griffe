@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.36.7](https://github.com/mkdocstrings/griffe/releases/tag/0.36.7) - 2023-10-17
+
+<small>[Compare with 0.36.6](https://github.com/mkdocstrings/griffe/compare/0.36.6...0.36.7)</small>
+
+### Bug Fixes
+
+- Add missing proxies (methods/properties) to aliases ([7320640](https://github.com/mkdocstrings/griffe/commit/7320640d42ebb4546f787fe458d5032a67ea20b7) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Use final target in alias proxies ([731d662](https://github.com/mkdocstrings/griffe/commit/731d66237252e754b7a935ca4d0344f554edb5ff) by Timothée Mazzucotelli).
+
 ## [0.36.6](https://github.com/mkdocstrings/griffe/releases/tag/0.36.6) - 2023-10-16
 
 <small>[Compare with 0.36.5](https://github.com/mkdocstrings/griffe/compare/0.36.5...0.36.6)</small>
