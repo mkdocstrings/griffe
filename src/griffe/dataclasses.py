@@ -1013,16 +1013,16 @@ class Alias(ObjectAliasMixin, SerializationMixin):
 
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
-    # We have to call the method/property on the first target, not the final one
-    # (which could be of another kind).
+    # We first try to reach the final target, trigerring alias resolution errors
+    # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property
     def _filepath(self) -> Path | list[Path] | None:
-        return cast(Module, self.target)._filepath
+        return cast(Module, self.final_target)._filepath
 
     @property
     def bases(self) -> list[Expr | str]:  # noqa: D102
-        return cast(Class, self.target).bases
+        return cast(Class, self.final_target).bases
 
     @property
     def decorators(self) -> list[Decorator]:  # noqa: D102
@@ -1054,43 +1054,43 @@ class Alias(ObjectAliasMixin, SerializationMixin):
 
     @property
     def overloads(self) -> dict[str, list[Function]] | list[Function] | None:  # noqa: D102
-        return cast(Union[Module, Class, Function], self.target).overloads
+        return cast(Union[Module, Class, Function], self.final_target).overloads
 
     @overloads.setter
     def overloads(self, overloads: list[Function] | None) -> None:
-        cast(Union[Module, Class, Function], self.target).overloads = overloads
+        cast(Union[Module, Class, Function], self.final_target).overloads = overloads
 
     @property
     def parameters(self) -> Parameters:  # noqa: D102
-        return cast(Function, self.target).parameters
+        return cast(Function, self.final_target).parameters
 
     @property
     def returns(self) -> str | Expr | None:  # noqa: D102
-        return cast(Function, self.target).returns
+        return cast(Function, self.final_target).returns
 
     @returns.setter
     def returns(self, returns: str | Expr | None) -> None:
-        cast(Function, self.target).returns = returns
+        cast(Function, self.final_target).returns = returns
 
     @property
     def setter(self) -> Function | None:  # noqa: D102
-        return cast(Function, self.target).setter
+        return cast(Function, self.final_target).setter
 
     @property
     def deleter(self) -> Function | None:  # noqa: D102
-        return cast(Function, self.target).deleter
+        return cast(Function, self.final_target).deleter
 
     @property
     def value(self) -> str | Expr | None:  # noqa: D102
-        return cast(Attribute, self.target).value
+        return cast(Attribute, self.final_target).value
 
     @property
     def annotation(self) -> str | Expr | None:  # noqa: D102
-        return cast(Attribute, self.target).annotation
+        return cast(Attribute, self.final_target).annotation
 
     @annotation.setter
     def annotation(self, annotation: str | Expr | None) -> None:
-        cast(Attribute, self.target).annotation = annotation
+        cast(Attribute, self.final_target).annotation = annotation
 
     @property
     def resolved_bases(self) -> list[Object]:  # noqa: D102
