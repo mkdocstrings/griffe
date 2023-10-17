@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+import griffe
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
 from griffe.tests import module_vtree, temporary_pypackage
@@ -70,3 +71,22 @@ def test_deepcopy() -> None:
 
     deepcopy(mod)
     deepcopy(mod.as_dict())
+
+
+def test_alias_proxies() -> None:
+    """Assert that the Alias class has all the necessary methods and properties.
+
+    Parameters:
+        cls: The class to check.
+    """
+    api = griffe.load("griffe")
+    alias_members = set(api["dataclasses.Alias"].all_members.keys())
+    for cls in (
+        api["dataclasses.Module"],
+        api["dataclasses.Class"],
+        api["dataclasses.Function"],
+        api["dataclasses.Attribute"],
+    ):
+        for name in cls.all_members:
+            if not name.startswith("_") or name.startswith("__"):
+                assert name in alias_members

@@ -372,6 +372,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return f"{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})"
 
     def __bool__(self) -> bool:
+        # Prevent using `__len__`.
         return True
 
     def __len__(self) -> int:
@@ -723,7 +724,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return base
 
 
-class Alias(ObjectAliasMixin):
+class Alias(ObjectAliasMixin, SerializationMixin):
     """This class represents an alias, or indirection, to an object declared in another module.
 
     Aliases represent objects that are in the scope of a module or class,
@@ -804,6 +805,10 @@ class Alias(ObjectAliasMixin):
         # not handled by __getattr__
         del self.target[key]
 
+    def __bool__(self) -> bool:
+        # Prevent using `__len__`.
+        return True
+
     def __len__(self) -> int:
         return 1
 
@@ -883,19 +888,27 @@ class Alias(ObjectAliasMixin):
             for name, member in final_target.inherited_members.items()
         }
 
+    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:  # noqa: D102
+        try:
+            return self.final_target.as_json(full=full, **kwargs)
+        except (AliasResolutionError, CyclicAliasError):
+            return super().as_json(full=full, **kwargs)
+
     # GENERIC OBJECT PROXIES --------------------------------
     # The following methods and properties exist on the target(s).
     # We first try to reach the final target, trigerring alias resolution errors
     # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property
-    def lineno(self) -> int | None:
-        """The target lineno or the alias lineno."""
+    def extra(self) -> dict:  # noqa: D102
+        return self.final_target.extra
+
+    @property
+    def lineno(self) -> int | None:  # noqa: D102
         return self.final_target.lineno
 
     @property
-    def endlineno(self) -> int | None:
-        """The target endlineno or the alias endlineno."""
+    def endlineno(self) -> int | None:  # noqa: D102
         return self.final_target.endlineno
 
     @property
@@ -967,6 +980,10 @@ class Alias(ObjectAliasMixin):
         return self.final_target.relative_filepath
 
     @property
+    def relative_package_filepath(self) -> Path:  # noqa: D102
+        return self.final_target.relative_package_filepath
+
+    @property
     def canonical_path(self) -> str:  # noqa: D102
         return self.final_target.canonical_path
 
@@ -1010,6 +1027,30 @@ class Alias(ObjectAliasMixin):
     @property
     def decorators(self) -> list[Decorator]:  # noqa: D102
         return cast(Union[Class, Function], self.target).decorators
+
+    @property
+    def imports_future_annotations(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).imports_future_annotations
+
+    @property
+    def is_init_module(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_init_module
+
+    @property
+    def is_package(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_package
+
+    @property
+    def is_subpackage(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_subpackage
+
+    @property
+    def is_namespace_package(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_namespace_package
+
+    @property
+    def is_namespace_subpackage(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_namespace_subpackage
 
     @property
     def overloads(self) -> dict[str, list[Function]] | list[Function] | None:  # noqa: D102
