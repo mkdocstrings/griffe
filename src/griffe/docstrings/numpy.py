@@ -119,7 +119,16 @@ def _read_block_items(
     while new_offset < len(lines):
         line = lines[new_offset]
 
-        if line.startswith(4 * " "):
+        if _is_empty_line(line):
+            # two line breaks indicate the start of a new section
+            if previous_was_empty:
+                break
+
+            # empty line: preserve it in the current item
+            current_item.append("")
+            previous_was_empty = True
+
+        elif line.startswith(4 * " "):
             # continuation line
             current_item.append(line[4:])
             previous_was_empty = False
@@ -135,15 +144,6 @@ def _read_block_items(
                 f"should be 4 spaces, not {cont_indent}",
             )
             previous_was_empty = False
-
-        elif _is_empty_line(line):
-            # two line breaks indicate the start of a new section
-            if previous_was_empty:
-                break
-
-            # empty line: preserve it in the current item
-            current_item.append("")
-            previous_was_empty = True
 
         else:
             # preserve original behavior, that a single line break between block

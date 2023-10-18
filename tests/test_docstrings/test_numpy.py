@@ -100,10 +100,23 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
     assert len(sections) == 2
     assert len(sections[0].value) == 1
 
-    # allow_section_blank_line requires at least 2 newlines to create a new section
+    # The `allow_section_blank_line` option requires at least 2 newlines to create a new section,
+    # and we have 3 blank lines here, so it should create a new section.
     sections2, _ = parse_numpy(docstring, allow_section_blank_line=True)
-    assert len(sections2) == 1
-    assert len(sections2[0].value) == 2
+    assert len(sections2) == 2
+    assert len(sections2[0].value) == 1
+
+    # Same thing with two blank lines:
+    docstring = "Returns\n-------\nonly_item : type\n    Description.\n    \n    \nSomething."
+    sections3, _ = parse_numpy(docstring, allow_section_blank_line=True)
+    assert len(sections3) == 2
+    assert len(sections3[0].value) == 1
+
+    # Now we have only 1 blank line, so it should not create a new section:
+    docstring = "Returns\n-------\nonly_item : type\n    Description.\n    \nSomething."
+    sections4, _ = parse_numpy(docstring, allow_section_blank_line=True)
+    assert len(sections4) == 1
+    assert len(sections4[0].value) == 2
 
 
 def test_doubly_indented_lines_in_section_items(parse_numpy: ParserType) -> None:
