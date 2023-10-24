@@ -146,7 +146,12 @@ class ModuleFinder:
         else:
             module_name = module
             top_module_name = module.split(".", 1)[0]
-        return module_name, self.find_package(top_module_name)
+        # Per PEP 561, stubs packages take precedence so look for that
+        # first
+        try:
+            return module_name, self.find_package(top_module_name + "-stubs")
+        except ModuleNotFoundError:
+            return module_name, self.find_package(top_module_name)
 
     def find_package(self, module_name: str) -> Package | NamespacePackage:
         """Find a package or namespace package.
@@ -168,6 +173,9 @@ class ModuleFinder:
             Path(f"{module_name}.py"),
         ]
 
+        real_module_name = module_name
+        if real_module_name.endswith("-stubs"):
+            real_module_name = real_module_name[:-6]
         namespace_dirs = []
         for path in self.search_paths:
             path_contents = self._contents(path)
@@ -177,11 +185,15 @@ class ModuleFinder:
                     if abs_path in path_contents:
                         if abs_path.suffix:
                             stubs = abs_path.with_suffix(".pyi")
-                            return Package(module_name, abs_path, stubs if stubs.exists() else None)
+                            return Package(real_module_name, abs_path, stubs if stubs.exists() else None)
                         init_module = abs_path / "__init__.py"
                         if init_module.exists() and not _is_pkg_style_namespace(init_module):
                             stubs = init_module.with_suffix(".pyi")
-                            return Package(module_name, init_module, stubs if stubs.exists() else None)
+                            return Package(real_module_name, init_module, stubs if stubs.exists() else None)
+                        init_module = abs_path / "__init__.pyi"
+                        if init_module.exists():
+                            # Stubs package
+                            return Package(real_module_name, init_module, None)
                         namespace_dirs.append(abs_path)
 
         if namespace_dirs:
