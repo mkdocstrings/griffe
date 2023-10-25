@@ -7,6 +7,7 @@ The different objects are modules, classes, functions, and attribute
 from __future__ import annotations
 
 import inspect
+import warnings
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
@@ -134,24 +135,34 @@ class Docstring:
         """
         return parse(self, parser or self.parser, **(options or self.parser_options))
 
-    def as_dict(self, *, full: bool = False, docstring_parser: Parser | None = None, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(
+        self,
+        *,
+        full: bool = False,
+        docstring_parser: Parser | None = None,
+        **kwargs: Any,  # noqa: ARG002
+    ) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Parameters:
             full: Whether to return full info, or just base info.
-            docstring_parser: The docstring parser to parse the docstring with. By default, no parsing is done.
-            **kwargs: Additional serialization or docstring parsing options.
+            docstring_parser: Deprecated. The docstring parser to parse the docstring with. By default, no parsing is done.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
+        # TODO: Remove at some point.
+        if docstring_parser is not None:
+            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
+
         base: dict[str, Any] = {
             "value": self.value,
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
         if full:
-            base["parsed"] = self.parse(docstring_parser, **kwargs)
+            base["parsed"] = self.parsed
         return base
 
 
