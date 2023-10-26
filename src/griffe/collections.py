@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ItemsView, KeysView, ValuesView
 
-from griffe.mixins import GetMembersMixin, SetMembersMixin
+from griffe.mixins import DelMembersMixin, GetMembersMixin, SetMembersMixin
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -53,7 +53,7 @@ class LinesCollection:
         return self._data.items()
 
 
-class ModulesCollection(GetMembersMixin, SetMembersMixin):
+class ModulesCollection(GetMembersMixin, SetMembersMixin, DelMembersMixin):
     """A collection of modules, allowing easy access to members."""
 
     is_collection = True

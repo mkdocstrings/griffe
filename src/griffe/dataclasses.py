@@ -20,7 +20,7 @@ from griffe.enumerations import Kind, ParameterKind
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import ExprCall, ExprName
 from griffe.logger import get_logger
-from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
+from griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
@@ -281,7 +281,7 @@ class Parameters:
             raise ValueError(f"parameter {parameter.name} already present")
 
 
-class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):
+class Object(ObjectAliasMixin):
     """An abstract class representing a Python object."""
 
     kind: Kind
@@ -735,7 +735,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return base
 
 
-class Alias(ObjectAliasMixin, SerializationMixin):
+class Alias(ObjectAliasMixin):
     """This class represents an alias, or indirection, to an object declared in another module.
 
     Aliases represent objects that are in the scope of a module or class,
@@ -803,18 +803,6 @@ class Alias(ObjectAliasMixin, SerializationMixin):
 
     def __repr__(self) -> str:
         return f"Alias({self.name!r}, {self.target_path!r})"
-
-    def __getitem__(self, key: str | tuple[str, ...]):
-        # not handled by __getattr__
-        return self.target[key]
-
-    def __setitem__(self, key: str | tuple[str, ...], value: Object | Alias):
-        # not handled by __getattr__
-        self.target[key] = value
-
-    def __delitem__(self, key: str | tuple[str, ...]):
-        # not handled by __getattr__
-        del self.target[key]
 
     def __bool__(self) -> bool:
         # Prevent using `__len__`.
