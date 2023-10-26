@@ -86,7 +86,7 @@ class ParsedValues:
 
 
 def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:  # noqa: ARG001
-    """Parse a Sphinx-styled docstring.
+    """Parse a Sphinx-style docstring.
 
     Parameters:
         docstring: The docstring to parse.
