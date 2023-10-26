@@ -89,6 +89,9 @@ ignore = [
     "ARG001",  # Unused function argument
     "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
 ]
+"src/*/debug.py" = [
+    "T201",  # Print statement
+]
 "scripts/*.py" = [
     "INP001",  # File is part of an implicit namespace package
     "T201",  # Print statement

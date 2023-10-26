@@ -19,13 +19,12 @@ import logging
 import os
 import sys
 from datetime import datetime, timezone
-from importlib.metadata import PackageNotFoundError
-from importlib.metadata import version as get_dist_version
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
 import colorama
 
+from griffe import debug
 from griffe.diff import ExplanationStyle, find_breaking_changes
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
@@ -44,11 +43,13 @@ DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 logger = get_logger(__name__)
 
 
-def _get_griffe_version() -> str:
-    try:
-        return get_dist_version("griffe")
-    except PackageNotFoundError:
-        return "0.0.0"
+class _DebugInfo(argparse.Action):
+    def __init__(self, nargs: int | str | None = 0, **kwargs: Any) -> None:
+        super().__init__(nargs=nargs, **kwargs)
+
+    def __call__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ARG002
+        debug.print_debug_info()
+        sys.exit(0)
 
 
 def _print_data(data: str, output_file: str | IO | None) -> None:
@@ -136,7 +137,8 @@ def get_parser() -> argparse.ArgumentParser:
 
     global_options = parser.add_argument_group(title="Global options")
     global_options.add_argument("-h", "--help", action="help", help=main_help)
-    global_options.add_argument("-V", "--version", action="version", version="%(prog)s " + _get_griffe_version())
+    global_options.add_argument("-V", "--version", action="version", version=f"%(prog)s {debug.get_version()}")
+    global_options.add_argument("--debug-info", action=_DebugInfo, help="Print debug information.")
 
     def add_common_options(subparser: argparse.ArgumentParser) -> None:
         common_options = subparser.add_argument_group(title="Common options")
@@ -475,6 +477,7 @@ def main(args: list[str] | None = None) -> int:
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)
     opts_dict = opts.__dict__
+    opts_dict.pop("debug_info")
     subcommand = opts_dict.pop("subcommand")
 
     # Initialize logging.

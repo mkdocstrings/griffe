@@ -62,42 +62,41 @@ duty = ["duty>=0.10"]
 ci-quality = ["griffe[duty,docs,quality,typing,security]"]
 ci-tests = ["griffe[duty,tests]"]
 docs = [
-    "black>=23.1",
-    "markdown-callouts>=0.2",
-    "markdown-exec>=0.5",
+    "black>=23.9",
+    "markdown-callouts>=0.3",
+    "markdown-exec>=1.7",
     "mkdocs>=1.5",
-    "mkdocs-coverage>=0.2",
-    "mkdocs-gen-files>=0.3",
-    "mkdocs-git-committers-plugin-2>=1.1",
-    "mkdocs-literate-nav>=0.4",
-    "mkdocs-material>=7.3",
-    "mkdocs-minify-plugin>=0.6.4",
-    "mkdocstrings[python]>=0.18",
-    "toml>=0.10",
+    "mkdocs-coverage>=1.0",
+    "mkdocs-gen-files>=0.5",
+    "mkdocs-git-committers-plugin-2>=1.2",
+    "mkdocs-literate-nav>=0.6",
+    "mkdocs-material>=9.4",
+    "mkdocs-minify-plugin>=0.7",
+    "mkdocstrings[python]>=0.23",
+    "tomli>=2.0; python_version < '3.11'",
     "rich>=12.6.0",
 ]
 maintain = [
-    "black>=23.1",
-    "blacken-docs>=1.13",
-    "git-changelog>=1.0",
+    "black>=23.9",
+    "blacken-docs>=1.16",
+    "git-changelog>=2.3",
 ]
 quality = [
-    "ruff>=0.0.246",
+    "ruff>=0.0",
 ]
 tests = [
     "jsonschema>=4.17.3",
     "pysource-codegen>=0.4.1",
-    "pytest>=6.2",
-    "pytest-cov>=3.0",
-    "pytest-randomly>=3.10",
-    "pytest-xdist>=2.4",
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-randomly>=3.15",
+    "pytest-xdist>=3.3",
 ]
 typing = [
-    "mypy>=0.910",
-    "types-markdown>=3.3",
+    "mypy>=1.5",
+    "types-markdown>=3.5",
     "types-pyyaml>=6.0",
-    "types-toml>=0.10",
 ]
 security = [
-    "safety>=2",
+    "safety>=2.3",
 ]

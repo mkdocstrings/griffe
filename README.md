@@ -20,11 +20,13 @@ but also "signature" in a familiar way. "On reconnaît bien là sa griffe."
 ## Installation
 
 With `pip`:
+
 ```bash
 pip install griffe
 ```
 
 With [`pipx`](https://github.com/pipxproject/pipx):
+
 ```bash
 python3.8 -m pip install --user pipx
 pipx install griffe
