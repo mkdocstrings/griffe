@@ -102,6 +102,7 @@ class ModuleFinder:
         module: str | Path,
         *,
         try_relative_path: bool = True,
+        find_stubs_package: bool = False,
     ) -> tuple[str, Package | NamespacePackage]:
         """Find the top module of a module.
 
@@ -146,12 +147,35 @@ class ModuleFinder:
         else:
             module_name = module
             top_module_name = module.split(".", 1)[0]
-        # Per PEP 561, stubs packages take precedence so look for that
-        # first
-        try:
-            return module_name, self.find_package(top_module_name + "-stubs")
-        except ModuleNotFoundError:
+
+        # Only search for actual package, let exceptions bubble up.
+        if not find_stubs_package:
             return module_name, self.find_package(top_module_name)
+
+        # Search for both package and stubs-only package.
+        try:
+            package = self.find_package(top_module_name)
+        except ModuleNotFoundError:
+            package = None
+        try:
+            stubs = self.find_package(top_module_name + "-stubs")
+        except ModuleNotFoundError:
+            stubs = None
+
+        # None found, raise error.
+        if package is None and stubs is None:
+            raise ModuleNotFoundError(top_module_name)
+
+        # Both found, assemble them to be merged later.
+        if package and stubs:
+            if isinstance(package, Package) and isinstance(stubs, Package):
+                package.stubs = stubs.path
+            elif isinstance(package, NamespacePackage) and isinstance(stubs, NamespacePackage):
+                package.path += stubs.path
+            return module_name, package
+
+        # Return either one.
+        return module_name, package or stubs  # type: ignore[return-value]
 
     def find_package(self, module_name: str) -> Package | NamespacePackage:
         """Find a package or namespace package.

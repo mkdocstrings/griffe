@@ -429,7 +429,12 @@ class GriffeLoader:
             return top_module
         if package.stubs:
             self.expand_wildcards(top_module)
-            stubs = self._load_module(package.name, package.stubs, submodules=False)
+            # If stubs are in the package itself, they have been merged while loading modules,
+            # so only the top-level init module needs to be merged still.
+            # If stubs are in another package (a stubs-only package),
+            # then we need to load the entire stubs package to merge everything.
+            submodules = package.stubs.parent != package.path.parent
+            stubs = self._load_module(package.name, package.stubs, submodules=submodules)
             return merge_stubs(top_module, stubs)
         return top_module
 
