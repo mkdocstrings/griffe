@@ -321,7 +321,7 @@ from griffe import Extension, Object, ObjectNode
 
 class MyExtension(Extension):
     def __init__(self) -> None:
-        super().__init__(self)
+        super().__init__()
         self.state_thingy = "initial stuff"
         self.list_of_things = []
 
@@ -472,7 +472,7 @@ from griffe import Attribute, Extension, ObjectNode
 
 class MyExtension(Extension):
     def __init__(self, option1: str, option2: bool = False) -> None:
-        super().__init__(self)
+        super().__init__()
         self.option1 = option1
         self.option2 = option2
 
