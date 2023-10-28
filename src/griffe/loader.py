@@ -93,6 +93,7 @@ class GriffeLoader:
         *,
         submodules: bool = True,
         try_relative_path: bool = True,
+        find_stubs_package: bool = False,
     ) -> Module:
         """Load a module.
 
@@ -100,6 +101,9 @@ class GriffeLoader:
             module: The module name or path.
             submodules: Whether to recurse on the submodules.
             try_relative_path: Whether to try finding the module as a relative path.
+            find_stubs_package: Whether to search for stubs-only package.
+                If both the package and its stubs are found, they'll be merged together.
+                If only the stubs are found, they'll be used as the package itself.
 
         Raises:
             LoadingError: When loading a module failed for various reasons.
@@ -119,7 +123,11 @@ class GriffeLoader:
                 return self.modules_collection.get_member(module_name)
             raise LoadingError("Cannot load builtin module without inspection")
         try:
-            module_name, package = self.finder.find_spec(module, try_relative_path=try_relative_path)
+            module_name, package = self.finder.find_spec(
+                module,
+                try_relative_path=try_relative_path,
+                find_stubs_package=find_stubs_package,
+            )
         except ModuleNotFoundError:
             logger.debug(f"Could not find {module}")
             if self.allow_inspection:
@@ -627,6 +635,7 @@ def load(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
+    find_stubs_package: bool = False,
 ) -> Module:
     """Load and return a module.
 
@@ -659,6 +668,9 @@ def load(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        find_stubs_package: Whether to search for stubs-only package.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
 
     Returns:
         A loaded module.
@@ -675,6 +687,7 @@ def load(
         module=module,
         submodules=submodules,
         try_relative_path=try_relative_path,
+        find_stubs_package=find_stubs_package,
     )
 
 

@@ -73,6 +73,7 @@ def _load_packages(
     resolve_external: bool = False,
     allow_inspection: bool = True,
     store_source: bool = True,
+    find_stubs_package: bool = False,
 ) -> GriffeLoader:
     # Create a single loader.
     loader = GriffeLoader(
@@ -91,7 +92,7 @@ def _load_packages(
             continue
         logger.info(f"Loading package {package}")
         try:
-            loader.load_module(package)
+            loader.load_module(package, try_relative_path=True, find_stubs_package=find_stubs_package)
         except ModuleNotFoundError as error:
             logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
         except ImportError as error:
@@ -151,6 +152,14 @@ def get_parser() -> argparse.ArgumentParser:
             help="Paths to search packages into.",
         )
         loading_options = subparser.add_argument_group(title="Loading options")
+        loading_options.add_argument(
+            "-B",
+            "--find-stubs-packages",
+            dest="find_stubs_package",
+            action="store_true",
+            default=False,
+            help="Whether to look for stubs-only packages and merge them with concrete ones.",
+        )
         loading_options.add_argument(
             "-e",
             "--extensions",
@@ -304,6 +313,7 @@ def dump(
     resolve_implicit: bool = False,
     resolve_external: bool = False,
     search_paths: Sequence[str | Path] | None = None,
+    find_stubs_package: bool = False,
     append_sys_path: bool = False,
     allow_inspection: bool = True,
     stats: bool = False,
@@ -321,6 +331,9 @@ def dump(
         resolve_external: Whether to load additional, unspecified modules to resolve aliases.
         extensions: The extensions to use.
         search_paths: The paths to search into.
+        find_stubs_package: Whether to search for stubs-only packages.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
         append_sys_path: Whether to append the contents of `sys.path` to the search paths.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         stats: Whether to compute and log stats about loading.
@@ -355,6 +368,7 @@ def dump(
         resolve_external=resolve_external,
         allow_inspection=allow_inspection,
         store_source=False,
+        find_stubs_package=find_stubs_package,
     )
     data_packages = loader.modules_collection.members
 
@@ -383,6 +397,7 @@ def check(
     base_ref: str | None = None,
     extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
+    find_stubs_package: bool = False,
     allow_inspection: bool = True,
     verbose: bool = False,
     color: bool | None = None,
@@ -436,6 +451,7 @@ def check(
             extensions=loaded_extensions,
             search_paths=search_paths,
             allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
         )
     else:
         new_package = load(
@@ -444,6 +460,7 @@ def check(
             extensions=loaded_extensions,
             search_paths=search_paths,
             allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
         )
 
     # Find and display API breakages.

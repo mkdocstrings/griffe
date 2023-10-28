@@ -114,6 +114,9 @@ class ModuleFinder:
             module: The module name or path.
             try_relative_path: Whether to try finding the module as a relative path,
                 when the given module is not already a path.
+            find_stubs_package: Whether to search for stubs-only package.
+                If both the package and its stubs are found, they'll be merged together.
+                If only the stubs are found, they'll be used as the package itself.
 
         Raises:
             FileNotFoundError: When a Path was passed and the module could not be found:
