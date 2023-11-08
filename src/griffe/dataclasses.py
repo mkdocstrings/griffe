@@ -452,8 +452,13 @@ class Object(ObjectAliasMixin):
         """
         if not isinstance(self, Class):
             return {}
+        try:
+            mro = self.mro()
+        except ValueError as error:
+            logger.debug(error)
+            return {}
         inherited_members = {}
-        for base in reversed(self.mro()):
+        for base in reversed(mro):
             for name, member in base.members.items():
                 if name not in self.members:
                     inherited_members[name] = Alias(name, member, parent=self, inherited=True)

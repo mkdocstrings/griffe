@@ -109,7 +109,7 @@ in extensions, while visiting or inspecting a module.
 
 ### Limitations
 
-Currently, there are two limitations to our class inheritance support:
+Currently, there are three limitations to our class inheritance support:
 
 1. when visiting (static analysis), some objects are not yet properly recognized as classes,
     for example named tuples. If you inherit from a named tuple,
@@ -123,7 +123,26 @@ Currently, there are two limitations to our class inheritance support:
         ...
     ```
 
-2. when inspecting (dynamic analysis), ephemeral base classes won't be resolved,
+2. when visiting (static analysis), subclasses using the same name
+    as one of their parent class will prevent Griffe from computing the MRO
+    and therefore the inherited members. To circumvent that, give a
+    different name to your subclass:
+
+    ```python
+    from package import SomeClass
+    
+    
+    # instead of
+    class SomeClass(SomeClass):
+        ...
+
+    
+    # do
+    class SomeOtherClass(SomeClass):
+        ...
+    ```
+
+3. when inspecting (dynamic analysis), ephemeral base classes won't be resolved,
     and therefore their members won't appear in child classes. To circumvent that,
     assign these dynamic classes to variables:
 
@@ -140,5 +159,6 @@ Currently, there are two limitations to our class inheritance support:
     class MyClass(MyTuple):
         ...
     ```
+
 
 We will try to lift these limitations in the future.
