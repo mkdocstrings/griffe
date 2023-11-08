@@ -51,23 +51,9 @@ def changelog(ctx: Context) -> None:
     Parameters:
         ctx: The context instance (passed automatically).
     """
-    from git_changelog.cli import build_and_render
+    from git_changelog.cli import main as git_changelog
 
-    git_changelog = lazy(build_and_render, name="git_changelog")
-    ctx.run(
-        git_changelog(
-            repository=".",
-            output="CHANGELOG.md",
-            convention="angular",
-            template="keepachangelog",
-            parse_trailers=True,
-            parse_refs=False,
-            sections=["build", "deps", "feat", "fix", "perf", "refactor"],
-            bump="auto",
-            in_place=True,
-        ),
-        title="Updating changelog",
-    )
+    ctx.run(git_changelog, args=[[]], title="Updating changelog")
 
 
 @duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies", "check-api"])
