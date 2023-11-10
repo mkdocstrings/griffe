@@ -95,13 +95,14 @@ class GriffeLoader:
         *,
         submodules: bool = True,
         try_relative_path: bool = True,
+        find_stubs_package: bool = False,
     ) -> Object:
         """Renamed `load`. Load an object as a Griffe object, given its dotted path.
 
         This method was renamed [`load`][griffe.loader.GriffeLoader.load].
         """
         warnings.warn("The `load_module` method was renamed `load`, and is deprecated.", DeprecationWarning, stacklevel=2)
-        return self.load(module, submodules=submodules, try_relative_path=try_relative_path)
+        return self.load(module, submodules=submodules, try_relative_path=try_relative_path, find_stubs_package=find_stubs_package)
 
     def load(
         self,
@@ -110,6 +111,7 @@ class GriffeLoader:
         *,
         submodules: bool = True,
         try_relative_path: bool = True,
+        find_stubs_package: bool = False,
         # TODO: Remove at some point.
         module: str | Path | None = None,
     ) -> Object:
@@ -131,6 +133,9 @@ class GriffeLoader:
             submodules: Whether to recurse on the submodules.
                 This parameter only makes sense when loading a package (top-level module).
             try_relative_path: Whether to try finding the module as a relative path.
+            find_stubs_package: Whether to search for stubs-only package.
+                If both the package and its stubs are found, they'll be merged together.
+                If only the stubs are found, they'll be used as the package itself.
             module: Deprecated. Use `objspec` positional-only parameter instead.
 
         Raises:
@@ -163,7 +168,11 @@ class GriffeLoader:
                 return obj
             raise LoadingError("Cannot load builtin module without inspection")
         try:
-            obj_path, package = self.finder.find_spec(objspec, try_relative_path=try_relative_path)  # type: ignore[arg-type]
+            obj_path, package = self.finder.find_spec(
+                objspec,
+                try_relative_path=try_relative_path,
+                find_stubs_package=find_stubs_package,
+            )
         except ModuleNotFoundError:
             logger.debug(f"Could not find {objspec}")
             if self.allow_inspection:
@@ -475,7 +484,12 @@ class GriffeLoader:
             return top_module
         if package.stubs:
             self.expand_wildcards(top_module)
-            stubs = self._load_module(package.name, package.stubs, submodules=False)
+            # If stubs are in the package itself, they have been merged while loading modules,
+            # so only the top-level init module needs to be merged still.
+            # If stubs are in another package (a stubs-only package),
+            # then we need to load the entire stubs package to merge everything.
+            submodules = submodules and package.stubs.parent != package.path.parent
+            stubs = self._load_module(package.name, package.stubs, submodules=submodules)
             return merge_stubs(top_module, stubs)
         return top_module
 
@@ -669,6 +683,7 @@ def load(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
+    find_stubs_package: bool = False,
     # TODO: Remove at some point.
     module: str | Path | None = None,
 ) -> Object:
@@ -704,6 +719,9 @@ def load(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        find_stubs_package: Whether to search for stubs-only package.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
         module: Deprecated. Use `objspec` positional-only parameter instead.
 
     Returns:
@@ -721,6 +739,7 @@ def load(
         objspec,
         submodules=submodules,
         try_relative_path=try_relative_path,
+        find_stubs_package=find_stubs_package,
         # TODO: Remove at some point.
         module=module,
     )
