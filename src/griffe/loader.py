@@ -101,8 +101,17 @@ class GriffeLoader:
 
         This method was renamed [`load`][griffe.loader.GriffeLoader.load].
         """
-        warnings.warn("The `load_module` method was renamed `load`, and is deprecated.", DeprecationWarning, stacklevel=2)
-        return self.load(module, submodules=submodules, try_relative_path=try_relative_path, find_stubs_package=find_stubs_package)
+        warnings.warn(
+            "The `load_module` method was renamed `load`, and is deprecated.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.load(
+            module,
+            submodules=submodules,
+            try_relative_path=try_relative_path,
+            find_stubs_package=find_stubs_package,
+        )
 
     def load(
         self,
@@ -169,7 +178,7 @@ class GriffeLoader:
             raise LoadingError("Cannot load builtin module without inspection")
         try:
             obj_path, package = self.finder.find_spec(
-                objspec,
+                objspec,  # type: ignore[arg-type]
                 try_relative_path=try_relative_path,
                 find_stubs_package=find_stubs_package,
             )

@@ -393,7 +393,7 @@ def test_loading_stubs_only_packages(tmp_path: Path, namespace: bool) -> None:
     loader = GriffeLoader(search_paths=[stubs_parent, package_parent])
 
     # Loading package and stubs, checking their contents.
-    top_module = loader.load_module("package", try_relative_path=False, find_stubs_package=True)
+    top_module = loader.load("package", try_relative_path=False, find_stubs_package=True)
     if not namespace:
         assert "a" in top_module.members
         assert "b" in top_module.members
