@@ -226,6 +226,13 @@ class Extension:
             attr: The attribute instance.
         """
 
+    def on_package_loaded(self, *, pkg: Module) -> None:
+        """Run when a package has been completely loaded.
+
+        Parameters:
+            pkg: The package (Module) instance.
+        """
+
 
 ExtensionType = Union[VisitorExtension, InspectorExtension, Extension]
 
@@ -326,16 +333,15 @@ class Extensions:
         """The inspectors that run after the inspection."""
         return self._inspectors[When.after_all]
 
-    def call(self, event: str, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def call(self, event: str, **kwargs: Any) -> None:
         """Call the extension hook for the given event.
 
         Parameters:
             event: The trigerred event.
-            node: The AST or Object node.
-            **kwargs: Additional arguments like a Griffe object.
+            **kwargs: Arguments passed to the hook.
         """
         for extension in self._extensions:
-            getattr(extension, event)(node=node, **kwargs)
+            getattr(extension, event)(**kwargs)
 
 
 builtin_extensions: set[str] = {
