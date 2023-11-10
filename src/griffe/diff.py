@@ -416,7 +416,7 @@ def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attrib
     #     if not is_subhint(new_attribute.annotation, old_attribute.annotation):
     if old_attribute.value != new_attribute.value:
         if new_attribute.value is None:
-            new_attribute.value = "unset"
+            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, "unset")
         yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
 
 
