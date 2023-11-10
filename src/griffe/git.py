@@ -126,6 +126,7 @@ def load_git(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
+    find_stubs_package: bool = False,
 ) -> Module:
     """Load and return a module from a specific Git reference.
 
@@ -147,6 +148,9 @@ def load_git(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        find_stubs_package: Whether to search for stubs-only package.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
 
     Returns:
         A loaded module.
@@ -166,6 +170,7 @@ def load_git(
             lines_collection=lines_collection,
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
         )
 
 
