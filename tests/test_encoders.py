@@ -19,7 +19,7 @@ def test_minimal_data_is_enough() -> None:
     infer as much data as within the original tree.
     """
     loader = GriffeLoader()
-    module = loader.load_module("griffe")
+    module = loader.load("griffe")
     minimal = module.as_json(full=False)
     full = module.as_json(full=True)
     reloaded = Module.from_json(minimal)
@@ -50,7 +50,7 @@ def _validate(obj: dict, schema: dict) -> None:
 def test_json_schema() -> None:
     """Assert that our serialized data matches our JSON schema."""
     loader = GriffeLoader()
-    module = loader.load_module("griffe")
+    module = loader.load("griffe")
     loader.resolve_aliases()
     data = json.loads(module.as_json(full=True))
     with open("docs/schema.json") as f:

@@ -16,7 +16,7 @@ For more complex needs, create and use a loader:
 from griffe.loader import GriffeLoader
 
 loader = GriffeLoader()
-mkdocs = loader.load_module("mkdocs")
+mkdocs = loader.load("mkdocs")
 ```
 
 Similarly, the [`GriffeLoader`][griffe.loader.GriffeLoader] accepts
@@ -25,13 +25,13 @@ a number of parameters to configure how the modules are found and loaded.
 If you don't want to recurse in the submodules:
 
 ```python
-mkdocs = loader.load_module("mkdocs", submodules=False)
+mkdocs = loader.load("mkdocs", submodules=False)
 ```
 
 ## Navigating into the loaded objects
 
-Both the `load` function and the `GriffeLoader.load_module` method
-return a [`Module`][griffe.dataclasses.Module] instance.
+Both the `load` function and the `GriffeLoader.load` method
+return an [`Object`][griffe.dataclasses.Object] instance.
 There are several ways to access members of an object:
 
 - through its `members` attribute, which is a dictionary,
@@ -86,8 +86,8 @@ from griffe.loader import GriffeLoader
 
 loader = GriffeLoader()
 # note that we don't load package_a
-loader.load_module("package_b")
-loader.load_module("package_c")
+loader.load("package_b")
+loader.load("package_c")
 ```
 
 If a base class cannot be resolved during computation

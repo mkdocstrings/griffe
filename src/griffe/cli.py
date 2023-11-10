@@ -92,7 +92,7 @@ def _load_packages(
             continue
         logger.info(f"Loading package {package}")
         try:
-            loader.load_module(package)
+            loader.load(package)
         except ModuleNotFoundError as error:
             logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
         except ImportError as error:

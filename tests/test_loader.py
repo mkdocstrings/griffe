@@ -18,7 +18,7 @@ def test_has_docstrings_does_not_try_to_resolve_alias() -> None:
     """Assert that checkins presence of docstrings does not trigger alias resolution."""
     with temporary_pyfile("""from abc import abstractmethod""") as (module_name, path):
         loader = GriffeLoader(search_paths=[path.parent])
-        module = loader.load_module(module_name)
+        module = loader.load(module_name)
         loader.resolve_aliases()
         assert "abstractmethod" in module.members
         assert not module.has_docstrings
@@ -37,7 +37,7 @@ def test_recursive_wildcard_expansion() -> None:
         mod_a.write_text("from .mod_b import *")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
 
         assert "CONST_X" in package["mod_a.mod_b.mod_c"].members
         assert "CONST_Y" in package["mod_a.mod_b.mod_c"].members
@@ -65,7 +65,7 @@ def test_dont_shortcut_alias_chain_after_expanding_wildcards() -> None:
         mod_c.write_text("class Base: ...\n")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
         child = package["mod_a.Child"]
         assert child.bases
@@ -85,7 +85,7 @@ def test_dont_overwrite_lower_member_when_expanding_wildcard() -> None:
         mod_b.write_text("overwritten = 1\nnot_overwritten = 1\n")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
         assert package["mod_a.overwritten"].value == "1"
         assert package["mod_a.not_overwritten"].value == "0"
@@ -125,7 +125,7 @@ def test_load_data_from_stubs() -> None:
             "from ._rust_notify import RustNotify\n__all__ = ['RustNotify']",
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
 
         assert "_rust_notify" in package.members
@@ -172,7 +172,7 @@ def test_load_from_both_py_and_pyi_files() -> None:
             ),
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
 
         assert "mod" in package.members
@@ -209,7 +209,7 @@ def test_overwrite_module_with_attribute() -> None:
         tmp_package.path.joinpath("mod.py").write_text("mod: list = [0, 1, 2]")
         tmp_package.path.joinpath("__init__.py").write_text("from package.mod import *")
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        loader.load_module(tmp_package.name)
+        loader.load(tmp_package.name)
         loader.resolve_aliases()
 
 
@@ -224,7 +224,7 @@ def test_load_package_from_both_py_and_pyi_files() -> None:
         tmp_package.path.joinpath("__init__.pyi").write_text("def f(x: int) -> str: ...")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         assert "f" in package.members
 
 
@@ -240,7 +240,7 @@ def test_load_single_module_from_both_py_and_pyi_files() -> None:
         tmp_folder.path.joinpath("mod.pyi").write_text("def f(x: int) -> str: ...")
 
         loader = GriffeLoader(search_paths=[tmp_folder.path])
-        package = loader.load_module("mod")
+        package = loader.load("mod")
         assert "f" in package.members
 
 
@@ -255,7 +255,7 @@ def test_unsupported_item_in_all(caplog: pytest.LogCaptureFixture) -> None:
         tmp_folder.path.joinpath("__init__.py").write_text(f"from .mod import {item_name}\n__all__ = [{item_name}]")
         tmp_folder.path.joinpath("mod.py").write_text(f"class {item_name}: ...")
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
-        loader.expand_exports(loader.load_module("package"))
+        loader.expand_exports(loader.load("package"))  # type: ignore[arg-type]
     assert any(item_name in record.message and record.levelname == "WARNING" for record in caplog.records)
 
 
@@ -268,7 +268,7 @@ def test_skip_modules_with_dots_in_filename(caplog: pytest.LogCaptureFixture) ->
     caplog.set_level(logging.DEBUG)
     with temporary_pypackage("package", ["gunicorn.conf.py"]) as tmp_folder:
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
-        loader.load_module("package")
+        loader.load("package")
     assert any("gunicorn.conf.py" in record.message and record.levelname == "DEBUG" for record in caplog.records)
 
 
@@ -276,7 +276,7 @@ def test_nested_namespace_packages() -> None:
     """Load a deeply nested namespace package."""
     with temporary_pypackage("a/b/c/d", ["mod.py"]) as tmp_folder:
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
-        a_package = loader.load_module("a")
+        a_package = loader.load("a")
         assert "b" in a_package.members
         b_package = a_package.members["b"]
         assert "c" in b_package.members
@@ -294,7 +294,7 @@ def test_multiple_nested_namespace_packages() -> None:
                 tmp_namespace_pkgs = [tmp_ns.tmpdir for tmp_ns in (tmp_ns1, tmp_ns2, tmp_ns3)]
                 loader = GriffeLoader(search_paths=tmp_namespace_pkgs)
 
-                a_package = loader.load_module("a")
+                a_package = loader.load("a")
                 for tmp_ns in tmp_namespace_pkgs:
                     assert tmp_ns.joinpath("a") in a_package.filepath  # type: ignore[operator]
                 assert "b" in a_package.members
@@ -324,7 +324,7 @@ def test_stop_at_first_package_inside_namespace_package() -> None:
             tmp_namespace_pkgs = [tmp_ns.tmpdir for tmp_ns in (tmp_ns1, tmp_ns2)]
             loader = GriffeLoader(search_paths=tmp_namespace_pkgs)
 
-            a_package = loader.load_module("a")
+            a_package = loader.load("a")
             assert "b" in a_package.members
 
             b_package = a_package.members["b"]
@@ -343,9 +343,9 @@ def test_stop_at_first_package_inside_namespace_package() -> None:
 def test_load_builtin_modules() -> None:
     """Assert builtin/compiled modules can be loaded."""
     loader = GriffeLoader()
-    loader.load_module("_ast")
-    loader.load_module("_collections")
-    loader.load_module("_json")
+    loader.load("_ast")
+    loader.load("_collections")
+    loader.load("_json")
     assert "_ast" in loader.modules_collection
     assert "_collections" in loader.modules_collection
     assert "_json" in loader.modules_collection
@@ -354,8 +354,8 @@ def test_load_builtin_modules() -> None:
 def test_resolve_aliases_of_builtin_modules() -> None:
     """Assert builtin/compiled modules can be loaded."""
     loader = GriffeLoader()
-    loader.load_module("io")
-    loader.load_module("_io")
+    loader.load("io")
+    loader.load("_io")
     unresolved, _ = loader.resolve_aliases(external=True, implicit=True, max_iterations=1)
     io_unresolved = {un for un in unresolved if un.startswith(("io", "_io"))}
     assert len(io_unresolved) < 5

@@ -6,13 +6,14 @@ This is the entrypoint to use griffe programatically:
 from griffe.loader import GriffeLoader
 
 griffe = GriffeLoader()
-fastapi = griffe.load_module("fastapi")
+fastapi = griffe.load("fastapi")
 ```
 """
 
 from __future__ import annotations
 
 import sys
+import warnings
 from contextlib import suppress
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
@@ -87,56 +88,101 @@ class GriffeLoader:
             "time_spent_inspecting": 0,
         }
 
+    # TODO: Remove at some point.
     def load_module(
         self,
         module: str | Path,
         *,
         submodules: bool = True,
         try_relative_path: bool = True,
-    ) -> Module:
-        """Load a module.
+    ) -> Object:
+        """Renamed `load`. Load an object as a Griffe object, given its dotted path.
+
+        This method was renamed [`load`][griffe.loader.GriffeLoader.load].
+        """
+        warnings.warn("The `load_module` method was renamed `load`, and is deprecated.", DeprecationWarning, stacklevel=2)
+        return self.load(module, submodules=submodules, try_relative_path=try_relative_path)
+
+    def load(
+        self,
+        objspec: str | Path | None = None,
+        /,
+        *,
+        submodules: bool = True,
+        try_relative_path: bool = True,
+        # TODO: Remove at some point.
+        module: str | Path | None = None,
+    ) -> Object:
+        """Load an object as a Griffe object, given its Python or file path.
+
+        Note that this will load the whole object's package,
+        and return only the specified object.
+        The rest of the package can be accessed from the returned object
+        with regular methods and properties (`parent`, `members`, etc.).
+
+        Examples:
+            >>> loader.load("griffe.dataclasses.Module")
+            Class("Module")
+            >>> loader.load("src/griffe/dataclasses.py")
+            Module("dataclasses")
 
         Parameters:
-            module: The module name or path.
+            objspec: The Python path of an object, or file path to a module.
             submodules: Whether to recurse on the submodules.
+                This parameter only makes sense when loading a package (top-level module).
             try_relative_path: Whether to try finding the module as a relative path.
+            module: Deprecated. Use `objspec` positional-only parameter instead.
 
         Raises:
             LoadingError: When loading a module failed for various reasons.
             ModuleNotFoundError: When a module was not found and inspection is disallowed.
 
         Returns:
-            A module.
+            A Griffe object.
         """
-        module_name: str
-        if module in _builtin_modules:
-            logger.debug(f"{module} is a builtin module")
+        # TODO: Remove at some point.
+        if objspec is None and module is None:
+            raise TypeError("load() missing 1 required positional argument: 'objspec'")
+        if objspec is None:
+            objspec = module
+            warnings.warn(
+                "Parameter 'module' was renamed 'objspec' and made positional-only.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        obj_path: str
+        if objspec in _builtin_modules:
+            logger.debug(f"{objspec} is a builtin module")
             if self.allow_inspection:
-                logger.debug(f"Inspecting {module}")
-                module_name = module  # type: ignore[assignment]
-                top_module = self._inspect_module(module)  # type: ignore[arg-type]
+                logger.debug(f"Inspecting {objspec}")
+                obj_path = objspec  # type: ignore[assignment]
+                top_module = self._inspect_module(objspec)  # type: ignore[arg-type]
                 self.modules_collection.set_member(top_module.path, top_module)
-                return self.modules_collection.get_member(module_name)
+                obj = self.modules_collection.get_member(obj_path)
+                self.extensions.call("on_package_loaded", pkg=obj)
+                return obj
             raise LoadingError("Cannot load builtin module without inspection")
         try:
-            module_name, package = self.finder.find_spec(module, try_relative_path=try_relative_path)
+            obj_path, package = self.finder.find_spec(objspec, try_relative_path=try_relative_path)  # type: ignore[arg-type]
         except ModuleNotFoundError:
-            logger.debug(f"Could not find {module}")
+            logger.debug(f"Could not find {objspec}")
             if self.allow_inspection:
-                logger.debug(f"Trying inspection on {module}")
-                module_name = module  # type: ignore[assignment]
-                top_module = self._inspect_module(module)  # type: ignore[arg-type]
+                logger.debug(f"Trying inspection on {objspec}")
+                obj_path = objspec  # type: ignore[assignment]
+                top_module = self._inspect_module(objspec)  # type: ignore[arg-type]
                 self.modules_collection.set_member(top_module.path, top_module)
             else:
                 raise
         else:
-            logger.debug(f"Found {module}: loading")
+            logger.debug(f"Found {objspec}: loading")
             try:
                 top_module = self._load_package(package, submodules=submodules)
             except LoadingError as error:
                 logger.exception(str(error))  # noqa: TRY401
                 raise
-        return self.modules_collection.get_member(module_name)
+        obj = self.modules_collection.get_member(obj_path)
+        self.extensions.call("on_package_loaded", pkg=obj)
+        return obj
 
     def resolve_aliases(
         self,
@@ -256,7 +302,7 @@ class GriffeLoader:
                     if not external:
                         continue
                     try:
-                        self.load_module(package, try_relative_path=False)
+                        self.load(package, try_relative_path=False)
                     except ImportError as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
@@ -390,7 +436,7 @@ class GriffeLoader:
                     if load_module:
                         logger.debug(f"Failed to resolve alias {member.path} -> {target}")
                         try:
-                            self.load_module(package, try_relative_path=False)
+                            self.load(package, try_relative_path=False)
                         except ImportError as error:
                             logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
@@ -611,7 +657,8 @@ class GriffeLoader:
 
 
 def load(
-    module: str | Path,
+    objspec: str | Path | None = None,
+    /,
     *,
     submodules: bool = True,
     try_relative_path: bool = True,
@@ -622,7 +669,9 @@ def load(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
-) -> Module:
+    # TODO: Remove at some point.
+    module: str | Path | None = None,
+) -> Object:
     """Load and return a module.
 
     Example:
@@ -638,14 +687,15 @@ def load(
     from griffe.loader import GriffeLoader
 
     loader = GriffeLoader(...)
-    module = loader.load_module(...)
+    module = loader.load(...)
     ```
 
     See the documentation for the loader: [`GriffeLoader`][griffe.loader.GriffeLoader].
 
     Parameters:
-        module: The module name or path.
+        objspec: The Python path of an object, or file path to a module.
         submodules: Whether to recurse on the submodules.
+            This parameter only makes sense when loading a package (top-level module).
         try_relative_path: Whether to try finding the module as a relative path.
         extensions: The extensions to use.
         search_paths: The paths to search into.
@@ -654,9 +704,10 @@ def load(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        module: Deprecated. Use `objspec` positional-only parameter instead.
 
     Returns:
-        A loaded module.
+        A Griffe object.
     """
     return GriffeLoader(
         extensions=extensions,
@@ -666,10 +717,12 @@ def load(
         lines_collection=lines_collection,
         modules_collection=modules_collection,
         allow_inspection=allow_inspection,
-    ).load_module(
-        module=module,
+    ).load(
+        objspec,
         submodules=submodules,
         try_relative_path=try_relative_path,
+        # TODO: Remove at some point.
+        module=module,
     )
 
 

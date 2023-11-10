@@ -125,7 +125,7 @@ def temporary_visited_package(
     """
     with temporary_pypackage(package, modules, init=init) as tmp_package:
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        yield loader.load_module(tmp_package.name)
+        yield loader.load(tmp_package.name)  # type: ignore[misc]
 
 
 @contextmanager
