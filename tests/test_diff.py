@@ -155,6 +155,11 @@ from griffe.tests import temporary_visited_module, temporary_visited_package
             [BreakageKind.PARAMETER_REMOVED],
         ),
         (
+            "class a:\n\tb: int | None = None",
+            "class a:\n\tb: int",
+            [BreakageKind.ATTRIBUTE_CHANGED_VALUE],
+        ),
+        (
             "def a() -> int: ...",
             "def a() -> str: ...",
             [],  # not supported yet: BreakageKind.RETURN_CHANGED_TYPE
