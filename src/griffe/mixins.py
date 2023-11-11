@@ -133,7 +133,7 @@ class DelMembersMixin:
             self.members[parts[0]].del_member(parts[1:])  # type: ignore[attr-defined]
 
 
-class SetMembersMixin(DelMembersMixin):
+class SetMembersMixin:
     """Mixin class to share methods for setting members."""
 
     def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
@@ -204,7 +204,48 @@ class SetMembersMixin(DelMembersMixin):
             self.members[parts[0]].set_member(parts[1:], value)  # type: ignore[attr-defined]
 
 
-class ObjectAliasMixin:
+class SerializationMixin:
+    """A mixin that adds de/serialization conveniences."""
+
+    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
+        """Return this object's data as a JSON string.
+
+        Parameters:
+            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options passed to encoder.
+
+        Returns:
+            A JSON string.
+        """
+        from griffe.encoders import JSONEncoder  # avoid circular import
+
+        return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
+
+    @classmethod
+    def from_json(cls: type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:  # noqa: PYI019
+        """Create an instance of this class from a JSON string.
+
+        Parameters:
+            json_string: JSON to decode into Object.
+            **kwargs: Additional options passed to decoder.
+
+        Returns:
+            An Object instance.
+
+        Raises:
+            TypeError: When the json_string does not represent and object
+                of the class from which this classmethod has been called.
+        """
+        from griffe.encoders import json_decoder  # avoid circular import
+
+        kwargs.setdefault("object_hook", json_decoder)
+        obj = json.loads(json_string, **kwargs)
+        if not isinstance(obj, cls):
+            raise TypeError(f"provided JSON object is not of type {cls}")
+        return obj
+
+
+class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, SerializationMixin):
     """A mixin for methods that appear both in objects and aliases, unchanged."""
 
     @property
@@ -305,47 +346,6 @@ class ObjectAliasMixin:
         if self.is_alias and not (self.inherited or self.parent.is_alias):  # type: ignore[attr-defined]
             return False
         return True
-
-
-class SerializationMixin:
-    """A mixin that adds de/serialization conveniences."""
-
-    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
-        """Return this object's data as a JSON string.
-
-        Parameters:
-            full: Whether to return full info, or just base info.
-            **kwargs: Additional serialization options passed to encoder.
-
-        Returns:
-            A JSON string.
-        """
-        from griffe.encoders import JSONEncoder  # avoid circular import
-
-        return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
-
-    @classmethod
-    def from_json(cls: type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:  # noqa: PYI019
-        """Create an instance of this class from a JSON string.
-
-        Parameters:
-            json_string: JSON to decode into Object.
-            **kwargs: Additional options passed to decoder.
-
-        Returns:
-            An Object instance.
-
-        Raises:
-            TypeError: When the json_string does not represent and object
-                of the class from which this classmethod has been called.
-        """
-        from griffe.encoders import json_decoder  # avoid circular import
-
-        kwargs.setdefault("object_hook", json_decoder)
-        obj = json.loads(json_string, **kwargs)
-        if not isinstance(obj, cls):
-            raise TypeError(f"provided JSON object is not of type {cls}")
-        return obj
 
 
 __all__ = [

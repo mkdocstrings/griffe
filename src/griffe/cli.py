@@ -19,13 +19,12 @@ import logging
 import os
 import sys
 from datetime import datetime, timezone
-from importlib.metadata import PackageNotFoundError
-from importlib.metadata import version as get_dist_version
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
 import colorama
 
+from griffe import debug
 from griffe.diff import ExplanationStyle, find_breaking_changes
 from griffe.docstrings.parsers import Parser
 from griffe.encoders import JSONEncoder
@@ -44,11 +43,13 @@ DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 logger = get_logger(__name__)
 
 
-def _get_griffe_version() -> str:
-    try:
-        return get_dist_version("griffe")
-    except PackageNotFoundError:
-        return "0.0.0"
+class _DebugInfo(argparse.Action):
+    def __init__(self, nargs: int | str | None = 0, **kwargs: Any) -> None:
+        super().__init__(nargs=nargs, **kwargs)
+
+    def __call__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ARG002
+        debug.print_debug_info()
+        sys.exit(0)
 
 
 def _print_data(data: str, output_file: str | IO | None) -> None:
@@ -73,6 +74,7 @@ def _load_packages(
     resolve_external: bool = False,
     allow_inspection: bool = True,
     store_source: bool = True,
+    find_stubs_package: bool = False,
 ) -> GriffeLoader:
     # Create a single loader.
     loader = GriffeLoader(
@@ -91,7 +93,7 @@ def _load_packages(
             continue
         logger.info(f"Loading package {package}")
         try:
-            loader.load_module(package)
+            loader.load_module(package, try_relative_path=True, find_stubs_package=find_stubs_package)
         except ModuleNotFoundError as error:
             logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
         except ImportError as error:
@@ -136,7 +138,8 @@ def get_parser() -> argparse.ArgumentParser:
 
     global_options = parser.add_argument_group(title="Global options")
     global_options.add_argument("-h", "--help", action="help", help=main_help)
-    global_options.add_argument("-V", "--version", action="version", version="%(prog)s " + _get_griffe_version())
+    global_options.add_argument("-V", "--version", action="version", version=f"%(prog)s {debug.get_version()}")
+    global_options.add_argument("--debug-info", action=_DebugInfo, help="Print debug information.")
 
     def add_common_options(subparser: argparse.ArgumentParser) -> None:
         common_options = subparser.add_argument_group(title="Common options")
@@ -151,6 +154,14 @@ def get_parser() -> argparse.ArgumentParser:
             help="Paths to search packages into.",
         )
         loading_options = subparser.add_argument_group(title="Loading options")
+        loading_options.add_argument(
+            "-B",
+            "--find-stubs-packages",
+            dest="find_stubs_package",
+            action="store_true",
+            default=False,
+            help="Whether to look for stubs-only packages and merge them with concrete ones.",
+        )
         loading_options.add_argument(
             "-e",
             "--extensions",
@@ -304,6 +315,7 @@ def dump(
     resolve_implicit: bool = False,
     resolve_external: bool = False,
     search_paths: Sequence[str | Path] | None = None,
+    find_stubs_package: bool = False,
     append_sys_path: bool = False,
     allow_inspection: bool = True,
     stats: bool = False,
@@ -321,6 +333,9 @@ def dump(
         resolve_external: Whether to load additional, unspecified modules to resolve aliases.
         extensions: The extensions to use.
         search_paths: The paths to search into.
+        find_stubs_package: Whether to search for stubs-only packages.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
         append_sys_path: Whether to append the contents of `sys.path` to the search paths.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         stats: Whether to compute and log stats about loading.
@@ -355,6 +370,7 @@ def dump(
         resolve_external=resolve_external,
         allow_inspection=allow_inspection,
         store_source=False,
+        find_stubs_package=find_stubs_package,
     )
     data_packages = loader.modules_collection.members
 
@@ -383,6 +399,7 @@ def check(
     base_ref: str | None = None,
     extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
+    find_stubs_package: bool = False,
     allow_inspection: bool = True,
     verbose: bool = False,
     color: bool | None = None,
@@ -436,6 +453,7 @@ def check(
             extensions=loaded_extensions,
             search_paths=search_paths,
             allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
         )
     else:
         new_package = load(
@@ -444,6 +462,7 @@ def check(
             extensions=loaded_extensions,
             search_paths=search_paths,
             allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
         )
 
     # Find and display API breakages.
@@ -475,6 +494,7 @@ def main(args: list[str] | None = None) -> int:
     parser = get_parser()
     opts: argparse.Namespace = parser.parse_args(args)
     opts_dict = opts.__dict__
+    opts_dict.pop("debug_info")
     subcommand = opts_dict.pop("subcommand")
 
     # Initialize logging.

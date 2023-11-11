@@ -628,7 +628,7 @@ class ExprSlice(Expr):
 class ExprSubscript(Expr):
     """Subscripts like `a[b]`."""
 
-    left: Expr
+    left: str | Expr
     """Left part."""
     slice: Expr  # noqa: A003
     """Slice part."""
@@ -642,11 +642,15 @@ class ExprSubscript(Expr):
     @property
     def path(self) -> str:
         """The path of this subscript's left part."""
+        if isinstance(self.left, str):
+            return self.left
         return self.left.path
 
     @property
     def canonical_path(self) -> str:
         """The canonical path of this subscript's left part."""
+        if isinstance(self.left, str):
+            return self.left
         return self.left.canonical_path
 
 
@@ -840,7 +844,13 @@ def _build_dictcomp(node: ast.DictComp, parent: Module | Class, **kwargs: Any) -
     )
 
 
-def _build_formatted(node: ast.FormattedValue, parent: Module | Class, **kwargs: Any) -> Expr:
+def _build_formatted(
+    node: ast.FormattedValue,
+    parent: Module | Class,
+    *,
+    in_formatted_str: bool = False,  # noqa: ARG001
+    **kwargs: Any,
+) -> Expr:
     return ExprFormatted(_build(node.value, parent, in_formatted_str=True, **kwargs))
 
 

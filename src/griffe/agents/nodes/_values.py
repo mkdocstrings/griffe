@@ -121,7 +121,7 @@ def _extract_floordiv(node: ast.FloorDiv, **kwargs: Any) -> str:
     return "//"
 
 
-def _extract_formatted(node: ast.FormattedValue, **kwargs: Any) -> str:
+def _extract_formatted(node: ast.FormattedValue, *, in_formatted_str: bool = False, **kwargs: Any) -> str:
     return f"{{{_extract(node.value, in_formatted_str=True, **kwargs)}}}"
 
 

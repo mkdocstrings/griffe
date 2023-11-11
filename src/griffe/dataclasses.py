@@ -7,6 +7,7 @@ The different objects are modules, classes, functions, and attribute
 from __future__ import annotations
 
 import inspect
+import warnings
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
@@ -19,7 +20,7 @@ from griffe.enumerations import Kind, ParameterKind
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import ExprCall, ExprName
 from griffe.logger import get_logger
-from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
+from griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
@@ -107,9 +108,6 @@ class Docstring:
         self.parser_options: dict[str, Any] = parser_options or {}
         """The configured parsing options."""
 
-    def __bool__(self) -> bool:
-        return bool(self.value)
-
     @property
     def lines(self) -> list[str]:
         """The lines of the docstring."""
@@ -137,24 +135,34 @@ class Docstring:
         """
         return parse(self, parser or self.parser, **(options or self.parser_options))
 
-    def as_dict(self, *, full: bool = False, docstring_parser: Parser | None = None, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(
+        self,
+        *,
+        full: bool = False,
+        docstring_parser: Parser | None = None,
+        **kwargs: Any,  # noqa: ARG002
+    ) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Parameters:
             full: Whether to return full info, or just base info.
-            docstring_parser: The docstring parser to parse the docstring with. By default, no parsing is done.
-            **kwargs: Additional serialization or docstring parsing options.
+            docstring_parser: Deprecated. The docstring parser to parse the docstring with. By default, no parsing is done.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
+        # TODO: Remove at some point.
+        if docstring_parser is not None:
+            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
+
         base: dict[str, Any] = {
             "value": self.value,
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
         if full:
-            base["parsed"] = self.parse(docstring_parser, **kwargs)
+            base["parsed"] = self.parsed
         return base
 
 
@@ -273,7 +281,7 @@ class Parameters:
             raise ValueError(f"parameter {parameter.name} already present")
 
 
-class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):
+class Object(ObjectAliasMixin):
     """An abstract class representing a Python object."""
 
     kind: Kind
@@ -375,6 +383,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return f"{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})"
 
     def __bool__(self) -> bool:
+        # Prevent using `__len__`.
         return True
 
     def __len__(self) -> int:
@@ -382,12 +391,12 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
 
     @property
     def has_docstring(self) -> bool:
-        """Whether this object has a non-empty docstring."""
+        """Whether this object has a docstring (empty or not)."""
         return bool(self.docstring)
 
     @property
     def has_docstrings(self) -> bool:
-        """Whether this object or any of its members has a non-empty docstring."""
+        """Whether this object or any of its members has a docstring (empty or not)."""
         if self.has_docstring:
             return True
         return any(member.has_docstrings for member in self.members.values())
@@ -443,8 +452,13 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         if not isinstance(self, Class):
             return {}
+        try:
+            mro = self.mro()
+        except ValueError as error:
+            logger.debug(error)
+            return {}
         inherited_members = {}
-        for base in reversed(self.mro()):
+        for base in reversed(mro):
             for name, member in base.members.items():
                 if name not in self.members:
                     inherited_members[name] = Alias(name, member, parent=self, inherited=True)
@@ -795,17 +809,9 @@ class Alias(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"Alias({self.name!r}, {self.target_path!r})"
 
-    def __getitem__(self, key: str | tuple[str, ...]):
-        # not handled by __getattr__
-        return self.target[key]
-
-    def __setitem__(self, key: str | tuple[str, ...], value: Object | Alias):
-        # not handled by __getattr__
-        self.target[key] = value
-
-    def __delitem__(self, key: str | tuple[str, ...]):
-        # not handled by __getattr__
-        del self.target[key]
+    def __bool__(self) -> bool:
+        # Prevent using `__len__`.
+        return True
 
     def __len__(self) -> int:
         return 1
@@ -886,19 +892,27 @@ class Alias(ObjectAliasMixin):
             for name, member in final_target.inherited_members.items()
         }
 
+    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:  # noqa: D102
+        try:
+            return self.final_target.as_json(full=full, **kwargs)
+        except (AliasResolutionError, CyclicAliasError):
+            return super().as_json(full=full, **kwargs)
+
     # GENERIC OBJECT PROXIES --------------------------------
     # The following methods and properties exist on the target(s).
     # We first try to reach the final target, trigerring alias resolution errors
     # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property
-    def lineno(self) -> int | None:
-        """The target lineno or the alias lineno."""
+    def extra(self) -> dict:  # noqa: D102
+        return self.final_target.extra
+
+    @property
+    def lineno(self) -> int | None:  # noqa: D102
         return self.final_target.lineno
 
     @property
-    def endlineno(self) -> int | None:
-        """The target endlineno or the alias endlineno."""
+    def endlineno(self) -> int | None:  # noqa: D102
         return self.final_target.endlineno
 
     @property
@@ -970,6 +984,10 @@ class Alias(ObjectAliasMixin):
         return self.final_target.relative_filepath
 
     @property
+    def relative_package_filepath(self) -> Path:  # noqa: D102
+        return self.final_target.relative_package_filepath
+
+    @property
     def canonical_path(self) -> str:  # noqa: D102
         return self.final_target.canonical_path
 
@@ -999,60 +1017,84 @@ class Alias(ObjectAliasMixin):
 
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
-    # We have to call the method/property on the first target, not the final one
-    # (which could be of another kind).
+    # We first try to reach the final target, trigerring alias resolution errors
+    # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property
     def _filepath(self) -> Path | list[Path] | None:
-        return cast(Module, self.target)._filepath
+        return cast(Module, self.final_target)._filepath
 
     @property
     def bases(self) -> list[Expr | str]:  # noqa: D102
-        return cast(Class, self.target).bases
+        return cast(Class, self.final_target).bases
 
     @property
     def decorators(self) -> list[Decorator]:  # noqa: D102
         return cast(Union[Class, Function], self.target).decorators
 
     @property
+    def imports_future_annotations(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).imports_future_annotations
+
+    @property
+    def is_init_module(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_init_module
+
+    @property
+    def is_package(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_package
+
+    @property
+    def is_subpackage(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_subpackage
+
+    @property
+    def is_namespace_package(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_namespace_package
+
+    @property
+    def is_namespace_subpackage(self) -> bool:  # noqa: D102
+        return cast(Module, self.final_target).is_namespace_subpackage
+
+    @property
     def overloads(self) -> dict[str, list[Function]] | list[Function] | None:  # noqa: D102
-        return cast(Union[Module, Class, Function], self.target).overloads
+        return cast(Union[Module, Class, Function], self.final_target).overloads
 
     @overloads.setter
     def overloads(self, overloads: list[Function] | None) -> None:
-        cast(Union[Module, Class, Function], self.target).overloads = overloads
+        cast(Union[Module, Class, Function], self.final_target).overloads = overloads
 
     @property
     def parameters(self) -> Parameters:  # noqa: D102
-        return cast(Function, self.target).parameters
+        return cast(Function, self.final_target).parameters
 
     @property
     def returns(self) -> str | Expr | None:  # noqa: D102
-        return cast(Function, self.target).returns
+        return cast(Function, self.final_target).returns
 
     @returns.setter
     def returns(self, returns: str | Expr | None) -> None:
-        cast(Function, self.target).returns = returns
+        cast(Function, self.final_target).returns = returns
 
     @property
     def setter(self) -> Function | None:  # noqa: D102
-        return cast(Function, self.target).setter
+        return cast(Function, self.final_target).setter
 
     @property
     def deleter(self) -> Function | None:  # noqa: D102
-        return cast(Function, self.target).deleter
+        return cast(Function, self.final_target).deleter
 
     @property
     def value(self) -> str | Expr | None:  # noqa: D102
-        return cast(Attribute, self.target).value
+        return cast(Attribute, self.final_target).value
 
     @property
     def annotation(self) -> str | Expr | None:  # noqa: D102
-        return cast(Attribute, self.target).annotation
+        return cast(Attribute, self.final_target).annotation
 
     @annotation.setter
     def annotation(self, annotation: str | Expr | None) -> None:
-        cast(Attribute, self.target).annotation = annotation
+        cast(Attribute, self.final_target).annotation = annotation
 
     @property
     def resolved_bases(self) -> list[Object]:  # noqa: D102

@@ -386,6 +386,12 @@ def _load_extension(
     # and the value to be a dictionary of options.
     if isinstance(extension, dict):
         import_path, options = next(iter(extension.items()))
+        # Force path to be a string, as it could have been passed from `mkdocs.yml`,
+        # using the custom YAML tag `!relative`, which gives an instance of MkDocs
+        # path placeholder classes, which are not iterable.
+        # See https://github.com/mkdocs/mkdocs/issues/3414.
+        # TODO: Update when this issue is resolved.
+        import_path = str(import_path)
 
     # Otherwise we consider it's an import path, without options.
     else:

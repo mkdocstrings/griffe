@@ -6,12 +6,14 @@ import logging
 from textwrap import dedent
 from typing import TYPE_CHECKING
 
+import pytest
+
 from griffe.expressions import ExprName
 from griffe.loader import GriffeLoader
 from griffe.tests import temporary_pyfile, temporary_pypackage
 
 if TYPE_CHECKING:
-    import pytest
+    from pathlib import Path
 
 
 def test_has_docstrings_does_not_try_to_resolve_alias() -> None:
@@ -359,3 +361,41 @@ def test_resolve_aliases_of_builtin_modules() -> None:
     unresolved, _ = loader.resolve_aliases(external=True, implicit=True, max_iterations=1)
     io_unresolved = {un for un in unresolved if un.startswith(("io", "_io"))}
     assert len(io_unresolved) < 5
+
+
+@pytest.mark.parametrize("namespace", [False, True])
+def test_loading_stubs_only_packages(tmp_path: Path, namespace: bool) -> None:
+    """Test loading and merging of stubs-only packages.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+        namespace: Whether the package and stubs are namespace packages.
+    """
+    # Create package.
+    package_parent = tmp_path / "pkg_parent"
+    package_parent.mkdir()
+    package = package_parent / "package"
+    package.mkdir()
+    if not namespace:
+        package.joinpath("__init__.py").write_text("a: int = 0")
+    package.joinpath("module.py").write_text("a: int = 0")
+
+    # Create stubs.
+    stubs_parent = tmp_path / "stubs_parent"
+    stubs_parent.mkdir()
+    stubs = stubs_parent / "package-stubs"
+    stubs.mkdir()
+    if not namespace:
+        stubs.joinpath("__init__.pyi").write_text("b: int")
+    stubs.joinpath("module.pyi").write_text("b: int")
+
+    # Exposing stubs first, to make sure order doesn't matter.
+    loader = GriffeLoader(search_paths=[stubs_parent, package_parent])
+
+    # Loading package and stubs, checking their contents.
+    top_module = loader.load_module("package", try_relative_path=False, find_stubs_package=True)
+    if not namespace:
+        assert "a" in top_module.members
+        assert "b" in top_module.members
+    assert "a" in top_module["module"].members
+    assert "b" in top_module["module"].members
