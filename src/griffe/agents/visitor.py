@@ -522,8 +522,8 @@ class Visitor:
             node: The node to visit.
         """
         for name in node.names:
-            if not node.module and node.level == 1 and not name.asname:
-                # special case: when being in `a` and doing `from . import b`,
+            if not node.module and node.level == 1 and not name.asname and self.current.module.is_init_module:
+                # special case: when being in `a/__init__.py` and doing `from . import b`,
                 # we are effectively creating a member `b` in `a` that is pointing to `a.b`
                 # -> cyclic alias! in that case, we just skip it, as both the member and module
                 # have the same name and can be accessed the same way

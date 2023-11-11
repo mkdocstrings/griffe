@@ -252,8 +252,8 @@ def _read_parameters(
         choices = match.group("choices")
         default = None
         if choices:
-            choices = choices.split(", ", 1)
-            default = choices[0]
+            annotation = choices
+            default = choices.split(", ", 1)[0]
         elif annotation:
             match = re.match(r"^(?P<annotation>.+),\s+default(?: |: |=)(?P<default>.+)$", annotation)
             if match:
@@ -762,7 +762,7 @@ def parse(
     warn_unknown_params: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
-    """Parse a docstring.
+    """Parse a Numpydoc-style docstring.
 
     This function iterates on lines of a docstring to build sections.
     It then returns this list of sections.

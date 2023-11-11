@@ -1090,7 +1090,7 @@ def test_ignore_init_summary(parse_numpy: ParserType, docstring: str) -> None:
     ],
 )
 def test_trim_doctest_flags_basic_example(parse_numpy: ParserType, docstring: str) -> None:
-    """Correctly parse_numpy simple example docstrings when `trim_doctest_flags` option is turned on.
+    """Correctly parse simple example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
         parse_numpy: Fixture parser.
@@ -1108,7 +1108,7 @@ def test_trim_doctest_flags_basic_example(parse_numpy: ParserType, docstring: st
 
 
 def test_trim_doctest_flags_multi_example(parse_numpy: ParserType) -> None:
-    """Correctly parse_numpy multiline example docstrings when `trim_doctest_flags` option is turned on.
+    """Correctly parse multiline example docstrings when `trim_doctest_flags` option is turned on.
 
     Parameters:
         parse_numpy: Fixture parser.
@@ -1142,3 +1142,20 @@ def test_trim_doctest_flags_multi_example(parse_numpy: ParserType) -> None:
     example_str = sections[0].value[3][1]
     assert "<BLANKLINE>" not in example_str
     assert "\n>>> print(list(range(1, 100)))\n" in example_str
+
+
+def test_parsing_choices(parse_numpy: ParserType) -> None:
+    """Correctly parse choices.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = r"""
+    Parameters
+    --------
+    order : {'C', 'F', 'A'}
+        Description of `order`.
+    """
+    sections, warnings = parse_numpy(docstring, trim_doctest_flags=True)
+    assert sections[0].value[0].annotation == "'C', 'F', 'A'"
+    assert not warnings

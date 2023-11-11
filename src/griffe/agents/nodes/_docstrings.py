@@ -26,7 +26,7 @@ def get_docstring(
     # TODO: possible optimization using a type map
     if isinstance(node, ast.Expr):
         doc = node.value
-    elif node.body and isinstance(node.body[0], ast.Expr) and not strict:  # type: ignore[attr-defined]
+    elif not strict and node.body and isinstance(node.body, list) and isinstance(node.body[0], ast.Expr):  # type: ignore[attr-defined]
         doc = node.body[0].value  # type: ignore[attr-defined]
     else:
         return None, None, None

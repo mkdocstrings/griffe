@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import sys
 import tempfile
-from collections import namedtuple
 from contextlib import contextmanager
+from dataclasses import dataclass
 from importlib import invalidate_caches
 from pathlib import Path
 from textwrap import dedent
@@ -24,7 +24,16 @@ if TYPE_CHECKING:
 TMPDIR_PREFIX = "griffe_"
 
 
-TmpPackage = namedtuple("TmpPackage", "tmpdir name path")  # noqa: PYI024
+@dataclass
+class TmpPackage:
+    """A temporary package."""
+
+    tmpdir: Path
+    """The temporary directory containing the package."""
+    name: str
+    """The package name, as to dynamically import it."""
+    path: Path
+    """The package path."""
 
 
 @contextmanager
@@ -66,11 +75,7 @@ def temporary_pypackage(
         init: Whether to create an `__init__` module in the leaf package.
 
     Yields:
-        A named tuple with the following fields:
-
-            - `tmp_dir`: The temporary directory containing the package.
-            - `name`: The package name, as to dynamically import it.
-            - `path`: The package path.
+        A temporary package.
     """
     modules = modules or {}
     if isinstance(modules, list):
@@ -120,7 +125,7 @@ def temporary_visited_package(
     """
     with temporary_pypackage(package, modules, init=init) as tmp_package:
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        yield loader.load_module(tmp_package.name)
+        yield loader.load(tmp_package.name)  # type: ignore[misc]
 
 
 @contextmanager

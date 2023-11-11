@@ -1,40 +1,73 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
+about: Create a bug report to help us improve.
+title: "bug: "
 labels: unconfirmed
-assignees: ''
-
+assignees: [pawamoy]
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+### Description of the bug
+<!-- Please provide a clear and concise description of what the bug is. -->
 
-**Debug logs**
+### To Reproduce
+<!-- Please provide a Minimal Reproducible Example (MRE) if possible.
+     Try to boil down the problem to a few lines of code.
+     Your code should run by simply copying and pasting it.
+
+     Example:
+
+     ```
+     git clone https://github.com/username/repro
+     cd repro
+     python -m venv .venv
+     . .venv/bin/activate
+     pip install -r requirements.txt
+     ...  # command or code showing the issue
+     ```
+-->
+
+```
+WRITE MRE / INSTRUCTIONS HERE
+```
+
+### Full traceback
+<!-- Please provide the full error message / traceback if any, by pasting it in the code block below.
+     No screenshots! -->
+
+<details><summary>Full traceback</summary>
+
+```python
+PASTE TRACEBACK HERE
+```
+
+</details>
+
+<!-- If using Griffe directly: -->
 ```console
 $ griffe dump ... -LDEBUG
-Paste logs here
+PASTE LOGS HERE
 ```
 
+<!-- If using Griffe through MkDocs and mkdocstrings: -->
 ```console
 $ mkdocs build -v
-Paste logs here
+PASTE LOGS HERE
 ```
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Run command '...'
-3. Scroll down to '...'
-4. See error
+### Expected behavior
+<!-- Please provide a clear and concise description of what you expected to happen. -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+### Environment information
+<!-- Please run the following command in your repository and paste its output below it,
+     redacting sensitive information. -->
 
-**System (please complete the following information):**
-- `griffe` version:
-- Python version:
-- OS:
+```bash
+griffe --debug-info  # | xclip -selection clipboard
+```
 
-**Additional context**
-Add any other context about the problem here.
+PASTE OUTPUT HERE
+
+### Additional context
+<!-- Add any other relevant context about the problem here,
+     like links to other issues or pull requests, screenshots, etc.
+-->

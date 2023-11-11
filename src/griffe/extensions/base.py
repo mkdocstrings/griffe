@@ -226,6 +226,13 @@ class Extension:
             attr: The attribute instance.
         """
 
+    def on_package_loaded(self, *, pkg: Module) -> None:
+        """Run when a package has been completely loaded.
+
+        Parameters:
+            pkg: The package (Module) instance.
+        """
+
 
 ExtensionType = Union[VisitorExtension, InspectorExtension, Extension]
 
@@ -326,16 +333,15 @@ class Extensions:
         """The inspectors that run after the inspection."""
         return self._inspectors[When.after_all]
 
-    def call(self, event: str, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def call(self, event: str, **kwargs: Any) -> None:
         """Call the extension hook for the given event.
 
         Parameters:
             event: The trigerred event.
-            node: The AST or Object node.
-            **kwargs: Additional arguments like a Griffe object.
+            **kwargs: Arguments passed to the hook.
         """
         for extension in self._extensions:
-            getattr(extension, event)(node=node, **kwargs)
+            getattr(extension, event)(**kwargs)
 
 
 builtin_extensions: set[str] = {
@@ -386,6 +392,12 @@ def _load_extension(
     # and the value to be a dictionary of options.
     if isinstance(extension, dict):
         import_path, options = next(iter(extension.items()))
+        # Force path to be a string, as it could have been passed from `mkdocs.yml`,
+        # using the custom YAML tag `!relative`, which gives an instance of MkDocs
+        # path placeholder classes, which are not iterable.
+        # See https://github.com/mkdocs/mkdocs/issues/3414.
+        # TODO: Update when this issue is resolved.
+        import_path = str(import_path)
 
     # Otherwise we consider it's an import path, without options.
     else:

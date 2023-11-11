@@ -34,8 +34,10 @@ def test_fuzzing_on_stdlib() -> None:
     loader = GriffeLoader()
     for package in stblib_packages:
         with suppress(ModuleNotFoundError):
-            loader.load_module(package)
+            loader.load(package)
 
     loader.resolve_aliases(implicit=True, external=True)
     for module in loader.modules_collection.members.values():
         _access_inherited_members(module)
+
+    loader.stats()

@@ -95,6 +95,9 @@ class Breakage:
 
     @property
     def _location(self) -> Path:
+        # Absolute file path probably means temporary worktree.
+        # We use our worktree prefix to remove some components
+        # of the path on the left (`/tmp/griffe-worktree-*/griffe_*/repo`).
         if self._relative_filepath.is_absolute():
             parts = self._relative_filepath.parts
             for index, part in enumerate(parts):
@@ -318,7 +321,7 @@ class ClassRemovedBaseBreakage(Breakage):
         return "[" + ", ".join(base.canonical_path for base in self.new_value) + "]"
 
 
-# TODO: decorators!
+# TODO: Check decorators? Maybe resolved by extensions and/or dynamic analysis.
 def _class_incompatibilities(
     old_class: Class,
     new_class: Class,
@@ -327,16 +330,12 @@ def _class_incompatibilities(
     seen_paths: set[str],
 ) -> Iterable[Breakage]:
     yield from ()
-    if new_class.bases != old_class.bases:
-        if len(new_class.bases) < len(old_class.bases):
-            yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)
-        else:
-            # TODO: check mro
-            ...
+    if new_class.bases != old_class.bases and len(new_class.bases) < len(old_class.bases):
+        yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)
     yield from _member_incompatibilities(old_class, new_class, ignore_private=ignore_private, seen_paths=seen_paths)
 
 
-# TODO: decorators!
+# TODO: Check decorators? Maybe resolved by extensions and/or dynamic analysis.
 def _function_incompatibilities(old_function: Function, new_function: Function) -> Iterator[Breakage]:
     new_param_names = [param.name for param in new_function.parameters]
     param_kinds = {param.kind for param in new_function.parameters}
@@ -344,7 +343,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
     has_variadic_kwargs = ParameterKind.var_keyword in param_kinds
 
     for old_index, old_param in enumerate(old_function.parameters):
-        # checking if parameter was removed
+        # Check if the parameter was removed.
         if old_param.name not in new_function.parameters:
             swallowed = (
                 (old_param.kind is ParameterKind.keyword_only and has_variadic_kwargs)
@@ -355,19 +354,19 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
                 yield ParameterRemovedBreakage(new_function, old_param, None)
             continue
 
-        # checking if parameter became required
+        # Check if the parameter became required.
         new_param = new_function.parameters[old_param.name]
         if new_param.required and not old_param.required:
             yield ParameterChangedRequiredBreakage(new_function, old_param, new_param)
 
-        # checking if parameter was moved
+        # Check if the parameter was moved.
         if old_param.kind in POSITIONAL and new_param.kind in POSITIONAL:
             new_index = new_param_names.index(old_param.name)
             if new_index != old_index:
                 details = f"position: from {old_index} to {new_index} ({new_index - old_index:+})"
                 yield ParameterMovedBreakage(new_function, old_param, new_param, details=details)
 
-        # checking if parameter changed kind
+        # Check if the parameter changed kind.
         if old_param.kind is not new_param.kind:
             incompatible_kind = any(
                 (
@@ -390,7 +389,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
             if incompatible_kind:
                 yield ParameterChangedKindBreakage(new_function, old_param, new_param)
 
-        # checking if parameter changed default
+        # Check if the parameter changed default.
         breakage = ParameterChangedDefaultBreakage(new_function, old_param, new_param)
         non_required = not old_param.required and not new_param.required
         non_variadic = old_param.kind not in VARIADIC and new_param.kind not in VARIADIC
@@ -399,10 +398,10 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
                 if old_param.default != new_param.default:
                     yield breakage
             except Exception:  # noqa: BLE001 (equality checks sometimes fail, e.g. numpy arrays)
-                # TODO: emitting breakage on a failed comparison could be a preference
+                # NOTE: Emitting breakage on a failed comparison could be a preference.
                 yield breakage
 
-    # checking if required parameters were added
+    # Check if required parameters were added.
     for new_param in new_function.parameters:
         if new_param.name not in old_function.parameters and new_param.required:
             yield ParameterAddedRequiredBreakage(new_function, None, new_param)
@@ -412,11 +411,14 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
 
 
 def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attribute) -> Iterable[Breakage]:
-    # TODO: use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
+    # TODO: Use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
     # if old_attribute.annotation is not None and new_attribute.annotation is not None:
     #     if not is_subhint(new_attribute.annotation, old_attribute.annotation):
     if old_attribute.value != new_attribute.value:
-        yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
+        if new_attribute.value is None:
+            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, "unset")
+        else:
+            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
 
 
 def _alias_incompatibilities(
@@ -500,17 +502,23 @@ def _type_based_yield(
 
 
 def _returns_are_compatible(old_function: Function, new_function: Function) -> bool:
+    # We consider that a return value of `None` only is not a strong contract,
+    # it just means that the function returns nothing. We don't expect users
+    # to be asserting that the return value is `None`.
+    # Therefore we don't consider it a breakage if the return changes from `None`
+    # to something else: the function just gained a return value.
     if old_function.returns is None:
         return True
+
     if new_function.returns is None:
-        # TODO: it should be configurable to allow/disallow removing a return type
+        # NOTE: Should it be configurable to allow/disallow removing a return type?
         return False
 
     with contextlib.suppress(AttributeError):
         if new_function.returns == old_function.returns:
             return True
 
-    # TODO: use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
+    # TODO: Use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
     return True
 
 

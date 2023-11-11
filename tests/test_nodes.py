@@ -76,7 +76,9 @@ syntax_examples = [
     ("code", "path", "is_package", "expected"),
     [
         ("from . import b", "a", False, "a.b"),
+        ("from . import b", "a", True, "a.b"),
         ("from . import c", "a.b", False, "a.c"),
+        ("from . import c", "a.b", True, "a.b.c"),
         ("from . import d", "a.b.c", False, "a.b.d"),
         ("from .c import d", "a", False, "a.c.d"),
         ("from .c import d", "a.b", False, "a.c.d"),

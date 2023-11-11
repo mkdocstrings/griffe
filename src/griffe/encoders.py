@@ -8,6 +8,7 @@ The available formats are:
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path, PosixPath, WindowsPath
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -82,14 +83,20 @@ class JSONEncoder(json.JSONEncoder):
                 you don't need the full data as it can be infered again
                 using the base data. If you want to feed a non-Python
                 tool instead, dump the full data.
-            docstring_parser: The docstring parser to use. By default, no parsing is done.
-            docstring_options: Additional docstring parsing options.
+            docstring_parser: Deprecated. The docstring parser to use. By default, no parsing is done.
+            docstring_options: Deprecated. Additional docstring parsing options.
             **kwargs: See [`json.JSONEncoder`][].
         """
         super().__init__(*args, **kwargs)
         self.full: bool = full
+
+        # TODO: Remove at some point.
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        if docstring_parser is not None:
+            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
+        if docstring_options is not None:
+            warnings.warn("Parameter `docstring_options` is deprecated and has no effect.", stacklevel=1)
 
     def default(self, obj: Any) -> Any:
         """Return a serializable representation of the given object.
@@ -101,7 +108,7 @@ class JSONEncoder(json.JSONEncoder):
             A serializable representation.
         """
         try:
-            return obj.as_dict(full=self.full, docstring_parser=self.docstring_parser, **self.docstring_options)
+            return obj.as_dict(full=self.full)
         except AttributeError:
             return _json_encoder_map.get(type(obj), super().default)(obj)
 
@@ -117,8 +124,15 @@ def _load_decorators(obj_dict: dict) -> list[Decorator]:
 
 
 def _load_expression(expression: dict) -> expressions.Expr:
+    # The expression class name is stored in the `cls` key-value.
     cls = getattr(expressions, expression.pop("cls"))
     expr = cls(**expression)
+
+    # For attributes, we need to re-attach names (`values`) together,
+    # as a single linked list, from right to left:
+    # in `a.b.c`, `c` links to `b` which links to `a`.
+    # In `(a or b).c` however, `c` does not link to `(a or b)`,
+    # as `(a or b)` is not a name and wouldn't allow to resolve `c`.
     if cls is expressions.ExprAttribute:
         previous = None
         for value in expr.values:
@@ -149,6 +163,9 @@ def _attach_parent_to_expr(expr: expressions.Expr | str | None, parent: Module |
 
 
 def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | Class) -> None:
+    # Every name and attribute expression must be reattached
+    # to its parent Griffe object (using its `parent` attribute),
+    # to allow resolving names.
     if isinstance(obj, Class):
         if obj.docstring:
             _attach_parent_to_expr(obj.docstring.value, parent)
@@ -256,14 +273,19 @@ def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | 
     Returns:
         An instance of a data class.
     """
+    # Load expressions.
     if "cls" in obj_dict:
         return _load_expression(obj_dict)
+
+    # Load objects and parameters.
     if "kind" in obj_dict:
         try:
             kind = Kind(obj_dict["kind"])
         except ValueError:
             return _load_parameter(obj_dict)
         return _loader_map[kind](obj_dict)
+
+    # Return dict as is.
     return obj_dict
 
 

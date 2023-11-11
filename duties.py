@@ -4,15 +4,17 @@ from __future__ import annotations
 
 import os
 import sys
+from contextlib import contextmanager
 from importlib.metadata import version as pkgversion
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Iterator
 
 from duty import duty
-from duty.callables import black, blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
+from duty.callables import black, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
 
 if TYPE_CHECKING:
     from duty.context import Context
+
 
 PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "duties.py", "scripts"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
@@ -30,32 +32,16 @@ def pyprefix(title: str) -> str:  # noqa: D103
     return title
 
 
-def merge(d1: Any, d2: Any) -> Any:  # noqa: D103
-    basic_types = (int, float, str, bool, complex)
-    if isinstance(d1, dict) and isinstance(d2, dict):
-        for key, value in d2.items():
-            if key in d1:
-                if isinstance(d1[key], basic_types):
-                    d1[key] = value
-                else:
-                    d1[key] = merge(d1[key], value)
-            else:
-                d1[key] = value
-        return d1
-    if isinstance(d1, list) and isinstance(d2, list):
-        return d1 + d2
-    return d2
-
-
-def mkdocs_config() -> str:  # noqa: D103
-    import mergedeep
-
-    # force YAML loader to merge arrays
-    mergedeep.merge = merge
-
+@contextmanager
+def material_insiders() -> Iterator[bool]:  # noqa: D103
     if "+insiders" in pkgversion("mkdocs-material"):
-        return "mkdocs.insiders.yml"
-    return "mkdocs.yml"
+        os.environ["MATERIAL_INSIDERS"] = "true"
+        try:
+            yield True
+        finally:
+            os.environ.pop("MATERIAL_INSIDERS")
+    else:
+        yield False
 
 
 @duty
@@ -65,23 +51,9 @@ def changelog(ctx: Context) -> None:
     Parameters:
         ctx: The context instance (passed automatically).
     """
-    from git_changelog.cli import build_and_render
+    from git_changelog.cli import main as git_changelog
 
-    git_changelog = lazy(build_and_render, name="git_changelog")
-    ctx.run(
-        git_changelog(
-            repository=".",
-            output="CHANGELOG.md",
-            convention="angular",
-            template="keepachangelog",
-            parse_trailers=True,
-            parse_refs=False,
-            sections=["build", "deps", "feat", "fix", "perf", "refactor"],
-            bump_latest=True,
-            in_place=True,
-        ),
-        title="Updating changelog",
-    )
+    ctx.run(git_changelog, args=[[]], title="Updating changelog")
 
 
 @duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies", "check-api"])
@@ -137,12 +109,12 @@ def check_docs(ctx: Context) -> None:
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
-    config = mkdocs_config()
-    ctx.run(
-        mkdocs.build(strict=True, config_file=config, verbose=True),
-        title=pyprefix("Building documentation"),
-        command=f"mkdocs build -vsf {config}",
-    )
+    with material_insiders():
+        ctx.run(
+            mkdocs.build(strict=True, verbose=True),
+            title=pyprefix("Building documentation"),
+            command="mkdocs build -vs",
+        )
 
 
 @duty
@@ -206,11 +178,12 @@ def docs(ctx: Context, host: str = "127.0.0.1", port: int = 8000) -> None:
         host: The host to serve the docs from.
         port: The port to serve the docs on.
     """
-    ctx.run(
-        mkdocs.serve(dev_addr=f"{host}:{port}", config_file=mkdocs_config()),
-        title="Serving documentation",
-        capture=False,
-    )
+    with material_insiders():
+        ctx.run(
+            mkdocs.serve(dev_addr=f"{host}:{port}"),
+            title="Serving documentation",
+            capture=False,
+        )
 
 
 @duty
@@ -221,10 +194,10 @@ def docs_deploy(ctx: Context) -> None:
         ctx: The context instance (passed automatically).
     """
     os.environ["DEPLOY"] = "true"
-    config_file = mkdocs_config()
-    if config_file == "mkdocs.yml":
-        ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
-    ctx.run(mkdocs.gh_deploy(config_file=config_file), title="Deploying documentation")
+    with material_insiders() as insiders:
+        if not insiders:
+            ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
+        ctx.run(mkdocs.gh_deploy(), title="Deploying documentation")
 
 
 @duty
@@ -239,11 +212,6 @@ def format(ctx: Context) -> None:
         title="Auto-fixing code",
     )
     ctx.run(black.run(*PY_SRC_LIST, config="config/black.toml"), title="Formatting code")
-    ctx.run(
-        blacken_docs.run(*PY_SRC_LIST, "docs", exts=["py", "md"], line_length=120),
-        title="Formatting docs",
-        nofail=True,
-    )
 
 
 @duty(post=["docs-deploy"])
@@ -292,54 +260,92 @@ def test(ctx: Context, match: str = "") -> None:
     )
 
 
+class Seeds(list):  # noqa: D101
+    def __init__(self, cli_value: str = "") -> None:  # noqa: D107
+        if cli_value:
+            self.extend(int(seed) for seed in cli_value.split(","))
+
+
 @duty
 def fuzz(
     ctx: Context,
     *,
-    profile: bool = False,
-    browser: bool = False,
+    size: int = 20,
+    min_seed: int = 0,
+    max_seed: int = 1_000_000,
+    seeds: Seeds = Seeds(),  # noqa: B008
 ) -> None:
-    """Fuzz Griffe against PDM cached packages.
+    """Fuzz Griffe against generated Python code.
 
     Parameters:
         ctx: The context instance (passed automatically).
-        profile: Whether to profile the run.
-        browser: Whether to open the SVG file in the browser at the end.
+        size: The size of the case set (number of cases to test).
+        seeds: Seeds to test or exclude.
+        min_seed: Minimum value for the seeds range.
+        max_seed: Maximum value for the seeds range.
     """
-    from griffe.cli import _load_packages as load_packages
+    import warnings
+    from random import sample
+    from tempfile import gettempdir
 
-    def find_pdm_packages() -> list[str]:
-        return ctx.run(
-            "find ~/.cache/pdm/packages -maxdepth 4 -type f -name __init__.py -exec dirname {} +",
-            title="Finding packages",
-            allow_overrides=False,
-        ).split("\n")
+    from pysource_codegen import generate
+    from pysource_minimize import minimize
 
-    packages = find_pdm_packages()
+    from griffe.agents.visitor import visit
 
-    if not profile:
-        griffe_load = lazy(load_packages, name="griffe.load")
-        ctx.run(
-            griffe_load(packages, resolve_aliases=True),
-            title=f"Fuzzing on {len(packages)} packages from PDM cache",
-        )
-        return
+    warnings.simplefilter("ignore", SyntaxWarning)
 
-    ctx.run(
-        [
-            sys.executable,
-            "-mcProfile",
-            "-oprofile.pstats",
-            "-m",
-            "griffe",
-            "dump",
-            "-rIUSo/dev/null",
-            "-LDEBUG",
-            *packages,
-        ],
-        title=f"Profiling on {len(packages)} packages",
-        pty=False,
-    )
-    ctx.run("gprof2dot profile.pstats | dot -Tsvg -o profile.svg", title="Converting to SVG")
-    if browser:
-        os.system("/usr/bin/firefox profile.svg 2>/dev/null &")  # noqa: S605
+    def fails(code: str, filepath: Path) -> bool:
+        try:
+            visit(filepath.stem, filepath=filepath, code=code)
+        except Exception:  # noqa: BLE001
+            return True
+        return False
+
+    def test_seed(seed: int, revisit: bool = False) -> bool:  # noqa: FBT001,FBT002
+        filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
+        if filepath.exists():
+            if revisit:
+                code = filepath.read_text()
+            else:
+                return True
+        else:
+            code = generate(seed)
+            filepath.write_text(code)
+
+        if fails(code, filepath):
+            new_code = minimize(code, fails)
+            if code != new_code:
+                filepath.write_text(new_code)
+            return False
+        return True
+
+    revisit = bool(seeds)
+    seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # type: ignore[assignment]
+    for seed in seeds:
+        ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")
+
+
+@duty
+def vscode(ctx: Context) -> None:
+    """Configure VSCode.
+
+    This task will overwrite the following files,
+    so make sure to back them up:
+
+    - `.vscode/launch.json`
+    - `.vscode/settings.json`
+    - `.vscode/tasks.json`
+
+    Parameters:
+        ctx: The context instance (passed automatically).
+    """
+
+    def update_config(filename: str) -> None:
+        source_file = Path("config", "vscode", filename)
+        target_file = Path(".vscode", filename)
+        target_file.parent.mkdir(exist_ok=True)
+        target_file.write_text(source_file.read_text())
+
+    for filename in ("launch.json", "settings.json", "tasks.json"):
+        ctx.run(update_config, args=[filename], title=f"Update .vscode/{filename}")

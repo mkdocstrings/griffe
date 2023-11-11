@@ -702,7 +702,7 @@ def parse(
     returns_type_in_property_summary: bool = False,
     **options: Any,
 ) -> list[DocstringSection]:
-    """Parse a docstring.
+    """Parse a Google-style docstring.
 
     This function iterates on lines of a docstring to build sections.
     It then returns this list of sections.

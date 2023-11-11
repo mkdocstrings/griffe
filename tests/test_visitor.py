@@ -7,13 +7,7 @@ from textwrap import dedent
 import pytest
 
 from griffe.loader import GriffeLoader
-from griffe.tests import temporary_pypackage, temporary_visited_module
-
-# @given(hs.from_node(node=libcst.Module))
-# @pytest.mark.skipif(sys.version_info >= (3, 11, 0), reason="Too slow on Python 3.11?")
-# def test_visit_arbitrary_code(code: str):
-#     with temporary_visited_module(code):
-#         ...
+from griffe.tests import temporary_pypackage, temporary_visited_module, temporary_visited_package
 
 
 def test_not_defined_at_runtime() -> None:
@@ -39,7 +33,7 @@ def test_not_defined_at_runtime() -> None:
         tmp_package.path.joinpath("module_b.py").write_text("CONST_B = 'hi'\nTYPE_B = str")
         tmp_package.path.joinpath("module_c.py").write_text("CONST_C = 'ho'\nTYPE_C = str")
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
         assert "CONST_B" in package.members
         assert "CONST_C" in package.members
@@ -219,7 +213,7 @@ def test_parse_complex__all__assignments(statements: str) -> None:
         tmp_package.path.joinpath("__init__.py").write_text(dedent(code) + dedent(statements))
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
 
         assert package.exports == {"CONST_INIT", "CONST_A", "CONST_B", "CONST_C"}
@@ -352,3 +346,18 @@ def test_visiting_if_statement_in_class_for_type_guards() -> None:
         """,
     ) as module:
         assert module["A.B"].runtime
+
+
+def test_visiting_relative_imports_triggering_cyclic_aliases() -> None:
+    """Skip specific imports to avoid cyclic aliases."""
+    with temporary_visited_package(
+        "pkg",
+        {
+            "__init__.py": "from . import a",
+            "a.py": "from . import b",
+            "b.py": "",
+        },
+    ) as pkg:
+        assert "a" not in pkg.imports
+        assert "b" in pkg["a"].imports
+        assert pkg["a"].imports["b"] == "pkg.b"

@@ -190,7 +190,6 @@ contains a single class, which itself contains a single method:
 - then it will go back up and finish walking since there are
   no more nodes to walk through
 
-
 Every time the agent enters a node,
 creates an object instance,
 or finish handling members of an object,
@@ -256,13 +255,33 @@ and how to hook onto them in your extensions.
 
 ### Events and hooks
 
-There are 3 generic **events**:
+There are two kinds of events in Griffe:
+**load events** and **analysis events**.
+Load events are scoped to the Griffe loader.
+Analysis events are scoped to the visitor and inspector agents
+(triggered during static and dynamic analysis).
+
+#### Load events
+
+There is only one **load event**:
+
+- [`on_package_loaded`][griffe.extensions.base.Extension.on_package_loaded] 
+
+This event is triggered when the loader has finished loading a package entirely,
+i.e. when all its submodules were scanned and loaded.
+This event can be hooked by extensions which require the whole package to be loaded,
+to be able to navigate the object tree without raising lookup errors
+or alias resolution errors.
+
+#### Analysis events
+
+There are 3 generic **analysis events**:
 
 - [`on_node`][griffe.extensions.base.Extension.on_node]
 - [`on_instance`][griffe.extensions.base.Extension.on_instance]
 - [`on_members`][griffe.extensions.base.Extension.on_members]
 
-There are also specific **events** for each object kind:
+There are also specific **analysis events** for each object kind:
 
 - [`on_module_node`][griffe.extensions.base.Extension.on_module_node]
 - [`on_module_instance`][griffe.extensions.base.Extension.on_module_instance]
@@ -321,7 +340,7 @@ from griffe import Extension, Object, ObjectNode
 
 class MyExtension(Extension):
     def __init__(self) -> None:
-        super().__init__(self)
+        super().__init__()
         self.state_thingy = "initial stuff"
         self.list_of_things = []
 
@@ -472,7 +491,7 @@ from griffe import Attribute, Extension, ObjectNode
 
 class MyExtension(Extension):
     def __init__(self, option1: str, option2: bool = False) -> None:
-        super().__init__(self)
+        super().__init__()
         self.option1 = option1
         self.option2 = option2
 
