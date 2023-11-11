@@ -12,11 +12,6 @@ from griffe.tests import temporary_visited_module, temporary_visited_package
     ("old_code", "new_code", "expected_breakages"),
     [
         (
-            "a = True",
-            "a = False",
-            [BreakageKind.ATTRIBUTE_CHANGED_VALUE],
-        ),
-        (
             "class a(int, str): ...",
             "class a(int): ...",
             [BreakageKind.CLASS_REMOVED_BASE],
@@ -153,6 +148,11 @@ from griffe.tests import temporary_visited_module, temporary_visited_package
             "def a(x, y): ...",
             "def a(x): ...",
             [BreakageKind.PARAMETER_REMOVED],
+        ),
+        (
+            "class a:\n\tb: int | None = None",
+            "class a:\n\tb: int",
+            [BreakageKind.ATTRIBUTE_CHANGED_VALUE],
         ),
         (
             "def a() -> int: ...",
