@@ -85,17 +85,23 @@ class ParsedValues:
     return_type: str | None = None
 
 
-def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:  # noqa: ARG001
+def parse(docstring: Docstring, *, warn_unknown_params: bool = True, **options: Any) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
 
     Parameters:
         docstring: The docstring to parse.
+        warn_unknown_params: Warn about documented parameters not appearing in the signature.
         **options: Additional parsing options.
 
     Returns:
         A list of docstring sections.
     """
     parsed_values = ParsedValues()
+
+    options = {
+        "warn_unknown_params": warn_unknown_params,
+        **options,
+    }
 
     lines = docstring.lines
     curr_line_index = 0
@@ -105,7 +111,7 @@ def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:  # no
         for field_type in field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
-                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values)
+                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values, **options)
                 break
         else:
             parsed_values.description.append(line)
@@ -115,7 +121,14 @@ def parse(docstring: Docstring, **options: Any) -> list[DocstringSection]:  # no
     return _parsed_values_to_sections(parsed_values)
 
 
-def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_parameter(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: ParsedValues,
+    *,
+    warn_unknown_params: bool = True,
+    **options: Any,  # noqa: ARG001
+) -> int:
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -135,15 +148,16 @@ def _read_parameter(docstring: Docstring, offset: int, parsed_values: ParsedValu
         _warn(docstring, 0, f"Duplicate parameter entry for '{name}'")
         return parsed_directive.next_index
 
-    with suppress(AttributeError):  # for parameters sections in objects without parameters
-        params = docstring.parent.parameters  # type: ignore[union-attr]
-        if name not in params:
-            message = f"Parameter '{name}' does not appear in the function signature"
-            for starred_name in (f"*{name}", f"**{name}"):
-                if starred_name in params:
-                    message += f". Did you mean '{starred_name}'?"
-                    break
-            _warn(docstring, 0, message)
+    if warn_unknown_params:
+        with suppress(AttributeError):  # for parameters sections in objects without parameters
+            params = docstring.parent.parameters  # type: ignore[union-attr]
+            if name not in params:
+                message = f"Parameter '{name}' does not appear in the function signature"
+                for starred_name in (f"*{name}", f"**{name}"):
+                    if starred_name in params:
+                        message += f". Did you mean '{starred_name}'?"
+                        break
+                _warn(docstring, 0, message)
 
     annotation = _determine_param_annotation(docstring, name, directive_type, parsed_values)
     default = _determine_param_default(docstring, name)
@@ -197,7 +211,12 @@ def _determine_param_annotation(
     return annotation
 
 
-def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_parameter_type(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: ParsedValues,
+    **options: Any,  # noqa: ARG001
+) -> int:
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -219,7 +238,12 @@ def _read_parameter_type(docstring: Docstring, offset: int, parsed_values: Parse
     return parsed_directive.next_index
 
 
-def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_attribute(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: ParsedValues,
+    **options: Any,  # noqa: ARG001
+) -> int:
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -256,7 +280,12 @@ def _read_attribute(docstring: Docstring, offset: int, parsed_values: ParsedValu
     return parsed_directive.next_index
 
 
-def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_attribute_type(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: ParsedValues,
+    **options: Any,  # noqa: ARG001
+) -> int:
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -278,7 +307,12 @@ def _read_attribute_type(docstring: Docstring, offset: int, parsed_values: Parse
     return parsed_directive.next_index
 
 
-def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_exception(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: ParsedValues,
+    **options: Any,  # noqa: ARG001
+) -> int:
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -292,7 +326,7 @@ def _read_exception(docstring: Docstring, offset: int, parsed_values: ParsedValu
     return parsed_directive.next_index
 
 
-def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues, **options: Any) -> int:  # noqa: ARG001
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -317,7 +351,12 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues)
     return parsed_directive.next_index
 
 
-def _read_return_type(docstring: Docstring, offset: int, parsed_values: ParsedValues) -> int:
+def _read_return_type(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: ParsedValues,
+    **options: Any,  # noqa: ARG001
+) -> int:
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
