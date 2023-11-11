@@ -289,22 +289,36 @@ def fuzz(
     from tempfile import gettempdir
 
     from pysource_codegen import generate
+    from pysource_minimize import minimize
 
     from griffe.agents.visitor import visit
 
     warnings.simplefilter("ignore", SyntaxWarning)
 
-    def test_seed(seed: int, revisit: bool = False) -> None:  # noqa: FBT001,FBT002
+    def fails(code: str, filepath: Path) -> bool:
+        try:
+            visit(filepath.stem, filepath=filepath, code=code)
+        except Exception:  # noqa: BLE001
+            return True
+        return False
+
+    def test_seed(seed: int, revisit: bool = False) -> bool:  # noqa: FBT001,FBT002
         filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
         if filepath.exists():
             if revisit:
                 code = filepath.read_text()
             else:
-                return
+                return True
         else:
             code = generate(seed)
             filepath.write_text(code)
-        visit(filepath.stem, filepath=filepath, code=code)
+
+        if fails(code, filepath):
+            new_code = minimize(code, fails)
+            if code != new_code:
+                filepath.write_text(new_code)
+            return False
+        return True
 
     revisit = bool(seeds)
     seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # type: ignore[assignment]

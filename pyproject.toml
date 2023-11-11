@@ -85,8 +85,9 @@ quality = [
     "ruff>=0.0",
 ]
 tests = [
-    "jsonschema>=4.17.3",
-    "pysource-codegen>=0.4.1",
+    "jsonschema>=4.17",
+    "pysource-codegen>=0.4",
+    "pysource-minimize>=0.5",
     "pytest>=7.4",
     "pytest-cov>=4.1",
     "pytest-randomly>=3.15",
