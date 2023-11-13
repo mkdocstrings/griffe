@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.38.0](https://github.com/mkdocstrings/griffe/releases/tag/0.38.0) - 2023-11-13
+
+<small>[Compare with 0.37.0](https://github.com/mkdocstrings/griffe/compare/0.37.0...0.38.0)</small>
+
+### Features
+
+- Allow passing load parameters to the temporary package visit helper ([3a7854f](https://github.com/mkdocstrings/griffe/commit/3a7854fb180e34392fd520d9d25a6298d4b80830) by Timothée Mazzucotelli).
+
 ## [0.37.0](https://github.com/mkdocstrings/griffe/releases/tag/0.37.0) - 2023-11-12
 
 <small>[Compare with 0.36.9](https://github.com/mkdocstrings/griffe/compare/0.36.9...0.37.0)</small>
