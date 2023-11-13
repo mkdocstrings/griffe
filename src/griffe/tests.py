@@ -106,6 +106,13 @@ def temporary_visited_package(
     modules: Sequence[str] | Mapping[str, str] | None = None,
     *,
     init: bool = True,
+    extensions: Extensions | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+    allow_inspection: bool = False,
+    store_source: bool = True,
 ) -> Iterator[Module]:
     """Create and visit a temporary package.
 
@@ -119,12 +126,28 @@ def temporary_visited_package(
             If a dict, keys are the file names and values their contents:
             `{"b.py": "b = 1", "c/d.py": "print('hey from c')"}`.
         init: Whether to create an `__init__` module in the leaf package.
+        extensions: The extensions to use.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
+        allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        store_source: Whether to store code source in the lines collection.
 
     Yields:
         A module.
     """
     with temporary_pypackage(package, modules, init=init) as tmp_package:
-        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        loader = GriffeLoader(
+            search_paths=[tmp_package.tmpdir],
+            extensions=extensions,
+            docstring_parser=docstring_parser,
+            docstring_options=docstring_options,
+            lines_collection=lines_collection,
+            modules_collection=modules_collection,
+            allow_inspection=allow_inspection,
+            store_source=store_source,
+        )
         yield loader.load(tmp_package.name)  # type: ignore[misc]
 
 
