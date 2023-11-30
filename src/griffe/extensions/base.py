@@ -8,6 +8,7 @@ import warnings
 from collections import defaultdict
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Sequence, Union
 
 from griffe.agents.nodes import ast_children, ast_kind
@@ -405,8 +406,9 @@ def _load_extension(
         options = {}
 
     # If the import path contains a colon, we split into path and class name.
-    if ":" in import_path:
-        import_path, extension_name = import_path.split(":", 1)
+    colons = import_path.count(":")
+    if colons > 1 or (colons and ":" not in Path(import_path).drive):
+        import_path, extension_name = import_path.rsplit(":", 1)
     else:
         extension_name = None
 
