@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.38.1](https://github.com/mkdocstrings/griffe/releases/tag/0.38.1) - 2023-12-06
+
+<small>[Compare with 0.38.0](https://github.com/mkdocstrings/griffe/compare/0.38.0...0.38.1)</small>
+
+### Bug Fixes
+
+- Support absolute Windows paths for extensions ([4e67d8f](https://github.com/mkdocstrings/griffe/commit/4e67d8fa5f0e9f23c1df2e1d772fc0f1e4e6c2e0) by Timothée Mazzucotelli). [Issue mkdocstrings-python#116](https://github.com/mkdocstrings/python/issues/116)
+
 ## [0.38.0](https://github.com/mkdocstrings/griffe/releases/tag/0.38.0) - 2023-11-13
 
 <small>[Compare with 0.37.0](https://github.com/mkdocstrings/griffe/compare/0.37.0...0.38.0)</small>
