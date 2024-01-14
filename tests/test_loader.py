@@ -336,7 +336,7 @@ def test_stop_at_first_package_inside_namespace_package() -> None:
             assert "d" in c_package.members
 
             d_package = c_package.members["d"]
-            assert d_package.is_subpackage  # type: ignore[union-attr]
+            assert d_package.is_subpackage
             assert d_package.filepath == tmp_ns1.tmpdir.joinpath("a/b/c/d/__init__.py")
             assert "mod1" in d_package.members
             assert "mod2" not in d_package.members

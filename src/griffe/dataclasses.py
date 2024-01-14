@@ -484,6 +484,31 @@ class Object(ObjectAliasMixin):
         """Whether this object is an attribute."""
         return self.kind is Kind.ATTRIBUTE
 
+    @property
+    def is_init_module(self) -> bool:
+        """Whether this object is an `__init__.py` module."""
+        return False
+
+    @property
+    def is_package(self) -> bool:
+        """Whether this object is a package (top module)."""
+        return False
+
+    @property
+    def is_subpackage(self) -> bool:
+        """Whether this object is a subpackage."""
+        return False
+
+    @property
+    def is_namespace_package(self) -> bool:
+        """Whether this object is a namespace package (top folder, no `__init__.py`)."""
+        return False
+
+    @property
+    def is_namespace_subpackage(self) -> bool:
+        """Whether this object is a namespace subpackage."""
+        return False
+
     def has_labels(self, labels: set[str]) -> bool:
         """Tell if this object has all the given labels.
 
