@@ -630,7 +630,7 @@ class ExprSubscript(Expr):
 
     left: str | Expr
     """Left part."""
-    slice: Expr  # noqa: A003
+    slice: Expr
     """Slice part."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
