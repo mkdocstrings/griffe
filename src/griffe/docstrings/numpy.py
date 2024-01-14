@@ -820,25 +820,31 @@ def parse(
         elif _is_empty_line(lines[offset]):
             current_section.append("")
 
-        # Dash line after regular, non-empty line.
-        elif is_end or _is_dash_line(lines[offset + 1]):
-            # Finish reading current section.
-            if is_end:
-                current_section.append(lines[offset])
+        # End of the docstring, wrap up.
+        elif is_end:
+            current_section.append(lines[offset])
             _append_section(sections, current_section, admonition_title)
             admonition_title = ""
             current_section = []
-            if not is_end:
-                # Start parsing new (known) section.
-                if line_lower in _section_kind:
-                    reader = _section_reader[_section_kind[line_lower]]
-                    section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
-                    if section:
-                        sections.append(section)
-                # Start parsing admonition.
-                else:
-                    admonition_title = lines[offset]
-                    offset += 1  # skip next dash line
+
+        # Dash line after regular, non-empty line.
+        elif _is_dash_line(lines[offset + 1]):
+            # Finish reading current section.
+            _append_section(sections, current_section, admonition_title)
+            current_section = []
+
+            # Start parsing new (known) section.
+            if line_lower in _section_kind:
+                admonition_title = ""
+                reader = _section_reader[_section_kind[line_lower]]
+                section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
+                if section:
+                    sections.append(section)
+
+            # Start parsing admonition.
+            else:
+                admonition_title = lines[offset]
+                offset += 1  # skip next dash line
 
         # Regular line.
         else:
