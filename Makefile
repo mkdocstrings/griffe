@@ -20,7 +20,8 @@ BASIC_DUTIES = \
 	docs-deploy \
 	format \
 	release \
-	fuzz
+	fuzz \
+	vscode
 
 QUALITY_DUTIES = \
 	check-quality \

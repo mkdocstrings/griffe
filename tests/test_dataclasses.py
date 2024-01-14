@@ -44,7 +44,7 @@ def test_handle_aliases_chain_in_has_docstrings() -> None:
         mod_b.write_text("from somelib import someobj")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         assert not package.has_docstrings
         loader.resolve_aliases(implicit=True)
         assert not package.has_docstrings
@@ -59,7 +59,7 @@ def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
         mod_b.write_text("from somelib import someobj")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         assert not package.has_docstrings
         assert not package["mod_a.someobj"].resolved
 
@@ -67,7 +67,7 @@ def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
 def test_deepcopy() -> None:
     """Assert we can deep-copy object trees."""
     loader = GriffeLoader()
-    mod = loader.load_module("griffe")
+    mod = loader.load("griffe")
 
     deepcopy(mod)
     deepcopy(mod.as_dict())

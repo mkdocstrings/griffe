@@ -7,6 +7,7 @@ The different objects are modules, classes, functions, and attribute
 from __future__ import annotations
 
 import inspect
+import warnings
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
@@ -19,7 +20,7 @@ from griffe.enumerations import Kind, ParameterKind
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import ExprCall, ExprName
 from griffe.logger import get_logger
-from griffe.mixins import GetMembersMixin, ObjectAliasMixin, SerializationMixin, SetMembersMixin
+from griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
@@ -134,24 +135,34 @@ class Docstring:
         """
         return parse(self, parser or self.parser, **(options or self.parser_options))
 
-    def as_dict(self, *, full: bool = False, docstring_parser: Parser | None = None, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(
+        self,
+        *,
+        full: bool = False,
+        docstring_parser: Parser | None = None,
+        **kwargs: Any,  # noqa: ARG002
+    ) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Parameters:
             full: Whether to return full info, or just base info.
-            docstring_parser: The docstring parser to parse the docstring with. By default, no parsing is done.
-            **kwargs: Additional serialization or docstring parsing options.
+            docstring_parser: Deprecated. The docstring parser to parse the docstring with. By default, no parsing is done.
+            **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
+        # TODO: Remove at some point.
+        if docstring_parser is not None:
+            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
+
         base: dict[str, Any] = {
             "value": self.value,
             "lineno": self.lineno,
             "endlineno": self.endlineno,
         }
         if full:
-            base["parsed"] = self.parse(docstring_parser, **kwargs)
+            base["parsed"] = self.parsed
         return base
 
 
@@ -270,7 +281,7 @@ class Parameters:
             raise ValueError(f"parameter {parameter.name} already present")
 
 
-class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMixin):
+class Object(ObjectAliasMixin):
     """An abstract class representing a Python object."""
 
     kind: Kind
@@ -441,8 +452,13 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         """
         if not isinstance(self, Class):
             return {}
+        try:
+            mro = self.mro()
+        except ValueError as error:
+            logger.debug(error)
+            return {}
         inherited_members = {}
-        for base in reversed(self.mro()):
+        for base in reversed(mro):
             for name, member in base.members.items():
                 if name not in self.members:
                     inherited_members[name] = Alias(name, member, parent=self, inherited=True)
@@ -724,7 +740,7 @@ class Object(GetMembersMixin, SetMembersMixin, ObjectAliasMixin, SerializationMi
         return base
 
 
-class Alias(ObjectAliasMixin, SerializationMixin):
+class Alias(ObjectAliasMixin):
     """This class represents an alias, or indirection, to an object declared in another module.
 
     Aliases represent objects that are in the scope of a module or class,
@@ -792,18 +808,6 @@ class Alias(ObjectAliasMixin, SerializationMixin):
 
     def __repr__(self) -> str:
         return f"Alias({self.name!r}, {self.target_path!r})"
-
-    def __getitem__(self, key: str | tuple[str, ...]):
-        # not handled by __getattr__
-        return self.target[key]
-
-    def __setitem__(self, key: str | tuple[str, ...], value: Object | Alias):
-        # not handled by __getattr__
-        self.target[key] = value
-
-    def __delitem__(self, key: str | tuple[str, ...]):
-        # not handled by __getattr__
-        del self.target[key]
 
     def __bool__(self) -> bool:
         # Prevent using `__len__`.

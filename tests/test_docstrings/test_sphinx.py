@@ -491,6 +491,30 @@ def test_parse__param_type_twice_annotated__error_message(parse_sphinx: ParserTy
     assert "Duplicate parameter information for 'foo'" in warnings[0]
 
 
+def test_warn_about_unknown_parameters(parse_sphinx: ParserType) -> None:
+    """Warn about unknown parameters in "Parameters" sections.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = """
+
+        :param str a: {SOME_TEXT}
+    """
+
+    _, warnings = parse_sphinx(
+        docstring,
+        parent=Function(
+            "func",
+            parameters=Parameters(
+                Parameter("b"),
+            ),
+        ),
+    )
+    assert len(warnings) == 1
+    assert "Parameter 'a' does not appear in the function signature" in warnings[0]
+
+
 def test_parse__param_type_no_type__error_message(parse_sphinx: ParserType) -> None:
     """Parse a simple docstring.
 

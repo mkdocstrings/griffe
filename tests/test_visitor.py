@@ -33,7 +33,7 @@ def test_not_defined_at_runtime() -> None:
         tmp_package.path.joinpath("module_b.py").write_text("CONST_B = 'hi'\nTYPE_B = str")
         tmp_package.path.joinpath("module_c.py").write_text("CONST_C = 'ho'\nTYPE_C = str")
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
         assert "CONST_B" in package.members
         assert "CONST_C" in package.members
@@ -213,7 +213,7 @@ def test_parse_complex__all__assignments(statements: str) -> None:
         tmp_package.path.joinpath("__init__.py").write_text(dedent(code) + dedent(statements))
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         loader.resolve_aliases()
 
         assert package.exports == {"CONST_INIT", "CONST_A", "CONST_B", "CONST_C"}

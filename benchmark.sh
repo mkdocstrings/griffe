@@ -49,7 +49,7 @@ extensions = None
 loader = GriffeLoader(allow_inspection=False, extensions=extensions)
 for package in stdlib_packages:
     try:
-        loader.load_module(package)
+        loader.load(package)
     except:
         pass
 loader.resolve_aliases(implicit=False, external=False)

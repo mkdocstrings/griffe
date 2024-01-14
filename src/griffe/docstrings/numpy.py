@@ -762,7 +762,7 @@ def parse(
     warn_unknown_params: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
-    """Parse a docstring.
+    """Parse a Numpydoc-style docstring.
 
     This function iterates on lines of a docstring to build sections.
     It then returns this list of sections.

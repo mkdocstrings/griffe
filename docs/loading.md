@@ -16,7 +16,7 @@ For more complex needs, create and use a loader:
 from griffe.loader import GriffeLoader
 
 loader = GriffeLoader()
-mkdocs = loader.load_module("mkdocs")
+mkdocs = loader.load("mkdocs")
 ```
 
 Similarly, the [`GriffeLoader`][griffe.loader.GriffeLoader] accepts
@@ -25,13 +25,13 @@ a number of parameters to configure how the modules are found and loaded.
 If you don't want to recurse in the submodules:
 
 ```python
-mkdocs = loader.load_module("mkdocs", submodules=False)
+mkdocs = loader.load("mkdocs", submodules=False)
 ```
 
 ## Navigating into the loaded objects
 
-Both the `load` function and the `GriffeLoader.load_module` method
-return a [`Module`][griffe.dataclasses.Module] instance.
+Both the `load` function and the `GriffeLoader.load` method
+return an [`Object`][griffe.dataclasses.Object] instance.
 There are several ways to access members of an object:
 
 - through its `members` attribute, which is a dictionary,
@@ -86,8 +86,8 @@ from griffe.loader import GriffeLoader
 
 loader = GriffeLoader()
 # note that we don't load package_a
-loader.load_module("package_b")
-loader.load_module("package_c")
+loader.load("package_b")
+loader.load("package_c")
 ```
 
 If a base class cannot be resolved during computation
@@ -109,7 +109,7 @@ in extensions, while visiting or inspecting a module.
 
 ### Limitations
 
-Currently, there are two limitations to our class inheritance support:
+Currently, there are three limitations to our class inheritance support:
 
 1. when visiting (static analysis), some objects are not yet properly recognized as classes,
     for example named tuples. If you inherit from a named tuple,
@@ -123,7 +123,26 @@ Currently, there are two limitations to our class inheritance support:
         ...
     ```
 
-2. when inspecting (dynamic analysis), ephemeral base classes won't be resolved,
+2. when visiting (static analysis), subclasses using the same name
+    as one of their parent class will prevent Griffe from computing the MRO
+    and therefore the inherited members. To circumvent that, give a
+    different name to your subclass:
+
+    ```python
+    from package import SomeClass
+    
+    
+    # instead of
+    class SomeClass(SomeClass):
+        ...
+
+    
+    # do
+    class SomeOtherClass(SomeClass):
+        ...
+    ```
+
+3. when inspecting (dynamic analysis), ephemeral base classes won't be resolved,
     and therefore their members won't appear in child classes. To circumvent that,
     assign these dynamic classes to variables:
 
@@ -140,5 +159,6 @@ Currently, there are two limitations to our class inheritance support:
     class MyClass(MyTuple):
         ...
     ```
+
 
 We will try to lift these limitations in the future.

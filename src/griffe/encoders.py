@@ -8,6 +8,7 @@ The available formats are:
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path, PosixPath, WindowsPath
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -82,14 +83,20 @@ class JSONEncoder(json.JSONEncoder):
                 you don't need the full data as it can be infered again
                 using the base data. If you want to feed a non-Python
                 tool instead, dump the full data.
-            docstring_parser: The docstring parser to use. By default, no parsing is done.
-            docstring_options: Additional docstring parsing options.
+            docstring_parser: Deprecated. The docstring parser to use. By default, no parsing is done.
+            docstring_options: Deprecated. Additional docstring parsing options.
             **kwargs: See [`json.JSONEncoder`][].
         """
         super().__init__(*args, **kwargs)
         self.full: bool = full
+
+        # TODO: Remove at some point.
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        if docstring_parser is not None:
+            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
+        if docstring_options is not None:
+            warnings.warn("Parameter `docstring_options` is deprecated and has no effect.", stacklevel=1)
 
     def default(self, obj: Any) -> Any:
         """Return a serializable representation of the given object.
@@ -101,7 +108,7 @@ class JSONEncoder(json.JSONEncoder):
             A serializable representation.
         """
         try:
-            return obj.as_dict(full=self.full, docstring_parser=self.docstring_parser, **self.docstring_options)
+            return obj.as_dict(full=self.full)
         except AttributeError:
             return _json_encoder_map.get(type(obj), super().default)(obj)
 
