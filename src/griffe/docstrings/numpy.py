@@ -800,7 +800,6 @@ def parse(
     offset = 2 if ignore_summary else 0
 
     while offset < len(lines):
-        is_end = offset == len(lines) - 1
         line_lower = lines[offset].lower()
 
         # Code blocks can contain dash lines that we must not interpret.
@@ -821,7 +820,7 @@ def parse(
             current_section.append("")
 
         # End of the docstring, wrap up.
-        elif is_end:
+        elif offset == len(lines) - 1:
             current_section.append(lines[offset])
             _append_section(sections, current_section, admonition_title)
             admonition_title = ""
