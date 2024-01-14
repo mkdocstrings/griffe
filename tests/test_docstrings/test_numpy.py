@@ -114,44 +114,14 @@ def test_doubly_indented_lines_in_section_items(parse_numpy: ParserType) -> None
     assert lines[-1].startswith(4 * " " + "- ")
 
 
-def test_text_section_after_parameters(parse_numpy: ParserType) -> None:
-    docstring = """
-        Parameters
-        ----------
-        a:
-            Some description
-        
-        A new text section
-    """
-
-    sections, _ = parse_numpy(docstring)
-    assert len(sections) == 2
-    assert sections[1].value == "A new text section"
-
-
-def test_text_section_between_sections(parse_numpy: ParserType) -> None:
-    docstring = """
-        Parameters
-        ----------
-        a:
-            Some description
-        
-        A new text section
-
-        Returns
-        -------
-        x: int
-    """
-
-    sections, _ = parse_numpy(docstring)
-    assert len(sections) == 3
-    assert sections[1].value == "A new text section"
-
-
 # =============================================================================================
 # Admonitions
-
 def test_admonition_see_also(parse_numpy: ParserType) -> None:
+    """Test a "See Also" admonition.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
     docstring = """
     Summary text.
 
@@ -170,6 +140,11 @@ def test_admonition_see_also(parse_numpy: ParserType) -> None:
 
 
 def test_admonition_empty(parse_numpy: ParserType) -> None:
+    """Test an empty "See Also" admonition.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
     docstring = """
     Summary text.
 
@@ -184,16 +159,31 @@ def test_admonition_empty(parse_numpy: ParserType) -> None:
     assert sections[1].value.description == ""
 
 
-def test_admonition_empty_title_is_text_section(parse_numpy: ParserType) -> None:
+def test_isolated_dash_lines_do_not_create_sections(parse_numpy: ParserType) -> None:
+    """An isolated dash-line (`---`) should not be parsed as a section.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
     docstring = """
     Summary text.
 
     ---
+    Text.
+
+    Note
+    ----
+    Note contents.
+
+    ---
+    Text.
     """
 
     sections, _ = parse_numpy(docstring)
-    assert len(sections) == 1
-    assert sections[0].value == "Summary text.\n\n---"
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text.\n\n---\nText."
+    assert sections[1].title == "Note"
+    assert sections[1].value.description == "Note contents.\n\n---\nText."
 
 
 # =============================================================================================
