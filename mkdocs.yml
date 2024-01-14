@@ -93,11 +93,12 @@ markdown_extensions:
     strip_period: no
 - footnotes
 - pymdownx.emoji:
-    emoji_index: !!python/name:materialx.emoji.twemoji
-    emoji_generator: !!python/name:materialx.emoji.to_svg
+    emoji_index: !!python/name:material.extensions.emoji.twemoji
+    emoji_generator: !!python/name:material.extensions.emoji.to_svg
 - pymdownx.keys
 - pymdownx.magiclink
 - pymdownx.snippets:
+    base_path: [!relative $config_dir]
     check_paths: true
 - pymdownx.superfences:
     custom_fences:
@@ -123,13 +124,14 @@ plugins:
     - scripts/gen_griffe_json.py
     - scripts/redirects.py
 - literate-nav:
-    nav_file: SUMMARY.txt
+    nav_file: SUMMARY.md
 - coverage
 - mkdocstrings:
     handlers:
       python:
         import:
         - https://docs.python.org/3/objects.inv
+        paths: [src]
         options:
           docstring_options:
             ignore_init_summary: true
@@ -151,6 +153,10 @@ plugins:
     repository: mkdocstrings/griffe
 - minify:
     minify_html: !ENV [DEPLOY, false]
+- group:
+    enabled: !ENV [MATERIAL_INSIDERS, false]
+    plugins:
+    - typeset
 
 extra:
   social:

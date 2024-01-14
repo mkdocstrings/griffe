@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pytest
@@ -82,6 +83,9 @@ class ExtensionTest(Extension):  # noqa: D101
         ExtensionTest(option=0),
         # with class
         ExtensionTest,
+        # with absolute paths (esp. important to test for Windows)
+        Path("tests/test_extensions.py").absolute().as_posix(),
+        Path("tests/test_extensions.py:ExtensionTest").absolute().as_posix(),
     ],
 )
 def test_loading_extensions(extension: str | dict[str, dict[str, Any]] | Extension | type[Extension]) -> None:

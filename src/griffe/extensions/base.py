@@ -8,6 +8,7 @@ import warnings
 from collections import defaultdict
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Sequence, Union
 
 from griffe.agents.nodes import ast_children, ast_kind
@@ -226,6 +227,13 @@ class Extension:
             attr: The attribute instance.
         """
 
+    def on_package_loaded(self, *, pkg: Module) -> None:
+        """Run when a package has been completely loaded.
+
+        Parameters:
+            pkg: The package (Module) instance.
+        """
+
 
 ExtensionType = Union[VisitorExtension, InspectorExtension, Extension]
 
@@ -326,16 +334,15 @@ class Extensions:
         """The inspectors that run after the inspection."""
         return self._inspectors[When.after_all]
 
-    def call(self, event: str, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def call(self, event: str, **kwargs: Any) -> None:
         """Call the extension hook for the given event.
 
         Parameters:
             event: The trigerred event.
-            node: The AST or Object node.
-            **kwargs: Additional arguments like a Griffe object.
+            **kwargs: Arguments passed to the hook.
         """
         for extension in self._extensions:
-            getattr(extension, event)(node=node, **kwargs)
+            getattr(extension, event)(**kwargs)
 
 
 builtin_extensions: set[str] = {
@@ -399,8 +406,9 @@ def _load_extension(
         options = {}
 
     # If the import path contains a colon, we split into path and class name.
-    if ":" in import_path:
-        import_path, extension_name = import_path.split(":", 1)
+    colons = import_path.count(":")
+    if colons > 1 or (colons and ":" not in Path(import_path).drive):
+        import_path, extension_name = import_path.rsplit(":", 1)
     else:
         extension_name = None
 

@@ -7,7 +7,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe.finder import ModuleFinder, NamespacePackage, _handle_editable_module, _handle_pth_file
+from griffe.finder import ModuleFinder, NamespacePackage, Package, _handle_editable_module, _handle_pth_file
 from griffe.tests import temporary_pypackage
 
 
@@ -164,3 +164,86 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     # (they don't respect standard package or namespace package layouts,
     # and rely on dynamic meta path finder stuff)
     assert _handle_editable_module(pth_file) == [Path("/path/to/whatever")]
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "find_stubs", "expect"),
+    [
+        ("package", "stubs", True, "both"),
+        ("stubs", "package", True, "both"),
+        ("package", None, True, "package"),
+        (None, "package", True, "package"),
+        ("stubs", None, True, "stubs"),
+        (None, "stubs", True, "stubs"),
+        (None, None, True, "none"),
+        ("package", "stubs", False, "package"),
+        ("stubs", "package", False, "package"),
+        ("package", None, False, "package"),
+        (None, "package", False, "package"),
+        ("stubs", None, False, "none"),
+        (None, "stubs", False, "none"),
+        (None, None, False, "none"),
+    ],
+)
+def test_finding_stubs_packages(
+    tmp_path: Path,
+    first: str | None,
+    second: str | None,
+    find_stubs: bool,
+    expect: str,
+) -> None:
+    """Find stubs-only packages.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    search_path1 = tmp_path / "sp1"
+    search_path2 = tmp_path / "sp2"
+    search_path1.mkdir()
+    search_path2.mkdir()
+
+    if first == "package":
+        package = search_path1 / "package"
+        package.mkdir()
+        package.joinpath("__init__.py").touch()
+    elif first == "stubs":
+        stubs = search_path1 / "package-stubs"
+        stubs.mkdir()
+        stubs.joinpath("__init__.pyi").touch()
+
+    if second == "package":
+        package = search_path2 / "package"
+        package.mkdir()
+        package.joinpath("__init__.py").touch()
+    elif second == "stubs":
+        stubs = search_path2 / "package-stubs"
+        stubs.mkdir()
+        stubs.joinpath("__init__.pyi").touch()
+
+    finder = ModuleFinder([search_path1, search_path2])
+
+    if expect == "none":
+        with pytest.raises(ModuleNotFoundError):
+            finder.find_spec("package", try_relative_path=False, find_stubs_package=find_stubs)
+        return
+
+    name, result = finder.find_spec("package", try_relative_path=False, find_stubs_package=find_stubs)
+    assert name == "package"
+
+    if expect == "both":
+        assert isinstance(result, Package)
+        assert result.path.suffix == ".py"
+        assert not result.path.parent.name.endswith("-stubs")
+        assert result.stubs
+        assert result.stubs.suffix == ".pyi"
+        assert result.stubs.parent.name.endswith("-stubs")
+    elif expect == "package":
+        assert isinstance(result, Package)
+        assert result.path.suffix == ".py"
+        assert not result.path.parent.name.endswith("-stubs")
+        assert result.stubs is None
+    elif expect == "stubs":
+        assert isinstance(result, Package)
+        assert result.path.suffix == ".pyi"
+        assert result.path.parent.name.endswith("-stubs")
+        assert result.stubs is None

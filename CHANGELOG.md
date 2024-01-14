@@ -5,6 +5,83 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.38.1](https://github.com/mkdocstrings/griffe/releases/tag/0.38.1) - 2023-12-06
+
+<small>[Compare with 0.38.0](https://github.com/mkdocstrings/griffe/compare/0.38.0...0.38.1)</small>
+
+### Bug Fixes
+
+- Support absolute Windows paths for extensions ([4e67d8f](https://github.com/mkdocstrings/griffe/commit/4e67d8fa5f0e9f23c1df2e1d772fc0f1e4e6c2e0) by Timothée Mazzucotelli). [Issue mkdocstrings-python#116](https://github.com/mkdocstrings/python/issues/116)
+
+## [0.38.0](https://github.com/mkdocstrings/griffe/releases/tag/0.38.0) - 2023-11-13
+
+<small>[Compare with 0.37.0](https://github.com/mkdocstrings/griffe/compare/0.37.0...0.38.0)</small>
+
+### Features
+
+- Allow passing load parameters to the temporary package visit helper ([3a7854f](https://github.com/mkdocstrings/griffe/commit/3a7854fb180e34392fd520d9d25a6298d4b80830) by Timothée Mazzucotelli).
+
+## [0.37.0](https://github.com/mkdocstrings/griffe/releases/tag/0.37.0) - 2023-11-12
+
+<small>[Compare with 0.36.9](https://github.com/mkdocstrings/griffe/compare/0.36.9...0.37.0)</small>
+
+### Deprecations
+
+- The loader `load_module` method was renamed `load`,
+    Its `module` parameter was renamed `objspec` and is now positional-only.
+    This method always returned the specified object, not just modules,
+    so it made more sense to rename it `load` and to rename the parameter
+    specifying the object. Old usages (`load_module` and `module=...`)
+    will continue to work for some time (a few months, a year, more),
+    and will emit deprecation warnings.
+
+### Features
+
+- Add option to warn about unknown parameters in Sphinx docstrings ([8b11d77](https://github.com/mkdocstrings/griffe/commit/8b11d77315ca7a5e15da519db1663d05805dd075) by Ashwin Vinod). [Issue #64](https://github.com/mkdocstrings/griffe/issues/64), [PR #210](https://github.com/mkdocstrings/griffe/pull/210), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+- Add `on_package_loaded` event ([a5cf654](https://github.com/mkdocstrings/griffe/commit/a5cf6543b43db06c4d0f24d2631ddc86b1fee41e) by Timothée Mazzucotelli).
+- Add option to find, load and merge stubs-only packages ([6e55f3b](https://github.com/mkdocstrings/griffe/commit/6e55f3bd0838e3f229fcd37d3aeced0146d33ff1) by Romain). [PR #221](https://github.com/mkdocstrings/griffe/pull/221), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+
+### Bug Fixes
+
+- Report attributes who lost their value as "unset" ([dfffa4b](https://github.com/mkdocstrings/griffe/commit/dfffa4b96a8a70f93b899bd41aefeaa9939819e9) by Geethakrishna-Puligundla). [Issue #218](https://github.com/mkdocstrings/griffe/issues/218), [PR #225](https://github.com/mkdocstrings/griffe/pull/225)
+- Don't crash when computing MRO for a class that is named after its parent ([a2dd8a6](https://github.com/mkdocstrings/griffe/commit/a2dd8a6bc3f95679e1c2e79ce05d175fb8f89ccc) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Rename loader `load_module` method to `load` ([2bfe206](https://github.com/mkdocstrings/griffe/commit/2bfe206b57f607b56f7bcb5a85a7e2a25fe3bf47) by Timothée Mazzucotelli).
+
+## [0.36.9](https://github.com/mkdocstrings/griffe/releases/tag/0.36.9) - 2023-10-27
+
+<small>[Compare with 0.36.8](https://github.com/mkdocstrings/griffe/compare/0.36.8...0.36.9)</small>
+
+### Bug Fixes
+
+- Fix accessing alias members with `__getitem__` ([8929409](https://github.com/mkdocstrings/griffe/commit/8929409d4703c6b684084e88aae0d99423e05dbf) by Timothée Mazzucotelli). [Issue mkdocstrings-python#111](https://github.com/mkdocstrings/python/issues/111)
+
+### Code Refactoring
+
+- Expose parser enuemration and parser functions in top-level module ([785baa0](https://github.com/mkdocstrings/griffe/commit/785baa04e3081fcf80756f56dddb95a00cb9b025) by Timothée Mazzucotelli).
+
+## [0.36.8](https://github.com/mkdocstrings/griffe/releases/tag/0.36.8) - 2023-10-25
+
+<small>[Compare with 0.36.7](https://github.com/mkdocstrings/griffe/compare/0.36.7...0.36.8)</small>
+
+### Bug Fixes
+
+- Use already parsed docstring sections when dumping full data ([311807b](https://github.com/mkdocstrings/griffe/commit/311807b8fa1716dabe5ba18d3e12c947286afd8e) by Timothée Mazzucotelli). [Discussion griffe-typingdoc#6](https://github.com/mkdocstrings/griffe-typingdoc/discussions/6)
+
+## [0.36.7](https://github.com/mkdocstrings/griffe/releases/tag/0.36.7) - 2023-10-17
+
+<small>[Compare with 0.36.6](https://github.com/mkdocstrings/griffe/compare/0.36.6...0.36.7)</small>
+
+### Bug Fixes
+
+- Add missing proxies (methods/properties) to aliases ([7320640](https://github.com/mkdocstrings/griffe/commit/7320640d42ebb4546f787fe458d5032a67ea20b7) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Use final target in alias proxies ([731d662](https://github.com/mkdocstrings/griffe/commit/731d66237252e754b7a935ca4d0344f554edb5ff) by Timothée Mazzucotelli).
+
 ## [0.36.6](https://github.com/mkdocstrings/griffe/releases/tag/0.36.6) - 2023-10-16
 
 <small>[Compare with 0.36.5](https://github.com/mkdocstrings/griffe/compare/0.36.5...0.36.6)</small>

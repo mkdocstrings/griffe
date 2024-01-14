@@ -31,7 +31,7 @@ def test_dont_trigger_alias_resolution_when_merging_stubs() -> None:
             ),
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        loader.load_module(tmp_package.name)
+        loader.load(tmp_package.name)
 
 
 def test_merge_stubs_on_wildcard_imported_objects() -> None:
@@ -60,5 +60,5 @@ def test_merge_stubs_on_wildcard_imported_objects() -> None:
             ),
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        module = loader.load_module(tmp_package.name)
+        module = loader.load(tmp_package.name)
         assert module["A.hello"].overloads

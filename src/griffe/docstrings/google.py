@@ -110,7 +110,11 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> I
     while new_offset < len(lines):
         line = lines[new_offset]
 
-        if line.startswith(indent * 2 * " "):
+        if _is_empty_line(line):
+            # empty line: preserve it in the current item
+            current_item[1].append("")
+
+        elif line.startswith(indent * 2 * " "):
             # continuation line
             current_item[1].append(line[indent * 2 :])
 
@@ -124,10 +128,6 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> I
                 f"Confusing indentation for continuation line {new_offset+1} in docstring, "
                 f"should be {indent} * 2 = {indent*2} spaces, not {cont_indent}",
             )
-
-        elif _is_empty_line(line):
-            # empty line: preserve it in the current item
-            current_item[1].append("")
 
         elif line.startswith(indent * " "):
             # indent equal to initial one: new item
@@ -702,7 +702,7 @@ def parse(
     returns_type_in_property_summary: bool = False,
     **options: Any,
 ) -> list[DocstringSection]:
-    """Parse a docstring.
+    """Parse a Google-style docstring.
 
     This function iterates on lines of a docstring to build sections.
     It then returns this list of sections.

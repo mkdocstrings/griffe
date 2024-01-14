@@ -96,7 +96,6 @@ def _read_block_items(
     docstring: Docstring,
     *,
     offset: int,
-    allow_section_blank_line: bool,
     **options: Any,  # noqa: ARG001
 ) -> tuple[list[list[str]], int]:
     lines = docstring.lines
@@ -110,8 +109,6 @@ def _read_block_items(
     while _is_empty_line(lines[new_offset]):
         new_offset += 1
 
-    previous_was_empty = False
-
     # start processing first item
     current_item = [lines[new_offset]]
     new_offset += 1
@@ -120,10 +117,13 @@ def _read_block_items(
     while new_offset < len(lines):
         line = lines[new_offset]
 
-        if line.startswith(4 * " "):
+        if _is_empty_line(line):
+            # empty line: preserve it in the current item
+            current_item.append("")
+
+        elif line.startswith(4 * " "):
             # continuation line
             current_item.append(line[4:])
-            previous_was_empty = False
 
         elif line.startswith(" "):
             # indent between initial and continuation: append but warn
@@ -135,30 +135,14 @@ def _read_block_items(
                 f"Confusing indentation for continuation line {new_offset+1} in docstring, "
                 f"should be 4 spaces, not {cont_indent}",
             )
-            previous_was_empty = False
 
-        elif _is_empty_line(line):
-            # two line breaks indicate the start of a new section
-            if previous_was_empty:
-                break
-
-            # empty line: preserve it in the current item
-            current_item.append("")
-            previous_was_empty = True
+        elif new_offset + 1 < len(lines) and _is_dash_line(lines[new_offset + 1]):
+            # detect the start of a new section
+            break
 
         else:
-            # preserve original behavior, that a single line break between block
-            # items triggers a new section
-            if not allow_section_blank_line and previous_was_empty:
-                break
-
-            # detect the start of a new section
-            if new_offset + 1 < len(lines) and lines[new_offset + 1].startswith("---"):
-                break
-
             items.append(current_item)
             current_item = [line]
-            previous_was_empty = False
 
         new_offset += 1
 
@@ -759,11 +743,10 @@ def parse(
     *,
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
-    allow_section_blank_line: bool = False,
     warn_unknown_params: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
-    """Parse a docstring.
+    """Parse a Numpydoc-style docstring.
 
     This function iterates on lines of a docstring to build sections.
     It then returns this list of sections.
@@ -772,9 +755,6 @@ def parse(
         docstring: The docstring to parse.
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
-        allow_section_blank_line: Whether to continue a section if there's an empty line
-            between items in a formatted block, like Parameters or Returns.
-            If True, you can still create a new section using two empty lines.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         **options: Additional parsing options.
 
@@ -792,7 +772,6 @@ def parse(
     options = {
         "trim_doctest_flags": trim_doctest_flags,
         "ignore_init_summary": ignore_init_summary,
-        "allow_section_blank_line": allow_section_blank_line,
         "warn_unknown_params": warn_unknown_params,
         **options,
     }

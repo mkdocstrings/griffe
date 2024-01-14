@@ -23,7 +23,7 @@ from griffe.exceptions import GitError
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
-    from griffe.dataclasses import Module
+    from griffe.dataclasses import Object
     from griffe.docstrings.parsers import Parser
     from griffe.extensions import Extensions
 
@@ -114,7 +114,8 @@ def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
 
 
 def load_git(
-    module: str | Path,
+    objspec: str | Path | None = None,
+    /,
     *,
     ref: str = "HEAD",
     repo: str | Path = ".",
@@ -126,7 +127,10 @@ def load_git(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
-) -> Module:
+    find_stubs_package: bool = False,
+    # TODO: Remove at some point.
+    module: str | Path | None = None,
+) -> Object:
     """Load and return a module from a specific Git reference.
 
     This function will create a temporary
@@ -136,10 +140,11 @@ def load_git(
     This function requires that the `git` executable is installed.
 
     Parameters:
-        module: The module path, relative to the repository root.
+        objspec: The Python path of an object, or file path to a module.
         ref: A Git reference such as a commit, tag or branch.
         repo: Path to the repository (i.e. the directory *containing* the `.git` directory)
         submodules: Whether to recurse on the submodules.
+            This parameter only makes sense when loading a package (top-level module).
         extensions: The extensions to use.
         search_paths: The paths to search into (relative to the repository root).
         docstring_parser: The docstring parser to use. By default, no parsing is done.
@@ -147,16 +152,23 @@ def load_git(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        find_stubs_package: Whether to search for stubs-only package.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
+        module: Deprecated. Use `objspec` positional-only parameter instead.
 
     Returns:
-        A loaded module.
+        A Griffe object.
     """
     with _tmp_worktree(repo, ref) as worktree:
         search_paths = [worktree / path for path in search_paths or ["."]]
+        if isinstance(objspec, Path):
+            objspec = worktree / objspec
+        # TODO: Remove at some point.
         if isinstance(module, Path):
             module = worktree / module
         return loader.load(
-            module=module,
+            objspec,
             submodules=submodules,
             try_relative_path=False,
             extensions=extensions,
@@ -166,6 +178,9 @@ def load_git(
             lines_collection=lines_collection,
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
+            # TODO: Remove at some point.
+            module=module,
         )
 
 

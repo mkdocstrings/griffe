@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+import griffe
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
 from griffe.tests import module_vtree, temporary_pypackage
@@ -43,7 +44,7 @@ def test_handle_aliases_chain_in_has_docstrings() -> None:
         mod_b.write_text("from somelib import someobj")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         assert not package.has_docstrings
         loader.resolve_aliases(implicit=True)
         assert not package.has_docstrings
@@ -58,7 +59,7 @@ def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
         mod_b.write_text("from somelib import someobj")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        package = loader.load_module(tmp_package.name)
+        package = loader.load(tmp_package.name)
         assert not package.has_docstrings
         assert not package["mod_a.someobj"].resolved
 
@@ -66,7 +67,26 @@ def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
 def test_deepcopy() -> None:
     """Assert we can deep-copy object trees."""
     loader = GriffeLoader()
-    mod = loader.load_module("griffe")
+    mod = loader.load("griffe")
 
     deepcopy(mod)
     deepcopy(mod.as_dict())
+
+
+def test_alias_proxies() -> None:
+    """Assert that the Alias class has all the necessary methods and properties.
+
+    Parameters:
+        cls: The class to check.
+    """
+    api = griffe.load("griffe")
+    alias_members = set(api["dataclasses.Alias"].all_members.keys())
+    for cls in (
+        api["dataclasses.Module"],
+        api["dataclasses.Class"],
+        api["dataclasses.Function"],
+        api["dataclasses.Attribute"],
+    ):
+        for name in cls.all_members:
+            if not name.startswith("_") or name.startswith("__"):
+                assert name in alias_members
