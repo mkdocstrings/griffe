@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from contextlib import suppress
 from pathlib import Path
 
 import pytest
 
 from griffe.agents.inspector import inspect
+import sys
 from griffe.tests import temporary_inspected_module, temporary_pypackage
 
 
@@ -54,9 +54,10 @@ def test_missing_dependency() -> None:
     with temporary_pypackage("package", ["module.py"]) as tmp_package:
         filepath = Path(tmp_package.path, "module.py")
         filepath.write_text("import missing")
-        with pytest.raises(ImportError):  # noqa: SIM117
-            with suppress(ModuleNotFoundError):
-                inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
+        with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"):
+            inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
+    sys.modules.pop("package", None)
+    sys.modules.pop("package.module", None)
 
 
 def test_inspect_properties_as_attributes() -> None:
@@ -95,3 +96,11 @@ def test_inspecting_parameters_with_functions_as_default_values() -> None:
     with temporary_inspected_module("def func(): ...\ndef other_func(f=func): ...") as module:
         default = module["other_func"].parameters["f"].default
     assert default == "func"
+
+
+def test_inspecting_package_and_module_with_same_names() -> None:
+    """Package and module having same name shouldn't cause issues."""
+    with temporary_pypackage("package", {"package.py": "a = 0"}) as tmp_package:
+        inspect("package.package", filepath=Path(tmp_package.path, "package.py"), import_paths=[tmp_package.tmpdir])
+    sys.modules.pop("package", None)
+    sys.modules.pop("package.package", None)

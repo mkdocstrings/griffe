@@ -82,9 +82,6 @@ def inspect(
     Returns:
         The module, with its members populated.
     """
-    import_paths = list(import_paths) if import_paths else []
-    if filepath and filepath.parent not in import_paths:
-        import_paths.insert(0, filepath.parent)
     return Inspector(
         module_name,
         filepath,
@@ -173,12 +170,34 @@ class Inspector:
         import_path = self.module_name
         if self.parent is not None:
             import_path = f"{self.parent.path}.{import_path}"
+
+        # Make sure `import_paths` is a list, in case we want to `insert` into it.
+        import_paths = list(import_paths or ())
+
+        # If the thing we want to import has a filepath,
+        # we make sure to insert the right parent directory
+        # at the front of our list of import paths.
+        # We do this by counting the number of dots `.` in the import path,
+        # corresponding to slashes `/` in the filesystem,
+        # and go up in the file tree the same number of times.
+        if self.filepath:
+            parent_path = self.filepath.parent
+            for _ in range(import_path.count(".")):
+                parent_path = parent_path.parent
+            if parent_path not in import_paths:
+                import_paths.insert(0, parent_path)
+
         value = dynamic_import(import_path, import_paths)
-        parent = None
+
+        # We successfully imported the given object,
+        # and we now create the object tree with all the necessary nodes,
+        # from the root of the package to this leaf object.
+        parent_node = None
         if self.parent is not None:
             for part in self.parent.path.split("."):
-                parent = ObjectNode(None, name=part, parent=parent)
-        module_node = ObjectNode(value, self.module_name, parent=parent)
+                parent_node = ObjectNode(None, name=part, parent=parent_node)
+        module_node = ObjectNode(value, self.module_name, parent=parent_node)
+
         self.inspect(module_node)
         return self.current.module
 
