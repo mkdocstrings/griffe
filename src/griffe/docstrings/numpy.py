@@ -721,6 +721,19 @@ def _read_examples_section(
     return None, new_offset
 
 
+def _append_section(sections: list, current: list[str], admonition_title: str) -> None:
+    if admonition_title:
+        sections.append(
+            DocstringSectionAdmonition(
+                kind=admonition_title.lower().replace(" ", "-"),
+                text="\n".join(current).rstrip("\n"),
+                title=admonition_title,
+            ),
+        )
+    elif current and any(current):
+        sections.append(DocstringSectionText("\n".join(current).rstrip("\n")))
+
+
 _section_reader = {
     DocstringSectionKind.parameters: _read_parameters_section,
     DocstringSectionKind.other_parameters: _read_other_parameters_section,
@@ -763,9 +776,8 @@ def parse(
     """
     sections: list[DocstringSection] = []
     current_section = []
-    current_title = None
+    admonition_title = ""
 
-    in_section_marker = False
     in_code_block = False
     lines = docstring.lines
 
@@ -791,56 +803,51 @@ def parse(
         is_end = offset == len(lines) - 1
         line_lower = lines[offset].lower()
 
-        # mark code blocks, since they can contain section markers
-        if line_lower.lstrip(" ").startswith("```"):
-            in_code_block = not in_code_block
-
-        if is_end or (not in_code_block and not in_section_marker and line_lower and _is_dash_line(lines[offset + 1])):
-            # create previous section ----
-            if is_end and not in_section_marker:
-                current_section.append(lines[offset])
-
-            if current_section or current_title:
-                # this should apply to most section, except for the initial summary,
-                # which does not have a title. however, due to how the reader() parses
-                # numpydoc specification sections, and when it decides to terminate,
-                # there could be other sections without a title.
-                if current_title is not None:
-                    sections.append(
-                        DocstringSectionAdmonition(
-                            kind=current_title.replace(" ", "-"),
-                            text="\n".join(current_section).rstrip("\n"),
-                            title=current_title,
-                        ),
-                    )
-                # create generic text sections. note that these might include anything
-                # "between" two parsed sections. for example, if a parameters section
-                # table has free text beneath it.
-                elif any(current_section) or is_end:
-                    sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
-
-                current_section = []
-                current_title = lines[offset].strip()
-
-            # handle new section ----
-            if line_lower in _section_kind:
-                reader = _section_reader[_section_kind[line_lower]]
-                section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
-                if section:
-                    sections.append(section)
-
-                current_title = None
-            else:
-                # ensure we don't add the dashed lines as content next loop
-                in_section_marker = True
-
-        elif not in_section_marker:
+        # Code blocks can contain dash lines that we must not interpret.
+        if in_code_block:
+            # End of code block.
+            if line_lower.lstrip(" ").startswith("```"):
+                in_code_block = False
+            # Lines in code block must not be interpreted in any way.
             current_section.append(lines[offset])
 
+        # Start of code block.
+        elif line_lower.lstrip(" ").startswith("```"):
+            in_code_block = True
+            current_section.append(lines[offset])
+
+        # Dash lines after empty lines lose their meaning.
+        elif _is_empty_line(lines[offset]):
+            current_section.append("")
+
+        # Dash line after regular, non-empty line.
+        elif is_end or _is_dash_line(lines[offset + 1]):
+            # Finish reading current section.
+            if is_end:
+                current_section.append(lines[offset])
+            _append_section(sections, current_section, admonition_title)
+            admonition_title = ""
+            current_section = []
+            if not is_end:
+                # Start parsing new (known) section.
+                if line_lower in _section_kind:
+                    reader = _section_reader[_section_kind[line_lower]]
+                    section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
+                    if section:
+                        sections.append(section)
+                # Start parsing admonition.
+                else:
+                    admonition_title = lines[offset]
+                    offset += 1  # skip next dash line
+
+        # Regular line.
         else:
-            in_section_marker = False
+            current_section.append(lines[offset])
 
         offset += 1
+
+    # Finish current section.
+    _append_section(sections, current_section, admonition_title)
 
     return sections
 
