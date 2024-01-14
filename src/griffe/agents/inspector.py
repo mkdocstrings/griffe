@@ -136,19 +136,19 @@ class Inspector:
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
         try:
-            # access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class
+            # Access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class.
             value = getattr(node.obj, "__doc__", None)
         except Exception:  # noqa: BLE001  # getattr can trigger exceptions
             return None
         if value is None:
             return None
         try:
-            # we avoid `inspect.getdoc` to avoid getting
+            # We avoid `inspect.getdoc` to avoid getting
             # the `__doc__` attribute from a parent class,
-            # but we still want to clean the doc
+            # but we still want to clean the doc.
             cleaned = cleandoc(value)
         except AttributeError:
-            # triggered on method descriptors
+            # Triggered on method descriptors.
             return None
         return Docstring(
             cleaned,
