@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
 
 from griffe.agents.inspector import inspect
-import sys
 from griffe.tests import temporary_inspected_module, temporary_pypackage
 
 

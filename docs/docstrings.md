@@ -832,10 +832,6 @@ The parser accepts a few options:
     These flags are used to alter the behavior of [doctest][] when testing docstrings,
     and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
-- `allow_section_blank_line`: Allow blank lines in sections' content.
-    When false, a blank line finishes the current section.
-    When true, single blank lines are kept as part of the section.
-    You can terminate sections with double blank lines. Default: false.
 
 #### Attributes
 

@@ -97,26 +97,8 @@ def test_empty_indented_lines_in_section_with_items(parse_numpy: ParserType) -> 
     """
     docstring = "Returns\n-------\nonly_item : type\n    Description.\n    \n    \n\nSomething."
     sections, _ = parse_numpy(docstring)
-    assert len(sections) == 2
-    assert len(sections[0].value) == 1
-
-    # The `allow_section_blank_line` option requires at least 2 newlines to create a new section,
-    # and we have 3 blank lines here, so it should create a new section.
-    sections2, _ = parse_numpy(docstring, allow_section_blank_line=True)
-    assert len(sections2) == 2
-    assert len(sections2[0].value) == 1
-
-    # Same thing with two blank lines:
-    docstring = "Returns\n-------\nonly_item : type\n    Description.\n    \n    \nSomething."
-    sections3, _ = parse_numpy(docstring, allow_section_blank_line=True)
-    assert len(sections3) == 2
-    assert len(sections3[0].value) == 1
-
-    # Now we have only 1 blank line, so it should not create a new section:
-    docstring = "Returns\n-------\nonly_item : type\n    Description.\n    \nSomething."
-    sections4, _ = parse_numpy(docstring, allow_section_blank_line=True)
-    assert len(sections4) == 1
-    assert len(sections4[0].value) == 2
+    assert len(sections) == 1
+    assert len(sections[0].value) == 2
 
 
 def test_doubly_indented_lines_in_section_items(parse_numpy: ParserType) -> None:
@@ -737,9 +719,7 @@ def test_blank_lines_in_section(parse_numpy: ParserType) -> None:
 
         Line 2.
     """
-    sections, _ = parse_numpy(docstring, allow_section_blank_line=False)
-    assert len(sections) == 2
-    sections, _ = parse_numpy(docstring, allow_section_blank_line=True)
+    sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
 
 
@@ -895,36 +875,26 @@ def test_detect_optional_flag(parse_numpy: ParserType) -> None:
     assert sections[0].value[2].default == "b''"
 
 
-def test_blank_lines_in_item_descriptions(parse_numpy: ParserType) -> None:
+@pytest.mark.parametrize("newlines", [1, 2, 3])
+def test_blank_lines_in_item_descriptions(parse_numpy: ParserType, newlines: int) -> None:
     """Support blank lines in the middle of item descriptions.
 
     Parameters:
         parse_numpy: Fixture parser.
+        newlines: Number of new lines between item summary and its body.
     """
-    docstring = """
+    nl = "\n"
+    nlindent = "\n" + " " * 12
+    docstring = f"""
         Parameters
         ----------
         a : str
-            Summary.
-
-            Body.
+            Summary.{nlindent * newlines}Body.
     """
-    sections, _ = parse_numpy(docstring, allow_section_blank_line=False)
+    sections, _ = parse_numpy(docstring)
     assert len(sections) == 1
     assert sections[0].value[0].annotation == "str"
-    assert sections[0].value[0].description == "Summary.\n\nBody."
-
-    docstring = """
-        Parameters
-        ----------
-        a : str
-            Summary.
-
-
-            Body.
-    """
-    sections, _ = parse_numpy(docstring, allow_section_blank_line=False)
-    assert len(sections) == 2
+    assert sections[0].value[0].description == f"Summary.{nl * newlines}Body."
 
 
 # =============================================================================================
