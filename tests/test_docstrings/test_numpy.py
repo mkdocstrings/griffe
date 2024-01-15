@@ -115,6 +115,78 @@ def test_doubly_indented_lines_in_section_items(parse_numpy: ParserType) -> None
 
 
 # =============================================================================================
+# Admonitions
+def test_admonition_see_also(parse_numpy: ParserType) -> None:
+    """Test a "See Also" admonition.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+    Summary text.
+
+    See Also
+    --------
+    some_function
+
+    more text
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text."
+    assert sections[1].title == "See Also"
+    assert sections[1].value.description == "some_function\n\nmore text"
+
+
+def test_admonition_empty(parse_numpy: ParserType) -> None:
+    """Test an empty "See Also" admonition.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+    Summary text.
+
+    See Also
+    --------
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text."
+    assert sections[1].title == "See Also"
+    assert sections[1].value.description == ""
+
+
+def test_isolated_dash_lines_do_not_create_sections(parse_numpy: ParserType) -> None:
+    """An isolated dash-line (`---`) should not be parsed as a section.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+    Summary text.
+
+    ---
+    Text.
+
+    Note
+    ----
+    Note contents.
+
+    ---
+    Text.
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text.\n\n---\nText."
+    assert sections[1].title == "Note"
+    assert sections[1].value.description == "Note contents.\n\n---\nText."
+
+
+# =============================================================================================
 # Annotations
 def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
     """Prefer the type written in the docstring over the annotation in the parent.
