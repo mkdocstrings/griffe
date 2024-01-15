@@ -74,8 +74,8 @@ docs = [
     "mkdocs-material>=9.4",
     "mkdocs-minify-plugin>=0.7",
     "mkdocstrings[python]>=0.23",
+    "rich>=12.6",
     "tomli>=2.0; python_version < '3.11'",
-    "rich>=12.6.0",
 ]
 maintain = [
     "black>=23.9",
