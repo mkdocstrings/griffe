@@ -33,8 +33,8 @@ if TYPE_CHECKING:
 NamePartsType = Tuple[str, ...]
 NamePartsAndPathType = Tuple[NamePartsType, Path]
 logger = get_logger(__name__)
-_editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", "^_editable_impl_\\w+\\.py$")]
-_editable_setuptools_patterns = [re.compile(pat) for pat in ("^__editable__\\w+\\.py$",)]
+_editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", r"^_editable_impl_\w+\.py$")]
+_editable_setuptools_patterns = [re.compile(pat) for pat in (r"^__editable__\w+\.py$",)]
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
 _editable_meson_python_patterns = [re.compile(pat) for pat in (r"^_\w+_editable_loader.py$",)]
 
