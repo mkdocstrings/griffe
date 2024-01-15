@@ -63,6 +63,7 @@ ci-quality = ["griffe[duty,docs,quality,typing,security]"]
 ci-tests = ["griffe[duty,tests]"]
 docs = [
     "black>=23.9",
+    "griffe-inherited-docstrings>=1.0",
     "markdown-callouts>=0.3",
     "markdown-exec>=1.7",
     "mkdocs>=1.5",

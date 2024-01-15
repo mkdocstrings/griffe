@@ -892,7 +892,8 @@ class Alias(ObjectAliasMixin):
         return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
 
     @cached_property
-    def members(self) -> dict[str, Object | Alias]:  # noqa: D102
+    def members(self) -> dict[str, Object | Alias]:
+        """The target's members (modules, classes, functions, attributes)."""
         final_target = self.final_target
 
         # We recreate aliases to maintain a correct hierarchy,
@@ -905,7 +906,15 @@ class Alias(ObjectAliasMixin):
         }
 
     @cached_property
-    def inherited_members(self) -> dict[str, Alias]:  # noqa: D102
+    def inherited_members(self) -> dict[str, Alias]:
+        """Members that are inherited from base classes.
+
+        Each inherited member of the target will be wrapped in an alias,
+        to preserve correct object access paths.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
         final_target = self.final_target
 
         # We recreate aliases to maintain a correct hierarchy,
@@ -917,7 +926,16 @@ class Alias(ObjectAliasMixin):
             for name, member in final_target.inherited_members.items()
         }
 
-    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:  # noqa: D102
+    def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
+        """Return this target's data as a JSON string.
+
+        Parameters:
+            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options passed to encoder.
+
+        Returns:
+            A JSON string.
+        """
         try:
             return self.final_target.as_json(full=full, **kwargs)
         except (AliasResolutionError, CyclicAliasError):
@@ -929,19 +947,23 @@ class Alias(ObjectAliasMixin):
     # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property
-    def extra(self) -> dict:  # noqa: D102
+    def extra(self) -> dict:
+        """Namespaced dictionaries storing extra metadata for this object, used by extensions."""
         return self.final_target.extra
 
     @property
-    def lineno(self) -> int | None:  # noqa: D102
+    def lineno(self) -> int | None:
+        """The starting line number of the target object."""
         return self.final_target.lineno
 
     @property
-    def endlineno(self) -> int | None:  # noqa: D102
+    def endlineno(self) -> int | None:
+        """The ending line number of the target object."""
         return self.final_target.endlineno
 
     @property
-    def docstring(self) -> Docstring | None:  # noqa: D102
+    def docstring(self) -> Docstring | None:
+        """The target docstring."""
         return self.final_target.docstring
 
     @docstring.setter
@@ -949,86 +971,193 @@ class Alias(ObjectAliasMixin):
         self.final_target.docstring = docstring
 
     @property
-    def labels(self) -> set[str]:  # noqa: D102
+    def labels(self) -> set[str]:
+        """The target labels (`property`, `dataclass`, etc.)."""
         return self.final_target.labels
 
     @property
-    def imports(self) -> dict[str, str]:  # noqa: D102
+    def imports(self) -> dict[str, str]:
+        """The other objects imported by this alias' target.
+
+        Keys are the names within the object (`from ... import ... as AS_NAME`),
+        while the values are the actual names of the objects (`from ... import REAL_NAME as ...`).
+        """
         return self.final_target.imports
 
     @property
-    def exports(self) -> set[str] | list[str | ExprName] | None:  # noqa: D102
+    def exports(self) -> set[str] | list[str | ExprName] | None:
+        """The names of the objects exported by this (module) object through the `__all__` variable.
+
+        Exports can contain string (object names) or resolvable names,
+        like other lists of exports coming from submodules:
+
+        ```python
+        from .submodule import __all__ as submodule_all
+
+        __all__ = ["hello", *submodule_all]
+        ```
+
+        Exports get expanded by the loader before it expands wildcards and resolves aliases.
+        """
         return self.final_target.exports
 
     @property
-    def aliases(self) -> dict[str, Alias]:  # noqa: D102
+    def aliases(self) -> dict[str, Alias]:
+        """The aliases pointing to this object."""
         return self.final_target.aliases
 
-    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: D102
+    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:
+        """Whether a member of this object is "exported".
+
+        By exported, we mean that the object is included in the `__all__` attribute
+        of its parent module or class. When `__all__` is not defined,
+        we consider the member to be *implicitely* exported,
+        unless it's a module and it was not imported,
+        and unless it's not defined at runtime.
+
+        Parameters:
+            member: The member to verify.
+            explicitely: Whether to only return True when `__all__` is defined.
+
+        Returns:
+            True or False.
+        """
         return self.final_target.member_is_exported(member, explicitely=explicitely)
 
-    def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:  # noqa: D102
+    def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
+        """Tell if this object is of the given kind.
+
+        Parameters:
+            kind: An instance or set of kinds (strings or enumerations).
+
+        Raises:
+            ValueError: When an empty set is given as argument.
+
+        Returns:
+            True or False.
+        """
         return self.final_target.is_kind(kind)
 
     @property
-    def is_module(self) -> bool:  # noqa: D102
+    def is_module(self) -> bool:
+        """Whether this object is a module."""
         return self.final_target.is_module
 
     @property
-    def is_class(self) -> bool:  # noqa: D102
+    def is_class(self) -> bool:
+        """Whether this object is a class."""
         return self.final_target.is_class
 
     @property
-    def is_function(self) -> bool:  # noqa: D102
+    def is_function(self) -> bool:
+        """Whether this object is a function."""
         return self.final_target.is_function
 
     @property
-    def is_attribute(self) -> bool:  # noqa: D102
+    def is_attribute(self) -> bool:
+        """Whether this object is an attribute."""
         return self.final_target.is_attribute
 
-    def has_labels(self, labels: set[str]) -> bool:  # noqa: D102
+    def has_labels(self, labels: set[str]) -> bool:
+        """Tell if this object has all the given labels.
+
+        Parameters:
+            labels: A set of labels.
+
+        Returns:
+            True or False.
+        """
         return self.final_target.has_labels(labels)
 
-    def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:  # noqa: D102
+    def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
+        """Filter and return members based on predicates.
+
+        Parameters:
+            *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.
+
+        Returns:
+            A dictionary of members.
+        """
         return self.final_target.filter_members(*predicates)
 
     @property
-    def module(self) -> Module:  # noqa: D102
+    def module(self) -> Module:
+        """The parent module of this object.
+
+        Raises:
+            ValueError: When the object is not a module and does not have a parent.
+        """
         return self.final_target.module
 
     @property
-    def package(self) -> Module:  # noqa: D102
+    def package(self) -> Module:
+        """The absolute top module (the package) of this object."""
         return self.final_target.package
 
     @property
-    def filepath(self) -> Path | list[Path]:  # noqa: D102
+    def filepath(self) -> Path | list[Path]:
+        """The file path (or directory list for namespace packages) where this object was defined."""
         return self.final_target.filepath
 
     @property
-    def relative_filepath(self) -> Path:  # noqa: D102
+    def relative_filepath(self) -> Path:
+        """The file path where this object was defined, relative to the current working directory.
+
+        If this object's file path is not relative to the current working directory, return its absolute path.
+
+        Raises:
+            ValueError: When the relative path could not be computed.
+        """
         return self.final_target.relative_filepath
 
     @property
-    def relative_package_filepath(self) -> Path:  # noqa: D102
+    def relative_package_filepath(self) -> Path:
+        """The file path where this object was defined, relative to the top module path.
+
+        Raises:
+            ValueError: When the relative path could not be computed.
+        """
         return self.final_target.relative_package_filepath
 
     @property
-    def canonical_path(self) -> str:  # noqa: D102
+    def canonical_path(self) -> str:
+        """The full dotted path of this object.
+
+        The canonical path is the path where the object was defined (not imported).
+        """
         return self.final_target.canonical_path
 
     @property
-    def lines_collection(self) -> LinesCollection:  # noqa: D102
+    def lines_collection(self) -> LinesCollection:
+        """The lines collection attached to this object or its parents.
+
+        Raises:
+            ValueError: When no modules collection can be found in the object or its parents.
+        """
         return self.final_target.lines_collection
 
     @property
-    def lines(self) -> list[str]:  # noqa: D102
+    def lines(self) -> list[str]:
+        """The lines containing the source of this object."""
         return self.final_target.lines
 
     @property
-    def source(self) -> str:  # noqa: D102
+    def source(self) -> str:
+        """The source code of this object."""
         return self.final_target.source
 
-    def resolve(self, name: str) -> str:  # noqa: D102
+    def resolve(self, name: str) -> str:
+        """Resolve a name within this object's and parents' scope.
+
+        Parameters:
+            name: The name to resolve.
+
+        Raises:
+            NameResolutionError: When the name could not be resolved.
+
+        Returns:
+            The resolved name.
+        """
         return self.final_target.resolve(name)
 
     def get_member(self, key: str | Sequence[str]) -> Object | Alias:  # noqa: D102
@@ -1050,39 +1179,48 @@ class Alias(ObjectAliasMixin):
         return cast(Module, self.final_target)._filepath
 
     @property
-    def bases(self) -> list[Expr | str]:  # noqa: D102
+    def bases(self) -> list[Expr | str]:
+        """The class bases."""
         return cast(Class, self.final_target).bases
 
     @property
-    def decorators(self) -> list[Decorator]:  # noqa: D102
+    def decorators(self) -> list[Decorator]:
+        """The class/function decorators."""
         return cast(Union[Class, Function], self.target).decorators
 
     @property
-    def imports_future_annotations(self) -> bool:  # noqa: D102
+    def imports_future_annotations(self) -> bool:
+        """Whether this module import future annotations."""
         return cast(Module, self.final_target).imports_future_annotations
 
     @property
-    def is_init_module(self) -> bool:  # noqa: D102
+    def is_init_module(self) -> bool:
+        """Whether this module is an `__init__.py` module."""
         return cast(Module, self.final_target).is_init_module
 
     @property
-    def is_package(self) -> bool:  # noqa: D102
+    def is_package(self) -> bool:
+        """Whether this module is a package (top module)."""
         return cast(Module, self.final_target).is_package
 
     @property
-    def is_subpackage(self) -> bool:  # noqa: D102
+    def is_subpackage(self) -> bool:
+        """Whether this module is a subpackage."""
         return cast(Module, self.final_target).is_subpackage
 
     @property
-    def is_namespace_package(self) -> bool:  # noqa: D102
+    def is_namespace_package(self) -> bool:
+        """Whether this module is a namespace package (top folder, no `__init__.py`)."""
         return cast(Module, self.final_target).is_namespace_package
 
     @property
-    def is_namespace_subpackage(self) -> bool:  # noqa: D102
+    def is_namespace_subpackage(self) -> bool:
+        """Whether this module is a namespace subpackage."""
         return cast(Module, self.final_target).is_namespace_subpackage
 
     @property
-    def overloads(self) -> dict[str, list[Function]] | list[Function] | None:  # noqa: D102
+    def overloads(self) -> dict[str, list[Function]] | list[Function] | None:
+        """The overloaded signatures declared in this class/module or for this function."""
         return cast(Union[Module, Class, Function], self.final_target).overloads
 
     @overloads.setter
@@ -1090,11 +1228,18 @@ class Alias(ObjectAliasMixin):
         cast(Union[Module, Class, Function], self.final_target).overloads = overloads
 
     @property
-    def parameters(self) -> Parameters:  # noqa: D102
-        return cast(Function, self.final_target).parameters
+    def parameters(self) -> Parameters:
+        """The parameters of the current function or `__init__` method for classes.
+
+        This property can fetch inherited members,
+        and therefore is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
+        return cast(Union[Class, Function], self.final_target).parameters
 
     @property
-    def returns(self) -> str | Expr | None:  # noqa: D102
+    def returns(self) -> str | Expr | None:
+        """The function return type annotation."""
         return cast(Function, self.final_target).returns
 
     @returns.setter
@@ -1102,19 +1247,23 @@ class Alias(ObjectAliasMixin):
         cast(Function, self.final_target).returns = returns
 
     @property
-    def setter(self) -> Function | None:  # noqa: D102
+    def setter(self) -> Function | None:
+        """The setter linked to this function (property)."""
         return cast(Function, self.final_target).setter
 
     @property
-    def deleter(self) -> Function | None:  # noqa: D102
+    def deleter(self) -> Function | None:
+        """The deleter linked to this function (property)."""
         return cast(Function, self.final_target).deleter
 
     @property
-    def value(self) -> str | Expr | None:  # noqa: D102
+    def value(self) -> str | Expr | None:
+        """The attribute value."""
         return cast(Attribute, self.final_target).value
 
     @property
-    def annotation(self) -> str | Expr | None:  # noqa: D102
+    def annotation(self) -> str | Expr | None:
+        """The attribute type annotation."""
         return cast(Attribute, self.final_target).annotation
 
     @annotation.setter
@@ -1122,10 +1271,16 @@ class Alias(ObjectAliasMixin):
         cast(Attribute, self.final_target).annotation = annotation
 
     @property
-    def resolved_bases(self) -> list[Object]:  # noqa: D102
+    def resolved_bases(self) -> list[Object]:
+        """Resolved class bases.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
         return cast(Class, self.final_target).resolved_bases
 
-    def mro(self) -> list[Class]:  # noqa: D102
+    def mro(self) -> list[Class]:
+        """Return a list of classes in order corresponding to Python's MRO."""
         return cast(Class, self.final_target).mro()
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
