@@ -36,6 +36,7 @@ logger = get_logger(__name__)
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", "^_editable_impl_\\w+\\.py$")]
 _editable_setuptools_patterns = [re.compile(pat) for pat in ("^__editable__\\w+\\.py$",)]
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
+_editable_meson_python_patterns = [re.compile(pat) for pat in (r"^_\w+_editable_loader.py$",)]
 
 
 def _match_pattern(string: str, patterns: Sequence[Pattern]) -> bool:
@@ -421,6 +422,14 @@ def _handle_editable_module(path: Path) -> list[Path]:
                 and node.targets[0].id == "MAPPING"
             ) and isinstance(node.value, ast.Dict):
                 return [Path(cst.value).parent for cst in node.value.values if isinstance(cst, ast.Constant)]
+    if _match_pattern(path.name, _editable_meson_python_patterns):
+        # Support for how 'meson-python' writes these files:
+        # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.
+        # Compiled modules then found in the cp311 folder, under src/package.
+        parsed_module = ast.parse(path.read_text())
+        for node in parsed_module.body:
+            if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and node.value.func.id == "install":
+                return [Path(node.value.args[1].value, "src")]
     raise UnhandledEditableModuleError(path)
 
 

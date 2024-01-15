@@ -166,6 +166,19 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     assert _handle_editable_module(pth_file) == [Path("/path/to/whatever")]
 
 
+def test_meson_python_file_handling(tmp_path: Path) -> None:
+    """Assert editable modules by `meson-python` are handled.
+
+    Parameters:
+        tmp_path: Pytest fixture.
+    """
+    pth_file = tmp_path / "_whatever_editable_loader.py"
+    pth_file.write_text(
+        "hello=1\ninstall({'whatever', 'hello'}, '/path/to/build', ['/tmp/ninja'], False)",
+    )
+    assert _handle_editable_module(pth_file) == [Path("/path/to/build/src")]
+
+
 @pytest.mark.parametrize(
     ("first", "second", "find_stubs", "expect"),
     [
