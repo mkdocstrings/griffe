@@ -18,6 +18,7 @@ import os
 import re
 import sys
 from contextlib import suppress
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterator, Sequence, Tuple
 
@@ -43,39 +44,37 @@ def _match_pattern(string: str, patterns: Sequence[Pattern]) -> bool:
     return any(pattern.match(string) for pattern in patterns)
 
 
+@dataclass
 class Package:
-    """This class is a simple placeholder used during the process of finding packages."""
+    """This class is a simple placeholder used during the process of finding packages.
 
-    def __init__(self, name: str, path: Path, stubs: Path | None = None) -> None:
-        """Initialize the package.
+    Parameters:
+        name: The package name.
+        path: The package path(s).
+        stubs: An optional path to the related stubs file (.pyi).
+    """
 
-        Parameters:
-            name: The package name.
-            path: The package path(s).
-            stubs: An optional path to the related stubs file (.pyi).
-        """
-        self.name: str = name
-        """Package name."""
-        self.path: Path = path
-        """Package folder path."""
-        self.stubs: Path | None = stubs
-        """Package stubs file."""
+    name: str
+    """Package name."""
+    path: Path
+    """Package folder path."""
+    stubs: Path | None = None
+    """Package stubs file."""
 
 
+@dataclass
 class NamespacePackage:
-    """This class is a simple placeholder used during the process of finding packages."""
+    """This class is a simple placeholder used during the process of finding packages.
 
-    def __init__(self, name: str, path: list[Path]) -> None:
-        """Initialize the namespace package.
+    Parameters:
+        name: The package name.
+        path: The package paths.
+    """
 
-        Parameters:
-            name: The package name.
-            path: The package paths.
-        """
-        self.name: str = name
-        """Namespace package name."""
-        self.path: list[Path] = path
-        """Namespace package folder paths."""
+    name: str
+    """Namespace package name."""
+    path: list[Path]
+    """Namespace package folder paths."""
 
 
 class ModuleFinder:
