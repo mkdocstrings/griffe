@@ -90,8 +90,8 @@ def test_pth_file_handling(tmp_path: Path) -> None:
             """,
         ),
     )
-    directories = _handle_pth_file(pth_file)
-    assert directories == [Path("tests")]
+    paths = [sp.path for sp in _handle_pth_file(pth_file)]
+    assert paths == [Path("tests")]
 
 
 def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
@@ -109,8 +109,8 @@ def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
             """,
         ),
     )
-    directories = _handle_pth_file(pth_file)
-    assert directories == [Path("tests")]
+    paths = [sp.path for sp in _handle_pth_file(pth_file)]
+    assert paths == [Path("tests")]
 
 
 @pytest.mark.parametrize("editable_file_name", ["__editables_whatever.py", "_editable_impl_whatever.py"])
@@ -122,7 +122,8 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
     """
     pth_file = tmp_path / editable_file_name
     pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')")
-    assert _handle_editable_module(pth_file) == [Path("src")]
+    paths = [sp.path for sp in _handle_editable_module(pth_file)]
+    assert paths == [Path("src")]
 
 
 def test_setuptools_file_handling(tmp_path: Path) -> None:
@@ -133,7 +134,8 @@ def test_setuptools_file_handling(tmp_path: Path) -> None:
     """
     pth_file = tmp_path / "__editable__whatever.py"
     pth_file.write_text("hello\nMAPPING = {'griffe': 'src/griffe'}")
-    assert _handle_editable_module(pth_file) == [Path("src")]
+    paths = [sp.path for sp in _handle_editable_module(pth_file)]
+    assert paths == [Path("src")]
 
 
 def test_setuptools_file_handling_multiple_paths(tmp_path: Path) -> None:
@@ -146,7 +148,8 @@ def test_setuptools_file_handling_multiple_paths(tmp_path: Path) -> None:
     pth_file.write_text(
         "hello=1\nMAPPING = {\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}\ndef printer():\n  print(hello)",
     )
-    assert _handle_editable_module(pth_file) == [Path("src1"), Path("src2")]
+    paths = [sp.path for sp in _handle_editable_module(pth_file)]
+    assert paths == [Path("src1"), Path("src2")]
 
 
 def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
@@ -163,7 +166,8 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     # in a location that Griffe won't be able to discover anyway
     # (they don't respect standard package or namespace package layouts,
     # and rely on dynamic meta path finder stuff)
-    assert _handle_editable_module(pth_file) == [Path("/path/to/whatever")]
+    paths = [sp.path for sp in _handle_editable_module(pth_file)]
+    assert paths == [Path("/path/to/whatever")]
 
 
 def test_meson_python_file_handling(tmp_path: Path) -> None:
@@ -174,9 +178,13 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     """
     pth_file = tmp_path / "_whatever_editable_loader.py"
     pth_file.write_text(
-        "hello=1\ninstall({'whatever', 'hello'}, '/path/to/build', ['/tmp/ninja'], False)",
+        # the path in argument 2 suffixed with src must exist, so we pass '.'
+        "hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)",
     )
-    assert _handle_editable_module(pth_file) == [Path("/path/to/build/src")]
+    search_paths = _handle_editable_module(pth_file)
+    assert all(sp.always_scan_for == "griffe" for sp in search_paths)
+    paths = [sp.path for sp in search_paths]
+    assert paths == [Path("src")]
 
 
 @pytest.mark.parametrize(

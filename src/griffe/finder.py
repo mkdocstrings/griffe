@@ -17,6 +17,7 @@ import ast
 import os
 import re
 import sys
+from collections import defaultdict
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
@@ -95,6 +96,8 @@ class ModuleFinder:
         # Optimization: pre-compute Paths to relieve CPU when joining paths.
         self.search_paths = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
         """The finder search paths."""
+
+        self._always_scan_for: dict[str, list[Path]] = defaultdict(list)
         self._extend_from_pth_files()
 
     def find_spec(
@@ -232,6 +235,8 @@ class ModuleFinder:
         self,
         path: Path | list[Path],
         seen: set | None = None,
+        *,
+        additional: bool = True,
     ) -> Iterator[NamePartsAndPathType]:
         """Iterate on a module's submodules, if any.
 
@@ -250,9 +255,11 @@ class ModuleFinder:
             filepath (Path): A submodule filepath.
         """
         if isinstance(path, list):
-            seen = set()
+            seen = seen if seen is not None else set()
             for path_elem in path:
-                yield from self.iter_submodules(path_elem, seen)
+                if path_elem not in seen:
+                    seen.add(path_elem)
+                    yield from self.iter_submodules(path_elem, seen, additional=additional)
             return
 
         if path.stem == "__init__":
@@ -286,6 +293,9 @@ class ModuleFinder:
                 yield rel_subpath.with_suffix("").parts, subpath
             else:
                 yield rel_subpath.with_name(stem).parts, subpath
+
+        if additional:
+            yield from self.iter_submodules(self._always_scan_for[path.stem], seen=seen, additional=False)
 
     def submodules(self, module: Module) -> list[NamePartsAndPathType]:
         """Return the list of a module's submodules.
@@ -330,7 +340,9 @@ class ModuleFinder:
             for item in self._contents(path):
                 if item.suffix == ".pth":
                     for directory in _handle_pth_file(item):
-                        self._append_search_path(directory)
+                        if scan := directory.always_scan_for:
+                            self._always_scan_for[scan].append(directory.path.joinpath(scan))
+                        self._append_search_path(directory.path)
 
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
         for root, dirs, files in os.walk(path, topdown=True):
@@ -373,7 +385,13 @@ def _module_depth(name_parts_and_path: NamePartsAndPathType) -> int:
     return len(name_parts_and_path[0])
 
 
-def _handle_pth_file(path: Path) -> list[Path]:
+@dataclass
+class _SP:
+    path: Path
+    always_scan_for: str = ""
+
+
+def _handle_pth_file(path: Path) -> list[_SP]:
     # Support for .pth files pointing to directories.
     # From https://docs.python.org/3/library/site.html:
     # A path configuration file is a file whose name has the form name.pth
@@ -392,11 +410,11 @@ def _handle_pth_file(path: Path) -> list[Path]:
             with suppress(UnhandledEditableModuleError):
                 return _handle_editable_module(editable_module)
         if line and not line.startswith("#") and os.path.exists(line):
-            directories.append(Path(line))
+            directories.append(_SP(Path(line)))
     return directories
 
 
-def _handle_editable_module(path: Path) -> list[Path]:
+def _handle_editable_module(path: Path) -> list[_SP]:
     if _match_pattern(path.name, (*_editable_editables_patterns, *_editable_scikit_build_core_patterns)):
         # Support for how 'editables' write these files:
         # example line: `F.map_module('griffe', '/media/data/dev/griffe/src/griffe/__init__.py')`.
@@ -408,8 +426,8 @@ def _handle_editable_module(path: Path) -> list[Path]:
             raise UnhandledEditableModuleError(path) from error
         new_path = Path(editable_lines[-1].split("'")[3])
         if new_path.name.startswith("__init__"):
-            return [new_path.parent.parent]
-        return [new_path]
+            return [_SP(new_path.parent.parent)]
+        return [_SP(new_path)]
     if _match_pattern(path.name, _editable_setuptools_patterns):
         # Support for how 'setuptools' writes these files:
         # example line: `MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}`.
@@ -420,15 +438,23 @@ def _handle_editable_module(path: Path) -> list[Path]:
                 and isinstance(node.targets[0], ast.Name)
                 and node.targets[0].id == "MAPPING"
             ) and isinstance(node.value, ast.Dict):
-                return [Path(cst.value).parent for cst in node.value.values if isinstance(cst, ast.Constant)]
+                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]
     if _match_pattern(path.name, _editable_meson_python_patterns):
         # Support for how 'meson-python' writes these files:
         # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.
         # Compiled modules then found in the cp311 folder, under src/package.
         parsed_module = ast.parse(path.read_text())
         for node in parsed_module.body:
-            if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and node.value.func.id == "install":
-                return [Path(node.value.args[1].value, "src")]
+            if (
+                isinstance(node, ast.Expr)
+                and isinstance(node.value, ast.Call)
+                and isinstance(node.value.func, ast.Name)
+                and node.value.func.id == "install"
+                and isinstance(node.value.args[1], ast.Constant)
+            ):
+                build_path = Path(node.value.args[1].value, "src")
+                pkg_name = next(build_path.iterdir()).name
+                return [_SP(build_path, always_scan_for=pkg_name)]
     raise UnhandledEditableModuleError(path)
 
 
