@@ -1,0 +1,360 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Griffe object.",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "The name of the alias.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.name",
+          "type": "string"
+        },
+        "kind": {
+          "title": "The 'alias' kind.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.kind",
+          "const": "alias"
+        },
+        "path": {
+          "title": "The alias path.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.path",
+          "type": "string"
+        },
+        "target_path": {
+          "title": "For aliases, the Python path of their target.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.target_path",
+          "type": "string"
+        },
+        "lineno": {
+          "title": "For aliases, the import starting line number in their own module.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.lineno",
+          "type": "integer"
+        },
+        "endlineno": {
+          "title": "For aliases, the import ending line number in their own module.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Alias.endlineno",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "path",
+        "target_path",
+        "lineno"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "The name of the object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.name",
+          "type": "string"
+        },
+        "kind": {
+          "title": "The kind of object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.kind",
+          "enum": [
+            "module",
+            "class",
+            "function",
+            "attribute"
+          ]
+        },
+        "path": {
+          "title": "The path of the object (dot-separated Python path).",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.path",
+          "type": "string"
+        },
+        "filepath": {
+          "title": "The file path of the object's parent module.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.filepath",
+          "type": "string"
+        },
+        "relative_filepath": {
+          "title": "The file path of the object's parent module, relative to the (at the time) current working directory.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.relative_filepath",
+          "type": "string"
+        },
+        "relative_package_filepath": {
+          "title": "The file path of the object's package, as found in the explored directories of the Python paths.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.relative_package_filepath",
+          "type": "string"
+        },
+        "labels": {
+          "title": "The labels of the object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Object.labels",
+          "type": "array"
+        },
+        "docstring": {
+          "title": "The docstring of the object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring",
+          "type": "object",
+          "properties": {
+            "value": {
+              "title": "The actual string.",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.value",
+              "type": "string"
+            },
+            "lineno": {
+              "title": "The docstring starting line number.",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.lineno",
+              "type": "integer"
+            },
+            "endlineno": {
+              "title": "The docstring ending line number.",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.endlineno",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "parsed": {
+              "title": "The parsed docstring (list of docstring sections).",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.parsed",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "title": "The docstring section kind.",
+                    "enum": [
+                      "text",
+                      "parameters",
+                      "other parameters",
+                      "raises",
+                      "warns",
+                      "returns",
+                      "yields",
+                      "receives",
+                      "examples",
+                      "attributes",
+                      "deprecated",
+                      "admonition"
+                    ]
+                  },
+                  "value": {
+                    "title": "The docstring section value",
+                    "type": [
+                      "string",
+                      "array"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "value"
+                ]
+              }
+            }
+          },
+          "required": [
+            "value",
+            "lineno",
+            "endlineno"
+          ]
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#"
+          }
+        },
+        "lineno": {
+          "title": "The docstring starting line number.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.lineno",
+          "type": "integer"
+        },
+        "endlineno": {
+          "title": "The docstring ending line number.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Docstring.endlineno",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "bases": true,
+        "decorators": true,
+        "parameters": true,
+        "returns": true,
+        "value": true,
+        "annotation": true
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "path",
+        "filepath",
+        "relative_filepath",
+        "relative_package_filepath",
+        "labels",
+        "members"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "class"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "bases": {
+                "title": "For classes, their bases classes.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Class.bases",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/annotation"
+                }
+              },
+              "decorators": {
+                "title": "For classes, their decorators.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Class.decorators",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "title": "The decorator value (string, name or expression).",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Decorator.value",
+                      "$ref": "#/$defs/annotation"
+                    },
+                    "lineno": {
+                      "title": "The decorator starting line number.",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Decorator.lineno",
+                      "type": "integer"
+                    },
+                    "endlineno": {
+                      "title": "The decorator ending line number.",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Decorator.endlineno",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "lineno",
+                    "endlineno"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "bases",
+              "decorators"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "function"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "title": "For functions, their parameters.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Function.parameters",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "title": "The name of the parameter.",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Parameter.name",
+                      "type": "string"
+                    },
+                    "annotation": {
+                      "title": "The annotation of the parameter.",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Parameter.annotation",
+                      "$ref": "#/$defs/annotation"
+                    },
+                    "kind": {
+                      "title": "The kind of parameter.",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Parameter.kind",
+                      "type": "string"
+                    },
+                    "default": {
+                      "title": "The default value of the parameter.",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Parameter.default",
+                      "$ref": "#/$defs/annotation"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "kind"
+                  ]
+                }
+              },
+              "returns": {
+                "title": "For functions, their return annotation.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Function.returns",
+                "$ref": "#/$defs/annotation"
+              }
+            },
+            "required": [
+              "parameters",
+              "returns"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "attribute"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "title": "For attributes, their value.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Attribute.value",
+                "$ref": "#/$defs/annotation"
+              },
+              "annotation": {
+                "title": "For attributes, their type annotation.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/dataclasses/#griffe.dataclasses.Attribute.annotation",
+                "$ref": "#/$defs/annotation"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "$defs": {
+    "expression": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotation": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/expression"
+        }
+      ]
+    }
+  }
+}

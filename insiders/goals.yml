@@ -1,0 +1,10 @@
+goals:
+  1000:
+    name: GraviFridge User Manual
+    features:
+    - name: "Markdown output format for the `griffe check` command"
+      ref: /checking#markdown
+      since: 2024/01/16
+    - name: "GitHub output format for the `griffe check` command"
+      ref: /checking#github
+      since: 2024/01/16

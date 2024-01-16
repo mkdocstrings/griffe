@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Griffe docstrings parsing options.",
+  "type": "object",
+  "properties": {
+    "ignore_init_summary": {
+      "title": "Whether to discard the summary line in `__init__` methods' docstrings.",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/docstrings/google/#griffe.docstrings.google.parse",
+      "type": "boolean",
+      "default": false
+    },
+    "trim_doctest_flags": {
+      "title": "Whether to remove doctest flags from Python example blocks.",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/docstrings/google/#griffe.docstrings.google.parse",
+      "type": "boolean",
+      "default": true
+    },
+    "returns_multiple_items": {
+      "title": "Whether the `Returns` section has multiple items.",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/griffe/docstrings/google/#griffe.docstrings.google.parse",
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "additionalProperties": false
+}
