@@ -5,6 +5,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.39.0](https://github.com/mkdocstrings/griffe/releases/tag/0.39.0) - 2024-01-16
+
+<small>[Compare with 0.38.1](https://github.com/mkdocstrings/griffe/compare/0.38.1...0.39.0)</small>
+
+### Features
+
+- Support editable installs dynamically exposing modules from other directories ([2c4ba75](https://github.com/mkdocstrings/griffe/commit/2c4ba751d7d47eb48b47179d316722315e5d4647) by Timothée Mazzucotelli). [Issue #229](https://github.com/mkdocstrings/griffe/issues/229)
+- Support meson-python editable modules ([9123897](https://github.com/mkdocstrings/griffe/commit/9123897ad8d85e48bd3c435ffabcf9a36a0ed355) by Timothée Mazzucotelli).
+- Support admonitions in Numpydoc docstrings ([1e311a4](https://github.com/mkdocstrings/griffe/commit/1e311a4eb935c58d488c928a86493ab3f3368f06) by Michael Chow). [Issue #214](https://github.com/mkdocstrings/griffe/issues/214), [PR #219](https://github.com/mkdocstrings/griffe/pull/219), Co-authored-by: Timothée Mazzucotelli <pawamoy@pm.me>
+- Expose module properties on all objects ([123f8c5](https://github.com/mkdocstrings/griffe/commit/123f8c5ba1826435e90dafffbfe304bd6ab8e187) by Timothée Mazzucotelli). [Issue #226](https://github.com/mkdocstrings/griffe/issues/226)
+
+### Bug Fixes
+
+- Consider space-only lines to be empty, never break Numpydoc sections on blank lines ([8c57354](https://github.com/mkdocstrings/griffe/commit/8c5735497578417e1dd723625590539016e7b7a5) by Timothée Mazzucotelli). [PR #220](https://github.com/mkdocstrings/griffe/pull/220), [Related to PR #219](https://github.com/mkdocstrings/griffe/pull/219), [Numpydoc discussion](https://github.com/numpy/numpydoc/issues/463)
+- Allow merging stubs into alias targets ([3cf7958](https://github.com/mkdocstrings/griffe/commit/3cf795871a0549b901d9374705d6a1eb84700128) by Timothée Mazzucotelli).
+- Insert the right directory in front of import paths before inspecting a module (dynamically imported) ([7d75c71](https://github.com/mkdocstrings/griffe/commit/7d75c71477ccb208e071bfe3c3204a0490274b44) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Set lineno to 0 for removed objects when checking API ([b660c34](https://github.com/mkdocstrings/griffe/commit/b660c346feb3a95fbe54a6dad460e988a9a41774) by Timothée Mazzucotelli).
+- Prepare support for new output formats (styles) of the check command ([f2ece1e](https://github.com/mkdocstrings/griffe/commit/f2ece1e602b0fb3d888a60d892089a55fdcf60f0) by Timothée Mazzucotelli).
+- Transform finder's package and namespace package classes into dataclasses ([16be6a4](https://github.com/mkdocstrings/griffe/commit/16be6a4a7660d8ed13ccdcf9c571eda647e078f0) by Timothée Mazzucotelli).
+
 ## [0.38.1](https://github.com/mkdocstrings/griffe/releases/tag/0.38.1) - 2023-12-06
 
 <small>[Compare with 0.38.0](https://github.com/mkdocstrings/griffe/compare/0.38.0...0.38.1)</small>
