@@ -77,6 +77,10 @@ class ExplanationStyle(enum.Enum):
     """Explanations on one-line."""
     VERBOSE: str = "verbose"
     """Explanations on multiple lines."""
+    MARKDOWN: str = "markdown"
+    """Explanations in Markdown, adapted to changelogs."""
+    GITHUB: str = "github"
+    """Explanation as GitHub workflow commands warnings, adapted to CI."""
 
 
 class BreakageKind(enum.Enum):

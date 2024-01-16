@@ -176,6 +176,12 @@ class Breakage:
         lines.append("")
         return "\n".join(lines)
 
+    def _explain_markdown(self) -> str:
+        return self._explain_oneline()
+
+    def _explain_github(self) -> str:
+        return self._explain_oneline()
+
 
 class ParameterMovedBreakage(Breakage):
     """Specific breakage class for moved parameters."""

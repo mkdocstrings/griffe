@@ -298,6 +298,8 @@ def get_parser() -> argparse.ArgumentParser:
         help="Force disable colors in the output.",
     )
     check_options.add_argument("-v", "--verbose", action="store_true", help="Verbose output.")
+    formats = ("oneline", "verbose")
+    check_options.add_argument("-f", "--format", dest="style", choices=formats, default=None, help="Output format.")
     add_common_options(check_parser)
 
     return parser
@@ -403,6 +405,7 @@ def check(
     allow_inspection: bool = True,
     verbose: bool = False,
     color: bool | None = None,
+    style: str | ExplanationStyle | None = None,
 ) -> int:
     """Load packages data and dump it as JSON.
 
@@ -470,7 +473,10 @@ def check(
 
     colorama.deinit()
     colorama.init(strip=color if color is None else not color)
-    style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
+    if style is None:  # noqa: SIM108
+        style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
+    else:
+        style = ExplanationStyle(style)
     for breakage in breakages:
         print(breakage.explain(style=style), file=sys.stderr)
 
