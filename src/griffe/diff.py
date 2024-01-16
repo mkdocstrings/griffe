@@ -123,6 +123,8 @@ class Breakage:
 
     @property
     def _lineno(self) -> int:
+        if self.kind is BreakageKind.OBJECT_REMOVED:
+            return 0
         if self.obj.is_alias:
             return self.obj.alias_lineno or 0  # type: ignore[attr-defined]
         return self.obj.lineno or 0
