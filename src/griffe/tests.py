@@ -60,6 +60,7 @@ def temporary_pypackage(
     modules: Sequence[str] | Mapping[str, str] | None = None,
     *,
     init: bool = True,
+    inits: bool = True,
 ) -> Iterator[TmpPackage]:
     """Create a package containing the given modules in a temporary directory.
 
@@ -72,7 +73,8 @@ def temporary_pypackage(
             If a list, simply touch the files: `["b.py", "c/d.py", "e/f"]`.
             If a dict, keys are the file names and values their contents:
             `{"b.py": "b = 1", "c/d.py": "print('hey from c')"}`.
-        init: Whether to create an `__init__` module in the leaf package.
+        init: Whether to create an `__init__` module in the top package.
+        inits: Whether to create `__init__` modules in subpackages.
 
     Yields:
         A temporary package.
@@ -96,7 +98,8 @@ def temporary_pypackage(
                 else:
                     current_path /= part
                     current_path.mkdir(**mkdir_kwargs)
-                    current_path.joinpath("__init__.py").touch()
+                    if inits:
+                        current_path.joinpath("__init__.py").touch()
         yield TmpPackage(tmpdirpath, package_name, package_path)
 
 

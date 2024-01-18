@@ -20,6 +20,7 @@ import sys
 from collections import defaultdict
 from contextlib import suppress
 from dataclasses import dataclass
+from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterator, Sequence, Tuple
 
@@ -235,8 +236,6 @@ class ModuleFinder:
         self,
         path: Path | list[Path],
         seen: set | None = None,
-        *,
-        additional: bool = True,
     ) -> Iterator[NamePartsAndPathType]:
         """Iterate on a module's submodules, if any.
 
@@ -255,11 +254,11 @@ class ModuleFinder:
             filepath (Path): A submodule filepath.
         """
         if isinstance(path, list):
-            seen = seen if seen is not None else set()
+            # We never enter this condition again in recursive calls,
+            # so we just have to set `seen` once regardless of its value.
+            seen = set()
             for path_elem in path:
-                if path_elem not in seen:
-                    seen.add(path_elem)
-                    yield from self.iter_submodules(path_elem, seen, additional=additional)
+                yield from self.iter_submodules(path_elem, seen)
             return
 
         if path.stem == "__init__":
@@ -269,7 +268,12 @@ class ModuleFinder:
         elif path.suffix in self.extensions_set:
             return
 
-        skip = set(seen) if seen else set()
+        # `seen` is only set when we scan a list of paths (namespace package).
+        # `skip` is used to prevent yielding modules
+        # of a regular subpackage that we already yielded
+        # from another part of the namespace.
+        skip = set(seen or ())
+
         for subpath in self._filter_py_modules(path):
             rel_subpath = subpath.relative_to(path)
             if rel_subpath.parent in skip:
@@ -294,9 +298,6 @@ class ModuleFinder:
             else:
                 yield rel_subpath.with_name(stem).parts, subpath
 
-        if additional:
-            yield from self.iter_submodules(self._always_scan_for[path.stem], seen=seen, additional=False)
-
     def submodules(self, module: Module) -> list[NamePartsAndPathType]:
         """Return the list of a module's submodules.
 
@@ -306,7 +307,13 @@ class ModuleFinder:
         Returns:
             A list of tuples containing the parts of the submodule name and its path.
         """
-        return sorted(self.iter_submodules(module.filepath), key=_module_depth)
+        return sorted(
+            chain(
+                self.iter_submodules(module.filepath),
+                self.iter_submodules(self._always_scan_for[module.name]),
+            ),
+            key=_module_depth,
+        )
 
     def _module_name_path(self, path: Path) -> tuple[str, Path]:
         if path.is_dir():

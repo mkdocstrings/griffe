@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from textwrap import dedent
 
 import pytest
 
+from griffe.dataclasses import Module
 from griffe.finder import ModuleFinder, NamespacePackage, Package, _handle_editable_module, _handle_pth_file
 from griffe.tests import temporary_pypackage
 
@@ -268,3 +270,33 @@ def test_finding_stubs_packages(
         assert result.path.suffix == ".pyi"
         assert result.path.parent.name.endswith("-stubs")
         assert result.stubs is None
+
+
+@pytest.mark.parametrize("namespace_package", [False, True])
+def test_scanning_package_and_module_with_same_names(namespace_package: bool) -> None:
+    """The finder correctly scans package and module having same the name.
+
+    Parameters:
+        namespace_package: Whether the temporary package is a namespace one.
+    """
+    init = not namespace_package
+    with temporary_pypackage("pkg", ["pkg/mod.py", "mod/mod.py"], init=init, inits=init) as tmp_package:
+        # Here we must make sure that all paths are relative
+        # to correctly assert the finder's behavior,
+        # so we pass `.` and actually enter the temporary directory.
+        path = Path(tmp_package.name)
+        filepath: Path | list[Path] = [path] if namespace_package else path
+        old = os.getcwd()
+        os.chdir(tmp_package.path.parent)
+        try:
+            finder = ModuleFinder(search_paths=[])
+            found = [path for _, path in finder.submodules(Module("pkg", filepath=filepath))]
+        finally:
+            os.chdir(old)
+        check = (
+            path / "pkg/mod.py",
+            path / "mod/mod.py",
+        )
+        for mod in check:
+            assert mod in found
+
