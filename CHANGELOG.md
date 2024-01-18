@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.39.1](https://github.com/mkdocstrings/griffe/releases/tag/0.39.1) - 2024-01-18
+
+<small>[Compare with 0.39.0](https://github.com/mkdocstrings/griffe/compare/0.39.0...0.39.1)</small>
+
+### Bug Fixes
+
+- De-duplicate search paths in finder as they could lead to the same modules being yielded twice or more when scanning namespace packages ([80a158a](https://github.com/mkdocstrings/griffe/commit/80a158a2de8d53a054405c3e14113b09d73335a3) by Timothée Mazzucotelli).
+- Fix logic for skipping already encountered modules when scanning namespace packages ([21a48d0](https://github.com/mkdocstrings/griffe/commit/21a48d0b9248467fe3c36440bee649ce8879f295) by Timothée Mazzucotelli). [Issue mkdocstrings#646](https://github.com/mkdocstrings/mkdocstrings/issues/646)
+
 ## [0.39.0](https://github.com/mkdocstrings/griffe/releases/tag/0.39.0) - 2024-01-16
 
 <small>[Compare with 0.38.1](https://github.com/mkdocstrings/griffe/compare/0.38.1...0.39.0)</small>
