@@ -300,3 +300,16 @@ def test_scanning_package_and_module_with_same_names(namespace_package: bool) ->
         for mod in check:
             assert mod in found
 
+
+def test_not_finding_namespace_package_twice() -> None:
+    """Deduplicate paths when finding namespace packages."""
+    with temporary_pypackage("pkg", ["pkg/mod.py", "mod/mod.py"], init=False, inits=False) as tmp_package:
+        old = os.getcwd()
+        os.chdir(tmp_package.tmpdir)
+        try:
+            finder = ModuleFinder(search_paths=[Path("."), tmp_package.tmpdir])
+            found = finder.find_package("pkg")
+        finally:
+            os.chdir(old)
+        assert isinstance(found, NamespacePackage)
+        assert len(found.path) == 1

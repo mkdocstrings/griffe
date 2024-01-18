@@ -94,12 +94,42 @@ class ModuleFinder:
             search_paths: Optional paths to search into.
         """
         self._paths_contents: dict[Path, list[Path]] = {}
-        # Optimization: pre-compute Paths to relieve CPU when joining paths.
-        self.search_paths = [path if isinstance(path, Path) else Path(path) for path in search_paths or sys.path]
+        self.search_paths: list[Path] = []
         """The finder search paths."""
+
+        # Optimization: pre-compute Paths to relieve CPU when joining paths.
+        for path in search_paths or sys.path:
+            self.append_search_path(Path(path))
 
         self._always_scan_for: dict[str, list[Path]] = defaultdict(list)
         self._extend_from_pth_files()
+
+    def append_search_path(self, path: Path) -> None:
+        """Append a search path.
+
+        The path will be resolved (absolute, normalized).
+        The path won't be appended if it is already in the search paths list.
+
+        Parameters:
+            path: The path to append.
+        """
+        path = path.resolve()
+        if path not in self.search_paths:
+            self.search_paths.append(path)
+
+    def insert_search_path(self, position: int, path: Path) -> None:
+        """Insert a search path at the given position.
+
+        The path will be resolved (absolute, normalized).
+        The path won't be inserted if it is already in the search paths list.
+
+        Parameters:
+            position: The insert position in the list.
+            path: The path to insert.
+        """
+        path = path.resolve()
+        if path not in self.search_paths:
+            self.search_paths.insert(position, path)
 
     def find_spec(
         self,
@@ -349,7 +379,7 @@ class ModuleFinder:
                     for directory in _handle_pth_file(item):
                         if scan := directory.always_scan_for:
                             self._always_scan_for[scan].append(directory.path.joinpath(scan))
-                        self._append_search_path(directory.path)
+                        self.append_search_path(directory.path)
 
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
         for root, dirs, files in os.walk(path, topdown=True):
@@ -372,7 +402,7 @@ class ModuleFinder:
         # add its parent to search paths and return it.
         while parent_path.parent != parent_path and (parent_path.parent / "__init__.py").exists():
             parent_path = parent_path.parent
-        self.search_paths.insert(0, parent_path.parent)
+        self.insert_search_path(0, parent_path.parent)
         return parent_path.name
 
 
