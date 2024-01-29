@@ -420,6 +420,13 @@ class ExprKeyword(Expr):
     """Name."""
     value: str | Expr
     """Value."""
+    call: Expr | None = None
+    """Call expression where this keyword is used."""
+
+    @property
+    def canonical_path(self) -> str:
+        """Path of the expressed keyword."""
+        return f"{self.call.canonical_path}({self.name})"
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield self.name
@@ -769,9 +776,10 @@ def _build_boolop(node: ast.BoolOp, parent: Module | Class, **kwargs: Any) -> Ex
 
 
 def _build_call(node: ast.Call, parent: Module | Class, **kwargs: Any) -> Expr:
+    call_expr = _build(node.func, parent, **kwargs)
     positional_args = [_build(arg, parent, **kwargs) for arg in node.args]
-    keyword_args = [_build(kwarg, parent, **kwargs) for kwarg in node.keywords]
-    return ExprCall(_build(node.func, parent, **kwargs), [*positional_args, *keyword_args])
+    keyword_args = [_build(kwarg, parent, call_expr=call_expr, **kwargs) for kwarg in node.keywords]
+    return ExprCall(call_expr, [*positional_args, *keyword_args])
 
 
 def _build_compare(node: ast.Compare, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -879,10 +887,10 @@ def _build_joinedstr(
     return ExprJoinedStr([_build(value, parent, in_joined_str=True, **kwargs) for value in node.values])
 
 
-def _build_keyword(node: ast.keyword, parent: Module | Class, **kwargs: Any) -> Expr:
+def _build_keyword(node: ast.keyword, parent: Module | Class, call_expr: Expr | None = None, **kwargs: Any) -> Expr:
     if node.arg is None:
         return ExprVarKeyword(_build(node.value, parent, **kwargs))
-    return ExprKeyword(node.arg, _build(node.value, parent, **kwargs))
+    return ExprKeyword(node.arg, _build(node.value, parent, **kwargs), call=call_expr)
 
 
 def _build_lambda(node: ast.Lambda, parent: Module | Class, **kwargs: Any) -> Expr:
