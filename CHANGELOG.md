@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.40.0](https://github.com/mkdocstrings/griffe/releases/tag/0.40.0) - 2024-01-30
+
+<small>[Compare with 0.39.1](https://github.com/mkdocstrings/griffe/compare/0.39.1...0.40.0)</small>
+
+### Features
+
+- Store reference to function call in keyword expressions ([d72f9d3](https://github.com/mkdocstrings/griffe/commit/d72f9d3a425fee11f23f9f7b44814b6fda458e6e) by Timothée Mazzucotelli). [PR #231](https://github.com/mkdocstrings/griffe/pull/231)
+
 ## [0.39.1](https://github.com/mkdocstrings/griffe/releases/tag/0.39.1) - 2024-01-18
 
 <small>[Compare with 0.39.0](https://github.com/mkdocstrings/griffe/compare/0.39.0...0.39.1)</small>
