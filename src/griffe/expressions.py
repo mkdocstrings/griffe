@@ -421,6 +421,31 @@ class ExprKeyword(Expr):
     value: str | Expr
     """Value."""
 
+    # Griffe is desinged around accessing Python objects
+    # with the dot notation, for example `module.Class`.
+    # Function parameters were not taken into account
+    # because they are not accessible the same way.
+    # But we still want to be able to cross-reference
+    # documentation of function parameters in downstream
+    # tools like mkdocstrings. So we add a special case
+    # for keyword expressions, where they get a meaningful
+    # canonical path (contrary to most other expressions that
+    # aren't or do not begin with names or attributes)
+    # of the form `path.to.called_function(param_name)`.
+    # For this we need to store a reference to the `func` part
+    # of the call expression in the keyword one,
+    # hence the following field.
+    # We allow it to be None for backward compatibility.
+    function: Expr | None = None
+    """Expression referencing the function called with this parameter."""
+
+    @property
+    def canonical_path(self) -> str:
+        """Path of the expressed keyword."""
+        if self.function:
+            return f"{self.function.canonical_path}({self.name})"
+        return super(ExprKeyword, self).canonical_path  # noqa: UP008
+
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield self.name
         yield "="
@@ -769,9 +794,10 @@ def _build_boolop(node: ast.BoolOp, parent: Module | Class, **kwargs: Any) -> Ex
 
 
 def _build_call(node: ast.Call, parent: Module | Class, **kwargs: Any) -> Expr:
+    function = _build(node.func, parent, **kwargs)
     positional_args = [_build(arg, parent, **kwargs) for arg in node.args]
-    keyword_args = [_build(kwarg, parent, **kwargs) for kwarg in node.keywords]
-    return ExprCall(_build(node.func, parent, **kwargs), [*positional_args, *keyword_args])
+    keyword_args = [_build(kwarg, parent, function=function, **kwargs) for kwarg in node.keywords]
+    return ExprCall(function, [*positional_args, *keyword_args])
 
 
 def _build_compare(node: ast.Compare, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -879,10 +905,10 @@ def _build_joinedstr(
     return ExprJoinedStr([_build(value, parent, in_joined_str=True, **kwargs) for value in node.values])
 
 
-def _build_keyword(node: ast.keyword, parent: Module | Class, **kwargs: Any) -> Expr:
+def _build_keyword(node: ast.keyword, parent: Module | Class, function: Expr | None = None, **kwargs: Any) -> Expr:
     if node.arg is None:
         return ExprVarKeyword(_build(node.value, parent, **kwargs))
-    return ExprKeyword(node.arg, _build(node.value, parent, **kwargs))
+    return ExprKeyword(node.arg, _build(node.value, parent, **kwargs), function=function)
 
 
 def _build_lambda(node: ast.Lambda, parent: Module | Class, **kwargs: Any) -> Expr:
