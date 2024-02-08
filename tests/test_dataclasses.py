@@ -74,11 +74,7 @@ def test_deepcopy() -> None:
 
 
 def test_alias_proxies() -> None:
-    """Assert that the Alias class has all the necessary methods and properties.
-
-    Parameters:
-        cls: The class to check.
-    """
+    """Assert that the Alias class has all the necessary methods and properties."""
     api = griffe.load("griffe")
     alias_members = set(api["dataclasses.Alias"].all_members.keys())
     for cls in (
