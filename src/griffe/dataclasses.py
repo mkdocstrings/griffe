@@ -1566,6 +1566,7 @@ class Class(Object):
                     *[
                         Parameter(attr.name, annotation=attr.annotation, default=attr.value)
                         for attr in self.attributes.values()
+                        if "property" not in attr.labels
                     ],
                 )
             return Parameters()

@@ -7,7 +7,7 @@ from copy import deepcopy
 import griffe
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
-from griffe.tests import module_vtree, temporary_pypackage
+from griffe.tests import module_vtree, temporary_pypackage, temporary_visited_module
 
 
 def test_submodule_exports() -> None:
@@ -86,3 +86,29 @@ def test_alias_proxies() -> None:
         for name in cls.all_members:
             if not name.startswith("_") or name.startswith("__"):
                 assert name in alias_members
+
+
+def test_dataclass_parameters() -> None:
+    """Don't return properties as parameters of dataclasses."""
+    with temporary_visited_module(
+        """
+        from dataclasses import dataclass
+        from functools import cached_property
+
+        @dataclass
+        class Point:
+            x: float
+            y: float
+
+            @property
+            def a(self):
+                return 0
+
+            @cached_property
+            def b(self):
+                return 0
+        """,
+    ) as module:
+        params = module["Point"].parameters
+        assert "a" not in params
+        assert "b" not in params
