@@ -502,7 +502,12 @@ def _type_based_yield(
             seen_paths=seen_paths,
         )
     elif old_member.is_class:
-        yield from _class_incompatibilities(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)  # type: ignore[arg-type]
+        yield from _class_incompatibilities(
+            old_member,  # type: ignore[arg-type]
+            new_member,  # type: ignore[arg-type]
+            ignore_private=ignore_private,
+            seen_paths=seen_paths,
+        )
     elif old_member.is_function:
         yield from _function_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
     elif old_member.is_attribute:

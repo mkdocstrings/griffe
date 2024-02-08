@@ -199,7 +199,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
     class_ = Class(
         name=obj_dict["name"],
         lineno=obj_dict["lineno"],
-        endlineno=obj_dict.get("endlineno", None),
+        endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
         decorators=_load_decorators(obj_dict),
         bases=obj_dict["bases"],
@@ -219,7 +219,7 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         returns=obj_dict["returns"],
         decorators=_load_decorators(obj_dict),
         lineno=obj_dict["lineno"],
-        endlineno=obj_dict.get("endlineno", None),
+        endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
     )
     function.labels |= set(obj_dict.get("labels", ()))
@@ -230,10 +230,10 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
     attribute = Attribute(
         name=obj_dict["name"],
         lineno=obj_dict["lineno"],
-        endlineno=obj_dict.get("endlineno", None),
+        endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
-        value=obj_dict.get("value", None),
-        annotation=obj_dict.get("annotation", None),
+        value=obj_dict.get("value"),
+        annotation=obj_dict.get("annotation"),
     )
     attribute.labels |= set(obj_dict.get("labels", ()))
     return attribute
@@ -244,7 +244,7 @@ def _load_alias(obj_dict: dict[str, Any]) -> Alias:
         name=obj_dict["name"],
         target=obj_dict["target_path"],
         lineno=obj_dict["lineno"],
-        endlineno=obj_dict.get("endlineno", None),
+        endlineno=obj_dict.get("endlineno"),
     )
 
 

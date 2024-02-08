@@ -473,7 +473,7 @@ def check(
 
     colorama.deinit()
     colorama.init(strip=color if color is None else not color)
-    if style is None:  # noqa: SIM108
+    if style is None:
         style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     else:
         style = ExplanationStyle(style)
