@@ -123,7 +123,10 @@ class Breakage:
 
     @property
     def _lineno(self) -> int:
-        if self.kind is BreakageKind.OBJECT_REMOVED:
+        # If the object was removed, and we are able to get the location (file path)
+        # as a relative path, then we use 0 instead of the original line number
+        # (it helps when checking current sources, and avoids pointing to now missing contents).
+        if self.kind is BreakageKind.OBJECT_REMOVED and self._relative_filepath != self._location:
             return 0
         if self.obj.is_alias:
             return self.obj.alias_lineno or 0  # type: ignore[attr-defined]
