@@ -723,9 +723,15 @@ def _read_examples_section(
 
 def _append_section(sections: list, current: list[str], admonition_title: str) -> None:
     if admonition_title:
+        kind = admonition_title.lower().replace(" ", "-")
+        if kind in ("warnings", "notes"):
+            # NumpyDoc sections are pluralised but admonitions aren't.
+            # We can special-case these explicitly so that it renders
+            # as one would expect.
+            kind = kind[:-1]
         sections.append(
             DocstringSectionAdmonition(
-                kind=admonition_title.lower().replace(" ", "-"),
+                kind=kind,
                 text="\n".join(current).rstrip("\n"),
                 title=admonition_title,
             ),

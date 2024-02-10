@@ -447,9 +447,6 @@ class DocstringSectionAdmonition(DocstringSection):
             text: The admonition text.
             title: An optional title.
         """
-        if kind == "warnings":
-            kind = "warning"
-
         super().__init__(title)
         self.value: DocstringAdmonition = DocstringAdmonition(annotation=kind, description=text)
 
