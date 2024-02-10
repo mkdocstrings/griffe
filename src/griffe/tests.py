@@ -37,6 +37,7 @@ class TmpPackage:
 
     def __post_init__(self) -> None:
         self.tmpdir = self.tmpdir.resolve()
+        self.path = self.path.resolve()
 
 
 @contextmanager
