@@ -153,6 +153,13 @@ def get_parser() -> argparse.ArgumentParser:
             type=Path,
             help="Paths to search packages into.",
         )
+        search_options.add_argument(
+            "-y",
+            "--sys-path",
+            dest="append_sys_path",
+            action="store_true",
+            help="Whether to append `sys.path` to search paths specified with `-s`.",
+        )
         loading_options = subparser.add_argument_group(title="Loading options")
         loading_options.add_argument(
             "-B",
@@ -232,13 +239,6 @@ def get_parser() -> argparse.ArgumentParser:
         default={},
         type=json.loads,
         help="The options for the docstring parser.",
-    )
-    dump_options.add_argument(
-        "-y",
-        "--sys-path",
-        dest="append_sys_path",
-        action="store_true",
-        help="Whether to append `sys.path` to search paths specified with `-s`.",
     )
     dump_options.add_argument(
         "-r",
@@ -401,13 +401,14 @@ def check(
     base_ref: str | None = None,
     extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
+    append_sys_path: bool = False,
     find_stubs_package: bool = False,
     allow_inspection: bool = True,
     verbose: bool = False,
     color: bool | None = None,
     style: str | ExplanationStyle | None = None,
 ) -> int:
-    """Load packages data and dump it as JSON.
+    """Check for API breaking changes in two versions of the same package.
 
     Parameters:
         package: The package to load and check.
@@ -416,6 +417,7 @@ def check(
         base_ref: Git reference (commit, branch, tag) to check.
         extensions: The extensions to use.
         search_paths: The paths to search into.
+        append_sys_path: Whether to append the contents of `sys.path` to the search paths.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         verbose: Use a verbose output.
 
@@ -424,6 +426,8 @@ def check(
     """
     # Prepare options.
     search_paths = list(search_paths) if search_paths else []
+    if append_sys_path:
+        search_paths.extend(sys.path)
 
     try:
         against = against or _get_latest_tag(package)
