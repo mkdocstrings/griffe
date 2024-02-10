@@ -536,16 +536,20 @@ class Visitor:
             else:
                 alias_name = name.asname or name.name
                 self.current.imports[alias_name] = alias_path
-            self.current.set_member(
-                alias_name,
-                Alias(
+            # Do not create aliases pointing to themselves (it happens with
+            # `from package.current_module import Thing as Thing` or
+            # `from . import thing as thing`).
+            if alias_path != f"{self.current.path}.{alias_name}":
+                self.current.set_member(
                     alias_name,
-                    alias_path,
-                    lineno=node.lineno,
-                    endlineno=node.end_lineno,
-                    runtime=not self.type_guarded,
-                ),
-            )
+                    Alias(
+                        alias_name,
+                        alias_path,
+                        lineno=node.lineno,
+                        endlineno=node.end_lineno,
+                        runtime=not self.type_guarded,
+                    ),
+                )
 
     def handle_attribute(
         self,
