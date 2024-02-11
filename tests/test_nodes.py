@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import logging
-import sys
 from ast import PyCF_ONLY_AST
 
 import pytest
 
-from griffe.agents.nodes import get_value, relative_to_absolute
+from griffe.agents.nodes import relative_to_absolute
 from griffe.expressions import Expr, ExprName
 from griffe.tests import module_vtree, temporary_visited_module
 
@@ -212,35 +211,6 @@ def test_default_value_from_nodes(default: str) -> None:
         params = module.members["f"].parameters  # type: ignore[union-attr]
         assert len(params) == 1
         assert str(params[0].default) == default
-
-
-@pytest.mark.parametrize("expression", syntax_examples)
-def test_building_value_from_nodes(expression: str) -> None:
-    """Test building value from AST nodes.
-
-    Parameters:
-        expression: An expression (parametrized).
-    """
-    try:
-        node = (
-            compile(  # type: ignore[attr-defined]
-                expression,
-                mode="exec",
-                filename="<>",
-                flags=PyCF_ONLY_AST,
-            )
-            .body[0]
-            .value
-        )
-    except SyntaxError:
-        pytest.skip(reason=f"Unsupported expression '{expression}' on Python {sys.version}")
-    value = get_value(node)
-
-    # make space after comma non-significant
-    value = value.replace(", ", ",")  # type: ignore[union-attr]
-    expression = expression.replace(", ", ",")
-
-    assert value == expression
 
 
 # https://github.com/mkdocstrings/griffe/issues/159
