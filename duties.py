@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import sys
 from contextlib import contextmanager
+from functools import partial
 from importlib.metadata import version as pkgversion
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator
@@ -332,7 +333,7 @@ def fuzz(
             filepath.write_text(code)
 
         if fails(code, filepath):
-            new_code = minimize(code, fails)
+            new_code = minimize(code, partial(fails, filepath=filepath))
             if code != new_code:
                 filepath.write_text(new_code)
             return False
