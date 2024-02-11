@@ -69,6 +69,10 @@ syntax_examples = [
     "{a, b, c}",
     "{a: b, c: d}",
     "[a, b, c]",
+    # yields
+    "yield",
+    "yield a",
+    "yield from a",
 ]
 
 

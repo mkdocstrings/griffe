@@ -724,6 +724,18 @@ class ExprYield(Expr):
             yield from _yield(self.value, flat=flat)
 
 
+@dataclass(eq=True, **dataclass_opts)
+class ExprYieldFrom(Expr):
+    """Yield statements like `yield from a`."""
+
+    value: str | Expr
+    """Yielded-from value."""
+
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+        yield "yield from "
+        yield from _yield(self.value, flat=flat)
+
+
 _unary_op_map = {
     ast.Invert: "~",
     ast.Not: "not ",
@@ -1002,6 +1014,10 @@ def _build_yield(node: ast.Yield, parent: Module | Class, **kwargs: Any) -> Expr
     return ExprYield(None if node.value is None else _build(node.value, parent, **kwargs))
 
 
+def _build_yield_from(node: ast.YieldFrom, parent: Module | Class, **kwargs: Any) -> Expr:
+    return ExprYieldFrom(_build(node.value, parent, **kwargs))
+
+
 _node_map: dict[type, Callable[[Any, Module | Class], Expr]] = {
     ast.Attribute: _build_attribute,
     ast.BinOp: _build_binop,
@@ -1030,6 +1046,7 @@ _node_map: dict[type, Callable[[Any, Module | Class], Expr]] = {
     ast.Tuple: _build_tuple,
     ast.UnaryOp: _build_unaryop,
     ast.Yield: _build_yield,
+    ast.YieldFrom: _build_yield_from,
 }
 
 # TODO: remove once Python 3.8 support is dropped

@@ -291,8 +291,12 @@ def _extract_usub(node: ast.USub, **kwargs: Any) -> str:
 
 def _extract_yield(node: ast.Yield, **kwargs: Any) -> str:
     if node.value is None:
-        return repr(None)
-    return _extract(node.value, **kwargs)
+        return "yield"
+    return f"yield {_extract(node.value, **kwargs)}"
+
+
+def _extract_yield_from(node: ast.YieldFrom, **kwargs: Any) -> str:
+    return f"yield from {_extract(node.value, **kwargs)}"
 
 
 _node_map: dict[type, Callable[[Any], str]] = {
@@ -353,6 +357,7 @@ _node_map: dict[type, Callable[[Any], str]] = {
     ast.UnaryOp: _extract_unaryop,
     ast.USub: _extract_usub,
     ast.Yield: _extract_yield,
+    ast.YieldFrom: _extract_yield_from,
 }
 
 # TODO: remove once Python 3.8 support is
