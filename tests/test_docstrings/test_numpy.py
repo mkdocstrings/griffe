@@ -207,7 +207,7 @@ def test_admonition_warnings_special_case(parse_numpy: ParserType) -> None:
     assert sections[0].value == "Summary text."
     assert sections[1].title == "Warnings"
     assert sections[1].value.description == "Be careful!!!\n\nmore text"
-    assert sections[1].value.annotation == "warning"
+    assert sections[1].value.kind == "warning"
 
 
 def test_admonition_notes_special_case(parse_numpy: ParserType) -> None:
