@@ -35,6 +35,10 @@ class TmpPackage:
     path: Path
     """The package path."""
 
+    def __post_init__(self) -> None:
+        self.tmpdir = self.tmpdir.resolve()
+        self.path = self.path.resolve()
+
 
 @contextmanager
 def temporary_pyfile(code: str, *, module_name: str = "module") -> Iterator[tuple[str, Path]]:
