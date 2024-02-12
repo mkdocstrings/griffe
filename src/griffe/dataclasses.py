@@ -751,9 +751,9 @@ class Object(ObjectAliasMixin):
                 },
             )
 
-        if self.lineno:
+        if self.lineno is not None:
             base["lineno"] = self.lineno
-        if self.endlineno:
+        if self.endlineno is not None:
             base["endlineno"] = self.endlineno
         if self.docstring:
             base["docstring"] = self.docstring
