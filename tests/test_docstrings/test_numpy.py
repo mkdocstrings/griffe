@@ -186,6 +186,54 @@ def test_isolated_dash_lines_do_not_create_sections(parse_numpy: ParserType) -> 
     assert sections[1].value.description == "Note contents.\n\n---\nText."
 
 
+def test_admonition_warnings_special_case(parse_numpy: ParserType) -> None:
+    """Test that the "Warnings" section renders as a warning admonition.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+    Summary text.
+
+    Warnings
+    --------
+    Be careful!!!
+
+    more text
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text."
+    assert sections[1].title == "Warnings"
+    assert sections[1].value.description == "Be careful!!!\n\nmore text"
+    assert sections[1].value.kind == "warning"
+
+
+def test_admonition_notes_special_case(parse_numpy: ParserType) -> None:
+    """Test that the "Warnings" section renders as a warning admonition.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+    Summary text.
+
+    Notes
+    -----
+    Something noteworthy.
+
+    more text
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 2
+    assert sections[0].value == "Summary text."
+    assert sections[1].title == "Notes"
+    assert sections[1].value.description == "Something noteworthy.\n\nmore text"
+    assert sections[1].value.kind == "note"
+
+
 # =============================================================================================
 # Annotations
 def test_prefer_docstring_type_over_annotation(parse_numpy: ParserType) -> None:
