@@ -65,7 +65,7 @@ def _extract(node: ast.AST, parent: Module) -> list[str | Name]:
     return _node_map[type(node)](node, parent)
 
 
-def get__all__(node: ast.Assign | ast.AugAssign, parent: Module) -> list[str | Name]:
+def get__all__(node: ast.Assign | ast.AnnAssign | ast.AugAssign, parent: Module) -> list[str | Name]:
     """Get the values declared in `__all__`.
 
     Parameters:
@@ -81,7 +81,7 @@ def get__all__(node: ast.Assign | ast.AugAssign, parent: Module) -> list[str | N
 
 
 def safe_get__all__(
-    node: ast.Assign | ast.AugAssign,
+    node: ast.Assign | ast.AnnAssign | ast.AugAssign,
     parent: Module,
     log_level: LogLevel = LogLevel.debug,  # TODO: set to error when we handle more things
 ) -> list[str | Name]:

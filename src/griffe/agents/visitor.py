@@ -585,8 +585,8 @@ class Visitor:
                 with suppress(AttributeError):
                     parent.exports = [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
-                        for name in safe_get__all__(node, self.current)
-                    ]  # type: ignore[arg-type]
+                        for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
+                    ]
             self.extensions.call("on_instance", node=node, obj=attribute)
             self.extensions.call("on_attribute_instance", node=node, attr=attribute)
 
@@ -620,10 +620,10 @@ class Visitor:
             )
             if all_augment:
                 # we assume exports is not None at this point
-                self.current.exports.extend(
+                self.current.exports.extend(  # type: ignore[union-attr]
                     [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
-                        for name in safe_get__all__(node, self.current)
+                        for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
                     ],
                 )
 

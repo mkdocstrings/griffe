@@ -2,20 +2,20 @@
 
 from __future__ import annotations
 
+import ast
 from itertools import zip_longest
-from typing import TYPE_CHECKING, Iterable
+from typing import Iterable, List, Optional, Tuple, Union
 
 from griffe.enumerations import ParameterKind
 from griffe.logger import get_logger
 
-if TYPE_CHECKING:
-    import ast
-
 logger = get_logger(__name__)
 
+ParametersType = List[Tuple[str, Optional[ast.AST], ParameterKind, Optional[Union[str, ast.AST]]]]
 
-def get_parameters(node: ast.arguments) -> list[tuple[str, ast.AST, ParameterKind, str | ast.AST]]:
-    parameters = []
+
+def get_parameters(node: ast.arguments) -> ParametersType:
+    parameters: ParametersType = []
 
     # TODO: probably some optimizations to do here
     args_kinds_defaults: Iterable = reversed(
