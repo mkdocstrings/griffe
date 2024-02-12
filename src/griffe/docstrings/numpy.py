@@ -40,7 +40,6 @@ from griffe.docstrings.dataclasses import (
     DocstringSectionDeprecated,
     DocstringSectionExamples,
     DocstringSectionFunctions,
-    DocstringSectionKind,
     DocstringSectionModules,
     DocstringSectionOtherParameters,
     DocstringSectionParameters,
@@ -54,6 +53,7 @@ from griffe.docstrings.dataclasses import (
     DocstringYield,
 )
 from griffe.docstrings.utils import parse_annotation, warning
+from griffe.enumerations import DocstringSectionKind
 from griffe.expressions import ExprName
 from griffe.logger import LogLevel
 

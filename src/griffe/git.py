@@ -24,8 +24,8 @@ from griffe.exceptions import GitError
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
     from griffe.dataclasses import Object
-    from griffe.docstrings.parsers import Parser
-    from griffe.extensions import Extensions
+    from griffe.enumerations import Parser
+    from griffe.extensions.base import Extensions
 
 
 WORKTREE_PREFIX = "griffe-worktree-"

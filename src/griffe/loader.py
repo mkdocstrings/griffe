@@ -21,10 +21,11 @@ from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import visit
 from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import Alias, Kind, Module, Object
+from griffe.dataclasses import Alias, Module, Object
+from griffe.enumerations import Kind
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import ExprName
-from griffe.extensions import Extensions
+from griffe.extensions.base import Extensions
 from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
@@ -33,7 +34,7 @@ from griffe.stats import stats
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.docstrings.parsers import Parser
+    from griffe.enumerations import Parser
 
 logger = get_logger(__name__)
 _builtin_modules: set[str] = set(sys.builtin_module_names)

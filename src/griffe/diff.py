@@ -8,8 +8,8 @@ from typing import Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
-from griffe.dataclasses import Alias, Attribute, Class, Function, Object, ParameterKind
-from griffe.enumerations import BreakageKind, ExplanationStyle
+from griffe.dataclasses import Alias, Attribute, Class, Function, Object
+from griffe.enumerations import BreakageKind, ExplanationStyle, ParameterKind
 from griffe.exceptions import AliasResolutionError
 from griffe.git import WORKTREE_PREFIX
 from griffe.logger import get_logger

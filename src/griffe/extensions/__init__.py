@@ -1,12 +1,12 @@
 """This module is the public interface to import elements from the base."""
 
+from griffe.enumerations import When
 from griffe.extensions.base import (
     Extension,
     Extensions,
     ExtensionType,
     InspectorExtension,
     VisitorExtension,
-    When,
     load_extensions,
 )
 

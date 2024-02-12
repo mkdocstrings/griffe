@@ -20,19 +20,17 @@ from griffe.dataclasses import (
     Decorator,
     Docstring,
     Function,
-    Kind,
     Module,
     Object,
     Parameter,
-    ParameterKind,
     Parameters,
 )
-from griffe.docstrings.dataclasses import DocstringSectionKind
+from griffe.enumerations import DocstringSectionKind, Kind, ParameterKind
 
 if TYPE_CHECKING:
     from enum import Enum
 
-    from griffe.docstrings.parsers import Parser
+    from griffe.enumerations import Parser
 
 
 def _enum_value(obj: Enum) -> str | int:

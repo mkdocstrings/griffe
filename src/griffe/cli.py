@@ -25,9 +25,9 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 import colorama
 
 from griffe import debug
-from griffe.diff import ExplanationStyle, find_breaking_changes
-from griffe.docstrings.parsers import Parser
+from griffe.diff import find_breaking_changes
 from griffe.encoders import JSONEncoder
+from griffe.enumerations import ExplanationStyle, Parser
 from griffe.exceptions import ExtensionError, GitError
 from griffe.extensions.base import load_extensions
 from griffe.git import _get_latest_tag, _get_repo_root, load_git
@@ -36,7 +36,7 @@ from griffe.logger import get_logger
 from griffe.stats import _format_stats
 
 if TYPE_CHECKING:
-    from griffe.extensions import Extensions, ExtensionType
+    from griffe.extensions.base import Extensions, ExtensionType
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()

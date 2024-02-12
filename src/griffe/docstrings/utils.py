@@ -6,8 +6,8 @@ from ast import PyCF_ONLY_AST
 from contextlib import suppress
 from typing import TYPE_CHECKING, Protocol
 
-from griffe.agents.nodes import safe_get_annotation
 from griffe.exceptions import BuiltinModuleError
+from griffe.expressions import safe_get_annotation
 from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:

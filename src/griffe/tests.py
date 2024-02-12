@@ -18,8 +18,8 @@ from griffe.loader import GriffeLoader
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
-    from griffe.docstrings.parsers import Parser
-    from griffe.extensions import Extensions
+    from griffe.enumerations import Parser
+    from griffe.extensions.base import Extensions
 
 TMPDIR_PREFIX = "griffe_"
 

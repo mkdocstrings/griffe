@@ -28,26 +28,18 @@ from inspect import Signature, cleandoc
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any, Sequence
 
-from griffe.agents.nodes import ObjectKind, ObjectNode, safe_get_annotation
+from griffe.agents.nodes import ObjectNode
 from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import (
-    Alias,
-    Attribute,
-    Class,
-    Docstring,
-    Function,
-    Module,
-    Parameter,
-    ParameterKind,
-    Parameters,
-)
-from griffe.extensions import Extensions
+from griffe.dataclasses import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
+from griffe.enumerations import ObjectKind, ParameterKind
+from griffe.expressions import safe_get_annotation
+from griffe.extensions.base import Extensions
 from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.docstrings.parsers import Parser
+    from griffe.enumerations import Parser
     from griffe.expressions import Expr
 
 

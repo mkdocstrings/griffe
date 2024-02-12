@@ -15,8 +15,8 @@ from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Callable, Literal, Sequence, Union, cast
 
 from griffe.c3linear import c3linear_merge
-from griffe.docstrings.parsers import Parser, parse
-from griffe.enumerations import Kind, ParameterKind
+from griffe.docstrings.parsers import parse
+from griffe.enumerations import Kind, ParameterKind, Parser
 from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe.expressions import ExprCall, ExprName
 from griffe.logger import get_logger

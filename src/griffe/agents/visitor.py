@@ -22,32 +22,27 @@ from griffe.agents.nodes import (
     get_names,
     relative_to_absolute,
     safe_get__all__,
+)
+from griffe.collections import LinesCollection, ModulesCollection
+from griffe.dataclasses import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
+from griffe.enumerations import Kind, ParameterKind
+from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
+from griffe.expressions import (
+    Expr,
+    ExprAttribute,
+    ExprCall,
+    ExprName,
     safe_get_annotation,
     safe_get_base_class,
     safe_get_condition,
+    safe_get_expression,
 )
-from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import (
-    Alias,
-    Attribute,
-    Class,
-    Decorator,
-    Docstring,
-    Function,
-    Kind,
-    Module,
-    Parameter,
-    ParameterKind,
-    Parameters,
-)
-from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
-from griffe.expressions import Expr, safe_get_expression
-from griffe.extensions import Extensions
+from griffe.extensions.base import Extensions
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.docstrings.parsers import Parser
+    from griffe.enumerations import Parser
 
 
 builtin_decorators = {

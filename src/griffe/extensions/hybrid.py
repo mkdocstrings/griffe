@@ -6,8 +6,9 @@ import re
 from typing import TYPE_CHECKING, Any, Pattern, Sequence
 
 from griffe.agents.nodes import ObjectNode
+from griffe.enumerations import When
 from griffe.exceptions import ExtensionError
-from griffe.extensions.base import InspectorExtension, VisitorExtension, When, _load_extension
+from griffe.extensions.base import InspectorExtension, VisitorExtension, _load_extension
 from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 
