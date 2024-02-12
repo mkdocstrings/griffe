@@ -72,6 +72,14 @@ syntax_examples = [
     "yield",
     "yield a",
     "yield from a",
+    # lambdas
+    "lambda a: a",
+    "lambda a, b: a",
+    "lambda *a, **b: a",
+    "lambda a, b=0: a",
+    "lambda a, /, b, c: a",
+    "lambda a, *, b, c: a",
+    "lambda a, /, b, *, c: a",
 ]
 
 

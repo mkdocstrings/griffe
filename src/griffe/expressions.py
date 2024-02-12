@@ -10,6 +10,7 @@ from functools import partial
 from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
 
+from griffe.agents.nodes import get_parameters
 from griffe.enumerations import ParameterKind
 from griffe.exceptions import NameResolutionError
 from griffe.logger import LogLevel, get_logger
@@ -486,8 +487,34 @@ class ExprLambda(Expr):
     """Lambda's body."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
-        yield "lambda "
-        yield from _join(self.parameters, ", ", flat=flat)
+        pos_only = False
+        pos_or_kw = False
+        kw_only = False
+        length = len(self.parameters)
+        yield "lambda"
+        if length:
+            yield " "
+        for index, parameter in enumerate(self.parameters, 1):
+            if parameter.kind is ParameterKind.positional_only:
+                pos_only = True
+            elif parameter.kind is ParameterKind.var_positional:
+                yield "*"
+            elif parameter.kind is ParameterKind.var_keyword:
+                yield "**"
+            elif parameter.kind is ParameterKind.positional_or_keyword and not pos_or_kw:
+                pos_or_kw = True
+            elif parameter.kind is ParameterKind.keyword_only and not kw_only:
+                kw_only = True
+                yield "*, "
+            if parameter.kind is not ParameterKind.positional_only and pos_only:
+                pos_only = False
+                yield "/, "
+            yield parameter.name
+            if parameter.default and parameter.kind not in (ParameterKind.var_positional, ParameterKind.var_keyword):
+                yield "="
+                yield from _yield(parameter.default, flat=flat)
+            if index < length:
+                yield ", "
         yield ": "
         yield from _yield(self.body, flat=flat)
 
@@ -587,13 +614,13 @@ class ExprNamedExpr(Expr):
 class ExprParameter(Expr):
     """Parameters in function signatures like `a: int = 0`."""
 
-    kind: str
-    """Parameter kind."""
-    name: str | None = None
+    name: str
     """Parameter name."""
+    kind: ParameterKind = ParameterKind.positional_or_keyword
+    """Parameter kind."""
     annotation: Expr | None = None
     """Parameter type."""
-    default: Expr | None = None
+    default: str | Expr | None = None
     """Parameter default."""
 
 
@@ -924,10 +951,19 @@ def _build_keyword(node: ast.keyword, parent: Module | Class, function: Expr | N
 
 
 def _build_lambda(node: ast.Lambda, parent: Module | Class, **kwargs: Any) -> Expr:
-    # FIXME: This needs better handling (all parameter kinds).
     return ExprLambda(
-        [ExprParameter(ParameterKind.positional_or_keyword.value, arg.arg) for arg in node.args.args],
-        _build(node.body, parent, **kwargs),
+        parameters=[
+            ExprParameter(
+                name=name,
+                kind=kind,
+                annotation=None,
+                default=default
+                if isinstance(default, str)
+                else safe_get_expression(default, parent=parent, parse_strings=False),
+            )
+            for name, _, kind, default in get_parameters(node.args)
+        ],
+        body=_build(node.body, parent, **kwargs),
     )
 
 
