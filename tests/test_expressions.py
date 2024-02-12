@@ -85,6 +85,6 @@ def test_expressions(code: str) -> None:
     Parameters:
         code: An expression (parametrized).
     """
-    top_node = compile(code, filename="<>", mode="eval", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body, parent=Module("module"))  # type: ignore[attr-defined]
+    top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # type: ignore[attr-defined]
     assert str(expression) == code
