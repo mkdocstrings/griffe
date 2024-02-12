@@ -583,7 +583,10 @@ class Visitor:
 
             if name == "__all__":
                 with suppress(AttributeError):
-                    parent.exports = safe_get__all__(node, self.current)  # type: ignore[arg-type]
+                    parent.exports = [
+                        name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
+                        for name in safe_get__all__(node, self.current)
+                    ]  # type: ignore[arg-type]
             self.extensions.call("on_instance", node=node, obj=attribute)
             self.extensions.call("on_attribute_instance", node=node, attr=attribute)
 
@@ -617,7 +620,12 @@ class Visitor:
             )
             if all_augment:
                 # we assume exports is not None at this point
-                self.current.exports.extend(safe_get__all__(node, self.current))  # type: ignore[arg-type,union-attr]
+                self.current.exports.extend(
+                    [
+                        name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
+                        for name in safe_get__all__(node, self.current)
+                    ],
+                )
 
     def visit_if(self, node: ast.If) -> None:
         """Visit an "if" node.
