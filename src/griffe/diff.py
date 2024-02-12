@@ -4,15 +4,17 @@ from __future__ import annotations
 
 import contextlib
 from pathlib import Path
-from typing import Any, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
-from griffe.dataclasses import Alias, Attribute, Class, Function, Object
 from griffe.enumerations import BreakageKind, ExplanationStyle, ParameterKind
 from griffe.exceptions import AliasResolutionError
 from griffe.git import WORKTREE_PREFIX
 from griffe.logger import get_logger
+
+if TYPE_CHECKING:
+    from griffe.dataclasses import Alias, Attribute, Class, Function, Object
 
 POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
 KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
