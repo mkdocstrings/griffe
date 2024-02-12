@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import warnings
+from typing import Any
+
 from griffe.agents.nodes._all import get__all__, safe_get__all__
 from griffe.agents.nodes._ast import (
     ast_children,
@@ -21,16 +24,30 @@ from griffe.agents.nodes._parameters import get_call_keyword_arguments, get_para
 from griffe.agents.nodes._runtime import ObjectNode
 from griffe.agents.nodes._values import get_value, safe_get_value
 from griffe.enumerations import ObjectKind
-from griffe.expressions import (
-    get_annotation,
-    get_base_class,
-    get_condition,
-    get_expression,
-    safe_get_annotation,
-    safe_get_base_class,
-    safe_get_condition,
-    safe_get_expression,
-)
+
+
+def __getattr__(name: str) -> Any:
+    if name in {
+        "get_annotation",
+        "get_base_class",
+        "get_condition",
+        "get_expression",
+        "safe_get_annotation",
+        "safe_get_base_class",
+        "safe_get_condition",
+        "safe_get_expression",
+    }:
+        warnings.warn(
+            f"Importing {name} from griffe.agents.node is deprecated. Import it from griffe.expressions instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        from griffe import expressions
+
+        return getattr(expressions, name)
+    raise AttributeError
+
 
 __all__ = [
     "ast_children",
