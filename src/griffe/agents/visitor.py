@@ -10,8 +10,7 @@ from __future__ import annotations
 
 import ast
 from contextlib import suppress
-from itertools import zip_longest
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any
 
 from griffe.agents.nodes import (
     ast_children,
@@ -20,6 +19,7 @@ from griffe.agents.nodes import (
     get_docstring,
     get_instance_names,
     get_names,
+    get_parameters,
     relative_to_absolute,
     safe_get__all__,
 )
@@ -361,78 +361,19 @@ class Visitor:
             return
 
         # handle parameters
-        parameters = Parameters()
-        annotation: str | Expr | None
-
-        posonlyargs = node.args.posonlyargs
-
-        # TODO: probably some optimizations to do here
-        args_kinds_defaults: Iterable = reversed(
-            (
-                *zip_longest(
-                    reversed(
-                        (
-                            *zip_longest(
-                                posonlyargs,
-                                [],
-                                fillvalue=ParameterKind.positional_only,
-                            ),
-                            *zip_longest(node.args.args, [], fillvalue=ParameterKind.positional_or_keyword),
-                        ),
-                    ),
-                    reversed(node.args.defaults),
-                    fillvalue=None,
-                ),
-            ),
-        )
-        arg: ast.arg
-        kind: ParameterKind
-        arg_default: ast.AST | None
-        for (arg, kind), arg_default in args_kinds_defaults:
-            annotation = safe_get_annotation(arg.annotation, parent=self.current)
-            default = safe_get_expression(arg_default, parent=self.current, parse_strings=False)
-            parameters.add(Parameter(arg.arg, annotation=annotation, kind=kind, default=default))
-
-        if node.args.vararg:
-            annotation = safe_get_annotation(node.args.vararg.annotation, parent=self.current)
-            parameters.add(
+        parameters = Parameters(
+            *[
                 Parameter(
-                    node.args.vararg.arg,
-                    annotation=annotation,
-                    kind=ParameterKind.var_positional,
-                    default="()",
-                ),
-            )
-
-        # TODO: probably some optimizations to do here
-        kwargs_defaults: Iterable = reversed(
-            (
-                *zip_longest(
-                    reversed(node.args.kwonlyargs),
-                    reversed(node.args.kw_defaults),
-                    fillvalue=None,
-                ),
-            ),
+                    name,
+                    kind=kind,
+                    annotation=safe_get_annotation(annotation, parent=self.current),
+                    default=default
+                    if isinstance(default, str)
+                    else safe_get_expression(default, parent=self.current, parse_strings=False),
+                )
+                for name, annotation, kind, default in get_parameters(node.args)
+            ],
         )
-        kwarg: ast.arg
-        kwarg_default: ast.AST | None
-        for kwarg, kwarg_default in kwargs_defaults:
-            annotation = safe_get_annotation(kwarg.annotation, parent=self.current)
-            default = safe_get_expression(kwarg_default, parent=self.current, parse_strings=False)
-            parameters.add(
-                Parameter(kwarg.arg, annotation=annotation, kind=ParameterKind.keyword_only, default=default),
-            )
-
-        if node.args.kwarg:
-            annotation = safe_get_annotation(node.args.kwarg.annotation, parent=self.current)
-            parameters.add(
-                Parameter(
-                    node.args.kwarg.arg,
-                    annotation=annotation,
-                    kind=ParameterKind.var_keyword,
-                    default="{}",
-                ),
-            )
 
         function = Function(
             name=node.name,
