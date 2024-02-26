@@ -5,6 +5,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.41.0](https://github.com/mkdocstrings/griffe/releases/tag/0.41.0) - 2024-02-26
+
+<small>[Compare with 0.40.1](https://github.com/mkdocstrings/griffe/compare/0.40.1...0.41.0)</small>
+
+### Features
+
+- Add option to append `sys.path` to search paths to the check command too ([d153fa0](https://github.com/mkdocstrings/griffe/commit/d153fa0aeaa248ae13101f189f887f9bfee27f04) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Special case NumpyDoc "warnings" and "notes" sections (plural) ([3b47cdb](https://github.com/mkdocstrings/griffe/commit/3b47cdb889e08106404bfcdbd3ce651f7eee6cdf) by Ethan Henderson). [PR #236](https://github.com/mkdocstrings/griffe/pull/236)
+- Serialize line numbers even if zero ([55e6e0e](https://github.com/mkdocstrings/griffe/commit/55e6e0e6c01351aa832aaf934d001442f66c8598) by Timothée Mazzucotelli).
+- Fix handling of lambda expressions ([598d08a](https://github.com/mkdocstrings/griffe/commit/598d08ae0dcd7d266194237211e6431ee65aee67) by Timothée Mazzucotelli).
+- Fix building expressions (and string values) for `yield` and `yield from` statements ([439f65e](https://github.com/mkdocstrings/griffe/commit/439f65e3703c5cad7d68aa3b2da371599236f58b) by Timothée Mazzucotelli).
+- Do not create aliases pointing to themselves ([356305f](https://github.com/mkdocstrings/griffe/commit/356305f69664c1d955f4dbf7c865cb4f553488fc) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Remove `get_call_keyword_arguments` utility function, as it is implemented with a single line and creates a cyclic depdendency with expressions ([35cf170](https://github.com/mkdocstrings/griffe/commit/35cf170cc91ba740e6f997d76f99d6a07e8d4437) by Timothée Mazzucotelli).
+- Further prevent cyclic dependency between node utils and expressions ([9614c83](https://github.com/mkdocstrings/griffe/commit/9614c83c037637d7823a4c06f115c3e2e4b6e10f) by Timothée Mazzucotelli).
+- Avoid cyclic dependency between node utils and expressions ([aedf39c](https://github.com/mkdocstrings/griffe/commit/aedf39c3795197deb6067e039da8bdec182bd363) by Timothée Mazzucotelli).
+- Move arguments node-parsing logic into its own module (used by visitor and lambda expressions) ([ad68e65](https://github.com/mkdocstrings/griffe/commit/ad68e65363c4338d7f38ccade2f9cc05d41f8100) by Timothée Mazzucotelli).
+- Use canonical imports ([3091660](https://github.com/mkdocstrings/griffe/commit/3091660ae1b6253e481cedbdcc31b73c0ab334df) by Timothée Mazzucotelli).
+- Use `ast.unparse` instead of our own unparser ([6fe1316](https://github.com/mkdocstrings/griffe/commit/6fe1316807870cbf93bba79f3d400cae6630ea73) by Timothée Mazzucotelli).
+- Only return 0 for the line number of removed objects when the location is reworked as relative ([3a4d054](https://github.com/mkdocstrings/griffe/commit/3a4d054e993e8a53cce9e53057e81479ab5f6034) by Timothée Mazzucotelli).
+
 ## [0.40.1](https://github.com/mkdocstrings/griffe/releases/tag/0.40.1) - 2024-02-08
 
 <small>[Compare with 0.40.0](https://github.com/mkdocstrings/griffe/compare/0.40.0...0.40.1)</small>
