@@ -25,12 +25,10 @@ from griffe.agents.nodes import (
 )
 from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
-from griffe.enumerations import Kind, ParameterKind
+from griffe.enumerations import Kind
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
 from griffe.expressions import (
     Expr,
-    ExprAttribute,
-    ExprCall,
     ExprName,
     safe_get_annotation,
     safe_get_base_class,
