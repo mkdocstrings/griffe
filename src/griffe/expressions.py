@@ -74,10 +74,9 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
 
 
 # TODO: Merge in decorators once Python 3.9 is dropped.
+dataclass_opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
-    dataclass_opts = {"slots": True}
-else:
-    dataclass_opts = {}
+    dataclass_opts["slots"] = True
 
 
 @dataclass

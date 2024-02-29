@@ -7,6 +7,7 @@ during static analysis.
 from __future__ import annotations
 
 import ast
+from contextlib import suppress
 from functools import lru_cache
 from typing import Any, cast
 
@@ -33,14 +34,16 @@ def _expr_args(expr: Expr) -> dict[str, str | Expr]:
     if isinstance(expr, ExprCall):
         for argument in expr.arguments:
             try:
-                args[argument.name] = argument.value
+                args[argument.name] = argument.value  # type: ignore[union-attr]
             except AttributeError:
                 # Argument is a unpacked variable.
-                var = expr.function.parent.modules_collection[argument.value.canonical_path]
-                args.update(_expr_args(var.value))
+                with suppress(Exception):
+                    collection = expr.function.parent.modules_collection  # type: ignore[attr-defined]
+                    var = collection[argument.value.canonical_path]  # type: ignore[union-attr]
+                    args.update(_expr_args(var.value))
     elif isinstance(expr, ExprDict):
-        args.update({ast.literal_eval(key): value for key, value in zip(expr.keys, expr.values)})
-    return args  # type: ignore[union-attr]
+        args.update({ast.literal_eval(str(key)): value for key, value in zip(expr.keys, expr.values)})
+    return args
 
 
 def _dataclass_arguments(decorators: list[Decorator]) -> dict[str, Any]:
@@ -141,7 +144,11 @@ def _set_dataclass_init(class_: Class) -> None:
         return
 
     # Retrieve parameters from all parent dataclasses.
-    for parent in reversed(class_.mro()):
+    try:
+        mro = class_.mro()
+    except ValueError:
+        mro = ()
+    for parent in reversed(mro):
         if _dataclass_decorator(parent.decorators):
             parameters.extend(_dataclass_parameters(parent))
             # At least one parent dataclass makes the current class a dataclass:
@@ -178,11 +185,11 @@ def _apply_recursively(mod_cls: Module | Class, processed: set[str]) -> None:
         _set_dataclass_init(mod_cls)
         for member in mod_cls.members.values():
             if not member.is_alias and member.is_class:
-                _apply_recursively(member, processed)
+                _apply_recursively(member, processed)  # type: ignore[arg-type]
     elif isinstance(mod_cls, Module):
         for member in mod_cls.members.values():
             if not member.is_alias and (member.is_module or member.is_class):
-                _apply_recursively(member, processed)
+                _apply_recursively(member, processed)  # type: ignore[arg-type]
 
 
 class DataclassesExtension(Extension):
