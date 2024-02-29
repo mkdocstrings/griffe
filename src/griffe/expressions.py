@@ -74,9 +74,10 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
 
 
 # TODO: Merge in decorators once Python 3.9 is dropped.
-dataclass_opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
-    dataclass_opts["slots"] = True
+    dataclass_opts = {"slots": True}
+else:
+    dataclass_opts = {}
 
 
 @dataclass
@@ -242,6 +243,11 @@ class ExprCall(Expr):
     """Function called."""
     arguments: Sequence[str | Expr]
     """Passed arguments."""
+
+    @property
+    def canonical_path(self) -> str:
+        """The canonical path of this subscript's left part."""
+        return self.function.canonical_path
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.function, flat=flat)

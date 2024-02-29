@@ -252,6 +252,9 @@ class Extensions:
         self._extensions: list[Extension] = []
         self.add(*extensions)
 
+        # TODO: Deprecate and remove at some point?
+        self.add(*_load_extension("dataclasses"))
+
     def add(self, *extensions: ExtensionType) -> None:
         """Add extensions to this container.
 
@@ -347,6 +350,7 @@ class Extensions:
 
 builtin_extensions: set[str] = {
     "hybrid",
+    "dataclasses",
 }
 
 

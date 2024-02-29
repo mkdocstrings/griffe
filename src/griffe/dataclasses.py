@@ -203,6 +203,16 @@ class Parameter:
     def __repr__(self) -> str:
         return f"Parameter(name={self.name!r}, annotation={self.annotation!r}, kind={self.kind!r}, default={self.default!r})"
 
+    def __eq__(self, __value: object) -> bool:
+        if not isinstance(__value, Parameter):
+            return NotImplemented
+        return (
+            self.name == __value.name
+            and self.annotation == __value.annotation
+            and self.kind == __value.kind
+            and self.default == __value.default
+        )
+
     @property
     def required(self) -> bool:
         """Whether this parameter is required."""
@@ -1561,14 +1571,6 @@ class Class(Object):
         try:
             return self.all_members["__init__"].parameters  # type: ignore[union-attr]
         except KeyError:
-            if "dataclass" in self.labels:
-                return Parameters(
-                    *[
-                        Parameter(attr.name, annotation=attr.annotation, default=attr.value)
-                        for attr in self.attributes.values()
-                        if "property" not in attr.labels
-                    ],
-                )
             return Parameters()
 
     @cached_property
