@@ -137,13 +137,8 @@ def _reorder_parameters(parameters: list[Parameter]) -> list[Parameter]:
 
 
 def _set_dataclass_init(class_: Class) -> None:
-    parameters = []
-
-    # If the class already has an `__init__` method, skip it.
-    if "__init__" in class_.members:
-        return
-
     # Retrieve parameters from all parent dataclasses.
+    parameters = []
     try:
         mro = class_.mro()
     except ValueError:
@@ -182,7 +177,8 @@ def _apply_recursively(mod_cls: Module | Class, processed: set[str]) -> None:
         return
     processed.add(mod_cls.canonical_path)
     if isinstance(mod_cls, Class):
-        _set_dataclass_init(mod_cls)
+        if "__init__" not in mod_cls.members:
+            _set_dataclass_init(mod_cls)
         for member in mod_cls.members.values():
             if not member.is_alias and member.is_class:
                 _apply_recursively(member, processed)  # type: ignore[arg-type]
