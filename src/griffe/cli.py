@@ -30,8 +30,8 @@ from griffe.encoders import JSONEncoder
 from griffe.enumerations import ExplanationStyle, Parser
 from griffe.exceptions import ExtensionError, GitError
 from griffe.extensions.base import load_extensions
-from griffe.git import _get_latest_tag, _get_repo_root, load_git
-from griffe.loader import GriffeLoader, load
+from griffe.git import get_latest_tag, get_repo_root
+from griffe.loader import GriffeLoader, load, load_git
 from griffe.logger import get_logger
 from griffe.stats import _format_stats
 
@@ -430,12 +430,12 @@ def check(
         search_paths.extend(sys.path)
 
     try:
-        against = against or _get_latest_tag(package)
+        against = against or get_latest_tag(package)
     except GitError as error:
         print(f"griffe: error: {error}", file=sys.stderr)
         return 2
     against_path = against_path or package
-    repository = _get_repo_root(against_path)
+    repository = get_repo_root(against_path)
 
     try:
         loaded_extensions = load_extensions(extensions or ())

@@ -10,7 +10,7 @@ import pytest
 
 from griffe.cli import check
 from griffe.dataclasses import Module
-from griffe.git import load_git
+from griffe.loader import load_git
 from tests import FIXTURES_DIR
 
 if TYPE_CHECKING:

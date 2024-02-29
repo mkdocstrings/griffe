@@ -15,9 +15,8 @@ from griffe.docstrings.numpy import parse as parse_numpy
 from griffe.docstrings.sphinx import parse as parse_sphinx
 from griffe.enumerations import Parser
 from griffe.extensions.base import Extension, load_extensions
-from griffe.git import load_git
 from griffe.importer import dynamic_import
-from griffe.loader import load
+from griffe.loader import load, load_git
 from griffe.logger import get_logger
 
 __all__: list[str] = [

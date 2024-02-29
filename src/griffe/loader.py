@@ -16,6 +16,7 @@ import sys
 import warnings
 from contextlib import suppress
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 
 from griffe.agents.inspector import inspect
@@ -27,13 +28,12 @@ from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingErr
 from griffe.expressions import ExprName
 from griffe.extensions.base import Extensions
 from griffe.finder import ModuleFinder, NamespacePackage, Package
+from griffe.git import tmp_worktree
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 from griffe.stats import stats
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from griffe.enumerations import Parser
 
 logger = get_logger(__name__)
@@ -759,4 +759,82 @@ def load(
     )
 
 
-__all__ = ["GriffeLoader", "load"]
+def load_git(
+    objspec: str | Path | None = None,
+    /,
+    *,
+    ref: str = "HEAD",
+    repo: str | Path = ".",
+    submodules: bool = True,
+    extensions: Extensions | None = None,
+    search_paths: Sequence[str | Path] | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+    allow_inspection: bool = True,
+    find_stubs_package: bool = False,
+    # TODO: Remove at some point.
+    module: str | Path | None = None,
+) -> Object:
+    """Load and return a module from a specific Git reference.
+
+    This function will create a temporary
+    [git worktree](https://git-scm.com/docs/git-worktree) at the requested reference
+    before loading `module` with [`griffe.load`][griffe.loader.load].
+
+    This function requires that the `git` executable is installed.
+
+    Examples:
+        ```python
+        from griffe.loader import load_git
+
+        old_api = load_git("my_module", ref="v0.1.0", repo="path/to/repo")
+        ```
+
+    Parameters:
+        objspec: The Python path of an object, or file path to a module.
+        ref: A Git reference such as a commit, tag or branch.
+        repo: Path to the repository (i.e. the directory *containing* the `.git` directory)
+        submodules: Whether to recurse on the submodules.
+            This parameter only makes sense when loading a package (top-level module).
+        extensions: The extensions to use.
+        search_paths: The paths to search into (relative to the repository root).
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
+        allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        find_stubs_package: Whether to search for stubs-only package.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
+        module: Deprecated. Use `objspec` positional-only parameter instead.
+
+    Returns:
+        A Griffe object.
+    """
+    with tmp_worktree(repo, ref) as worktree:
+        search_paths = [worktree / path for path in search_paths or ["."]]
+        if isinstance(objspec, Path):
+            objspec = worktree / objspec
+        # TODO: Remove at some point.
+        if isinstance(module, Path):
+            module = worktree / module
+        return load(
+            objspec,
+            submodules=submodules,
+            try_relative_path=False,
+            extensions=extensions,
+            search_paths=search_paths,
+            docstring_parser=docstring_parser,
+            docstring_options=docstring_options,
+            lines_collection=lines_collection,
+            modules_collection=modules_collection,
+            allow_inspection=allow_inspection,
+            find_stubs_package=find_stubs_package,
+            # TODO: Remove at some point.
+            module=module,
+        )
+
+
+__all__ = ["GriffeLoader", "load", "load_git"]
