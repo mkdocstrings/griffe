@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier
-_commit: 1.2.1
+_commit: 1.2.4
 _src_path: gh:pawamoy/copier-pdm
 author_email: pawamoy@pm.me
 author_fullname: Timothée Mazzucotelli
@@ -9,6 +9,7 @@ copyright_holder: Timothée Mazzucotelli
 copyright_holder_email: pawamoy@pm.me
 copyright_license: ISC License
 insiders: true
+insiders_email: pawamoy@pm.me
 insiders_repository_name: griffe
 project_description: Signatures for entire Python programs. Extract the structure,
     the frame, the skeleton of your project, to generate API documentation or find
