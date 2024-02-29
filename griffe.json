@@ -73742,7 +73742,7 @@
 "relative_filepath": "src/griffe/extensions/base.py",
 "relative_package_filepath": "griffe/extensions/base.py",
 "lineno": 364,
-"endlineno": 455,
+"endlineno": 454,
 "docstring": {
 "value": "Load a configured extension.\n\nParameters:\n    extension: An extension, with potential configuration options.\n\nRaises:\n    ExtensionNotLoadedError: When the extension cannot be loaded,\n        either because the module is not found, or because it does not expose\n        the Extension attribute. ImportError will bubble up so users can see\n        the traceback.\n\nReturns:\n    An extension instance.",
 "lineno": 367,
@@ -73944,12 +73944,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/base.py",
 "relative_filepath": "src/griffe/extensions/base.py",
 "relative_package_filepath": "griffe/extensions/base.py",
-"lineno": 458,
-"endlineno": 474,
+"lineno": 457,
+"endlineno": 473,
 "docstring": {
 "value": "Load configured extensions.\n\nParameters:\n    exts: A sequence of extension, with potential configuration options.\n\nReturns:\n    An extensions container.",
-"lineno": 459,
-"endlineno": 466,
+"lineno": 458,
+"endlineno": 465,
 "parsed": [
 {
 "kind": "text",
@@ -74119,8 +74119,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/base.py",
 "relative_filepath": "src/griffe/extensions/base.py",
 "relative_package_filepath": "griffe/extensions/base.py",
-"lineno": 477,
-"endlineno": 486,
+"lineno": 476,
+"endlineno": 485,
 "labels": [
 "module-attribute"
 ],
