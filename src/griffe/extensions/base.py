@@ -396,8 +396,6 @@ def _load_extension(
         # Force path to be a string, as it could have been passed from `mkdocs.yml`,
         # using the custom YAML tag `!relative`, which gives an instance of MkDocs
         # path placeholder classes, which are not iterable.
-        # See https://github.com/mkdocs/mkdocs/issues/3414.
-        # TODO: Update when this issue is resolved.
         import_path = str(import_path)
 
     # Otherwise we consider it's an import path, without options.
@@ -407,6 +405,7 @@ def _load_extension(
 
     # If the import path contains a colon, we split into path and class name.
     colons = import_path.count(":")
+    # Special case for The Annoying Operating System.
     if colons > 1 or (colons and ":" not in Path(import_path).drive):
         import_path, extension_name = import_path.rsplit(":", 1)
     else:
@@ -446,7 +445,7 @@ def _load_extension(
                 f"Extension module '{import_path}' has no '{extension_name}' attribute",
             ) from error
 
-    # No class name was specified so we search all extension classes in the module
+    # No class name was specified so we search all extension classes in the module,
     # instantiate each with the same options, and return them.
     extensions = []
     for obj in vars(ext_object).values():
