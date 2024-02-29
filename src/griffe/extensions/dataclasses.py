@@ -147,7 +147,7 @@ def _set_dataclass_init(class_: Class) -> None:
     try:
         mro = class_.mro()
     except ValueError:
-        mro = ()
+        mro = ()  # type: ignore[assignment]
     for parent in reversed(mro):
         if _dataclass_decorator(parent.decorators):
             parameters.extend(_dataclass_parameters(parent))
