@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.41.1](https://github.com/mkdocstrings/griffe/releases/tag/0.41.1) - 2024-03-01
+
+<small>[Compare with 0.41.0](https://github.com/mkdocstrings/griffe/compare/0.41.0...0.41.1)</small>
+
+### Deprecations
+
+- The `load_git` function moved from `griffe.git` to `griffe.loader`.
+  It is still importable from `griffe.git`, but will emit a deprecation warning.
+
+### Code Refactoring
+
+- Expose Git utilities, move `load_git` into the `loader` module ([327cc5b](https://github.com/mkdocstrings/griffe/commit/327cc5b0f28f7236eaaf1c028674b6e0006611da) by Timothée Mazzucotelli).
+
 ## [0.41.0](https://github.com/mkdocstrings/griffe/releases/tag/0.41.0) - 2024-02-26
 
 <small>[Compare with 0.40.1](https://github.com/mkdocstrings/griffe/compare/0.40.1...0.41.0)</small>
