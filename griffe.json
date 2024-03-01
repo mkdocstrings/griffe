@@ -140,35 +140,35 @@
 },
 {
 "kind": "alias",
-"name": "load_git",
-"target_path": "griffe.git.load_git",
-"path": "griffe.load_git",
-"lineno": 18,
-"endlineno": 18
-},
-{
-"kind": "alias",
 "name": "dynamic_import",
 "target_path": "griffe.importer.dynamic_import",
 "path": "griffe.dynamic_import",
-"lineno": 19,
-"endlineno": 19
+"lineno": 18,
+"endlineno": 18
 },
 {
 "kind": "alias",
 "name": "load",
 "target_path": "griffe.loader.load",
 "path": "griffe.load",
-"lineno": 20,
-"endlineno": 20
+"lineno": 19,
+"endlineno": 19
+},
+{
+"kind": "alias",
+"name": "load_git",
+"target_path": "griffe.loader.load_git",
+"path": "griffe.load_git",
+"lineno": 19,
+"endlineno": 19
 },
 {
 "kind": "alias",
 "name": "get_logger",
 "target_path": "griffe.logger.get_logger",
 "path": "griffe.get_logger",
-"lineno": 21,
-"endlineno": 21
+"lineno": 20,
+"endlineno": 20
 },
 {
 "kind": "attribute",
@@ -177,8 +177,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/__init__.py",
 "relative_filepath": "src/griffe/__init__.py",
 "relative_package_filepath": "griffe/__init__.py",
-"lineno": 23,
-"endlineno": 42,
+"lineno": 22,
+"endlineno": 41,
 "labels": [
 "module-attribute"
 ],
@@ -14557,25 +14557,17 @@
 },
 {
 "kind": "alias",
-"name": "_get_latest_tag",
-"target_path": "griffe.git._get_latest_tag",
-"path": "griffe.cli._get_latest_tag",
+"name": "get_latest_tag",
+"target_path": "griffe.git.get_latest_tag",
+"path": "griffe.cli.get_latest_tag",
 "lineno": 33,
 "endlineno": 33
 },
 {
 "kind": "alias",
-"name": "_get_repo_root",
-"target_path": "griffe.git._get_repo_root",
-"path": "griffe.cli._get_repo_root",
-"lineno": 33,
-"endlineno": 33
-},
-{
-"kind": "alias",
-"name": "load_git",
-"target_path": "griffe.git.load_git",
-"path": "griffe.cli.load_git",
+"name": "get_repo_root",
+"target_path": "griffe.git.get_repo_root",
+"path": "griffe.cli.get_repo_root",
 "lineno": 33,
 "endlineno": 33
 },
@@ -14592,6 +14584,14 @@
 "name": "load",
 "target_path": "griffe.loader.load",
 "path": "griffe.cli.load",
+"lineno": 34,
+"endlineno": 34
+},
+{
+"kind": "alias",
+"name": "load_git",
+"target_path": "griffe.loader.load_git",
+"path": "griffe.cli.load_git",
 "lineno": 34,
 "endlineno": 34
 },
@@ -40178,13 +40178,13 @@
 "relative_filepath": "src/griffe/git.py",
 "relative_package_filepath": "griffe/git.py",
 "docstring": {
-"value": "This module contains the code allowing to load modules from specific git commits.\n\n```python\nfrom griffe.git import load_git\n\n# where `repo` is the folder *containing* `.git`\nold_api = load_git(\"my_module\", commit=\"v0.1.0\", repo=\"path/to/repo\")\n```",
+"value": "This module contains Git utilities.",
 "lineno": 1,
-"endlineno": 9,
+"endlineno": 1,
 "parsed": [
 {
 "kind": "text",
-"value": "This module contains the code allowing to load modules from specific git commits.\n\n```python\nfrom griffe.git import load_git\n\n# where `repo` is the folder *containing* `.git`\nold_api = load_git(\"my_module\", commit=\"v0.1.0\", repo=\"path/to/repo\")\n```"
+"value": "This module contains Git utilities."
 }
 ]
 },
@@ -40195,144 +40195,88 @@
 "name": "annotations",
 "target_path": "__future__.annotations",
 "path": "griffe.git.annotations",
-"lineno": 11,
-"endlineno": 11
+"lineno": 3,
+"endlineno": 3
 },
 {
 "kind": "alias",
 "name": "os",
 "target_path": "os",
 "path": "griffe.git.os",
-"lineno": 13,
-"endlineno": 13
+"lineno": 5,
+"endlineno": 5
 },
 {
 "kind": "alias",
 "name": "shutil",
 "target_path": "shutil",
 "path": "griffe.git.shutil",
-"lineno": 14,
-"endlineno": 14
+"lineno": 6,
+"endlineno": 6
 },
 {
 "kind": "alias",
 "name": "subprocess",
 "target_path": "subprocess",
 "path": "griffe.git.subprocess",
-"lineno": 15,
-"endlineno": 15
+"lineno": 7,
+"endlineno": 7
+},
+{
+"kind": "alias",
+"name": "warnings",
+"target_path": "warnings",
+"path": "griffe.git.warnings",
+"lineno": 8,
+"endlineno": 8
 },
 {
 "kind": "alias",
 "name": "contextmanager",
 "target_path": "contextlib.contextmanager",
 "path": "griffe.git.contextmanager",
-"lineno": 16,
-"endlineno": 16
+"lineno": 9,
+"endlineno": 9
 },
 {
 "kind": "alias",
 "name": "Path",
 "target_path": "pathlib.Path",
 "path": "griffe.git.Path",
-"lineno": 17,
-"endlineno": 17
+"lineno": 10,
+"endlineno": 10
 },
 {
 "kind": "alias",
 "name": "TemporaryDirectory",
 "target_path": "tempfile.TemporaryDirectory",
 "path": "griffe.git.TemporaryDirectory",
-"lineno": 18,
-"endlineno": 18
-},
-{
-"kind": "alias",
-"name": "TYPE_CHECKING",
-"target_path": "typing.TYPE_CHECKING",
-"path": "griffe.git.TYPE_CHECKING",
-"lineno": 19,
-"endlineno": 19
+"lineno": 11,
+"endlineno": 11
 },
 {
 "kind": "alias",
 "name": "Any",
 "target_path": "typing.Any",
 "path": "griffe.git.Any",
-"lineno": 19,
-"endlineno": 19
+"lineno": 12,
+"endlineno": 12
 },
 {
 "kind": "alias",
 "name": "Iterator",
 "target_path": "typing.Iterator",
 "path": "griffe.git.Iterator",
-"lineno": 19,
-"endlineno": 19
-},
-{
-"kind": "alias",
-"name": "Sequence",
-"target_path": "typing.Sequence",
-"path": "griffe.git.Sequence",
-"lineno": 19,
-"endlineno": 19
-},
-{
-"kind": "alias",
-"name": "loader",
-"target_path": "griffe.loader",
-"path": "griffe.git.loader",
-"lineno": 21,
-"endlineno": 21
+"lineno": 12,
+"endlineno": 12
 },
 {
 "kind": "alias",
 "name": "GitError",
 "target_path": "griffe.exceptions.GitError",
 "path": "griffe.git.GitError",
-"lineno": 22,
-"endlineno": 22
-},
-{
-"kind": "alias",
-"name": "LinesCollection",
-"target_path": "griffe.collections.LinesCollection",
-"path": "griffe.git.LinesCollection",
-"lineno": 25,
-"endlineno": 25
-},
-{
-"kind": "alias",
-"name": "ModulesCollection",
-"target_path": "griffe.collections.ModulesCollection",
-"path": "griffe.git.ModulesCollection",
-"lineno": 25,
-"endlineno": 25
-},
-{
-"kind": "alias",
-"name": "Object",
-"target_path": "griffe.dataclasses.Object",
-"path": "griffe.git.Object",
-"lineno": 26,
-"endlineno": 26
-},
-{
-"kind": "alias",
-"name": "Parser",
-"target_path": "griffe.enumerations.Parser",
-"path": "griffe.git.Parser",
-"lineno": 27,
-"endlineno": 27
-},
-{
-"kind": "alias",
-"name": "Extensions",
-"target_path": "griffe.extensions.base.Extensions",
-"path": "griffe.git.Extensions",
-"lineno": 28,
-"endlineno": 28
+"lineno": 14,
+"endlineno": 14
 },
 {
 "kind": "attribute",
@@ -40341,8 +40285,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
 "relative_filepath": "src/griffe/git.py",
 "relative_package_filepath": "griffe/git.py",
-"lineno": 31,
-"endlineno": 31,
+"lineno": 16,
+"endlineno": 16,
 "labels": [
 "module-attribute"
 ],
@@ -40351,13 +40295,163 @@
 },
 {
 "kind": "function",
-"name": "_assert_git_repo",
-"path": "griffe.git._assert_git_repo",
+"name": "__getattr__",
+"path": "griffe.git.__getattr__",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
+"relative_filepath": "src/griffe/git.py",
+"relative_package_filepath": "griffe/git.py",
+"lineno": 20,
+"endlineno": 31,
+"labels": [],
+"members": [],
+"decorators": [],
+"parameters": [
+{
+"name": "name",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"kind": "positional or keyword",
+"default": null
+}
+],
+"returns": {
+"name": "Any",
+"cls": "ExprName"
+}
+},
+{
+"kind": "function",
+"name": "assert_git_repo",
+"path": "griffe.git.assert_git_repo",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
 "relative_filepath": "src/griffe/git.py",
 "relative_package_filepath": "griffe/git.py",
 "lineno": 34,
-"endlineno": 46,
+"endlineno": 54,
+"docstring": {
+"value": "Assert that a directory is a Git repository.\n\nParameters:\n    path: Path to a directory.\n\nRaises:\n    OSError: When the directory is not a Git repository.",
+"lineno": 35,
+"endlineno": 42,
+"parsed": [
+{
+"kind": "text",
+"value": "Assert that a directory is a Git repository."
+},
+{
+"kind": "parameters",
+"value": [
+{
+"name": "path",
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"description": "Path to a directory."
+}
+]
+},
+{
+"kind": "raises",
+"value": [
+{
+"annotation": {
+"name": "OSError",
+"cls": "ExprName"
+},
+"description": "When the directory is not a Git repository."
+}
+]
+}
+]
+},
+"labels": [],
+"members": [],
+"decorators": [],
+"parameters": [
+{
+"name": "path",
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"kind": "positional or keyword",
+"default": null
+}
+],
+"returns": "None"
+},
+{
+"kind": "function",
+"name": "get_latest_tag",
+"path": "griffe.git.get_latest_tag",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
+"relative_filepath": "src/griffe/git.py",
+"relative_package_filepath": "griffe/git.py",
+"lineno": 57,
+"endlineno": 81,
+"docstring": {
+"value": "Get latest tag of a Git repository.\n\nParameters:\n    repo: The path to Git repository.\n\nReturns:\n    The latest tag.",
+"lineno": 58,
+"endlineno": 65,
+"parsed": [
+{
+"kind": "text",
+"value": "Get latest tag of a Git repository."
+},
+{
+"kind": "parameters",
+"value": [
+{
+"name": "repo",
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"description": "The path to Git repository."
+}
+]
+},
+{
+"kind": "returns",
+"value": [
+{
+"name": "",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"description": "The latest tag."
+}
+]
+}
+]
+},
 "labels": [],
 "members": [],
 "decorators": [],
@@ -40380,23 +40474,71 @@
 "default": null
 }
 ],
-"returns": "None"
+"returns": {
+"name": "str",
+"cls": "ExprName"
+}
 },
 {
 "kind": "function",
-"name": "_get_latest_tag",
-"path": "griffe.git._get_latest_tag",
+"name": "get_repo_root",
+"path": "griffe.git.get_repo_root",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
 "relative_filepath": "src/griffe/git.py",
 "relative_package_filepath": "griffe/git.py",
-"lineno": 49,
-"endlineno": 65,
+"lineno": 84,
+"endlineno": 101,
+"docstring": {
+"value": "Get the root of a Git repository.\n\nParameters:\n    repo: The path to a Git repository.\n\nReturns:\n    The root of the repository.",
+"lineno": 85,
+"endlineno": 92,
+"parsed": [
+{
+"kind": "text",
+"value": "Get the root of a Git repository."
+},
+{
+"kind": "parameters",
+"value": [
+{
+"name": "repo",
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"description": "The path to a Git repository."
+}
+]
+},
+{
+"kind": "returns",
+"value": [
+{
+"name": "",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"description": "The root of the repository."
+}
+]
+}
+]
+},
 "labels": [],
 "members": [],
 "decorators": [],
 "parameters": [
 {
-"name": "path",
+"name": "repo",
 "annotation": {
 "left": {
 "name": "str",
@@ -40420,53 +40562,17 @@
 },
 {
 "kind": "function",
-"name": "_get_repo_root",
-"path": "griffe.git._get_repo_root",
+"name": "tmp_worktree",
+"path": "griffe.git.tmp_worktree",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
 "relative_filepath": "src/griffe/git.py",
 "relative_package_filepath": "griffe/git.py",
-"lineno": 68,
-"endlineno": 77,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "path",
-"annotation": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"name": "str",
-"cls": "ExprName"
-}
-},
-{
-"kind": "function",
-"name": "_tmp_worktree",
-"path": "griffe.git._tmp_worktree",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
-"relative_filepath": "src/griffe/git.py",
-"relative_package_filepath": "griffe/git.py",
-"lineno": 80,
-"endlineno": 113,
+"lineno": 104,
+"endlineno": 137,
 "docstring": {
 "value": "Context manager that checks out the given reference in the given repository to a temporary worktree.\n\nParameters:\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    ref: A Git reference such as a commit, tag or branch.\n\nYields:\n    The path to the temporary worktree.\n\nRaises:\n    OSError: If `repo` is not a valid `.git` repository\n    RuntimeError: If the `git` executable is unavailable, or if it cannot create a worktree",
-"lineno": 82,
-"endlineno": 94,
+"lineno": 106,
+"endlineno": 118,
 "parsed": [
 {
 "kind": "text",
@@ -40545,8 +40651,8 @@
 "name": "contextmanager",
 "cls": "ExprName"
 },
-"lineno": 80,
-"endlineno": 80
+"lineno": 104,
+"endlineno": 104
 }
 ],
 "parameters": [
@@ -40590,495 +40696,24 @@
 }
 },
 {
-"kind": "function",
-"name": "load_git",
-"path": "griffe.git.load_git",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
-"relative_filepath": "src/griffe/git.py",
-"relative_package_filepath": "griffe/git.py",
-"lineno": 116,
-"endlineno": 184,
-"docstring": {
-"value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.loader.load].\n\nThis function requires that the `git` executable is installed.\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n\nReturns:\n    A Griffe object.",
-"lineno": 134,
-"endlineno": 162,
-"parsed": [
-{
-"kind": "text",
-"value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.loader.load].\n\nThis function requires that the `git` executable is installed."
-},
-{
-"kind": "parameters",
-"value": [
-{
-"name": "objspec",
-"annotation": {
-"left": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "The Python path of an object, or file path to a module.",
-"value": "None"
-},
-{
-"name": "ref",
-"annotation": {
-"name": "str",
-"cls": "ExprName"
-},
-"description": "A Git reference such as a commit, tag or branch.",
-"value": "'HEAD'"
-},
-{
-"name": "repo",
-"annotation": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"description": "Path to the repository (i.e. the directory *containing* the `.git` directory)",
-"value": "'.'"
-},
-{
-"name": "submodules",
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-},
-"description": "Whether to recurse on the submodules.\nThis parameter only makes sense when loading a package (top-level module).",
-"value": "True"
-},
-{
-"name": "extensions",
-"annotation": {
-"left": {
-"name": "Extensions",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "The extensions to use.",
-"value": "None"
-},
-{
-"name": "search_paths",
-"annotation": {
-"left": {
-"left": {
-"name": "Sequence",
-"cls": "ExprName"
-},
-"slice": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"cls": "ExprSubscript"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "The paths to search into (relative to the repository root).",
-"value": "None"
-},
-{
-"name": "docstring_parser",
-"annotation": {
-"left": {
-"name": "Parser",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "The docstring parser to use. By default, no parsing is done.",
-"value": "None"
-},
-{
-"name": "docstring_options",
-"annotation": {
-"left": {
-"left": {
-"name": "dict",
-"cls": "ExprName"
-},
-"slice": {
-"elements": [
-{
-"name": "str",
-"cls": "ExprName"
-},
-{
-"name": "Any",
-"cls": "ExprName"
-}
-],
-"implicit": true,
-"cls": "ExprTuple"
-},
-"cls": "ExprSubscript"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "Additional docstring parsing options.",
-"value": "None"
-},
-{
-"name": "lines_collection",
-"annotation": {
-"left": {
-"name": "LinesCollection",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "A collection of source code lines.",
-"value": "None"
-},
-{
-"name": "modules_collection",
-"annotation": {
-"left": {
-"name": "ModulesCollection",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "A collection of modules.",
-"value": "None"
-},
-{
-"name": "allow_inspection",
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-},
-"description": "Whether to allow inspecting modules when visiting them is not possible.",
-"value": "True"
-},
-{
-"name": "find_stubs_package",
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-},
-"description": "Whether to search for stubs-only package.\nIf both the package and its stubs are found, they'll be merged together.\nIf only the stubs are found, they'll be used as the package itself.",
-"value": "False"
-},
-{
-"name": "module",
-"annotation": {
-"left": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"description": "Deprecated. Use `objspec` positional-only parameter instead.",
-"value": "None"
-}
-]
-},
-{
-"kind": "returns",
-"value": [
-{
-"name": "",
-"annotation": {
-"name": "Object",
-"cls": "ExprName"
-},
-"description": "A Griffe object."
-}
-]
-}
-]
-},
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "objspec",
-"annotation": {
-"left": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "positional-only",
-"default": "None"
-},
-{
-"name": "ref",
-"annotation": {
-"name": "str",
-"cls": "ExprName"
-},
-"kind": "keyword-only",
-"default": "'HEAD'"
-},
-{
-"name": "repo",
-"annotation": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "'.'"
-},
-{
-"name": "submodules",
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-},
-"kind": "keyword-only",
-"default": "True"
-},
-{
-"name": "extensions",
-"annotation": {
-"left": {
-"name": "Extensions",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-},
-{
-"name": "search_paths",
-"annotation": {
-"left": {
-"left": {
-"name": "Sequence",
-"cls": "ExprName"
-},
-"slice": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"cls": "ExprSubscript"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-},
-{
-"name": "docstring_parser",
-"annotation": {
-"left": {
-"name": "Parser",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-},
-{
-"name": "docstring_options",
-"annotation": {
-"left": {
-"left": {
-"name": "dict",
-"cls": "ExprName"
-},
-"slice": {
-"elements": [
-{
-"name": "str",
-"cls": "ExprName"
-},
-{
-"name": "Any",
-"cls": "ExprName"
-}
-],
-"implicit": true,
-"cls": "ExprTuple"
-},
-"cls": "ExprSubscript"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-},
-{
-"name": "lines_collection",
-"annotation": {
-"left": {
-"name": "LinesCollection",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-},
-{
-"name": "modules_collection",
-"annotation": {
-"left": {
-"name": "ModulesCollection",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-},
-{
-"name": "allow_inspection",
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-},
-"kind": "keyword-only",
-"default": "True"
-},
-{
-"name": "find_stubs_package",
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-},
-"kind": "keyword-only",
-"default": "False"
-},
-{
-"name": "module",
-"annotation": {
-"left": {
-"left": {
-"name": "str",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Path",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"operator": "|",
-"right": "None",
-"cls": "ExprBinOp"
-},
-"kind": "keyword-only",
-"default": "None"
-}
-],
-"returns": {
-"name": "Object",
-"cls": "ExprName"
-}
-},
-{
 "kind": "attribute",
 "name": "__all__",
 "path": "griffe.git.__all__",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/git.py",
 "relative_filepath": "src/griffe/git.py",
 "relative_package_filepath": "griffe/git.py",
-"lineno": 187,
-"endlineno": 187,
+"lineno": 140,
+"endlineno": 140,
 "labels": [
 "module-attribute"
 ],
 "members": [],
 "value": {
 "elements": [
-"'load_git'"
+"'assert_git_repo'",
+"'get_latest_tag'",
+"'get_repo_root'",
+"'tmp_worktree'"
 ],
 "cls": "ExprList"
 }
@@ -42279,211 +41914,219 @@
 },
 {
 "kind": "alias",
+"name": "Path",
+"target_path": "pathlib.Path",
+"path": "griffe.loader.Path",
+"lineno": 19,
+"endlineno": 19
+},
+{
+"kind": "alias",
 "name": "TYPE_CHECKING",
 "target_path": "typing.TYPE_CHECKING",
 "path": "griffe.loader.TYPE_CHECKING",
-"lineno": 19,
-"endlineno": 19
+"lineno": 20,
+"endlineno": 20
 },
 {
 "kind": "alias",
 "name": "Any",
 "target_path": "typing.Any",
 "path": "griffe.loader.Any",
-"lineno": 19,
-"endlineno": 19
+"lineno": 20,
+"endlineno": 20
 },
 {
 "kind": "alias",
 "name": "ClassVar",
 "target_path": "typing.ClassVar",
 "path": "griffe.loader.ClassVar",
-"lineno": 19,
-"endlineno": 19
+"lineno": 20,
+"endlineno": 20
 },
 {
 "kind": "alias",
 "name": "Sequence",
 "target_path": "typing.Sequence",
 "path": "griffe.loader.Sequence",
-"lineno": 19,
-"endlineno": 19
+"lineno": 20,
+"endlineno": 20
 },
 {
 "kind": "alias",
 "name": "cast",
 "target_path": "typing.cast",
 "path": "griffe.loader.cast",
-"lineno": 19,
-"endlineno": 19
+"lineno": 20,
+"endlineno": 20
 },
 {
 "kind": "alias",
 "name": "inspect",
 "target_path": "griffe.agents.inspector.inspect",
 "path": "griffe.loader.inspect",
-"lineno": 21,
-"endlineno": 21
+"lineno": 22,
+"endlineno": 22
 },
 {
 "kind": "alias",
 "name": "visit",
 "target_path": "griffe.agents.visitor.visit",
 "path": "griffe.loader.visit",
-"lineno": 22,
-"endlineno": 22
+"lineno": 23,
+"endlineno": 23
 },
 {
 "kind": "alias",
 "name": "LinesCollection",
 "target_path": "griffe.collections.LinesCollection",
 "path": "griffe.loader.LinesCollection",
-"lineno": 23,
-"endlineno": 23
+"lineno": 24,
+"endlineno": 24
 },
 {
 "kind": "alias",
 "name": "ModulesCollection",
 "target_path": "griffe.collections.ModulesCollection",
 "path": "griffe.loader.ModulesCollection",
-"lineno": 23,
-"endlineno": 23
+"lineno": 24,
+"endlineno": 24
 },
 {
 "kind": "alias",
 "name": "Alias",
 "target_path": "griffe.dataclasses.Alias",
 "path": "griffe.loader.Alias",
-"lineno": 24,
-"endlineno": 24
+"lineno": 25,
+"endlineno": 25
 },
 {
 "kind": "alias",
 "name": "Module",
 "target_path": "griffe.dataclasses.Module",
 "path": "griffe.loader.Module",
-"lineno": 24,
-"endlineno": 24
+"lineno": 25,
+"endlineno": 25
 },
 {
 "kind": "alias",
 "name": "Object",
 "target_path": "griffe.dataclasses.Object",
 "path": "griffe.loader.Object",
-"lineno": 24,
-"endlineno": 24
+"lineno": 25,
+"endlineno": 25
 },
 {
 "kind": "alias",
 "name": "Kind",
 "target_path": "griffe.enumerations.Kind",
 "path": "griffe.loader.Kind",
-"lineno": 25,
-"endlineno": 25
+"lineno": 26,
+"endlineno": 26
 },
 {
 "kind": "alias",
 "name": "AliasResolutionError",
 "target_path": "griffe.exceptions.AliasResolutionError",
 "path": "griffe.loader.AliasResolutionError",
-"lineno": 26,
-"endlineno": 26
+"lineno": 27,
+"endlineno": 27
 },
 {
 "kind": "alias",
 "name": "CyclicAliasError",
 "target_path": "griffe.exceptions.CyclicAliasError",
 "path": "griffe.loader.CyclicAliasError",
-"lineno": 26,
-"endlineno": 26
+"lineno": 27,
+"endlineno": 27
 },
 {
 "kind": "alias",
 "name": "LoadingError",
 "target_path": "griffe.exceptions.LoadingError",
 "path": "griffe.loader.LoadingError",
-"lineno": 26,
-"endlineno": 26
+"lineno": 27,
+"endlineno": 27
 },
 {
 "kind": "alias",
 "name": "UnimportableModuleError",
 "target_path": "griffe.exceptions.UnimportableModuleError",
 "path": "griffe.loader.UnimportableModuleError",
-"lineno": 26,
-"endlineno": 26
+"lineno": 27,
+"endlineno": 27
 },
 {
 "kind": "alias",
 "name": "ExprName",
 "target_path": "griffe.expressions.ExprName",
 "path": "griffe.loader.ExprName",
-"lineno": 27,
-"endlineno": 27
+"lineno": 28,
+"endlineno": 28
 },
 {
 "kind": "alias",
 "name": "Extensions",
 "target_path": "griffe.extensions.base.Extensions",
 "path": "griffe.loader.Extensions",
-"lineno": 28,
-"endlineno": 28
+"lineno": 29,
+"endlineno": 29
 },
 {
 "kind": "alias",
 "name": "ModuleFinder",
 "target_path": "griffe.finder.ModuleFinder",
 "path": "griffe.loader.ModuleFinder",
-"lineno": 29,
-"endlineno": 29
+"lineno": 30,
+"endlineno": 30
 },
 {
 "kind": "alias",
 "name": "NamespacePackage",
 "target_path": "griffe.finder.NamespacePackage",
 "path": "griffe.loader.NamespacePackage",
-"lineno": 29,
-"endlineno": 29
+"lineno": 30,
+"endlineno": 30
 },
 {
 "kind": "alias",
 "name": "Package",
 "target_path": "griffe.finder.Package",
 "path": "griffe.loader.Package",
-"lineno": 29,
-"endlineno": 29
+"lineno": 30,
+"endlineno": 30
+},
+{
+"kind": "alias",
+"name": "tmp_worktree",
+"target_path": "griffe.git.tmp_worktree",
+"path": "griffe.loader.tmp_worktree",
+"lineno": 31,
+"endlineno": 31
 },
 {
 "kind": "alias",
 "name": "get_logger",
 "target_path": "griffe.logger.get_logger",
 "path": "griffe.loader.get_logger",
-"lineno": 30,
-"endlineno": 30
+"lineno": 32,
+"endlineno": 32
 },
 {
 "kind": "alias",
 "name": "merge_stubs",
 "target_path": "griffe.merger.merge_stubs",
 "path": "griffe.loader.merge_stubs",
-"lineno": 31,
-"endlineno": 31
+"lineno": 33,
+"endlineno": 33
 },
 {
 "kind": "alias",
 "name": "stats",
 "target_path": "griffe.stats.stats",
 "path": "griffe.loader.stats",
-"lineno": 32,
-"endlineno": 32
-},
-{
-"kind": "alias",
-"name": "Path",
-"target_path": "pathlib.Path",
-"path": "griffe.loader.Path",
-"lineno": 35,
-"endlineno": 35
+"lineno": 34,
+"endlineno": 34
 },
 {
 "kind": "alias",
@@ -45374,14 +45017,497 @@
 }
 },
 {
+"kind": "function",
+"name": "load_git",
+"path": "griffe.loader.load_git",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
+"relative_filepath": "src/griffe/loader.py",
+"relative_package_filepath": "griffe/loader.py",
+"lineno": 762,
+"endlineno": 837,
+"docstring": {
+"value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.loader.load].\n\nThis function requires that the `git` executable is installed.\n\nExamples:\n    ```python\n    from griffe.loader import load_git\n\n    old_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n    ```\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n\nReturns:\n    A Griffe object.",
+"lineno": 780,
+"endlineno": 815,
+"parsed": [
+{
+"kind": "text",
+"value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.loader.load].\n\nThis function requires that the `git` executable is installed."
+},
+{
+"kind": "examples",
+"value": [
+[
+"text",
+"```python\nfrom griffe.loader import load_git\n\nold_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n```"
+]
+]
+},
+{
+"kind": "parameters",
+"value": [
+{
+"name": "objspec",
+"annotation": {
+"left": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "The Python path of an object, or file path to a module.",
+"value": "None"
+},
+{
+"name": "ref",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"description": "A Git reference such as a commit, tag or branch.",
+"value": "'HEAD'"
+},
+{
+"name": "repo",
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"description": "Path to the repository (i.e. the directory *containing* the `.git` directory)",
+"value": "'.'"
+},
+{
+"name": "submodules",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to recurse on the submodules.\nThis parameter only makes sense when loading a package (top-level module).",
+"value": "True"
+},
+{
+"name": "extensions",
+"annotation": {
+"left": {
+"name": "Extensions",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "The extensions to use.",
+"value": "None"
+},
+{
+"name": "search_paths",
+"annotation": {
+"left": {
+"left": {
+"name": "Sequence",
+"cls": "ExprName"
+},
+"slice": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"cls": "ExprSubscript"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "The paths to search into (relative to the repository root).",
+"value": "None"
+},
+{
+"name": "docstring_parser",
+"annotation": {
+"left": {
+"name": "Parser",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "The docstring parser to use. By default, no parsing is done.",
+"value": "None"
+},
+{
+"name": "docstring_options",
+"annotation": {
+"left": {
+"left": {
+"name": "dict",
+"cls": "ExprName"
+},
+"slice": {
+"elements": [
+{
+"name": "str",
+"cls": "ExprName"
+},
+{
+"name": "Any",
+"cls": "ExprName"
+}
+],
+"implicit": true,
+"cls": "ExprTuple"
+},
+"cls": "ExprSubscript"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "Additional docstring parsing options.",
+"value": "None"
+},
+{
+"name": "lines_collection",
+"annotation": {
+"left": {
+"name": "LinesCollection",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "A collection of source code lines.",
+"value": "None"
+},
+{
+"name": "modules_collection",
+"annotation": {
+"left": {
+"name": "ModulesCollection",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "A collection of modules.",
+"value": "None"
+},
+{
+"name": "allow_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to allow inspecting modules when visiting them is not possible.",
+"value": "True"
+},
+{
+"name": "find_stubs_package",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to search for stubs-only package.\nIf both the package and its stubs are found, they'll be merged together.\nIf only the stubs are found, they'll be used as the package itself.",
+"value": "False"
+},
+{
+"name": "module",
+"annotation": {
+"left": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "Deprecated. Use `objspec` positional-only parameter instead.",
+"value": "None"
+}
+]
+},
+{
+"kind": "returns",
+"value": [
+{
+"name": "",
+"annotation": {
+"name": "Object",
+"cls": "ExprName"
+},
+"description": "A Griffe object."
+}
+]
+}
+]
+},
+"labels": [],
+"members": [],
+"decorators": [],
+"parameters": [
+{
+"name": "objspec",
+"annotation": {
+"left": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "positional-only",
+"default": "None"
+},
+{
+"name": "ref",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "'HEAD'"
+},
+{
+"name": "repo",
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "'.'"
+},
+{
+"name": "submodules",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "True"
+},
+{
+"name": "extensions",
+"annotation": {
+"left": {
+"name": "Extensions",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "search_paths",
+"annotation": {
+"left": {
+"left": {
+"name": "Sequence",
+"cls": "ExprName"
+},
+"slice": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"cls": "ExprSubscript"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "docstring_parser",
+"annotation": {
+"left": {
+"name": "Parser",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "docstring_options",
+"annotation": {
+"left": {
+"left": {
+"name": "dict",
+"cls": "ExprName"
+},
+"slice": {
+"elements": [
+{
+"name": "str",
+"cls": "ExprName"
+},
+{
+"name": "Any",
+"cls": "ExprName"
+}
+],
+"implicit": true,
+"cls": "ExprTuple"
+},
+"cls": "ExprSubscript"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "lines_collection",
+"annotation": {
+"left": {
+"name": "LinesCollection",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "modules_collection",
+"annotation": {
+"left": {
+"name": "ModulesCollection",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "allow_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "True"
+},
+{
+"name": "find_stubs_package",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
+"name": "module",
+"annotation": {
+"left": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": {
+"name": "Path",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+}
+],
+"returns": {
+"name": "Object",
+"cls": "ExprName"
+}
+},
+{
 "kind": "attribute",
 "name": "__all__",
 "path": "griffe.loader.__all__",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 762,
-"endlineno": 762,
+"lineno": 840,
+"endlineno": 840,
 "labels": [
 "module-attribute"
 ],
@@ -45389,7 +45515,8 @@
 "value": {
 "elements": [
 "'GriffeLoader'",
-"'load'"
+"'load'",
+"'load_git'"
 ],
 "cls": "ExprList"
 }
