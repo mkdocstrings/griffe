@@ -8,3 +8,9 @@ goals:
     - name: "GitHub output format for the `griffe check` command"
       ref: /checking#github
       since: 2024/01/16
+  1500:
+    name: HyperLamp Quick Start Guide
+    features:
+    - name: "Check API of Python packages from PyPI"
+      ref: /checking#using-pypi
+      since: 2024/03/02
