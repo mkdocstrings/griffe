@@ -1,6 +1,6 @@
 # Insiders
 
-*griffe* follows the **sponsorware** release strategy, which means
+*Griffe* follows the **sponsorware** release strategy, which means
 that new features are first exclusively released to sponsors as part of
 [Insiders][insiders]. Read on to learn [what sponsorships achieve][sponsorship],
 [how to become a sponsor][sponsors] to get access to Insiders,
@@ -8,7 +8,7 @@ and [what's in it for you][features]!
 
 ## What is Insiders?
 
-*griffe Insiders* is a private fork of *griffe*, hosted as
+*Griffe Insiders* is a private fork of *Griffe*, hosted as
 a private GitHub repository. Almost[^1] [all new features][features]
 are developed as part of this fork, which means that they are immediately
 available to all eligible sponsors, as they are made collaborators of this
@@ -17,11 +17,11 @@ repository.
   [^1]:
     In general, every new feature is first exclusively released to sponsors, but
     sometimes upstream dependencies enhance
-    existing features that must be supported by *griffe*.
+    existing features that must be supported by *Griffe*.
 
 Every feature is tied to a [funding goal][funding] in monthly subscriptions. When a
 funding goal is hit, the features that are tied to it are merged back into
-*griffe* and released for general availability, making them available
+*Griffe* and released for general availability, making them available
 to all users. Bugfixes are always released in tandem.
 
 Sponsorships start as low as [**$10 a month**][sponsors].[^2]
@@ -44,7 +44,7 @@ The biggest bottleneck in Open Source is time.[^3]
   [^3]:
     Making an Open Source project sustainable is exceptionally hard: maintainers
     burn out, projects are abandoned. That's not great and very unpredictable.
-    The sponsorware model ensures that if you decide to use *griffe*,
+    The sponsorware model ensures that if you decide to use *Griffe*,
     you can be sure that bugs are fixed quickly and new features are added
     regularly.
 
@@ -60,17 +60,31 @@ data_source = "docs/insiders/goals.yml"
 ```
 
 <!-- blacken-docs:off -->
-```python exec="1" session="insiders"
+```python exec="1" session="insiders" idprefix=""
 --8<-- "scripts/insiders.py"
 
-print(
-    f"""The moment you <a href="#how-to-become-a-sponsor">become a sponsor</a>, you'll get **immediate
-    access to {len(unreleased_features)} additional features** that you can start using right away, and
-    which are currently exclusively available to sponsors:\n"""
-)
+if unreleased_features:
+    print(
+        "The moment you [become a sponsor](#how-to-become-a-sponsor), you'll get **immediate "
+        f"access to {len(unreleased_features)} additional features** that you can start using right away, and "
+        "which are currently exclusively available to sponsors:\n"
+    )
 
-for feature in unreleased_features:
-    feature.render(badge=True)
+    for feature in unreleased_features:
+        feature.render(badge=True)
+
+    print(
+        "\n\nThese are just the features related to this project. "
+        "[See the complete feature list on the author's main Insiders page](https://pawamoy.github.io/insiders/#whats-in-it-for-me)."
+    )
+else:
+    print(
+        "The moment you [become a sponsor](#how-to-become-a-sponsor), you'll get immediate "
+        "access to all released features that you can start using right away, and "
+        "which are exclusively available to sponsors. At this moment, there are no "
+        "Insiders features for this project, but checkout the [next funding goals](#goals) "
+        "to see what's coming, as well as **[the feature list for all Insiders projects](https://pawamoy.github.io/insiders/#whats-in-it-for-me).**"
+    )
 ```
 <!-- blacken-docs:on -->
 
@@ -83,7 +97,7 @@ You can use your individual or organization GitHub account for sponsoring.
 
 **Important**: If you're sponsoring **[@pawamoy][github sponsor profile]**
 through a GitHub organization, please send a short email
-to pawamoy@pm.me with the name of your
+to insiders@pawamoy.fr with the name of your
 organization and the GitHub account of the individual
 that should be added as a collaborator.[^4]
 
@@ -92,7 +106,7 @@ You can cancel your sponsorship anytime.[^5]
   [^4]:
     It's currently not possible to grant access to each member of an
     organization, as GitHub only allows for adding users. Thus, after
-    sponsoring, please send an email to pawamoy@pm.me, stating which
+    sponsoring, please send an email to insiders@pawamoy.fr, stating which
     account should become a collaborator of the Insiders repository. We're
     working on a solution which will make access to organizations much simpler.
     To ensure that access is not tied to a particular individual GitHub account,
@@ -128,7 +142,7 @@ You can cancel your sponsorship anytime.[^5]
 
 <small>
   If you sponsor publicly, you're automatically added here with a link to
-  your profile and avatar to show your support for *griffe*.
+  your profile and avatar to show your support for *Griffe*.
   Alternatively, if you wish to keep your sponsorship private, you'll be a
   silent +1. You can select visibility during checkout and change it
   afterwards.
@@ -168,16 +182,14 @@ for goal in goals.values():
 ### Compatibility
 
 > We're building an open source project and want to allow outside collaborators
-to use *griffe* locally without having access to Insiders.
+to use *Griffe* locally without having access to Insiders.
 Is this still possible?
 
-Yes. Insiders is compatible with *griffe*. Almost all new features
+Yes. Insiders is compatible with *Griffe*. Almost all new features
 and configuration options are either backward-compatible or implemented behind
 feature flags. Most Insiders features enhance the overall experience,
 though while these features add value for the users of your project, they
 shouldn't be necessary for previewing when making changes to content.
-
-
 
 ### Payment
 
@@ -188,15 +200,15 @@ yearly billing cycle][billing cycle]. If for some reason you cannot do that, you
 could also create a dedicated GitHub account with a yearly billing cycle, which
 you only use for sponsoring (some sponsors already do that).
 
-If you have any problems or further questions, please reach out to pawamoy@pm.me.
+If you have any problems or further questions, please reach out to insiders@pawamoy.fr.
 
 ### Terms
 
 > Are we allowed to use Insiders under the same terms and conditions as
-*griffe*?
+*Griffe*?
 
-Yes. Whether you're an individual or a company, you may use *griffe
-Insiders* precisely under the same terms as *griffe*, which are given
+Yes. Whether you're an individual or a company, you may use *Griffe
+Insiders* precisely under the same terms as *Griffe*, which are given
 by the [ISC License][license]. However, we kindly ask you to respect our
 **fair use policy**:
 

@@ -1,4 +1,4 @@
-site_name: "griffe"
+site_name: "Griffe"
 site_description: "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 site_url: "https://mkdocstrings.github.io/griffe"
 repo_url: "https://github.com/mkdocstrings/griffe"

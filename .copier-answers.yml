@@ -1,20 +1,20 @@
 # Changes here will be overwritten by Copier
-_commit: 1.2.4
+_commit: 1.2.5
 _src_path: gh:pawamoy/copier-pdm
-author_email: pawamoy@pm.me
+author_email: dev@pawamoy.fr
 author_fullname: Timothée Mazzucotelli
 author_username: pawamoy
 copyright_date: '2021'
 copyright_holder: Timothée Mazzucotelli
-copyright_holder_email: pawamoy@pm.me
+copyright_holder_email: dev@pawamoy.fr
 copyright_license: ISC License
 insiders: true
-insiders_email: pawamoy@pm.me
+insiders_email: insiders@pawamoy.fr
 insiders_repository_name: griffe
 project_description: Signatures for entire Python programs. Extract the structure,
     the frame, the skeleton of your project, to generate API documentation or find
     breaking changes in your API.
-project_name: griffe
+project_name: Griffe
 public_release: true
 python_package_command_line_name: griffe
 python_package_distribution_name: griffe

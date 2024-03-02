@@ -4,7 +4,7 @@ title: Getting started with Insiders
 
 # Getting started with Insiders
 
-*griffe Insiders* is a compatible drop-in replacement for *griffe*,
+*Griffe Insiders* is a compatible drop-in replacement for *Griffe*,
 and can be installed similarly using `pip` or `git`.
 Note that in order to access the Insiders  repository,
 you need to [become an eligible sponsor] of @pawamoy on GitHub.
@@ -25,7 +25,7 @@ and [how to use it](https://pawamoy.github.io/pypi-insiders/#usage).
 
 ### with pip (ssh/https)
 
-*griffe Insiders* can be installed with `pip` [using SSH][using ssh]:
+*Griffe Insiders* can be installed with `pip` [using SSH][using ssh]:
 
 ```bash
 pip install git+ssh://git@github.com/pawamoy-insiders/griffe.git
@@ -60,7 +60,7 @@ pip install git+https://${GH_TOKEN}@github.com/pawamoy-insiders/griffe.git
 
 ### with pip (self-hosted)
 
-Self-hosting the Insiders package makes it possible to depend on *griffe* normally,
+Self-hosting the Insiders package makes it possible to depend on *Griffe* normally,
 while transparently downloading and installing the Insiders version locally.
 It means that you can specify your dependencies normally, and your contributors without access
 to Insiders will get the public version, while you get the Insiders version on your machine.
@@ -175,7 +175,7 @@ as it is against our [Terms of use](index.md#terms).**
 
 ### with git
 
-Of course, you can use *griffe Insiders* directly from `git`:
+Of course, you can use *Griffe Insiders* directly from `git`:
 
 ```
 git clone git@github.com:pawamoy-insiders/griffe
@@ -189,7 +189,7 @@ pip install -e griffe
 
 ## Upgrading
 
-When upgrading Insiders, you should always check the version of *griffe*
+When upgrading Insiders, you should always check the version of *Griffe*
 which makes up the first part of the version qualifier. For example, a version like
 `8.x.x.4.x.x` means that Insiders `4.x.x` is currently based on `8.x.x`.
 
