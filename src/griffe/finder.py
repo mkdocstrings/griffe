@@ -346,6 +346,8 @@ class ModuleFinder:
         )
 
     def _module_name_path(self, path: Path) -> tuple[str, Path]:
+        # Always return absolute paths to avoid working-directory-dependent issues.
+        path = path.absolute()
         if path.is_dir():
             for ext in self.accepted_py_module_extensions:
                 module_path = path / f"__init__{ext}"
@@ -354,9 +356,7 @@ class ModuleFinder:
             return path.name, path
         if path.exists():
             if path.stem == "__init__":
-                if path.parent.is_absolute():
-                    return path.parent.name, path
-                return path.parent.resolve().name, path
+                return path.parent.name, path
             return path.stem, path
         raise FileNotFoundError
 
@@ -392,10 +392,11 @@ class ModuleFinder:
     def _top_module_name(self, path: Path) -> str:
         # First find if a parent is in search paths.
         parent_path = path if path.is_dir() else path.parent
+        # Always resolve parent path to compare for relativeness against resolved search paths.
+        parent_path = parent_path.resolve()
         for search_path in self.search_paths:
             with suppress(ValueError):
-                # FIXME: It does not work when `parent_path` is relative and `search_path` absolute.
-                rel_path = parent_path.relative_to(search_path)
+                rel_path = parent_path.relative_to(search_path.resolve())
                 top_path = search_path / rel_path.parts[0]
                 return top_path.name
         # If not, get the highest directory with an `__init__` module,
