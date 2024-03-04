@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.41.3](https://github.com/mkdocstrings/griffe/releases/tag/0.41.3) - 2024-03-04
+
+<small>[Compare with 0.41.2](https://github.com/mkdocstrings/griffe/compare/0.41.2...0.41.3)</small>
+
+### Code Refactoring
+
+- Catch index errors when finding top module in case of search path misconfiguration ([46c56c7](https://github.com/mkdocstrings/griffe/commit/46c56c7ff505531f5422f526ad38095ed463cc1b) by Timothée Mazzucotelli). [Issue-#246](https://github.com/mkdocstrings/griffe/issues/246)
+
 ## [0.41.2](https://github.com/mkdocstrings/griffe/releases/tag/0.41.2) - 2024-03-03
 
 <small>[Compare with 0.41.1](https://github.com/mkdocstrings/griffe/compare/0.41.1...0.41.2)</small>
