@@ -395,10 +395,9 @@ class ModuleFinder:
         # Always resolve parent path to compare for relativeness against resolved search paths.
         parent_path = parent_path.resolve()
         for search_path in self.search_paths:
-            with suppress(ValueError):
+            with suppress(ValueError, IndexError):
                 rel_path = parent_path.relative_to(search_path.resolve())
-                top_path = search_path / rel_path.parts[0]
-                return top_path.name
+                return rel_path.parts[0]
         # If not, get the highest directory with an `__init__` module,
         # add its parent to search paths and return it.
         while parent_path.parent != parent_path and (parent_path.parent / "__init__.py").exists():
