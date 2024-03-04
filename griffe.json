@@ -38644,7 +38644,7 @@
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
 "lineno": 82,
-"endlineno": 407,
+"endlineno": 406,
 "docstring": {
 "value": "The Griffe finder, allowing to find modules on the file system.",
 "lineno": 83,
@@ -39843,7 +39843,7 @@
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
 "lineno": 392,
-"endlineno": 407,
+"endlineno": 406,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -39880,8 +39880,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 410,
-"endlineno": 410,
+"lineno": 409,
+"endlineno": 409,
 "labels": [
 "module-attribute"
 ],
@@ -39913,8 +39913,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 411,
-"endlineno": 411,
+"lineno": 410,
+"endlineno": 410,
 "labels": [
 "module-attribute"
 ],
@@ -39946,8 +39946,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 412,
-"endlineno": 412,
+"lineno": 411,
+"endlineno": 411,
 "labels": [
 "module-attribute"
 ],
@@ -39979,8 +39979,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 417,
-"endlineno": 419,
+"lineno": 416,
+"endlineno": 418,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -40007,8 +40007,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 422,
-"endlineno": 423,
+"lineno": 421,
+"endlineno": 422,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -40035,8 +40035,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 426,
-"endlineno": 429,
+"lineno": 425,
+"endlineno": 428,
 "labels": [
 "dataclass"
 ],
@@ -40048,8 +40048,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 428,
-"endlineno": 428,
+"lineno": 427,
+"endlineno": 427,
 "labels": [
 "instance-attribute"
 ],
@@ -40066,8 +40066,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 429,
-"endlineno": 429,
+"lineno": 428,
+"endlineno": 428,
 "labels": [
 "class-attribute",
 "instance-attribute"
@@ -40087,8 +40087,8 @@
 "name": "dataclass",
 "cls": "ExprName"
 },
-"lineno": 426,
-"endlineno": 426
+"lineno": 425,
+"endlineno": 425
 }
 ]
 },
@@ -40099,8 +40099,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 432,
-"endlineno": 452,
+"lineno": 431,
+"endlineno": 451,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -40134,8 +40134,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 455,
-"endlineno": 496,
+"lineno": 454,
+"endlineno": 495,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -40169,8 +40169,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 499,
-"endlineno": 499,
+"lineno": 498,
+"endlineno": 498,
 "labels": [
 "module-attribute"
 ],
