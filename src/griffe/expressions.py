@@ -108,6 +108,16 @@ class Expr:
         """
         yield from ()
 
+    def modernize(self) -> Expr:
+        """Modernize the expression.
+
+        For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+        Returns:
+            A modernized expression.
+        """
+        return self
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return the expression as a dictionary.
 
