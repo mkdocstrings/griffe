@@ -473,8 +473,17 @@ def load_extensions(
             extensions.add(*ext)
         else:
             extensions.add(ext)
+
     # TODO: Deprecate and remove at some point?
-    extensions.add(*_load_extension("dataclasses"))  # type: ignore[misc]
+    # Always add our built-in dataclasses extension.
+    from griffe.extensions.dataclasses import DataclassesExtension
+
+    for ext in extensions._extensions:
+        if type(ext) == DataclassesExtension:
+            break
+    else:
+        extensions.add(*_load_extension("dataclasses"))  # type: ignore[misc]
+
     return extensions
 
 
