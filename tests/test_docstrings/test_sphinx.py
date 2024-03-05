@@ -996,7 +996,7 @@ def test_parse__raise_no_name__error(parse_sphinx: ParserType) -> None:
     assert "Failed to parse exception directive from" in warnings[0]
 
 
-def test_parse_module_attributes_section__expected_attributes_section(parse_sphinx: ParserType) -> None:
+def test_parse__module_attributes_section__expected_attributes_section(parse_sphinx: ParserType) -> None:
     """Parse attributes section in modules.
 
     Parameters:
@@ -1035,3 +1035,20 @@ def test_parse_module_attributes_section__expected_attributes_section(parse_sphi
     for index, expected in enumerate(expected_kwargs):
         assert_attribute_equal(attr_section.value[index], DocstringAttribute(**expected))  # type: ignore[arg-type]
     assert not warnings
+
+
+def test_parse__properties_return_type(parse_sphinx: ParserType) -> None:
+    """Parse attributes section in modules.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = """
+        Property that returns True for explaining the issue.
+
+        :return: True
+    """
+    prop = Attribute("example", annotation="bool")
+    sections, warnings = parse_sphinx(docstring, parent=prop)
+    assert not warnings
+    assert sections[1].value[0].annotation == "bool"
