@@ -33,7 +33,7 @@ from griffe.collections import LinesCollection, ModulesCollection
 from griffe.dataclasses import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.enumerations import ObjectKind, ParameterKind
 from griffe.expressions import safe_get_annotation
-from griffe.extensions.base import Extensions
+from griffe.extensions.base import Extensions, load_extensions
 from griffe.importer import dynamic_import
 
 if TYPE_CHECKING:
@@ -77,7 +77,7 @@ def inspect(
     return Inspector(
         module_name,
         filepath,
-        extensions or Extensions(),
+        extensions or load_extensions(),
         parent,
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,

@@ -26,7 +26,7 @@ from griffe.dataclasses import Alias, Module, Object
 from griffe.enumerations import Kind
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import ExprName
-from griffe.extensions.base import Extensions
+from griffe.extensions.base import Extensions, load_extensions
 from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.git import tmp_worktree
 from griffe.logger import get_logger
@@ -69,7 +69,7 @@ class GriffeLoader:
             allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
             store_source: Whether to store code source in the lines collection.
         """
-        self.extensions: Extensions = extensions or Extensions()
+        self.extensions: Extensions = extensions or load_extensions()
         """Loaded Griffe extensions."""
         self.docstring_parser: Parser | None = docstring_parser
         """Selected docstring parser."""

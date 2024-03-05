@@ -243,6 +243,11 @@ class ExprCall(Expr):
     arguments: Sequence[str | Expr]
     """Passed arguments."""
 
+    @property
+    def canonical_path(self) -> str:
+        """The canonical path of this subscript's left part."""
+        return self.function.canonical_path
+
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
         yield from _yield(self.function, flat=flat)
         yield "("

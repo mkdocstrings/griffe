@@ -347,6 +347,7 @@ class Extensions:
 
 builtin_extensions: set[str] = {
     "hybrid",
+    "dataclasses",
 }
 
 
@@ -454,7 +455,9 @@ def _load_extension(
     return [ext(**options) for ext in extensions]
 
 
-def load_extensions(exts: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]]) -> Extensions:
+def load_extensions(
+    exts: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
+) -> Extensions:
     """Load configured extensions.
 
     Parameters:
@@ -464,12 +467,23 @@ def load_extensions(exts: Sequence[str | dict[str, Any] | ExtensionType | type[E
         An extensions container.
     """
     extensions = Extensions()
-    for extension in exts:
+    for extension in exts or ():
         ext = _load_extension(extension)
         if isinstance(ext, list):
             extensions.add(*ext)
         else:
             extensions.add(ext)
+
+    # TODO: Deprecate and remove at some point?
+    # Always add our built-in dataclasses extension.
+    from griffe.extensions.dataclasses import DataclassesExtension
+
+    for ext in extensions._extensions:
+        if type(ext) == DataclassesExtension:
+            break
+    else:
+        extensions.add(*_load_extension("dataclasses"))  # type: ignore[misc]
+
     return extensions
 
 

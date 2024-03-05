@@ -35,7 +35,7 @@ from griffe.expressions import (
     safe_get_condition,
     safe_get_expression,
 )
-from griffe.extensions.base import Extensions
+from griffe.extensions.base import Extensions, load_extensions
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -92,7 +92,7 @@ def visit(
         module_name,
         filepath,
         code,
-        extensions or Extensions(),
+        extensions or load_extensions(),
         parent,
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,

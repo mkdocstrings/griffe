@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from textwrap import dedent
+
+import pytest
 
 import griffe
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
-from griffe.tests import module_vtree, temporary_pypackage, temporary_visited_module
+from griffe.tests import module_vtree, temporary_pypackage, temporary_visited_module, temporary_visited_package
 
 
 def test_submodule_exports() -> None:
@@ -88,7 +91,7 @@ def test_alias_proxies() -> None:
                 assert name in alias_members
 
 
-def test_dataclass_parameters() -> None:
+def test_dataclass_properties() -> None:
     """Don't return properties as parameters of dataclasses."""
     with temporary_visited_module(
         """
@@ -112,3 +115,166 @@ def test_dataclass_parameters() -> None:
         params = module["Point"].parameters
         assert "a" not in params
         assert "b" not in params
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        """
+        @dataclass
+        class Dataclass:
+            x: float
+            y: float = field(kw_only=True)
+
+        class Class:
+            def __init__(self, x: float, *, y: float): ...
+        """,
+        """
+        @dataclass
+        class Dataclass:
+            x: float = field(kw_only=True)
+            y: float
+
+        class Class:
+            def __init__(self, y: float, *, x: float): ...
+        """,
+        """
+        @dataclass
+        class Dataclass:
+            x: float
+            _: KW_ONLY
+            y: float
+
+        class Class:
+            def __init__(self, x: float, *, y: float): ...
+        """,
+        """
+        @dataclass
+        class Dataclass:
+            _: KW_ONLY
+            x: float
+            y: float
+
+        class Class:
+            def __init__(self, *, x: float, y: float): ...
+        """,
+        """
+        @dataclass(kw_only=True)
+        class Dataclass:
+            x: float
+            y: float
+
+        class Class:
+            def __init__(self, *, x: float, y: float): ...
+        """,
+    ],
+)
+def test_dataclass_parameter_kinds(code: str) -> None:
+    """Check dataclass and equivalent non-dataclass parameters.
+
+    The parameter kinds for each pair should be the same.
+
+    Parameters:
+        code: Python code to visit.
+    """
+    code = f"from dataclasses import dataclass, field, KW_ONLY\n\n{dedent(code)}"
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        for dataclass_param, regular_param in zip(module["Dataclass"].parameters, module["Class"].parameters):
+            assert dataclass_param == regular_param
+
+
+def test_regular_class_inheriting_dataclass_dont_get_its_own_params() -> None:
+    """A regular class inheriting from a dataclass don't have its attributes added to `__init__`."""
+    code = """
+        from dataclasses import dataclass
+
+        @dataclass
+        class Base:
+            a: int
+            b: str
+
+        @dataclass
+        class Derived1(Base):
+            c: float
+
+        class Derived2(Base):
+            d: float
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        params1 = module["Derived1"].parameters
+        params2 = module["Derived2"].parameters
+        assert [p.name for p in params1] == ["self", "a", "b", "c"]
+        assert [p.name for p in params2] == ["self", "a", "b"]
+
+
+def test_regular_class_inheriting_dataclass_is_labelled_dataclass() -> None:
+    """A regular class inheriting from a dataclass is labelled as a dataclass too."""
+    code = """
+        from dataclasses import dataclass
+
+        @dataclass
+        class Base:
+            pass
+
+        class Derived(Base):
+            pass
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        obj = module["Derived"]
+        assert "dataclass" in obj.labels
+
+
+def test_fields_with_init_false() -> None:
+    """Fields marked with `init=False` are not added to the `__init__` method."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class PointA:
+            x: float
+            y: float
+            z: float = field(init=False)
+
+        @dataclass(init=False)
+        class PointB:
+            x: float
+            y: float
+
+        @dataclass(init=False)
+        class PointC:
+            x: float
+            y: float = field(init=True)  # init=True has no effect
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        params_a = module["PointA"].parameters
+        params_b = module["PointB"].parameters
+        params_c = module["PointC"].parameters
+
+        assert "z" not in params_a
+        assert "x" not in params_b
+        assert "y" not in params_b
+        assert "x" not in params_c
+        assert "y" not in params_c
+
+
+def test_parameters_are_reorderd_to_match_their_kind() -> None:
+    """Keyword-only parameters in base class are pushed back to the end of the signature."""
+    code = """
+        from dataclasses import dataclass
+
+        @dataclass(kw_only=True)
+        class Base:
+            a: int
+            b: str
+
+        @dataclass
+        class Reordered(Base):
+            b: float
+            c: float
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        params_base = module["Base"].parameters
+        params_reordered = module["Reordered"].parameters
+        assert [p.name for p in params_base] == ["self", "a", "b"]
+        assert [p.name for p in params_reordered] == ["self", "b", "c", "a"]
+        assert str(params_reordered["b"].annotation) == "float"
