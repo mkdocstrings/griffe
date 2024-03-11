@@ -10,7 +10,7 @@ import pytest
 
 from griffe.expressions import ExprName
 from griffe.loader import GriffeLoader
-from griffe.tests import temporary_pyfile, temporary_pypackage
+from griffe.tests import temporary_pyfile, temporary_pypackage, temporary_visited_package
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -399,3 +399,25 @@ def test_loading_stubs_only_packages(tmp_path: Path, namespace: bool) -> None:
         assert "b" in top_module.members
     assert "a" in top_module["module"].members
     assert "b" in top_module["module"].members
+
+
+@pytest.mark.parametrize(
+    "init",
+    [
+        "from package.thing import thing",
+        "thing = False",
+    ],
+)
+def test_submodule_shadowing_member(init: str, caplog: pytest.LogCaptureFixture) -> None:
+    """Warn when a submodule shadows a member of the same name.
+
+    Parameters:
+        init: Contents of the top-level init module.
+    """
+    caplog.set_level(logging.DEBUG)
+    with temporary_visited_package(
+        "package",
+        {"__init__.py": init, "thing.py": "thing = True"},
+        init=True,
+    ):
+        assert "shadowing" in caplog.text

@@ -387,7 +387,7 @@ class GriffeLoader:
                 )
                 # Special case: we avoid overwriting a submodule with an alias pointing to it.
                 # Griffe suffers from this design flaw where an object cannot store both
-                # a submodule and a member of the same name, while this poses no issue in Python.
+                # a submodule and a member of the same name, while this poses (almost) no issue in Python.
                 # We at least prevent this case where a submodule is overwritten by an imported version of itself.
                 if already_present:
                     prev_member = obj.get_member(new_member.name)
@@ -580,17 +580,22 @@ class GriffeLoader:
             return
         submodule_name = subparts[-1]
         try:
-            parent_module.set_member(
+            submodule = self._load_module(
                 submodule_name,
-                self._load_module(
-                    submodule_name,
-                    subpath,
-                    submodules=False,
-                    parent=parent_module,
-                ),
+                subpath,
+                submodules=False,
+                parent=parent_module,
             )
         except LoadingError as error:
             logger.debug(str(error))
+        else:
+            if submodule_name in parent_module.members:
+                logger.debug(
+                    f"Submodule '{submodule.path}' is shadowing the member at the same path. "
+                    "We recommend renaming the member or the submodule (for example prefixing it with `_`), "
+                    "see https://mkdocstrings.github.io/griffe/best_practices/#avoid-member-submodule-name-shadowing.",
+                )
+            parent_module.set_member(submodule_name, submodule)
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:
         return Module(
