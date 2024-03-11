@@ -5,14 +5,9 @@ even more structured data from source code.
 
 The available parsers are:
 
-- `google`, to parse Google-style docstrings,
-    see [Napoleon's documentation](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
-- `numpy`, to parse Numpydoc docstrings,
-    see [Numpydoc's documentation](https://numpydoc.readthedocs.io/en/latest/format.html)
-- `sphinx`, to parse Sphinx-style docstrings,
-    see [Sphinx's documentation](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html)
-
-## Syntax
+- `google`, to parse Google-style docstrings, see [Napoleon's documentation][napoleon]
+- `numpy`, to parse Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
+- `sphinx`, to parse Sphinx-style docstrings, see [Sphinx's documentation][sphinx]
 
 Most of the time, the syntax specified in the aforementioned docs is supported.
 In some cases, the original syntax is not supported, or is supported but with subtle differences.
@@ -23,7 +18,11 @@ used in docstrings: it's retrieved as regular text.
 Tooling making use of Griffe can then choose to render
 the text as if it is Markdown, or AsciiDoc, or reStructuredText, etc..
 
-### Google-style
+## Google-style
+
+Google-style docstrings, see [Napoleon's documentation][napoleon].
+
+### Syntax {#google-syntax}
 
 Sections are written like this:
 
@@ -115,7 +114,26 @@ def foo(a, b):
     """
 ```
 
-#### Parser options
+### Admonitions {#google-admonitions}
+
+When a section identifier does not match one of the [supported sections](#google-sections),
+the section is parsed as an "admonition" (or "callout").
+
+Identifiers are case-insensitive, however singular and plural forms are distinct.
+For example, `Note:` is not the same as `Notes:`.
+
+In particular, `Examples` is parsed as the [Examples section](#google-section-examples),
+while `Example` is parsed as an admonition whose kind is `example`.
+
+The kind is obtained by lower-casing the identifier and replacing spaces with dashes.
+For example, an admonition whose identifier is `See also:` will have a kind equal to `see-also`.
+
+Custom section titles are preserved in admonitions:
+`Tip: Check this out:` is parsed as a `tip` admonition with `Check this out:` as title.
+
+It is up to any downstream documentation renderer to make use of these kinds and titles.
+
+### Parser options {#google-options}
 
 The parser accepts a few options:
 
@@ -134,7 +152,11 @@ The parser accepts a few options:
     and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 
-#### Attributes
+### Sections {#google-sections}
+
+The following sections are supported.
+
+#### Attributes {#google-section-attributes}
 
 - Multiple items allowed
 
@@ -186,7 +208,7 @@ For example, a type of `list[str]` will be parsed just as if it was an actual Py
 You can therefore use complex types (available in the current scope) in docstrings,
 for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Functions/Methods
+#### Functions/Methods {#google-section-functions}
 
 - Multiple items allowed
 
@@ -239,7 +261,7 @@ Functions:
 The signatures do not have to match the real ones:
 you can shorten them to only show the important parameters.
 
-#### Classes
+#### Classes {#google-section-classes}
 
 - Multiple items allowed
 
@@ -292,7 +314,7 @@ Functions:
 The signatures do not have to match the real ones:
 you can shorten them to only show the important initialization parameters.
 
-#### Modules
+#### Modules {#google-section-modules}
 
 - Multiple items allowed
 
@@ -315,7 +337,7 @@ Modules:
 """
 ```
 
-#### Deprecated
+#### Deprecated {#google-section-deprecated}
 
 Deprecated sections allow to document a deprecation that happened at a particular version.
 They can be used in every docstring.
@@ -330,7 +352,7 @@ Deprecated:
 foo: int = 0
 ```
 
-#### Examples
+#### Examples {#google-section-examples}
 
 Examples sections allow to add examples of Python code without the use of markup code blocks.
 They are a mix of prose and interactive console snippets.
@@ -358,7 +380,7 @@ WARNING: **Not the same as *Example* sections.**
 *Example* (singular) sections are parsed as admonitions.
 Console code blocks will only be understood in *Examples* (plural) sections.
 
-#### Parameters
+#### Parameters {#google-section-parameters}
 
 - Aliases: Args, Arguments, Params
 - Multiple items allowed
@@ -412,7 +434,7 @@ For example, a type of `list[str]` will be parsed just as if it was an actual Py
 You can therefore use complex types (available in the current scope) in docstrings,
 for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Other Parameters
+#### Other Parameters {#google-section-other-parameters}
 
 - Aliases: Keyword Args, Keyword Arguments, Other Args, Other Arguments, Other Params
 - Multiple items allowed
@@ -458,7 +480,7 @@ def foo(a, b):
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See the same tip for parameters.
 
-#### Raises
+#### Raises {#google-section-raises}
 
 - Aliases: Exceptions
 - Multiple items allowed
@@ -486,7 +508,7 @@ You can document custom exception, using the names available in the current scop
 for example `my_exceptions.MyCustomException` or `MyCustomException` directly,
 depending on what you imported/defined in the current module.
 
-#### Warns
+#### Warns {#google-section-warns}
 
 - Aliases: Warnings
 - Multiple items allowed
@@ -513,7 +535,7 @@ You can document custom warnings, using the names available in the current scope
 for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly,
 depending on what you imported/defined in the current module.
 
-#### Yields
+#### Yields {#google-section-yields}
 
 - Multiple items allowed
 
@@ -573,7 +595,7 @@ Yields:
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See previous tips for types in docstrings.
 
-#### Receives
+#### Receives {#google-section-receives}
 
 - Multiple items allowed
 
@@ -655,7 +677,7 @@ Receives:
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See previous tips for types in docstrings.
 
-#### Returns
+#### Returns {#google-section-returns}
 
 - Multiple items allowed
 
@@ -739,7 +761,11 @@ Setting it to false will disallow specifying a name.
 TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
 See previous tips for types in docstrings.
 
-### Numpydoc-style
+## Numpydoc-style
+
+Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
+
+### Syntax {#numpydoc-syntax}
 
 Sections are written like this:
 
@@ -821,7 +847,22 @@ several syntaxes are supported:
     """
     ```
 
-#### Parser options
+### Admonitions {#numpydoc-admonitions}
+
+When a section identifier does not match one of the [supported sections](#numpydoc-sections),
+the section is parsed as an "admonition" (or "callout").
+
+Identifiers are case-insensitive, however singular and plural forms are distinct,
+except for notes and warnings.
+In particular, `Examples` is parsed as the [Examples section](#numpydoc-section-examples),
+while `Example` is parsed as an admonition whose kind is `example`.
+
+The kind is obtained by lower-casing the identifier and replacing spaces with dashes.
+For example, an admonition whose identifer is `See also` will have a kind equal to `see-also`.
+
+It is up to any downstream documentation renderer to make use of these kinds.
+
+### Parser options {#numpydoc-options}
 
 The parser accepts a few options:
 
@@ -833,7 +874,11 @@ The parser accepts a few options:
     and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 
-#### Attributes
+### Sections {#numpydoc-sections}
+
+The following sections are supported.
+
+#### Attributes {#numpydoc-section-attributes}
 
 - Multiple items allowed
 
@@ -894,7 +939,7 @@ For example, a type of `list[str]` will be parsed just as if it was an actual Py
 You can therefore use complex types (available in the current scope) in docstrings,
 for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Functions/Methods
+#### Functions/Methods {#numpydoc-section-functions}
 
 - Multiple items allowed
 
@@ -956,7 +1001,7 @@ bar(baz=1)
 The signatures do not have to match the real ones:
 you can shorten them to only show the important parameters.
 
-#### Classes
+#### Classes {#numpydoc-section-classes}
 
 - Multiple items allowed
 
@@ -1018,7 +1063,7 @@ Bar(baz=1)
 The signatures do not have to match the real ones:
 you can shorten them to only show the important initialization parameters.
 
-#### Modules
+#### Modules {#numpydoc-section-modules}
 
 - Multiple items allowed
 
@@ -1044,7 +1089,7 @@ bar
 """
 ```
 
-#### Deprecated
+#### Deprecated {#numpydoc-section-deprecated}
 
 Deprecated sections allow to document a deprecation that happened at a particular version.
 They can be used in every docstring.
@@ -1061,7 +1106,7 @@ Deprecated
 foo: int = 0
 ```
 
-#### Examples
+#### Examples {#numpydoc-section-examples}
 
 Examples sections allow to add examples of Python code without the use of markup code blocks.
 They are a mix of prose and interactive console snippets.
@@ -1086,7 +1131,7 @@ Blank lines delimit prose vs. console blocks.
 """
 ```
 
-#### Parameters
+#### Parameters {#numpydoc-section-parameters}
 
 - Aliases: Args, Arguments, Params
 - Multiple items allowed
@@ -1149,7 +1194,7 @@ For example, a type of `list[str]` will be parsed just as if it was an actual Py
 You can therefore use complex types (available in the current scope) in docstrings,
 for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Other Parameters
+#### Other Parameters {#numpydoc-section-other-parameters}
 
 - Aliases: Keyword Args, Keyword Arguments, Other Args, Other Arguments, Other Params
 - Multiple items allowed
@@ -1181,7 +1226,7 @@ def foo(a, b, **kwargs):
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See the same tip for parameters.
 
-#### Raises
+#### Raises {#numpydoc-section-raises}
 
 - Aliases: Exceptions
 - Multiple items allowed
@@ -1213,9 +1258,8 @@ You can document custom exception, using the names available in the current scop
 for example `my_exceptions.MyCustomException` or `MyCustomException` directly,
 depending on what you imported/defined in the current module.
 
-#### Warns
+#### Warns {#numpydoc-section-warns}
 
-- Aliases: Warnings
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code.
@@ -1242,7 +1286,7 @@ You can document custom warnings, using the names available in the current scope
 for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly,
 depending on what you imported/defined in the current module.
 
-#### Yields
+#### Yields {#numpydoc-section-yields}
 
 - Multiple items allowed
 
@@ -1310,7 +1354,7 @@ t : int
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See previous tips for types in docstrings.
 
-#### Receives
+#### Receives {#numpydoc-section-receives}
 
 - Multiple items allowed
 
@@ -1401,7 +1445,7 @@ flag : int
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See previous tips for types in docstrings.
 
-#### Returns
+#### Returns {#numpydoc-section-returns}
 
 - Multiple items allowed
 
@@ -1568,3 +1612,7 @@ Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 [merge_init]: https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class
 [doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags
 [doctest]: https://docs.python.org/3/library/doctest.html#module-doctest
+
+[napoleon]: https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+[numpydoc]: https://numpydoc.readthedocs.io/en/latest/format.html
+[sphinx]: https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html
