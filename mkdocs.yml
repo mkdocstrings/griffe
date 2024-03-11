@@ -26,6 +26,7 @@ nav:
   - Checking for API breakages: checking.md
   - Dumping data as JSON: dumping.md
   - Loading and navigating data: loading.md
+  - Best practices: best_practices.md
   - Extensions:
     - Using and writing extensions: extensions.md
   - Docstrings:
