@@ -80,6 +80,10 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
         if member.is_attribute:
             member = cast(Attribute, member)
 
+            # Exclude @property and @cached_property attributes
+            if "property" in member.labels:
+                continue
+
             # Start of keyword-only parameters.
             if isinstance(member.annotation, Expr) and member.annotation.canonical_path == "dataclasses.KW_ONLY":
                 kw_only = True
