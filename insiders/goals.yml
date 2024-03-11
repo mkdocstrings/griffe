@@ -3,14 +3,17 @@ goals:
     name: GraviFridge User Manual
     features:
     - name: "Markdown output format for the `griffe check` command"
-      ref: /checking#markdown
+      ref: /checking/#markdown
       since: 2024/01/16
     - name: "GitHub output format for the `griffe check` command"
-      ref: /checking#github
+      ref: /checking/#github
       since: 2024/01/16
   1500:
     name: HyperLamp Quick Start Guide
     features:
     - name: "Check API of Python packages from PyPI"
-      ref: /checking#using-pypi
+      ref: /checking/#using-pypi
       since: 2024/03/02
+    - name: "Expressions modernization"
+      ref: /expressions/#modernization
+      since: 2024/03/11
