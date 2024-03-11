@@ -42,4 +42,4 @@ def parse(
     return [DocstringSectionText(docstring.value)]
 
 
-__all__ = ["parse", "Parser", "parsers"]
+__all__ = ["parse", "parsers"]
