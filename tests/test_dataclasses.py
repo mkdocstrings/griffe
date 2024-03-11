@@ -10,7 +10,7 @@ import pytest
 import griffe
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
-from griffe.tests import module_vtree, temporary_pypackage, temporary_visited_module, temporary_visited_package
+from griffe.tests import module_vtree, temporary_pypackage, temporary_visited_package
 
 
 def test_submodule_exports() -> None:
@@ -93,8 +93,7 @@ def test_alias_proxies() -> None:
 
 def test_dataclass_properties() -> None:
     """Don't return properties as parameters of dataclasses."""
-    with temporary_visited_module(
-        """
+    code = """
         from dataclasses import dataclass
         from functools import cached_property
 
@@ -110,11 +109,10 @@ def test_dataclass_properties() -> None:
             @cached_property
             def b(self):
                 return 0
-        """,
-    ) as module:
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
         params = module["Point"].parameters
-        assert "a" not in params
-        assert "b" not in params
+        assert [p.name for p in params] == ["self", "x", "y"]
 
 
 @pytest.mark.parametrize(
