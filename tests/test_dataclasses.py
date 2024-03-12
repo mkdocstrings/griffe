@@ -276,3 +276,37 @@ def test_parameters_are_reorderd_to_match_their_kind() -> None:
         assert [p.name for p in params_base] == ["self", "a", "b"]
         assert [p.name for p in params_reordered] == ["self", "b", "c", "a"]
         assert str(params_reordered["b"].annotation) == "float"
+
+
+def test_parameters_annotated_as_initvar() -> None:
+    """Don't return InitVar annotated fields as class members.
+
+    But if __init__ is defined, InitVar has no effect.
+    """
+
+    code = """
+    from dataclasses import dataclass, InitVar
+
+    @dataclass
+    class PointA:
+        x: float
+        y: float
+        z: InitVar[float]
+
+    @dataclass
+    class PointB:
+        x: float
+        y: float
+        z: InitVar[float]
+
+        def __init__(self, r: float): ...
+    """
+
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        PointA = module["PointA"]
+        assert ["self", "x", "y", "z"] == [p.name for p in PointA.parameters]
+        assert ["x", "y", "__init__"] == [name for name in PointA.members]
+
+        PointB = module["PointB"]
+        assert ["self", "r"] == [p.name for p in PointB.parameters]
+        assert ["x", "y", "z", "__init__"] == [name for name in PointB.members]
