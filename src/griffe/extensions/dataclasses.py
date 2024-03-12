@@ -178,10 +178,7 @@ def _set_dataclass_init(class_: Class) -> None:
 
 def _del_members_annotated_as_initvar(class_: Class) -> None:
     # Definitions annotated as InitVar are not class members
-    attributes = cast(
-        list[Attribute],
-        [member for member in class_.members.values() if member.is_attribute]
-    )
+    attributes = [member for member in class_.members.values() if isinstance(member, Attribute)]
     for attribute in attributes:
         if isinstance(attribute.annotation, Expr) and attribute.annotation.canonical_path == "dataclasses.InitVar":
             class_.del_member(attribute.name)
