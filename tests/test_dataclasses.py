@@ -283,7 +283,6 @@ def test_parameters_annotated_as_initvar() -> None:
 
     But if __init__ is defined, InitVar has no effect.
     """
-
     code = """
     from dataclasses import dataclass, InitVar
 
@@ -303,10 +302,10 @@ def test_parameters_annotated_as_initvar() -> None:
     """
 
     with temporary_visited_package("package", {"__init__.py": code}) as module:
-        PointA = module["PointA"]
-        assert ["self", "x", "y", "z"] == [p.name for p in PointA.parameters]
-        assert ["x", "y", "__init__"] == [name for name in PointA.members]
+        point_a = module["PointA"]
+        assert ["self", "x", "y", "z"] == [p.name for p in point_a.parameters]
+        assert ["x", "y", "__init__"] == list(point_a.members)
 
-        PointB = module["PointB"]
-        assert ["self", "r"] == [p.name for p in PointB.parameters]
-        assert ["x", "y", "z", "__init__"] == [name for name in PointB.members]
+        point_b = module["PointB"]
+        assert ["self", "r"] == [p.name for p in point_b.parameters]
+        assert ["x", "y", "z", "__init__"] == list(point_b.members)
