@@ -91,16 +91,22 @@ def test_alias_proxies() -> None:
                 assert name in alias_members
 
 
-def test_dataclass_properties() -> None:
-    """Don't return properties as parameters of dataclasses."""
+def test_dataclass_properties_and_class_variables() -> None:
+    """Don't return properties or class variables as parameters of dataclasses."""
     code = """
         from dataclasses import dataclass
         from functools import cached_property
+        from typing import ClassVar
 
         @dataclass
         class Point:
             x: float
             y: float
+
+            # These definitions create class variables
+            r: ClassVar[float]
+            s: float = 3
+            t: ClassVar[float] = 3
 
             @property
             def a(self):
@@ -112,7 +118,7 @@ def test_dataclass_properties() -> None:
     """
     with temporary_visited_package("package", {"__init__.py": code}) as module:
         params = module["Point"].parameters
-        assert [p.name for p in params] == ["self", "x", "y"]
+        assert [p.name for p in params] == ["self", "x", "y", "s"]
 
 
 @pytest.mark.parametrize(
