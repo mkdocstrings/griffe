@@ -74,14 +74,20 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
     # All parameters marked as keyword-only.
     kw_only = dec_args.get("kw_only") == "True"
 
+    # Attributes that have labels for these characteristics are
+    # not class parameters:
+    #   - @property
+    #   - @cached_property
+    #   - ClassVar annotation
+    non_parameter_labels = {"property", "class-attribute"}
+
     # Iterate on current attributes to find parameters.
     parameters = []
     for member in class_.members.values():
         if member.is_attribute:
             member = cast(Attribute, member)
 
-            # Exclude @property and @cached_property attributes
-            if "property" in member.labels:
+            if member.labels & non_parameter_labels:
                 continue
 
             # Start of keyword-only parameters.

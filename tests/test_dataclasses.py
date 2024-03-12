@@ -91,16 +91,18 @@ def test_alias_proxies() -> None:
                 assert name in alias_members
 
 
-def test_dataclass_properties() -> None:
-    """Don't return properties as parameters of dataclasses."""
+def test_dataclass_properties_and_class_variables() -> None:
+    """Don't return properties or typed class variables as parameters of dataclasses."""
     code = """
         from dataclasses import dataclass
         from functools import cached_property
+        from typing import ClassVar
 
         @dataclass
         class Point:
             x: float
             y: float
+            z: ClassVar[float] = 3
 
             @property
             def a(self):
