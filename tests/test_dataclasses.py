@@ -92,7 +92,7 @@ def test_alias_proxies() -> None:
 
 
 def test_dataclass_properties_and_class_variables() -> None:
-    """Don't return properties or typed class variables as parameters of dataclasses."""
+    """Don't return properties or class variables as parameters of dataclasses."""
     code = """
         from dataclasses import dataclass
         from functools import cached_property
@@ -102,7 +102,11 @@ def test_dataclass_properties_and_class_variables() -> None:
         class Point:
             x: float
             y: float
-            z: ClassVar[float] = 3
+
+            # These definitions create class variables
+            r: ClassVar[float]
+            s: float = 3
+            t: ClassVar[float] = 3
 
             @property
             def a(self):
