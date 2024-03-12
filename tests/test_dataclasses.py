@@ -118,7 +118,7 @@ def test_dataclass_properties_and_class_variables() -> None:
     """
     with temporary_visited_package("package", {"__init__.py": code}) as module:
         params = module["Point"].parameters
-        assert [p.name for p in params] == ["self", "x", "y"]
+        assert [p.name for p in params] == ["self", "x", "y", "s"]
 
 
 @pytest.mark.parametrize(
