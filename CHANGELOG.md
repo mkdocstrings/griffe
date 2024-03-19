@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.42.1](https://github.com/mkdocstrings/griffe/releases/tag/0.42.1) - 2024-03-19
+
+<small>[Compare with 0.42.0](https://github.com/mkdocstrings/griffe/compare/0.42.0...0.42.1)</small>
+
+### Bug Fixes
+
+- Don't return class variables as parameters of dataclasses ([2729c22](https://github.com/mkdocstrings/griffe/commit/2729c22505d87b771ab7a70c91c9f8301275aa8c) by Hassan Kibirige). [PR-253](https://github.com/mkdocstrings/griffe/pull/253)
+- Don't turn items annotated as InitVar into dataclass members ([6835ea3](https://github.com/mkdocstrings/griffe/commit/6835ea361325a205c0af69acabc66ca5193156c5) by Hassan Kibirige). [PR-252](https://github.com/mkdocstrings/griffe/pull/252)
+
 ## [0.42.0](https://github.com/mkdocstrings/griffe/releases/tag/0.42.0) - 2024-03-11
 
 <small>[Compare with 0.41.3](https://github.com/mkdocstrings/griffe/compare/0.41.3...0.42.0)</small>
