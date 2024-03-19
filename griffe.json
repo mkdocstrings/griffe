@@ -73512,7 +73512,7 @@
 "relative_filepath": "src/griffe/docstrings/utils.py",
 "relative_package_filepath": "griffe/docstrings/utils.py",
 "lineno": 18,
-"endlineno": 20,
+"endlineno": 19,
 "labels": [],
 "members": [
 {
@@ -73523,7 +73523,7 @@
 "relative_filepath": "src/griffe/docstrings/utils.py",
 "relative_package_filepath": "griffe/docstrings/utils.py",
 "lineno": 19,
-"endlineno": 20,
+"endlineno": 19,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -73589,12 +73589,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/docstrings/utils.py",
 "relative_filepath": "src/griffe/docstrings/utils.py",
 "relative_package_filepath": "griffe/docstrings/utils.py",
-"lineno": 23,
-"endlineno": 51,
+"lineno": 22,
+"endlineno": 50,
 "docstring": {
 "value": "Create and return a warn function.\n\nParameters:\n    name: The logger name.\n\nReturns:\n    A function used to log parsing warnings.\n\nThis function logs a warning message by prefixing it with the filepath and line number.\n\nOther parameters: Parameters of the returned function:\n    docstring (Docstring): The docstring object.\n    offset (int): The offset in the docstring lines.\n    message (str): The message to log.",
-"lineno": 24,
-"endlineno": 38,
+"lineno": 23,
+"endlineno": 37,
 "parsed": [
 {
 "kind": "text",
@@ -73688,12 +73688,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/docstrings/utils.py",
 "relative_filepath": "src/griffe/docstrings/utils.py",
 "relative_package_filepath": "griffe/docstrings/utils.py",
-"lineno": 54,
-"endlineno": 82,
+"lineno": 53,
+"endlineno": 81,
 "docstring": {
 "value": "Parse a string into a true name or expression that can be resolved later.\n\nParameters:\n    annotation: The annotation to parse.\n    docstring: The docstring in which the annotation appears.\n        The docstring's parent is accessed to bind a resolver to the resulting name/expression.\n    log_level: Log level to use to log a message.\n\nReturns:\n    The string unchanged, or a new name or expression.",
-"lineno": 59,
-"endlineno": 69,
+"lineno": 58,
+"endlineno": 68,
 "parsed": [
 {
 "kind": "text",
@@ -73828,8 +73828,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/docstrings/utils.py",
 "relative_filepath": "src/griffe/docstrings/utils.py",
 "relative_package_filepath": "griffe/docstrings/utils.py",
-"lineno": 85,
-"endlineno": 85,
+"lineno": 84,
+"endlineno": 84,
 "labels": [
 "module-attribute"
 ],
@@ -77933,7 +77933,7 @@
 "relative_filepath": "src/griffe/extensions/dataclasses.py",
 "relative_package_filepath": "griffe/extensions/dataclasses.py",
 "lineno": 65,
-"endlineno": 122,
+"endlineno": 131,
 "labels": [
 "cached"
 ],
@@ -77992,8 +77992,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/dataclasses.py",
 "relative_filepath": "src/griffe/extensions/dataclasses.py",
 "relative_package_filepath": "griffe/extensions/dataclasses.py",
-"lineno": 125,
-"endlineno": 140,
+"lineno": 134,
+"endlineno": 149,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -78034,8 +78034,33 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/dataclasses.py",
 "relative_filepath": "src/griffe/extensions/dataclasses.py",
 "relative_package_filepath": "griffe/extensions/dataclasses.py",
-"lineno": 143,
-"endlineno": 176,
+"lineno": 152,
+"endlineno": 185,
+"labels": [],
+"members": [],
+"decorators": [],
+"parameters": [
+{
+"name": "class_",
+"annotation": {
+"name": "Class",
+"cls": "ExprName"
+},
+"kind": "positional or keyword",
+"default": null
+}
+],
+"returns": "None"
+},
+{
+"kind": "function",
+"name": "_del_members_annotated_as_initvar",
+"path": "griffe.extensions.dataclasses._del_members_annotated_as_initvar",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/dataclasses.py",
+"relative_filepath": "src/griffe/extensions/dataclasses.py",
+"relative_package_filepath": "griffe/extensions/dataclasses.py",
+"lineno": 188,
+"endlineno": 193,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -78059,8 +78084,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/dataclasses.py",
 "relative_filepath": "src/griffe/extensions/dataclasses.py",
 "relative_package_filepath": "griffe/extensions/dataclasses.py",
-"lineno": 179,
-"endlineno": 192,
+"lineno": 196,
+"endlineno": 210,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -78108,12 +78133,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/dataclasses.py",
 "relative_filepath": "src/griffe/extensions/dataclasses.py",
 "relative_package_filepath": "griffe/extensions/dataclasses.py",
-"lineno": 195,
-"endlineno": 208,
+"lineno": 213,
+"endlineno": 226,
 "docstring": {
 "value": "Built-in extension adding support for dataclasses.\n\nThis extension creates `__init__` methods of dataclasses\nif they don't already exist.",
-"lineno": 196,
-"endlineno": 200,
+"lineno": 214,
+"endlineno": 218,
 "parsed": [
 {
 "kind": "text",
@@ -78130,12 +78155,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/extensions/dataclasses.py",
 "relative_filepath": "src/griffe/extensions/dataclasses.py",
 "relative_package_filepath": "griffe/extensions/dataclasses.py",
-"lineno": 202,
-"endlineno": 208,
+"lineno": 220,
+"endlineno": 226,
 "docstring": {
 "value": "Hook for loaded packages.\n\nParameters:\n    pkg: The loaded package.",
-"lineno": 203,
-"endlineno": 207,
+"lineno": 221,
+"endlineno": 225,
 "parsed": [
 {
 "kind": "text",

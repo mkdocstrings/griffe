@@ -1,6 +1,9 @@
 goals:
+  500:
+    name: PlasmaVac User Guide
+    features: []
   1000:
-    name: GraviFridge User Manual
+    name: GraviFridge Fluid Renewal
     features:
     - name: "Markdown output format for the `griffe check` command"
       ref: /checking/#markdown
@@ -9,7 +12,7 @@ goals:
       ref: /checking/#github
       since: 2024/01/16
   1500:
-    name: HyperLamp Quick Start Guide
+    name: HyperLamp Navigation Tips
     features:
     - name: "Check API of Python packages from PyPI"
       ref: /checking/#using-pypi
@@ -17,3 +20,6 @@ goals:
     - name: "Expressions modernization"
       ref: /expressions/#modernization
       since: 2024/03/11
+  2000:
+    name: FusionDrive Ejection Configuration
+    features: []
