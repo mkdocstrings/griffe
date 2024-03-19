@@ -22,8 +22,7 @@ class ParserType(Protocol):  # noqa: D101
         docstring: str,
         parent: ParentType | None = None,
         **parser_opts: Any,
-    ) -> ParseResultType:
-        ...
+    ) -> ParseResultType: ...
 
 
 def parser(parser_module: ModuleType) -> Iterator[ParserType]:

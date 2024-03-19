@@ -89,8 +89,7 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
                 # TODO: It is better to explicitly check for ClassVar, but
                 # Visitor.handle_attribute unwraps it from the annotation.
                 # Maybe create internal_labels and store classvar in there.
-                "class-attribute" in member.labels
-                and "instance-attribute" not in member.labels
+                "class-attribute" in member.labels and "instance-attribute" not in member.labels
             ):
                 continue
 

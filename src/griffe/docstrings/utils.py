@@ -16,8 +16,7 @@ if TYPE_CHECKING:
 
 
 class WarningCallable(Protocol):
-    def __call__(self, docstring: Docstring, offset: int, message: str, log_level: LogLevel = ...) -> None:
-        ...
+    def __call__(self, docstring: Docstring, offset: int, message: str, log_level: LogLevel = ...) -> None: ...
 
 
 def warning(name: str) -> WarningCallable:
