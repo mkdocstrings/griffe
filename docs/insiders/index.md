@@ -130,12 +130,10 @@ You can cancel your sponsorship anytime.[^5]
 
 <hr>
 <div class="premium-sponsors">
-
-
-
-<div id="bronze-sponsors"></div>
+  <div id="gold-sponsors"></div>
+  <div id="silver-sponsors"></div>
+  <div id="bronze-sponsors"></div>
 </div>
-
 <hr>
 
 <div id="sponsors"></div>
