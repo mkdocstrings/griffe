@@ -80,8 +80,17 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
         if member.is_attribute:
             member = cast(Attribute, member)
 
-            # Exclude @property and @cached_property attributes
-            if "property" in member.labels:
+            # Attributes that have labels for these characteristics are
+            # not class parameters:
+            #   - @property
+            #   - @cached_property
+            #   - ClassVar annotation
+            if "property" in member.labels or (
+                # TODO: It is better to explicitly check for ClassVar, but
+                # Visitor.handle_attribute unwraps it from the annotation.
+                # Maybe create internal_labels and store classvar in there.
+                "class-attribute" in member.labels and "instance-attribute" not in member.labels
+            ):
                 continue
 
             # Start of keyword-only parameters.
@@ -176,6 +185,14 @@ def _set_dataclass_init(class_: Class) -> None:
     class_.set_member("__init__", init)
 
 
+def _del_members_annotated_as_initvar(class_: Class) -> None:
+    # Definitions annotated as InitVar are not class members
+    attributes = [member for member in class_.members.values() if isinstance(member, Attribute)]
+    for attribute in attributes:
+        if isinstance(attribute.annotation, Expr) and attribute.annotation.canonical_path == "dataclasses.InitVar":
+            class_.del_member(attribute.name)
+
+
 def _apply_recursively(mod_cls: Module | Class, processed: set[str]) -> None:
     if mod_cls.canonical_path in processed:
         return
@@ -183,6 +200,7 @@ def _apply_recursively(mod_cls: Module | Class, processed: set[str]) -> None:
     if isinstance(mod_cls, Class):
         if "__init__" not in mod_cls.members:
             _set_dataclass_init(mod_cls)
+            _del_members_annotated_as_initvar(mod_cls)
         for member in mod_cls.members.values():
             if not member.is_alias and member.is_class:
                 _apply_recursively(member, processed)  # type: ignore[arg-type]

@@ -130,12 +130,10 @@ You can cancel your sponsorship anytime.[^5]
 
 <hr>
 <div class="premium-sponsors">
-
-
-
-<div id="bronze-sponsors"></div>
+  <div id="gold-sponsors"></div>
+  <div id="silver-sponsors"></div>
+  <div id="bronze-sponsors"></div>
 </div>
-
 <hr>
 
 <div id="sponsors"></div>
@@ -171,7 +169,7 @@ This section lists all funding goals that were previously completed, which means
 that those features were part of Insiders, but are now generally available and
 can be used by all users.
 
-```python exec="1" session="insiders"
+```python exec="1" session="insiders" idprefix=""
 for goal in goals.values():
     if goal.complete:
         goal.render()

@@ -5,6 +5,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.42.1](https://github.com/mkdocstrings/griffe/releases/tag/0.42.1) - 2024-03-19
+
+<small>[Compare with 0.42.0](https://github.com/mkdocstrings/griffe/compare/0.42.0...0.42.1)</small>
+
+### Bug Fixes
+
+- Don't return class variables as parameters of dataclasses ([2729c22](https://github.com/mkdocstrings/griffe/commit/2729c22505d87b771ab7a70c91c9f8301275aa8c) by Hassan Kibirige). [PR-253](https://github.com/mkdocstrings/griffe/pull/253)
+- Don't turn items annotated as InitVar into dataclass members ([6835ea3](https://github.com/mkdocstrings/griffe/commit/6835ea361325a205c0af69acabc66ca5193156c5) by Hassan Kibirige). [PR-252](https://github.com/mkdocstrings/griffe/pull/252)
+
+## [0.42.0](https://github.com/mkdocstrings/griffe/releases/tag/0.42.0) - 2024-03-11
+
+<small>[Compare with 0.41.3](https://github.com/mkdocstrings/griffe/compare/0.41.3...0.42.0)</small>
+
+### Features
+
+- Better support for dataclasses ([82a9d57](https://github.com/mkdocstrings/griffe/commit/82a9d5798b2eebddfd640b918415a0e3de2ca739) by Timothée Mazzucotelli). [Issue-33](https://github.com/mkdocstrings/griffe/issues/233), [Issue-34](https://github.com/mkdocstrings/griffe/issues/234), [Issue-38](https://github.com/mkdocstrings/griffe/issues/238), [Issue-39](https://github.com/mkdocstrings/griffe/issues/239), [PR-240](https://github.com/mkdocstrings/griffe/pull/240)
+
+### Bug Fixes
+
+- Don't return properties as parameters of dataclasses (again) ([8c48397](https://github.com/mkdocstrings/griffe/commit/8c48397e7301bbb296e2f2630405f2d22f7222e3) by Hassan Kibirige). [Issue-232](https://github.com/mkdocstrings/griffe/issues/232), [PR-248](https://github.com/mkdocstrings/griffe/pull/248)
+- Fix getting return type from parent property when parsing Sphinx docstrings ([f314957](https://github.com/mkdocstrings/griffe/commit/f314957c9da7805a9eb1a23d1a7f3d47b0b1e4c0) by Timothée Mazzucotelli). [Issue-125](https://github.com/mkdocstrings/griffe/issues/125)
+
+### Code Refactoring
+
+- Warn (debug) when a submodule shadows a member with the same name ([cdc9e1c](https://github.com/mkdocstrings/griffe/commit/cdc9e1c5ee92a4c621314a9d9c6c465bfdd2ad92) by Timothée Mazzucotelli). [Issue-124](https://github.com/mkdocstrings/griffe/issues/124)
+
 ## [0.41.3](https://github.com/mkdocstrings/griffe/releases/tag/0.41.3) - 2024-03-04
 
 <small>[Compare with 0.41.2](https://github.com/mkdocstrings/griffe/compare/0.41.2...0.41.3)</small>

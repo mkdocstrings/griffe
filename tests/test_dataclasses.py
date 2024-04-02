@@ -91,16 +91,22 @@ def test_alias_proxies() -> None:
                 assert name in alias_members
 
 
-def test_dataclass_properties() -> None:
-    """Don't return properties as parameters of dataclasses."""
+def test_dataclass_properties_and_class_variables() -> None:
+    """Don't return properties or class variables as parameters of dataclasses."""
     code = """
         from dataclasses import dataclass
         from functools import cached_property
+        from typing import ClassVar
 
         @dataclass
         class Point:
             x: float
             y: float
+
+            # These definitions create class variables
+            r: ClassVar[float]
+            s: float = 3
+            t: ClassVar[float] = 3
 
             @property
             def a(self):
@@ -112,7 +118,7 @@ def test_dataclass_properties() -> None:
     """
     with temporary_visited_package("package", {"__init__.py": code}) as module:
         params = module["Point"].parameters
-        assert [p.name for p in params] == ["self", "x", "y"]
+        assert [p.name for p in params] == ["self", "x", "y", "s"]
 
 
 @pytest.mark.parametrize(
@@ -276,3 +282,36 @@ def test_parameters_are_reorderd_to_match_their_kind() -> None:
         assert [p.name for p in params_base] == ["self", "a", "b"]
         assert [p.name for p in params_reordered] == ["self", "b", "c", "a"]
         assert str(params_reordered["b"].annotation) == "float"
+
+
+def test_parameters_annotated_as_initvar() -> None:
+    """Don't return InitVar annotated fields as class members.
+
+    But if __init__ is defined, InitVar has no effect.
+    """
+    code = """
+    from dataclasses import dataclass, InitVar
+
+    @dataclass
+    class PointA:
+        x: float
+        y: float
+        z: InitVar[float]
+
+    @dataclass
+    class PointB:
+        x: float
+        y: float
+        z: InitVar[float]
+
+        def __init__(self, r: float): ...
+    """
+
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        point_a = module["PointA"]
+        assert ["self", "x", "y", "z"] == [p.name for p in point_a.parameters]
+        assert ["x", "y", "__init__"] == list(point_a.members)
+
+        point_b = module["PointB"]
+        assert ["self", "r"] == [p.name for p in point_b.parameters]
+        assert ["x", "y", "z", "__init__"] == list(point_b.members)
