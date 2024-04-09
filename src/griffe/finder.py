@@ -307,7 +307,7 @@ class ModuleFinder:
         for subpath in self._filter_py_modules(path):
             rel_subpath = subpath.relative_to(path)
             if rel_subpath.parent in skip:
-                logger.debug(f"Skip {subpath}, another module took precedence")
+                logger.skip_module(module_path=subpath)
                 continue
             py_file = rel_subpath.suffix == ".py"
             stem = rel_subpath.stem

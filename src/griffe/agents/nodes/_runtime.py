@@ -47,7 +47,7 @@ class ObjectNode:
             # which triggers the __getattr__ method of the object, which in
             # turn can raise various exceptions. Probably not just __getattr__.
             # See https://github.com/pawamoy/pytkdocs/issues/45
-            logger.debug(f"Could not unwrap {name}: {error!r}")
+            logger.could_not_unwrap(name=name, error=error)
 
         self.obj: Any = obj
         """The actual Python object."""

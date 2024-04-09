@@ -168,9 +168,9 @@ class GriffeLoader:
             )
         obj_path: str
         if objspec in _builtin_modules:
-            logger.debug(f"{objspec} is a builtin module")
+            logger.builtin_module(module=objspec)
             if self.allow_inspection:
-                logger.debug(f"Inspecting {objspec}")
+                logger.inspecting_module(module=objspec)
                 obj_path = objspec  # type: ignore[assignment]
                 top_module = self._inspect_module(objspec)  # type: ignore[arg-type]
                 self.modules_collection.set_member(top_module.path, top_module)
@@ -185,16 +185,16 @@ class GriffeLoader:
                 find_stubs_package=find_stubs_package,
             )
         except ModuleNotFoundError:
-            logger.debug(f"Could not find {objspec}")
+            logger.could_not_find_module(module=objspec)
             if self.allow_inspection:
-                logger.debug(f"Trying inspection on {objspec}")
+                logger.trying_inspection(module=objspec)
                 obj_path = objspec  # type: ignore[assignment]
                 top_module = self._inspect_module(objspec)  # type: ignore[arg-type]
                 self.modules_collection.set_member(top_module.path, top_module)
             else:
                 raise
         else:
-            logger.debug(f"Found {objspec}: loading")
+            logger.found(objspec=objspec)
             try:
                 top_module = self._load_package(package, submodules=submodules)
             except LoadingError as error:
@@ -252,9 +252,7 @@ class GriffeLoader:
                 )
                 resolved |= next_resolved
                 unresolved |= next_unresolved
-            logger.debug(
-                f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go",
-            )
+            logger.finished_iteration(iteration=iteration, resolved=len(resolved), unresolved=len(unresolved))
         return unresolved, iteration
 
     def expand_exports(self, module: Module, seen: set | None = None) -> None:
@@ -277,14 +275,14 @@ class GriffeLoader:
                 try:
                     next_module = self.modules_collection.get_member(module_path)
                 except KeyError:
-                    logger.debug(f"Cannot expand '{export.canonical_path}', try pre-loading corresponding package")
+                    logger.cannot_expand(path=export.canonical_path)
                     continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
                     try:
                         expanded |= next_module.exports
                     except TypeError:
-                        logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
+                        logger.unsupported_all_item(module_path=module.path, item=export)
             # It's a string, simply add it to the current exports.
             else:
                 expanded.add(export)
@@ -324,16 +322,15 @@ class GriffeLoader:
                     try:
                         self.load(package, try_relative_path=False)
                     except ImportError as error:
-                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        logger.could_not_expand_wildcard_error(name=member.name, path=obj.path, error=error)
                         continue
 
                 # Try getting the module from which every public object is imported.
                 try:
                     target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
                 except KeyError:
-                    logger.debug(
-                        f"Could not expand wildcard import {member.name} in {obj.path}: "
-                        f"{cast(Alias, member).target_path} not found in modules collection",
+                    logger.could_not_expand_wildcard_import_error(
+                        name=member.name, path=obj.path, target=cast(Alias, member).target_path
                     )
                     continue
 
@@ -342,7 +339,7 @@ class GriffeLoader:
                     try:
                         self.expand_wildcards(target, external=external, seen=seen)
                     except (AliasResolutionError, CyclicAliasError) as error:
-                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        logger.could_not_expand_wildcard_error(name=member.name, path=obj.path, error=error)
                         continue
 
                 # Collect every imported object.
@@ -454,16 +451,16 @@ class GriffeLoader:
                         and package not in self.modules_collection
                     )
                     if load_module:
-                        logger.debug(f"Failed to resolve alias {member.path} -> {target}")
+                        logger.failed_to_resolve_alias(path=member.path, target=target)
                         try:
                             self.load(package, try_relative_path=False)
                         except ImportError as error:
-                            logger.debug(f"Could not follow alias {member.path}: {error}")
+                            logger.could_not_follow_alias(path=member.path, error=error)
                             load_failures.add(package)
                 except CyclicAliasError as error:
-                    logger.debug(str(error))
+                    logger.cyclic_alias_error(error=error)
                 else:
-                    logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
+                    logger.alias_resolved(path=member.path, final_path=member.final_target.path)  # type: ignore[union-attr]
                     resolved.add(member.path)
 
             # Recurse into unseen modules and classes.
@@ -531,7 +528,7 @@ class GriffeLoader:
         submodules: bool = True,
         parent: Module | None = None,
     ) -> Module:
-        logger.debug(f"Loading path {module_path}")
+        logger.loading_path(filepath=module_path)
         if isinstance(module_path, list):
             module = self._create_module(module_name, module_path)
         elif module_path.suffix in {".py", ".pyi"}:
@@ -552,7 +549,7 @@ class GriffeLoader:
     def _load_submodule(self, module: Module, subparts: tuple[str, ...], subpath: Path) -> None:
         for subpart in subparts:
             if "." in subpart:
-                logger.debug(f"Skip {subpath}, dots in filenames are not supported")
+                logger.skip_module_with_dots(module=subpath)
                 return
         try:
             parent_module = self._get_or_create_parent_module(module, subparts, subpath)
@@ -575,8 +572,8 @@ class GriffeLoader:
             # but that's because in that case Python acts like the whole tree is a regular package.
             # It works when the namespace package appears in only one search path (`sys.path`),
             # but will fail if it appears in multiple search paths: Python will only find the first occurrence.
-            # It's better to not falsely suuport this, and to warn users.
-            logger.debug(f"{error}. Missing __init__ module?")
+            # It's better to not falsely support this, and to warn users.
+            logger.missing_init_module(error=error)
             return
         submodule_name = subparts[-1]
         try:
@@ -590,11 +587,7 @@ class GriffeLoader:
             logger.debug(str(error))
         else:
             if submodule_name in parent_module.members:
-                logger.debug(
-                    f"Submodule '{submodule.path}' is shadowing the member at the same path. "
-                    "We recommend renaming the member or the submodule (for example prefixing it with `_`), "
-                    "see https://mkdocstrings.github.io/griffe/best_practices/#avoid-member-submodule-name-shadowing.",
-                )
+                logger.submodule_shadowing_member(filepath=submodule.filepath, path=submodule.path)
             parent_module.set_member(submodule_name, submodule)
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:

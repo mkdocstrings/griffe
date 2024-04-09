@@ -20,9 +20,10 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
+from typing import IO, TYPE_CHECKING, Any, Callable, ClassVar, Sequence
 
 import colorama
+from colorama import Fore, Style
 
 from griffe import debug
 from griffe.diff import find_breaking_changes
@@ -32,7 +33,7 @@ from griffe.exceptions import ExtensionError, GitError
 from griffe.extensions.base import load_extensions
 from griffe.git import get_latest_tag, get_repo_root
 from griffe.loader import GriffeLoader, load, load_git
-from griffe.logger import get_logger
+from griffe.logger import LogLevel, get_logger
 from griffe.stats import _format_stats
 
 if TYPE_CHECKING:
@@ -89,29 +90,26 @@ def _load_packages(
     # Load each package.
     for package in packages:
         if not package:
-            logger.debug("Empty package name, continuing")
+            logger.empty_package_name()
             continue
-        logger.info(f"Loading package {package}")
+        logger.loading_package(package=package)
         try:
             loader.load(package, try_relative_path=True, find_stubs_package=find_stubs_package)
         except ModuleNotFoundError as error:
-            logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
+            logger.could_not_find_package(package=package, error=error)
         except ImportError as error:
             logger.exception(f"Tried but could not import package {package}: {error}")  # noqa: TRY401
-    logger.info("Finished loading packages")
+    logger.finished_loading()
 
     # Resolve aliases.
     if resolve_aliases:
-        logger.info("Starting alias resolution")
+        logger.starting_alias_resolution()
         unresolved, iterations = loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
         if unresolved:
-            logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
+            logger.unresolved_aliases(unresolved=len(unresolved), iterations=iterations)
         else:
-            logger.info(f"All aliases were resolved after {iterations} iterations")
+            logger.all_resolved(iterations=iterations)
     return loader
-
-
-_level_choices = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
 
 
 def _extensions_type(value: str) -> Sequence[str | dict[str, Any]]:
@@ -190,7 +188,7 @@ def get_parser() -> argparse.ArgumentParser:
             "--log-level",
             metavar="LEVEL",
             default=DEFAULT_LOG_LEVEL,
-            choices=_level_choices,
+            choices=[level.value.upper() for level in LogLevel],
             type=str.upper,
             help="Set the log level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`.",
         )
@@ -489,6 +487,22 @@ def check(
     return 0
 
 
+class _ColorFormatter(logging.Formatter):
+    COLORS: ClassVar[dict[int, str]] = {
+        LogLevel.trace.number: Style.DIM,
+        LogLevel.debug.number: "",
+        LogLevel.info.number: Fore.BLUE,
+        LogLevel.success.number: Fore.GREEN,
+        LogLevel.warning.number: Fore.YELLOW,
+        LogLevel.error.number: Fore.RED,
+        LogLevel.critical.number: Style.BRIGHT + Fore.RED,
+    }
+
+    def format(self, record: logging.LogRecord):
+        formatter = logging.Formatter(f"{self.COLORS[record.levelno]}{self._fmt}{Style.RESET_ALL}")
+        return formatter.format(record)
+
+
 def main(args: list[str] | None = None) -> int:
     """Run the main program.
 
@@ -519,7 +533,9 @@ def main(args: list[str] | None = None) -> int:
         )
         return 1
     else:
-        logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)
+        handler = logging.StreamHandler()
+        handler.setFormatter(_ColorFormatter())
+        logging.basicConfig(format="%(message)s", level=level, handlers=[handler])
 
     # Run subcommand.
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}

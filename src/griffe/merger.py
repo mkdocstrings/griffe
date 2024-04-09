@@ -68,8 +68,8 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                 # not the canonical one. Therefore, we must allow merging stubs into the target of an alias,
                 # as long as the stub and target are of the same kind.
                 if obj_member.kind is not stub_member.kind and not obj_member.is_alias:
-                    logger.debug(
-                        f"Cannot merge stubs for {obj_member.path}: kind {stub_member.kind.value} != {obj_member.kind.value}",
+                    logger.cannot_merge_stubs(
+                        path=obj_member.path, kind1=stub_member.kind.value, kind2=obj_member.kind.value
                     )
                 elif obj_member.is_module:
                     _merge_module_stubs(obj_member, stub_member)  # type: ignore[arg-type]
@@ -97,7 +97,7 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
     Returns:
         The regular module.
     """
-    logger.debug(f"Trying to merge {mod1.filepath} and {mod2.filepath}")
+    logger.trying_to_merge_stubs(filepath1=mod1.filepath, filepath2=mod2.filepath)
     if mod1.filepath.suffix == ".pyi":  # type: ignore[union-attr]
         stubs = mod1
         module = mod2

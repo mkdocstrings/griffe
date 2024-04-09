@@ -465,7 +465,7 @@ class Object(ObjectAliasMixin):
         try:
             mro = self.mro()
         except ValueError as error:
-            logger.debug(error)
+            logger.cannot_compute_mro(error=error)
             return {}
         inherited_members = {}
         for base in reversed(mro):
@@ -1588,7 +1588,7 @@ class Class(Object):
                 if resolved_base.is_alias:
                     resolved_base = resolved_base.final_target
             except (AliasResolutionError, CyclicAliasError, KeyError):
-                logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
+                logger.cannot_resolve_base_class(base_path=base_path)
             else:
                 resolved_bases.append(resolved_base)
         return resolved_bases
