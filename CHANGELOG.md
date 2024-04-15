@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.42.2](https://github.com/mkdocstrings/griffe/releases/tag/0.42.2) - 2024-04-15
+
+<small>[Compare with 0.42.1](https://github.com/mkdocstrings/griffe/compare/0.42.1...0.42.2)</small>
+
+### Bug Fixes
+
+- Fix target path of aliases for multipart imports (`import a.b.c as x`) ([ee27ad9](https://github.com/mkdocstrings/griffe/commit/ee27ad97669a7321d18e6724e6c155cef601a289) by Timothée Mazzucotelli). [Issue-259](https://github.com/mkdocstrings/griffe/issues/259)
+
 ## [0.42.1](https://github.com/mkdocstrings/griffe/releases/tag/0.42.1) - 2024-03-19
 
 <small>[Compare with 0.42.0](https://github.com/mkdocstrings/griffe/compare/0.42.0...0.42.1)</small>
