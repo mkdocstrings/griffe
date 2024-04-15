@@ -435,7 +435,7 @@ class Visitor:
             node: The node to visit.
         """
         for name in node.names:
-            alias_path = name.name.split(".", 1)[0]
+            alias_path = name.name if name.asname else name.name.split(".", 1)[0]
             alias_name = name.asname or alias_path.split(".", 1)[0]
             self.current.imports[alias_name] = alias_path
             self.current.set_member(

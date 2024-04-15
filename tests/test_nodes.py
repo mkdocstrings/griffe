@@ -124,6 +124,20 @@ def test_relative_to_absolute_imports(code: str, path: str, is_package: bool, ex
         assert relative_to_absolute(node, name, module) == expected
 
 
+def test_multipart_imports() -> None:
+    """Assert that a multipart path like `a.b.c` imported as `x` points to the right target."""
+    with temporary_visited_module(
+        """
+        import pkg.b.c
+        import pkg.b.c as alias
+        """,
+    ) as module:
+        pkg = module["pkg"]
+        alias = module["alias"]
+    assert pkg.target_path == "pkg"
+    assert alias.target_path == "pkg.b.c"
+
+
 @pytest.mark.parametrize(
     "expression",
     [
