@@ -607,6 +607,33 @@ class ExprName(Expr):
         except NameResolutionError:
             return self.name
 
+    @property
+    def is_enum_class(self) -> bool:
+        """Whether this name resolves to an enumeration class."""
+        try:
+            bases = self.parent[self.name].bases  # type: ignore[union-attr,index]
+        except Exception:  # noqa: BLE001
+            return False
+
+        # TODO: Support inheritance?
+        return any(isinstance(base, Expr) and base.canonical_path == "enum.Enum" for base in bases)
+
+    @property
+    def is_enum_instance(self) -> bool:
+        """Whether this name resolves to an enumeration instance."""
+        try:
+            return self.parent.is_enum_class  # type: ignore[union-attr]
+        except Exception:  # noqa: BLE001
+            return False
+
+    @property
+    def is_enum_value(self) -> bool:
+        """Whether this name resolves to an enumeration value."""
+        try:
+            return self.name == "value" and self.parent.is_enum_instance  # type: ignore[union-attr]
+        except Exception:  # noqa: BLE001
+            return False
+
 
 @dataclass(eq=True, **dataclass_opts)
 class ExprNamedExpr(Expr):
