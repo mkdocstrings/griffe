@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.43.0](https://github.com/mkdocstrings/griffe/releases/tag/0.43.0) - 2024-04-18
+
+<small>[Compare with 0.42.2](https://github.com/mkdocstrings/griffe/compare/0.42.2...0.43.0)</small>
+
+### Features
+
+- Add properties telling whether an expression name resolves to an enumeration class, instance or value ([fdb21d9](https://github.com/mkdocstrings/griffe/commit/fdb21d943f72fb10a4406930bf3e3bf7aceff6b0) by Timothée Mazzucotelli). [Issue-mkdocstrings/python#124](https://github.com/mkdocstrings/python/issues/124)
+
 ## [0.42.2](https://github.com/mkdocstrings/griffe/releases/tag/0.42.2) - 2024-04-15
 
 <small>[Compare with 0.42.1](https://github.com/mkdocstrings/griffe/compare/0.42.1...0.42.2)</small>
