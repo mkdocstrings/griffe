@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.44.0](https://github.com/mkdocstrings/griffe/releases/tag/0.44.0) - 2024-04-19
+
+<small>[Compare with 0.43.0](https://github.com/mkdocstrings/griffe/compare/0.43.0...0.44.0)</small>
+
+### Features
+
+- Add `resolved` property on expression names, returning the corresponding Griffe object ([9b5ca45](https://github.com/mkdocstrings/griffe/commit/9b5ca4574250f847fd33a8cb92af56806db50c1b) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Fix enumeration properties on expression names ([6f22256](https://github.com/mkdocstrings/griffe/commit/6f22256ad02439d961bce2bb1afa32d4e9e10b10) by Timothée Mazzucotelli).
+
 ## [0.43.0](https://github.com/mkdocstrings/griffe/releases/tag/0.43.0) - 2024-04-18
 
 <small>[Compare with 0.42.2](https://github.com/mkdocstrings/griffe/compare/0.42.2...0.43.0)</small>
