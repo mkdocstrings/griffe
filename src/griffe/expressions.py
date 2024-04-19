@@ -619,7 +619,7 @@ class ExprName(Expr):
     def is_enum_class(self) -> bool:
         """Whether this name resolves to an enumeration class."""
         try:
-            bases = self.parent[self.name].bases  # type: ignore[union-attr,index]
+            bases = self.resolved.bases  # type: ignore[union-attr]
         except Exception:  # noqa: BLE001
             return False
 
