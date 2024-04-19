@@ -608,6 +608,14 @@ class ExprName(Expr):
             return self.name
 
     @property
+    def resolved(self) -> Module | Class | None:
+        """The resolved object this name refers to."""
+        try:
+            return self.parent.modules_collection[self.parent.resolve(self.name)]  # type: ignore[union-attr]
+        except Exception:  # noqa: BLE001
+            return self.parent.resolved[self.name]  # type: ignore[union-attr,index]
+
+    @property
     def is_enum_class(self) -> bool:
         """Whether this name resolves to an enumeration class."""
         try:
