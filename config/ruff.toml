@@ -4,7 +4,6 @@ line-length = 120
 [lint]
 exclude = [
     "tests/fixtures/*.py",
-    "site",
 ]
 select = [
     "A", "ANN", "ARG",
@@ -91,5 +90,8 @@ known-first-party = ["griffe"]
 convention = "google"
 
 [format]
+exclude = [
+    "tests/fixtures/*.py",
+]
 docstring-code-format = true
 docstring-code-line-length = 80

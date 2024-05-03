@@ -3,6 +3,7 @@
 # This Makefile is just here to allow auto-completion in the terminal.
 
 actions = \
+	allrun \
 	changelog \
 	check \
 	check-api \
@@ -16,6 +17,7 @@ actions = \
 	docs-deploy \
 	format \
 	help \
+	multirun \
 	release \
 	run \
 	setup \

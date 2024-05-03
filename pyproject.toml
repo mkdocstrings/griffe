@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
@@ -52,3 +53,9 @@ version = {source = "scm"}
 [tool.pdm.build]
 package-dir = "src"
 editable-backend = "editables"
+source-includes = ["share"]
+
+[tool.pdm.build.wheel-data]
+data = [
+    {path = "share/**/*", relative-to = "."},
+]

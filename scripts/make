@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-export PYTHON_VERSIONS=${PYTHON_VERSIONS-3.8 3.9 3.10 3.11 3.12}
+export PYTHON_VERSIONS=${PYTHON_VERSIONS-3.8 3.9 3.10 3.11 3.12 3.13}
 
 exe=""
 prefix=""
@@ -10,8 +10,16 @@ prefix=""
 # Install runtime and development dependencies,
 # as well as current project in editable mode.
 uv_install() {
-    uv pip compile pyproject.toml devdeps.txt | uv pip install -r -
-    uv pip install -e .
+    local uv_opts
+    if [ -n "${UV_RESOLUTION}" ]; then
+        uv_opts="--resolution=${UV_RESOLUTION}"
+    fi
+    uv pip compile ${uv_opts} pyproject.toml devdeps.txt | uv pip install -r -
+    if [ -z "${CI}" ]; then
+        uv pip install --no-deps -e .
+    else
+        uv pip install --no-deps .
+    fi
 }
 
 
@@ -28,13 +36,13 @@ setup() {
     if [ -n "${PYTHON_VERSIONS}" ]; then
         for version in ${PYTHON_VERSIONS}; do
             if [ ! -d ".venvs/${version}" ]; then
-                uv venv --seed --python "${version}" ".venvs/${version}"
+                uv venv --python "${version}" ".venvs/${version}"
             fi
             VIRTUAL_ENV="${PWD}/.venvs/${version}" uv_install
         done
     fi
 
-    if [ ! -d .venv ]; then uv venv --seed --python python; fi
+    if [ ! -d .venv ]; then uv venv --python python; fi
     uv_install
 }
 
@@ -58,30 +66,73 @@ activate() {
     return 1
 }
 
+# Run a command in a specific virtual environment.
+run() {
+    local version="$1"
+    local cmd="$2"
+    shift 2
 
-# Run a command in all configured Python virtual environments.
-# We handle the case when the `PYTHON_VERSIONS` environment variable
-# is unset or empty, for robustness.
-multirun() {
-    local cmd="$1"
-    shift
-
-    if [ -n "${PYTHON_VERSIONS}" ]; then
-        for version in ${PYTHON_VERSIONS}; do
-            (activate ".venvs/${version}" && MULTIRUN=1 "${prefix}${cmd}${exe}" "$@")
-        done
-    else
+    if [ "${version}" = "default" ]; then
         (activate .venv && "${prefix}${cmd}${exe}" "$@")
+    else
+        (activate ".venvs/${version}" && MULTIRUN=1 "${prefix}${cmd}${exe}" "$@")
     fi
 }
 
 
-# Run a command in the default Python virtual environment.
-# We rely on `multirun`'s handling of empty `PYTHON_VERSIONS`.
-singlerun() {
-    PYTHON_VERSIONS= multirun "$@"
+# Run a command in all configured Python virtual environments.
+# We allow `PYTHON_VERSIONS` to be empty, and in that case
+# we run the command in the default virtual environment only.
+multirun() {
+    if [ -n "${PYTHON_VERSIONS}" ]; then
+        for version in ${PYTHON_VERSIONS}; do
+            run "${version}" "$@"
+        done
+    else
+        run default "$@"
+    fi
 }
 
+
+# Run a command in all configured Python virtual environments,
+# as well as in the default virtual environment.
+allrun() {
+    run default "$@"
+    if [ -n "${PYTHON_VERSIONS}" ]; then
+        multirun "$@"
+    fi
+}
+
+
+# Clean project by deleting build artifacts and cache files.
+clean() {
+    rm -rf build
+    rm -rf dist
+    rm -rf htmlcov
+    rm -rf site
+    rm -rf .coverage*
+    rm -rf .pdm-build
+
+    find . -type d \
+      -path ./.venv -prune \
+      -path ./.venvs -prune \
+      -o -name .cache \
+      -o -name .pytest_cache \
+      -o -name .mypy_cache \
+      -o -name .ruff_cache \
+      -o -name __pycache__ |
+        xargs rm -rf
+}
+
+# Configure VSCode.
+# This task will overwrite the following files, so make sure to back them up:
+# - `.vscode/launch.json`
+# - `.vscode/settings.json`
+# - `.vscode/tasks.json`
+vscode() {
+    mkdir -p .vscode &>/dev/null
+    cp -v config/vscode/* .vscode
+}
 
 # Record options following a command name,
 # until a non-option argument is met or there are no more arguments.
@@ -104,13 +155,36 @@ options() {
 # Main function.
 main() {
     local cmd
+
+    if [ $# -eq 0 ] || [ "$1" = "help" ]; then
+        if [ -n "$2" ]; then
+            run default duty --help "$2"
+        else
+            echo "Available commands"
+            echo "  help                  Print this help. Add task name to print help."
+            echo "  setup                 Setup all virtual environments (install dependencies)."
+            echo "  run                   Run a command in the default virtual environment."
+            echo "  multirun              Run a command for all configured Python versions."
+            echo "  allrun                Run a command in all virtual environments."
+            echo "  3.x                   Run a command in the virtual environment for Python 3.x."
+            echo "  clean                 Delete build artifacts and cache files."
+            echo "  vscode                Configure VSCode to work on this project."
+            if run default python -V &>/dev/null; then
+                echo
+                echo "Available tasks"
+                run default duty --list
+            fi
+        fi
+        exit 0
+    fi
+
     while [ $# -ne 0 ]; do
         cmd="$1"
         shift
 
         # Handle `run` early to simplify `case` below.
         if [ "${cmd}" = "run" ]; then
-            singlerun "$@"
+            run default "$@"
             exit $?
         fi
 
@@ -120,21 +194,34 @@ main() {
             exit $?
         fi
 
+        # Handle `allrun` early to simplify `case` below.
+        if [ "${cmd}" = "allrun" ]; then
+            allrun "$@"
+            exit $?
+        fi
+
+        # Handle `3.x` early to simplify `case` below.
+        if [[ "${cmd}" = 3.* ]]; then
+            run "${cmd}" "$@"
+            exit $?
+        fi
+
         # All commands except `run` and `multirun` can be chained on a single line.
         # Some of them accept options in two formats: `-f`, `--flag` and `param=value`.
         # Some of them don't, and will print warnings/errors if options were given.
-        opts=($(options "$@")) || shift $?
+        # The following statement reads options into an array. A syntax quirk means
+        # that with no options, the array still contains a single empty string.
+        # In that case, the `options` function returned 0, so we can empty the array.
+        opts=("$(options "$@")") && opts=() || shift $?
 
         case "${cmd}" in
             # The following commands require special handling.
-            help|"")
-                singlerun duty --list ;;
-            setup)
-                setup ;;
             check)
                 multirun duty check-quality check-types check-docs
-                singlerun duty check-dependencies check-api
+                run default duty check-dependencies check-api
             ;;
+            clean|setup|vscode)
+                "${cmd}" ;;
 
             # The following commands run in all venvs.
             check-quality|\
@@ -145,7 +232,7 @@ main() {
 
             # The following commands run in the default venv only.
             *)
-                singlerun duty "${cmd}" "${opts[@]}" ;;
+                run default duty "${cmd}" "${opts[@]}" ;;
         esac
     done
 }
