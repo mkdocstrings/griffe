@@ -703,6 +703,9 @@ def load(
     find_stubs_package: bool = False,
     # TODO: Remove at some point.
     module: str | Path | None = None,
+    resolve_aliases: bool = False,
+    resolve_external: bool | None = None,
+    resolve_implicit: bool = False,
 ) -> Object:
     """Load and return a module.
 
@@ -741,11 +744,16 @@ def load(
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
         module: Deprecated. Use `objspec` positional-only parameter instead.
+        resolve_aliases: Whether to resolve aliases.
+        resolve_external: Whether to try to load unspecified modules to resolve aliases.
+            Default value (`None`) means to load external modules only if they are the private sibling
+            or the origin module (for example when `ast` imports from `_ast`).
+        resolve_implicit: When false, only try to resolve an alias if it is explicitely exported.
 
     Returns:
         A Griffe object.
     """
-    return GriffeLoader(
+    loader = GriffeLoader(
         extensions=extensions,
         search_paths=search_paths,
         docstring_parser=docstring_parser,
@@ -754,7 +762,8 @@ def load(
         modules_collection=modules_collection,
         allow_inspection=allow_inspection,
         store_source=store_source,
-    ).load(
+    )
+    result = loader.load(
         objspec,
         submodules=submodules,
         try_relative_path=try_relative_path,
@@ -762,6 +771,9 @@ def load(
         # TODO: Remove at some point.
         module=module,
     )
+    if resolve_aliases:
+        loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
+    return result
 
 
 def load_git(
@@ -781,6 +793,9 @@ def load_git(
     find_stubs_package: bool = False,
     # TODO: Remove at some point.
     module: str | Path | None = None,
+    resolve_aliases: bool = False,
+    resolve_external: bool | None = None,
+    resolve_implicit: bool = False,
 ) -> Object:
     """Load and return a module from a specific Git reference.
 
@@ -814,6 +829,11 @@ def load_git(
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
         module: Deprecated. Use `objspec` positional-only parameter instead.
+        resolve_aliases: Whether to resolve aliases.
+        resolve_external: Whether to try to load unspecified modules to resolve aliases.
+            Default value (`None`) means to load external modules only if they are the private sibling
+            or the origin module (for example when `ast` imports from `_ast`).
+        resolve_implicit: When false, only try to resolve an alias if it is explicitely exported.
 
     Returns:
         A Griffe object.
@@ -839,6 +859,9 @@ def load_git(
             find_stubs_package=find_stubs_package,
             # TODO: Remove at some point.
             module=module,
+            resolve_aliases=resolve_aliases,
+            resolve_external=resolve_external,
+            resolve_implicit=resolve_implicit,
         )
 
 
