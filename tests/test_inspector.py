@@ -11,6 +11,14 @@ from griffe.agents.inspector import inspect
 from griffe.tests import temporary_inspected_module, temporary_pypackage
 
 
+# Use this function to clear sys.modules from a module and its submodules
+# after having used `temporary_pypackage` and `inspect` together.
+def _clear_sys_modules(name: str) -> None:
+    for module in list(sys.modules.keys()):
+        if module == name or module.startswith(f"{name}."):
+            sys.modules.pop(module, None)
+
+
 def test_annotations_from_builtin_types() -> None:
     """Assert builtin types are correctly transformed to annotations."""
     with temporary_inspected_module("def func(a: int) -> str: pass") as module:
@@ -56,8 +64,7 @@ def test_missing_dependency() -> None:
         filepath.write_text("import missing")
         with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"):
             inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
-    sys.modules.pop("package", None)
-    sys.modules.pop("package.module", None)
+    _clear_sys_modules("package")
 
 
 def test_inspect_properties_as_attributes() -> None:
@@ -101,6 +108,5 @@ def test_inspecting_parameters_with_functions_as_default_values() -> None:
 def test_inspecting_package_and_module_with_same_names() -> None:
     """Package and module having same name shouldn't cause issues."""
     with temporary_pypackage("package", {"package.py": "a = 0"}) as tmp_package:
-        inspect("package.package", filepath=Path(tmp_package.path, "package.py"), import_paths=[tmp_package.tmpdir])
-    sys.modules.pop("package", None)
-    sys.modules.pop("package.package", None)
+        inspect("package.package", filepath=tmp_package.path / "package.py", import_paths=[tmp_package.tmpdir])
+    _clear_sys_modules("package")
