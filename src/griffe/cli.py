@@ -71,7 +71,7 @@ def _load_packages(
     docstring_options: dict[str, Any] | None = None,
     resolve_aliases: bool = True,
     resolve_implicit: bool = False,
-    resolve_external: bool = False,
+    resolve_external: bool | None = None,
     allow_inspection: bool = True,
     store_source: bool = True,
     find_stubs_package: bool = False,
@@ -256,8 +256,17 @@ def get_parser() -> argparse.ArgumentParser:
     dump_options.add_argument(
         "-U",
         "--resolve-external",
+        dest="resolve_external",
         action="store_true",
-        help="Whether to resolve aliases pointing to external/unknown modules (not loaded directly).",
+        help="Always resolve aliases pointing to external/unknown modules (not loaded directly)."
+        "Default is to resolve only from one module to its private sibling (`ast` -> `_ast`).",
+    )
+    dump_options.add_argument(
+        "--no-resolve-external",
+        dest="resolve_external",
+        action="store_false",
+        help="Never resolve aliases pointing to external/unknown modules (not loaded directly)."
+        "Default is to resolve only from one module to its private sibling (`ast` -> `_ast`).",
     )
     dump_options.add_argument(
         "-S",
@@ -315,7 +324,7 @@ def dump(
     extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
     resolve_aliases: bool = False,
     resolve_implicit: bool = False,
-    resolve_external: bool = False,
+    resolve_external: bool | None = None,
     search_paths: Sequence[str | Path] | None = None,
     find_stubs_package: bool = False,
     append_sys_path: bool = False,
@@ -333,6 +342,7 @@ def dump(
         resolve_aliases: Whether to resolve aliases (indirect objects references).
         resolve_implicit: Whether to resolve every alias or only the explicitly exported ones.
         resolve_external: Whether to load additional, unspecified modules to resolve aliases.
+            Default is to resolve only from one module to its private sibling (`ast` -> `_ast`).
         extensions: The extensions to use.
         search_paths: The paths to search into.
         find_stubs_package: Whether to search for stubs-only packages.

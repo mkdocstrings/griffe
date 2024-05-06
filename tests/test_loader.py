@@ -421,3 +421,31 @@ def test_submodule_shadowing_member(init: str, caplog: pytest.LogCaptureFixture)
         init=True,
     ):
         assert "shadowing" in caplog.text
+
+
+@pytest.mark.parametrize("wildcard", [True, False])
+@pytest.mark.parametrize(("external", "foo_is_resolved"), [(None, True), (True, True), (False, False)])
+def test_side_loading_sibling_private_module(wildcard: bool, external: bool | None, foo_is_resolved: bool) -> None:
+    """Automatically load `_a` when `a` (wildcard) imports from it.
+
+    Parameters:
+        wildcard: Whether the import is a wildcard import.
+        external: Value for the `external` parameter when resolving aliases.
+        foo_is_resolved: Whether the `foo` alias should be resolved.
+    """
+    with temporary_pypackage("_a", {"__init__.py": "def foo():\n    '''Docstring.'''"}) as pkg_a:  # noqa: SIM117
+        with temporary_pypackage("a", {"__init__.py": f"from _a import {'*' if wildcard else 'foo'}"}) as pkg_a_private:
+            loader = GriffeLoader(search_paths=[pkg_a.tmpdir, pkg_a_private.tmpdir])
+            package = loader.load("a")
+            loader.resolve_aliases(external=external, implicit=True)
+            if foo_is_resolved:
+                assert "foo" in package.members
+                assert package["foo"].is_alias
+                assert package["foo"].resolved
+                assert package["foo"].docstring.value == "Docstring."
+            elif wildcard:
+                assert "foo" not in package.members
+            else:
+                assert "foo" in package.members
+                assert package["foo"].is_alias
+                assert not package["foo"].resolved

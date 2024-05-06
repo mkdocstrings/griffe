@@ -208,7 +208,7 @@ class GriffeLoader:
         self,
         *,
         implicit: bool = False,
-        external: bool = False,
+        external: bool | None = None,
         max_iterations: int | None = None,
     ) -> tuple[set[str], int]:
         """Resolve aliases.
@@ -294,7 +294,7 @@ class GriffeLoader:
         self,
         obj: Object,
         *,
-        external: bool = False,
+        external: bool | None = None,
         seen: set | None = None,
     ) -> None:
         """Expand wildcards: try to recursively expand all found wildcards.
@@ -319,7 +319,7 @@ class GriffeLoader:
 
                 # Try loading the (unknown) package containing the wildcard importe module (if allowed to).
                 if not_loaded:
-                    if not external:
+                    if external is False or (external is None and package != f"_{obj.package.name}"):
                         continue
                     try:
                         self.load(package, try_relative_path=False)
@@ -407,7 +407,7 @@ class GriffeLoader:
         obj: Object | Alias,
         *,
         implicit: bool = False,
-        external: bool = False,
+        external: bool | None = None,
         seen: set[str] | None = None,
         load_failures: set[str] | None = None,
     ) -> tuple[set[str], set[str]]:
@@ -448,7 +448,7 @@ class GriffeLoader:
                     unresolved.add(member.path)
                     package = target.split(".", 1)[0]
                     load_module = (
-                        external
+                        (external is True or (external is None and package == f"_{obj.package.name}"))
                         and package not in load_failures
                         and obj.package.path != package
                         and package not in self.modules_collection
