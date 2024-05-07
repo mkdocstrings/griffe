@@ -323,7 +323,7 @@ class GriffeLoader:
                         continue
                     try:
                         self.load(package, try_relative_path=False)
-                    except ImportError as error:
+                    except (ImportError, LoadingError) as error:
                         logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
 
@@ -457,7 +457,7 @@ class GriffeLoader:
                         logger.debug(f"Failed to resolve alias {member.path} -> {target}")
                         try:
                             self.load(package, try_relative_path=False)
-                        except ImportError as error:
+                        except (ImportError, LoadingError) as error:
                             logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
                 except CyclicAliasError as error:
