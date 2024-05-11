@@ -2,21 +2,13 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
 
 from griffe.agents.inspector import inspect
 from griffe.tests import temporary_inspected_module, temporary_pypackage
-
-
-# Use this function to clear sys.modules from a module and its submodules
-# after having used `temporary_pypackage` and `inspect` together.
-def _clear_sys_modules(name: str) -> None:
-    for module in list(sys.modules.keys()):
-        if module == name or module.startswith(f"{name}."):
-            sys.modules.pop(module, None)
+from tests.helpers import clear_sys_modules
 
 
 def test_annotations_from_builtin_types() -> None:
@@ -64,7 +56,7 @@ def test_missing_dependency() -> None:
         filepath.write_text("import missing")
         with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"):
             inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
-    _clear_sys_modules("package")
+    clear_sys_modules("package")
 
 
 def test_inspect_properties_as_attributes() -> None:
@@ -109,7 +101,7 @@ def test_inspecting_package_and_module_with_same_names() -> None:
     """Package and module having same name shouldn't cause issues."""
     with temporary_pypackage("package", {"package.py": "a = 0"}) as tmp_package:
         inspect("package.package", filepath=tmp_package.path / "package.py", import_paths=[tmp_package.tmpdir])
-    _clear_sys_modules("package")
+    clear_sys_modules("package")
 
 
 def test_inspecting_module_with_submodules() -> None:
@@ -117,7 +109,7 @@ def test_inspecting_module_with_submodules() -> None:
     with temporary_pypackage("pkg", ["mod.py"]) as tmp_package:
         pkg = inspect("pkg", filepath=tmp_package.path / "__init__.py")
     assert "mod" not in pkg.members
-    _clear_sys_modules("pkg")
+    clear_sys_modules("pkg")
 
 
 def test_inspecting_module_with_imported_submodules() -> None:
@@ -135,7 +127,7 @@ def test_inspecting_module_with_imported_submodules() -> None:
     assert "mod" in pkg.members
     assert pkg["mod"].is_alias
     assert pkg["mod"].target_path == "pkg.subpkg.mod"
-    _clear_sys_modules("pkg")
+    clear_sys_modules("pkg")
 
 
 def test_inspecting_objects_from_private_builtin_stdlib_moduless() -> None:
