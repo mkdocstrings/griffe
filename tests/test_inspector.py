@@ -110,3 +110,40 @@ def test_inspecting_package_and_module_with_same_names() -> None:
     with temporary_pypackage("package", {"package.py": "a = 0"}) as tmp_package:
         inspect("package.package", filepath=tmp_package.path / "package.py", import_paths=[tmp_package.tmpdir])
     _clear_sys_modules("package")
+
+
+def test_inspecting_module_with_submodules() -> None:
+    """Inspecting a module shouldn't register any of its submodules if they're not imported."""
+    with temporary_pypackage("pkg", ["mod.py"]) as tmp_package:
+        pkg = inspect("pkg", filepath=tmp_package.path / "__init__.py")
+    assert "mod" not in pkg.members
+    _clear_sys_modules("pkg")
+
+
+def test_inspecting_module_with_imported_submodules() -> None:
+    """When inspecting a package on the disk, direct submodules should be skipped entirely."""
+    with temporary_pypackage(
+        "pkg",
+        {
+            "__init__.py": "from pkg import subpkg\nfrom pkg.subpkg import mod",
+            "subpkg/__init__.py": "a = 0",
+            "subpkg/mod.py": "b = 0",
+        },
+    ) as tmp_package:
+        pkg = inspect("pkg", filepath=tmp_package.path / "__init__.py")
+    assert "subpkg" not in pkg.members
+    assert "mod" in pkg.members
+    assert pkg["mod"].is_alias
+    assert pkg["mod"].target_path == "pkg.subpkg.mod"
+    _clear_sys_modules("pkg")
+
+
+def test_inspecting_objects_from_private_builtin_stdlib_moduless() -> None:
+    """Inspect objects from private built-in modules in the standard library."""
+    ast = inspect("ast")
+    assert "Assign" in ast.members
+    assert not ast["Assign"].is_alias
+
+    ast = inspect("_ast")
+    assert "Assign" in ast.members
+    assert not ast["Assign"].is_alias
