@@ -11,6 +11,7 @@ import pytest
 from griffe.expressions import ExprName
 from griffe.loader import GriffeLoader
 from griffe.tests import temporary_pyfile, temporary_pypackage, temporary_visited_package
+from tests.helpers import clear_sys_modules
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -449,3 +450,17 @@ def test_side_loading_sibling_private_module(wildcard: bool, external: bool | No
                 assert "foo" in package.members
                 assert package["foo"].is_alias
                 assert not package["foo"].resolved
+
+
+def test_forcing_inspection() -> None:
+    """Load a package with forced dynamic analysis."""
+    with temporary_pypackage("pkg", {"__init__.py": "a = 0", "mod.py": "b = 1"}) as pkg:
+        static_loader = GriffeLoader(force_inspection=False, search_paths=[pkg.tmpdir])
+        dynamic_loader = GriffeLoader(force_inspection=True, search_paths=[pkg.tmpdir])
+        static_package = static_loader.load("pkg")
+        dynamic_package = dynamic_loader.load("pkg")
+        for name in static_package.members:
+            assert name in dynamic_package.members
+        for name in static_package["mod"].members:
+            assert name in dynamic_package["mod"].members
+    clear_sys_modules("pkg")

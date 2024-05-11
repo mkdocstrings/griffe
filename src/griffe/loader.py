@@ -29,6 +29,7 @@ from griffe.expressions import ExprName
 from griffe.extensions.base import Extensions, load_extensions
 from griffe.finder import ModuleFinder, NamespacePackage, Package
 from griffe.git import tmp_worktree
+from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 from griffe.stats import stats
@@ -55,6 +56,7 @@ class GriffeLoader:
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
         allow_inspection: bool = True,
+        force_inspection: bool = False,
         store_source: bool = True,
     ) -> None:
         """Initialize the loader.
@@ -81,6 +83,8 @@ class GriffeLoader:
         """Collection of modules."""
         self.allow_inspection: bool = allow_inspection
         """Whether to allow inspecting (importing) modules for which we can't find sources."""
+        self.force_inspection: bool = force_inspection
+        """Whether to force inspecting (importing) modules, even when sources were found."""
         self.store_source: bool = store_source
         """Whether to store source code in the lines collection."""
         self.finder: ModuleFinder = ModuleFinder(search_paths)
@@ -159,6 +163,7 @@ class GriffeLoader:
         # TODO: Remove at some point.
         if objspec is None and module is None:
             raise TypeError("load() missing 1 required positional argument: 'objspec'")
+
         if objspec is None:
             objspec = module
             warnings.warn(
@@ -166,18 +171,14 @@ class GriffeLoader:
                 DeprecationWarning,
                 stacklevel=2,
             )
+
         obj_path: str
-        if objspec in _builtin_modules:
-            logger.debug(f"{objspec} is a builtin module")
-            if self.allow_inspection:
-                logger.debug(f"Inspecting {objspec}")
-                obj_path = objspec  # type: ignore[assignment]
-                top_module = self._inspect_module(objspec)  # type: ignore[arg-type]
-                self.modules_collection.set_member(top_module.path, top_module)
-                obj = self.modules_collection.get_member(obj_path)
-                self.extensions.call("on_package_loaded", pkg=obj)
-                return obj
-            raise LoadingError("Cannot load builtin module without inspection")
+        package = None
+        top_module = None
+
+        # We always start by searching paths on the disk,
+        # even if inspection is forced.
+        logger.debug(f"Searching path(s) for {objspec}")
         try:
             obj_path, package = self.finder.find_spec(
                 objspec,  # type: ignore[arg-type]
@@ -185,21 +186,46 @@ class GriffeLoader:
                 find_stubs_package=find_stubs_package,
             )
         except ModuleNotFoundError:
-            logger.debug(f"Could not find {objspec}")
-            if self.allow_inspection:
-                logger.debug(f"Trying inspection on {objspec}")
-                obj_path = objspec  # type: ignore[assignment]
-                top_module = self._inspect_module(objspec)  # type: ignore[arg-type]
-                self.modules_collection.set_member(top_module.path, top_module)
-            else:
+            # If we couldn't find paths on disk and inspection is disabled,
+            # re-raise ModuleNotFoundError.
+            logger.debug(f"Could not find path for {objspec} on disk")
+            if not (self.allow_inspection or self.force_inspection):
                 raise
-        else:
-            logger.debug(f"Found {objspec}: loading")
+
+            # Otherwise we try to dynamically import the top-level module.
+            obj_path = str(objspec)
+            top_module_name = obj_path.split(".", 1)[0]
+            logger.debug(f"Trying to dynamically import {top_module_name}")
+            top_module_object = dynamic_import(top_module_name, self.finder.search_paths)
+
             try:
-                top_module = self._load_package(package, submodules=submodules)
-            except LoadingError as error:
-                logger.exception(str(error))  # noqa: TRY401
-                raise
+                top_module_path = top_module_object.__path__
+            except AttributeError:
+                # If the top-level module has no `__path__`, we inspect it as-is,
+                # and do not try to recurse into submodules (there shouldn't be any in builtin/compiled modules).
+                logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
+                top_module = self._inspect_module(top_module_name)
+                self.modules_collection.set_member(top_module.path, top_module)
+                obj = self.modules_collection.get_member(obj_path)
+                self.extensions.call("on_package_loaded", pkg=obj)
+                return obj
+
+            # We found paths, and use them to build our intermediate Package or NamespacePackage struct.
+            logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
+            if len(top_module_path) > 1:
+                package = NamespacePackage(top_module_name, top_module_path)
+            else:
+                package = Package(top_module_name, top_module_path[0])
+
+        # We have an intermediate package, and an object path: we're ready to load.
+        logger.debug(f"Found {objspec}: loading")
+        try:
+            top_module = self._load_package(package, submodules=submodules)
+        except LoadingError as error:
+            logger.exception(str(error))  # noqa: TRY401
+            raise
+
+        # Package is loaded, we now retrieve the initially requested object and return it.
         obj = self.modules_collection.get_member(obj_path)
         self.extensions.call("on_package_loaded", pkg=obj)
         return obj
@@ -534,9 +560,10 @@ class GriffeLoader:
         logger.debug(f"Loading path {module_path}")
         if isinstance(module_path, list):
             module = self._create_module(module_name, module_path)
+        elif self.force_inspection:
+            module = self._inspect_module(module_name, module_path, parent)
         elif module_path.suffix in {".py", ".pyi"}:
-            code = module_path.read_text(encoding="utf8")
-            module = self._visit_module(code, module_name, module_path, parent)
+            module = self._visit_module(module_name, module_path, parent)
         elif self.allow_inspection:
             module = self._inspect_module(module_name, module_path, parent)
         else:
@@ -559,7 +586,7 @@ class GriffeLoader:
         except UnimportableModuleError as error:
             # NOTE: Why don't we load submodules when there's no init module in their folder?
             # Usually when a folder with Python files does not have an __init__.py module,
-            # it's because the Python files are scripts, that should never be imported.
+            # it's because the Python files are scripts that should never be imported.
             # Django has manage.py somewhere for example, in a folder without init module.
             # This script isn't part of the Python API, as it's meant to be called on the CLI exclusively
             # (at least it was the case a few years ago when I was still using Django).
@@ -590,11 +617,13 @@ class GriffeLoader:
             logger.debug(str(error))
         else:
             if submodule_name in parent_module.members:
-                logger.debug(
-                    f"Submodule '{submodule.path}' is shadowing the member at the same path. "
-                    "We recommend renaming the member or the submodule (for example prefixing it with `_`), "
-                    "see https://mkdocstrings.github.io/griffe/best_practices/#avoid-member-submodule-name-shadowing.",
-                )
+                member = parent_module.members[submodule_name]
+                if member.is_alias or not member.is_module:
+                    logger.debug(
+                        f"Submodule '{submodule.path}' is shadowing the member at the same path. "
+                        "We recommend renaming the member or the submodule (for example prefixing it with `_`), "
+                        "see https://mkdocstrings.github.io/griffe/best_practices/#avoid-member-submodule-name-shadowing.",
+                    )
             parent_module.set_member(submodule_name, submodule)
 
     def _create_module(self, module_name: str, module_path: Path | list[Path]) -> Module:
@@ -605,7 +634,8 @@ class GriffeLoader:
             modules_collection=self.modules_collection,
         )
 
-    def _visit_module(self, code: str, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
+    def _visit_module(self, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
+        code = module_path.read_text(encoding="utf8")
         if self.store_source:
             self.lines_collection[module_path] = code.splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
@@ -628,6 +658,8 @@ class GriffeLoader:
         for prefix in self.ignored_modules:
             if module_name.startswith(prefix):
                 raise ImportError(f"Ignored module '{module_name}'")
+        if self.store_source and filepath and filepath.suffix in {".py", ".pyi"}:
+            self.lines_collection[filepath] = filepath.read_text(encoding="utf8").splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
         try:
             module = inspect(
@@ -699,6 +731,7 @@ def load(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
+    force_inspection: bool = False,
     store_source: bool = True,
     find_stubs_package: bool = False,
     # TODO: Remove at some point.
@@ -739,6 +772,7 @@ def load(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        force_inspection: Whether to force using dynamic analysis when loading data.
         store_source: Whether to store code source in the lines collection.
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
@@ -761,6 +795,7 @@ def load(
         lines_collection=lines_collection,
         modules_collection=modules_collection,
         allow_inspection=allow_inspection,
+        force_inspection=force_inspection,
         store_source=store_source,
     )
     result = loader.load(
@@ -790,6 +825,7 @@ def load_git(
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
+    force_inspection: bool = False,
     find_stubs_package: bool = False,
     # TODO: Remove at some point.
     module: str | Path | None = None,
@@ -825,6 +861,7 @@ def load_git(
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        force_inspection: Whether to force using dynamic analysis when loading data.
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
@@ -856,6 +893,7 @@ def load_git(
             lines_collection=lines_collection,
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
             # TODO: Remove at some point.
             module=module,
