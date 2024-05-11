@@ -73,6 +73,7 @@ def _load_packages(
     resolve_implicit: bool = False,
     resolve_external: bool | None = None,
     allow_inspection: bool = True,
+    force_inspection: bool = False,
     store_source: bool = True,
     find_stubs_package: bool = False,
 ) -> GriffeLoader:
@@ -83,6 +84,7 @@ def _load_packages(
         docstring_parser=docstring_parser,
         docstring_options=docstring_options,
         allow_inspection=allow_inspection,
+        force_inspection=force_inspection,
         store_source=store_source,
     )
 
@@ -183,6 +185,14 @@ def get_parser() -> argparse.ArgumentParser:
             action="store_false",
             default=True,
             help="Disallow inspection of builtin/compiled/not found modules.",
+        )
+        loading_options.add_argument(
+            "-x",
+            "--force-inspection",
+            dest="force_inspection",
+            action="store_true",
+            default=False,
+            help="Force inspection of everything, even when sources are found.",
         )
         debug_options = subparser.add_argument_group(title="Debugging options")
         debug_options.add_argument(
@@ -329,6 +339,7 @@ def dump(
     find_stubs_package: bool = False,
     append_sys_path: bool = False,
     allow_inspection: bool = True,
+    force_inspection: bool = False,
     stats: bool = False,
 ) -> int:
     """Load packages data and dump it as JSON.
@@ -350,6 +361,7 @@ def dump(
             If only the stubs are found, they'll be used as the package itself.
         append_sys_path: Whether to append the contents of `sys.path` to the search paths.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        force_inspection: Whether to force using dynamic analysis when loading data.
         stats: Whether to compute and log stats about loading.
 
     Returns:
@@ -381,6 +393,7 @@ def dump(
         resolve_implicit=resolve_implicit,
         resolve_external=resolve_external,
         allow_inspection=allow_inspection,
+        force_inspection=force_inspection,
         store_source=False,
         find_stubs_package=find_stubs_package,
     )
@@ -414,6 +427,7 @@ def check(
     append_sys_path: bool = False,
     find_stubs_package: bool = False,
     allow_inspection: bool = True,
+    force_inspection: bool = False,
     verbose: bool = False,
     color: bool | None = None,
     style: str | ExplanationStyle | None = None,
@@ -429,6 +443,7 @@ def check(
         search_paths: The paths to search into.
         append_sys_path: Whether to append the contents of `sys.path` to the search paths.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        force_inspection: Whether to force using dynamic analysis when loading data.
         verbose: Use a verbose output.
 
     Returns:
@@ -461,6 +476,7 @@ def check(
         extensions=loaded_extensions,
         search_paths=search_paths,
         allow_inspection=allow_inspection,
+        force_inspection=force_inspection,
     )
     if base_ref:
         new_package = load_git(
@@ -470,6 +486,7 @@ def check(
             extensions=loaded_extensions,
             search_paths=search_paths,
             allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
         )
     else:
@@ -479,6 +496,7 @@ def check(
             extensions=loaded_extensions,
             search_paths=search_paths,
             allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
         )
 
