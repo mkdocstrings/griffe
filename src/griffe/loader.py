@@ -671,6 +671,7 @@ class GriffeLoader:
                 docstring_parser=self.docstring_parser,
                 docstring_options=self.docstring_options,
                 lines_collection=self.lines_collection,
+                modules_collection=self.modules_collection,
             )
         except SystemExit as error:
             raise ImportError(f"Importing '{module_name}' raised a system exit") from error
