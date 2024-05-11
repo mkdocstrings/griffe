@@ -35,6 +35,7 @@ from griffe.enumerations import ObjectKind, ParameterKind
 from griffe.expressions import safe_get_annotation
 from griffe.extensions.base import Extensions, load_extensions
 from griffe.importer import dynamic_import
+from griffe.logger import get_logger
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -43,6 +44,7 @@ if TYPE_CHECKING:
     from griffe.expressions import Expr
 
 
+logger = get_logger(__name__)
 empty = Signature.empty
 
 
@@ -218,9 +220,34 @@ class Inspector:
             before_inspector.inspect(node)
 
         for child in node.children:
-            target_path = child.alias_target_path
-            if target_path:
-                self.current.set_member(child.name, Alias(child.name, target_path))
+            if target_path := child.alias_target_path:
+                # If the child is an actual submodule of the current module,
+                # and has no `__file__` set, we won't find it on the disk so we must inspect it now.
+                # For that we instantiate a new inspector and use it to inspect the submodule,
+                # then assign the submodule as member of the current module.
+                # If the submodule has a `__file__` set, the loader should find it on the disk,
+                # so we skip it here (no member, no alias, just skip it).
+                if child.is_module and target_path == f"{self.current.path}.{child.name}":
+                    if not hasattr(child.obj, "__file__"):
+                        logger.debug(f"Module {target_path} is not discoverable on disk, inspecting right now")
+                        inspector = Inspector(
+                            child.name,
+                            filepath=None,
+                            parent=self.current.module,
+                            extensions=self.extensions,
+                            docstring_parser=self.docstring_parser,
+                            docstring_options=self.docstring_options,
+                            lines_collection=self.lines_collection,
+                            modules_collection=self.modules_collection,
+                        )
+                        try:
+                            inspector.inspect_module(child)
+                        finally:
+                            self.extensions.attach_inspector(self)
+                        self.current.set_member(child.name, inspector.current.module)
+                # Otherwise, alias the object.
+                else:
+                    self.current.set_member(child.name, Alias(child.name, target_path))
             else:
                 self.inspect(child)
 
