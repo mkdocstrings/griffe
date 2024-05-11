@@ -348,7 +348,6 @@ class Inspector:
         Parameters:
             node: The node to inspect.
         """
-        node.obj = node.obj.func
         self.handle_function(node, {"cached", "property"})
 
     def inspect_property(self, node: ObjectNode) -> None:
