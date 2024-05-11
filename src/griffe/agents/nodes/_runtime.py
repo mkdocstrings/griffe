@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import inspect
+import sys
 from functools import cached_property
-from inspect import getmodule
 from typing import Any, ClassVar, Sequence
 
 from griffe.enumerations import ObjectKind
@@ -12,6 +12,7 @@ from griffe.logger import get_logger
 
 logger = get_logger(__name__)
 
+_builtin_module_names = {_.lstrip("_") for _ in sys.builtin_module_names}
 _cyclic_relationships = {
     ("os", "nt"),
     ("os", "posix"),
@@ -78,12 +79,27 @@ class ObjectNode:
 
     @property
     def module(self) -> ObjectNode:
-        """The object's module."""
+        """The object's module, fetched from the node tree."""
         if self.is_module:
             return self
         if self.parent is not None:
             return self.parent.module
         raise ValueError(f"Object node {self.path} does not have a parent module")
+
+    @property
+    def module_path(self) -> str | None:
+        """The object's module path."""
+        try:
+            return self.obj.__module__
+        except AttributeError:
+            try:
+                module = inspect.getmodule(self.obj) or self.module.obj
+            except ValueError:
+                return None
+            try:
+                return module.__spec__.name  # type: ignore[union-attr]
+            except AttributeError:
+                return getattr(module, "__name__", None)
 
     @property
     def kind(self) -> ObjectKind:
@@ -218,53 +234,39 @@ class ObjectNode:
     @cached_property
     def alias_target_path(self) -> str | None:
         """Alias target path of this node, if the node should be an alias."""
-        # the whole point of the following logic is to deal with these cases:
-        # - parent object has a module member
-        # - if this module is not a submodule of the parent, alias it
-        # - but break special cycles coming from builtin modules
-        #   like ast -> _ast -> ast (here we inspect _ast)
-        #   or os -> posix/nt -> os (here we inspect posix/nt)
         if self.parent is None:
             return None
 
-        obj = self.obj
-        if isinstance(obj, cached_property):
-            obj = obj.func
-
-        try:
-            child_module = getmodule(obj)
-        except Exception:  # noqa: BLE001
-            return None
-        if not child_module:
+        # Get the path of the module the child was declared in.
+        child_module_path = self.module_path
+        if not child_module_path:
             return None
 
-        if self.parent.is_module:
-            parent_module = self.parent.obj
-        else:
-            parent_module = getmodule(self.parent.obj)
-            if not parent_module:
-                return None
-
-        parent_module_path = getattr(parent_module.__spec__, "name", parent_module.__name__)
-        child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)
-        parent_base_name = parent_module_path.split(".")[-1]
-        child_base_name = child_module_path.split(".")[-1]
-
-        # special cases: inspect.getmodule does not return the real modules
-        # for those, but rather the "user-facing" ones - we prevent that
-        # and use the real parent module
-        if (
-            parent_module_path,
-            child_module_path,
-        ) in _cyclic_relationships or parent_base_name == f"_{child_base_name}":
-            child_module = parent_module
-            child_module_path = getattr(child_module.__spec__, "name", child_module.__name__)  # type: ignore[union-attr]
-
-        if child_module_path == self.module.path or child_module_path.startswith(self.module.path + "."):
+        # Get the module the parent object was declared in.
+        parent_module_path = self.parent.module_path
+        if not parent_module_path:
             return None
 
-        child_module_path = child_module_path.lstrip("_")
-        if self.kind is ObjectKind.MODULE:
+        # Special cases: break cycles.
+        if (parent_module_path, child_module_path) in _cyclic_relationships:
+            return None
+
+        # If the current object was declared in the same module as its parent,
+        # or in a module with the same name but starting/not starting with an underscore,
+        # we don't want to alias it. Examples: (a, a), (a, _a), (_a, a), (_a, _a).
+        # TODO: Use `removeprefix` when we drop Python 3.8.
+        if parent_module_path.lstrip("_") == child_module_path.lstrip("_"):
+            return None
+
+        # If the current object was declared in any other module, we alias it.
+        # We remove the leading underscore from the child module path
+        # if it's a built-in module (e.g. _io -> io). That's because objects
+        # in built-in modules inconsistently lie about their module path,
+        # so we prefer to use the non-underscored (public) version,
+        # as users most likely import from the public module and not the private one.
+        if child_module_path.lstrip("_") in _builtin_module_names:
+            child_module_path = child_module_path.lstrip("_")
+        if self.is_module:
             return child_module_path
         child_name = getattr(self.obj, "__name__", self.name)
         return f"{child_module_path}.{child_name}"
