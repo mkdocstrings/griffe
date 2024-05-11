@@ -40,6 +40,7 @@ class ObjectNode:
             name: The object's name.
             parent: The object's parent node.
         """
+        # Unwrap object.
         try:
             obj = inspect.unwrap(obj)
         except Exception as error:  # noqa: BLE001
@@ -49,12 +50,21 @@ class ObjectNode:
             # See https://github.com/pawamoy/pytkdocs/issues/45
             logger.debug(f"Could not unwrap {name}: {error!r}")
 
+        # Unwrap cached properties (`inpsect.unwrap` doesn't do that).
+        if isinstance(obj, cached_property):
+            is_cached_property = True
+            obj = obj.func
+        else:
+            is_cached_property = False
+
         self.obj: Any = obj
         """The actual Python object."""
         self.name: str = name
         """The Python object's name."""
         self.parent: ObjectNode | None = parent
         """The parent node."""
+        self.is_cached_property: bool = is_cached_property
+        """Whether this node's object is a cached property."""
 
     def __repr__(self) -> str:
         return f"ObjectNode(name={self.name!r})"
@@ -86,6 +96,8 @@ class ObjectNode:
             return ObjectKind.STATICMETHOD
         if self.is_classmethod:
             return ObjectKind.CLASSMETHOD
+        if self.is_cached_property:
+            return ObjectKind.CACHED_PROPERTY
         if self.is_method:
             return ObjectKind.METHOD
         if self.is_builtin_method:
@@ -96,8 +108,6 @@ class ObjectNode:
             return ObjectKind.FUNCTION
         if self.is_builtin_function:
             return ObjectKind.BUILTIN_FUNCTION
-        if self.is_cached_property:
-            return ObjectKind.CACHED_PROPERTY
         if self.is_property:
             return ObjectKind.PROPERTY
         if self.is_method_descriptor:
@@ -142,11 +152,6 @@ class ObjectNode:
     def is_property(self) -> bool:
         """Whether this node's object is a property."""
         return isinstance(self.obj, property) or self.is_cached_property
-
-    @cached_property
-    def is_cached_property(self) -> bool:
-        """Whether this node's object is a cached property."""
-        return isinstance(self.obj, cached_property)
 
     @cached_property
     def parent_is_class(self) -> bool:
