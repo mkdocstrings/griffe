@@ -176,6 +176,9 @@ class Inspector:
             parent_path = self.filepath.parent
             for _ in range(import_path.count(".")):
                 parent_path = parent_path.parent
+            # Climb up one more time for `__init__` modules.
+            if self.filepath.stem == "__init__":
+                parent_path = parent_path.parent
             if parent_path not in import_paths:
                 import_paths.insert(0, parent_path)
 
