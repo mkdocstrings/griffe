@@ -176,7 +176,7 @@ class SetMembersMixin:
         Examples:
             >>> griffe_object.set_member("foo", foo)
             >>> griffe_object.set_member("path.to.bar", bar)
-            >>> griffe_object.set_member(("path", "to", "qux", qux)
+            >>> griffe_object.set_member(("path", "to", "qux"), qux)
         """
         parts = _get_parts(key)
         if len(parts) == 1:
