@@ -32,7 +32,7 @@ from griffe.git import tmp_worktree
 from griffe.importer import dynamic_import
 from griffe.logger import get_logger
 from griffe.merger import merge_stubs
-from griffe.stats import stats
+from griffe.stats import Stats
 
 if TYPE_CHECKING:
     from griffe.enumerations import Parser
@@ -506,13 +506,16 @@ class GriffeLoader:
 
         return resolved, unresolved
 
-    def stats(self) -> dict:
+    def stats(self) -> Stats:
         """Compute some statistics.
 
         Returns:
             Some statistics.
         """
-        return {**stats(self), **self._time_stats}
+        stats = Stats(self)
+        stats.time_spent_visiting = self._time_stats["time_spent_visiting"]
+        stats.time_spent_inspecting = self._time_stats["time_spent_inspecting"]
+        return stats
 
     def _load_package(self, package: Package | NamespacePackage, *, submodules: bool = True) -> Module:
         top_module = self._load_module(package.name, package.path, submodules=submodules)

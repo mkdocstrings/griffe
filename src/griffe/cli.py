@@ -33,7 +33,6 @@ from griffe.extensions.base import load_extensions
 from griffe.git import get_latest_tag, get_repo_root
 from griffe.loader import GriffeLoader, load, load_git
 from griffe.logger import get_logger
-from griffe.stats import _format_stats
 
 if TYPE_CHECKING:
     from griffe.extensions.base import Extensions, ExtensionType
@@ -411,7 +410,9 @@ def dump(
     elapsed = datetime.now(tz=timezone.utc) - started
 
     if stats:
-        logger.info(_format_stats({"time_spent_serializing": elapsed.microseconds, **loader.stats()}))
+        loader_stats = loader.stats()
+        loader_stats.time_spent_serializing = elapsed.microseconds
+        logger.info(loader_stats.as_text())
 
     return 0 if len(data_packages) == len(packages) else 1
 
