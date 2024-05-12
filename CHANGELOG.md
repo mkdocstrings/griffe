@@ -5,6 +5,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.45.0](https://github.com/mkdocstrings/griffe/releases/tag/0.45.0) - 2024-05-12
+
+<small>[Compare with 0.44.0](https://github.com/mkdocstrings/griffe/compare/0.44.0...0.45.0)</small>
+
+### Features
+
+- Implement `-x`, `--force-inspection` CLI option ([776063d](https://github.com/mkdocstrings/griffe/commit/776063d971b059576c62f62fdd2e1199de033711) by Timothée Mazzucotelli).
+- Implement `force_inspection` option in the loader API ([3266f22](https://github.com/mkdocstrings/griffe/commit/3266f2290637d3f46d782fe7ce222ff29f549043) by Timothée Mazzucotelli).
+- Support inspecting packages (`__init__` modules) ([3f74f67](https://github.com/mkdocstrings/griffe/commit/3f74f679de15df098482fead505d0402bff84401) by Timothée Mazzucotelli).
+- Add parameters for resolving aliases to `load` functions ([e418dee](https://github.com/mkdocstrings/griffe/commit/e418dee1563e2a02ec61c920842e8b8a13419448) by Timothée Mazzucotelli).
+- Load private sibling modules by default when resolving aliases ([4806189](https://github.com/mkdocstrings/griffe/commit/4806189111572495466638bb7899cf906eeebfe9) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Pass down modules collection when inspecting ([bc0f74b](https://github.com/mkdocstrings/griffe/commit/bc0f74bef40a812e00765a7ab17507b0bfbd62c3) by Timothée Mazzucotelli).
+- Catch loading errors when loading additional modules during wildcard expansion and alias resolution ([964e0d2](https://github.com/mkdocstrings/griffe/commit/964e0d2b78d3bc3530601009148fb4a5905b8721) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Improve stats code and performance ([eeb497f](https://github.com/mkdocstrings/griffe/commit/eeb497fa41acf50801cc6a7a240d079cc1592e79) by Timothée Mazzucotelli).
+- Recurse immediately into non-discoverable submodules (no path on disk) during dynamic analysis ([d0b7a1d](https://github.com/mkdocstrings/griffe/commit/d0b7a1d96a4dd7513f34673b0ef6cd02aa7d0fca) by Timothée Mazzucotelli).
+- Simplify the code that checks if an object should be aliased or not during dynamic analysis ([fc794c2](https://github.com/mkdocstrings/griffe/commit/fc794c24c578fe868900483b20601937db3f3d05) by Timothée Mazzucotelli).
+- Avoid side-effect in inspector by checking early if an object is a cached property ([a6bfcfd](https://github.com/mkdocstrings/griffe/commit/a6bfcfdb9e2a0740d72abbd1480e0aa7e23c9af1) by Timothée Mazzucotelli).
+
 ## [0.44.0](https://github.com/mkdocstrings/griffe/releases/tag/0.44.0) - 2024-04-19
 
 <small>[Compare with 0.43.0](https://github.com/mkdocstrings/griffe/compare/0.43.0...0.44.0)</small>
