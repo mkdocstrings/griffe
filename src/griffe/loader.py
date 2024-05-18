@@ -200,7 +200,9 @@ class GriffeLoader:
 
             try:
                 top_module_path = top_module_object.__path__
-            except AttributeError:
+                if not top_module_path:
+                    raise ValueError(f"Module {top_module_name} has no paths set")  # noqa: TRY301
+            except (AttributeError, ValueError):
                 # If the top-level module has no `__path__`, we inspect it as-is,
                 # and do not try to recurse into submodules (there shouldn't be any in builtin/compiled modules).
                 logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
@@ -212,6 +214,7 @@ class GriffeLoader:
 
             # We found paths, and use them to build our intermediate Package or NamespacePackage struct.
             logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
+            top_module_path = [Path(path) for path in top_module_path]
             if len(top_module_path) > 1:
                 package = NamespacePackage(top_module_name, top_module_path)
             else:

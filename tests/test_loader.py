@@ -464,3 +464,14 @@ def test_forcing_inspection() -> None:
         for name in static_package["mod"].members:
             assert name in dynamic_package["mod"].members
     clear_sys_modules("pkg")
+
+
+def test_relying_on_modules_path_attribute(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Load a package that relies on the `__path__` attribute of a module."""
+
+    def raise_module_not_found_error(*args, **kwargs) -> None:  # noqa: ARG001,ANN002,ANN003
+        raise ModuleNotFoundError
+
+    loader = GriffeLoader()
+    monkeypatch.setattr(loader.finder, "find_spec", raise_module_not_found_error)
+    assert loader.load("griffe")
