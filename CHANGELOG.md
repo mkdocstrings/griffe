@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.45.1](https://github.com/mkdocstrings/griffe/releases/tag/0.45.1) - 2024-05-18
+
+<small>[Compare with 0.45.0](https://github.com/mkdocstrings/griffe/compare/0.45.0...0.45.1)</small>
+
+### Bug Fixes
+
+- Fix loading of importable modules thanks to their `__path__` attribute ([56f5363](https://github.com/mkdocstrings/griffe/commit/56f5363063b54bc43a7e61da7ac6b177db2f158f) by Timothée Mazzucotelli). [Issue-269](https://github.com/mkdocstrings/griffe/issues/269)
+
 ## [0.45.0](https://github.com/mkdocstrings/griffe/releases/tag/0.45.0) - 2024-05-12
 
 <small>[Compare with 0.44.0](https://github.com/mkdocstrings/griffe/compare/0.44.0...0.45.0)</small>
