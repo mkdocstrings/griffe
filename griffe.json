@@ -256,57 +256,25 @@
 },
 {
 "kind": "alias",
+"name": "Path",
+"target_path": "pathlib.Path",
+"path": "griffe.stats.Path",
+"lineno": 6,
+"endlineno": 6
+},
+{
+"kind": "alias",
 "name": "TYPE_CHECKING",
 "target_path": "typing.TYPE_CHECKING",
 "path": "griffe.stats.TYPE_CHECKING",
-"lineno": 6,
-"endlineno": 6
+"lineno": 7,
+"endlineno": 7
 },
 {
 "kind": "alias",
-"name": "Iterable",
-"target_path": "typing.Iterable",
-"path": "griffe.stats.Iterable",
-"lineno": 6,
-"endlineno": 6
-},
-{
-"kind": "alias",
-"name": "Union",
-"target_path": "typing.Union",
-"path": "griffe.stats.Union",
-"lineno": 6,
-"endlineno": 6
-},
-{
-"kind": "alias",
-"name": "cast",
-"target_path": "typing.cast",
-"path": "griffe.stats.cast",
-"lineno": 6,
-"endlineno": 6
-},
-{
-"kind": "alias",
-"name": "Class",
-"target_path": "griffe.dataclasses.Class",
-"path": "griffe.stats.Class",
-"lineno": 8,
-"endlineno": 8
-},
-{
-"kind": "alias",
-"name": "Module",
-"target_path": "griffe.dataclasses.Module",
-"path": "griffe.stats.Module",
-"lineno": 8,
-"endlineno": 8
-},
-{
-"kind": "alias",
-"name": "BuiltinModuleError",
-"target_path": "griffe.exceptions.BuiltinModuleError",
-"path": "griffe.stats.BuiltinModuleError",
+"name": "Kind",
+"target_path": "griffe.enumerations.Kind",
+"path": "griffe.stats.Kind",
 "lineno": 9,
 "endlineno": 9
 },
@@ -335,356 +303,41 @@
 "endlineno": 13
 },
 {
-"kind": "function",
-"name": "_direct",
-"path": "griffe.stats._direct",
+"kind": "class",
+"name": "Stats",
+"path": "griffe.stats.Stats",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
 "relative_filepath": "src/griffe/stats.py",
 "relative_package_filepath": "griffe/stats.py",
 "lineno": 16,
-"endlineno": 17,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "objects",
-"annotation": {
-"left": {
-"name": "Iterable",
-"cls": "ExprName"
-},
-"slice": {
-"left": {
-"name": "Object",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Alias",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"cls": "ExprSubscript"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"left": {
-"name": "list",
-"cls": "ExprName"
-},
-"slice": {
-"left": {
-"name": "Object",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Alias",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"cls": "ExprSubscript"
-}
-},
-{
-"kind": "function",
-"name": "_n_modules",
-"path": "griffe.stats._n_modules",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 20,
-"endlineno": 22,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "module",
-"annotation": {
-"name": "Module",
-"cls": "ExprName"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"name": "int",
-"cls": "ExprName"
-}
-},
-{
-"kind": "function",
-"name": "_n_classes",
-"path": "griffe.stats._n_classes",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 25,
-"endlineno": 31,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "module_or_class",
-"annotation": {
-"left": {
-"name": "Module",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Class",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"name": "int",
-"cls": "ExprName"
-}
-},
-{
-"kind": "function",
-"name": "_n_functions",
-"path": "griffe.stats._n_functions",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 34,
-"endlineno": 41,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "module_or_class",
-"annotation": {
-"left": {
-"name": "Module",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Class",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"name": "int",
-"cls": "ExprName"
-}
-},
-{
-"kind": "function",
-"name": "_n_attributes",
-"path": "griffe.stats._n_attributes",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 44,
-"endlineno": 51,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "module_or_class",
-"annotation": {
-"left": {
-"name": "Module",
-"cls": "ExprName"
-},
-"operator": "|",
-"right": {
-"name": "Class",
-"cls": "ExprName"
-},
-"cls": "ExprBinOp"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"name": "int",
-"cls": "ExprName"
-}
-},
-{
-"kind": "function",
-"name": "_merge_exts",
-"path": "griffe.stats._merge_exts",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 54,
-"endlineno": 57,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "exts1",
-"annotation": {
-"left": {
-"name": "dict",
-"cls": "ExprName"
-},
-"slice": {
-"elements": [
-{
-"name": "str",
-"cls": "ExprName"
-},
-{
-"name": "int",
-"cls": "ExprName"
-}
-],
-"implicit": true,
-"cls": "ExprTuple"
-},
-"cls": "ExprSubscript"
-},
-"kind": "positional or keyword",
-"default": null
-},
-{
-"name": "exts2",
-"annotation": {
-"left": {
-"name": "dict",
-"cls": "ExprName"
-},
-"slice": {
-"elements": [
-{
-"name": "str",
-"cls": "ExprName"
-},
-{
-"name": "int",
-"cls": "ExprName"
-}
-],
-"implicit": true,
-"cls": "ExprTuple"
-},
-"cls": "ExprSubscript"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": {
-"left": {
-"name": "dict",
-"cls": "ExprName"
-},
-"slice": {
-"elements": [
-{
-"name": "str",
-"cls": "ExprName"
-},
-{
-"name": "int",
-"cls": "ExprName"
-}
-],
-"implicit": true,
-"cls": "ExprTuple"
-},
-"cls": "ExprSubscript"
-}
-},
-{
-"kind": "function",
-"name": "_sum_extensions",
-"path": "griffe.stats._sum_extensions",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 60,
-"endlineno": 73,
-"labels": [],
-"members": [],
-"decorators": [],
-"parameters": [
-{
-"name": "exts",
-"annotation": {
-"left": {
-"name": "dict",
-"cls": "ExprName"
-},
-"slice": {
-"elements": [
-{
-"name": "str",
-"cls": "ExprName"
-},
-{
-"name": "int",
-"cls": "ExprName"
-}
-],
-"implicit": true,
-"cls": "ExprTuple"
-},
-"cls": "ExprSubscript"
-},
-"kind": "positional or keyword",
-"default": null
-},
-{
-"name": "module",
-"annotation": {
-"name": "Module",
-"cls": "ExprName"
-},
-"kind": "positional or keyword",
-"default": null
-}
-],
-"returns": "None"
-},
-{
-"kind": "function",
-"name": "stats",
-"path": "griffe.stats.stats",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
-"relative_filepath": "src/griffe/stats.py",
-"relative_package_filepath": "griffe/stats.py",
-"lineno": 76,
-"endlineno": 109,
+"endlineno": 138,
 "docstring": {
-"value": "Return some loading statistics.\n\nParameters:\n    loader: The loader to compute stats from.\n\nReturns:\n    Some statistics.",
-"lineno": 77,
-"endlineno": 84,
+"value": "Load statistics for a Griffe loader.",
+"lineno": 17,
+"endlineno": 17,
 "parsed": [
 {
 "kind": "text",
-"value": "Return some loading statistics."
+"value": "Load statistics for a Griffe loader."
+}
+]
 },
+"labels": [],
+"members": [
+{
+"kind": "function",
+"name": "__init__",
+"path": "griffe.stats.Stats.__init__",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 19,
+"endlineno": 52,
+"docstring": {
+"value": "Initialiwe the stats object.\n\nParameters:\n    loader: The loader to compute stats for.",
+"lineno": 20,
+"endlineno": 24,
+"parsed": [
 {
 "kind": "parameters",
 "value": [
@@ -694,20 +347,7 @@
 "name": "GriffeLoader",
 "cls": "ExprName"
 },
-"description": "The loader to compute stats from."
-}
-]
-},
-{
-"kind": "returns",
-"value": [
-{
-"name": "",
-"annotation": {
-"name": "dict",
-"cls": "ExprName"
-},
-"description": "Some statistics."
+"description": "The loader to compute stats for."
 }
 ]
 }
@@ -717,6 +357,12 @@
 "members": [],
 "decorators": [],
 "parameters": [
+{
+"name": "self",
+"annotation": null,
+"kind": "positional or keyword",
+"default": null
+},
 {
 "name": "loader",
 "annotation": {
@@ -727,36 +373,382 @@
 "default": null
 }
 ],
-"returns": {
-"name": "dict",
+"returns": "None"
+},
+{
+"kind": "attribute",
+"name": "loader",
+"path": "griffe.stats.Stats.loader",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 25,
+"endlineno": 25,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"name": "loader",
 "cls": "ExprName"
 }
 },
 {
-"kind": "function",
-"name": "_format_stats",
-"path": "griffe.stats._format_stats",
+"kind": "attribute",
+"name": "by_kind",
+"path": "griffe.stats.Stats.by_kind",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
 "relative_filepath": "src/griffe/stats.py",
 "relative_package_filepath": "griffe/stats.py",
-"lineno": 112,
-"endlineno": 171,
+"lineno": 39,
+"endlineno": 44,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"keys": [
+{
+"values": [
+{
+"name": "Kind",
+"cls": "ExprName"
+},
+{
+"name": "MODULE",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+},
+{
+"values": [
+{
+"name": "Kind",
+"cls": "ExprName"
+},
+{
+"name": "CLASS",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+},
+{
+"values": [
+{
+"name": "Kind",
+"cls": "ExprName"
+},
+{
+"name": "FUNCTION",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+},
+{
+"values": [
+{
+"name": "Kind",
+"cls": "ExprName"
+},
+{
+"name": "ATTRIBUTE",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+}
+],
+"values": [
+"0",
+"0",
+"0",
+"0"
+],
+"cls": "ExprDict"
+}
+},
+{
+"kind": "attribute",
+"name": "packages",
+"path": "griffe.stats.Stats.packages",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 45,
+"endlineno": 45,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"arguments": [
+{
+"name": "top_modules",
+"cls": "ExprName"
+}
+],
+"function": {
+"name": "len",
+"cls": "ExprName"
+},
+"cls": "ExprCall"
+}
+},
+{
+"kind": "attribute",
+"name": "modules_by_extension",
+"path": "griffe.stats.Stats.modules_by_extension",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 46,
+"endlineno": 46,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"name": "modules_by_extension",
+"cls": "ExprName"
+}
+},
+{
+"kind": "attribute",
+"name": "lines",
+"path": "griffe.stats.Stats.lines",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 47,
+"endlineno": 47,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"arguments": [
+{
+"element": {
+"arguments": [
+{
+"name": "lines",
+"cls": "ExprName"
+}
+],
+"function": {
+"name": "len",
+"cls": "ExprName"
+},
+"cls": "ExprCall"
+},
+"generators": [
+{
+"conditions": [],
+"is_async": false,
+"iterable": {
+"arguments": [],
+"function": {
+"values": [
+{
+"name": "loader",
+"cls": "ExprName"
+},
+{
+"name": "lines_collection",
+"cls": "ExprName"
+},
+{
+"name": "values",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+},
+"cls": "ExprCall"
+},
+"target": {
+"name": "lines",
+"cls": "ExprName"
+},
+"cls": "ExprComprehension"
+}
+],
+"cls": "ExprGeneratorExp"
+}
+],
+"function": {
+"name": "sum",
+"cls": "ExprName"
+},
+"cls": "ExprCall"
+}
+},
+{
+"kind": "attribute",
+"name": "time_spent_visiting",
+"path": "griffe.stats.Stats.time_spent_visiting",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 48,
+"endlineno": 48,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": "0"
+},
+{
+"kind": "attribute",
+"name": "time_spent_inspecting",
+"path": "griffe.stats.Stats.time_spent_inspecting",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 49,
+"endlineno": 49,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": "0"
+},
+{
+"kind": "attribute",
+"name": "time_spent_serializing",
+"path": "griffe.stats.Stats.time_spent_serializing",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 50,
+"endlineno": 50,
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": "0"
+},
+{
+"kind": "function",
+"name": "_itercount",
+"path": "griffe.stats.Stats._itercount",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 54,
+"endlineno": 64,
 "labels": [],
 "members": [],
 "decorators": [],
 "parameters": [
 {
-"name": "stats",
+"name": "self",
+"annotation": null,
+"kind": "positional or keyword",
+"default": null
+},
+{
+"name": "root",
 "annotation": {
-"name": "dict",
+"left": {
+"name": "Object",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": {
+"name": "Alias",
+"cls": "ExprName"
+},
+"cls": "ExprBinOp"
+},
+"kind": "positional or keyword",
+"default": null
+}
+],
+"returns": "None"
+},
+{
+"kind": "function",
+"name": "as_text",
+"path": "griffe.stats.Stats.as_text",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 66,
+"endlineno": 138,
+"docstring": {
+"value": "Format the statistics as text.\n\nReturns:\n    Text stats.",
+"lineno": 67,
+"endlineno": 71,
+"parsed": [
+{
+"kind": "text",
+"value": "Format the statistics as text."
+},
+{
+"kind": "returns",
+"value": [
+{
+"name": "",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"description": "Text stats."
+}
+]
+}
+]
+},
+"labels": [],
+"members": [],
+"decorators": [],
+"parameters": [
+{
+"name": "self",
+"annotation": null,
 "kind": "positional or keyword",
 "default": null
 }
 ],
 "returns": {
 "name": "str",
+"cls": "ExprName"
+}
+}
+],
+"bases": [],
+"decorators": []
+},
+{
+"kind": "attribute",
+"name": "stats",
+"path": "griffe.stats.stats",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
+"relative_filepath": "src/griffe/stats.py",
+"relative_package_filepath": "griffe/stats.py",
+"lineno": 141,
+"endlineno": 141,
+"docstring": {
+"value": "Deprecated. Use `Stats` instead.",
+"lineno": 142,
+"endlineno": 142,
+"parsed": [
+{
+"kind": "text",
+"value": "Deprecated. Use `Stats` instead."
+}
+]
+},
+"labels": [
+"module-attribute"
+],
+"members": [],
+"value": {
+"name": "Stats",
 "cls": "ExprName"
 }
 },
@@ -767,15 +759,15 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/stats.py",
 "relative_filepath": "src/griffe/stats.py",
 "relative_package_filepath": "griffe/stats.py",
-"lineno": 174,
-"endlineno": 174,
+"lineno": 144,
+"endlineno": 144,
 "labels": [
 "module-attribute"
 ],
 "members": [],
 "value": {
 "elements": [
-"'stats'"
+"'Stats'"
 ],
 "cls": "ExprList"
 }
@@ -14655,27 +14647,19 @@
 },
 {
 "kind": "alias",
-"name": "_format_stats",
-"target_path": "griffe.stats._format_stats",
-"path": "griffe.cli._format_stats",
-"lineno": 37,
-"endlineno": 37
-},
-{
-"kind": "alias",
 "name": "Extensions",
 "target_path": "griffe.extensions.base.Extensions",
 "path": "griffe.cli.Extensions",
-"lineno": 40,
-"endlineno": 40
+"lineno": 39,
+"endlineno": 39
 },
 {
 "kind": "alias",
 "name": "ExtensionType",
 "target_path": "griffe.extensions.base.ExtensionType",
 "path": "griffe.cli.ExtensionType",
-"lineno": 40,
-"endlineno": 40
+"lineno": 39,
+"endlineno": 39
 },
 {
 "kind": "attribute",
@@ -14684,8 +14668,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 43,
-"endlineno": 43,
+"lineno": 42,
+"endlineno": 42,
 "labels": [
 "module-attribute"
 ],
@@ -14731,8 +14715,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 44,
-"endlineno": 44,
+"lineno": 43,
+"endlineno": 43,
 "labels": [
 "module-attribute"
 ],
@@ -14758,8 +14742,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 47,
-"endlineno": 53,
+"lineno": 46,
+"endlineno": 52,
 "labels": [],
 "members": [
 {
@@ -14769,8 +14753,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 48,
-"endlineno": 49,
+"lineno": 47,
+"endlineno": 48,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -14822,8 +14806,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 51,
-"endlineno": 53,
+"lineno": 50,
+"endlineno": 52,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -14880,8 +14864,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 56,
-"endlineno": 63,
+"lineno": 55,
+"endlineno": 62,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -14927,8 +14911,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 66,
-"endlineno": 112,
+"lineno": 65,
+"endlineno": 113,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -15058,11 +15042,16 @@
 {
 "name": "resolve_external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "kind": "keyword-only",
-"default": "False"
+"default": "None"
 },
 {
 "name": "allow_inspection",
@@ -15072,6 +15061,15 @@
 },
 "kind": "keyword-only",
 "default": "True"
+},
+{
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
 },
 {
 "name": "store_source",
@@ -15104,8 +15102,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 115,
-"endlineno": 115,
+"lineno": 116,
+"endlineno": 116,
 "labels": [
 "module-attribute"
 ],
@@ -15129,8 +15127,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 118,
-"endlineno": 122,
+"lineno": 119,
+"endlineno": 123,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -15189,12 +15187,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 125,
-"endlineno": 306,
+"lineno": 126,
+"endlineno": 324,
 "docstring": {
 "value": "Return the CLI argument parser.\n\nReturns:\n    An argparse parser.",
-"lineno": 126,
-"endlineno": 130,
+"lineno": 127,
+"endlineno": 131,
 "parsed": [
 {
 "kind": "text",
@@ -15249,12 +15247,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 309,
-"endlineno": 394,
+"lineno": 327,
+"endlineno": 418,
 "docstring": {
-"value": "Load packages data and dump it as JSON.\n\nParameters:\n    packages: The packages to load and dump.\n    output: Where to output the JSON-serialized data.\n    full: Whether to output full or minimal data.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    resolve_aliases: Whether to resolve aliases (indirect objects references).\n    resolve_implicit: Whether to resolve every alias or only the explicitly exported ones.\n    resolve_external: Whether to load additional, unspecified modules to resolve aliases.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    find_stubs_package: Whether to search for stubs-only packages.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    append_sys_path: Whether to append the contents of `sys.path` to the search paths.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    stats: Whether to compute and log stats about loading.\n\nReturns:\n    `0` for success, `1` for failure.",
-"lineno": 326,
-"endlineno": 348,
+"value": "Load packages data and dump it as JSON.\n\nParameters:\n    packages: The packages to load and dump.\n    output: Where to output the JSON-serialized data.\n    full: Whether to output full or minimal data.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    resolve_aliases: Whether to resolve aliases (indirect objects references).\n    resolve_implicit: Whether to resolve every alias or only the explicitly exported ones.\n    resolve_external: Whether to load additional, unspecified modules to resolve aliases.\n        Default is to resolve only from one module to its private sibling (`ast` -> `_ast`).\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    find_stubs_package: Whether to search for stubs-only packages.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    append_sys_path: Whether to append the contents of `sys.path` to the search paths.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    stats: Whether to compute and log stats about loading.\n\nReturns:\n    `0` for success, `1` for failure.",
+"lineno": 345,
+"endlineno": 369,
 "parsed": [
 {
 "kind": "text",
@@ -15375,11 +15373,16 @@
 {
 "name": "resolve_external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
-"description": "Whether to load additional, unspecified modules to resolve aliases.",
-"value": "False"
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "Whether to load additional, unspecified modules to resolve aliases.\nDefault is to resolve only from one module to its private sibling (`ast` -> `_ast`).",
+"value": "None"
 },
 {
 "name": "extensions",
@@ -15505,6 +15508,15 @@
 },
 "description": "Whether to allow inspecting modules when visiting them is not possible.",
 "value": "True"
+},
+{
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to force using dynamic analysis when loading data.",
+"value": "False"
 },
 {
 "name": "stats",
@@ -15718,11 +15730,16 @@
 {
 "name": "resolve_external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "kind": "keyword-only",
-"default": "False"
+"default": "None"
 },
 {
 "name": "search_paths",
@@ -15781,6 +15798,15 @@
 "default": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
 "name": "stats",
 "annotation": {
 "name": "bool",
@@ -15802,12 +15828,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 397,
-"endlineno": 523,
+"lineno": 421,
+"endlineno": 554,
 "docstring": {
-"value": "Check for API breaking changes in two versions of the same package.\n\nParameters:\n    package: The package to load and check.\n    against: Older Git reference (commit, branch, tag) to check against.\n    against_path: Path when the \"against\" reference is checked out.\n    base_ref: Git reference (commit, branch, tag) to check.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    append_sys_path: Whether to append the contents of `sys.path` to the search paths.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    verbose: Use a verbose output.\n\nReturns:\n    `0` for success, `1` for failure.",
-"lineno": 412,
-"endlineno": 427,
+"value": "Check for API breaking changes in two versions of the same package.\n\nParameters:\n    package: The package to load and check.\n    against: Older Git reference (commit, branch, tag) to check against.\n    against_path: Path when the \"against\" reference is checked out.\n    base_ref: Git reference (commit, branch, tag) to check.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    append_sys_path: Whether to append the contents of `sys.path` to the search paths.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    verbose: Use a verbose output.\n\nReturns:\n    `0` for success, `1` for failure.",
+"lineno": 437,
+"endlineno": 453,
 "parsed": [
 {
 "kind": "text",
@@ -15997,6 +16023,15 @@
 },
 "description": "Whether to allow inspecting modules when visiting them is not possible.",
 "value": "True"
+},
+{
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to force using dynamic analysis when loading data.",
+"value": "False"
 },
 {
 "name": "verbose",
@@ -16221,6 +16256,15 @@
 "default": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
 "name": "verbose",
 "annotation": {
 "name": "bool",
@@ -16278,12 +16322,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 526,
-"endlineno": 560,
+"lineno": 557,
+"endlineno": 591,
 "docstring": {
 "value": "Run the main program.\n\nThis function is executed when you type `griffe` or `python -m griffe`.\n\nParameters:\n    args: Arguments passed from the command line.\n\nReturns:\n    An exit code.",
-"lineno": 527,
-"endlineno": 536,
+"lineno": 558,
+"endlineno": 567,
 "parsed": [
 {
 "kind": "text",
@@ -16368,8 +16412,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/cli.py",
 "relative_filepath": "src/griffe/cli.py",
 "relative_package_filepath": "griffe/cli.py",
-"lineno": 563,
-"endlineno": 563,
+"lineno": 594,
+"endlineno": 594,
 "labels": [
 "module-attribute"
 ],
@@ -17244,7 +17288,7 @@
 "lineno": 165,
 "endlineno": 204,
 "docstring": {
-"value": "Set a member with its name or path.\n\nThis method is part of the producer API:\nyou can use it safely while building Griffe trees\n(for example in Griffe extensions).\n\nParameters:\n    key: The name or path of the member.\n    value: The member.\n\nExamples:\n    >>> griffe_object.set_member(\"foo\", foo)\n    >>> griffe_object.set_member(\"path.to.bar\", bar)\n    >>> griffe_object.set_member((\"path\", \"to\", \"qux\", qux)",
+"value": "Set a member with its name or path.\n\nThis method is part of the producer API:\nyou can use it safely while building Griffe trees\n(for example in Griffe extensions).\n\nParameters:\n    key: The name or path of the member.\n    value: The member.\n\nExamples:\n    >>> griffe_object.set_member(\"foo\", foo)\n    >>> griffe_object.set_member(\"path.to.bar\", bar)\n    >>> griffe_object.set_member((\"path\", \"to\", \"qux\"), qux)",
 "lineno": 166,
 "endlineno": 180,
 "parsed": [
@@ -17301,7 +17345,7 @@
 "value": [
 [
 "examples",
-">>> griffe_object.set_member(\"foo\", foo)\n>>> griffe_object.set_member(\"path.to.bar\", bar)\n>>> griffe_object.set_member((\"path\", \"to\", \"qux\", qux)"
+">>> griffe_object.set_member(\"foo\", foo)\n>>> griffe_object.set_member(\"path.to.bar\", bar)\n>>> griffe_object.set_member((\"path\", \"to\", \"qux\"), qux)"
 ]
 ]
 }
@@ -36489,7 +36533,7 @@
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
 "lineno": 32,
-"endlineno": 45,
+"endlineno": 47,
 "docstring": {
 "value": "Dataclass to store environment information.",
 "lineno": 34,
@@ -36565,17 +36609,46 @@
 },
 {
 "kind": "attribute",
-"name": "platform",
-"path": "griffe.debug.Environment.platform",
+"name": "interpreter_path",
+"path": "griffe.debug.Environment.interpreter_path",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
 "lineno": 40,
 "endlineno": 40,
 "docstring": {
-"value": "Operating System.",
+"value": "Path to Python executable.",
 "lineno": 41,
 "endlineno": 41,
+"parsed": [
+{
+"kind": "text",
+"value": "Path to Python executable."
+}
+]
+},
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+}
+},
+{
+"kind": "attribute",
+"name": "platform",
+"path": "griffe.debug.Environment.platform",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
+"relative_filepath": "src/griffe/debug.py",
+"relative_package_filepath": "griffe/debug.py",
+"lineno": 42,
+"endlineno": 42,
+"docstring": {
+"value": "Operating System.",
+"lineno": 43,
+"endlineno": 43,
 "parsed": [
 {
 "kind": "text",
@@ -36599,12 +36672,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
-"lineno": 42,
-"endlineno": 42,
+"lineno": 44,
+"endlineno": 44,
 "docstring": {
 "value": "Installed packages.",
-"lineno": 43,
-"endlineno": 43,
+"lineno": 45,
+"endlineno": 45,
 "parsed": [
 {
 "kind": "text",
@@ -36635,12 +36708,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
-"lineno": 44,
-"endlineno": 44,
+"lineno": 46,
+"endlineno": 46,
 "docstring": {
 "value": "Environment variables.",
-"lineno": 45,
-"endlineno": 45,
+"lineno": 47,
+"endlineno": 47,
 "parsed": [
 {
 "kind": "text",
@@ -36694,6 +36767,15 @@
 },
 {
 "name": "interpreter_version",
+"annotation": {
+"name": "str",
+"cls": "ExprName"
+},
+"kind": "positional or keyword",
+"default": null
+},
+{
+"name": "interpreter_path",
 "annotation": {
 "name": "str",
 "cls": "ExprName"
@@ -36765,8 +36847,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
-"lineno": 48,
-"endlineno": 56,
+"lineno": 50,
+"endlineno": 58,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -36800,12 +36882,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
-"lineno": 59,
-"endlineno": 71,
+"lineno": 61,
+"endlineno": 73,
 "docstring": {
 "value": "Get version of the given distribution.\n\nParameters:\n    dist: A distribution name.\n\nReturns:\n    A version number.",
-"lineno": 60,
-"endlineno": 67,
+"lineno": 62,
+"endlineno": 69,
 "parsed": [
 {
 "kind": "text",
@@ -36866,12 +36948,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
-"lineno": 74,
-"endlineno": 89,
+"lineno": 76,
+"endlineno": 92,
 "docstring": {
 "value": "Get debug/environment information.\n\nReturns:\n    Environment information.",
-"lineno": 75,
-"endlineno": 79,
+"lineno": 77,
+"endlineno": 81,
 "parsed": [
 {
 "kind": "text",
@@ -36908,12 +36990,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/debug.py",
 "relative_filepath": "src/griffe/debug.py",
 "relative_package_filepath": "griffe/debug.py",
-"lineno": 92,
-"endlineno": 102,
+"lineno": 95,
+"endlineno": 105,
 "docstring": {
 "value": "Print debug/environment information.",
-"lineno": 93,
-"endlineno": 93,
+"lineno": 96,
+"endlineno": 96,
 "parsed": [
 {
 "kind": "text",
@@ -44710,35 +44792,43 @@
 },
 {
 "kind": "alias",
+"name": "dynamic_import",
+"target_path": "griffe.importer.dynamic_import",
+"path": "griffe.loader.dynamic_import",
+"lineno": 37,
+"endlineno": 37
+},
+{
+"kind": "alias",
 "name": "get_logger",
 "target_path": "griffe.logger.get_logger",
 "path": "griffe.loader.get_logger",
-"lineno": 37,
-"endlineno": 37
+"lineno": 38,
+"endlineno": 38
 },
 {
 "kind": "alias",
 "name": "merge_stubs",
 "target_path": "griffe.merger.merge_stubs",
 "path": "griffe.loader.merge_stubs",
-"lineno": 38,
-"endlineno": 38
+"lineno": 39,
+"endlineno": 39
 },
 {
 "kind": "alias",
-"name": "stats",
-"target_path": "griffe.stats.stats",
-"path": "griffe.loader.stats",
-"lineno": 39,
-"endlineno": 39
+"name": "Stats",
+"target_path": "griffe.stats.Stats",
+"path": "griffe.loader.Stats",
+"lineno": 40,
+"endlineno": 40
 },
 {
 "kind": "alias",
 "name": "Parser",
 "target_path": "griffe.enumerations.Parser",
 "path": "griffe.loader.Parser",
-"lineno": 42,
-"endlineno": 42
+"lineno": 43,
+"endlineno": 43
 },
 {
 "kind": "attribute",
@@ -44747,8 +44837,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 44,
-"endlineno": 44,
+"lineno": 45,
+"endlineno": 45,
 "labels": [
 "module-attribute"
 ],
@@ -44774,8 +44864,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 45,
-"endlineno": 45,
+"lineno": 46,
+"endlineno": 46,
 "labels": [
 "module-attribute"
 ],
@@ -44821,12 +44911,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 48,
-"endlineno": 691,
+"lineno": 49,
+"endlineno": 730,
 "docstring": {
 "value": "The Griffe loader, allowing to load data from modules.",
-"lineno": 49,
-"endlineno": 49,
+"lineno": 50,
+"endlineno": 50,
 "parsed": [
 {
 "kind": "text",
@@ -44843,8 +44933,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 51,
-"endlineno": 51,
+"lineno": 52,
+"endlineno": 52,
 "labels": [
 "class-attribute"
 ],
@@ -44875,12 +44965,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 53,
-"endlineno": 96,
+"lineno": 54,
+"endlineno": 100,
 "docstring": {
 "value": "Initialize the loader.\n\nParameters:\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    store_source: Whether to store code source in the lines collection.",
-"lineno": 65,
-"endlineno": 76,
+"lineno": 67,
+"endlineno": 78,
 "parsed": [
 {
 "kind": "parameters",
@@ -45159,6 +45249,15 @@
 "default": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
 "name": "store_source",
 "annotation": {
 "name": "bool",
@@ -45177,12 +45276,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 77,
-"endlineno": 77,
+"lineno": 79,
+"endlineno": 79,
 "docstring": {
 "value": "Loaded Griffe extensions.",
-"lineno": 78,
-"endlineno": 78,
+"lineno": 80,
+"endlineno": 80,
 "parsed": [
 {
 "kind": "text",
@@ -45224,12 +45323,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 79,
-"endlineno": 79,
+"lineno": 81,
+"endlineno": 81,
 "docstring": {
 "value": "Selected docstring parser.",
-"lineno": 80,
-"endlineno": 80,
+"lineno": 82,
+"endlineno": 82,
 "parsed": [
 {
 "kind": "text",
@@ -45262,12 +45361,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 81,
-"endlineno": 81,
+"lineno": 83,
+"endlineno": 83,
 "docstring": {
 "value": "Configured parsing options.",
-"lineno": 82,
-"endlineno": 82,
+"lineno": 84,
+"endlineno": 84,
 "parsed": [
 {
 "kind": "text",
@@ -45323,12 +45422,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 83,
-"endlineno": 83,
+"lineno": 85,
+"endlineno": 85,
 "docstring": {
 "value": "Collection of source code lines.",
-"lineno": 84,
-"endlineno": 84,
+"lineno": 86,
+"endlineno": 86,
 "parsed": [
 {
 "kind": "text",
@@ -45370,12 +45469,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 85,
-"endlineno": 85,
+"lineno": 87,
+"endlineno": 87,
 "docstring": {
 "value": "Collection of modules.",
-"lineno": 86,
-"endlineno": 86,
+"lineno": 88,
+"endlineno": 88,
 "parsed": [
 {
 "kind": "text",
@@ -45417,12 +45516,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 87,
-"endlineno": 87,
+"lineno": 89,
+"endlineno": 89,
 "docstring": {
 "value": "Whether to allow inspecting (importing) modules for which we can't find sources.",
-"lineno": 88,
-"endlineno": 88,
+"lineno": 90,
+"endlineno": 90,
 "parsed": [
 {
 "kind": "text",
@@ -45445,17 +45544,50 @@
 },
 {
 "kind": "attribute",
+"name": "force_inspection",
+"path": "griffe.loader.GriffeLoader.force_inspection",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
+"relative_filepath": "src/griffe/loader.py",
+"relative_package_filepath": "griffe/loader.py",
+"lineno": 91,
+"endlineno": 91,
+"docstring": {
+"value": "Whether to force inspecting (importing) modules, even when sources were found.",
+"lineno": 92,
+"endlineno": 92,
+"parsed": [
+{
+"kind": "text",
+"value": "Whether to force inspecting (importing) modules, even when sources were found."
+}
+]
+},
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"name": "force_inspection",
+"cls": "ExprName"
+},
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+}
+},
+{
+"kind": "attribute",
 "name": "store_source",
 "path": "griffe.loader.GriffeLoader.store_source",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 89,
-"endlineno": 89,
+"lineno": 93,
+"endlineno": 93,
 "docstring": {
 "value": "Whether to store source code in the lines collection.",
-"lineno": 90,
-"endlineno": 90,
+"lineno": 94,
+"endlineno": 94,
 "parsed": [
 {
 "kind": "text",
@@ -45483,12 +45615,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 91,
-"endlineno": 91,
+"lineno": 95,
+"endlineno": 95,
 "docstring": {
 "value": "The module source finder.",
-"lineno": 92,
-"endlineno": 92,
+"lineno": 96,
+"endlineno": 96,
 "parsed": [
 {
 "kind": "text",
@@ -45525,8 +45657,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 93,
-"endlineno": 96,
+"lineno": 97,
+"endlineno": 100,
 "labels": [
 "instance-attribute"
 ],
@@ -45554,12 +45686,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 99,
-"endlineno": 121,
+"lineno": 103,
+"endlineno": 125,
 "docstring": {
 "value": "Renamed `load`. Load an object as a Griffe object, given its dotted path.\n\nThis method was renamed [`load`][griffe.loader.GriffeLoader.load].",
-"lineno": 107,
-"endlineno": 110,
+"lineno": 111,
+"endlineno": 114,
 "parsed": [
 {
 "kind": "text",
@@ -45634,12 +45766,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 123,
-"endlineno": 210,
+"lineno": 127,
+"endlineno": 239,
 "docstring": {
 "value": "Load an object as a Griffe object, given its Python or file path.\n\nNote that this will load the whole object's package,\nand return only the specified object.\nThe rest of the package can be accessed from the returned object\nwith regular methods and properties (`parent`, `members`, etc.).\n\nExamples:\n    >>> loader.load(\"griffe.dataclasses.Module\")\n    Class(\"Module\")\n    >>> loader.load(\"src/griffe/dataclasses.py\")\n    Module(\"dataclasses\")\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n\nRaises:\n    LoadingError: When loading a module failed for various reasons.\n    ModuleNotFoundError: When a module was not found and inspection is disallowed.\n\nReturns:\n    A Griffe object.",
-"lineno": 134,
-"endlineno": 163,
+"lineno": 138,
+"endlineno": 167,
 "parsed": [
 {
 "kind": "text",
@@ -45858,12 +45990,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 212,
-"endlineno": 263,
+"lineno": 241,
+"endlineno": 292,
 "docstring": {
 "value": "Resolve aliases.\n\nParameters:\n    implicit: When false, only try to resolve an alias if it is explicitely exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    max_iterations: Maximum number of iterations on the loader modules collection.\n\nReturns:\n    The unresolved aliases and the number of iterations done.",
-"lineno": 219,
-"endlineno": 228,
+"lineno": 248,
+"endlineno": 257,
 "parsed": [
 {
 "kind": "text",
@@ -45884,11 +46016,16 @@
 {
 "name": "external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "description": "When false, don't try to load unspecified modules to resolve aliases.",
-"value": "False"
+"value": "None"
 },
 {
 "name": "max_iterations",
@@ -45967,11 +46104,16 @@
 {
 "name": "external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "kind": "keyword-only",
-"default": "False"
+"default": "None"
 },
 {
 "name": "max_iterations",
@@ -46024,12 +46166,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 265,
-"endlineno": 296,
+"lineno": 294,
+"endlineno": 325,
 "docstring": {
 "value": "Expand exports: try to recursively expand all module exports (`__all__` values).\n\nParameters:\n    module: The module to recurse on.\n    seen: Used to avoid infinite recursion.",
-"lineno": 266,
-"endlineno": 271,
+"lineno": 295,
+"endlineno": 300,
 "parsed": [
 {
 "kind": "text",
@@ -46107,12 +46249,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 298,
-"endlineno": 408,
+"lineno": 327,
+"endlineno": 437,
 "docstring": {
 "value": "Expand wildcards: try to recursively expand all found wildcards.\n\nParameters:\n    obj: The object and its members to recurse on.\n    external: When true, try to load unspecified modules to expand wildcards.\n    seen: Used to avoid infinite recursion.",
-"lineno": 305,
-"endlineno": 311,
+"lineno": 334,
+"endlineno": 340,
 "parsed": [
 {
 "kind": "text",
@@ -46132,11 +46274,16 @@
 {
 "name": "external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "description": "When true, try to load unspecified modules to expand wildcards.",
-"value": "False"
+"value": "None"
 },
 {
 "name": "seen",
@@ -46178,11 +46325,16 @@
 {
 "name": "external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "kind": "keyword-only",
-"default": "False"
+"default": "None"
 },
 {
 "name": "seen",
@@ -46208,12 +46360,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 410,
-"endlineno": 486,
+"lineno": 439,
+"endlineno": 515,
 "docstring": {
 "value": "Follow aliases: try to recursively resolve all found aliases.\n\nParameters:\n    obj: The object and its members to recurse on.\n    implicit: When false, only try to resolve an alias if it is explicitely exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    seen: Used to avoid infinite recursion.\n    load_failures: Set of external packages we failed to load (to prevent retries).\n\nReturns:\n    Both sets of resolved and unresolved aliases.",
-"lineno": 419,
-"endlineno": 430,
+"lineno": 448,
+"endlineno": 459,
 "parsed": [
 {
 "kind": "text",
@@ -46250,11 +46402,16 @@
 {
 "name": "external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "description": "When false, don't try to load unspecified modules to resolve aliases.",
-"value": "False"
+"value": "None"
 },
 {
 "name": "seen",
@@ -46385,11 +46542,16 @@
 {
 "name": "external",
 "annotation": {
+"left": {
 "name": "bool",
 "cls": "ExprName"
 },
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
 "kind": "keyword-only",
-"default": "False"
+"default": "None"
 },
 {
 "name": "seen",
@@ -46477,12 +46639,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 488,
-"endlineno": 494,
+"lineno": 517,
+"endlineno": 526,
 "docstring": {
 "value": "Compute some statistics.\n\nReturns:\n    Some statistics.",
-"lineno": 489,
-"endlineno": 493,
+"lineno": 518,
+"endlineno": 522,
 "parsed": [
 {
 "kind": "text",
@@ -46494,7 +46656,7 @@
 {
 "name": "",
 "annotation": {
-"name": "dict",
+"name": "Stats",
 "cls": "ExprName"
 },
 "description": "Some statistics."
@@ -46515,7 +46677,7 @@
 }
 ],
 "returns": {
-"name": "dict",
+"name": "Stats",
 "cls": "ExprName"
 }
 },
@@ -46526,8 +46688,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 496,
-"endlineno": 510,
+"lineno": 528,
+"endlineno": 542,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46577,8 +46739,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 512,
-"endlineno": 529,
+"lineno": 544,
+"endlineno": 561,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46658,8 +46820,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 531,
-"endlineno": 551,
+"lineno": 563,
+"endlineno": 584,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46739,8 +46901,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 553,
-"endlineno": 555,
+"lineno": 586,
+"endlineno": 588,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46770,8 +46932,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 557,
-"endlineno": 603,
+"lineno": 590,
+"endlineno": 638,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46833,8 +46995,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 605,
-"endlineno": 611,
+"lineno": 640,
+"endlineno": 646,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46891,8 +47053,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 613,
-"endlineno": 630,
+"lineno": 648,
+"endlineno": 666,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -46900,15 +47062,6 @@
 {
 "name": "self",
 "annotation": null,
-"kind": "positional or keyword",
-"default": null
-},
-{
-"name": "code",
-"annotation": {
-"name": "str",
-"cls": "ExprName"
-},
 "kind": "positional or keyword",
 "default": null
 },
@@ -46957,8 +47110,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 632,
-"endlineno": 652,
+"lineno": 668,
+"endlineno": 691,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -47019,8 +47172,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 654,
-"endlineno": 682,
+"lineno": 693,
+"endlineno": 721,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -47085,8 +47238,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 684,
-"endlineno": 691,
+"lineno": 723,
+"endlineno": 730,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -47169,12 +47322,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 694,
-"endlineno": 769,
+"lineno": 733,
+"endlineno": 823,
 "docstring": {
-"value": "Load and return a module.\n\nExample:\n```python\nimport griffe\n\nmodule = griffe.load(...)\n```\n\nThis is a shortcut for:\n\n```python\nfrom griffe.loader import GriffeLoader\n\nloader = GriffeLoader(...)\nmodule = loader.load(...)\n```\n\nSee the documentation for the loader: [`GriffeLoader`][griffe.loader.GriffeLoader].\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    store_source: Whether to store code source in the lines collection.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n\nReturns:\n    A Griffe object.",
-"lineno": 712,
-"endlineno": 752,
+"value": "Load and return a module.\n\nExample:\n```python\nimport griffe\n\nmodule = griffe.load(...)\n```\n\nThis is a shortcut for:\n\n```python\nfrom griffe.loader import GriffeLoader\n\nloader = GriffeLoader(...)\nmodule = loader.load(...)\n```\n\nSee the documentation for the loader: [`GriffeLoader`][griffe.loader.GriffeLoader].\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    store_source: Whether to store code source in the lines collection.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitely exported.\n\nReturns:\n    A Griffe object.",
+"lineno": 755,
+"endlineno": 801,
 "parsed": [
 {
 "kind": "text",
@@ -47349,6 +47502,15 @@
 "value": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to force using dynamic analysis when loading data.",
+"value": "False"
+},
+{
 "name": "store_source",
 "annotation": {
 "name": "bool",
@@ -47387,6 +47549,38 @@
 },
 "description": "Deprecated. Use `objspec` positional-only parameter instead.",
 "value": "None"
+},
+{
+"name": "resolve_aliases",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to resolve aliases.",
+"value": "False"
+},
+{
+"name": "resolve_external",
+"annotation": {
+"left": {
+"name": "bool",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "Whether to try to load unspecified modules to resolve aliases.\nDefault value (`None`) means to load external modules only if they are the private sibling\nor the origin module (for example when `ast` imports from `_ast`).",
+"value": "None"
+},
+{
+"name": "resolve_implicit",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "When false, only try to resolve an alias if it is explicitely exported.",
+"value": "False"
 }
 ]
 },
@@ -47575,6 +47769,15 @@
 "default": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
 "name": "store_source",
 "annotation": {
 "name": "bool",
@@ -47613,6 +47816,38 @@
 },
 "kind": "keyword-only",
 "default": "None"
+},
+{
+"name": "resolve_aliases",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
+"name": "resolve_external",
+"annotation": {
+"left": {
+"name": "bool",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "resolve_implicit",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
 }
 ],
 "returns": {
@@ -47627,12 +47862,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 772,
-"endlineno": 847,
+"lineno": 826,
+"endlineno": 915,
 "docstring": {
-"value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.loader.load].\n\nThis function requires that the `git` executable is installed.\n\nExamples:\n    ```python\n    from griffe.loader import load_git\n\n    old_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n    ```\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n\nReturns:\n    A Griffe object.",
-"lineno": 790,
-"endlineno": 825,
+"value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.loader.load].\n\nThis function requires that the `git` executable is installed.\n\nExamples:\n    ```python\n    from griffe.loader import load_git\n\n    old_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n    ```\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    module: Deprecated. Use `objspec` positional-only parameter instead.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitely exported.\n\nReturns:\n    A Griffe object.",
+"lineno": 848,
+"endlineno": 889,
 "parsed": [
 {
 "kind": "text",
@@ -47833,6 +48068,15 @@
 "value": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to force using dynamic analysis when loading data.",
+"value": "False"
+},
+{
 "name": "find_stubs_package",
 "annotation": {
 "name": "bool",
@@ -47862,6 +48106,38 @@
 },
 "description": "Deprecated. Use `objspec` positional-only parameter instead.",
 "value": "None"
+},
+{
+"name": "resolve_aliases",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to resolve aliases.",
+"value": "False"
+},
+{
+"name": "resolve_external",
+"annotation": {
+"left": {
+"name": "bool",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"description": "Whether to try to load unspecified modules to resolve aliases.\nDefault value (`None`) means to load external modules only if they are the private sibling\nor the origin module (for example when `ast` imports from `_ast`).",
+"value": "None"
+},
+{
+"name": "resolve_implicit",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "When false, only try to resolve an alias if it is explicitely exported.",
+"value": "False"
 }
 ]
 },
@@ -48067,6 +48343,15 @@
 "default": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
 "name": "find_stubs_package",
 "annotation": {
 "name": "bool",
@@ -48096,6 +48381,38 @@
 },
 "kind": "keyword-only",
 "default": "None"
+},
+{
+"name": "resolve_aliases",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
+"name": "resolve_external",
+"annotation": {
+"left": {
+"name": "bool",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+},
+"kind": "keyword-only",
+"default": "None"
+},
+{
+"name": "resolve_implicit",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
 }
 ],
 "returns": {
@@ -48110,12 +48427,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 850,
-"endlineno": 958,
+"lineno": 918,
+"endlineno": 1029,
 "docstring": {
-"value": "Load and return a module from a specific package version downloaded using pip.\n\nParameters:\n    package: The package import name.\n    distribution: The distribution name.\n    version_spec: The version specifier to use when installing with pip.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.",
-"lineno": 865,
-"endlineno": 883,
+"value": "Load and return a module from a specific package version downloaded using pip.\n\nParameters:\n    package: The package import name.\n    distribution: The distribution name.\n    version_spec: The version specifier to use when installing with pip.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.",
+"lineno": 934,
+"endlineno": 953,
 "parsed": [
 {
 "kind": "text",
@@ -48281,6 +48598,15 @@
 },
 "description": "Whether to allow inspecting modules when visiting them is not possible.",
 "value": "True"
+},
+{
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"description": "Whether to force using dynamic analysis when loading data.",
+"value": "False"
 },
 {
 "name": "find_stubs_package",
@@ -48461,6 +48787,15 @@
 "default": "True"
 },
 {
+"name": "force_inspection",
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+},
+"kind": "keyword-only",
+"default": "False"
+},
+{
 "name": "find_stubs_package",
 "annotation": {
 "name": "bool",
@@ -48482,8 +48817,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/loader.py",
 "relative_filepath": "src/griffe/loader.py",
 "relative_package_filepath": "griffe/loader.py",
-"lineno": 961,
-"endlineno": 961,
+"lineno": 1032,
+"endlineno": 1032,
 "labels": [
 "module-attribute"
 ],
@@ -53007,27 +53342,62 @@
 },
 {
 "kind": "alias",
+"name": "get_logger",
+"target_path": "griffe.logger.get_logger",
+"path": "griffe.agents.inspector.get_logger",
+"lineno": 38,
+"endlineno": 38
+},
+{
+"kind": "alias",
 "name": "Path",
 "target_path": "pathlib.Path",
 "path": "griffe.agents.inspector.Path",
-"lineno": 40,
-"endlineno": 40
+"lineno": 41,
+"endlineno": 41
 },
 {
 "kind": "alias",
 "name": "Parser",
 "target_path": "griffe.enumerations.Parser",
 "path": "griffe.agents.inspector.Parser",
-"lineno": 42,
-"endlineno": 42
+"lineno": 43,
+"endlineno": 43
 },
 {
 "kind": "alias",
 "name": "Expr",
 "target_path": "griffe.expressions.Expr",
 "path": "griffe.agents.inspector.Expr",
-"lineno": 43,
-"endlineno": 43
+"lineno": 44,
+"endlineno": 44
+},
+{
+"kind": "attribute",
+"name": "logger",
+"path": "griffe.agents.inspector.logger",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
+"relative_filepath": "src/griffe/agents/inspector.py",
+"relative_package_filepath": "griffe/agents/inspector.py",
+"lineno": 47,
+"endlineno": 47,
+"labels": [
+"module-attribute"
+],
+"members": [],
+"value": {
+"arguments": [
+{
+"name": "__name__",
+"cls": "ExprName"
+}
+],
+"function": {
+"name": "get_logger",
+"cls": "ExprName"
+},
+"cls": "ExprCall"
+}
 },
 {
 "kind": "attribute",
@@ -53036,8 +53406,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 46,
-"endlineno": 46,
+"lineno": 48,
+"endlineno": 48,
 "labels": [
 "module-attribute"
 ],
@@ -53063,12 +53433,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 49,
-"endlineno": 86,
+"lineno": 51,
+"endlineno": 88,
 "docstring": {
 "value": "Inspect a module.\n\nParameters:\n    module_name: The module name (as when importing [from] it).\n    filepath: The module file path.\n    import_paths: Paths to import the module from.\n    extensions: The extensions to use when inspecting the module.\n    parent: The optional parent of this module.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n\nReturns:\n    The module, with its members populated.",
-"lineno": 61,
-"endlineno": 76,
+"lineno": 63,
+"endlineno": 78,
 "parsed": [
 {
 "kind": "text",
@@ -53416,12 +53786,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 89,
-"endlineno": 464,
+"lineno": 91,
+"endlineno": 493,
 "docstring": {
 "value": "This class is used to instantiate an inspector.\n\nInspectors iterate on objects members to extract data from them.",
-"lineno": 90,
-"endlineno": 93,
+"lineno": 92,
+"endlineno": 95,
 "parsed": [
 {
 "kind": "text",
@@ -53438,12 +53808,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 95,
-"endlineno": 127,
+"lineno": 97,
+"endlineno": 129,
 "docstring": {
 "value": "Initialize the inspector.\n\nParameters:\n    module_name: The module name.\n    filepath: The optional filepath.\n    extensions: Extensions to use when inspecting.\n    parent: The module parent.\n    docstring_parser: The docstring parser to use.\n    docstring_options: The docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.",
-"lineno": 106,
-"endlineno": 117,
+"lineno": 108,
+"endlineno": 119,
 "parsed": [
 {
 "kind": "parameters",
@@ -53707,8 +54077,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 119,
-"endlineno": 119,
+"lineno": 121,
+"endlineno": 121,
 "labels": [
 "instance-attribute"
 ],
@@ -53729,8 +54099,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 120,
-"endlineno": 120,
+"lineno": 122,
+"endlineno": 122,
 "labels": [
 "instance-attribute"
 ],
@@ -53756,8 +54126,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 121,
-"endlineno": 121,
+"lineno": 123,
+"endlineno": 123,
 "labels": [
 "instance-attribute"
 ],
@@ -53796,8 +54166,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 122,
-"endlineno": 122,
+"lineno": 124,
+"endlineno": 124,
 "labels": [
 "instance-attribute"
 ],
@@ -53823,8 +54193,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 123,
-"endlineno": 123,
+"lineno": 125,
+"endlineno": 125,
 "labels": [
 "instance-attribute"
 ],
@@ -53850,8 +54220,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 124,
-"endlineno": 124,
+"lineno": 126,
+"endlineno": 126,
 "labels": [
 "instance-attribute"
 ],
@@ -53877,8 +54247,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 125,
-"endlineno": 125,
+"lineno": 127,
+"endlineno": 127,
 "labels": [
 "instance-attribute"
 ],
@@ -53927,8 +54297,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 126,
-"endlineno": 126,
+"lineno": 128,
+"endlineno": 128,
 "labels": [
 "instance-attribute"
 ],
@@ -53963,8 +54333,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 127,
-"endlineno": 127,
+"lineno": 129,
+"endlineno": 129,
 "labels": [
 "instance-attribute"
 ],
@@ -53999,8 +54369,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 129,
-"endlineno": 149,
+"lineno": 131,
+"endlineno": 151,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -54038,12 +54408,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 151,
-"endlineno": 194,
+"lineno": 153,
+"endlineno": 199,
 "docstring": {
 "value": "Build and return the object representing the module attached to this inspector.\n\nThis method triggers a complete inspection of the module members.\n\nParameters:\n    import_paths: Paths replacing `sys.path` to import the module.\n\nReturns:\n    A module instance.",
-"lineno": 152,
-"endlineno": 161,
+"lineno": 154,
+"endlineno": 163,
 "parsed": [
 {
 "kind": "text",
@@ -54150,12 +54520,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 196,
-"endlineno": 206,
+"lineno": 201,
+"endlineno": 211,
 "docstring": {
 "value": "Extend the base inspection with extensions.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 197,
-"endlineno": 201,
+"lineno": 202,
+"endlineno": 206,
 "parsed": [
 {
 "kind": "text",
@@ -54205,12 +54575,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 208,
-"endlineno": 225,
+"lineno": 213,
+"endlineno": 255,
 "docstring": {
 "value": "Extend the base generic inspection with extensions.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 209,
-"endlineno": 213,
+"lineno": 214,
+"endlineno": 218,
 "parsed": [
 {
 "kind": "text",
@@ -54260,12 +54630,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 227,
-"endlineno": 247,
+"lineno": 257,
+"endlineno": 277,
 "docstring": {
 "value": "Inspect a module.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 228,
-"endlineno": 232,
+"lineno": 258,
+"endlineno": 262,
 "parsed": [
 {
 "kind": "text",
@@ -54315,12 +54685,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 249,
-"endlineno": 276,
+"lineno": 279,
+"endlineno": 306,
 "docstring": {
 "value": "Inspect a class.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 250,
-"endlineno": 254,
+"lineno": 280,
+"endlineno": 284,
 "parsed": [
 {
 "kind": "text",
@@ -54370,12 +54740,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 278,
-"endlineno": 284,
+"lineno": 308,
+"endlineno": 314,
 "docstring": {
 "value": "Inspect a static method.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 279,
-"endlineno": 283,
+"lineno": 309,
+"endlineno": 313,
 "parsed": [
 {
 "kind": "text",
@@ -54425,12 +54795,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 286,
-"endlineno": 292,
+"lineno": 316,
+"endlineno": 322,
 "docstring": {
 "value": "Inspect a class method.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 287,
-"endlineno": 291,
+"lineno": 317,
+"endlineno": 321,
 "parsed": [
 {
 "kind": "text",
@@ -54480,12 +54850,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 294,
-"endlineno": 300,
+"lineno": 324,
+"endlineno": 330,
 "docstring": {
 "value": "Inspect a method descriptor.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 295,
-"endlineno": 299,
+"lineno": 325,
+"endlineno": 329,
 "parsed": [
 {
 "kind": "text",
@@ -54535,12 +54905,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 302,
-"endlineno": 308,
+"lineno": 332,
+"endlineno": 338,
 "docstring": {
 "value": "Inspect a builtin method.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 303,
-"endlineno": 307,
+"lineno": 333,
+"endlineno": 337,
 "parsed": [
 {
 "kind": "text",
@@ -54590,12 +54960,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 310,
-"endlineno": 316,
+"lineno": 340,
+"endlineno": 346,
 "docstring": {
 "value": "Inspect a method.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 311,
-"endlineno": 315,
+"lineno": 341,
+"endlineno": 345,
 "parsed": [
 {
 "kind": "text",
@@ -54645,12 +55015,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 318,
-"endlineno": 324,
+"lineno": 348,
+"endlineno": 354,
 "docstring": {
 "value": "Inspect a coroutine.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 319,
-"endlineno": 323,
+"lineno": 349,
+"endlineno": 353,
 "parsed": [
 {
 "kind": "text",
@@ -54700,12 +55070,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 326,
-"endlineno": 332,
+"lineno": 356,
+"endlineno": 362,
 "docstring": {
 "value": "Inspect a builtin function.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 327,
-"endlineno": 331,
+"lineno": 357,
+"endlineno": 361,
 "parsed": [
 {
 "kind": "text",
@@ -54755,12 +55125,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 334,
-"endlineno": 340,
+"lineno": 364,
+"endlineno": 370,
 "docstring": {
 "value": "Inspect a function.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 335,
-"endlineno": 339,
+"lineno": 365,
+"endlineno": 369,
 "parsed": [
 {
 "kind": "text",
@@ -54810,12 +55180,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 342,
-"endlineno": 349,
+"lineno": 372,
+"endlineno": 378,
 "docstring": {
 "value": "Inspect a cached property.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 343,
-"endlineno": 347,
+"lineno": 373,
+"endlineno": 377,
 "parsed": [
 {
 "kind": "text",
@@ -54865,12 +55235,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 351,
-"endlineno": 357,
+"lineno": 380,
+"endlineno": 386,
 "docstring": {
 "value": "Inspect a property.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 352,
-"endlineno": 356,
+"lineno": 381,
+"endlineno": 385,
 "parsed": [
 {
 "kind": "text",
@@ -54920,12 +55290,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 359,
-"endlineno": 409,
+"lineno": 388,
+"endlineno": 438,
 "docstring": {
 "value": "Handle a function.\n\nParameters:\n    node: The node to inspect.\n    labels: Labels to add to the data object.",
-"lineno": 360,
-"endlineno": 365,
+"lineno": 389,
+"endlineno": 394,
 "parsed": [
 {
 "kind": "text",
@@ -55003,12 +55373,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 411,
-"endlineno": 417,
+"lineno": 440,
+"endlineno": 446,
 "docstring": {
 "value": "Inspect an attribute.\n\nParameters:\n    node: The node to inspect.",
-"lineno": 412,
-"endlineno": 416,
+"lineno": 441,
+"endlineno": 445,
 "parsed": [
 {
 "kind": "text",
@@ -55058,12 +55428,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 419,
-"endlineno": 464,
+"lineno": 448,
+"endlineno": 493,
 "docstring": {
 "value": "Handle an attribute.\n\nParameters:\n    node: The node to inspect.\n    annotation: A potentiel annotation.",
-"lineno": 420,
-"endlineno": 425,
+"lineno": 449,
+"endlineno": 454,
 "parsed": [
 {
 "kind": "text",
@@ -55161,8 +55531,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 467,
-"endlineno": 473,
+"lineno": 496,
+"endlineno": 502,
 "labels": [
 "module-attribute"
 ],
@@ -55312,8 +55682,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 476,
-"endlineno": 489,
+"lineno": 505,
+"endlineno": 518,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -55357,8 +55727,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 492,
-"endlineno": 509,
+"lineno": 521,
+"endlineno": 538,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -55415,8 +55785,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/inspector.py",
 "relative_filepath": "src/griffe/agents/inspector.py",
 "relative_package_filepath": "griffe/agents/inspector.py",
-"lineno": 512,
-"endlineno": 512,
+"lineno": 541,
+"endlineno": 541,
 "labels": [
 "module-attribute"
 ],
@@ -55757,17 +56127,17 @@
 },
 {
 "kind": "alias",
-"name": "cached_property",
-"target_path": "functools.cached_property",
-"path": "griffe.agents.nodes._runtime.cached_property",
+"name": "sys",
+"target_path": "sys",
+"path": "griffe.agents.nodes._runtime.sys",
 "lineno": 6,
 "endlineno": 6
 },
 {
 "kind": "alias",
-"name": "getmodule",
-"target_path": "inspect.getmodule",
-"path": "griffe.agents.nodes._runtime.getmodule",
+"name": "cached_property",
+"target_path": "functools.cached_property",
+"path": "griffe.agents.nodes._runtime.cached_property",
 "lineno": 7,
 "endlineno": 7
 },
@@ -55840,13 +56210,73 @@
 },
 {
 "kind": "attribute",
+"name": "_builtin_module_names",
+"path": "griffe.agents.nodes._runtime._builtin_module_names",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
+"relative_filepath": "src/griffe/agents/nodes/_runtime.py",
+"relative_package_filepath": "griffe/agents/nodes/_runtime.py",
+"lineno": 15,
+"endlineno": 15,
+"labels": [
+"module-attribute"
+],
+"members": [],
+"value": {
+"element": {
+"arguments": [
+"'_'"
+],
+"function": {
+"values": [
+{
+"name": "_",
+"cls": "ExprName"
+},
+{
+"name": "lstrip",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+},
+"cls": "ExprCall"
+},
+"generators": [
+{
+"conditions": [],
+"is_async": false,
+"iterable": {
+"values": [
+{
+"name": "sys",
+"cls": "ExprName"
+},
+{
+"name": "builtin_module_names",
+"cls": "ExprName"
+}
+],
+"cls": "ExprAttribute"
+},
+"target": {
+"name": "_",
+"cls": "ExprName"
+},
+"cls": "ExprComprehension"
+}
+],
+"cls": "ExprSetComp"
+}
+},
+{
+"kind": "attribute",
 "name": "_cyclic_relationships",
 "path": "griffe.agents.nodes._runtime._cyclic_relationships",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 15,
-"endlineno": 20,
+"lineno": 16,
+"endlineno": 21,
 "labels": [
 "module-attribute"
 ],
@@ -55896,12 +56326,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 23,
-"endlineno": 265,
+"lineno": 24,
+"endlineno": 272,
 "docstring": {
 "value": "Helper class to represent an object tree.\n\nIt's not really a tree but more a backward-linked list:\neach node has a reference to its parent, but not to its child (for simplicity purposes and to avoid bugs).\n\nEach node stores an object, its name, and a reference to its parent node.",
-"lineno": 24,
-"endlineno": 30,
+"lineno": 25,
+"endlineno": 31,
 "parsed": [
 {
 "kind": "text",
@@ -55918,8 +56348,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 33,
-"endlineno": 33,
+"lineno": 34,
+"endlineno": 34,
 "labels": [
 "class-attribute"
 ],
@@ -55951,12 +56381,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 35,
-"endlineno": 57,
+"lineno": 36,
+"endlineno": 68,
 "docstring": {
 "value": "Initialize the object.\n\nParameters:\n    obj: A Python object.\n    name: The object's name.\n    parent: The object's parent node.",
-"lineno": 36,
-"endlineno": 42,
+"lineno": 37,
+"endlineno": 43,
 "parsed": [
 {
 "kind": "parameters",
@@ -56047,12 +56477,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 52,
-"endlineno": 52,
+"lineno": 61,
+"endlineno": 61,
 "docstring": {
 "value": "The actual Python object.",
-"lineno": 53,
-"endlineno": 53,
+"lineno": 62,
+"endlineno": 62,
 "parsed": [
 {
 "kind": "text",
@@ -56080,12 +56510,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 54,
-"endlineno": 54,
+"lineno": 63,
+"endlineno": 63,
 "docstring": {
 "value": "The Python object's name.",
-"lineno": 55,
-"endlineno": 55,
+"lineno": 64,
+"endlineno": 64,
 "parsed": [
 {
 "kind": "text",
@@ -56113,12 +56543,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 56,
-"endlineno": 56,
+"lineno": 65,
+"endlineno": 65,
 "docstring": {
 "value": "The parent node.",
-"lineno": 57,
-"endlineno": 57,
+"lineno": 66,
+"endlineno": 66,
 "parsed": [
 {
 "kind": "text",
@@ -56145,14 +56575,47 @@
 }
 },
 {
+"kind": "attribute",
+"name": "is_cached_property",
+"path": "griffe.agents.nodes._runtime.ObjectNode.is_cached_property",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
+"relative_filepath": "src/griffe/agents/nodes/_runtime.py",
+"relative_package_filepath": "griffe/agents/nodes/_runtime.py",
+"lineno": 67,
+"endlineno": 67,
+"docstring": {
+"value": "Whether this node's object is a cached property.",
+"lineno": 68,
+"endlineno": 68,
+"parsed": [
+{
+"kind": "text",
+"value": "Whether this node's object is a cached property."
+}
+]
+},
+"labels": [
+"instance-attribute"
+],
+"members": [],
+"value": {
+"name": "is_cached_property",
+"cls": "ExprName"
+},
+"annotation": {
+"name": "bool",
+"cls": "ExprName"
+}
+},
+{
 "kind": "function",
 "name": "__repr__",
 "path": "griffe.agents.nodes._runtime.ObjectNode.__repr__",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 59,
-"endlineno": 60,
+"lineno": 70,
+"endlineno": 71,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -56176,12 +56639,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 63,
-"endlineno": 67,
+"lineno": 74,
+"endlineno": 78,
 "docstring": {
 "value": "The object's (Python) path.",
-"lineno": 64,
-"endlineno": 64,
+"lineno": 75,
+"endlineno": 75,
 "parsed": [
 {
 "kind": "text",
@@ -56205,16 +56668,16 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 70,
-"endlineno": 76,
+"lineno": 81,
+"endlineno": 87,
 "docstring": {
-"value": "The object's module.",
-"lineno": 71,
-"endlineno": 71,
+"value": "The object's module, fetched from the node tree.",
+"lineno": 82,
+"endlineno": 82,
 "parsed": [
 {
 "kind": "text",
-"value": "The object's module."
+"value": "The object's module, fetched from the node tree."
 }
 ]
 },
@@ -56229,17 +56692,51 @@
 },
 {
 "kind": "attribute",
+"name": "module_path",
+"path": "griffe.agents.nodes._runtime.ObjectNode.module_path",
+"filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
+"relative_filepath": "src/griffe/agents/nodes/_runtime.py",
+"relative_package_filepath": "griffe/agents/nodes/_runtime.py",
+"lineno": 90,
+"endlineno": 102,
+"docstring": {
+"value": "The object's module path.",
+"lineno": 91,
+"endlineno": 91,
+"parsed": [
+{
+"kind": "text",
+"value": "The object's module path."
+}
+]
+},
+"labels": [
+"property"
+],
+"members": [],
+"annotation": {
+"left": {
+"name": "str",
+"cls": "ExprName"
+},
+"operator": "|",
+"right": "None",
+"cls": "ExprBinOp"
+}
+},
+{
+"kind": "attribute",
 "name": "kind",
 "path": "griffe.agents.nodes._runtime.ObjectNode.kind",
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 79,
-"endlineno": 105,
+"lineno": 105,
+"endlineno": 131,
 "docstring": {
 "value": "The kind of this node.",
-"lineno": 80,
-"endlineno": 80,
+"lineno": 106,
+"endlineno": 106,
 "parsed": [
 {
 "kind": "text",
@@ -56263,12 +56760,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 108,
-"endlineno": 114,
+"lineno": 134,
+"endlineno": 140,
 "docstring": {
 "value": "The children of this node.",
-"lineno": 109,
-"endlineno": 109,
+"lineno": 135,
+"endlineno": 135,
 "parsed": [
 {
 "kind": "text",
@@ -56300,12 +56797,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 117,
-"endlineno": 119,
+"lineno": 143,
+"endlineno": 145,
 "docstring": {
 "value": "Whether this node's object is a module.",
-"lineno": 118,
-"endlineno": 118,
+"lineno": 144,
+"endlineno": 144,
 "parsed": [
 {
 "kind": "text",
@@ -56330,12 +56827,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 122,
-"endlineno": 124,
+"lineno": 148,
+"endlineno": 150,
 "docstring": {
 "value": "Whether this node's object is a class.",
-"lineno": 123,
-"endlineno": 123,
+"lineno": 149,
+"endlineno": 149,
 "parsed": [
 {
 "kind": "text",
@@ -56360,12 +56857,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 127,
-"endlineno": 129,
+"lineno": 153,
+"endlineno": 155,
 "docstring": {
 "value": "Whether this node's object is a function.",
-"lineno": 128,
-"endlineno": 128,
+"lineno": 154,
+"endlineno": 154,
 "parsed": [
 {
 "kind": "text",
@@ -56390,12 +56887,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 132,
-"endlineno": 134,
+"lineno": 158,
+"endlineno": 160,
 "docstring": {
 "value": "Whether this node's object is a builtin function.",
-"lineno": 133,
-"endlineno": 133,
+"lineno": 159,
+"endlineno": 159,
 "parsed": [
 {
 "kind": "text",
@@ -56420,12 +56917,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 137,
-"endlineno": 139,
+"lineno": 163,
+"endlineno": 165,
 "docstring": {
 "value": "Whether this node's object is a coroutine.",
-"lineno": 138,
-"endlineno": 138,
+"lineno": 164,
+"endlineno": 164,
 "parsed": [
 {
 "kind": "text",
@@ -56450,46 +56947,16 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 142,
-"endlineno": 144,
+"lineno": 168,
+"endlineno": 170,
 "docstring": {
 "value": "Whether this node's object is a property.",
-"lineno": 143,
-"endlineno": 143,
+"lineno": 169,
+"endlineno": 169,
 "parsed": [
 {
 "kind": "text",
 "value": "Whether this node's object is a property."
-}
-]
-},
-"labels": [
-"cached",
-"property"
-],
-"members": [],
-"annotation": {
-"name": "bool",
-"cls": "ExprName"
-}
-},
-{
-"kind": "attribute",
-"name": "is_cached_property",
-"path": "griffe.agents.nodes._runtime.ObjectNode.is_cached_property",
-"filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
-"relative_filepath": "src/griffe/agents/nodes/_runtime.py",
-"relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 147,
-"endlineno": 149,
-"docstring": {
-"value": "Whether this node's object is a cached property.",
-"lineno": 148,
-"endlineno": 148,
-"parsed": [
-{
-"kind": "text",
-"value": "Whether this node's object is a cached property."
 }
 ]
 },
@@ -56510,12 +56977,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 152,
-"endlineno": 154,
+"lineno": 173,
+"endlineno": 175,
 "docstring": {
 "value": "Whether the object of this node's parent is a class.",
-"lineno": 153,
-"endlineno": 153,
+"lineno": 174,
+"endlineno": 174,
 "parsed": [
 {
 "kind": "text",
@@ -56540,12 +57007,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 157,
-"endlineno": 160,
+"lineno": 178,
+"endlineno": 181,
 "docstring": {
 "value": "Whether this node's object is a method.",
-"lineno": 158,
-"endlineno": 158,
+"lineno": 179,
+"endlineno": 179,
 "parsed": [
 {
 "kind": "text",
@@ -56570,12 +57037,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 163,
-"endlineno": 169,
+"lineno": 184,
+"endlineno": 190,
 "docstring": {
 "value": "Whether this node's object is a method descriptor.\n\nBuilt-in methods (e.g. those implemented in C/Rust) are often\nmethod descriptors, rather than normal methods.",
-"lineno": 164,
-"endlineno": 168,
+"lineno": 185,
+"endlineno": 189,
 "parsed": [
 {
 "kind": "text",
@@ -56600,12 +57067,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 172,
-"endlineno": 174,
+"lineno": 193,
+"endlineno": 195,
 "docstring": {
 "value": "Whether this node's object is a builtin method.",
-"lineno": 173,
-"endlineno": 173,
+"lineno": 194,
+"endlineno": 194,
 "parsed": [
 {
 "kind": "text",
@@ -56630,12 +57097,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 177,
-"endlineno": 185,
+"lineno": 198,
+"endlineno": 206,
 "docstring": {
 "value": "Whether this node's object is a staticmethod.",
-"lineno": 178,
-"endlineno": 178,
+"lineno": 199,
+"endlineno": 199,
 "parsed": [
 {
 "kind": "text",
@@ -56660,12 +57127,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 188,
-"endlineno": 196,
+"lineno": 209,
+"endlineno": 217,
 "docstring": {
 "value": "Whether this node's object is a classmethod.",
-"lineno": 189,
-"endlineno": 189,
+"lineno": 210,
+"endlineno": 210,
 "parsed": [
 {
 "kind": "text",
@@ -56690,8 +57157,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 199,
-"endlineno": 202,
+"lineno": 220,
+"endlineno": 223,
 "labels": [
 "cached",
 "property"
@@ -56716,8 +57183,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 204,
-"endlineno": 211,
+"lineno": 225,
+"endlineno": 232,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -56759,12 +57226,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 214,
-"endlineno": 265,
+"lineno": 235,
+"endlineno": 272,
 "docstring": {
 "value": "Alias target path of this node, if the node should be an alias.",
-"lineno": 215,
-"endlineno": 215,
+"lineno": 236,
+"endlineno": 236,
 "parsed": [
 {
 "kind": "text",
@@ -56798,8 +57265,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 268,
-"endlineno": 268,
+"lineno": 275,
+"endlineno": 275,
 "labels": [
 "module-attribute"
 ],
