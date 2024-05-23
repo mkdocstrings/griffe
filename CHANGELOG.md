@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.45.2](https://github.com/mkdocstrings/griffe/releases/tag/0.45.2) - 2024-05-23
+
+<small>[Compare with 0.45.1](https://github.com/mkdocstrings/griffe/compare/0.45.1...0.45.2)</small>
+
+### Bug Fixes
+
+- Support setuptools' new editable modules using type annotations ([14d45e8](https://github.com/mkdocstrings/griffe/commit/14d45e83d4a48c67b2347965351145cc78d7abe9) by Timothée Mazzucotelli). [Issue-273](https://github.com/mkdocstrings/griffe/issues/273)
+
 ## [0.45.1](https://github.com/mkdocstrings/griffe/releases/tag/0.45.1) - 2024-05-18
 
 <small>[Compare with 0.45.0](https://github.com/mkdocstrings/griffe/compare/0.45.0...0.45.1)</small>
