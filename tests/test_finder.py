@@ -128,27 +128,33 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
     assert paths == [Path("src")]
 
 
-def test_setuptools_file_handling(tmp_path: Path) -> None:
+@pytest.mark.parametrize("annotation", ["", ": dict[str, str]"])
+def test_setuptools_file_handling(tmp_path: Path, annotation: str) -> None:
     """Assert editable modules by `setuptools` are handled.
 
     Parameters:
         tmp_path: Pytest fixture.
+        annotation: The type annotation of the MAPPING variable.
     """
     pth_file = tmp_path / "__editable__whatever.py"
-    pth_file.write_text("hello\nMAPPING = {'griffe': 'src/griffe'}")
+    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
 
-def test_setuptools_file_handling_multiple_paths(tmp_path: Path) -> None:
+@pytest.mark.parametrize("annotation", ["", ": dict[str, str]"])
+def test_setuptools_file_handling_multiple_paths(tmp_path: Path, annotation: str) -> None:
     """Assert editable modules by `setuptools` are handled when multiple packages are installed in the same editable.
 
     Parameters:
         tmp_path: Pytest fixture.
+        annotation: The type annotation of the MAPPING variable.
     """
     pth_file = tmp_path / "__editable__whatever.py"
     pth_file.write_text(
-        "hello=1\nMAPPING = {\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}\ndef printer():\n  print(hello)",
+        "hello=1\n"
+        f"MAPPING{annotation} = {{\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}}\n"
+        "def printer():\n  print(hello)",
     )
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src1"), Path("src2")]
