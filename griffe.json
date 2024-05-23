@@ -42757,7 +42757,7 @@
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
 "lineno": 454,
-"endlineno": 495,
+"endlineno": 498,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -42791,8 +42791,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/finder.py",
 "relative_filepath": "src/griffe/finder.py",
 "relative_package_filepath": "griffe/finder.py",
-"lineno": 498,
-"endlineno": 498,
+"lineno": 501,
+"endlineno": 501,
 "labels": [
 "module-attribute"
 ],
