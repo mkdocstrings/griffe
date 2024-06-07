@@ -112,7 +112,7 @@ class GriffeLoader:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.load(
+        return self.load(  # type: ignore[return-value]
             module,
             submodules=submodules,
             try_relative_path=try_relative_path,
@@ -129,7 +129,7 @@ class GriffeLoader:
         find_stubs_package: bool = False,
         # TODO: Remove at some point.
         module: str | Path | None = None,
-    ) -> Object:
+    ) -> Object | Alias:
         """Load an object as a Griffe object, given its Python or file path.
 
         Note that this will load the whole object's package,
@@ -230,7 +230,7 @@ class GriffeLoader:
 
         # Package is loaded, we now retrieve the initially requested object and return it.
         obj = self.modules_collection.get_member(obj_path)
-        self.extensions.call("on_package_loaded", pkg=obj)
+        self.extensions.call("on_package_loaded", pkg=top_module)
         return obj
 
     def resolve_aliases(
@@ -746,7 +746,7 @@ def load(
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
-) -> Object:
+) -> Object | Alias:
     """Load and return a module.
 
     Example:
@@ -839,7 +839,7 @@ def load_git(
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
-) -> Object:
+) -> Object | Alias:
     """Load and return a module from a specific Git reference.
 
     This function will create a temporary

@@ -16,6 +16,8 @@ from tests.helpers import clear_sys_modules
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from griffe.dataclasses import Alias
+
 
 def test_has_docstrings_does_not_try_to_resolve_alias() -> None:
     """Assert that checkins presence of docstrings does not trigger alias resolution."""
@@ -48,7 +50,7 @@ def test_recursive_wildcard_expansion() -> None:
         assert "CONST_X" not in package.members
         assert "CONST_Y" not in package.members
 
-        loader.expand_wildcards(package)
+        loader.expand_wildcards(package)  # type: ignore[arg-type]
 
         assert "CONST_X" in package["mod_a"].members
         assert "CONST_Y" in package["mod_a"].members
@@ -475,3 +477,12 @@ def test_relying_on_modules_path_attribute(monkeypatch: pytest.MonkeyPatch) -> N
     loader = GriffeLoader()
     monkeypatch.setattr(loader.finder, "find_spec", raise_module_not_found_error)
     assert loader.load("griffe")
+
+
+def test_not_calling_package_loaded_hook_on_something_else_than_package() -> None:
+    """Always call the `on_package_loaded` hook on a package, not any other object."""
+    with temporary_pypackage("pkg", {"__init__.py": "from typing import List as L"}) as pkg:
+        loader = GriffeLoader(search_paths=[pkg.tmpdir])
+        alias: Alias = loader.load("pkg.L")  # type: ignore[assignment]
+        assert alias.is_alias
+        assert not alias.resolved
