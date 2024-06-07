@@ -198,6 +198,7 @@ def temporary_visited_module(
             modules_collection=modules_collection,
         )
         module.modules_collection[module_name] = module
+        module.lines_collection[path] = code.splitlines()
         yield module
 
 
@@ -244,6 +245,7 @@ def temporary_inspected_module(
                 modules_collection=modules_collection,
             )
             module.modules_collection[module_name] = module
+            module.lines_collection[path] = code.splitlines()
             yield module
         finally:
             if module_name in sys.modules:
