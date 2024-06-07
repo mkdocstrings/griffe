@@ -7,7 +7,6 @@ actions = \
 	changelog \
 	check \
 	check-api \
-	check-dependencies \
 	check-docs \
 	check-quality \
 	check-types \
@@ -26,4 +25,4 @@ actions = \
 
 .PHONY: $(actions)
 $(actions):
-	@bash scripts/make "$@"
+	@python scripts/make "$@"

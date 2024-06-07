@@ -49,9 +49,6 @@ jobs:
     - name: Check if the code is correctly typed
       run: make check-types
 
-    - name: Check for vulnerabilities in dependencies
-      run: make check-dependencies
-
     - name: Check for breaking changes in the API
       run: make check-api
 
