@@ -303,7 +303,7 @@ class Visitor:
             property_setter_or_deleter = (
                 prop_function in {"setter", "deleter"}
                 and path == function.path
-                and self.current.get_member(function.name).has_labels({"property"})
+                and self.current.get_member(function.name).has_labels("property")
             )
             if property_setter_or_deleter:
                 return prop_function

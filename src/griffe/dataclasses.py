@@ -519,16 +519,28 @@ class Object(ObjectAliasMixin):
         """Whether this object is a namespace subpackage."""
         return False
 
-    def has_labels(self, labels: set[str]) -> bool:
+    def has_labels(self, *labels: str | set[str]) -> bool:
         """Tell if this object has all the given labels.
 
         Parameters:
-            labels: A set of labels.
+            *labels: Labels that must be present.
 
         Returns:
             True or False.
         """
-        return all(label in self.labels for label in labels)
+        # TODO: Remove at some point.
+        all_labels = set()
+        for label in labels:
+            if isinstance(label, str):
+                all_labels.add(label)
+            else:
+                warnings.warn(
+                    "Passing a set of labels to `has_labels` is deprecated. Pass multiple strings instead.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+                all_labels.update(label)
+        return all_labels.issubset(self.labels)
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
         """Filter and return members based on predicates.
@@ -1068,16 +1080,16 @@ class Alias(ObjectAliasMixin):
         """Whether this object is an attribute."""
         return self.final_target.is_attribute
 
-    def has_labels(self, labels: set[str]) -> bool:
+    def has_labels(self, *labels: str | set[str]) -> bool:
         """Tell if this object has all the given labels.
 
         Parameters:
-            labels: A set of labels.
+            *labels: Labels that must be present.
 
         Returns:
             True or False.
         """
-        return self.final_target.has_labels(labels)
+        return self.final_target.has_labels(*labels)
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
         """Filter and return members based on predicates.
