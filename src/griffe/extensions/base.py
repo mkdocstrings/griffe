@@ -9,7 +9,7 @@ from collections import defaultdict
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Sequence, Union
+from typing import TYPE_CHECKING, Any, Dict, Sequence, Type, Union
 
 from griffe.agents.nodes import ast_children, ast_kind
 from griffe.enumerations import When
@@ -236,6 +236,7 @@ class Extension:
 
 
 ExtensionType = Union[VisitorExtension, InspectorExtension, Extension]
+"""All the types that can be passed to `Extensions.add`."""
 
 
 class Extensions:
@@ -455,8 +456,13 @@ def _load_extension(
     return [ext(**options) for ext in extensions]
 
 
+LoadableExtension = Union[str, Dict[str, Any], ExtensionType, Type[ExtensionType]]
+"""All the types that can be passed to `load_extensions`."""
+
+
 def load_extensions(
-    exts: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
+    # TODO: Only accept LoadableExtension at some point.
+    *exts: LoadableExtension | Sequence[LoadableExtension],
 ) -> Extensions:
     """Load configured extensions.
 
@@ -467,7 +473,22 @@ def load_extensions(
         An extensions container.
     """
     extensions = Extensions()
-    for extension in exts or ():
+
+    # TODO: Remove at some point.
+    all_exts: list[LoadableExtension] = []
+    for ext in exts:
+        if isinstance(ext, (list, tuple)):
+            warnings.warn(
+                "Passing multiple extensions as a single list or tuple is deprecated. "
+                "Please pass them as separate arguments instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            all_exts.extend(ext)
+        else:
+            all_exts.append(ext)  # type: ignore[arg-type]
+
+    for extension in all_exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):
             extensions.add(*ext)

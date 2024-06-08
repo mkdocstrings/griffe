@@ -376,7 +376,7 @@ def dump(
         search_paths.extend(sys.path)
 
     try:
-        loaded_extensions = load_extensions(extensions or ())
+        loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError as error:
         logger.exception(str(error))  # noqa: TRY401
         return 1
@@ -464,7 +464,7 @@ def check(
     repository = get_repo_root(against_path)
 
     try:
-        loaded_extensions = load_extensions(extensions or ())
+        loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError as error:
         logger.exception(str(error))  # noqa: TRY401
         return 1

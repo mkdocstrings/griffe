@@ -87,13 +87,11 @@ import griffe
 from mypackage.extensions import ThisExtension, ThisOtherExtension
 
 extensions = griffe.load_extensions(
-    [
-        {"pydantic": {"schema": true}},
-        {"scripts/exts.py:DynamicDocstrings": {"paths": ["mypkg.mymod.myobj"]}},
-        "griffe_attrs",
-        ThisExtension(option="value"),
-        ThisOtherExtension,
-    ]
+    {"pydantic": {"schema": true}},
+    {"scripts/exts.py:DynamicDocstrings": {"paths": ["mypkg.mymod.myobj"]}},
+    "griffe_attrs",
+    ThisExtension(option="value"),
+    ThisOtherExtension,
 )
 
 data = griffe.load("mypackage", extensions=extensions)

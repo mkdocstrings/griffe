@@ -94,7 +94,7 @@ def test_loading_extensions(extension: str | dict[str, dict[str, Any]] | Extensi
     Parameters:
         extension: Extension specification (parametrized).
     """
-    extensions = load_extensions([extension])
+    extensions = load_extensions(extension)
     loaded: ExtensionTest = extensions._extensions[0]  # type: ignore[assignment]
     # We cannot use isinstance here,
     # because loading from a filepath drops the parent `tests` package,
@@ -115,7 +115,7 @@ def test_extension_events() -> None:
             cattr = 1
             def method(self): ...
         """,
-        extensions=load_extensions([extension]),
+        extensions=load_extensions(extension),
     ):
         pass
     events = [

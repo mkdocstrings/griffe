@@ -39,12 +39,12 @@ from griffe.loader import GriffeLoader
 from griffe.extensions import load_extensions
 from griffe.extensions import Extension
 stdlib_packages = sorted([m for m in sys.stdlib_module_names if not m.startswith("_")])
-# extensions = load_extensions([
+# extensions = load_extensions(
 #     Extension, Extension, Extension, Extension,
 #     Extension, Extension, Extension, Extension,
 #     Extension, Extension, Extension, Extension,
 #     Extension, Extension, Extension, Extension,
-# ])
+# )
 extensions = None
 loader = GriffeLoader(allow_inspection=False, extensions=extensions)
 for package in stdlib_packages:
