@@ -13,11 +13,12 @@ from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
 
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import visit
+from griffe.collections import LinesCollection
 from griffe.dataclasses import Module, Object
 from griffe.loader import GriffeLoader
 
 if TYPE_CHECKING:
-    from griffe.collections import LinesCollection, ModulesCollection
+    from griffe.collections import ModulesCollection
     from griffe.enumerations import Parser
     from griffe.extensions.base import Extensions
 
@@ -185,11 +186,14 @@ def temporary_visited_module(
     Yields:
         The visited module.
     """
+    code = dedent(code)
     with temporary_pyfile(code, module_name=module_name) as (_, path):
+        lines_collection = lines_collection or LinesCollection()
+        lines_collection[path] = code.splitlines()
         module = visit(
             module_name,
             filepath=path,
-            code=dedent(code),
+            code=code,
             extensions=extensions,
             parent=parent,
             docstring_parser=docstring_parser,
@@ -198,7 +202,6 @@ def temporary_visited_module(
             modules_collection=modules_collection,
         )
         module.modules_collection[module_name] = module
-        module.lines_collection[path] = code.splitlines()
         yield module
 
 
@@ -232,6 +235,8 @@ def temporary_inspected_module(
         The inspected module.
     """
     with temporary_pyfile(code, module_name=module_name) as (_, path):
+        lines_collection = lines_collection or LinesCollection()
+        lines_collection[path] = code.splitlines()
         try:
             module = inspect(
                 module_name,
@@ -245,7 +250,6 @@ def temporary_inspected_module(
                 modules_collection=modules_collection,
             )
             module.modules_collection[module_name] = module
-            module.lines_collection[path] = code.splitlines()
             yield module
         finally:
             if module_name in sys.modules:
