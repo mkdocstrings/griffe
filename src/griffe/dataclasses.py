@@ -699,13 +699,14 @@ class Object(ObjectAliasMixin):
             return []
         if isinstance(filepath, list):
             return []
-
         try:
             lines = self.lines_collection[filepath]
         except KeyError:
             return []
-        if self.lineno is None or self.endlineno is None:
+        if self.is_module:
             return lines
+        if self.lineno is None or self.endlineno is None:
+            return []
         return lines[self.lineno - 1 : self.endlineno]
 
     @property

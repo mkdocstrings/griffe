@@ -315,3 +315,36 @@ def test_parameters_annotated_as_initvar() -> None:
         point_b = module["PointB"]
         assert ["self", "r"] == [p.name for p in point_b.parameters]
         assert ["x", "y", "z", "__init__"] == list(point_b.members)
+
+
+def test_module_source() -> None:
+    """Check the source property of a module."""
+    code = "print('hello')\nprint('world')"
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        assert module.source == code
+
+
+def test_class_source() -> None:
+    """Check the source property of a class."""
+    code = """
+    class A:
+        def __init__(self, x: int):
+            self.x = x
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        assert module["A"].source == dedent(code).strip()
+
+
+def test_object_source_with_missing_line_number() -> None:
+    """Check the source property of an object with missing line number."""
+    code = """
+    class A:
+        def __init__(self, x: int):
+            self.x = x
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        module["A"].endlineno = None
+        assert not module["A"].source
+        module["A"].endlineno = 3
+        module["A"].lineno = None
+        assert not module["A"].source
