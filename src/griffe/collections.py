@@ -25,6 +25,9 @@ class LinesCollection:
     def __setitem__(self, key: Path, value: list[str]) -> None:
         self._data[key] = value
 
+    def __contains__(self, item: Path) -> bool:
+        return item in self._data
+
     def __bool__(self) -> bool:
         return True
 

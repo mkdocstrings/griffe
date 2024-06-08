@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import ast
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, cleandoc
+from inspect import Signature, cleandoc, getsourcelines
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any, Sequence
 
@@ -149,6 +149,16 @@ class Inspector:
             parser=self.docstring_parser,
             parser_options=self.docstring_options,
         )
+
+    def _get_linenos(self, node: ObjectNode) -> tuple[int, int] | tuple[None, None]:
+        # Line numbers won't be useful if we don't have the source code.
+        if not self.filepath or self.filepath not in self.lines_collection:
+            return None, None
+        try:
+            lines, lineno = getsourcelines(node.obj)
+        except (OSError, TypeError):
+            return None, None
+        return lineno, lineno + "".join(lines).rstrip().count("\n")
 
     def get_module(self, import_paths: Sequence[str | Path] | None = None) -> Module:
         """Build and return the object representing the module attached to this inspector.
@@ -291,10 +301,13 @@ class Inspector:
                 continue
             bases.append(f"{base.__module__}.{base.__qualname__}")
 
+        lineno, endlineno = self._get_linenos(node)
         class_ = Class(
             name=node.name,
             docstring=self._get_docstring(node),
             bases=bases,
+            lineno=lineno,
+            endlineno=endlineno,
         )
         self.current.set_member(node.name, class_)
         self.current = class_
@@ -413,6 +426,8 @@ class Inspector:
                 else _convert_object_to_annotation(return_annotation, parent=self.current)
             )
 
+        lineno, endlineno = self._get_linenos(node)
+
         obj: Attribute | Function
         labels = labels or set()
         if "property" in labels:
@@ -421,6 +436,8 @@ class Inspector:
                 value=None,
                 annotation=returns,
                 docstring=self._get_docstring(node),
+                lineno=lineno,
+                endlineno=endlineno,
             )
         else:
             obj = Function(
@@ -428,6 +445,8 @@ class Inspector:
                 parameters=parameters,
                 returns=returns,
                 docstring=self._get_docstring(node),
+                lineno=lineno,
+                endlineno=endlineno,
             )
         obj.labels |= labels
         self.current.set_member(node.name, obj)

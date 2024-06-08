@@ -10,7 +10,7 @@ import pytest
 import griffe
 from griffe.dataclasses import Docstring, Module
 from griffe.loader import GriffeLoader
-from griffe.tests import module_vtree, temporary_pypackage, temporary_visited_package
+from griffe.tests import module_vtree, temporary_inspected_module, temporary_pypackage, temporary_visited_package
 
 
 def test_submodule_exports() -> None:
@@ -317,14 +317,14 @@ def test_parameters_annotated_as_initvar() -> None:
         assert ["x", "y", "z", "__init__"] == list(point_b.members)
 
 
-def test_module_source() -> None:
+def test_visited_module_source() -> None:
     """Check the source property of a module."""
     code = "print('hello')\nprint('world')"
     with temporary_visited_package("package", {"__init__.py": code}) as module:
         assert module.source == code
 
 
-def test_class_source() -> None:
+def test_visited_class_source() -> None:
     """Check the source property of a class."""
     code = """
     class A:
@@ -335,7 +335,7 @@ def test_class_source() -> None:
         assert module["A"].source == dedent(code).strip()
 
 
-def test_object_source_with_missing_line_number() -> None:
+def test_visited_object_source_with_missing_line_number() -> None:
     """Check the source property of an object with missing line number."""
     code = """
     class A:
@@ -343,6 +343,39 @@ def test_object_source_with_missing_line_number() -> None:
             self.x = x
     """
     with temporary_visited_package("package", {"__init__.py": code}) as module:
+        module["A"].endlineno = None
+        assert not module["A"].source
+        module["A"].endlineno = 3
+        module["A"].lineno = None
+        assert not module["A"].source
+
+
+def test_inspected_module_source() -> None:
+    """Check the source property of a module."""
+    code = "print('hello')\nprint('world')"
+    with temporary_inspected_module(code) as module:
+        assert module.source == code
+
+
+def test_inspected_class_source() -> None:
+    """Check the source property of a class."""
+    code = """
+    class A:
+        def __init__(self, x: int):
+            self.x = x
+    """
+    with temporary_inspected_module(code) as module:
+        assert module["A"].source == dedent(code).strip()
+
+
+def test_inspected_object_source_with_missing_line_number() -> None:
+    """Check the source property of an object with missing line number."""
+    code = """
+    class A:
+        def __init__(self, x: int):
+            self.x = x
+    """
+    with temporary_inspected_module(code) as module:
         module["A"].endlineno = None
         assert not module["A"].source
         module["A"].endlineno = 3
