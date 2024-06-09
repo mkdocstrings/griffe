@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.45.3](https://github.com/mkdocstrings/griffe/releases/tag/0.45.3) - 2024-06-09
+
+<small>[Compare with 0.45.2](https://github.com/mkdocstrings/griffe/compare/0.45.2...0.45.3)</small>
+
+### Bug Fixes
+
+- Always call `on_package_loaded` hook on a package, and not any other object ([40db38d](https://github.com/mkdocstrings/griffe/commit/40db38d6d55c5a7926d39408e7fd51ec198b62b9) by Timothée Mazzucotelli). [Issue-283](https://github.com/mkdocstrings/griffe/issues/283)
+
 ## [0.45.2](https://github.com/mkdocstrings/griffe/releases/tag/0.45.2) - 2024-05-23
 
 <small>[Compare with 0.45.1](https://github.com/mkdocstrings/griffe/compare/0.45.1...0.45.2)</small>
