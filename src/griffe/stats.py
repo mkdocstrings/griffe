@@ -2,15 +2,27 @@
 
 from __future__ import annotations
 
+import warnings
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from griffe.enumerations import Kind
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Alias, Object
     from griffe.loader import GriffeLoader
+
+
+def __getattr__(name: str) -> Any:
+    if name == "stats":
+        warnings.warn(
+            "The 'stats' function was made into a class and renamed 'Stats'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return Stats
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 class Stats:
@@ -137,8 +149,5 @@ class Stats:
 
         return "\n".join(lines)
 
-
-stats = Stats
-"""Deprecated. Use `Stats` instead."""
 
 __all__ = ["Stats"]
