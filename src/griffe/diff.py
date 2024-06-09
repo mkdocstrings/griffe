@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
@@ -339,13 +340,12 @@ def _class_incompatibilities(
     old_class: Class,
     new_class: Class,
     *,
-    ignore_private: bool = True,
     seen_paths: set[str],
 ) -> Iterable[Breakage]:
     yield from ()
     if new_class.bases != old_class.bases and len(new_class.bases) < len(old_class.bases):
         yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)
-    yield from _member_incompatibilities(old_class, new_class, ignore_private=ignore_private, seen_paths=seen_paths)
+    yield from _member_incompatibilities(old_class, new_class, seen_paths=seen_paths)
 
 
 # TODO: Check decorators? Maybe resolved by extensions and/or dynamic analysis.
@@ -438,11 +438,8 @@ def _alias_incompatibilities(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
-    ignore_private: bool,
     seen_paths: set[str],
 ) -> Iterable[Breakage]:
-    if not ignore_private:
-        return
     try:
         old_member = old_obj.target if old_obj.is_alias else old_obj  # type: ignore[union-attr]
         new_member = new_obj.target if new_obj.is_alias else new_obj  # type: ignore[union-attr]
@@ -450,39 +447,34 @@ def _alias_incompatibilities(
         logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
         return
 
-    yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)
+    yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
 
 
 def _member_incompatibilities(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
-    ignore_private: bool = True,
     seen_paths: set[str] | None = None,
 ) -> Iterator[Breakage]:
     seen_paths = set() if seen_paths is None else seen_paths
     for name, old_member in old_obj.all_members.items():
-        if ignore_private and name.startswith("_"):
-            logger.debug(f"API check: {old_obj.path}.{name}: skip private object")
+        if not old_member.is_public:
+            logger.debug(f"API check: {old_obj.path}.{name}: skip non-public object")
             continue
-
         logger.debug(f"API check: {old_obj.path}.{name}")
         try:
             new_member = new_obj.all_members[name]
         except KeyError:
-            is_module = not old_member.is_alias and old_member.is_module
-            if is_module or old_member.is_exported(explicitely=False):
+            if (not old_member.is_alias and old_member.is_module) or old_member.is_public:
                 yield ObjectRemovedBreakage(old_member, old_member, None)  # type: ignore[arg-type]
-            continue
-
-        yield from _type_based_yield(old_member, new_member, ignore_private=ignore_private, seen_paths=seen_paths)
+        else:
+            yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
 
 
 def _type_based_yield(
     old_member: Object | Alias,
     new_member: Object | Alias,
     *,
-    ignore_private: bool,
     seen_paths: set[str],
 ) -> Iterator[Breakage]:
     if old_member.path in seen_paths:
@@ -494,7 +486,6 @@ def _type_based_yield(
         yield from _alias_incompatibilities(
             old_member,
             new_member,
-            ignore_private=ignore_private,
             seen_paths=seen_paths,
         )
     elif new_member.kind != old_member.kind:
@@ -503,14 +494,12 @@ def _type_based_yield(
         yield from _member_incompatibilities(
             old_member,
             new_member,
-            ignore_private=ignore_private,
             seen_paths=seen_paths,
         )
     elif old_member.is_class:
         yield from _class_incompatibilities(
             old_member,  # type: ignore[arg-type]
             new_member,  # type: ignore[arg-type]
-            ignore_private=ignore_private,
             seen_paths=seen_paths,
         )
     elif old_member.is_function:
@@ -540,11 +529,14 @@ def _returns_are_compatible(old_function: Function, new_function: Function) -> b
     return True
 
 
+_sentinel = object()
+
+
 def find_breaking_changes(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
-    ignore_private: bool = True,
+    ignore_private: bool = _sentinel,  # type: ignore[assignment]
 ) -> Iterator[Breakage]:
     """Find breaking changes between two versions of the same API.
 
@@ -565,7 +557,13 @@ def find_breaking_changes(
         >>> for breakage in griffe.find_breaking_changes(old, new)
         ...     print(breakage.explain(style=style), file=sys.stderr)
     """
-    yield from _member_incompatibilities(old_obj, new_obj, ignore_private=ignore_private)
+    if ignore_private is not _sentinel:
+        warnings.warn(
+            "The `ignore_private` parameter is deprecated and will be removed in a future version.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+    yield from _member_incompatibilities(old_obj, new_obj)
 
 
 __all__ = [

@@ -8,7 +8,7 @@ from textwrap import dedent
 import pytest
 
 import griffe
-from griffe.dataclasses import Docstring, Module
+from griffe.dataclasses import Attribute, Docstring, Module
 from griffe.loader import GriffeLoader
 from griffe.tests import module_vtree, temporary_inspected_module, temporary_pypackage, temporary_visited_package
 
@@ -17,18 +17,17 @@ def test_submodule_exports() -> None:
     """Check that a module is exported depending on whether it was also imported."""
     root = Module("root")
     sub = Module("sub")
+    private = Attribute("_private")
     root["sub"] = sub
+    root["_private"] = private
 
-    assert not root.member_is_exported(sub, explicitely=True)
-    assert not root.member_is_exported(sub, explicitely=False)
-
+    assert not sub.is_wildcard_exposed
     root.imports["sub"] = "root.sub"
-    assert not root.member_is_exported(sub, explicitely=True)
-    assert root.member_is_exported(sub, explicitely=False)
+    assert sub.is_wildcard_exposed
 
-    root.exports = {"sub"}
-    assert root.member_is_exported(sub, explicitely=True)
-    assert root.member_is_exported(sub, explicitely=False)
+    assert not private.is_wildcard_exposed
+    root.exports = {"_private"}
+    assert private.is_wildcard_exposed
 
 
 def test_has_docstrings() -> None:

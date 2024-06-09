@@ -411,27 +411,14 @@ class Object(ObjectAliasMixin):
             return True
         return any(member.has_docstrings for member in self.members.values())
 
-    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:
-        """Whether a member of this object is "exported".
-
-        By exported, we mean that the object is included in the `__all__` attribute
-        of its parent module or class. When `__all__` is not defined,
-        we consider the member to be *implicitely* exported,
-        unless it's a module and it was not imported,
-        and unless it's not defined at runtime.
-
-        Parameters:
-            member: The member to verify.
-            explicitely: Whether to only return True when `__all__` is defined.
-
-        Returns:
-            True or False.
-        """
-        if not member.runtime:
-            return False
-        if self.exports is None:
-            return not explicitely and (member.is_alias or not member.is_module or member.name in self.imports)
-        return member.name in self.exports
+    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
+        """Deprecated. Use [`member.is_exported`][griffe.dataclasses.Object.is_exported] instead."""
+        warnings.warn(
+            "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return member.is_exported
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
         """Tell if this object is of the given kind.
@@ -1029,23 +1016,14 @@ class Alias(ObjectAliasMixin):
         """The aliases pointing to this object."""
         return self.final_target.aliases
 
-    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:
-        """Whether a member of this object is "exported".
-
-        By exported, we mean that the object is included in the `__all__` attribute
-        of its parent module or class. When `__all__` is not defined,
-        we consider the member to be *implicitely* exported,
-        unless it's a module and it was not imported,
-        and unless it's not defined at runtime.
-
-        Parameters:
-            member: The member to verify.
-            explicitely: Whether to only return True when `__all__` is defined.
-
-        Returns:
-            True or False.
-        """
-        return self.final_target.member_is_exported(member, explicitely=explicitely)
+    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
+        """Deprecated. Use [`member.is_exported`][griffe.dataclasses.Alias.is_exported] instead."""
+        warnings.warn(
+            "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return member.is_exported
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
         """Tell if this object is of the given kind.

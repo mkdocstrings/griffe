@@ -464,7 +464,7 @@ class GriffeLoader:
             if member.is_alias:
                 if member.wildcard or member.resolved:  # type: ignore[union-attr]
                     continue
-                if not implicit and not member.is_explicitely_exported:
+                if not implicit and not member.is_exported:
                     continue
 
                 # Try resolving the alias. If it fails, check if it is because it comes
@@ -717,11 +717,10 @@ class GriffeLoader:
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
         module = self.modules_collection.get_member(wildcard_obj.wildcard)  # type: ignore[arg-type]  # we know it's a wildcard
-        explicitely = "__all__" in module.members
         return [
             (imported_member, wildcard_obj.alias_lineno, wildcard_obj.alias_endlineno)
             for imported_member in module.members.values()
-            if imported_member.is_exported(explicitely=explicitely)
+            if imported_member.is_wildcard_exposed
         ]
 
 

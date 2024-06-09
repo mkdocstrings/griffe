@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import warnings
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 
@@ -293,33 +294,63 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
-    def is_exported(self, *, explicitely: bool = True) -> bool:
-        """Tell if this object/alias is implicitely exported by its parent.
+    @property
+    def has_private_name(self) -> bool:
+        """Whether this object/alias has a private name."""
+        return self.name.startswith("_")  # type: ignore[attr-defined]
 
-        Parameters:
-            explicitely: Whether to only return True when `__all__` is defined.
+    @property
+    def is_exported(self) -> bool:
+        """Whether this object/alias is exported (listed in `__all__`)."""
+        result = self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
+        return _True if result else _False  # type: ignore[return-value]
+
+    @property
+    def is_explicitely_exported(self) -> bool:
+        """Deprecated. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead."""
+        warnings.warn(
+            "The `is_explicitely_exported` property is deprecated. Use `is_exported` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.is_exported
+
+    @property
+    def is_implicitely_exported(self) -> bool:
+        """Deprecated. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead."""
+        warnings.warn(
+            "The `is_implicitely_exported` property is deprecated. Use `is_exported` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.is_exported
+
+    @property
+    def is_wildcard_exposed(self) -> bool:
+        """Whether this object/alias is exposed to wildcard imports.
+
+        To be exposed to wildcard imports, an object/alias must:
+
+        - be available at runtime
+        - have a module as parent
+        - be listed in `__all__` if `__all__` is defined
+        - or not be private (having a name starting with an underscore)
+
+        Special case for Griffe trees: a submodule is only exposed if its parent imports it.
 
         Returns:
             True or False.
         """
-        return self.parent.member_is_exported(self, explicitely=explicitely)  # type: ignore[attr-defined]
+        if not self.runtime or not self.parent.is_module:  # type: ignore[attr-defined]
+            return False
+        if self.parent.exports is not None:  # type: ignore[attr-defined]
+            return self.name in self.parent.exports  # type: ignore[attr-defined]
+        if self.has_private_name:
+            return False
+        return self.is_alias or not self.is_module or self.name in self.parent.imports  # type: ignore[attr-defined]
 
     @property
-    def is_explicitely_exported(self) -> bool:
-        """Whether this object/alias is explicitely exported by its parent."""
-        return self.is_exported(explicitely=True)
-
-    @property
-    def is_implicitely_exported(self) -> bool:
-        """Whether this object/alias is implicitely exported by its parent."""
-        return self.parent.exports is None  # type: ignore[attr-defined]
-
-    def is_public(
-        self,
-        *,
-        strict: bool = False,
-        check_name: bool = True,
-    ) -> bool:
+    def is_public(self) -> bool:
         """Whether this object is considered public.
 
         In modules, developers can mark objects as public thanks to the `__all__` variable.
@@ -328,25 +359,47 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         Therefore, to decide whether an object is public, we follow this algorithm:
 
         - If the object's `public` attribute is set (boolean), return its value.
-        - In strict mode, the object is public only if it is explicitely exported (listed in `__all__`).
-            Strict mode should only be used for module members.
-        - Otherwise, if name checks are enabled, the object is private if its name starts with an underscore.
-        - Otherwise, if the object is an alias, and is neither inherited from a base class,
-            nor a member of a parent alias, it is not public.
+        - If the object is exposed to wildcard imports, it is public.
+        - If the object has a private name, it is private.
+        - If the object was imported from another module, it is private.
         - Otherwise, the object is public.
         """
+        # TODO: Return regular True/False values in next version.
         if self.public is not None:  # type: ignore[attr-defined]
-            return self.public  # type: ignore[attr-defined]
-        if self.is_explicitely_exported:
-            return True
-        if strict:
-            return False
-        if check_name and self.name.startswith("_"):  # type: ignore[attr-defined]
-            return False
-        if self.is_alias and not (self.inherited or self.parent.is_alias):  # type: ignore[attr-defined]
-            return False
-        return True
+            return _True if self.public else _False  # type: ignore[return-value,attr-defined]
+        if self.is_wildcard_exposed:
+            return _True  # type: ignore[return-value]
+        if self.has_private_name:
+            return _False  # type: ignore[return-value]
+        # The following condition effectively filters out imported objects.
+        # TODO: In a future version, we will support two conventions regarding imports:
+        # - `from a import x as x` marks `x` as public.
+        # - `from a import *` marks all wildcard imported objects as public.
+        if self.is_alias and not (self.inherited or (self.parent and self.parent.is_alias)):  # type: ignore[attr-defined]
+            return _False  # type: ignore[return-value]
+        return _True  # type: ignore[return-value]
 
+
+# This is used to allow the `is_public` property to be "callable",
+# for backward compatibility with the previous implementation.
+class _Bool:
+    def __init__(self, value: bool) -> None:  # noqa: FBT001
+        self.value = value
+
+    def __bool__(self) -> bool:
+        return self.value
+
+    def __call__(self, *args: Any, **kwargs: Any) -> bool:  # noqa: ARG002
+        warnings.warn(
+            "This method is now a property and should be accessed as such (without parentheses).",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.value
+
+
+_True = _Bool(True)  # noqa: FBT003
+_False = _Bool(False)  # noqa: FBT003
 
 __all__ = [
     "DelMembersMixin",
