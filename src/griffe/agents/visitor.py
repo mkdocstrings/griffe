@@ -368,8 +368,11 @@ class Visitor:
                     default=default
                     if isinstance(default, str)
                     else safe_get_expression(default, parent=self.current, parse_strings=False),
+                    lineno=lineno,
+                    endlineno=endlineno,
+                    parent=self.current,
                 )
-                for name, annotation, kind, default in get_parameters(node.args)
+                for name, annotation, kind, default, lineno, endlineno in get_parameters(node.args)
             ],
         )
 
