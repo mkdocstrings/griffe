@@ -383,10 +383,7 @@ def test_inspected_object_source_with_missing_line_number() -> None:
 
 
 def test_dataclass_parameter_docstrings() -> None:
-    """
-    Class parameters should have a docstring attribute
-    """
-
+    """Class parameters should have a docstring attribute."""
     code = """
     from dataclasses import dataclass, InitVar
 
