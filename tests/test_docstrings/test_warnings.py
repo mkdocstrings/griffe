@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from griffe.dataclasses import Docstring, Function, Parameter, ParameterKind, Parameters
-from griffe.docstrings.parsers import Parser, parse
+from griffe import Docstring, Function, Parameter, ParameterKind, Parameters, Parser, parse
 
 
 def test_can_warn_without_parent_module() -> None:

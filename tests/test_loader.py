@@ -8,9 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe.expressions import ExprName
-from griffe.loader import GriffeLoader
-from griffe.tests import temporary_pyfile, temporary_pypackage, temporary_visited_package
+from griffe import ExprName, GriffeLoader, temporary_pyfile, temporary_pypackage, temporary_visited_package
 from tests.helpers import clear_sys_modules
 
 if TYPE_CHECKING:
@@ -483,6 +481,6 @@ def test_not_calling_package_loaded_hook_on_something_else_than_package() -> Non
     """Always call the `on_package_loaded` hook on a package, not any other object."""
     with temporary_pypackage("pkg", {"__init__.py": "from typing import List as L"}) as pkg:
         loader = GriffeLoader(search_paths=[pkg.tmpdir])
-        alias: Alias = loader.load("pkg.L")  # type: ignore[assignment]
+        alias: Alias = loader.load("pkg.L")
         assert alias.is_alias
         assert not alias.resolved

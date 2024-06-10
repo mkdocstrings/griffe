@@ -7,10 +7,16 @@ from textwrap import dedent
 
 import pytest
 
-import griffe
-from griffe.dataclasses import Attribute, Docstring, Module
-from griffe.loader import GriffeLoader
-from griffe.tests import module_vtree, temporary_inspected_module, temporary_pypackage, temporary_visited_package
+from griffe import (
+    Attribute,
+    Docstring,
+    GriffeLoader,
+    Module,
+    module_vtree,
+    temporary_inspected_module,
+    temporary_pypackage,
+    temporary_visited_package,
+)
 
 
 def test_submodule_exports() -> None:
@@ -73,21 +79,6 @@ def test_deepcopy() -> None:
 
     deepcopy(mod)
     deepcopy(mod.as_dict())
-
-
-def test_alias_proxies() -> None:
-    """Assert that the Alias class has all the necessary methods and properties."""
-    api = griffe.load("griffe")
-    alias_members = set(api["dataclasses.Alias"].all_members.keys())
-    for cls in (
-        api["dataclasses.Module"],
-        api["dataclasses.Class"],
-        api["dataclasses.Function"],
-        api["dataclasses.Attribute"],
-    ):
-        for name in cls.all_members:
-            if not name.startswith("_") or name.startswith("__"):
-                assert name in alias_members
 
 
 def test_dataclass_properties_and_class_variables() -> None:

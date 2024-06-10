@@ -8,8 +8,7 @@ from typing import TYPE_CHECKING, Iterator
 
 import pytest
 
-from griffe.exceptions import LoadingError
-from griffe.loader import GriffeLoader
+from griffe import GriffeLoader, LoadingError
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Alias, Object

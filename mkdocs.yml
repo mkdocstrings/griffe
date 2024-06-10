@@ -4,7 +4,7 @@ site_url: "https://mkdocstrings.github.io/griffe"
 repo_url: "https://github.com/mkdocstrings/griffe"
 repo_name: "mkdocstrings/griffe"
 site_dir: "site"
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/griffe]
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src]
 copyright: Copyright &copy; 2021 Timothée Mazzucotelli
 edit_uri: edit/main/docs/
 
@@ -16,31 +16,42 @@ not_in_nav: |
   usage.md
 
 nav:
-- Home:
-  - Overview: index.md
-  - Changelog: changelog.md
-  - Credits: credits.md
+- Home: index.md
+- Getting started:
+  - getting-started.md
+  - Installation: installation.md
+  - Introduction: introduction.md
+  - Playground: playground.md
   - License: license.md
-- Usage:
-  - CLI reference: cli_reference.md
-  - Checking for API breakages: checking.md
-  - Dumping data as JSON: dumping.md
-  - Loading and navigating data: loading.md
-  - Best practices: best_practices.md
-  - Extensions:
-    - Using and writing extensions: extensions.md
-  - Docstrings:
-    - Supported styles: docstrings.md
-    - Parsing docstrings in Python: parsing_docstrings.md
-  - Try it out!:
-    - Run Griffe in your browser: try_it_out.md
-# defer to gen-files + literate-nav
-- API reference:
-  - Griffe: reference/
-- Development:
-  - Contributing: contributing.md
-  - Code of Conduct: code_of_conduct.md
-  - Coverage report: coverage.md
+  - Community:
+    - community.md
+    - Getting help: getting-help.md
+    - Code of conduct: code-of-conduct.md
+    - Contributing: contributing.md
+    - Coverage report: coverage.md
+    - Credits: credits.md
+- Guide:
+  - guide.md
+  - User guide:
+    - guide/users.md
+    - Loading data: guide/users/loading.md
+    - Serializing data: guide/users/dumping.md
+    - API checks: guide/users/checking.md
+    - Best practices: guide/users/best-practices.md
+    - Docstrings: guide/users/docstrings.md
+    - Extensions: guide/users/extensions.md
+  - Contributor guide:
+    - guide/contributors.md
+    - Architecture: guide/contributors/architecture.md
+- Reference:
+  - reference.md
+  - Command-line interface: reference/cli.md
+  - Docstring parsers: reference/docstrings.md
+  - Python API:
+    - reference/api.md
+    - Loading modules: reference/api/loading.md
+    - Data models: reference/api/models.md
+- Changelog: changelog.md
 - Insiders:
   - insiders/index.md
   - Getting started:
@@ -102,6 +113,7 @@ markdown_extensions:
 - callouts:
     strip_period: no
 - footnotes
+- md_in_html
 - pymdownx.emoji:
     emoji_index: !!python/name:material.extensions.emoji.twemoji
     emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -127,14 +139,15 @@ markdown_extensions:
 
 plugins:
 - search
-- markdown-exec
+- markdown-exec:
+    ansi: required
 - gen-files:
     scripts:
-    - scripts/gen_ref_nav.py
     - scripts/gen_griffe_json.py
     - scripts/redirects.py
 - literate-nav:
     nav_file: SUMMARY.md
+- section-index
 - coverage
 - mkdocstrings:
     handlers:
@@ -152,6 +165,7 @@ plugins:
           inherited_members: true
           merge_init_into_class: true
           separate_signature: true
+          show_inheritance_diagram: true
           show_root_heading: true
           show_root_full_path: false
           show_source: false

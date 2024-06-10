@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from griffe.extensions import Extension, load_extensions
-from griffe.tests import temporary_visited_module
+from griffe import Extension, load_extensions, temporary_visited_module
 
 if TYPE_CHECKING:
     import ast

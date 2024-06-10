@@ -45,7 +45,7 @@ Gitter = "https://gitter.im/mkdocstrings/griffe"
 Funding = "https://github.com/sponsors/pawamoy"
 
 [project.scripts]
-griffe = "griffe.cli:main"
+griffe = "griffe:main"
 
 [tool.pdm]
 version = {source = "scm"}
