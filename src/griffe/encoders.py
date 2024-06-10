@@ -149,7 +149,7 @@ def _load_parameter(obj_dict: dict[str, Any]) -> Parameter:
         default=obj_dict["default"],
         lineno=obj_dict["lineno"],
         endlineno=obj_dict["endlineno"],
-        docstring=obj_dict["docstring"],
+        docstring=_load_docstring(obj_dict),
     )
 
 

@@ -290,7 +290,7 @@ class Parameter:
         """The source code of this object."""
         return dedent("\n".join(self.lines))
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    def as_dict(self, *, full: bool = False,  **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this parameter's data as a dictionary.
 
         Parameters:
@@ -299,16 +299,17 @@ class Parameter:
         Returns:
             A dictionary.
         """
-        return {
+        base = {
             "name": self.name,
             "annotation": self.annotation,
             "kind": self.kind,
             "default": self.default,
             "lineno": self.lineno,
             "endlineno": self.endlineno,
-            "docstring": self.docstring,
         }
-
+        if self.docstring:
+            base["docstring"] = self.docstring.as_dict(full=full)
+        return base
 
 class Parameters:
     """This class is a container for parameters.
