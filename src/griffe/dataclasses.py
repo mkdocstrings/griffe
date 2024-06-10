@@ -299,7 +299,7 @@ class Parameter:
         Returns:
             A dictionary.
         """
-        base = {
+        base: dict[str, Any] = {
             "name": self.name,
             "annotation": self.annotation,
             "kind": self.kind,
