@@ -147,8 +147,6 @@ def _load_parameter(obj_dict: dict[str, Any]) -> Parameter:
         annotation=obj_dict["annotation"],
         kind=ParameterKind(obj_dict["kind"]),
         default=obj_dict["default"],
-        lineno=obj_dict["lineno"],
-        endlineno=obj_dict["endlineno"],
         docstring=_load_docstring(obj_dict),
     )
 

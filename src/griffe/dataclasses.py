@@ -176,11 +176,8 @@ class Parameter:
         annotation: str | Expr | None = None,
         kind: ParameterKind | None = None,
         default: str | Expr | None = None,
-        lineno: int | None = None,
-        endlineno: int | None = None,
         docstring: Docstring | None = None,
         parent: Module | Class | None = None,
-        lines_collection: LinesCollection | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -189,11 +186,8 @@ class Parameter:
             annotation: The parameter annotation, if any.
             kind: The parameter kind.
             default: The parameter default, if any.
-            lineno: The parameter starting line, or None for modules. Lines start at 1.
-            endlineno: The parameter ending line (inclusive), or None for modules.
             docstring: The parameter docstring.
             parent: The object parent.
-            lines_collection: A collection of source code lines.
         """
         self.name: str = name
         """The parameter name."""
@@ -203,15 +197,10 @@ class Parameter:
         """The parameter kind."""
         self.default: str | Expr | None = default
         """The parameter default value."""
-        self.lineno: int | None = lineno
-        """The starting line number of the parameter."""
-        self.endlineno: int | None = endlineno
-        """The ending line number of the parameter."""
         self.docstring: Docstring | None = docstring
         """The parameter docstring."""
         self.parent: Module | Class | None = parent
         """The parent of the parameter (none if top module)."""
-        self._lines_collection: LinesCollection | None = lines_collection
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -237,59 +226,6 @@ class Parameter:
         """Whether this parameter is required."""
         return self.default is None
 
-    @property
-    def module(self) -> Module:
-        """The parent module of this object.
-
-        Raises:
-            ValueError: When the object is not a module and does not have a parent.
-        """
-        if isinstance(self, Module):
-            return self
-        if self.parent is not None:
-            return self.parent.module
-        raise ValueError(f"Object {self.name} does not have a parent module")
-
-    @property
-    def filepath(self) -> Path | list[Path]:
-        """The file path (or directory list for namespace packages) where this object was defined."""
-        return self.module.filepath
-
-    @property
-    def lines_collection(self) -> LinesCollection:
-        """The lines collection attached to this object or its parents.
-
-        Raises:
-            ValueError: When no modules collection can be found in the object or its parents.
-        """
-        if self._lines_collection is not None:
-            return self._lines_collection
-        if self.parent is None:
-            raise ValueError("no lines collection in this object or its parents")
-        return self.parent.lines_collection
-
-    @property
-    def lines(self) -> list[str]:
-        """The lines containing the source of this object."""
-        try:
-            filepath = self.filepath
-        except BuiltinModuleError:
-            return []
-        if isinstance(filepath, list):
-            return []
-        try:
-            lines = self.lines_collection[filepath]
-        except KeyError:
-            return []
-        if self.lineno is None or self.endlineno is None:
-            return []
-        return lines[self.lineno - 1 : self.endlineno]
-
-    @property
-    def source(self) -> str:
-        """The source code of this object."""
-        return dedent("\n".join(self.lines))
-
     def as_dict(self, *, full: bool = False,  **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this parameter's data as a dictionary.
 
@@ -304,12 +240,11 @@ class Parameter:
             "annotation": self.annotation,
             "kind": self.kind,
             "default": self.default,
-            "lineno": self.lineno,
-            "endlineno": self.endlineno,
         }
         if self.docstring:
             base["docstring"] = self.docstring.as_dict(full=full)
         return base
+
 
 class Parameters:
     """This class is a container for parameters.

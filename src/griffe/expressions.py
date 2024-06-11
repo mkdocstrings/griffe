@@ -1011,7 +1011,7 @@ def _build_lambda(node: ast.Lambda, parent: Module | Class, **kwargs: Any) -> Ex
                 if isinstance(default, str)
                 else safe_get_expression(default, parent=parent, parse_strings=False),
             )
-            for name, _, kind, default, _, _ in get_parameters(node.args)
+            for name, _, kind, default in get_parameters(node.args)
         ],
         body=_build(node.body, parent, **kwargs),
     )

@@ -11,7 +11,7 @@ from griffe.logger import get_logger
 
 logger = get_logger(__name__)
 
-ParametersType = List[Tuple[str, Optional[ast.AST], ParameterKind, Optional[Union[str, ast.AST]], Optional[int], Optional[int]]]
+ParametersType = List[Tuple[str, Optional[ast.AST], ParameterKind, Optional[Union[str, ast.AST]]]]
 
 
 def get_parameters(node: ast.arguments) -> ParametersType:
@@ -40,7 +40,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
     kind: ParameterKind
     arg_default: ast.AST | None
     for (arg, kind), arg_default in args_kinds_defaults:
-        parameters.append((arg.arg, arg.annotation, kind, arg_default, arg.lineno, arg.end_lineno))
+        parameters.append((arg.arg, arg.annotation, kind, arg_default))
 
     if node.vararg:
         parameters.append(
@@ -49,8 +49,6 @@ def get_parameters(node: ast.arguments) -> ParametersType:
                 node.vararg.annotation,
                 ParameterKind.var_positional,
                 "()",
-                node.vararg.lineno,
-                node.vararg.end_lineno,
             ),
         )
 
@@ -68,7 +66,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
     kwarg_default: ast.AST | None
     for kwarg, kwarg_default in kwargs_defaults:
         parameters.append(
-            (kwarg.arg, kwarg.annotation, ParameterKind.keyword_only, kwarg_default, kwarg.lineno, kwarg.end_lineno),
+            (kwarg.arg, kwarg.annotation, ParameterKind.keyword_only, kwarg_default),
         )
 
     if node.kwarg:
@@ -78,8 +76,6 @@ def get_parameters(node: ast.arguments) -> ParametersType:
                 node.kwarg.annotation,
                 ParameterKind.var_keyword,
                 "{}",
-                node.kwarg.lineno,
-                node.kwarg.end_lineno,
             ),
         )
 

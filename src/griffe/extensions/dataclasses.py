@@ -125,11 +125,8 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
                     annotation=member.annotation,
                     kind=kind,
                     default=default,
-                    lineno=member.lineno,
-                    endlineno=member.endlineno,
                     docstring=member.docstring,
                     parent=member.parent,
-                    lines_collection=member.lines_collection,
                 ),
             )
 
