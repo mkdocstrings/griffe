@@ -1,5 +1,7 @@
 # Introduction
 
+Griffe is able to read Python source code and inspect objects at runtime to extract information about the API of a Python package. This information is then stored into data models (Python classes), and these model instances together form a tree that statically represent the package's API: starting with the top-level module, then descending into submodules, classes, functions and attributes. From there, it's possible to explore and exploit this API representation in various ways.
+
 ## Command line tool
 
 Griffe is both a command line tool and a Python library. The command line tool offers a few commands to, for example, serialize API data to JSON and check for API breaking changes between two versions of your project.

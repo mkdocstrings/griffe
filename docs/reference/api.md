@@ -1,6 +1,5 @@
-::: griffe
+# ::: griffe
     options:
-        heading_level: 1
         summary:
             functions: true
         members: false

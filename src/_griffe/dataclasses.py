@@ -10,7 +10,9 @@ Functions and attributes do not have any members.
 Indirections to objects declared in other modules are represented as "aliases".
 An alias therefore represents an imported object,
 and behaves almost exactly like the object it points to:
-it is a light wrapper around the object
+it is a light wrapper around the object,
+with special methods and properties
+that allow to access the target's data transparently.
 """
 
 from __future__ import annotations

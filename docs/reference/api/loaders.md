@@ -1,4 +1,4 @@
-# Loading modules
+# Loaders
 
 ::: _griffe.loader
     options:
@@ -15,9 +15,5 @@
         heading_level: 2
 
 ::: griffe.load_git
-    options:
-        heading_level: 2
-
-::: griffe.ModuleFinder
     options:
         heading_level: 2

@@ -13,6 +13,6 @@ The best place to share about Griffe is of course the Griffe's Gitter channel.
 More generally, Griffe is also related to **API documentation** and **API analysis** (static or dynamic): if your project is related to these two domains, but in different ecosystems (other programming languages, static site generators, or environments), feel free to drop us a message! We are always happy to share with other actors in these domains :material-handshake:
 
 - [Getting help](getting-help.md)
-- [Code of conduct](code-of-conduct.md)
 - [Contributing](contributing.md)
+- [Code of conduct](code-of-conduct.md)
 - [Credits](credits.md)

@@ -6,6 +6,5 @@ If you need help, if you have questions, or if you would like to contribute to t
 
 - [Installation](installation.md)
 - [Introduction (short tour)](introduction.md)
-- [Getting help](getting-help.md)
-- [Contributing](contributing.md)
 - [Guide (advanced tour)](guide.md)
+- [Getting help](getting-help.md)

@@ -1,4 +1,4 @@
-# Loading data with Python
+# Loading
 
 Griffe provides a shortcut function for simple needs:
 

@@ -58,5 +58,5 @@ $ griffe check griffe -ssrc -b0.45.0 -a0.44.0 --verbose
 </div>
 </div>
 
-[:material-play: Try the playground](playground.md){ .md-button }
+[:material-play: Playground](playground.md){ .md-button }
 [:simple-gitter: Join our Gitter channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ .md-button target="_blank" }

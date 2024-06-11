@@ -26,31 +26,55 @@ nav:
   - Community:
     - community.md
     - Getting help: getting-help.md
-    - Code of conduct: code-of-conduct.md
     - Contributing: contributing.md
-    - Coverage report: coverage.md
+    - Code of conduct: code-of-conduct.md
     - Credits: credits.md
 - Guide:
   - guide.md
   - User guide:
     - guide/users.md
-    - Loading data: guide/users/loading.md
-    - Serializing data: guide/users/dumping.md
-    - API checks: guide/users/checking.md
-    - Best practices: guide/users/best-practices.md
-    - Docstrings: guide/users/docstrings.md
-    - Extensions: guide/users/extensions.md
+    - Manipulating APIs:
+      - Loading: guide/users/loading.md
+      - Navigating: guide/users/navigating.md
+      - Serializing: guide/users/serializing.md
+      - Checking: guide/users/checking.md
+      - Extending: guide/users/extending.md
+    - Recommendations:
+      - Public API: guide/users/public-api.md
+      - Python code: guide/users/best-practices.md
+      - Docstrings: guide/users/docstrings.md
   - Contributor guide:
     - guide/contributors.md
     - Architecture: guide/contributors/architecture.md
+    - Coverage report: coverage.md
 - Reference:
   - reference.md
   - Command-line interface: reference/cli.md
   - Docstring parsers: reference/docstrings.md
   - Python API:
     - reference/api.md
-    - Loading modules: reference/api/loading.md
-    - Data models: reference/api/models.md
+    - Loaders: reference/api/loaders.md  # add stubs merger, collections, stats
+    - Finder: reference/api/finder.md
+    - Models:
+      - reference/api/models.md
+      - Module: reference/api/models/module.md
+      - Class: reference/api/models/class.md
+      - Function: reference/api/models/function.md
+      - Attribute: reference/api/models/attribute.md
+      - Alias: reference/api/models/alias.md
+    - Agents: reference/api/agents.md  # add importer stuff and node utils
+    - API checks: reference/api/checks.md
+    - Extensions: reference/api/extensions.md
+    - Docstrings:
+      - reference/api/docstrings.md
+      - Google: reference/api/docstrings/google.md
+      - Numpy: reference/api/docstrings/numpy.md
+      - Sphinx: reference/api/docstrings/sphinx.md
+    - Exceptions: reference/api/exceptions.md
+    - Expressions: reference/api/expressions.md
+    - Git utilities: reference/api/git.md
+    - Logging: reference/api/logging.md
+    - Helpers: reference/api/helpers.md
 - Changelog: changelog.md
 - Insiders:
   - insiders/index.md
@@ -164,7 +188,9 @@ plugins:
           heading_level: 1
           inherited_members: true
           merge_init_into_class: true
+          parameter_headings: true
           separate_signature: true
+          show_bases: false
           show_inheritance_diagram: true
           show_root_heading: true
           show_root_full_path: false

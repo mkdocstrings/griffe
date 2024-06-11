@@ -1,8 +1,8 @@
-# User/Developer guide
+# User guide
 
-## Griffe features
+## Manipulating APIs
 
-The following topics explore what Griffe can do for you.
+The following topics will guide you through the various methods Griffe offers for exploring and exploiting Python APIs.
 
 <div class="grid cards" markdown>
 
@@ -12,7 +12,7 @@ The following topics explore what Griffe can do for you.
 
     Griffe can find packages and modules to scan them statically or dynamically and extract API-related information.
 
-    [:octicons-arrow-right-24: Learn how to load data](guide/users/loading.md)
+    [:octicons-arrow-right-24: Learn how to load data](users/loading.md)
 
 -   :material-navigation-variant-outline:{ .lg .middle } **Navigating**
 
@@ -20,7 +20,7 @@ The following topics explore what Griffe can do for you.
 
     Griffe exposes the extracted API information into data models, making it easy to navigate your API.
 
-    [:octicons-arrow-right-24: Learn how to navigate data](guide/users/models.md)
+    [:octicons-arrow-right-24: Learn how to navigate data](users/navigating.md)
 
 -   :material-code-json:{ .lg .middle } **Serializing**
 
@@ -28,19 +28,27 @@ The following topics explore what Griffe can do for you.
 
     Griffe can serialize your API data into JSON, for other tools to navigate or manipulate it.
 
-    [:octicons-arrow-right-24: Learn how to serialize data](guide/users/serializing.md)
+    [:octicons-arrow-right-24: Learn how to serialize data](users/serializing.md)
 
--   :material-puzzle-plus:{ .lg .middle } **Extending Griffe**
+-   :material-target:{ .lg .middle } **Checking**
 
     ---
 
-    Griffe can be extended thanks to its extension system.
+    Griffe can compare snapshots of the same API to find breaking changes.
 
-    [:octicons-arrow-right-24: Learn how to write and use extensions](guide/users/extensions.md)
+    [:octicons-arrow-right-24: Learn how to detect and handle breaking changes](users/checking.md)
+
+-   :material-puzzle-plus:{ .lg .middle } **Extending**
+
+    ---
+
+    API data can be augmented or modified thanks to Griffe's extension system.
+
+    [:octicons-arrow-right-24: Learn how to write and use extensions](users/extending.md)
 
 </div>
 
-## On your side
+## Recommendations
 
 These topics explore the user side: how to write code to better integrate with Griffe.
 
@@ -52,15 +60,15 @@ These topics explore the user side: how to write code to better integrate with G
 
     See our recommendations for exposing public APIs to your users.
 
-    [:octicons-arrow-right-24: See our public API recommendations](guide/users/public-api.md)
+    [:octicons-arrow-right-24: See our public API recommendations](users/public-api.md)
 
--   :material-star-face:{ .lg .middle } **Best practices**
+-   :material-star-face:{ .lg .middle } **Python code best practices**
 
     ---
 
     See our best practices for writing Python code.
 
-    [:octicons-arrow-right-24: See our best practices](guide/users/best-practices.md)
+    [:octicons-arrow-right-24: See our best practices](users/best-practices.md)
 
 -   :material-text:{ .lg .middle } **Docstrings**
 
@@ -68,6 +76,6 @@ These topics explore the user side: how to write code to better integrate with G
 
     Griffe supports multiple docstring styles. Learn about these different styles, and see our recommendations to write docstrings.
 
-    [:octicons-arrow-right-24: See our docstring recommendations](guide/users/docstrings.md)
+    [:octicons-arrow-right-24: See our docstring recommendations](users/docstrings.md)
 
 </div>

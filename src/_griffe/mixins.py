@@ -32,7 +32,12 @@ def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
 
 
 class GetMembersMixin:
-    """Mixin class to share methods for accessing members."""
+    """Mixin class to share methods for accessing members.
+
+    Methods:
+        get_member: Get a member with its name or path.
+        __getitem__: Same as `get_member`, with the item syntax `[]`.
+    """
 
     def __getitem__(self, key: str | Sequence[str]) -> Any:
         """Get a member with its name or path.
@@ -80,7 +85,12 @@ class GetMembersMixin:
 
 
 class DelMembersMixin:
-    """Mixin class to share methods for deleting members."""
+    """Mixin class to share methods for deleting members.
+
+    Methods:
+        del_member: Delete a member with its name or path.
+        __delitem__: Same as `del_member`, with the item syntax `[]`.
+    """
 
     def __delitem__(self, key: str | Sequence[str]) -> None:
         """Delete a member with its name or path.
@@ -135,7 +145,12 @@ class DelMembersMixin:
 
 
 class SetMembersMixin:
-    """Mixin class to share methods for setting members."""
+    """Mixin class to share methods for setting members.
+
+    Methods:
+        set_member: Set a member with its name or path.
+        __setitem__: Same as `set_member`, with the item syntax `[]`.
+    """
 
     def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
         """Set a member with its name or path.
@@ -206,7 +221,12 @@ class SetMembersMixin:
 
 
 class SerializationMixin:
-    """A mixin that adds de/serialization conveniences."""
+    """Mixin class to share methods for de/serializing objects.
+
+    Methods:
+        as_json: Return this object's data as a JSON string.
+        from_json: Create an instance of this class from a JSON string.
+    """
 
     def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
         """Return this object's data as a JSON string.
@@ -247,7 +267,19 @@ class SerializationMixin:
 
 
 class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, SerializationMixin):
-    """A mixin for methods that appear both in objects and aliases, unchanged."""
+    """Mixin class to share methods that appear both in objects and aliases, unchanged.
+
+    Attributes:
+        all_members: All members (declared and inherited).
+        modules: The module members.
+        classes: The class members.
+        functions: The function members.
+        attributes: The attribute members.
+        has_private_name: Whether this object/alias has a private name.
+        is_exported: Whether this object/alias is exported (listed in `__all__`).
+        is_wildcard_exposed: Whether this object/alias is exposed to wildcard imports.
+        is_public: Whether this object is considered public.
+    """
 
     @property
     def all_members(self) -> dict[str, Object | Alias]:

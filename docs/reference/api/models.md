@@ -1,4 +1,4 @@
-# Data models
+# Models
 
 ::: _griffe.dataclasses
     options:
@@ -8,48 +8,45 @@
         summary:
             classes: true
 
-::: griffe.Module
-    options:
-        heading_level: 2
+## The 5 models
 
-::: griffe.Class
-    options:
-        heading_level: 2
+- [`Module`][griffe.Module]
+- [`Class`][griffe.Class]
+- [`Function`][griffe.Function]
+- [`Attribute`][griffe.Attribute]
+- [`Alias`][griffe.Alias]
 
-::: griffe.Function
-    options:
-        heading_level: 2
-
-::: griffe.Attribute
-    options:
-        heading_level: 2
-
-::: griffe.Alias
-    options:
-        heading_level: 2
-
-## Base classes
-
-::: griffe.Object
-    options:
-        heading_level: 3
-
-::: griffe.ObjectAliasMixin
-    options:
-        heading_level: 3
+## Models base classes
 
 ::: griffe.GetMembersMixin
     options:
         heading_level: 3
+        members: false
 
 ::: griffe.SetMembersMixin
     options:
         heading_level: 3
+        members: false
 
 ::: griffe.DelMembersMixin
     options:
         heading_level: 3
+        members: false
 
 ::: griffe.SerializationMixin
     options:
         heading_level: 3
+        members: false
+
+::: griffe.ObjectAliasMixin
+    options:
+        heading_level: 3
+        members: false
+        inherited_members: false
+
+::: griffe.Object
+    options:
+        heading_level: 3
+        members: false
+        inherited_members: false
+        parameter_headings: false

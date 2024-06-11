@@ -2,6 +2,8 @@
 
 Griffe is a Python package, so you can install it with your favorite Python package installer or dependency manager.
 
+TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](insiders/index.md#whats-in-it-for-me), is also available to sponsors :octicons-heart-fill-24:{ .heart .pulse }**
+
 ## Install as a tool & library
 
 === ":simple-python: pip"
@@ -101,5 +103,3 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     [Rye](https://rye.astral.sh/) is an all-in-one solution for Python project management, written in Rust.
 
     </div>
-
-TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](insiders/index.md#whats-in-it-for-me), is also available to sponsors :octicons-heart-fill-24:{ .heart .pulse }**

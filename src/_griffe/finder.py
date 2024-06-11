@@ -82,7 +82,13 @@ class NamespacePackage:
 
 
 class ModuleFinder:
-    """The Griffe finder, allowing to find modules on the file system."""
+    """The Griffe finder, allowing to find modules on the file system.
+
+    The module finder is generally not used directly.
+    Each [`GriffeLoader`][griffe.GriffeLoader] instance creates its own module finder instance.
+    The finder can be configured when instantiating the loader
+    thanks to the loader [`search_paths`][griffe.GriffeLoader(search_paths)] parameter.
+    """
 
     accepted_py_module_extensions: ClassVar[list[str]] = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
     """List of extensions supported by the finder."""
@@ -140,7 +146,7 @@ class ModuleFinder:
         try_relative_path: bool = True,
         find_stubs_package: bool = False,
     ) -> tuple[str, Package | NamespacePackage]:
-        """Find the top module of a module.
+        """Find the top-level parent module of a module.
 
         If a Path is passed, only try to find the module as a file path.
         If a string is passed, first try to find the module as a file path,
