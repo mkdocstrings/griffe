@@ -197,9 +197,9 @@ class Parameter:
         """The parameter default value."""
         self.docstring: Docstring | None = docstring
         """The parameter docstring."""
-        # The parent function is set in Function.__init__ when the
-        # parameter(s) are assigned to a function
-        self.parent: Function | None = None
+        # The parent function is set in `Function.__init__`,
+        # when the parameters are assigned to the function.
+        self.function: Function | None = None
         """The parent function of the parameter."""
 
     def __str__(self) -> str:
