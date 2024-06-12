@@ -1662,7 +1662,7 @@ class Function(Object):
         """The overloaded signatures of this function."""
 
         for parameter in self.parameters:
-            parameter.parent = self
+            parameter.function = self
 
     @property
     def annotation(self) -> str | Expr | None:
