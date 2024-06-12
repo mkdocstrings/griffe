@@ -125,6 +125,7 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
                     annotation=member.annotation,
                     kind=kind,
                     default=default,
+                    docstring=member.docstring,
                 ),
             )
 

@@ -380,3 +380,44 @@ def test_inspected_object_source_with_missing_line_number() -> None:
         module["A"].endlineno = 3
         module["A"].lineno = None
         assert not module["A"].source
+
+
+def test_dataclass_parameter_docstrings() -> None:
+    """Class parameters should have a docstring attribute."""
+    code = """
+    from dataclasses import dataclass, InitVar
+
+    @dataclass
+    class Base:
+        a: int
+        "Parameter a"
+        b: InitVar[int] = 3
+        "Parameter b"
+
+    @dataclass
+    class Derived(Base):
+        c: float
+        d: InitVar[float]
+        "Parameter d"
+    """
+
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        base = module["Base"]
+        param_self = base.parameters[0]
+        param_a = base.parameters[1]
+        param_b = base.parameters[2]
+        assert param_self.docstring is None
+        assert param_a.docstring.value == "Parameter a"
+        assert param_b.docstring.value == "Parameter b"
+
+        derived = module["Derived"]
+        param_self = derived.parameters[0]
+        param_a = derived.parameters[1]
+        param_b = derived.parameters[2]
+        param_c = derived.parameters[3]
+        param_d = derived.parameters[4]
+        assert param_self.docstring is None
+        assert param_a.docstring.value == "Parameter a"
+        assert param_b.docstring.value == "Parameter b"
+        assert param_c.docstring is None
+        assert param_d.docstring.value == "Parameter d"

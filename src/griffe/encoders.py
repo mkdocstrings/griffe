@@ -147,6 +147,7 @@ def _load_parameter(obj_dict: dict[str, Any]) -> Parameter:
         annotation=obj_dict["annotation"],
         kind=ParameterKind(obj_dict["kind"]),
         default=obj_dict["default"],
+        docstring=_load_docstring(obj_dict),
     )
 
 

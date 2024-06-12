@@ -176,6 +176,7 @@ class Parameter:
         annotation: str | Expr | None = None,
         kind: ParameterKind | None = None,
         default: str | Expr | None = None,
+        docstring: Docstring | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -184,6 +185,7 @@ class Parameter:
             annotation: The parameter annotation, if any.
             kind: The parameter kind.
             default: The parameter default, if any.
+            docstring: The parameter docstring.
         """
         self.name: str = name
         """The parameter name."""
@@ -193,6 +195,12 @@ class Parameter:
         """The parameter kind."""
         self.default: str | Expr | None = default
         """The parameter default value."""
+        self.docstring: Docstring | None = docstring
+        """The parameter docstring."""
+        # The parent function is set in `Function.__init__`,
+        # when the parameters are assigned to the function.
+        self.function: Function | None = None
+        """The parent function of the parameter."""
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -218,7 +226,7 @@ class Parameter:
         """Whether this parameter is required."""
         return self.default is None
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    def as_dict(self, *, full: bool = False,  **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this parameter's data as a dictionary.
 
         Parameters:
@@ -227,12 +235,15 @@ class Parameter:
         Returns:
             A dictionary.
         """
-        return {
+        base: dict[str, Any] = {
             "name": self.name,
             "annotation": self.annotation,
             "kind": self.kind,
             "default": self.default,
         }
+        if self.docstring:
+            base["docstring"] = self.docstring.as_dict(full=full)
+        return base
 
 
 class Parameters:
@@ -1649,6 +1660,9 @@ class Function(Object):
         """The deleter linked to this function (property)."""
         self.overloads: list[Function] | None = None
         """The overloaded signatures of this function."""
+
+        for parameter in self.parameters:
+            parameter.function = self
 
     @property
     def annotation(self) -> str | Expr | None:
