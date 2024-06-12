@@ -126,7 +126,6 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
                     kind=kind,
                     default=default,
                     docstring=member.docstring,
-                    parent=member.parent,
                 ),
             )
 

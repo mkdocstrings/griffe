@@ -177,7 +177,6 @@ class Parameter:
         kind: ParameterKind | None = None,
         default: str | Expr | None = None,
         docstring: Docstring | None = None,
-        parent: Module | Class | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -187,7 +186,6 @@ class Parameter:
             kind: The parameter kind.
             default: The parameter default, if any.
             docstring: The parameter docstring.
-            parent: The object parent.
         """
         self.name: str = name
         """The parameter name."""
@@ -199,8 +197,10 @@ class Parameter:
         """The parameter default value."""
         self.docstring: Docstring | None = docstring
         """The parameter docstring."""
-        self.parent: Module | Class | None = parent
-        """The parent of the parameter (none if top module)."""
+        # The parent function is set in Function.__init__ when the
+        # parameter(s) are assigned to a function
+        self.parent: Function | None = None
+        """The parent function of the parameter."""
 
     def __str__(self) -> str:
         param = f"{self.name}: {self.annotation} = {self.default}"
@@ -1660,6 +1660,9 @@ class Function(Object):
         """The deleter linked to this function (property)."""
         self.overloads: list[Function] | None = None
         """The overloaded signatures of this function."""
+
+        for parameter in self.parameters:
+            parameter.parent = self
 
     @property
     def annotation(self) -> str | Expr | None:
