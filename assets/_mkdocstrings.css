@@ -37,6 +37,11 @@
   margin-right: 0.2rem;
 }
 
+/* Backward-compatibility: docstring section titles in bold. */
+.doc-section-title {
+  font-weight: bold;
+}
+
 /* Symbols in Navigation and ToC. */
 :root,
 [data-md-color-scheme="default"] {
