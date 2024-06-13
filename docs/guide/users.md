@@ -1,5 +1,7 @@
 # User guide
 
+Welcome to the Griffe user guide!
+
 ## Manipulating APIs
 
 The following topics will guide you through the various methods Griffe offers for exploring and exploiting Python APIs.

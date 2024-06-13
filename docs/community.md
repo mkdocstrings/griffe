@@ -6,7 +6,7 @@ You can start new discussions on GitHub, in the following repositories, dependin
 
 You can also join our dedicated Gitter channels: [Griffe channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ target="_blank" }, [mkdocstrings-python channel](https://app.gitter.im/#/room/#mkdocstrings_python:gitter.im){ target="_blank" }, [mkdocstrings channel](https://app.gitter.im/#/room/#mkdocstrings_community:gitter.im){ target="_blank" }, and [MkDocs channel](https://app.gitter.im/#/room/#mkdocs_community:gitter.im){ target="_blank" }. 
 
-The best place to share about Griffe is of course the Griffe's Gitter channel.
+The best place to share about Griffe is of course our Gitter channel.
 
 [:simple-gitter: Join Griffe's Gitter channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ .md-button target="_blank" }
 

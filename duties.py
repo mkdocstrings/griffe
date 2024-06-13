@@ -48,20 +48,53 @@ def material_insiders() -> Iterator[bool]:  # noqa: D103
 def changelog(ctx: Context, bump: str = "") -> None:
     """Update the changelog in-place with latest commits.
 
+    ```bash
+    make changelog [bump=VERSION]
+    ```
+
     Parameters:
         bump: Bump option passed to git-changelog.
+
+    Update the changelog in-place. The changelog task uses [git-changelog](https://pawamoy.github.io/git-changelog/)
+    to read Git commits and parse their messages to infer the new version based
+    on the [Conventional Commits convention](https://www.conventionalcommits.org/en/v1.0.0/).
+    If you want to bump the latest changelog entry to a specific version,
+    pass it with the bump argument: `make changelog bump=1.0.0`.
+
+    The configuration for git-changelog is located at `config/git-changelog.toml`.
     """
     ctx.run(tools.git_changelog(bump=bump or None), title="Updating changelog")
 
 
 @duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies", "check-api"])
 def check(ctx: Context) -> None:  # noqa: ARG001
-    """Check it all!"""
+    """Check it all!
+
+    ```bash
+    make check
+    ```
+
+    Composite command to run all the check commands:
+
+    - [`check-quality`](#check-quality), to check the code quality on all Python versions
+    - [`check-types`](#check-quality), to type-check the code on all Python versions
+    - [`check-docs`](#check-quality), to check the docs on all Python versions
+    - [`check-api`](#check-api), to check for API breaking changes
+    """
 
 
 @duty
 def check_quality(ctx: Context) -> None:
-    """Check the code quality."""
+    """Check the code quality.
+
+    ```bash
+    make check-quality
+    ```
+
+    Check the code quality using [Ruff](https://astral.sh/ruff).
+
+    The configuration for Ruff is located at `config/ruff.toml`.
+    """
     ctx.run(
         tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml"),
         title=pyprefix("Checking code quality"),
@@ -70,7 +103,16 @@ def check_quality(ctx: Context) -> None:
 
 @duty
 def check_docs(ctx: Context) -> None:
-    """Check if the documentation builds correctly."""
+    """Check if the documentation builds correctly.
+
+    ```bash
+    make check-docs
+    ```
+
+    Build the docs with [MkDocs](https://www.mkdocs.org/) in strict mode.
+
+    The configuration for MkDocs is located at `mkdocs.yml`.
+    """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
     with material_insiders():
@@ -82,7 +124,16 @@ def check_docs(ctx: Context) -> None:
 
 @duty
 def check_types(ctx: Context) -> None:
-    """Check that the code is correctly typed."""
+    """Check that the code is correctly typed.
+
+    ```bash
+    make check-types
+    ```
+
+    Run type-checking on the code with [Mypy](https://mypy.readthedocs.io/).
+
+    The configuration for Mypy is located at `config/mypy.ini`.
+    """
     ctx.run(
         tools.mypy(*PY_SRC_LIST, config_file="config/mypy.ini"),
         title=pyprefix("Type-checking"),
@@ -91,7 +142,15 @@ def check_types(ctx: Context) -> None:
 
 @duty
 def check_api(ctx: Context, *cli_args: str) -> None:
-    """Check for API breaking changes."""
+    """Check for API breaking changes.
+
+    ```bash
+    make check-api
+    ```
+
+    Compare the current code to the latest version (Git tag)
+    using [Griffe](https://mkdocstrings.github.io/griffe/).
+    """
     ctx.run(
         tools.griffe.check("griffe", search=["src"], color=True).add_args(*cli_args),
         title="Checking for API breaking changes",
@@ -103,9 +162,15 @@ def check_api(ctx: Context, *cli_args: str) -> None:
 def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000) -> None:
     """Serve the documentation (localhost:8000).
 
+    ```bash
+    make docs
+    ```
+
     Parameters:
         host: The host to serve the docs from.
         port: The port to serve the docs on.
+
+    Use [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
     """
     with material_insiders():
         ctx.run(
@@ -117,7 +182,14 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
 
 @duty
 def docs_deploy(ctx: Context) -> None:
-    """Deploy the documentation to GitHub pages."""
+    """Deploy the documentation to GitHub pages.
+
+    ```bash
+    make docs-deploy
+    ```
+
+    Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
+    """
     os.environ["DEPLOY"] = "true"
     with material_insiders() as insiders:
         if not insiders:
@@ -139,7 +211,15 @@ def docs_deploy(ctx: Context) -> None:
 
 @duty
 def format(ctx: Context) -> None:
-    """Run formatting tools on the code."""
+    """Run formatting tools on the code.
+
+    ```bash
+    make format
+    ```
+
+    Format the code with [Ruff](https://astral.sh/ruff).
+    This command will also automatically fix some coding issues when possible.
+    """
     ctx.run(
         tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", fix_only=True, exit_zero=True),
         title="Auto-fixing code",
@@ -149,7 +229,17 @@ def format(ctx: Context) -> None:
 
 @duty
 def build(ctx: Context) -> None:
-    """Build source and wheel distributions."""
+    """Build source and wheel distributions.
+
+    ```bash
+    make build
+    ```
+
+    Build distributions of your project for the current version.
+    The build task uses the [`build` tool](https://build.pypa.io/en/stable/)
+    to build `.tar.gz` (Gzipped sources archive) and `.whl` (wheel) distributions
+    of your project in the `dist` directory.
+    """
     ctx.run(
         tools.build(),
         title="Building source and wheel distributions",
@@ -159,7 +249,15 @@ def build(ctx: Context) -> None:
 
 @duty
 def publish(ctx: Context) -> None:
-    """Publish source and wheel distributions to PyPI."""
+    """Publish source and wheel distributions to PyPI.
+
+    ```bash
+    make publish
+    ```
+
+    Publish the source and wheel distributions of your project to PyPI
+    using [Twine](https://twine.readthedocs.io/).
+    """
     if not Path("dist").exists():
         ctx.run("false", title="No distribution files found")
     dists = [str(dist) for dist in Path("dist").iterdir()]
@@ -172,10 +270,24 @@ def publish(ctx: Context) -> None:
 
 @duty(post=["build", "publish", "docs-deploy"])
 def release(ctx: Context, version: str = "") -> None:
-    """Release a new Python package.
+    """Release a new version of the project.
+
+    ```bash
+    make release [version=VERSION]
+    ```
 
     Parameters:
-        version: The new version number to use.
+        version: The new version number to use. If not provided, you will be prompted for it.
+
+    This task will:
+
+    - Stage changes to `pyproject.toml` and `CHANGELOG.md`
+    - Commit the changes with a message like `chore: Prepare release 1.0.0`
+    - Tag the commit with the new version number
+    - Push the commit and the tag to the remote repository
+    - Build source and wheel distributions
+    - Publish the distributions to PyPI
+    - Deploy the documentation to GitHub pages
     """
     origin = ctx.run("git config --get remote.origin.url", silent=True)
     if "pawamoy-insiders/griffe" in origin:
@@ -194,7 +306,16 @@ def release(ctx: Context, version: str = "") -> None:
 
 @duty(silent=True, aliases=["cov"])
 def coverage(ctx: Context) -> None:
-    """Report coverage as text and HTML."""
+    """Report coverage as text and HTML.
+
+    ```bash
+    make coverage
+    ```
+
+    Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
+    then generate an HTML report into the `htmlcov` directory,
+    and print a text report in the console.
+    """
     ctx.run(tools.coverage.combine(), nofail=True)
     ctx.run(tools.coverage.report(rcfile="config/coverage.ini"), capture=False)
     ctx.run(tools.coverage.html(rcfile="config/coverage.ini"))
@@ -204,8 +325,14 @@ def coverage(ctx: Context) -> None:
 def test(ctx: Context, *cli_args: str, match: str = "") -> None:
     """Run the test suite.
 
+    ```bash
+    make test [match=EXPR]
+    ```
+
     Parameters:
         match: A pytest expression to filter selected tests.
+
+    Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
     """
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"

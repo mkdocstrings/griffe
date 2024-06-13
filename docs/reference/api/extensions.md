@@ -1,0 +1,29 @@
+# Extensions
+
+::: griffe.load_extensions
+    options:
+        heading_level: 2
+
+::: griffe.Extension
+    options:
+        heading_level: 2
+
+::: griffe.Extensions
+    options:
+        heading_level: 2
+
+::: griffe.VisitorExtension
+    options:
+        heading_level: 2
+
+::: griffe.InspectorExtension
+    options:
+        heading_level: 2
+
+::: griffe.DataclassesExtension
+    options:
+        heading_level: 2
+
+::: griffe.HybridExtension
+    options:
+        heading_level: 2

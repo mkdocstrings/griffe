@@ -45,15 +45,19 @@ nav:
       - Docstrings: guide/users/docstrings.md
   - Contributor guide:
     - guide/contributors.md
+    - Environment setup: guide/contributors/setup.md
+    - Management commands: guide/contributors/commands.md
+    - Development workflow: guide/contributors/workflow.md
     - Architecture: guide/contributors/architecture.md
-    - Coverage report: coverage.md
+    - Coverage report: guide/contributors/coverage.md
 - Reference:
   - reference.md
   - Command-line interface: reference/cli.md
   - Docstring parsers: reference/docstrings.md
+  # TODO: Sprinkle all enumerations.
   - Python API:
     - reference/api.md
-    - Loaders: reference/api/loaders.md  # add stubs merger, collections, stats
+    - Loaders: reference/api/loaders.md
     - Finder: reference/api/finder.md
     - Models:
       - reference/api/models.md
@@ -62,18 +66,19 @@ nav:
       - Function: reference/api/models/function.md
       - Attribute: reference/api/models/attribute.md
       - Alias: reference/api/models/alias.md
-    - Agents: reference/api/agents.md  # add importer stuff and node utils
+    - Agents: reference/api/agents.md
     - API checks: reference/api/checks.md
     - Extensions: reference/api/extensions.md
     - Docstrings:
       - reference/api/docstrings.md
+      - Models: reference/api/docstrings/models.md
       - Google: reference/api/docstrings/google.md
       - Numpy: reference/api/docstrings/numpy.md
       - Sphinx: reference/api/docstrings/sphinx.md
     - Exceptions: reference/api/exceptions.md
     - Expressions: reference/api/expressions.md
     - Git utilities: reference/api/git.md
-    - Logging: reference/api/logging.md
+    - Loggers: reference/api/loggers.md
     - Helpers: reference/api/helpers.md
 - Changelog: changelog.md
 - Insiders:
@@ -172,13 +177,15 @@ plugins:
 - literate-nav:
     nav_file: SUMMARY.md
 - section-index
-- coverage
+- coverage:
+    page_path: guide/contributors/coverage
 - mkdocstrings:
     handlers:
       python:
         import:
-        - https://docs.python.org/3/objects.inv
-        paths: [src]
+        - url: https://docs.python.org/3/objects.inv
+          domains: [std, py]
+        paths: [src, scripts, .]
         options:
           docstring_options:
             ignore_init_summary: true

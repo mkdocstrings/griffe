@@ -44,3 +44,8 @@ def test_public_api() -> None:
         if name not in griffe.__all__ or not hasattr(griffe, name):
             not_exposed.append(path)
     assert not not_exposed, "Objects not exposed:\n" + "\n".join(sorted(not_exposed))
+
+
+# TODO: Assert unique names across code base.
+# TODO: Assert all public names are documented in the API reference.
+# TODO: Assert no other name is added to the API objects inventory.

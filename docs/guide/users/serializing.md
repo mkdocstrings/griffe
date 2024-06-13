@@ -56,4 +56,4 @@ You can also add the search paths to the `PYTHONPATH` environment variable.
 If Griffe can't find the packages, it will fail with a `ModuleNotFoundError`.
 
 For an example of what real data looks like,
-see [the full Griffe JSON dump](griffe.json). 
+see [the full Griffe JSON dump](../../griffe.json). 

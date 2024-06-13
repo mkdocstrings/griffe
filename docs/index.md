@@ -28,8 +28,8 @@ hide:
 
     Learn everything you can do with Griffe.
 
-    [:fontawesome-solid-book: Guide](guide/introduction.md){ .md-button .md-button--primary }
-    [:material-code-parentheses: API reference](reference/api/introduction.md){ .md-button .md-button--primary }
+    [:fontawesome-solid-book: Guide](guide/users.md){ .md-button .md-button--primary }
+    [:material-code-parentheses: API reference](reference/api.md){ .md-button .md-button--primary }
 
 </div>
 
