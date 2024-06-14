@@ -7,9 +7,9 @@ to generate API documentation or find breaking changes in your API.
 
 from __future__ import annotations
 
-from slothy import slothy
+from slothy import lazy_importing
 
-with slothy():
+with lazy_importing():
     from _griffe.agents.inspector import Inspector, inspect
     from _griffe.agents.nodes.assignments import get_instance_names, get_name, get_names
     from _griffe.agents.nodes.ast import (
