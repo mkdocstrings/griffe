@@ -1206,14 +1206,14 @@ class Alias(ObjectAliasMixin):
         """
         return self.final_target.resolve(name)
 
-    def get_member(self, key: str | Sequence[str]) -> Object | Alias:
-        return self.final_target.get_member(key)
+    # def get_member(self, key: str | Sequence[str]) -> Object | Alias:
+    #     return self.final_target.get_member(key)
 
-    def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
-        return self.final_target.set_member(key, value)
+    # def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
+    #     return self.final_target.set_member(key, value)
 
-    def del_member(self, key: str | Sequence[str]) -> None:
-        return self.final_target.del_member(key)
+    # def del_member(self, key: str | Sequence[str]) -> None:
+    #     return self.final_target.del_member(key)
 
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
