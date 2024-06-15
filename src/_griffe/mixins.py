@@ -84,6 +84,8 @@ class GetMembersMixin:
         return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
 
 
+# FIXME: Are `aliases` in other objects correctly updated when we delete a member?
+# Would weak references be useful there?
 class DelMembersMixin:
     """Mixin class to share methods for deleting members.
 

@@ -34,5 +34,4 @@ mkdocs-material>=9.5
 mkdocs-minify-plugin>=0.8
 mkdocs-section-index>=0.3
 mkdocstrings[python]>=0.25
-rich>=12.6
 tomli>=2.0; python_version < '3.11'
