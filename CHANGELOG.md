@@ -706,7 +706,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <small>[Compare with 0.25.5](https://github.com/mkdocstrings/griffe/compare/0.25.5...0.26.0)</small>
 
-### Breaking changes
+### Breaking Changes
 
 - `AliasResolutionError` instances don't have a `target_path` attribute anymore.
     It is instead replaced by an `alias` attribute which is a reference to an `Alias` instance.
@@ -758,23 +758,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <small>[Compare with 0.25.3](https://github.com/mkdocstrings/griffe/compare/0.25.3...0.25.4)</small>
 
 ### Bug Fixes
+
 - Fix creation of aliases to modules when inspecting ([54242cb](https://github.com/mkdocstrings/griffe/commit/54242cbdbbcb68785942fa327113cd6508815fa9) by Timothée Mazzucotelli).
 - Support (setuptools) editable packages with multiple roots ([bd37dfb](https://github.com/mkdocstrings/griffe/commit/bd37dfb16b43fac53207b426ee02218e57a5d5d1) by Gilad). [PR #126](https://github.com/mkdocstrings/griffe/pull/126)
-
 
 ## [0.25.3](https://github.com/mkdocstrings/griffe/releases/tag/0.25.3) - 2023-01-04
 
 <small>[Compare with 0.25.2](https://github.com/mkdocstrings/griffe/compare/0.25.2...0.25.3)</small>
 
 ### Bug Fixes
-- Fix parsing of annotations in Numpy attributes sections ([18fa396](https://github.com/mkdocstrings/griffe/commit/18fa39612b828e2892665b7367f7cdf76908970c) by Timothée Mazzucotelli). [Issue #72](https://github.com/mkdocstrings/griffe/issues/72)
 
+- Fix parsing of annotations in Numpy attributes sections ([18fa396](https://github.com/mkdocstrings/griffe/commit/18fa39612b828e2892665b7367f7cdf76908970c) by Timothée Mazzucotelli). [Issue #72](https://github.com/mkdocstrings/griffe/issues/72)
 
 ## [0.25.2](https://github.com/mkdocstrings/griffe/releases/tag/0.25.2) - 2022-12-24
 
 <small>[Compare with 0.25.1](https://github.com/mkdocstrings/griffe/compare/0.25.1...0.25.2)</small>
 
 ### Bug Fixes
+
 - Make sure passage through aliases is reset ([79733f4](https://github.com/mkdocstrings/griffe/commit/79733f4d03f3f66b948dc17c57404349d9e72c9a) by Timothée Mazzucotelli). [Issue #123](https://github.com/mkdocstrings/griffe/issues/123)
 - Ignore cyclic alias errors when updating target aliases ([bb62b2f](https://github.com/mkdocstrings/griffe/commit/bb62b2f744d221efedeba1cb33151b3787d2ee57) by Timothée Mazzucotelli). [Issue #123](https://github.com/mkdocstrings/griffe/issues/123)
 
@@ -786,24 +787,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Bug Fixes
 - Pass through aliases earlier to prevent infinite recursion ([e533f29](https://github.com/mkdocstrings/griffe/commit/e533f29258838a1e171dea702fb033bfa68ed089) by Timothée Mazzucotelli). [Issue #83](https://github.com/mkdocstrings/griffe/issues/83), [#122](https://github.com/mkdocstrings/griffe/issues/122)
 
-
 ## [0.25.0](https://github.com/mkdocstrings/griffe/releases/tag/0.25.0) - 2022-12-11
 
 <small>[Compare with 0.24.1](https://github.com/mkdocstrings/griffe/compare/0.24.1...0.25.0)</small>
 
-### Breaking changes
+### Breaking Changes
+
 - Parameter `only_known_modules` was renamed `external` in the [`expand_wildcards()`][griffe.loader.GriffeLoader.expand_wildcards] method of the loader.
 - Exception `UnhandledEditablesModuleError` was renamed `UnhandledEditableModuleError` since we now support editable installation from other packages than `editables`.
 
 ### Highlights
+
 - Properties are now fetched as attributes rather than functions, since that is how they are used. This was asked by users, and since Griffe generates signatures for Python APIs (emphasis on **APIs**), it makes sense to return data that matches the interface provided to users. Such property objects in Griffe's output will still have the associated `property` labels of course.
 - Lots of bug fixes. These bugs were discovered by running Griffe on *many* major packages as well as the standard library (again). Particularly, alias resolution should be more robust now, and should generate less issues like cyclic aliases, meaning indirect/wildcard imports should be better understood. We still highly discourage the use of wilcard imports :grinning:
 
 ### Features
+
 - Support `setuptools` editable modules ([abc18f7](https://github.com/mkdocstrings/griffe/commit/abc18f7b94cea7b7850bb9f14ebc4822beb1d27c) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#463](https://github.com/mkdocstrings/mkdocstrings/issues/463)
 - Support merging stubs on wildcard imported objects ([0ed9c36](https://github.com/mkdocstrings/griffe/commit/0ed9c363b6b064361d311acee1732e757899291b) by Timothée Mazzucotelli). [Issue #116](https://github.com/mkdocstrings/griffe/issues/116)
 
 ### Bug Fixes
+
 - Prevent cyclic alias creation when expanding wildcards ([a77e4e8](https://github.com/mkdocstrings/griffe/commit/a77e4e8bbba8a24d9f604eaff4cc57c6851c14c3) by Timothée Mazzucotelli).
 - Don't crash and show hint when wildcard expansion fails ([336faf6](https://github.com/mkdocstrings/griffe/commit/336faf6dff679c970e594151a7a5d2bd99f52af6) by Timothée Mazzucotelli).
 - Register top module after inspection ([86454ec](https://github.com/mkdocstrings/griffe/commit/86454ececfa8e88b0f1024bde49e6dd0cb8542d0) by Timothée Mazzucotelli).
@@ -817,6 +821,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix deepcopy crashing because of `__getattr__` ([11b023b](https://github.com/mkdocstrings/griffe/commit/11b023b8bc0575313a9aea1f6ef99944c8b02537) by Timothée Mazzucotelli). [Issue #73](https://github.com/mkdocstrings/griffe/issues/73), [PR #119](https://github.com/mkdocstrings/griffe/pull/119)
 
 ### Code Refactoring
+
 - Prevent reloading of failed modules ([8ef14ab](https://github.com/mkdocstrings/griffe/commit/8ef14ab6389bb06e1903c7628dd1d811f2af101a) by Timothée Mazzucotelli).
 - Rename `only_known_modules` parameter to `external` ([5f816c6](https://github.com/mkdocstrings/griffe/commit/5f816c67222f9aa1bd008782430501a2de26d5a4) by Timothée Mazzucotelli).
 - Rework alias creation decision in the inspector ([f434943](https://github.com/mkdocstrings/griffe/commit/f434943579e02fb02c28f7e2be65293f6ab6b657) by Timothée Mazzucotelli).
@@ -825,14 +830,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Load properties as attributes ([5c97a45](https://github.com/mkdocstrings/griffe/commit/5c97a45087e0ba8c39a9745d9c5248c4c35909a8) by Timothée Mazzucotelli). [Issue mkdocstrings/python#9](https://github.com/mkdocstrings/python/issues/9)
 - Use a cyclic relationship map for inspection ([9a2a711](https://github.com/mkdocstrings/griffe/commit/9a2a7117d2d9d7b8327e640e8760594349531627) by Timothée Mazzucotelli). [PR #115](https://github.com/mkdocstrings/griffe/pull/115)
 
-
 ## [0.24.1](https://github.com/mkdocstrings/griffe/releases/tag/0.24.1) - 2022-11-18
 
 <small>[Compare with 0.24.0](https://github.com/mkdocstrings/griffe/compare/0.24.0...0.24.1)</small>
 
 ### Bug Fixes
-- Support nested namespace packages ([d571f8f](https://github.com/mkdocstrings/griffe/commit/d571f8f726d50b34c84fbdaa6db3b2059cfe9dec) by Timothée Mazzucotelli).
 
+- Support nested namespace packages ([d571f8f](https://github.com/mkdocstrings/griffe/commit/d571f8f726d50b34c84fbdaa6db3b2059cfe9dec) by Timothée Mazzucotelli).
 
 ## [0.24.0](https://github.com/mkdocstrings/griffe/releases/tag/0.24.0) - 2022-11-13
 
@@ -843,7 +847,7 @@ with the help of our new API breakage detection feature :smile:!
 Many thanks to Talley Lambert ([@tlambert03](https://github.com/tlambert03))
 for the initial code allowing to compare two Griffe trees.
 
-### Breaking changes
+### Breaking Changes
 
 - All parameters of the [`load_git`][griffe.loader.load_git] function, except `module`, are now keyword-only.
 - Parameter `try_relative_path` of the [`load_git`][griffe.loader.load_git] function was removed.
@@ -863,40 +867,44 @@ for the initial code allowing to compare two Griffe trees.
     - Example after: `loader.resolve_aliases(implicit=False, external=False)`
 
 ### Features
+
 - Add CLI command to check for API breakages ([90bded4](https://github.com/mkdocstrings/griffe/commit/90bded46ccaab0417ed57ed11d3b67597f3845ba) by Timothée Mazzucotelli). [Issue #75](https://github.com/mkdocstrings/griffe/issues/75), [PR #105](https://github.com/mkdocstrings/griffe/pull/105)
 - Add function to find API breaking changes ([a4f1280](https://github.com/mkdocstrings/griffe/commit/a4f1280a2b65fabc4caa4448d556ac3e83b2f0d0) by Talley Lambert and Timothée Mazzucotelli). [Issue #75](https://github.com/mkdocstrings/griffe/issues/75), [PR #105](https://github.com/mkdocstrings/griffe/pull/105)
 
 ### Bug Fixes
+
 - Fix labels mismatch staticmethod-classmethod in inspector ([25060f6](https://github.com/mkdocstrings/griffe/commit/25060f6dad686c73bd32203dc1b3ac789fdc4aef) by Timothée Mazzucotelli). [Issue #111](https://github.com/mkdocstrings/griffe/issues/111)
 - Prevent infinite loop while looking for package's parent folder ([f297f1a](https://github.com/mkdocstrings/griffe/commit/f297f1a6550ecadf77c34effe45802327340b1c4) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#72](https://github.com/mkdocstrings/mkdocstrings/issues/72)
 - Fix comparing names and expressions ([07bffff](https://github.com/mkdocstrings/griffe/commit/07bffff71845d3c9e66007a6a7de269f17312d2b) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Rename some parameters in Git module ([9ad7a2c](https://github.com/mkdocstrings/griffe/commit/9ad7a2c1abde97556d9b4657bef4231e1ef6fa19) by Timothée Mazzucotelli).
 - Set parameters as keyword-only ([44c01be](https://github.com/mkdocstrings/griffe/commit/44c01bec147add34ba3f5ac716ac6722540e3ba7) by Timothée Mazzucotelli).
 - Remove stars from parameters names ([91dce14](https://github.com/mkdocstrings/griffe/commit/91dce14d7fa3c8c2075a3319fdd7636443fe6cbc) by Timothée Mazzucotelli).
 - Refactor CLI to use subcommands ([760b091](https://github.com/mkdocstrings/griffe/commit/760b0918c60911386932cec720418af8d3360c1b) by Timothée Mazzucotelli). [PR #110](https://github.com/mkdocstrings/griffe/pull/110)
 - Rename parameters used when resolving aliases ([3d3a4eb](https://github.com/mkdocstrings/griffe/commit/3d3a4eb99e587bd9dd7bfadca4c45737fb886139) by Timothée Mazzucotelli).
 
-
 ## [0.23.0](https://github.com/mkdocstrings/griffe/releases/tag/0.23.0) - 2022-10-26
 
 <small>[Compare with 0.22.2](https://github.com/mkdocstrings/griffe/compare/0.22.2...0.23.0)</small>
 
 ### Features
+
 - Support `typing_extensions.overload` ([c29fad5](https://github.com/mkdocstrings/griffe/commit/c29fad58c721399badfc93ff8e0f10a6f92c359e) by Nyuan Zhang). [PR #108](https://github.com/mkdocstrings/griffe/pull/108)
 
 ### Bug Fixes
+
 - Log debug instead of errors when failing to parse NumPy annotations for additional sections ([568ff60](https://github.com/mkdocstrings/griffe/commit/568ff60621c0b5cc35ac0e0d0209fa3bc1b2ba8a) by Sigurd Spieckermann). [Issue #93](https://github.com/mkdocstrings/griffe/issues/93), [PR #109](https://github.com/mkdocstrings/griffe/pull/109)
 - Don't strip too many parentheses around a call node ([bb5c5e7](https://github.com/mkdocstrings/griffe/commit/bb5c5e71f95c537ca2d19299b157a0bbf59e5279) by Timothée Mazzucotelli). [PR #107](https://github.com/mkdocstrings/griffe/pull/107)
 - Guard against more alias resolution errors ([2be135d](https://github.com/mkdocstrings/griffe/commit/2be135d8ab88d6f97175c958e31e76b0d7d8f934) by Timothée Mazzucotelli). [Issue #83](https://github.com/mkdocstrings/griffe/issues/83), [PR #103](https://github.com/mkdocstrings/griffe/pull/103)
-
 
 ## [0.22.2](https://github.com/mkdocstrings/griffe/releases/tag/0.22.2) - 2022-09-24
 
 <small>[Compare with 0.22.1](https://github.com/mkdocstrings/griffe/compare/0.22.1...0.22.2)</small>
 
 ### Bug Fixes
+
 - Log debug instead of errors when failing to parse Numpy annotations ([75eeeda](https://github.com/mkdocstrings/griffe/commit/75eeeda2f1181ae680b3d47df3814bad200220d3) by Timothée Mazzucotelli). [Issue #93](https://github.com/mkdocstrings/griffe/issues/93)
 - Don't crash on unsupported module names (containing dots) ([6a57194](https://github.com/mkdocstrings/griffe/commit/6a571949000a3d2910990337f96751c0cac7e815) by Timothée Mazzucotelli). [Issue #94](https://github.com/mkdocstrings/griffe/issues/94)
 - Show correct docstring line numbers on Python 3.7 ([edd4b6d](https://github.com/mkdocstrings/griffe/commit/edd4b6d23f4399960db4e16a8c269318aef033d6) by Timothée Mazzucotelli). [Issue #98](https://github.com/mkdocstrings/griffe/issues/98)
@@ -905,120 +913,127 @@ for the initial code allowing to compare two Griffe trees.
 - Prevent infinite recursion while expanding exports ([68446f7](https://github.com/mkdocstrings/griffe/commit/68446f7ab94536596dccb690fb2cac613cd32460) by Timothée Mazzucotelli).
 - Add missing check while expanding wildcards ([7e816ed](https://github.com/mkdocstrings/griffe/commit/7e816ed141d6f13bf1ae7c758c32e68cc663fe0e) by Timothée Mazzucotelli).
 
-
 ## [0.22.1](https://github.com/mkdocstrings/griffe/releases/tag/0.22.1) - 2022-09-10
 
 <small>[Compare with 0.22.0](https://github.com/mkdocstrings/griffe/compare/0.22.0...0.22.1)</small>
 
 ### Bug Fixes
-- Always use `encoding="utf8"` when reading text files ([3b279bf](https://github.com/mkdocstrings/griffe/commit/3b279bf61afabc7312e9e58745fd19a53d97ac74) by Rudolf Byker). [Issue #99](https://github.com/mkdocstrings/griffe/issues/99), [PR #100](https://github.com/mkdocstrings/griffe/pull/100)
 
+- Always use `encoding="utf8"` when reading text files ([3b279bf](https://github.com/mkdocstrings/griffe/commit/3b279bf61afabc7312e9e58745fd19a53d97ac74) by Rudolf Byker). [Issue #99](https://github.com/mkdocstrings/griffe/issues/99), [PR #100](https://github.com/mkdocstrings/griffe/pull/100)
 
 ## [0.22.0](https://github.com/mkdocstrings/griffe/releases/tag/0.22.0) - 2022-06-28
 
 <small>[Compare with 0.21.0](https://github.com/mkdocstrings/griffe/compare/0.21.0...0.22.0)</small>
 
 ### Features
+
 - Support forward references ([245daea](https://github.com/mkdocstrings/griffe/commit/245daeabc8130bd7ecab86f55c4906d9161b9e73) by Timothée Mazzucotelli). [Issue #86](https://github.com/mkdocstrings/griffe/issues/86)
 
 ### Code Refactoring
-- Safely parse annotations and values ([b023e2b](https://github.com/mkdocstrings/griffe/commit/b023e2be509f3ac39dbe1ed9adf21247e4416e53) by Timothée Mazzucotelli).
 
+- Safely parse annotations and values ([b023e2b](https://github.com/mkdocstrings/griffe/commit/b023e2be509f3ac39dbe1ed9adf21247e4416e53) by Timothée Mazzucotelli).
 
 ## [0.21.0](https://github.com/mkdocstrings/griffe/releases/tag/0.21.0) - 2022-06-25
 
 <small>[Compare with 0.20.0](https://github.com/mkdocstrings/griffe/compare/0.20.0...0.21.0)</small>
 
 ### Features
+
 - Add `load_git` function allowing to load data from a specific git ref ([b2c3946](https://github.com/mkdocstrings/griffe/commit/b2c39467630c33edc914dd7e6dc96fb611267905) by Talley Lambert). [Issue #75](https://github.com/mkdocstrings/griffe/issues/75), [PR #76](https://github.com/mkdocstrings/griffe/pull/76)
 
 ### Bug Fixes
+
 - Fix detecting and merging stubs for single-file packages ([6a82542](https://github.com/mkdocstrings/griffe/commit/6a825423a9dfd86343532c2872980240f2e98b74) by Talley Lambert). [Issue #77](https://github.com/mkdocstrings/griffe/issues/77), [PR #78](https://github.com/mkdocstrings/griffe/pull/78)
 - Fix parsing ExtSlice nodes when getting values ([b2fe968](https://github.com/mkdocstrings/griffe/commit/b2fe9684f274786decdf9fb395bebc5057235eda) by Timothée Mazzucotelli). [Issue #87](https://github.com/mkdocstrings/griffe/issues/87)
 - Don't trigger alias resolution when merging stubs ([2b88627](https://github.com/mkdocstrings/griffe/commit/2b88627862b8db50045cc97ae5644abd36f36b5a) by Timothée Mazzucotelli). [Issue #89](https://github.com/mkdocstrings/griffe/issues/89)
 - Fix handling of .pth files ([f212dd3](https://github.com/mkdocstrings/griffe/commit/f212dd3b92f51a64795fdbb30aefd0a730393523) by Gabriel Dugny). [Issue #84](https://github.com/mkdocstrings/griffe/issues/84), [PR #85](https://github.com/mkdocstrings/griffe/pull/85)
-
 
 ## [0.20.0](https://github.com/mkdocstrings/griffe/releases/tag/0.20.0) - 2022-06-03
 
 <small>[Compare with 0.19.3](https://github.com/mkdocstrings/griffe/compare/0.19.3...0.20.0)</small>
 
 ### Features
+
 - Add `as_json` and `from_json` convenience methods on objects ([5c3d751](https://github.com/mkdocstrings/griffe/commit/5c3d7511d2465e16805fa564c3d60d44618410d8) by Talley Lambert). [PR #74](https://github.com/mkdocstrings/griffe/pull/74)
 
 ### Bug Fixes
+
 - Fix unparsing of f-strings ([9ca74bd](https://github.com/mkdocstrings/griffe/commit/9ca74bd144167de9506cf5b0725a784e52f5e67a) by Timothée Mazzucotelli). [Issue #80](https://github.com/mkdocstrings/griffe/issues/80)
 - Don't crash when overwriting a submodule with a wildcard imported attribute ([bfad1cc](https://github.com/mkdocstrings/griffe/commit/bfad1ccf079e69fa0161754d9f1f7edd5819f943) by Timothée Mazzucotelli). [Issue #72](https://github.com/mkdocstrings/griffe/issues/72), [#79](https://github.com/mkdocstrings/griffe/issues/79), [mkdocstrings/mkdocstrings#438](https://github.com/mkdocstrings/mkdocstrings/issues/438)
-
 
 ## [0.19.3](https://github.com/mkdocstrings/griffe/releases/tag/0.19.3) - 2022-05-26
 
 <small>[Compare with 0.19.2](https://github.com/mkdocstrings/griffe/compare/0.19.2...0.19.3)</small>
 
 ### Bug Fixes
-- Support USub and UAdd nodes in annotations ([1169c51](https://github.com/mkdocstrings/griffe/commit/1169c51bd6ae04f491fa5e50cae93d99e8ce920d) by Timothée Mazzucotelli). [Issue #71](https://github.com/mkdocstrings/griffe/issues/71)
 
+- Support USub and UAdd nodes in annotations ([1169c51](https://github.com/mkdocstrings/griffe/commit/1169c51bd6ae04f491fa5e50cae93d99e8ce920d) by Timothée Mazzucotelli). [Issue #71](https://github.com/mkdocstrings/griffe/issues/71)
 
 ## [0.19.2](https://github.com/mkdocstrings/griffe/releases/tag/0.19.2) - 2022-05-18
 
 <small>[Compare with 0.19.1](https://github.com/mkdocstrings/griffe/compare/0.19.1...0.19.2)</small>
 
 ### Bug Fixes
-- Don't crash on single line docstrings with trailing whitespace (Google) ([8d9ccd5](https://github.com/mkdocstrings/griffe/commit/8d9ccd531dd91c6fbfa0922a0133680f881733b0) by Timothée Mazzucotelli).
 
+- Don't crash on single line docstrings with trailing whitespace (Google) ([8d9ccd5](https://github.com/mkdocstrings/griffe/commit/8d9ccd531dd91c6fbfa0922a0133680f881733b0) by Timothée Mazzucotelli).
 
 ## [0.19.1](https://github.com/mkdocstrings/griffe/releases/tag/0.19.1) - 2022-05-07
 
 <small>[Compare with 0.19.0](https://github.com/mkdocstrings/griffe/compare/0.19.0...0.19.1)</small>
 
 ### Bug Fixes
-- Don't crash on nested functions in `__init__` methods ([cd5af43](https://github.com/mkdocstrings/griffe/commit/cd5af43f3a98d54d822015818b7aa0ef15159286) by Timothée Mazzucotelli). [Issue #68](https://github.com/mkdocstrings/griffe/issues/68)
 
+- Don't crash on nested functions in `__init__` methods ([cd5af43](https://github.com/mkdocstrings/griffe/commit/cd5af43f3a98d54d822015818b7aa0ef15159286) by Timothée Mazzucotelli). [Issue #68](https://github.com/mkdocstrings/griffe/issues/68)
 
 ## [0.19.0](https://github.com/mkdocstrings/griffe/releases/tag/0.19.0) - 2022-05-06
 
 <small>[Compare with 0.18.0](https://github.com/mkdocstrings/griffe/compare/0.18.0...0.19.0)</small>
 
 ### Features
+
 - Add `load` shortcut function for convenience ([f38a42d](https://github.com/mkdocstrings/griffe/commit/f38a42ddd7ac9d58f36627d9f2a69f4acd65df50) by Timothée Mazzucotelli).
 - Support loading (and merging) `*.pyi` files ([41518f4](https://github.com/mkdocstrings/griffe/commit/41518f4aa9e00756a910067cf6f01f07ca7327da) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#404](https://github.com/mkdocstrings/mkdocstrings/issues/404)
 - Improve support for call nodes in annotations ([45e5bf5](https://github.com/mkdocstrings/griffe/commit/45e5bf53d509344b3f28118836d356903c64bbf3) by Timothée Mazzucotelli). [Issue #66](https://github.com/mkdocstrings/griffe/issues/66)
 - Support `dataclass` decorators on classes ([f579431](https://github.com/mkdocstrings/griffe/commit/f579431474cc4db687e4264f5062074654dec2f3) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Handle absence of values ([190585d](https://github.com/mkdocstrings/griffe/commit/190585d3482bfc3a72694910529b7a0aac35444c) by Timothée Mazzucotelli).
 - Simplify decorators to labels function ([04e768f](https://github.com/mkdocstrings/griffe/commit/04e768fb621898faf7a96cc7e7170f10da876664) by Timothée Mazzucotelli).
 - Always sort labels when serializing ([bd2504b](https://github.com/mkdocstrings/griffe/commit/bd2504bdb43df3e290c88bd8d25903823f5fc2d6) by Timothée Mazzucotelli).
-
 
 ## [0.18.0](https://github.com/mkdocstrings/griffe/releases/tag/0.18.0) - 2022-04-19
 
 <small>[Compare with 0.17.0](https://github.com/mkdocstrings/griffe/compare/0.17.0...0.18.0)</small>
 
 ### Features
+
 - Add CLI option to disallow inspection ([8f71a07](https://github.com/mkdocstrings/griffe/commit/8f71a07c17de4cfb2b519dc2b4086f102de4d325) by Timothée Mazzucotelli).
 - Support complex `__all__` assignments ([9a2128b](https://github.com/mkdocstrings/griffe/commit/9a2128b8d4533119b705ec47fc1eca404b4282ef) by Timothée Mazzucotelli). [Issue #40](https://github.com/mkdocstrings/griffe/issues/40)
 - Inherit class parameters from `__init__` method ([e195593](https://github.com/mkdocstrings/griffe/commit/e195593b181690313c9e447c8bc2befa72fd6e09) by François Rozet). [Issue mkdocstrings/python#19](https://github.com/mkdocstrings/python/issues/19), [PR #65](https://github.com/mkdocstrings/python/pull/65).
   It allows to write "Parameters" sections in the docstring of the class itself.
 
 ### Performance Improvements
+
 - Avoid using `__len__` as boolean method ([d465493](https://github.com/mkdocstrings/griffe/commit/d4654930577186fb6d3e89ea1561a2daf15b3a65) by Timothée Mazzucotelli).
 
 ### Bug Fixes
+
 - Don't crash on unhandle `__all__` assignments ([cbc103c](https://github.com/mkdocstrings/griffe/commit/cbc103c91836db2e235a46a0f9048c1230de507d) by Timothée Mazzucotelli).
 - Handle empty packages names in CLI ([52b51c4](https://github.com/mkdocstrings/griffe/commit/52b51c49a14783c986beb851abd33cbcd0ab8729) by Timothée Mazzucotelli).
 - Don't crash on Google parameters sections found in non-function docstrings ([4a417bc](https://github.com/mkdocstrings/griffe/commit/4a417bc6c0e83b42fe1a74a4a8b0881d3955075f) by Timothée Mazzucotelli). [Issue mkdocstrings/python#19](https://github.com/mkdocstrings/python/issues/19)
 
 ### Code Refactoring
+
 - Improve "unknown parameter" messages ([7191799](https://github.com/mkdocstrings/griffe/commit/7191799c92d7544f949c5870cf2867e02d406c57) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#423](https://github.com/mkdocstrings/mkdocstrings/issues/423)
 - Set property label on `@cached_property`-decoratored methods ([bc068f8](https://github.com/mkdocstrings/griffe/commit/bc068f8123c5bcbe4dce272dda52840019141b06) by Timothée Mazzucotelli).
-
 
 ## [0.17.0](https://github.com/mkdocstrings/griffe/releases/tag/0.17.0) - 2022-04-15
 
 <small>[Compare with 0.16.0](https://github.com/mkdocstrings/griffe/compare/0.16.0...0.17.0)</small>
 
 ### Features
+
 - Handle properties setters and deleters ([50a4490](https://github.com/mkdocstrings/griffe/commit/50a449069de89bb83da854b1bbd1681ec68f0395) by Timothée Mazzucotelli).
 - Handle `typing.overload` decorator ([927bbd9](https://github.com/mkdocstrings/griffe/commit/927bbd9fe7712e8d0fc9763fb51d89bef3173350) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#308](https://github.com/mkdocstrings/mkdocstrings/issues/308)
 - Set labels on functions using decorators ([1c1feb2](https://github.com/mkdocstrings/griffe/commit/1c1feb264c748f4a78ffebf3b9ea1966f2533522) by Timothée Mazzucotelli). [Issue #47](https://github.com/mkdocstrings/griffe/issues/47)
@@ -1026,252 +1041,264 @@ for the initial code allowing to compare two Griffe trees.
 - Support pkg-style namespace packages ([efba0c6](https://github.com/mkdocstrings/griffe/commit/efba0c6a5e1dc185e96e5a09c05e94c751abc4cb) by Timothée Mazzucotelli). [Issue #58](https://github.com/mkdocstrings/griffe/issues/58)
 
 ### Code Refactoring
+
 - Remove useless attribute ([c4a92b7](https://github.com/mkdocstrings/griffe/commit/c4a92b7e2cbe240a376d5d6944b7b0d23255648b) by Timothée Mazzucotelli).
 - Improve Google warnings ([641089a](https://github.com/mkdocstrings/griffe/commit/641089aed53423894df8733941e404f7e6505b94) by Timothée Mazzucotelli).
 - Remove useless import nodes generic visits ([f83fc8e](https://github.com/mkdocstrings/griffe/commit/f83fc8e629451abd4f4eadfe34b448fb3b77b9b6) by Timothée Mazzucotelli).
-
 
 ## [0.16.0](https://github.com/mkdocstrings/griffe/releases/tag/0.16.0) - 2022-04-09
 
 <small>[Compare with 0.15.1](https://github.com/mkdocstrings/griffe/compare/0.15.1...0.16.0)</small>
 
 ### Features
+
 - Warn about unknown parameters in Numpy docstrings ([23f63f2](https://github.com/mkdocstrings/griffe/commit/23f63f255eef5aa2dbaa1765f93634ecaf94dbb3) by Timothée Mazzucotelli).
 - Warn about unknown parameters in Google docstrings ([72be993](https://github.com/mkdocstrings/griffe/commit/72be993c95460a6465a4e70a95b79ae4095db541) by Kevin Musgrave). [Issue mkdocstrings/mkdocstrings#408](https://github.com/mkdocstrings/mkdocstrings/issues/408), [PR #63](https://github.com/mkdocstrings/griffe/issues/63)
 
 ### Bug Fixes
-- Don't crash on unhandled AST nodes while parsing text annotations ([f3be3a6](https://github.com/mkdocstrings/griffe/commit/f3be3a68141e24a9c0c6b9a87e3f22e75a168d80) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#416](https://github.com/mkdocstrings/mkdocstrings/issues/416)
 
+- Don't crash on unhandled AST nodes while parsing text annotations ([f3be3a6](https://github.com/mkdocstrings/griffe/commit/f3be3a68141e24a9c0c6b9a87e3f22e75a168d80) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#416](https://github.com/mkdocstrings/mkdocstrings/issues/416)
 
 ## [0.15.1](https://github.com/mkdocstrings/griffe/releases/tag/0.15.1) - 2022-04-08
 
 <small>[Compare with 0.15.0](https://github.com/mkdocstrings/griffe/compare/0.15.0...0.15.1)</small>
 
 ### Bug Fixes
+
 - Don't overwrite existing (lower) members when expanding wildcards ([9ff86e3](https://github.com/mkdocstrings/griffe/commit/9ff86e369d8fb3a6eeb7d94cd60c87fa26bf74b4) by Timothée Mazzucotelli).
 - Don't insert admonition before current section (Google parser) ([8d8a46f](https://github.com/mkdocstrings/griffe/commit/8d8a46fca7df917c4bba979128d94d3b79252ff5) by Timothée Mazzucotelli).
 - Handle aliases chains in `has_docstrings` method ([77c6943](https://github.com/mkdocstrings/griffe/commit/77c69430ddc74fedaa33fa65afd59ac546900829) by Timothée Mazzucotelli).
 - Actually check for docstrings recursively ([15f4193](https://github.com/mkdocstrings/griffe/commit/15f4193b764f85dcab042ab193e984bebf151029) by Timothée Mazzucotelli).
-
 
 ## [0.15.0](https://github.com/mkdocstrings/griffe/releases/tag/0.15.0) - 2022-04-03
 
 <small>[Compare with 0.14.1](https://github.com/mkdocstrings/griffe/compare/0.14.1...0.15.0)</small>
 
 ### Features
+
 - Support `ignore_init_summary` in Numpy parser ([f8cd147](https://github.com/mkdocstrings/griffe/commit/f8cd14734603d29e6e72c9a350f663dccdeb36b4) by Timothée Mazzucotelli). [Issue #44](https://github.com/mkdocstrings/griffe/issues/44)
 - Enable cross-references for Numpy docstrings annotations ([e32a73c](https://github.com/mkdocstrings/griffe/commit/e32a73c9e100cf0778768c4a1f76152d9aecc451) by Timothée Mazzucotelli). Issues [#11](https://github.com/mkdocstrings/griffe/issues/11), [#12](https://github.com/mkdocstrings/griffe/issues/12), [#13](https://github.com/mkdocstrings/griffe/issues/13), [#14](https://github.com/mkdocstrings/griffe/issues/14), [#15](https://github.com/mkdocstrings/griffe/issues/15), [#16](https://github.com/mkdocstrings/griffe/issues/16), [#17](https://github.com/mkdocstrings/griffe/issues/17), [#18](https://github.com/mkdocstrings/griffe/issues/18)
 - Retrieve annotations from parent in Numpy parser ([8d4eae3](https://github.com/mkdocstrings/griffe/commit/8d4eae353cbd42f47fe6f8101e6e1f8be4054c84) by Timothée Mazzucotelli). Issues [#29](https://github.com/mkdocstrings/griffe/issues/29), [#30](https://github.com/mkdocstrings/griffe/issues/30), [#31](https://github.com/mkdocstrings/griffe/issues/31), [#32](https://github.com/mkdocstrings/griffe/issues/32)
 - Parse annotations in Iterator/Generator for Google docstrings ([f0129ef](https://github.com/mkdocstrings/griffe/commit/f0129efa2046089355ee62c48f23eb0189b054ce) by Timothée Mazzucotelli). [Issue #28](https://github.com/mkdocstrings/griffe/issues/28)
 
 ### Bug Fixes
+
 - Fix missing "receives" entry in Google parser ([35d63fb](https://github.com/mkdocstrings/griffe/commit/35d63fbd566fa439a255c3f44ffeb4a9474db7f9) by Timothée Mazzucotelli).
 - Fix serialization of Windows paths ([b7e8da8](https://github.com/mkdocstrings/griffe/commit/b7e8da868cd6ec8230f2d58a8f3c38248f7c97b2) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Be less strict on spacing around ":" in Numpy docstrings ([aa592b5](https://github.com/mkdocstrings/griffe/commit/aa592b5f38b71e6eadd883257d2239fceec43752) by Timothée Mazzucotelli).
 - Be less strict in Numpy regular expressions ([603dc0e](https://github.com/mkdocstrings/griffe/commit/603dc0e21aa12754ec4f76ffc40869bf8519935d) by Timothée Mazzucotelli).
 - Rename variables in Numpy module ([4407244](https://github.com/mkdocstrings/griffe/commit/4407244a2e4b59c988c61e4c7b9f07532cad5b3c) by Timothée Mazzucotelli).
-
 
 ## [0.14.1](https://github.com/mkdocstrings/griffe/releases/tag/0.14.1) - 2022-04-01
 
 <small>[Compare with 0.14.0](https://github.com/mkdocstrings/griffe/compare/0.14.0...0.14.1)</small>
 
 ### Bug Fixes
+
 - Retrieve default value for non-string parameters ([15952ed](https://github.com/mkdocstrings/griffe/commit/15952ed72f6f5db3a4dec2fc60cb256c838be6a3) by ThomasPJ). [Issue #59](https://github.com/mkdocstrings/griffe/issues/59), [issue mkdocstrings/python#8](https://github.com/mkdocstrings/python/issues/8), [PR #60](https://github.com/mkdocstrings/griffe/pull/60)
 - Prevent infinite recursion while expanding wildcards ([428628f](https://github.com/mkdocstrings/griffe/commit/428628f423192611529b9b346cd295999d0dad25) by Timothée Mazzucotelli). [Issue #57](https://github.com/mkdocstrings/griffe/issues/57)
-
 
 ## [0.14.0](https://github.com/mkdocstrings/griffe/releases/tag/0.14.0) - 2022-03-06
 
 <small>[Compare with 0.13.2](https://github.com/mkdocstrings/griffe/compare/0.13.2...0.14.0)</small>
 
 ### Features
-- Ignore `__doc__` from parent classes ([10aa59e](https://github.com/mkdocstrings/griffe/commit/10aa59ef2fbf1db2c8829e0905bea88406495c41) by Will Da Silva). [Issue #55](https://github.com/mkdocstrings/griffe/issues/55), [PR #56](https://github.com/mkdocstrings/griffe/pull/56)
 
+- Ignore `__doc__` from parent classes ([10aa59e](https://github.com/mkdocstrings/griffe/commit/10aa59ef2fbf1db2c8829e0905bea88406495c41) by Will Da Silva). [Issue #55](https://github.com/mkdocstrings/griffe/issues/55), [PR #56](https://github.com/mkdocstrings/griffe/pull/56)
 
 ## [0.13.2](https://github.com/mkdocstrings/griffe/releases/tag/0.13.2) - 2022-03-01
 
 <small>[Compare with 0.13.1](https://github.com/mkdocstrings/griffe/compare/0.13.1...0.13.2)</small>
 
 ### Bug Fixes
+
 - Fix type regex in Numpy parser ([3a10fda](https://github.com/mkdocstrings/griffe/commit/3a10fda89c2e32e2d8acd89eb1ce8ab20a0fc251) by Timothée Mazzucotelli).
 - Current module must not be available in its members' scope ([54f9688](https://github.com/mkdocstrings/griffe/commit/54f9688c11a1f7d3893ca774a07afe876f0b809c) by Timothée Mazzucotelli).
 - Allow named sections after numpydoc examples ([a44d9c6](https://github.com/mkdocstrings/griffe/commit/a44d9c65cf24d2820e805d23365f38aab82c8c07) by Lucina). [PR #54](https://github.com/mkdocstrings/griffe/pull/54)
-
 
 ## [0.13.1](https://github.com/mkdocstrings/griffe/releases/tag/0.13.1) - 2022-02-24
 
 <small>[Compare with 0.13.0](https://github.com/mkdocstrings/griffe/compare/0.13.0...0.13.1)</small>
 
 ### Bug Fixes
+
 - Don't cut through wildcard-expanded aliases chains ([65dafa4](https://github.com/mkdocstrings/griffe/commit/65dafa4660e8c95687cad4d5c5145a56f126ae61) by Timothée Mazzucotelli).
 - Fix docstrings warnings when there's no parent module ([e080549](https://github.com/mkdocstrings/griffe/commit/e080549e3eaf887a0f037a4457329eab35bd6409) by Timothée Mazzucotelli). [Issue #51](https://github.com/mkdocstrings/griffe/issues/51)
 
 ### Code Refactoring
-- Use proper classes for docstrings sections ([46eddac](https://github.com/mkdocstrings/griffe/commit/46eddac0b847eeb75e4964a3186069f7698235b0) by Timothée Mazzucotelli). [Issue mkdocstrings/python#3](https://github.com/mkdocstrings/python/issues/3), [PR #52](https://github.com/mkdocstrings/griffe/pull/52)
 
+- Use proper classes for docstrings sections ([46eddac](https://github.com/mkdocstrings/griffe/commit/46eddac0b847eeb75e4964a3186069f7698235b0) by Timothée Mazzucotelli). [Issue mkdocstrings/python#3](https://github.com/mkdocstrings/python/issues/3), [PR #52](https://github.com/mkdocstrings/griffe/pull/52)
 
 ## [0.13.0](https://github.com/mkdocstrings/griffe/releases/tag/0.13.0) - 2022-02-23
 
 <small>[Compare with 0.12.6](https://github.com/mkdocstrings/griffe/compare/0.12.6...0.13.0)</small>
 
 ### Features
+
 - Implement `trim_doctest_flags` for Google and Numpy ([8057153](https://github.com/mkdocstrings/griffe/commit/8057153823711d8f486b1c52469090ce404771cb) by Jeremy Goh). [Issue mkdocstrings/mkdocstrings#386](https://github.com/mkdocstrings/mkdocstrings/issues/386), [PR #48](https://github.com/mkdocstrings/griffe/pull/48)
 
 ### Bug Fixes
-- Rename keyword parameters to keyword arguments ([ce3eb6b](https://github.com/mkdocstrings/griffe/commit/ce3eb6b5d7caad6df41496dd300924535d92dc7f) by Jeremy Goh).
 
+- Rename keyword parameters to keyword arguments ([ce3eb6b](https://github.com/mkdocstrings/griffe/commit/ce3eb6b5d7caad6df41496dd300924535d92dc7f) by Jeremy Goh).
 
 ## [0.12.6](https://github.com/mkdocstrings/griffe/releases/tag/0.12.6) - 2022-02-18
 
 <small>[Compare with 0.12.5](https://github.com/mkdocstrings/griffe/compare/0.12.5...0.12.6)</small>
 
 ### Bug Fixes
-- Support starred parameters in Numpy docstrings ([27f0fc2](https://github.com/mkdocstrings/griffe/commit/27f0fc21299a41a3afc07b46afbe8f37757c3918) by Timothée Mazzucotelli). [Issue #43](https://github.com/mkdocstrings/griffe/issues/43)
 
+- Support starred parameters in Numpy docstrings ([27f0fc2](https://github.com/mkdocstrings/griffe/commit/27f0fc21299a41a3afc07b46afbe8f37757c3918) by Timothée Mazzucotelli). [Issue #43](https://github.com/mkdocstrings/griffe/issues/43)
 
 ## [0.12.5](https://github.com/mkdocstrings/griffe/releases/tag/0.12.5) - 2022-02-17
 
 <small>[Compare with 0.12.4](https://github.com/mkdocstrings/griffe/compare/0.12.4...0.12.5)</small>
 
 ### Bug Fixes
-- Fix getting line numbers on aliases ([351750e](https://github.com/mkdocstrings/griffe/commit/351750ea70d0ab3f10c2766846c10d00612cda1d) by Timothée Mazzucotelli).
 
+- Fix getting line numbers on aliases ([351750e](https://github.com/mkdocstrings/griffe/commit/351750ea70d0ab3f10c2766846c10d00612cda1d) by Timothée Mazzucotelli).
 
 ## [0.12.4](https://github.com/mkdocstrings/griffe/releases/tag/0.12.4) - 2022-02-16
 
 <small>[Compare with 0.12.3](https://github.com/mkdocstrings/griffe/compare/0.12.3...0.12.4)</small>
 
 ### Bug Fixes
+
 - Update target path when changing alias target ([5eda646](https://github.com/mkdocstrings/griffe/commit/5eda646f7bc2fdb112887fdeaa07f8a2f4635c12) by Timothée Mazzucotelli).
 - Fix relative imports to absolute with wildcards ([69500dd](https://github.com/mkdocstrings/griffe/commit/69500dd0ce06f4acc91eb60ff20ac8d79303a281) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#382](https://github.com/mkdocstrings/mkdocstrings/issues/382)
 - Fix accessing members using tuples ([87ff1df](https://github.com/mkdocstrings/griffe/commit/87ff1dfae93d9eb6f735f9c1290092d61cac7591) by Timothée Mazzucotelli).
 - Fix recursive wildcard expansion ([60e6edf](https://github.com/mkdocstrings/griffe/commit/60e6edf9dcade104b069946380a0d1dcc22bce9a) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#382](https://github.com/mkdocstrings/mkdocstrings/issues/382)
 - Only export submodules if they were imported ([98c72db](https://github.com/mkdocstrings/griffe/commit/98c72dbab114fd7782efd6f2f9bbf78e3f4ccb27) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#382](https://github.com/mkdocstrings/mkdocstrings/issues/382)
 
-
 ## [0.12.3](https://github.com/mkdocstrings/griffe/releases/tag/0.12.3) - 2022-02-15
 
 <small>[Compare with 0.12.2](https://github.com/mkdocstrings/griffe/compare/0.12.2...0.12.3)</small>
 
 ### Bug Fixes
+
 - Always decode source as UTF8 ([563469b](https://github.com/mkdocstrings/griffe/commit/563469b4cf320ea38096846312dc757a614d8094) by Timothée Mazzucotelli).
 - Fix JSON encoder and decoder ([3e768d6](https://github.com/mkdocstrings/griffe/commit/3e768d6574a45624237e0897c1d6a6c87e446016) by Timothée Mazzucotelli).
 
 ### Code Refactoring
-- Improve error handling ([7b15a51](https://github.com/mkdocstrings/griffe/commit/7b15a51fb9dd4722757f272f00402ce29ef2bd3f) by Timothée Mazzucotelli).
 
+- Improve error handling ([7b15a51](https://github.com/mkdocstrings/griffe/commit/7b15a51fb9dd4722757f272f00402ce29ef2bd3f) by Timothée Mazzucotelli).
 
 ## [0.12.2](https://github.com/mkdocstrings/griffe/releases/tag/0.12.2) - 2022-02-13
 
 <small>[Compare with 0.12.1](https://github.com/mkdocstrings/griffe/compare/0.12.1...0.12.2)</small>
 
 ### Bug Fixes
+
 - Fix JSON unable to serialize docstring kind values ([91e6719](https://github.com/mkdocstrings/griffe/commit/91e67190fc4f69911ad6ea3eb239a74fc1f15ba6) by Timothée Mazzucotelli).
 
 ### Code Refactoring
-- Make attribute labels more explicit ([19eac2e](https://github.com/mkdocstrings/griffe/commit/19eac2e5a13d77175849c199ba3337a66e3824a2) by Timothée Mazzucotelli).
 
+- Make attribute labels more explicit ([19eac2e](https://github.com/mkdocstrings/griffe/commit/19eac2e5a13d77175849c199ba3337a66e3824a2) by Timothée Mazzucotelli).
 
 ## [0.12.1](https://github.com/mkdocstrings/griffe/releases/tag/0.12.1) - 2022-02-12
 
 <small>[Compare with 0.11.7](https://github.com/mkdocstrings/griffe/compare/0.11.7...0.12.1)</small>
 
 ### Features
+
 - Add `ignore_init_summary` option to the Google parser ([81f0333](https://github.com/mkdocstrings/griffe/commit/81f0333b1691955f6020095051b2cf869f0c2c24) by Timothée Mazzucotelli).
 - Add `is_KIND` properties on objects ([17a08cd](https://github.com/mkdocstrings/griffe/commit/17a08cd7142bdee041577735d5e5ac246c181ec9) by Timothée Mazzucotelli).
-
 
 ## [0.11.7](https://github.com/mkdocstrings/griffe/releases/tag/0.11.7) - 2022-02-12
 
 <small>[Compare with 0.11.6](https://github.com/mkdocstrings/griffe/compare/0.11.6...0.11.7)</small>
 
 ### Bug Fixes
+
 - Keep only first assignment in conditions ([0104440](https://github.com/mkdocstrings/griffe/commit/010444018ca6ba437e70166e0da3e2d2ca6bbbe8) by Timothée Mazzucotelli).
 - Support invert unary op in annotations ([734ef55](https://github.com/mkdocstrings/griffe/commit/734ef551f5c5b2b4b48de32033d4c2e7cff0a124) by Timothée Mazzucotelli).
 - Fix handling of missing modules during dynamic imports ([7a3b383](https://github.com/mkdocstrings/griffe/commit/7a3b38349712c5b66792da1a8a9efae1b6f663a7) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#380](https://github.com/mkdocstrings/mkdocstrings/issues/380)
 - Fix getting lines of compiled modules ([899461b](https://github.com/mkdocstrings/griffe/commit/899461b2f48622f334ceeaa6d73c935bacb540ea) by Timothée Mazzucotelli).
 
 ### Code Refactoring
-- Get annotation with the same property on functions ([ecc7bba](https://github.com/mkdocstrings/griffe/commit/ecc7bba8880f90417a21830e0e9cccf30f582399) by Timothée Mazzucotelli).
 
+- Get annotation with the same property on functions ([ecc7bba](https://github.com/mkdocstrings/griffe/commit/ecc7bba8880f90417a21830e0e9cccf30f582399) by Timothée Mazzucotelli).
 
 ## [0.11.6](https://github.com/mkdocstrings/griffe/releases/tag/0.11.6) - 2022-02-10
 
 <small>[Compare with 0.11.5](https://github.com/mkdocstrings/griffe/compare/0.11.5...0.11.6)</small>
 
 ### Bug Fixes
-- Fix infinite loop in Google parser ([8b7b97b](https://github.com/mkdocstrings/griffe/commit/8b7b97b6f507dc91b957592e1d247d79bd3e9a5b) by Timothée Mazzucotelli). [Issue #38](https://github.com/mkdocstrings/griffe/issues/38)
 
+- Fix infinite loop in Google parser ([8b7b97b](https://github.com/mkdocstrings/griffe/commit/8b7b97b6f507dc91b957592e1d247d79bd3e9a5b) by Timothée Mazzucotelli). [Issue #38](https://github.com/mkdocstrings/griffe/issues/38)
 
 ## [0.11.5](https://github.com/mkdocstrings/griffe/releases/tag/0.11.5) - 2022-02-08
 
 <small>[Compare with 0.11.4](https://github.com/mkdocstrings/griffe/compare/0.11.4...0.11.5)</small>
 
 ### Bug Fixes
-- Fix building title and kind of Google admonitions ([87ab56c](https://github.com/mkdocstrings/griffe/commit/87ab56cfe5458b313527bc2eb47ea418fcb231ab) by Timothée Mazzucotelli). [Issue mkdocstrings#379](https://github.com/mkdocstrings/mkdocstrings/issues/379)
 
+- Fix building title and kind of Google admonitions ([87ab56c](https://github.com/mkdocstrings/griffe/commit/87ab56cfe5458b313527bc2eb47ea418fcb231ab) by Timothée Mazzucotelli). [Issue mkdocstrings#379](https://github.com/mkdocstrings/mkdocstrings/issues/379)
 
 ## [0.11.4](https://github.com/mkdocstrings/griffe/releases/tag/0.11.4) - 2022-02-07
 
 <small>[Compare with 0.11.3](https://github.com/mkdocstrings/griffe/compare/0.11.3...0.11.4)</small>
 
 ### Bug Fixes
-- Don't trigger alias resolution while checking docstrings presence ([dda72ea](https://github.com/mkdocstrings/griffe/commit/dda72ea56b091d1c9bc1b7aa369548328894da29) by Timothée Mazzucotelli). [Issue #37](https://github.com/mkdocstrings/griffe/issues/37)
 
+- Don't trigger alias resolution while checking docstrings presence ([dda72ea](https://github.com/mkdocstrings/griffe/commit/dda72ea56b091d1c9bc1b7aa369548328894da29) by Timothée Mazzucotelli). [Issue #37](https://github.com/mkdocstrings/griffe/issues/37)
 
 ## [0.11.3](https://github.com/mkdocstrings/griffe/releases/tag/0.11.3) - 2022-02-05
 
 <small>[Compare with 0.11.2](https://github.com/mkdocstrings/griffe/compare/0.11.2...0.11.3)</small>
 
 ### Bug Fixes
-- Fix getting params defaults on Python 3.7 ([0afd867](https://github.com/mkdocstrings/griffe/commit/0afd8675d2d24302d68619f31adbe5ac5d8ff5a7) by Timothée Mazzucotelli).
 
+- Fix getting params defaults on Python 3.7 ([0afd867](https://github.com/mkdocstrings/griffe/commit/0afd8675d2d24302d68619f31adbe5ac5d8ff5a7) by Timothée Mazzucotelli).
 
 ## [0.11.2](https://github.com/mkdocstrings/griffe/releases/tag/0.11.2) - 2022-02-03
 
 <small>[Compare with 0.11.1](https://github.com/mkdocstrings/griffe/compare/0.11.1...0.11.2)</small>
 
 ### Code Refactoring
-- Factorize docstring annotation parser ([19609be](https://github.com/mkdocstrings/griffe/commit/19609bede6227998a1322dbed6fcc1ae2e924bc8) by Timothée Mazzucotelli).
 
+- Factorize docstring annotation parser ([19609be](https://github.com/mkdocstrings/griffe/commit/19609bede6227998a1322dbed6fcc1ae2e924bc8) by Timothée Mazzucotelli).
 
 ## [0.11.1](https://github.com/mkdocstrings/griffe/releases/tag/0.11.1) - 2022-02-01
 
 <small>[Compare with 0.11.0](https://github.com/mkdocstrings/griffe/compare/0.11.0...0.11.1)</small>
 
 ### Code Refactoring
-- Rename RST parser to Sphinx ([a612cb1](https://github.com/mkdocstrings/griffe/commit/a612cb1c8d52fabe5a1ebaf892e9b82c67d15a30) by Timothée Mazzucotelli).
 
+- Rename RST parser to Sphinx ([a612cb1](https://github.com/mkdocstrings/griffe/commit/a612cb1c8d52fabe5a1ebaf892e9b82c67d15a30) by Timothée Mazzucotelli).
 
 ## [0.11.0](https://github.com/mkdocstrings/griffe/releases/tag/0.11.0) - 2022-01-31
 
 <small>[Compare with 0.10.0](https://github.com/mkdocstrings/griffe/compare/0.10.0...0.11.0)</small>
 
 ### Features
+
 - Support matrix multiplication operator in visitor ([6129e17](https://github.com/mkdocstrings/griffe/commit/6129e17c86ff49a8e539039dcd04a58b30e3648e) by Timothée Mazzucotelli).
 
 ### Bug Fixes
+
 - Fix name resolution for inspected data ([ed3e7e5](https://github.com/mkdocstrings/griffe/commit/ed3e7e5fa8a9d702c92f47e8244635cf11a923f2) by Timothée Mazzucotelli).
 - Make importer actually able to import any nested object ([d007219](https://github.com/mkdocstrings/griffe/commit/d00721971c7b820e16e463408f04cc3e81a14db6) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Always use search paths to import modules ([a9a378f](https://github.com/mkdocstrings/griffe/commit/a9a378fc6e47678e08a22383879e4d01acd16b54) by Timothée Mazzucotelli).
 - Split out module finder ([7290642](https://github.com/mkdocstrings/griffe/commit/7290642e36341e64b8ed770e237e9f232e05eada) by Timothée Mazzucotelli).
-
 
 ## [0.10.0](https://github.com/mkdocstrings/griffe/releases/tag/0.10.0) - 2022-01-14
 
 <small>[Compare with 0.9.0](https://github.com/mkdocstrings/griffe/compare/0.9.0...0.10.0)</small>
 
 ### Bug Fixes
+
 - Fix infinite recursion errors in alias resolver ([133b4e4](https://github.com/mkdocstrings/griffe/commit/133b4e4bf721fc7536a1ca957f13f7c9f83bf07a) by Timothée Mazzucotelli).
 - Fix inspection of nodes children (aliases or not) ([bb354f2](https://github.com/mkdocstrings/griffe/commit/bb354f21e7b079f4c1e8dd50297d53810c18450e) by Timothée Mazzucotelli).
 - Fix relative to absolute import conversion ([464c39e](https://github.com/mkdocstrings/griffe/commit/464c39eaa812a927190469b18bd910e95e3c1d3c) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Rename some CLI options ([1323268](https://github.com/mkdocstrings/griffe/commit/13232685b0f2752d92428ab786d428d0af11743b) by Timothée Mazzucotelli).
 - Return the loader the to main function ([9c6317e](https://github.com/mkdocstrings/griffe/commit/9c6317e5afa25dd11d18906503b8010046878868) by Timothée Mazzucotelli).
 - Improve logging messages ([b8eb16e](https://github.com/mkdocstrings/griffe/commit/b8eb16e0fedfe50f2c3ad65e326f4dc6e6918ac0) by Timothée Mazzucotelli).
@@ -1281,20 +1308,22 @@ for the initial code allowing to compare two Griffe trees.
 - Support dict methods in lines collection ([1b0cb94](https://github.com/mkdocstrings/griffe/commit/1b0cb945dba619df7ce1358f7961e4bd80f70218) by Timothée Mazzucotelli).
 
 ### Features
+
 - Compute and show some stats ([1b8d0a1](https://github.com/mkdocstrings/griffe/commit/1b8d0a1c91e03dfa5f92ad9c6dff02863a43fc01) by Timothée Mazzucotelli).
 - Add CLI options for alias resolution ([87a59cb](https://github.com/mkdocstrings/griffe/commit/87a59cb7af5f8e7df9ddba41fb4a4b65cb264481) by Timothée Mazzucotelli).
 - Support Google raises annotations cross-refs ([8006ae1](https://github.com/mkdocstrings/griffe/commit/8006ae13bc27d117ce6b8fdc8ac91dc8541a670f) by Timothée Mazzucotelli).
-
 
 ## [0.9.0](https://github.com/mkdocstrings/griffe/releases/tag/0.9.0) - 2022-01-04
 
 <small>[Compare with 0.8.0](https://github.com/mkdocstrings/griffe/compare/0.8.0...0.9.0)</small>
 
 ### Features
+
 - Loader option to only follow aliases in known modules ([879d91b](https://github.com/mkdocstrings/griffe/commit/879d91b4c50832620ce6ee7bdcc85107a6df9a1f) by Timothée Mazzucotelli).
 - Use aliases when inspecting too ([60439ee](https://github.com/mkdocstrings/griffe/commit/60439eefb4635e58e4bd898e5565eab48a5c91d0) by Timothée Mazzucotelli).
 
 ### Bug Fixes
+
 - Handle more errors when loading modules ([1aa571a](https://github.com/mkdocstrings/griffe/commit/1aa571a112e3b2ca955c23f2eef97b36f34bcd8c) by Timothée Mazzucotelli).
 - Handle more errors when getting signature ([2db85e7](https://github.com/mkdocstrings/griffe/commit/2db85e7f655c1e383ba310f40195844c2867e1b9) by Timothée Mazzucotelli).
 - Fix checking parent truthfulness ([6129e50](https://github.com/mkdocstrings/griffe/commit/6129e50331f6e36bcbee2e07b871abee45f7e872) by Timothée Mazzucotelli).
@@ -1310,18 +1339,19 @@ for the initial code allowing to compare two Griffe trees.
 - Fix Google parser missing lines ending with colon ([2f7969c](https://github.com/mkdocstrings/griffe/commit/2f7969ccbf91b63ae22deb742250068c114fe1a9) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Improve alias resolution robustness ([e708139](https://github.com/mkdocstrings/griffe/commit/e708139c9bd19be320bdb279310560212872326f) by Timothée Mazzucotelli).
 - Remove async loader for now ([acc5ecf](https://github.com/mkdocstrings/griffe/commit/acc5ecf2bb45dcebdd56d763a657a1075c4a3002) by Timothée Mazzucotelli).
 - Improve handling of Google admonitions ([8aa5ed0](https://github.com/mkdocstrings/griffe/commit/8aa5ed0be4f1902dbdfbce9b4a9c7ac619418d43) by Timothée Mazzucotelli).
 - Better handling of import errors and system exits while inspecting modules ([7ba1589](https://github.com/mkdocstrings/griffe/commit/7ba1589552fb37fba3c2f3093058e135a6e48a27) by Timothée Mazzucotelli).
 - Empty generic visit/inspect methods in base classes ([338760e](https://github.com/mkdocstrings/griffe/commit/338760ea2189e74577250b8c3f4ffe91f81e6b6e) by Timothée Mazzucotelli).
 
-
 ## [0.8.0](https://github.com/mkdocstrings/griffe/releases/tag/0.8.0) - 2022-01-02
 
 <small>[Compare with 0.7.1](https://github.com/mkdocstrings/griffe/compare/0.7.1...0.8.0)</small>
 
 ### Features
+
 - Support getting attribute annotation from parent in RST docstring parser ([25db61a](https://github.com/mkdocstrings/griffe/commit/25db61ab01042ad797ac5cdea0b2f7e2382191c1) by Timothée Mazzucotelli).
 - Handle relative imports ([62b0927](https://github.com/mkdocstrings/griffe/commit/62b0927516ca345de61aa3cc03e977d4d37220de) by Timothée Mazzucotelli).
 - Support wildcard imports ([77a3cb7](https://github.com/mkdocstrings/griffe/commit/77a3cb7e4198dc2e2cea953c5f621544b564552c) by Timothée Mazzucotelli).
@@ -1330,59 +1360,63 @@ for the initial code allowing to compare two Griffe trees.
 - Support inspecting builtin functions/methods ([aa1fce3](https://github.com/mkdocstrings/griffe/commit/aa1fce330ce3e2af4dd9a3c43827637d1e220dde) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Handle extensions errors ([11278ca](https://github.com/mkdocstrings/griffe/commit/11278caea27e9f91a1dc9cc160414f01b24f5354) by Timothée Mazzucotelli).
 - Don't always try to find a module as a relative  path ([e6df277](https://github.com/mkdocstrings/griffe/commit/e6df2774bfd631fd9a09913480b4d61d137bc0c6) by Timothée Mazzucotelli).
 - Improve loggers patching ([f4b262a](https://github.com/mkdocstrings/griffe/commit/f4b262ab5a3d874591324adc2b5ffff214c7e7da) by Timothée Mazzucotelli).
 - Improve dynamic imports ([2998195](https://github.com/mkdocstrings/griffe/commit/299819519b7eb9b07b938d22bfb3a27e3b05095d) by Timothée Mazzucotelli).
-
 
 ## [0.7.1](https://github.com/mkdocstrings/griffe/releases/tag/0.7.1) - 2021-12-28
 
 <small>[Compare with 0.7.0](https://github.com/mkdocstrings/griffe/compare/0.7.0...0.7.1)</small>
 
 ### Code Refactoring
-- Only log warning if async mode is used ([356e848](https://github.com/mkdocstrings/griffe/commit/356e848c8e233334401461b02a0188731b71a8cf) by Timothée Mazzucotelli).
 
+- Only log warning if async mode is used ([356e848](https://github.com/mkdocstrings/griffe/commit/356e848c8e233334401461b02a0188731b71a8cf) by Timothée Mazzucotelli).
 
 ## [0.7.0](https://github.com/mkdocstrings/griffe/releases/tag/0.7.0) - 2021-12-28
 
 <small>[Compare with 0.6.0](https://github.com/mkdocstrings/griffe/compare/0.6.0...0.7.0)</small>
 
 ### Features
+
 - Support more nodes on Python 3.7 ([7f2c4ec](https://github.com/mkdocstrings/griffe/commit/7f2c4ec3bf610ade7305e19ab220a4b447bed41d) by Timothée Mazzucotelli).
 
 ### Code Refactoring
-- Don't crash on syntax errors and log an error ([10bb6b1](https://github.com/mkdocstrings/griffe/commit/10bb6b15bb9b132626c525b81f3ee33c3bb5746f) by Timothée Mazzucotelli).
 
+- Don't crash on syntax errors and log an error ([10bb6b1](https://github.com/mkdocstrings/griffe/commit/10bb6b15bb9b132626c525b81f3ee33c3bb5746f) by Timothée Mazzucotelli).
 
 ## [0.6.0](https://github.com/mkdocstrings/griffe/releases/tag/0.6.0) - 2021-12-27
 
 <small>[Compare with 0.5.0](https://github.com/mkdocstrings/griffe/compare/0.5.0...0.6.0)</small>
 
 ### Features
+
 - Support more AST nodes ([cd1b305](https://github.com/mkdocstrings/griffe/commit/cd1b305932832ad5347ce829a48a311e3c44d542) by Timothée Mazzucotelli).
 
 ### Code Refactoring
-- Use annotation getter for base classes ([8b1a7ed](https://github.com/mkdocstrings/griffe/commit/8b1a7edc11a72f679689fa9ba9e632907f9304f8) by Timothée Mazzucotelli).
 
+- Use annotation getter for base classes ([8b1a7ed](https://github.com/mkdocstrings/griffe/commit/8b1a7edc11a72f679689fa9ba9e632907f9304f8) by Timothée Mazzucotelli).
 
 ## [0.5.0](https://github.com/mkdocstrings/griffe/releases/tag/0.5.0) - 2021-12-20
 
 <small>[Compare with 0.4.0](https://github.com/mkdocstrings/griffe/compare/0.4.0...0.5.0)</small>
 
 ### Features
+
 - Add support for Python 3.7 ([4535adc](https://github.com/mkdocstrings/griffe/commit/4535adce19edbe7e9cde90f3b1075a8245a6ebc8) by Timothée Mazzucotelli).
 
 ### Bug Fixes
+
 - Don't propagate aliases of an alias ([8af48f8](https://github.com/mkdocstrings/griffe/commit/8af48f87e2e6bb0f2cf1531fa10287a069f67289) by Timothée Mazzucotelli).
 - Don't reassign members defined in except clauses ([d918b4e](https://github.com/mkdocstrings/griffe/commit/d918b4efcedcedbec6db214ade8cde921d7e97b2) by Timothée Mazzucotelli).
-
 
 ## [0.4.0](https://github.com/mkdocstrings/griffe/releases/tag/0.4.0) - 2021-11-28
 
 <small>[Compare with 0.3.0](https://github.com/mkdocstrings/griffe/compare/0.3.0...0.4.0)</small>
 
 ### Features
+
 - Add a prototype 'hybrid' extension ([8cb3c16](https://github.com/mkdocstrings/griffe/commit/8cb3c1661223378a2511fd42a0693d0fbfe924d8) by Timothée Mazzucotelli).
 - Allow passing extensions config as JSON on the CLI ([9a7fa8b](https://github.com/mkdocstrings/griffe/commit/9a7fa8bd88752ca1a074179db3a4c7fc41b68028) by Timothée Mazzucotelli).
 - Support names for returns, yields and receives sections items ([1c5a4c9](https://github.com/mkdocstrings/griffe/commit/1c5a4c95738615ea9bb6a816c61d078e6133100a) by Timothée Mazzucotelli).
@@ -1392,6 +1426,7 @@ for the initial code allowing to compare two Griffe trees.
 - Support namespace packages ([2414c8e](https://github.com/mkdocstrings/griffe/commit/2414c8e24b7ba7ee986d95b301662fd06ef350fe) by Timothée Mazzucotelli).
 
 ### Bug Fixes
+
 - Fix extensions loader ([78fb70b](https://github.com/mkdocstrings/griffe/commit/78fb70b77076b68fa30592caa5e92a91f0ce2caa) by Timothée Mazzucotelli).
 - Avoid visiting/inspecting multiple times ([75a8a8b](https://github.com/mkdocstrings/griffe/commit/75a8a8b7145e1872cbecf93f8e33749b51b5b77b) by Timothée Mazzucotelli).
 - Set modules collection attribute earlier ([592c0bd](https://github.com/mkdocstrings/griffe/commit/592c0bde6b6959615bc56030758098c8e45119a2) by Timothée Mazzucotelli).
@@ -1399,6 +1434,7 @@ for the initial code allowing to compare two Griffe trees.
 - Handle Div nodes for values ([272e4d6](https://github.com/mkdocstrings/griffe/commit/272e4d64b5ca557732af903d35aefbe405bd3ac0) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Set log level to INFO ([718e73e](https://github.com/mkdocstrings/griffe/commit/718e73ebb6767c0b10c03482d6f92cf135778ec7) by Timothée Mazzucotelli).
 - Add target setter ([7f0064c](https://github.com/mkdocstrings/griffe/commit/7f0064c154459b4f4da7fc25bc49f8dd1e4fd2c0) by Timothée Mazzucotelli).
 - Reorganize conditions ([15ab876](https://github.com/mkdocstrings/griffe/commit/15ab8763acc92d9160b847dc878f8bdad7f0b705) by Timothée Mazzucotelli).
@@ -1409,12 +1445,12 @@ for the initial code allowing to compare two Griffe trees.
 - Refactor loaders ([d9b94bb](https://github.com/mkdocstrings/griffe/commit/d9b94bbcb55c29268ab1e077420e2b0d5297638c) by Timothée Mazzucotelli).
 - Improve typing ([e08bcfa](https://github.com/mkdocstrings/griffe/commit/e08bcfac68aa22dc4bc58914b3340c1743f87ee7) by Timothée Mazzucotelli).
 
-
 ## [0.3.0](https://github.com/mkdocstrings/griffe/releases/tag/0.3.0) - 2021-11-21
 
 <small>[Compare with 0.2.0](https://github.com/mkdocstrings/griffe/compare/0.2.0...0.3.0)</small>
 
 ### Features
+
 - Handle aliases and their resolution ([67ae903](https://github.com/mkdocstrings/griffe/commit/67ae9034ac25061bc7d5c6def63715209643ca20) by Timothée Mazzucotelli).
 - Resolve annotations in docstrings ([847384a](https://github.com/mkdocstrings/griffe/commit/847384a322017ca94bd40d4342eb4b8b42858f91) by Timothée Mazzucotelli).
 - Resolve annotations ([6451eff](https://github.com/mkdocstrings/griffe/commit/6451effa01aa09cd3db1584fe111152de649e525) by Timothée Mazzucotelli).
@@ -1434,9 +1470,11 @@ for the initial code allowing to compare two Griffe trees.
 - Add an RST-style docstring parser ([742e7b2](https://github.com/mkdocstrings/griffe/commit/742e7b2e2101d0679571645584c5a6d3077a9764) by Timothée Mazzucotelli).
 
 ### Performance Improvements
+
 - Improve JSON encoder perfs ([6a78eb0](https://github.com/mkdocstrings/griffe/commit/6a78eb0b707a148356fb5bc69d9d0c2115239074) by Timothée Mazzucotelli).
 
 ### Bug Fixes
+
 - Handle serialization of Posix paths ([3a66b95](https://github.com/mkdocstrings/griffe/commit/3a66b95a4c91e6160d161acc457c66196adaa4fe) by Timothée Mazzucotelli).
 - Fix list annotation getter ([5ae800a](https://github.com/mkdocstrings/griffe/commit/5ae800a8902a28b5241192c0905b1914e2bfe906) by Timothée Mazzucotelli).
 - Show accurate line number in Google warnings ([2953590](https://github.com/mkdocstrings/griffe/commit/29535902d53b553906f59295104690c9417eb79f) by Timothée Mazzucotelli).
@@ -1451,6 +1489,7 @@ for the initial code allowing to compare two Griffe trees.
 - Fix getting arguments annotations in the Google-style parser ([8bcbfba](https://github.com/mkdocstrings/griffe/commit/8bcbfbae861be4c3f9c2b8841c8bc86f39611168) by Timothée Mazzucotelli).
 
 ### Code Refactoring
+
 - Export parsers and main function in docstrings module ([96469da](https://github.com/mkdocstrings/griffe/commit/96469dab63a28c061e1d064528f8e07f394c2d81) by Timothée Mazzucotelli).
 - Remove top exports ([cd76694](https://github.com/mkdocstrings/griffe/commit/cd7669481a272d7c939b61f6ff2df1cb55eab39e) by Timothée Mazzucotelli).
 - Reorganize exceptions ([7f9b805](https://github.com/mkdocstrings/griffe/commit/7f9b8055aa069816b3b55fd02730e97e37a6bea4) by Timothée Mazzucotelli).
@@ -1483,12 +1522,12 @@ for the initial code allowing to compare two Griffe trees.
 - Rename `start_index` argument to `offset` ([dd88358](https://github.com/mkdocstrings/griffe/commit/dd88358d8db78636ba5f39fcad92ff5192791852) by Timothée Mazzucotelli).
 - Reuse parsers warn function ([03dfdd3](https://github.com/mkdocstrings/griffe/commit/03dfdd38c5977ee83383f95acda1280b3f9ac86b) by Timothée Mazzucotelli).
 
-
 ## [0.2.0](https://github.com/mkdocstrings/griffe/releases/tag/0.2.0) - 2021-09-25
 
 <small>[Compare with 0.1.0](https://github.com/mkdocstrings/griffe/compare/0.1.0...0.2.0)</small>
 
 ### Features
+
 - Add Google-style docstring parser ([cdefccc](https://github.com/mkdocstrings/griffe/commit/cdefcccff2cb8236003736545cffaf0bd6f46539) by Timothée Mazzucotelli).
 - Support all kinds of functions arguments ([c177562](https://github.com/mkdocstrings/griffe/commit/c177562c358f89da8c541b51d86f9470dd849c8f) by Timothée Mazzucotelli).
 - Initial support for class decorators and bases ([8e229aa](https://github.com/mkdocstrings/griffe/commit/8e229aa5f04d21bde108dca517166d291fd2147a) by Timothée Mazzucotelli).
@@ -1500,6 +1539,7 @@ for the initial code allowing to compare two Griffe trees.
 - Support paths in loader ([8f4df75](https://github.com/mkdocstrings/griffe/commit/8f4df7518ee5164e695e27fc9dcedae7a8b05133) by Timothée Mazzucotelli).
 
 ### Performance Improvements
+
 - Avoid name lookups in visitor ([00de148](https://github.com/mkdocstrings/griffe/commit/00de1482891e0c0091e79c14fdc318c6a95e4f6f) by Timothée Mazzucotelli).
 - Factorize and improve main and extensions visitors ([9b27b56](https://github.com/mkdocstrings/griffe/commit/9b27b56c0fc17d94144fd0b7e3783d3f6f572d3d) by Timothée Mazzucotelli).
 - Delegate children computation at runtime ([8d54c87](https://github.com/mkdocstrings/griffe/commit/8d54c8792f2a98c744374ae290bcb31fa81141b4) by Timothée Mazzucotelli).
@@ -1507,11 +1547,11 @@ for the initial code allowing to compare two Griffe trees.
 - Optimize node linker ([03f955e](https://github.com/mkdocstrings/griffe/commit/03f955ee698adffb7217528c03691876f299f8ca) by Timothée Mazzucotelli).
 - Optimize docstring getter ([4a05516](https://github.com/mkdocstrings/griffe/commit/4a05516de320473b5defd70f208b4e90763f2208) by Timothée Mazzucotelli).
 
-
 ## [0.1.0](https://github.com/mkdocstrings/griffe/releases/tag/0.1.0) - 2021-09-09
 
 <small>[Compare with first commit](https://github.com/mkdocstrings/griffe/compare/7ea73adcc6aebcbe0eb64982916220773731a6b3...0.1.0)</small>
 
 ### Features
+
 - Add initial code ([8cbdf7a](https://github.com/mkdocstrings/griffe/commit/8cbdf7a49202dcf3cd617ae905c0f04cdfe053dd) by Timothée Mazzucotelli).
 - Generate project from copier-pdm template ([7ea73ad](https://github.com/mkdocstrings/griffe/commit/7ea73adcc6aebcbe0eb64982916220773731a6b3) by Timothée Mazzucotelli).
