@@ -5,6 +5,47 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.46.0](https://github.com/mkdocstrings/griffe/releases/tag/0.46.0) - 2024-06-16
+
+<small>[Compare with 0.45.3](https://github.com/mkdocstrings/griffe/compare/0.45.3...0.46.0)</small>
+
+WARNING: **⚡ Imminent v1! ⚡🚀**
+We are working on v1, and it will come soon, so we recommend that you consider adding an upper bound on Griffe. Version 1 will remove all legacy code! There will be a couple more v0 before so that you get all the deprecation warnings needed to upgrade your code using Griffe before upgrading to v1. See breaking changes and deprecations for v0.46 below.
+
+### Breaking Changes
+
+We are still in v0, so no major bump yet.
+
+- Calling objects' [`has_labels()`][griffe.Object.has_labels] method with a `labels` keyword argument is not supported anymore. The parameter became a variadic positional parameter, so it cannot be used as a keyword argument anymore. Passing a sequence instead of multiple positional arguments still works but will emit a deprecation warning.
+- Calling the [`load_extensions()`][griffe.load_extensions] function with an `exts` keyword argument is not supported anymore. The parameter became a variadic positional parameter, so it cannot be used as a keyword argument anymore. Passing a sequence instead of multiple positional arguments still works but will emit a deprecation warning.
+
+### Deprecations
+
+- As seen above in the breaking changes section, the only parameters of [`Object.has_labels()`][griffe.Object.has_labels] and [`load_extensions()`][griffe.load_extensions] both became variadic positional parameters. Passing a sequence as single argument is deprecated in favor of passing multiple arguments. This is an ergonomic change: I myself often forgot to wrap extensions in a list. Passing sequences of labels (lists, sets, tuples) is also difficult from Jinja templates.
+- The following methods and properties on objects and aliases are deprecated: [`member_is_exported()`][griffe.Object.member_is_exported], [`is_explicitely_exported`][griffe.mixins.ObjectAliasMixin.is_explicitely_exported], [`is_implicitely_exported`][griffe.mixins.ObjectAliasMixin.is_implicitely_exported]. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The [`is_exported()`][griffe.mixins.ObjectAliasMixin.is_exported] and [`is_public()`][griffe.mixins.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The `ignore_private` parameter of the [`find_breaking_changes()`][griffe.find_breaking_changes] function is now deprecated and unused. With the reworked "exported" and "public" API, this parameter became useless. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- Using `stats()` instead of [`Stats`][griffe.stats.Stats] will now emit a deprecation warning.
+
+### Features
+
+- Add `docstring` attribute to parameters ([e21eabe](https://github.com/mkdocstrings/griffe/commit/e21eabe8c48e3650d04fec805804683cb743ce12) by Hassan Kibirige). [Issue-286](https://github.com/mkdocstrings/griffe/issues/286), [Related-to-mkdocstrings/griffe#252](https://github.com/mkdocstrings/griffe/pull/252), [PR-288](https://github.com/mkdocstrings/griffe/pull/288), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Provide line numbers for classes and functions when inspecting ([b6ddcc4](https://github.com/mkdocstrings/griffe/commit/b6ddcc4e6da42318961bb7cb7be59041a43c6451) by Timothée Mazzucotelli). [Issue-272](https://github.com/mkdocstrings/griffe/issues/272)
+- Populate lines collection within helpers ([ab2e947](https://github.com/mkdocstrings/griffe/commit/ab2e9479c2b94dc7b6736e40024db87fb87b4e62) by Timothée Mazzucotelli). [GitHub-issue-270](https://github.com/mkdocstrings/griffe/issues/270), [Radicle-issue-0d6a513](https://app.radicle.xyz/nodes/seed.radicle.garden/rad:z23ZVuA1DWS99PDJ1rcarCtJi99x1/issues/0d6a51328f554f235c38a2a652b844c4ba21bba5)
+
+### Bug Fixes
+
+- Handle partials as functions while inspecting ([be29c32](https://github.com/mkdocstrings/griffe/commit/be29c3214680dc20c9c776d12a2a15ca690fa8d0) by Timothée Mazzucotelli).
+- Populate lines collection before visiting/inspecting modules within helpers ([08c3f40](https://github.com/mkdocstrings/griffe/commit/08c3f409f3fc130f07b2d717cddff38d47d4dbca) by Timothée Mazzucotelli). [Issue-272](https://github.com/mkdocstrings/griffe/issues/272)
+- Don't return all lines when line numbers are missing ([9e6dcaa](https://github.com/mkdocstrings/griffe/commit/9e6dcaa8f30132ebef59eb27b1f2f3ff7bc03bae) by Timothée Mazzucotelli). [Issue-271](https://github.com/mkdocstrings/griffe/issues/271)
+
+### Code Refactoring
+
+- Emit deprecation warning when accessing `stats` instead of `Stats` ([e5572d2](https://github.com/mkdocstrings/griffe/commit/e5572d2eb1dd8dbe8f9b43b33119bd9becc4a4d9) by Timothée Mazzucotelli).
+- Rework "exported" and "public" logic ([b327b90](https://github.com/mkdocstrings/griffe/commit/b327b908d9546c8eb8f4ce5d3a216309937a6552) by Timothée Mazzucotelli). [Issue-281](https://github.com/mkdocstrings/griffe/issues/281)
+- Allow passing multiple extensions to `load_extensions` instead of a sequence ([fadb72b](https://github.com/mkdocstrings/griffe/commit/fadb72b4b693f418ebc11aefba3be188a2522c7e) by Timothée Mazzucotelli). [Issue-268](https://github.com/mkdocstrings/griffe/issues/268)
+- Allow passing multiple labels to `Object.has_labels` instead of set ([c4e3bf2](https://github.com/mkdocstrings/griffe/commit/c4e3bf2c1a6ff7a1a66f203ae7abec859cbdea44) by Timothée Mazzucotelli). [Issue-267](https://github.com/mkdocstrings/griffe/issues/267)
+
 ## [0.45.3](https://github.com/mkdocstrings/griffe/releases/tag/0.45.3) - 2024-06-09
 
 <small>[Compare with 0.45.2](https://github.com/mkdocstrings/griffe/compare/0.45.2...0.45.3)</small>
