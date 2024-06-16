@@ -226,7 +226,7 @@ class Parameter:
         """Whether this parameter is required."""
         return self.default is None
 
-    def as_dict(self, *, full: bool = False,  **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this parameter's data as a dictionary.
 
         Parameters:
