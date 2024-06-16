@@ -57625,7 +57625,7 @@
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
 "lineno": 24,
-"endlineno": 272,
+"endlineno": 273,
 "docstring": {
 "value": "Helper class to represent an object tree.\n\nIt's not really a tree but more a backward-linked list:\neach node has a reference to its parent, but not to its child (for simplicity purposes and to avoid bugs).\n\nEach node stores an object, its name, and a reference to its parent node.",
 "lineno": 25,
@@ -58156,7 +58156,7 @@
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
 "lineno": 153,
-"endlineno": 155,
+"endlineno": 156,
 "docstring": {
 "value": "Whether this node's object is a function.",
 "lineno": 154,
@@ -58185,12 +58185,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 158,
-"endlineno": 160,
+"lineno": 159,
+"endlineno": 161,
 "docstring": {
 "value": "Whether this node's object is a builtin function.",
-"lineno": 159,
-"endlineno": 159,
+"lineno": 160,
+"endlineno": 160,
 "parsed": [
 {
 "kind": "text",
@@ -58215,12 +58215,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 163,
-"endlineno": 165,
+"lineno": 164,
+"endlineno": 166,
 "docstring": {
 "value": "Whether this node's object is a coroutine.",
-"lineno": 164,
-"endlineno": 164,
+"lineno": 165,
+"endlineno": 165,
 "parsed": [
 {
 "kind": "text",
@@ -58245,12 +58245,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 168,
-"endlineno": 170,
+"lineno": 169,
+"endlineno": 171,
 "docstring": {
 "value": "Whether this node's object is a property.",
-"lineno": 169,
-"endlineno": 169,
+"lineno": 170,
+"endlineno": 170,
 "parsed": [
 {
 "kind": "text",
@@ -58275,12 +58275,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 173,
-"endlineno": 175,
+"lineno": 174,
+"endlineno": 176,
 "docstring": {
 "value": "Whether the object of this node's parent is a class.",
-"lineno": 174,
-"endlineno": 174,
+"lineno": 175,
+"endlineno": 175,
 "parsed": [
 {
 "kind": "text",
@@ -58305,12 +58305,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 178,
-"endlineno": 181,
+"lineno": 179,
+"endlineno": 182,
 "docstring": {
 "value": "Whether this node's object is a method.",
-"lineno": 179,
-"endlineno": 179,
+"lineno": 180,
+"endlineno": 180,
 "parsed": [
 {
 "kind": "text",
@@ -58335,12 +58335,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 184,
-"endlineno": 190,
+"lineno": 185,
+"endlineno": 191,
 "docstring": {
 "value": "Whether this node's object is a method descriptor.\n\nBuilt-in methods (e.g. those implemented in C/Rust) are often\nmethod descriptors, rather than normal methods.",
-"lineno": 185,
-"endlineno": 189,
+"lineno": 186,
+"endlineno": 190,
 "parsed": [
 {
 "kind": "text",
@@ -58365,12 +58365,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 193,
-"endlineno": 195,
+"lineno": 194,
+"endlineno": 196,
 "docstring": {
 "value": "Whether this node's object is a builtin method.",
-"lineno": 194,
-"endlineno": 194,
+"lineno": 195,
+"endlineno": 195,
 "parsed": [
 {
 "kind": "text",
@@ -58395,12 +58395,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 198,
-"endlineno": 206,
+"lineno": 199,
+"endlineno": 207,
 "docstring": {
 "value": "Whether this node's object is a staticmethod.",
-"lineno": 199,
-"endlineno": 199,
+"lineno": 200,
+"endlineno": 200,
 "parsed": [
 {
 "kind": "text",
@@ -58425,12 +58425,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 209,
-"endlineno": 217,
+"lineno": 210,
+"endlineno": 218,
 "docstring": {
 "value": "Whether this node's object is a classmethod.",
-"lineno": 210,
-"endlineno": 210,
+"lineno": 211,
+"endlineno": 211,
 "parsed": [
 {
 "kind": "text",
@@ -58455,8 +58455,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 220,
-"endlineno": 223,
+"lineno": 221,
+"endlineno": 224,
 "labels": [
 "cached",
 "property"
@@ -58481,8 +58481,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 225,
-"endlineno": 232,
+"lineno": 226,
+"endlineno": 233,
 "labels": [],
 "members": [],
 "decorators": [],
@@ -58524,12 +58524,12 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 235,
-"endlineno": 272,
+"lineno": 236,
+"endlineno": 273,
 "docstring": {
 "value": "Alias target path of this node, if the node should be an alias.",
-"lineno": 236,
-"endlineno": 236,
+"lineno": 237,
+"endlineno": 237,
 "parsed": [
 {
 "kind": "text",
@@ -58563,8 +58563,8 @@
 "filepath": "/media/data/dev/insiders/griffe/src/griffe/agents/nodes/_runtime.py",
 "relative_filepath": "src/griffe/agents/nodes/_runtime.py",
 "relative_package_filepath": "griffe/agents/nodes/_runtime.py",
-"lineno": 275,
-"endlineno": 275,
+"lineno": 276,
+"endlineno": 276,
 "labels": [
 "module-attribute"
 ],
