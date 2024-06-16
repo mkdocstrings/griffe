@@ -139,3 +139,20 @@ def test_inspecting_objects_from_private_builtin_stdlib_moduless() -> None:
     ast = inspect("_ast")
     assert "Assign" in ast.members
     assert not ast["Assign"].is_alias
+
+
+def test_inspecting_partials_as_functions() -> None:
+    """Assert partials are correctly inspected as functions."""
+    with temporary_inspected_module(
+        """
+        from functools import partial
+        def func(a: int, b: int) -> int: pass
+        partial_func = partial(func, 1)
+        partial_func.__module__ = __name__
+        """,
+    ) as module:
+        partial_func = module["partial_func"]
+        assert partial_func.is_function
+        assert partial_func.parameters[0].name == "b"
+        assert partial_func.parameters[0].annotation.name == "int"
+        assert partial_func.returns.name == "int"

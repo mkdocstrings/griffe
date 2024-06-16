@@ -120,14 +120,14 @@ class ObjectNode:
             return ObjectKind.BUILTIN_METHOD
         if self.is_coroutine:
             return ObjectKind.COROUTINE
-        if self.is_function:
-            return ObjectKind.FUNCTION
         if self.is_builtin_function:
             return ObjectKind.BUILTIN_FUNCTION
-        if self.is_property:
-            return ObjectKind.PROPERTY
         if self.is_method_descriptor:
             return ObjectKind.METHOD_DESCRIPTOR
+        if self.is_function:
+            return ObjectKind.FUNCTION
+        if self.is_property:
+            return ObjectKind.PROPERTY
         return ObjectKind.ATTRIBUTE
 
     @cached_property
@@ -152,7 +152,8 @@ class ObjectNode:
     @cached_property
     def is_function(self) -> bool:
         """Whether this node's object is a function."""
-        return inspect.isfunction(self.obj)
+        # `inspect.isfunction` returns `False` for partials.
+        return inspect.isfunction(self.obj) or (callable(self.obj) and not self.is_class)
 
     @cached_property
     def is_builtin_function(self) -> bool:
