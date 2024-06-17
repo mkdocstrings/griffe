@@ -367,8 +367,8 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         # TODO: Return regular True/False values in next version.
         if self.public is not None:  # type: ignore[attr-defined]
             return _True if self.public else _False  # type: ignore[return-value,attr-defined]
-        if self.is_wildcard_exposed:
-            return _True  # type: ignore[return-value]
+        if self.parent and self.parent.is_module and bool(self.parent.exports):  # type: ignore[attr-defined]
+            return _True if self.name in self.parent.exports else _False  # type: ignore[attr-defined,return-value]
         if self.has_private_name:
             return _False  # type: ignore[return-value]
         # The following condition effectively filters out imported objects.
@@ -388,6 +388,9 @@ class _Bool:
 
     def __bool__(self) -> bool:
         return self.value
+
+    def __repr__(self) -> str:
+        return repr(self.value)
 
     def __call__(self, *args: Any, **kwargs: Any) -> bool:  # noqa: ARG002
         warnings.warn(

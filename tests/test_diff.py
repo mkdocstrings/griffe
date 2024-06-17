@@ -181,7 +181,7 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
     for breakage, expected_kind in zip(breaking, expected_breakages):
         assert breakage.kind is expected_kind
     # check with aliases
-    import_a = "from ._mod_a import a"
+    import_a = "from ._mod_a import a\n__all__ = ['a']"
     old_modules = {"__init__.py": import_a, "_mod_a.py": old_code}
     new_modules = {"__init__.py": new_code and import_a, "_mod_a.py": new_code}
     with temporary_visited_package("package_old", old_modules) as old_package:  # noqa: SIM117
