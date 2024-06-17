@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.46.1](https://github.com/mkdocstrings/griffe/releases/tag/0.46.1) - 2024-06-17
+
+<small>[Compare with 0.46.0](https://github.com/mkdocstrings/griffe/compare/0.46.0...0.46.1)</small>
+
+WARNING: **⚡ Imminent v1! ⚡🚀 See [v0.46](#0460-2024-06-16).**
+
+### Bug Fixes
+
+- Always consider special objects ("dunder" attributes/methods/etc.) to be public ([3319410](https://github.com/mkdocstrings/griffe/commit/331941029decd9d400b30ea1471b6bcc384fd54f) by Timothée Mazzucotelli). [Issue-294](https://github.com/mkdocstrings/griffe/issues/294), [Issue-295](https://github.com/mkdocstrings/griffe/issues/295)
+- Don't consider imported objects as public ([ea90952](https://github.com/mkdocstrings/griffe/commit/ea909526f3a637849364544daff74cd49ccaf428) by Timothée Mazzucotelli). [Discussion-169](https://github.com/mkdocstrings/python/discussions/169)
+
 ## [0.46.0](https://github.com/mkdocstrings/griffe/releases/tag/0.46.0) - 2024-06-16
 
 <small>[Compare with 0.45.3](https://github.com/mkdocstrings/griffe/compare/0.45.3...0.46.0)</small>
