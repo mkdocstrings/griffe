@@ -300,6 +300,11 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         return self.name.startswith("_")  # type: ignore[attr-defined]
 
     @property
+    def has_special_name(self) -> bool:
+        """Whether this object/alias has a special name."""
+        return self.name.startswith("__") and self.name.endswith("__")  # type: ignore[attr-defined]
+
+    @property
     def is_exported(self) -> bool:
         """Whether this object/alias is exported (listed in `__all__`)."""
         result = self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
@@ -365,18 +370,30 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         - Otherwise, the object is public.
         """
         # TODO: Return regular True/False values in next version.
+
+        # Give priority to the `public` attribute if it is set.
         if self.public is not None:  # type: ignore[attr-defined]
             return _True if self.public else _False  # type: ignore[return-value,attr-defined]
+
+        # If the object is defined at the module-level and is listed in `__all__`, it is public.
+        # If the parent module defines `__all__` but does not list the object, it is private.
         if self.parent and self.parent.is_module and bool(self.parent.exports):  # type: ignore[attr-defined]
             return _True if self.name in self.parent.exports else _False  # type: ignore[attr-defined,return-value]
-        if self.has_private_name:
+
+        # Special objects are always considered public.
+        # Even if we don't access them directly, they are used through different *public* means
+        # like instantiating classes (`__init__`), using operators (`__eq__`), etc..
+        if self.has_private_name and not self.has_special_name:
             return _False  # type: ignore[return-value]
-        # The following condition effectively filters out imported objects.
+
         # TODO: In a future version, we will support two conventions regarding imports:
         # - `from a import x as x` marks `x` as public.
         # - `from a import *` marks all wildcard imported objects as public.
+        # The following condition effectively filters out imported objects.
         if self.is_alias and not (self.inherited or (self.parent and self.parent.is_alias)):  # type: ignore[attr-defined]
             return _False  # type: ignore[return-value]
+
+        # If we reached this point, the object is public.
         return _True  # type: ignore[return-value]
 
 
