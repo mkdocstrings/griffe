@@ -325,6 +325,11 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         return self.name.startswith("__") and self.name.endswith("__")  # type: ignore[attr-defined]
 
     @property
+    def is_class_private(self) -> bool:
+        """Whether this object/alias is class-private (starts with `__` and is a class member)."""
+        return self.parent and self.parent.is_class and self.name.startswith("__") and not self.name.endswith("__")  # type: ignore[attr-defined]
+
+    @property
     def is_exported(self) -> bool:
         """Whether this object/alias is exported (listed in `__all__`)."""
         result = self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
