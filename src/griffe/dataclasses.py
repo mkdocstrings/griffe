@@ -400,6 +400,9 @@ class Object(ObjectAliasMixin):
         self.public: bool | None = None
         """Whether this object is public."""
 
+        self.deprecated: str | None = None
+        """Whether this object is deprecated (boolean or deprecation message)."""
+
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
@@ -851,6 +854,9 @@ class Alias(ObjectAliasMixin):
 
         self.public: bool | None = None
         """Whether this alias is public."""
+
+        self.deprecated: str | bool | None = None
+        """Whether this alias is deprecated (boolean or deprecation message)."""
 
         self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False

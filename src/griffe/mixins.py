@@ -434,6 +434,12 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         # If we reached this point, the object is public.
         return _True  # type: ignore[return-value]
 
+    @property
+    def is_deprecated(self) -> bool:
+        """Whether this object is deprecated."""
+        # NOTE: We might want to add more ways to detect deprecations in the future.
+        return bool(self.deprecated)  # type: ignore[attr-defined]
+
 
 # This is used to allow the `is_public` property to be "callable",
 # for backward compatibility with the previous implementation.
