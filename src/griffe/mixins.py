@@ -330,6 +330,11 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         return self.parent and self.parent.is_class and self.name.startswith("__") and not self.name.endswith("__")  # type: ignore[attr-defined]
 
     @property
+    def is_imported(self) -> bool:
+        """Whether this object/alias was imported from another module."""
+        return self.parent and self.name in self.parent.imports  # type: ignore[attr-defined]
+
+    @property
     def is_exported(self) -> bool:
         """Whether this object/alias is exported (listed in `__all__`)."""
         result = self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
@@ -377,7 +382,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
             return self.name in self.parent.exports  # type: ignore[attr-defined]
         if self.name.startswith("_"):  # type: ignore[attr-defined]
             return False
-        return self.is_alias or not self.is_module or self.name in self.parent.imports  # type: ignore[attr-defined]
+        return self.is_alias or not self.is_module or self.is_imported  # type: ignore[attr-defined]
 
     @property
     def is_public(self) -> bool:
