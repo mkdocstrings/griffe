@@ -296,12 +296,32 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
 
     @property
     def has_private_name(self) -> bool:
-        """Whether this object/alias has a private name."""
+        """Deprecated. Use [`is_private`][griffe.Object.is_private] instead."""
+        warnings.warn(
+            "The `has_private_name` property is deprecated. Use `is_private` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.name.startswith("_")  # type: ignore[attr-defined]
 
     @property
     def has_special_name(self) -> bool:
-        """Whether this object/alias has a special name."""
+        """Deprecated. Use [`is_special`][griffe.Object.is_special] instead."""
+        warnings.warn(
+            "The `has_special_name` property is deprecated. Use `is_special` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.name.startswith("__") and self.name.endswith("__")  # type: ignore[attr-defined]
+
+    @property
+    def is_private(self) -> bool:
+        """Whether this object/alias is private (starts with `_`) but not special."""
+        return self.name.startswith("_") and not self.is_special  # type: ignore[attr-defined]
+
+    @property
+    def is_special(self) -> bool:
+        """Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`)."""
         return self.name.startswith("__") and self.name.endswith("__")  # type: ignore[attr-defined]
 
     @property
@@ -350,7 +370,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
             return False
         if self.parent.exports is not None:  # type: ignore[attr-defined]
             return self.name in self.parent.exports  # type: ignore[attr-defined]
-        if self.has_private_name:
+        if self.name.startswith("_"):  # type: ignore[attr-defined]
             return False
         return self.is_alias or not self.is_module or self.name in self.parent.imports  # type: ignore[attr-defined]
 
@@ -383,7 +403,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         # Special objects are always considered public.
         # Even if we don't access them directly, they are used through different *public* means
         # like instantiating classes (`__init__`), using operators (`__eq__`), etc..
-        if self.has_private_name and not self.has_special_name:
+        if self.is_private:
             return _False  # type: ignore[return-value]
 
         # TODO: In a future version, we will support two conventions regarding imports:
