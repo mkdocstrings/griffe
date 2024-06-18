@@ -343,16 +343,22 @@ class Object(ObjectAliasMixin):
         """
         self.name: str = name
         """The object name."""
+
         self.lineno: int | None = lineno
         """The starting line number of the object."""
+
         self.endlineno: int | None = endlineno
         """The ending line number of the object."""
+
         self.docstring: Docstring | None = docstring
         """The object docstring."""
+
         self.parent: Module | Class | None = parent
         """The parent of the object (none if top module)."""
+
         self.members: dict[str, Object | Alias] = {}
         """The object members (modules, classes, functions, attributes)."""
+
         self.labels: set[str] = set()
         """The object labels (`property`, `dataclass`, etc.)."""
 
@@ -390,6 +396,7 @@ class Object(ObjectAliasMixin):
 
         self.extra: dict[str, dict[str, Any]] = defaultdict(dict)
         """Namespaced dictionaries storing extra metadata for this object, used by extensions."""
+
         self.public: bool | None = None
         """Whether this object is public."""
 
@@ -829,21 +836,28 @@ class Alias(ObjectAliasMixin):
         """
         self.name: str = name
         """The alias name."""
+
         self.alias_lineno: int | None = lineno
         """The starting line number of the alias."""
+
         self.alias_endlineno: int | None = endlineno
         """The ending line number of the alias."""
+
         self.runtime: bool = runtime
         """Whether this alias is available at runtime."""
+
         self.inherited: bool = inherited
         """Whether this alias represents an inherited member."""
+
         self.public: bool | None = None
         """Whether this alias is public."""
+
         self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False
 
         self.target_path: str
         """The path of this alias' target."""
+
         if isinstance(target, str):
             self._target: Object | Alias | None = None
             self.target_path = target
