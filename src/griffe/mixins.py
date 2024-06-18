@@ -376,12 +376,20 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         Returns:
             True or False.
         """
+        # If the object is not available at runtime or is not defined at the module level, it is not exposed.
         if not self.runtime or not self.parent.is_module:  # type: ignore[attr-defined]
             return False
+
+        # If the parent module defines `__all__`, the object is exposed if it is listed in it.
         if self.parent.exports is not None:  # type: ignore[attr-defined]
             return self.name in self.parent.exports  # type: ignore[attr-defined]
+
+        # If the object's name starts with an underscore, it is not exposed.
+        # We don't use `is_private` or `is_special` here to avoid redundant string checks.
         if self.name.startswith("_"):  # type: ignore[attr-defined]
             return False
+
+        # Special case for Griffe trees: a submodule is only exposed if its parent imports it.
         return self.is_alias or not self.is_module or self.is_imported  # type: ignore[attr-defined]
 
     @property
