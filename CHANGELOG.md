@@ -5,6 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.47.0](https://github.com/mkdocstrings/griffe/releases/tag/0.47.0) - 2024-06-18
+
+<small>[Compare with 0.46.1](https://github.com/mkdocstrings/griffe/compare/0.46.1...0.47.0)</small>
+
+WARNING: **⚡ Imminent v1! ⚡🚀 See [v0.46](#0460-2024-06-16).**
+
+### Deprecations
+
+- The `has_private_name` and `has_special_name` properties on objects and aliases have been renamed `is_private` and `is_special`. The `is_private` property now only returns true if the name is *not* special.
+
+### Features
+
+- Add `deprecated` attribute and `is_deprecated` property to objects/aliases ([2a75d84](https://github.com/mkdocstrings/griffe/commit/2a75d84265b40983ce4a1eb148677efb803f78c6) by Timothée Mazzucotelli).
+- Add `is_imported` property to objects/aliases ([de926cc](https://github.com/mkdocstrings/griffe/commit/de926cc4782d53b9b28a2f887890d7711dfbc667) by Timothée Mazzucotelli).
+- Add `is_class_private` property to objects/aliases ([491b6c4](https://github.com/mkdocstrings/griffe/commit/491b6c4da086a68e8e1eee13f2d4b7840390b6b9) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Rename `has_private_name` and `has_special_name` to `is_private` and `is_special` ([ae7c7e7](https://github.com/mkdocstrings/griffe/commit/ae7c7e73e7bf7f02b86fc58503888113d98e8e39) by Timothée Mazzucotelli).
+
 ## [0.46.1](https://github.com/mkdocstrings/griffe/releases/tag/0.46.1) - 2024-06-17
 
 <small>[Compare with 0.46.0](https://github.com/mkdocstrings/griffe/compare/0.46.0...0.46.1)</small>
