@@ -1,5 +1,7 @@
 # Agents
 
+## **Main API**
+
 ::: griffe.visit
     options:
         heading_level: 2
@@ -7,6 +9,8 @@
 ::: griffe.inspect
     options:
         heading_level: 2
+
+## **Advanced API**
 
 ::: griffe.Visitor
     options:
@@ -16,51 +20,98 @@
     options:
         heading_level: 2
 
-## Dynamic analysis helpers
+## **Dynamic analysis helpers**
 
-### ::: griffe.sys_path
-### ::: griffe.dynamic_import
+::: griffe.sys_path
+    options:
+        heading_level: 2
 
-## AST and runtime utilities
+::: griffe.dynamic_import
+    options:
+        heading_level: 2
 
-### ::: griffe.get_name
+::: griffe.ObjectNode
+    options:
+        heading_level: 2
 
-### ::: griffe.get_names
+## **Static analysis helpers**
 
-### ::: griffe.get_instance_names
+::: griffe.ast_kind
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_kind
+::: griffe.ast_children
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_children
+::: griffe.ast_previous_siblings
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_previous_siblings
+::: griffe.ast_next_siblings
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_next_siblings
+::: griffe.ast_siblings
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_siblings
+::: griffe.ast_previous
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_previous
+::: griffe.ast_next
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_next
+::: griffe.ast_first_child
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_first_child
+::: griffe.ast_last_child
+    options:
+        heading_level: 2
 
-### ::: griffe.ast_last_child
+::: griffe.get_docstring
+    options:
+        heading_level: 2
 
-### ::: griffe.get_docstring
+::: griffe.get_name
+    options:
+        heading_level: 2
 
-### ::: griffe.ExportedName
+::: griffe.get_names
+    options:
+        heading_level: 2
 
-### ::: griffe.get__all__
+::: griffe.get_instance_names
+    options:
+        heading_level: 2
 
-### ::: griffe.safe_get__all__
+::: griffe.ExportedName
+    options:
+        heading_level: 2
 
-### ::: griffe.relative_to_absolute
+::: griffe.get__all__
+    options:
+        heading_level: 2
 
-### ::: griffe.get_parameters
+::: griffe.safe_get__all__
+    options:
+        heading_level: 2
 
-### ::: griffe.ObjectNode
+::: griffe.relative_to_absolute
+    options:
+        heading_level: 2
 
-### ::: griffe.get_value
+::: griffe.get_parameters
+    options:
+        heading_level: 2
 
-### ::: griffe.safe_get_value
+::: griffe.get_value
+    options:
+        heading_level: 2
+
+::: griffe.safe_get_value
+    options:
+        heading_level: 2

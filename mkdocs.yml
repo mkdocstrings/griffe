@@ -72,9 +72,7 @@ nav:
     - Docstrings:
       - reference/api/docstrings.md
       - Models: reference/api/docstrings/models.md
-      - Google: reference/api/docstrings/google.md
-      - Numpy: reference/api/docstrings/numpy.md
-      - Sphinx: reference/api/docstrings/sphinx.md
+      - Parsers: reference/api/docstrings/parsers.md
     - Exceptions: reference/api/exceptions.md
     - Expressions: reference/api/expressions.md
     - Git utilities: reference/api/git.md

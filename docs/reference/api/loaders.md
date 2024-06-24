@@ -6,9 +6,7 @@
         show_root_heading: false
         show_root_toc_entry: false
 
-::: griffe.GriffeLoader
-    options:
-        heading_level: 2
+## **Main API**
 
 ::: griffe.load
     options:
@@ -18,7 +16,9 @@
     options:
         heading_level: 2
 
-::: griffe.merge_stubs
+## **Advanced API**
+
+::: griffe.GriffeLoader
     options:
         heading_level: 2
 
@@ -30,6 +30,12 @@
     options:
         heading_level: 2
 
+## **Additional API**
+
 ::: griffe.Stats
+    options:
+        heading_level: 2
+
+::: griffe.merge_stubs
     options:
         heading_level: 2

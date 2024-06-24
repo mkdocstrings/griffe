@@ -1,15 +1,13 @@
-# Finder
+# Docstring parsers
 
-## **Advanced API**
-
-::: griffe.ModuleFinder
+::: griffe.parse_google
     options:
         heading_level: 2
 
-::: griffe.Package
+::: griffe.parse_numpy
     options:
         heading_level: 2
 
-::: griffe.NamespacePackage
+::: griffe.parse_sphinx
     options:
         heading_level: 2

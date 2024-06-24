@@ -1,5 +1,13 @@
 # Expressions
 
+::: _griffe.expressions
+    options:
+        members: false
+        show_root_heading: false
+        show_root_toc_entry: false
+        summary:
+            classes: true
+
 ::: griffe.Expr
     options:
         heading_level: 2

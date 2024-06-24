@@ -175,7 +175,7 @@ We will try to lift these limitations in the future.
 
 Each object holds a reference to its parent (except for the top-level module, for which the parent is `None`). Accessing the parent is as easy as doing `obj.parent`.
 
-Many of the available data fields are computed thanks to this parent, allowing us to climb the tree up to its root, the top-level module. Some of the fields taking advantage of [`parent`](griffe.Object.parent) are:
+Many of the available data fields are computed thanks to this parent, allowing us to climb the tree up to its root, the top-level module. Some of the fields taking advantage of [`parent`][griffe.Object.parent] are:
 
 - [`module`][griffe.Object.module], which is the parent module of any object nested within it:
 

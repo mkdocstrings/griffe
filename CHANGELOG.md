@@ -53,10 +53,10 @@ We are still in v0, so no major bump yet.
 ### Deprecations
 
 - As seen above in the breaking changes section, the only parameters of [`Object.has_labels()`][griffe.Object.has_labels] and [`load_extensions()`][griffe.load_extensions] both became variadic positional parameters. Passing a sequence as single argument is deprecated in favor of passing multiple arguments. This is an ergonomic change: I myself often forgot to wrap extensions in a list. Passing sequences of labels (lists, sets, tuples) is also difficult from Jinja templates.
-- The following methods and properties on objects and aliases are deprecated: [`member_is_exported()`][griffe.Object.member_is_exported], [`is_explicitely_exported`][griffe.mixins.ObjectAliasMixin.is_explicitely_exported], [`is_implicitely_exported`][griffe.mixins.ObjectAliasMixin.is_implicitely_exported]. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- The [`is_exported()`][griffe.mixins.ObjectAliasMixin.is_exported] and [`is_public()`][griffe.mixins.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The following methods and properties on objects and aliases are deprecated: [`member_is_exported()`][griffe.Object.member_is_exported], [`is_explicitely_exported`][griffe.ObjectAliasMixin.is_explicitely_exported], [`is_implicitely_exported`][griffe.ObjectAliasMixin.is_implicitely_exported]. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The [`is_exported()`][griffe.ObjectAliasMixin.is_exported] and [`is_public()`][griffe.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
 - The `ignore_private` parameter of the [`find_breaking_changes()`][griffe.find_breaking_changes] function is now deprecated and unused. With the reworked "exported" and "public" API, this parameter became useless. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- Using `stats()` instead of [`Stats`][griffe.stats.Stats] will now emit a deprecation warning.
+- Using `stats()` instead of [`Stats`][griffe.Stats] will now emit a deprecation warning.
 
 ### Features
 

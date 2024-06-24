@@ -659,7 +659,7 @@ By default, Griffe will print each detected breakage on a single line, on `stder
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe check griffe -ssrc -b0.24.0 -a0.23.0
+$ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
 
 Depending on the detected breakages, the lines might be hard to read (being too compact),
@@ -667,5 +667,5 @@ so `griffe check` also accepts a `--verbose` or `-v` option to add some space to
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe check griffe -ssrc -b0.24.0 -a0.23.0 --verbose
+$ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```

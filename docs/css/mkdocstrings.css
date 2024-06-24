@@ -36,3 +36,8 @@ a.autorefs-external:hover::after {
   --doc-symbol-parameter-fg-color: #829bd1;
   --doc-symbol-parameter-bg-color: #829bd11a;
 }
+
+/* Hide parameters in ToC. */
+li.md-nav__item:has(> a[href*="("]) {
+  display: none;
+}
