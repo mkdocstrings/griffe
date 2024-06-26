@@ -15,7 +15,7 @@ from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
 from packaging.requirements import Requirement
 
-# TODO: Remove once support for Python 3.10 is dropped.
+# YORE: EOL 3.10: Replace block with line 2.
 if sys.version_info >= (3, 11):
     import tomllib
 else:

@@ -88,7 +88,7 @@ class JSONEncoder(json.JSONEncoder):
         super().__init__(*args, **kwargs)
         self.full: bool = full
 
-        # TODO: Remove at some point.
+        # YORE: Bump 1.0.0: Remove block.
         self.docstring_parser: Parser | None = docstring_parser
         self.docstring_options: dict[str, Any] = docstring_options or {}
         if docstring_parser is not None:

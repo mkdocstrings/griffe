@@ -21,7 +21,7 @@ _cyclic_relationships = {
 
 
 def _same_components(a: str, b: str, /) -> bool:
-    # TODO: Use `removeprefix` when we drop Python 3.8.
+    # YORE: EOL 3.8: Replace `lstrip` with `removeprefix` within line.
     return [cpn.lstrip("_") for cpn in a.split(".")] == [cpn.lstrip("_") for cpn in b.split(".")]
 
 

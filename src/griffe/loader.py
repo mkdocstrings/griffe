@@ -94,7 +94,7 @@ class GriffeLoader:
             "time_spent_inspecting": 0,
         }
 
-    # TODO: Remove at some point.
+    # YORE: Bump 1.0.0: Remove block.
     def load_module(
         self,
         module: str | Path,
@@ -127,7 +127,7 @@ class GriffeLoader:
         submodules: bool = True,
         try_relative_path: bool = True,
         find_stubs_package: bool = False,
-        # TODO: Remove at some point.
+        # YORE: Bump 1.0.0: Remove line.
         module: str | Path | None = None,
     ) -> Object | Alias:
         """Load an object as a Griffe object, given its Python or file path.
@@ -160,10 +160,9 @@ class GriffeLoader:
         Returns:
             A Griffe object.
         """
-        # TODO: Remove at some point.
+        # YORE: Bump 1.0.0: Remove block.
         if objspec is None and module is None:
             raise TypeError("load() missing 1 required positional argument: 'objspec'")
-
         if objspec is None:
             objspec = module
             warnings.warn(
@@ -740,7 +739,7 @@ def load(
     force_inspection: bool = False,
     store_source: bool = True,
     find_stubs_package: bool = False,
-    # TODO: Remove at some point.
+    # YORE: Bump 1.0.0: Remove line.
     module: str | Path | None = None,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
@@ -809,7 +808,7 @@ def load(
         submodules=submodules,
         try_relative_path=try_relative_path,
         find_stubs_package=find_stubs_package,
-        # TODO: Remove at some point.
+        # YORE: Bump 1.0.0: Remove line.
         module=module,
     )
     if resolve_aliases:
@@ -833,7 +832,7 @@ def load_git(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     find_stubs_package: bool = False,
-    # TODO: Remove at some point.
+    # YORE: Bump 1.0.0: Remove line.
     module: str | Path | None = None,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
@@ -885,9 +884,11 @@ def load_git(
         search_paths = [worktree / path for path in search_paths or ["."]]
         if isinstance(objspec, Path):
             objspec = worktree / objspec
-        # TODO: Remove at some point.
+
+        # YORE: Bump 1.0.0: Remove block.
         if isinstance(module, Path):
             module = worktree / module
+
         return load(
             objspec,
             submodules=submodules,
@@ -901,7 +902,7 @@ def load_git(
             allow_inspection=allow_inspection,
             force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
-            # TODO: Remove at some point.
+            # YORE: Bump 1.0.0: Remove line.
             module=module,
             resolve_aliases=resolve_aliases,
             resolve_external=resolve_external,

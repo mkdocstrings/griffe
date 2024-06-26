@@ -152,7 +152,7 @@ class Docstring:
         Returns:
             A dictionary.
         """
-        # TODO: Remove at some point.
+        # YORE: Bump 1.0.0: Remove block.
         if docstring_parser is not None:
             warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
 
@@ -527,6 +527,7 @@ class Object(ObjectAliasMixin):
         """Whether this object is a namespace subpackage."""
         return False
 
+    # YORE: Bump 1.0.0: Replace ` | set[str]` with `` within line.
     def has_labels(self, *labels: str | set[str]) -> bool:
         """Tell if this object has all the given labels.
 
@@ -536,7 +537,7 @@ class Object(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        # TODO: Remove at some point.
+        # YORE: Bump 1.0.0: Remove block.
         all_labels = set()
         for label in labels:
             if isinstance(label, str):
@@ -548,6 +549,8 @@ class Object(ObjectAliasMixin):
                     stacklevel=2,
                 )
                 all_labels.update(label)
+
+        # YORE: Bump 1.0.0: Replace `all_labels` with `set(labels)` within line.
         return all_labels.issubset(self.labels)
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:

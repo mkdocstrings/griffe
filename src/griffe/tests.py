@@ -317,10 +317,12 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
     parts = path.split(".")
     modules = [Module(name, filepath=Path(*parts[:index], "__init__.py")) for index, name in enumerate(parts)]
     if not leaf_package:
+        # YORE: EOL 3.8: Replace block with line 2.
         try:
             filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[union-attr]
-        except AttributeError:  # TODO: remove once Python 3.8 is dropped
+        except AttributeError:
             filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")  # type: ignore[union-attr]
+
         modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]
 

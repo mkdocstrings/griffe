@@ -73,7 +73,7 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
     return fields
 
 
-# TODO: Merge in decorators once Python 3.9 is dropped.
+# YORE: EOL 3.9: Remove block.
 dataclass_opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
     dataclass_opts["slots"] = True
@@ -171,6 +171,7 @@ class Expr:
         return isinstance(self, ExprSubscript) and self.canonical_name == "Generator"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprAttribute(Expr):
     """Attributes like `a.b`."""
@@ -214,6 +215,7 @@ class ExprAttribute(Expr):
         return self.last.canonical_path
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprBinOp(Expr):
     """Binary operations like `a + b`."""
@@ -231,6 +233,7 @@ class ExprBinOp(Expr):
         yield from _yield(self.right, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprBoolOp(Expr):
     """Boolean operations like `a or b`."""
@@ -244,6 +247,7 @@ class ExprBoolOp(Expr):
         yield from _join(self.values, f" {self.operator} ", flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprCall(Expr):
     """Calls like `f()`."""
@@ -265,6 +269,7 @@ class ExprCall(Expr):
         yield ")"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprCompare(Expr):
     """Comparisons like `a > b`."""
@@ -282,6 +287,7 @@ class ExprCompare(Expr):
         yield from _join(zip_longest(self.operators, [], self.comparators, fillvalue=" "), " ", flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprComprehension(Expr):
     """Comprehensions like `a for b in c if d`."""
@@ -307,6 +313,7 @@ class ExprComprehension(Expr):
             yield from _join(self.conditions, " if ", flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprConstant(Expr):
     """Constants like `"a"` or `1`."""
@@ -318,6 +325,7 @@ class ExprConstant(Expr):
         yield self.value
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprDict(Expr):
     """Dictionaries like `{"a": 0}`."""
@@ -337,6 +345,7 @@ class ExprDict(Expr):
         yield "}"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprDictComp(Expr):
     """Dict comprehensions like `{k: v for k, v in a}`."""
@@ -357,6 +366,7 @@ class ExprDictComp(Expr):
         yield "}"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprExtSlice(Expr):
     """Extended slice like `a[x:y, z]`."""
@@ -368,6 +378,7 @@ class ExprExtSlice(Expr):
         yield from _join(self.dims, ", ", flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprFormatted(Expr):
     """Formatted string like `{1 + 1}`."""
@@ -381,6 +392,7 @@ class ExprFormatted(Expr):
         yield "}"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprGeneratorExp(Expr):
     """Generator expressions like `a for b in c for d in e`."""
@@ -396,6 +408,7 @@ class ExprGeneratorExp(Expr):
         yield from _join(self.generators, " ", flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprIfExp(Expr):
     """Conditions like `a if b else c`."""
@@ -415,6 +428,7 @@ class ExprIfExp(Expr):
         yield from _yield(self.orelse, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprJoinedStr(Expr):
     """Joined strings like `f"a {b} c"`."""
@@ -428,6 +442,7 @@ class ExprJoinedStr(Expr):
         yield "'"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprKeyword(Expr):
     """Keyword arguments like `a=b`."""
@@ -468,6 +483,7 @@ class ExprKeyword(Expr):
         yield from _yield(self.value, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprVarPositional(Expr):
     """Variadic positional parameters like `*args`."""
@@ -480,6 +496,7 @@ class ExprVarPositional(Expr):
         yield from _yield(self.value, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprVarKeyword(Expr):
     """Variadic keyword parameters like `**kwargs`."""
@@ -492,6 +509,7 @@ class ExprVarKeyword(Expr):
         yield from _yield(self.value, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprLambda(Expr):
     """Lambda expressions like `lambda a: a.b`."""
@@ -534,6 +552,7 @@ class ExprLambda(Expr):
         yield from _yield(self.body, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprList(Expr):
     """Lists like `[0, 1, 2]`."""
@@ -547,6 +566,7 @@ class ExprList(Expr):
         yield "]"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprListComp(Expr):
     """List comprehensions like `[a for b in c]`."""
@@ -564,6 +584,7 @@ class ExprListComp(Expr):
         yield "]"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=False, **dataclass_opts)
 class ExprName(Expr):
     """This class represents a Python object identified by a name in a given scope."""
@@ -643,6 +664,7 @@ class ExprName(Expr):
             return False
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprNamedExpr(Expr):
     """Named/assignment expressions like `a := b`."""
@@ -660,6 +682,7 @@ class ExprNamedExpr(Expr):
         yield ")"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprParameter(Expr):
     """Parameters in function signatures like `a: int = 0`."""
@@ -674,6 +697,7 @@ class ExprParameter(Expr):
     """Parameter default."""
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprSet(Expr):
     """Sets like `{0, 1, 2}`."""
@@ -687,6 +711,7 @@ class ExprSet(Expr):
         yield "}"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprSetComp(Expr):
     """Set comprehensions like `{a for b in c}`."""
@@ -704,6 +729,7 @@ class ExprSetComp(Expr):
         yield "}"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprSlice(Expr):
     """Slices like `[a:b:c]`."""
@@ -726,6 +752,7 @@ class ExprSlice(Expr):
             yield from _yield(self.step, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprSubscript(Expr):
     """Subscripts like `a[b]`."""
@@ -756,6 +783,7 @@ class ExprSubscript(Expr):
         return self.left.canonical_path
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprTuple(Expr):
     """Tuples like `(0, 1, 2)`."""
@@ -773,6 +801,7 @@ class ExprTuple(Expr):
             yield ")"
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprUnaryOp(Expr):
     """Unary operations like `-1`."""
@@ -787,6 +816,7 @@ class ExprUnaryOp(Expr):
         yield from _yield(self.value, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprYield(Expr):
     """Yield statements like `yield a`."""
@@ -801,6 +831,7 @@ class ExprYield(Expr):
             yield from _yield(self.value, flat=flat)
 
 
+# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **dataclass_opts)
 class ExprYieldFrom(Expr):
     """Yield statements like `yield from a`."""
@@ -1135,7 +1166,7 @@ _node_map: dict[type, Callable[[Any, Module | Class], Expr]] = {
     ast.YieldFrom: _build_yield_from,
 }
 
-# TODO: remove once Python 3.8 support is dropped
+# YORE: EOL 3.8: Remove block.
 if sys.version_info < (3, 9):
 
     def _build_extslice(node: ast.ExtSlice, parent: Module | Class, **kwargs: Any) -> Expr:

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from griffe.logger import get_logger
 
-# TODO: Remove once support for Python 3.8 is dropped.
+# YORE: EOL 3.8: Replace block with line 4.
 if sys.version_info < (3, 9):
     from astunparse import unparse
 else:
