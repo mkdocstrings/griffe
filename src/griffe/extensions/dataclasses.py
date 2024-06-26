@@ -80,6 +80,10 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
         if member.is_attribute:
             member = cast(Attribute, member)
 
+            # All dataclass parameters have annotations
+            if member.annotation is None:
+                continue
+
             # Attributes that have labels for these characteristics are
             # not class parameters:
             #   - @property
