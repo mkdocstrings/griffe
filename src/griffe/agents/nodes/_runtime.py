@@ -269,7 +269,7 @@ class ObjectNode:
             child_module_path = child_module_path.lstrip("_")
         if self.is_module:
             return child_module_path
-        child_name = getattr(self.obj, "__name__", self.name)
+        child_name = getattr(self.obj, "__qualname__", self.path[len(self.module.path) + 1 :])
         return f"{child_module_path}.{child_name}"
 
 
