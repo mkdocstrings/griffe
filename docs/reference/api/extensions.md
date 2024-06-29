@@ -21,6 +21,7 @@
 ::: griffe.DataclassesExtension
     options:
         heading_level: 2
+        inherited_members: false
 
 ## **Deprecated API**
 

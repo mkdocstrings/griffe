@@ -62,7 +62,7 @@ These topics explore the user side: how to write code to better integrate with G
 
     See our recommendations for exposing public APIs to your users.
 
-    [:octicons-arrow-right-24: See our public API recommendations](users/public-api.md)
+    [:octicons-arrow-right-24: See our public API recommendations](users/public-apis.md)
 
 -   :material-star-face:{ .lg .middle } **Python code best practices**
 
@@ -70,7 +70,7 @@ These topics explore the user side: how to write code to better integrate with G
 
     See our best practices for writing Python code.
 
-    [:octicons-arrow-right-24: See our best practices](users/best-practices.md)
+    [:octicons-arrow-right-24: See our best practices](users/python-code.md)
 
 -   :material-text:{ .lg .middle } **Docstrings**
 

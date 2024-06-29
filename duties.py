@@ -76,10 +76,10 @@ def check(ctx: Context) -> None:  # noqa: ARG001
 
     Composite command to run all the check commands:
 
-    - [`check-quality`](#check-quality), to check the code quality on all Python versions
-    - [`check-types`](#check-quality), to type-check the code on all Python versions
-    - [`check-docs`](#check-quality), to check the docs on all Python versions
-    - [`check-api`](#check-api), to check for API breaking changes
+    - [`check-quality`][], to check the code quality on all Python versions
+    - [`check-types`][], to type-check the code on all Python versions
+    - [`check-docs`][], to check the docs on all Python versions
+    - [`check-api`][], to check for API breaking changes
     """
 
 

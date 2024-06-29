@@ -319,13 +319,13 @@ class Object(ObjectAliasMixin):
     kind: Kind
     """The object kind."""
     is_alias: bool = False
-    """Whether this object is an alias."""
+    """Always false for objects."""
     is_collection: bool = False
-    """Whether this object is a (modules) collection."""
+    """Always false for objects."""
     inherited: bool = False
-    """Whether this object (alias) is inherited.
+    """Always false for objects.
 
-    Objects can never be inherited, only aliases can.
+    Only aliases can be marked as inherited.
     """
 
     def __init__(
@@ -585,6 +585,15 @@ class Object(ObjectAliasMixin):
     def module(self) -> Module:
         """The parent module of this object.
 
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown["core.Markdown.references"].module
+            Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))
+            >>> # The `module` of a module is itself.
+            >>> markdown["core"].module
+            Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))
+
         Raises:
             ValueError: When the object is not a module and does not have a parent.
         """
@@ -596,7 +605,14 @@ class Object(ObjectAliasMixin):
 
     @property
     def package(self) -> Module:
-        """The absolute top module (the package) of this object."""
+        """The absolute top module (the package) of this object.
+
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown["core.Markdown.references"].package
+            Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py'))
+        """
         module = self.module
         while module.parent:
             module = module.parent  # type: ignore[assignment]  # always a module
@@ -604,7 +620,14 @@ class Object(ObjectAliasMixin):
 
     @property
     def filepath(self) -> Path | list[Path]:
-        """The file path (or directory list for namespace packages) where this object was defined."""
+        """The file path (or directory list for namespace packages) where this object was defined.
+
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown.filepath
+            PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py')
+        """
         return self.module.filepath
 
     @property
@@ -673,6 +696,12 @@ class Object(ObjectAliasMixin):
         """The dotted path of this object.
 
         On regular objects (not aliases), the path is the canonical path.
+
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown["core.Markdown.references"].path
+            'markdown.core.Markdown.references'
         """
         return self.canonical_path
 
@@ -748,6 +777,9 @@ class Object(ObjectAliasMixin):
         Returns:
             The resolved name.
         """
+        # TODO: Better match Python's own scoping rules?
+        # Also, maybe return regular paths instead of canonical ones?
+
         # Name is a member this object.
         if name in self.members:
             if self.members[name].is_alias:
@@ -826,7 +858,9 @@ class Alias(ObjectAliasMixin):
     """
 
     is_alias: bool = True
+    """Always true for aliases."""
     is_collection: bool = False
+    """Always false for aliases."""
 
     def __init__(
         self,
@@ -1479,7 +1513,7 @@ class Module(Object):
         super().__init__(*args, **kwargs)
         self._filepath: Path | list[Path] | None = filepath
         self.overloads: dict[str, list[Function]] = defaultdict(list)
-        """The overloaded signature declared in this module."""
+        """The overloaded signatures declared in this module."""
 
     def __repr__(self) -> str:
         try:

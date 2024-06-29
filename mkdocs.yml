@@ -40,9 +40,11 @@ nav:
       - Checking: guide/users/checking.md
       - Extending: guide/users/extending.md
     - Recommendations:
-      - Public API: guide/users/public-api.md
-      - Python code: guide/users/best-practices.md
+      - Public APIs: guide/users/public-apis.md
+      - Python code: guide/users/python-code.md
       - Docstrings: guide/users/docstrings.md
+    - How-to:
+      - Parse docstrings: guide/users/how-to/parse-docstrings.md
   - Contributor guide:
     - guide/contributors.md
     - Environment setup: guide/contributors/setup.md
@@ -67,6 +69,7 @@ nav:
       - Attribute: reference/api/models/attribute.md
       - Alias: reference/api/models/alias.md
     - Agents: reference/api/agents.md
+    - Serializers: reference/api/serializers.md
     - API checks: reference/api/checks.md
     - Extensions: reference/api/extensions.md
     - Docstrings:
@@ -166,6 +169,7 @@ markdown_extensions:
 
 plugins:
 - search
+- autorefs
 - markdown-exec:
     ansi: required
 - gen-files:

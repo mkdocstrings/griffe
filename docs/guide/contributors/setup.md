@@ -1,6 +1,6 @@
 # Environment setup
 
-To work on the project, whether to update the code or the documentation, you will have to setup a development environment. See [TL;DR](#tldr) at the end for a short summary.
+To work on the project, whether to update the code or the documentation, you will have to setup a development environment.
 
 ## Requirements
 

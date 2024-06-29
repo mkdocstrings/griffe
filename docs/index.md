@@ -44,7 +44,7 @@ Griffe can be used as a Python library. For example, the [Python handler](https:
 
 ```console exec="1" source="console" result="json" title="Serializing as JSON"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
+$ griffe dump griffe -ssrc -r 2>/dev/null | head -n24
 ```
 
 </div>
@@ -52,7 +52,7 @@ $ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
 
 ```console exec="1" source="console" result="ansi" returncode="1" title="Checking for API breaking changes"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe check griffe -ssrc -b0.45.0 -a0.44.0 --verbose
+$ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
 
 </div>

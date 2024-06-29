@@ -16,6 +16,12 @@ The 5 models:
 - [`Attribute`][griffe.Attribute]
 - [`Alias`][griffe.Alias]
 
+## **Model kind enumeration**
+
+::: griffe.Kind
+    options:
+        heading_level: 2
+
 ## **Models base classes**
 
 ::: griffe.GetMembersMixin
@@ -47,6 +53,3 @@ The 5 models:
 ::: griffe.Object
     options:
         heading_level: 2
-        members: false
-        inherited_members: false
-        parameter_headings: false

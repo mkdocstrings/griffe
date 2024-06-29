@@ -28,9 +28,13 @@ When [loading an object](loading.md), Griffe will give you back an instance of o
 
 However deep is the object, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.
 
-## Members
+## Moving up: parents
 
-To access members, there are more options:
+Each object holds a reference to its [`parent`][griffe.Object.parent] (except for the top-level module, for which the parent is `None`). Shortcuts are provided to climb up directly to the parent [`module`][griffe.Object.module], or the top-level [`package`][griffe.Object.package]. As we have seen in the [Loading chapter](loading.md), Griffe stores all loaded modules in a modules collection; this collection can be accessed too, through the [`modules_collection`][griffe.Object.modules_collection] attribute.
+
+## Moving down: members
+
+To access an object's members, there are a few options:
 
 - Access to regular members through the [`members`][griffe.Object.members] attribute, which is a dictionary. The keys are member names, the values are Griffe models.
 
@@ -93,11 +97,13 @@ The same way members are accessed, they can also be set:
 - Safer method for extensions: `markdown.del_member("thing")`, also supporting dotted-paths and string tuples. This will not delete inherited members for classes.
 - Regular member deletion: `del markdown.members["thing"]`. **This is not recommended, as the [`aliases`][griffe.Object.aliases] attribute of other objects in the tree will not be automatically updated.**
 
-## Inherited members
+### Inherited members
 
 Griffe supports class inheritance, both when visiting and inspecting modules.
 
 To access members of a class that are inherited from base classes, use the [`inherited_members`][griffe.Object.inherited_members] attribute. If this is the first time you access inherited members, the base classes of the given class will be resolved and cached, then the MRO (Method Resolution Order) will be computed for these bases classes, and a dictionary of inherited members will be built and cached. Next times you access it, you'll get the cached dictionary. Make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+
+Inherited members are aliases that point at the corresponding members in parent classes. These aliases will have their [`inherited`][griffe.Alias.inherited] attribute set to true.
 
 **Important:** only classes from already loaded packages will be used when computing inherited members. This gives users control over how deep into inheritance to go, by pre-loading packages from which you want to inherit members. For example, if `package_c.ClassC` inherits from `package_b.ClassB`, itself inheriting from `package_a.ClassA`, and you want to load `ClassB` members only:
 
@@ -116,7 +122,7 @@ If you want to access all members at once (both declared and inherited), use the
 
 Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by Griffe. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
-### Limitations
+#### Limitations
 
 Currently, there are three limitations to our class inheritance support:
 
@@ -171,51 +177,223 @@ Currently, there are three limitations to our class inheritance support:
 
 We will try to lift these limitations in the future.
 
-## Data fields
+## Aliases
 
-Each object holds a reference to its parent (except for the top-level module, for which the parent is `None`). Accessing the parent is as easy as doing `obj.parent`.
+Aliases represent indirections, such as objects imported from elsewhere, or attribute and methods inherited from parent classes. They are pointers to the object they represent. The path of the object they represent is stored in their [`target_path`][griffe.Alias.target_path] attribute. Once they are resolved, the target object can be accessed through their [`target`][griffe.Alias.target] attribute.
 
-Many of the available data fields are computed thanks to this parent, allowing us to climb the tree up to its root, the top-level module. Some of the fields taking advantage of [`parent`][griffe.Object.parent] are:
+Aliases can be found in objects' members. Each object can also access its own aliases (the aliases pointing at it) through its [`aliases`][griffe.Object.aliases] attribute. This attribute is a dictionary whose keys are the aliases paths and values are the aliases themselves.
 
-- [`module`][griffe.Object.module], which is the parent module of any object nested within it:
+Most of the time, aliases simply act as proxies to their target objects. For example, accessing the `docstring` of an alias will simply return the docstring of the object it targets.
 
-    ```pycon
-    >>> import griffe
-    >>> markdown = griffe.load("markdown")
-    >>> markdown["core.Markdown.references"].module
-    Module(PosixPath('.venv/lib/python3.11/site-packages/markdown/core.py'))
-    >>> # The `module` of a module is itself.
-    >>> markdown["core"].module
-    Module(PosixPath('.venv/lib/python3.11/site-packages/markdown/core.py'))
+Accessing fields on aliases will trigger their resolution. If they are already resolved (their `target` attribute is set to the target object), the field is returned. If they are not resolved, their target path will be looked up in the modules collection, and if it is found, the object at this location will be assigned to the alias' `target` attribute. If it isn't found, an [`AliasResolutionError`][griffe.AliasResolutionError] exception will be raised.
+
+Since merely accessing an alias field can raise an exception, it is often useful to check if an object is an alias before accessing its fields. There are multiple ways to check if an object is an alias:
+
+- using the `is_alias` boolean ([`Object.is_alias`][griffe.Object.is_alias], [`Alias.is_alias`][griffe.Alias.is_alias]), which won't trigger resolution
+- using `isinstance` to check if the object is an instance of [`Alias`][griffe.Alias]
+
+```pycon
+>>> import griffe
+>>> load = griffe.load("griffe.load")
+>>> load.is_alias
+True
+>>> isinstance(load, griffe.Alias)
+True
+```
+
+The [`kind`][griffe.Alias.kind] of an alias will only return [`ALIAS`][griffe.Kind.ALIAS] if the alias is not resolved and cannot be resolved within the current modules collection.
+
+You can of course also catch any raised exception with a regular try/except block:
+
+```python
+try:
+    print(obj.source)
+except griffe.AliasResolutionError:
+    pass
+```
+
+To check if an alias is already resolved, you can use its [`resolved`][griffe.Alias.resolved] attribute.
+
+### Alias chains
+
+Aliases can be chained. For example, if module `a` imports `X` from module `b`, which itself imports `X` from module `c`, then `a.X` is an alias to `b.X` which is an alias to `c.X`: `a.X` -> `b.X` -> `c.X`. To access the final target directly, you can use the [`final_target`][griffe.Alias.final_target] attribute. Most alias properties that act like proxies actually fetch the final target rather than the next one to return the final field.
+
+Sometimes, when a package makes use of complicated imports (wildcard imports from parents and submodules), or when runtime objects are hard to inspect, it is possible to end up with a cyclic chain of aliases. You could for example end up with a chain like `a.X` -> `b.X` -> `c.X` -> `a.X`. In this case, the alias *cannot* be resolved, since the chain goes in a loop. Griffe will raise a [`CyclicAliasError`][griffe.CyclicAliasError] when trying to resolve such cyclic chains.
+
+Aliases chains are never partially resolved: either they are resolved down to their final target, or none of their links are resolved.
+
+## Object kind
+
+The kind of an object (module, class, function, attribute or alias) can be obtained in several ways.
+
+- With the [`kind`][griffe.Object.kind] attribute and the [`Kind`][griffe.Kind] enumeration: `obj.kind is Kind.MODULE`.
+- With the [`is_kind()`][griffe.Object.is_kind] method:
+    - `obj.is_kind(Kind.MODULE)`
+    - `obj.is_kind("class")`
+    - `obj.is_kind({"function", Kind.ATTRIBUTE})`
+
+    When given a set of kinds, the method returns true if the object is of one of the given kinds.
+- With the [`is_module`][griffe.Object.is_module], [`is_class`][griffe.Object.is_class], [`is_function`][griffe.Object.is_function], [`is_attribute`][griffe.Object.is_attribute], and [`is_alias`][griffe.Object.is_alias] attributes.
+
+Additionally, it is possible to check if an object is a sub-kind of module, with the following attributes:
+
+- [`is_init_module`][griffe.Object.is_init_module], for `__init__.py` modules
+- [`is_package`][griffe.Object.is_package], for top-level packages
+- [`is_subpackage`][griffe.Object.is_subpackage], for non-top-level packages
+- [`is_namespace_package`][griffe.Object.is_namespace_package], for top-level [namespace packages](https://packaging.python.org/en/latest/guides/packaging-namespace-packages/)
+- [`is_namespace_subpackage`][griffe.Object.is_namespace_subpackage], for non-top-level namespace packages
+
+Finally, additional [`labels`][griffe.Object.labels] are attached to objects to further specify their kind. The [`has_labels()`][griffe.Object.has_labels] method can be used to check if an object has several specific labels.
+
+## Object location
+
+An object is identified by its [`path`][griffe.Object.path], which is its location in the object tree. The path is composed of all the parent names and the object name, separated by dots, for example `mod.Class.meth`. This `path` is the [`canonical_path`][griffe.Object.canonical_path] on regular objects. For aliases however, the `path` is *where they are imported* while the canonical path is *where they come from*. Example:
+
+```python
+# pkg1.py
+from pkg2 import A as B
+```
+
+```pycon
+>>> import griffe
+>>> B = griffe.load("pkg1.B")
+>>> B.path
+'pkg1.B'
+>>> B.canonical_path
+'pkg2.A'
+```
+
+### Source
+
+Information on the actual source code of objects is available through the following attributes:
+
+- [`filepath`][griffe.Object.filepath], the absolute path to the module the object appears in, for example `~/project/src/pkg/mod.py`
+- [`relative_filepath`][griffe.Object.relative_filepath], the relative path to the module, compared to the current working directory, for example `src/pkg/mod.py`
+- [`relative_package_filepath`][griffe.Object.relative_package_filepath], the relative path to the module, compared to the parent of the top-level package, for example `pkg/mod.py`
+- [`lineno`][griffe.Object.lineno] and [`endlineno`][griffe.Object.endlineno], the starting and ending line numbers of the object in the source
+- [`lines`][griffe.Object.lines], the lines of code defining the object (or importing the alias)
+- [`source`][griffe.Object.source], the source lines concatenated as a single multiline string
+
+Each object holds a reference to a [`lines_collection`][griffe.Object.lines_collection]. Similar to the modules collection, this lines collection is a dictionary whose keys are module file-paths and values are their contents as list of lines. The lines collection is populated by the loader.
+
+## Object visibility
+
+Each object has fields that are related to visibility of the API.
+
+- [`is_public`][griffe.Object.is_public]: whether this object is public (destined to be consumed by your users). For module-level objects, Griffe considers that the object is public if:
+    - it is listed in its parent module's `__all__` attribute
+    - or if its parent module does not declare `__all__`, and the object doesn't have a private name, and the object is not imported from elsewhere
+
+    ```python
+    # package1/__init__.py
+    from package2 import A  # not public
+    from package1 import submodule  # not public
+
+    b = 0  # public
+    _c = 1  # not public
+    __d = 2  # not public
+
+    def __getattr__(name: str):  # public
+        ...
     ```
 
-- [`package`][griffe.Object.package], which is the top-level module, or package, of any object:
+    For class-level objects, Griffe considers that the object is public if the object doesn't have a private name, and the object is not imported from elsewhere.
 
-    ```pycon
-    >>> import griffe
-    >>> markdown = griffe.load("markdown")
-    >>> markdown["core.Markdown.references"].package
-    Module(PosixPath('.venv/lib/python3.11/site-packages/markdown/__init__.py'))
+    ```python
+    # package1/__init__.py
+    class A:
+        from package1.module import X  # not public
+        from package2 import Y  # not public
+
+        b = 0  # public
+        _c = 1  # not public
+        __d = 2  # not public
+
+        def __eq__(self, other):  # public
+            ...
     ```
+        
+- [`is_deprecated`][griffe.Object.is_deprecated]: whether this object is deprecated and shouldn't be used.
+- [`is_special`][griffe.Object.is_special]: whether this object has a special name like `__special__`
+- [`is_private`][griffe.Object.is_private]: whether this object has a private name like `_private` or `__private`, but not `__special__`
+- [`is_class_private`][griffe.Object.is_class_private]: whether this object has a class-private name like `__private` and is a member of a class
 
-- [`path`][griffe.Object.path], which is the "Python path" of an object. This path is the chain of names in the tree down to the current object, separated by dots.
+Since `is_private` only check the name of the object, it is not mutually exclusive with `is_public`. It means an object can return true for both `is_public` and `is_private`. We invite Griffe users to mostly rely on `is_public` and `not is_public`.
 
-    ```pycon
-    >>> import griffe
-    >>> markdown = griffe.load("markdown")
-    >>> markdown["core.Markdown.references"].path
-    'markdown.core.Markdown.references'
-    ```
+It is possible to force `is_public` and `is_deprecated` to return true or false by setting the [`public`][griffe.Object.public] and [`deprecated`][griffe.Object.deprecated] fields respectively. These fields are typically set by extensions that support new ways of marking objects as public or deprecated. 
 
-    The `path` of an object therefore depends on its location in the object tree. 
+## Imports/exports
 
-- [`filepath`][griffe.Object.filepath], which is the filepath the object exists in.
+Modules and classes populate their [`imports`][griffe.Object.imports] field with name that were imported from other modules. Similarly, modules populate their [`exports`][griffe.Object.exports] field with names that were exported by being listed into the module's `__all__` attribute. Each object then provides then [`is_imported`][griffe.Object.is_imported] and [`is_exported`][griffe.Object.is_exported] fields, which tell if an object was imported or exported respectively. Additionally, objects also provide an [`is_wildcard_exposed`][griffe.Object.is_wildcard_exposed] field that tells if an object is exposed to wildcard imports, i.e. will be imported when another module does `from this_module import *`.
 
-    ```pycon
-    >>> import griffe
-    >>> markdown = griffe.load("markdown")
-    >>> markdown.filepath
-    PosixPath('.venv/lib/python3.11/site-packages/markdown/__init__.py')
-    ```
+## Docstrings
+
+Each object has an optional [`docstring`][griffe.Object.docstring] attached to it. To check whether it has one without comparing against `None`, the two following fields can be used:
+
+- [`has_docstring`][griffe.Object.has_docstring]: whether this object has a docstring (even empty)
+- [`has_docstrings`][griffe.Object.has_docstrings]: same thing, but recursive; whether this object or any of its members has a docstring (even empty)
+
+[Docstrings][griffe.Docstring] provide their cleaned-up [`value`][griffe.Docstring.value] (de-indented string, stripped from leading and trailing new lines), as well as their starting and ending line numbers with [`lineno`][griffe.Docstring.lineno] and [`endlineno`][griffe.Docstring.endlineno].
+
+Docstrings can be parsed against several [docstring-styles](../../reference/docstrings.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
+
+When loading a package, it is possible to specify the docstring style to attach to every docstring (see [`griffe.load(docstring_parser)`][griffe.load(docstring_parser)]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of docstring sections.
+
+After a package is loaded, it is still possible to change the style used for specific docstrings by either overriding their [`parser`][griffe.Docstring.parser] and [`parser_options`][griffe.Docstring.parser_options] attributes, or by calling their [`parse()`][griffe.Docstring.parse] method with a different style:
+
+```pycon
+>>> import griffe
+>>> markdown = griffe.load("markdown", docstring_parser="google")
+>>> markdown["Markdown"].docstring.parse("numpy")
+[...]
+```
+
+Do note, however, that the `parsed` attribute is cached, and won't be reset when overriding the `parser` or `parser_options` values.
+
+Docstrings have a [`parent`][griffe.Docstring.parent] field too, that is a reference to their respective module, class, function or attribute.
+
+## Model-specific fields
+
+Models have most fields in common, but also have specific fiels.
+
+### Modules
+
+- [`imports_future_annotations`][griffe.Module.imports_future_annotations]: Whether the module imports [future annotations](https://peps.python.org/pep-0563/), which changes the way we parse type annotations.
+- [`overloads`][griffe.Module.overloads]: A dictionary to store overloads for module-level functions.
+
+### Classes
+
+- [`bases`][griffe.Class.bases]: A list of class bases in the form of [expressions][griffe.Expr].
+- [`resolved_bases`][griffe.Class.resolved_bases]: A list of class bases, in the form of [Class][griffe.Class] objects. Only the bases that were loaded are returned, the others are discarded.
+- [`mro()`][griffe.Class.mro]: A method to compute the Method Resolution Order in the form of a list of [Class][griffe.Class] objects.
+- [`overloads`][griffe.Class.overloads]: A dictionary to store overloads for class-level methods.
+- [`decorators`][griffe.Class.decorators]: The [decorators][griffe.Decorator] applied to the class.
+- [`parameters`][griffe.Class.parameters]: The [parameters][griffe.Parameters] of the class' `__init__` method, if any.
+
+### Functions
+
+- [`decorators`][griffe.Function.decorators]: The [decorators][griffe.Decorator] applied to the function.
+- [`deleter`][griffe.Function.deleter]: The property deleter, if the function is a property.
+- [`setter`][griffe.Function.setter]: The property setter, if the function is a property.
+- [`overloads`][griffe.Function.overloads]: The overloaded signatures of the function.
+- [`parameters`][griffe.Function.parameters]: The [parameters][griffe.Parameters] of the function.
+- [`returns`][griffe.Function.returns]: The type annotation of the returned value, in the form of an [expression][griffe.Expr]. The `annotation` field can also be used, for compatibility with attributes.
+
+### Attributes
+
+- [`annotation`][griffe.Attribute.annotation]: The type annotation of the attribute, in the form of an [expression][griffe.Expr].
+- [`value`][griffe.Attribute.value]: The value of the attribute, in the form of an [expression][griffe.Expr].
+
+### Alias
+
+- [`alias_lineno`][griffe.Alias.alias_lineno]: The alias line number (where the object is imported).
+- [`alias_endlineno`][griffe.Alias.alias_endlineno]: The alias ending line number (where the object is imported).
+- [`target`][griffe.Alias.target]: The alias target (a module, class, function or attribute).
+- [`target_path`][griffe.Alias.target_path]: The path of the alias target, as a string.
+- [`wildcard`][griffe.Alias.wildcard]: Whether this alias represents a wildcard import, and if so from which module.
+- [`resolve_target()`][griffe.Alias.resolve_target]: A method that resolves the target when called.
 
 
+## Next steps
+
+In this chapter we saw many of the fields that compose our models, and how and why to use them. Now you might be interested in [extending](extending.md) or [serializing](serializing.md) the API data, or [checking for API breaking changes](checking.md).

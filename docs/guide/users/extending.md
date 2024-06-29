@@ -1,46 +1,29 @@
-# Extensions
+# Extending APIs
 
-Extensions allow to enhance or customize the data that Griffe collects.
+Griffe has an extension system that can be used to enhance or customize the data that Griffe collects. Extensions are written in Python.
 
 ## Using extensions
 
-Extensions can be specified both on the command-line
-(in the terminal), and programmatically (in Python).
+Extensions can be specified both on the command-line (in the terminal), and programmatically (in Python).
 
 ### On the command-line
 
-On the command-line, you can specify extensions to use
-with the `-e`, `--extensions` option. This option
-accepts a single positional argument which can take
-two forms:
+On the command-line, you can specify extensions to use with the `-e`, `--extensions` option. This option accepts a single positional argument which can take two forms:
 
 - a comma-separated list of extensions
 - a JSON list of extensions
 
-Extensions can accept options: the comma-separated list
-does not allow to specify options, while the JSON list does.
-See examples below.
+Extensions can accept options: the comma-separated list does not allow to specify options, while the JSON list does. See examples below.
 
 With both forms, each extension refers to one of these three things:
 
-- the name of a built-in extension's module, for example `dynamic_docstrings`
-  (this is just an example, this built-in extension does not exist)
-- the Python dotted-path to a module containing one or more extensions,
-  or to an extension directly, for example `package.module` and `package.module.ThisExtension`
-- the file path to a Python script, and an optional extension name, separated by a colon,
-  for example `scripts/griffe_exts.py` and `scripts/griffe_exts.py:ThisExtension`
+- the name of a built-in extension's module, for example `dynamic_docstrings` (this is just an example, this built-in extension does not exist)
+- the Python dotted-path to a module containing one or more extensions, or to an extension directly, for example `package.module` and `package.module.ThisExtension`
+- the file path to a Python script, and an optional extension name, separated by a colon, for example `scripts/griffe_exts.py` and `scripts/griffe_exts.py:ThisExtension`
 
-The specified extension modules can contain more than one extension:
-Griffe will pick up and load every extension declared or imported within the modules.
-If options are specified for a module that contains
-multiple extensions, the same options will be passed to all the extensions,
-so extension writers must make sure that all extensions within
-a single module accept the same options.
-If they don't, Griffe will abort with an error.
+The specified extension modules can contain more than one extension: Griffe will pick up and load every extension declared or imported within the modules. If options are specified for a module that contains multiple extensions, the same options will be passed to all the extensions, so extension writers must make sure that all extensions within a single module accept the same options. If they don't, Griffe will abort with an error.
 
-To specify options in the JSON form, use a dictionary instead of a string:
-the dictionary's only key is the extension identifier (built-in name, Python path, file path)
-and its value is a dictionary of options.
+To specify options in the JSON form, use a dictionary instead of a string: the dictionary's only key is the extension identifier (built-in name, Python path, file path) and its value is a dictionary of options.
 
 Some examples:
 
@@ -60,24 +43,15 @@ griffe check --search src griffe -e '[
 ]'
 ```
 
-In the above two examples, `pydantic` would be a built-in extension,
-`scripts/exts.py:DynamicDocstrings` the file path plus name of a local extension,
-and `griffe_attrs` the name of a third-party package that exposes
-one or more extensions.
+In the above two examples, `pydantic` would be a built-in extension, `scripts/exts.py:DynamicDocstrings` the file path plus name of a local extension, and `griffe_attrs` the name of a third-party package that exposes one or more extensions.
 
 ### Programmatically
 
-Within Python code, extensions can be specified
-with the `extensions` parameter of the [`GriffeLoader` class][griffe.GriffeLoader]
-or [`load` function][griffe.load].
+Within Python code, extensions can be specified with the `extensions` parameter of the [`GriffeLoader` class][griffe.GriffeLoader] or [`load` function][griffe.load].
 
-The parameter accepts an instance of the [`Extensions` class][griffe.Extensions].
-Such an instance is created with the help of the [`load_extensions` function][griffe.load_extensions],
-which itself accepts a list of strings, dictionaries, extension classes and extension instances.
+The parameter accepts an instance of the [`Extensions` class][griffe.Extensions]. Such an instance is created with the help of the [`load_extensions` function][griffe.load_extensions], which itself accepts a list of strings, dictionaries, extension classes and extension instances.
 
-Strings and dictionaries are used the same way as [on the command-line](#on-the-command-line).
-Extension instances are used as such, and extension classes are instantiated
-without any options.
+Strings and dictionaries are used the same way as [on the command-line](#on-the-command-line). Extension instances are used as such, and extension classes are instantiated without any options.
 
 Example:
 
@@ -114,49 +88,23 @@ plugins:
           - griffe_attrs
 ```
 
-The `extensions` key accepts a list that is passed to the
-[`load_extensions` function][griffe.load_extensions].
-See [how to use extensions programmatically](#programmatically) to learn more.
+The `extensions` key accepts a list that is passed to the [`load_extensions` function][griffe.load_extensions]. See [how to use extensions programmatically](#programmatically) to learn more.
 
 ## Writing extensions
 
-In the next section we give a bit of context on how Griffe works,
-to show how extensions can integrate into the data collection process.
-Feel free to skip to the [Events and hooks](#events-and-hooks) section
-or the [Full example](#full-example) section
-if you'd prefer to see concrete examples first.
+In the next section we give a bit of context on how Griffe works, to show how extensions can integrate into the data collection process. Feel free to skip to the [Events and hooks](#events-and-hooks) section or the [Full example](#full-example) section if you'd prefer to see concrete examples first.
 
 ### How it works
 
-To extract information from your Python sources,
-Griffe tries to build Abstract Syntax Trees by parsing the sources
-with [`ast`][] utilities.
+To extract information from your Python sources, Griffe tries to build Abstract Syntax Trees by parsing the sources with [`ast`][] utilities.
 
-If the source code is not available
-(the modules are built-in or compiled),
-Griffe imports the modules and builds object trees instead.
+If the source code is not available (the modules are built-in or compiled), Griffe imports the modules and builds object trees instead.
 
-Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pattern)
-to walk the tree and extract information.
-For ASTs, Griffe uses its [Visitor agent][griffe.Visitor]
-and for object trees, it uses its [Inspector agent][griffe.Inspector].
+Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pattern) to walk the tree and extract information. For ASTs, Griffe uses its [Visitor agent][griffe.Visitor] and for object trees, it uses its [Inspector agent][griffe.Inspector].
 
-Sometimes during the walk through the tree (depth-first order),
-both the visitor and inspector agents will trigger events.
-These events can be hooked on by extensions to alter or enhance
-Griffe's behavior. Some hooks will be passed just the current
-node being visited, others will be passed both the node
-and an instance of an [Object][griffe.Object] subclass,
-such as a [Module][griffe.Module],
-a [Class][griffe.Class],
-a [Function][griffe.Function],
-or an [Attribute][griffe.Attribute].
-Extensions will therefore be able to modify these instances.
+Sometimes during the walk through the tree (depth-first order), both the visitor and inspector agents will trigger events. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], or an [Attribute][griffe.Attribute]. Extensions will therefore be able to modify these instances.
 
-The following flow chart shows an example of an AST visit.
-The tree is simplified: actual trees have a lot more nodes
-like `if/elif/else` nodes, `try/except/else/finally` nodes,
-[and many more][ast.AST].
+The following flow chart shows an example of an AST visit. The tree is simplified: actual trees have a lot more nodes like `if/elif/else` nodes, `try/except/else/finally` nodes, [and many more][ast.AST].
 
 ```mermaid
 flowchart TB
@@ -164,34 +112,23 @@ M(Module definition) --- C(Class definition) & F(Function definition)
 C --- m(Function definition) & A(Variable assignment)
 ```
 
-The following flow chart shows an example of an object tree inspection.
-The tree is simplified as well:
-[many more types of objects are handled][griffe.ObjectKind]. 
+The following flow chart shows an example of an object tree inspection. The tree is simplified as well: [many more types of objects are handled][griffe.ObjectKind].
 
-```mermaid 
+```mermaid
 flowchart TB
 M(Module) --- C(Class) & F(Function)
 C --- m(Method) & A(Attribute)
 ```
 
-For a more concrete example, let say that we visit (or inspect)
-an AST (or object tree) for a given module, and that this module
-contains a single class, which itself contains a single method:
+For a more concrete example, let say that we visit (or inspect) an AST (or object tree) for a given module, and that this module contains a single class, which itself contains a single method:
 
-- the agent (visitor or inspector) will walk through the tree
-  by starting with the module node
-- it will instantiate a [Module][griffe.Module],
-  then walk through its members, continuing with the class node
-- it will instantiate a [Class][griffe.Class],
-  then walk through its members, continuing with the function node
+- the agent (visitor or inspector) will walk through the tree by starting with the module node
+- it will instantiate a [Module][griffe.Module], then walk through its members, continuing with the class node
+- it will instantiate a [Class][griffe.Class], then walk through its members, continuing with the function node
 - it will instantiate a [Function][griffe.Function]
-- then it will go back up and finish walking since there are
-  no more nodes to walk through
+- then it will go back up and finish walking since there are no more nodes to walk through
 
-Every time the agent enters a node,
-creates an object instance,
-or finish handling members of an object,
-it will trigger an event.
+Every time the agent enters a node, creates an object instance, or finish handling members of an object, it will trigger an event.
 
 The flow of events is drawn in the following flowchart:
 
@@ -245,31 +182,19 @@ class event_mod_members event
 classDef event stroke:#3cc,stroke-width:2
 ```
 
-Hopefully this flowchart gave you a pretty good idea
-of what happens when Griffe collects data from a Python module.
-The next setion will explain in more details
-the different events that are triggered,
-and how to hook onto them in your extensions.
+Hopefully this flowchart gave you a pretty good idea of what happens when Griffe collects data from a Python module. The next setion will explain in more details the different events that are triggered, and how to hook onto them in your extensions.
 
 ### Events and hooks
 
-There are two kinds of events in Griffe:
-**load events** and **analysis events**.
-Load events are scoped to the Griffe loader.
-Analysis events are scoped to the visitor and inspector agents
-(triggered during static and dynamic analysis).
+There are two kinds of events in Griffe: **load events** and **analysis events**. Load events are scoped to the Griffe loader. Analysis events are scoped to the visitor and inspector agents (triggered during static and dynamic analysis).
 
 #### Load events
 
 There is only one **load event**:
 
-- [`on_package_loaded`][griffe.Extension.on_package_loaded] 
+- [`on_package_loaded`][griffe.Extension.on_package_loaded]
 
-This event is triggered when the loader has finished loading a package entirely,
-i.e. when all its submodules were scanned and loaded.
-This event can be hooked by extensions which require the whole package to be loaded,
-to be able to navigate the object tree without raising lookup errors
-or alias resolution errors.
+This event is triggered when the loader has finished loading a package entirely, i.e. when all its submodules were scanned and loaded. This event can be hooked by extensions which require the whole package to be loaded, to be able to navigate the object tree without raising lookup errors or alias resolution errors.
 
 #### Analysis events
 
@@ -292,28 +217,15 @@ There are also specific **analysis events** for each object kind:
 - [`on_attribute_node`][griffe.Extension.on_attribute_node]
 - [`on_attribute_instance`][griffe.Extension.on_attribute_instance]
 
-The "on node" events are triggered when the agent (visitor or inspector)
-starts handling a node in the tree (AST or object tree).
+The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
 
-The "on instance" events are triggered when the agent
-just created an instance of [Module][griffe.Module],
-[Class][griffe.Class],
-[Function][griffe.Function],
-or [Attribute][griffe.Attribute],
-and added it as a member of its parent.
+The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], or [Attribute][griffe.Attribute], and added it as a member of its parent.
 
-The "on members" events are triggered when the agent
-just finished handling all the members of an object.
-Functions and attributes do not have members,
-so there are no "on members" event for these two kinds.
+The "on members" events are triggered when the agent just finished handling all the members of an object. Functions and attributes do not have members, so there are no "on members" event for these two kinds.
 
-**Hooks** are methods that are called when a particular
-event is triggered. To target a specific event,
-the hook must be named after it.
+**Hooks** are methods that are called when a particular event is triggered. To target a specific event, the hook must be named after it.
 
-**Extensions** are classes that inherit from
-[Griffe's Extension base class][griffe.Extension]
-and define some hooks as methods:
+**Extensions** are classes that inherit from [Griffe's Extension base class][griffe.Extension] and define some hooks as methods:
 
 ```python
 import ast
@@ -325,11 +237,9 @@ class MyExtension(Extension):
         """Do something with `node` and/or `obj`."""
 ```
 
-Hooks are always defined as methods of a class inheriting from 
-[Extension][griffe.Extension], never as standalone functions.
+Hooks are always defined as methods of a class inheriting from [Extension][griffe.Extension], never as standalone functions.
 
-Since hooks are declared in a class, feel free to also declare state variables
-(or any other variable) in the `__init__` method:
+Since hooks are declared in a class, feel free to also declare state variables (or any other variable) in the `__init__` method:
 
 ```python
 import ast
@@ -348,14 +258,9 @@ class MyExtension(Extension):
 
 ### Static/dynamic support
 
-Extensions can support both static and dynamic analysis of modules.
-If a module is scanned statically, your extension hooks
-will receive AST nodes (from the [ast][] module of the standard library).
-If the module is scanned dynamically,
-your extension hooks will receive [object nodes][griffe.ObjectNode].
+Extensions can support both static and dynamic analysis of modules. If a module is scanned statically, your extension hooks will receive AST nodes (from the [ast][] module of the standard library). If the module is scanned dynamically, your extension hooks will receive [object nodes][griffe.ObjectNode].
 
-To support static analysis, dynamic analysis, or both,
-you can therefore check the type of the received node:
+To support static analysis, dynamic analysis, or both, you can therefore check the type of the received node:
 
 ```python
 import ast
@@ -371,32 +276,20 @@ class MyExtension(Extension):
             ...  # apply logic for dynamic analysis
 ```
 
-Since hooks also receive instantiated modules, classes, functions and attributes,
-most of the time you will not need to use the `node` argument
-other than for checking its type and deciding what to do based on the result.
-If you do need to, read the next section explaining how to visit trees.
+Since hooks also receive instantiated modules, classes, functions and attributes, most of the time you will not need to use the `node` argument other than for checking its type and deciding what to do based on the result. If you do need to, read the next section explaining how to visit trees.
 
 ### Visiting trees
 
 Extensions provide basic functionality to help you visit trees:
 
-- [`visit`][griffe.Extension.visit]: call `self.visit(node)`
-  to start visiting an abstract syntax tree.
-- [`generic_visit`][griffe.Extension.generic_visit]: call
-  `self.generic_visit(node)` to visit each subnode of a given node.
-- [`inspect`][griffe.Extension.inspect]: call `self.inspect(node)`
-  to start visiting an object tree. Nodes contain references to the runtime objects,
-  see [`ObjectNode`][griffe.ObjectNode].
-- [`generic_inspect`][griffe.Extension.generic_inspect]: call
-  `self.generic_inspect(node)` to visit each subnode of a given node.
+- [`visit`][griffe.Extension.visit]: call `self.visit(node)` to start visiting an abstract syntax tree.
+- [`generic_visit`][griffe.Extension.generic_visit]: call `self.generic_visit(node)` to visit each subnode of a given node.
+- [`inspect`][griffe.Extension.inspect]: call `self.inspect(node)` to start visiting an object tree. Nodes contain references to the runtime objects, see [`ObjectNode`][griffe.ObjectNode].
+- [`generic_inspect`][griffe.Extension.generic_inspect]: call `self.generic_inspect(node)` to visit each subnode of a given node.
 
-Calling `self.visit(node)` or `self.inspect(node)` will do nothing
-unless you actually implement methods that handle specific types of nodes:
+Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you actually implement methods that handle specific types of nodes:
 
-- for ASTs, methods must be named `visit_<node_type>` where `<node_type>`
-    is replaced with the lowercase name of the node's class. For example,
-    to allow visiting [`ClassDef`][ast.ClassDef] nodes, you must
-    implement the `visit_classdef` method:
+- for ASTs, methods must be named `visit_<node_type>` where `<node_type>` is replaced with the lowercase name of the node's class. For example, to allow visiting [`ClassDef`][ast.ClassDef] nodes, you must implement the `visit_classdef` method:
 
     ```python
     import ast
@@ -413,14 +306,9 @@ unless you actually implement methods that handle specific types of nodes:
             self.generic_visit(node)
     ```
 
-    See the [list of existing AST classes](#ast-nodes) to learn
-    what method you can implement.
+    See the [list of existing AST classes](#ast-nodes) to learn what method you can implement.
 
-- for object trees, methods must be named `inspect_<node_type>`,
-    where `<node_type>` is replaced with the string value of the node's kind.
-    The different kinds are listed in the [`ObjectKind`][griffe.ObjectKind] enumeration.
-    For example, to allow inspecting coroutine nodes, you must implement
-    the `inspect_coroutine` method:
+- for object trees, methods must be named `inspect_<node_type>`, where `<node_type>` is replaced with the string value of the node's kind. The different kinds are listed in the [`ObjectKind`][griffe.ObjectKind] enumeration. For example, to allow inspecting coroutine nodes, you must implement the `inspect_coroutine` method:
 
     ```python
     from griffe import Extension, ObjectNode
@@ -436,13 +324,7 @@ unless you actually implement methods that handle specific types of nodes:
 
 ### Extra data
 
-All Griffe objects (modules, classes, functions, attributes)
-can store additional (meta)data in their `extra` attribute.
-This attribute is a dictionary of dictionaries. The first
-layer is used as namespacing: each extension writes
-into its own namespace, or integrates with other projects
-by reading/writing in their namespaces,
-according to what they support and document.
+All Griffe objects (modules, classes, functions, attributes) can store additional (meta)data in their `extra` attribute. This attribute is a dictionary of dictionaries. The first layer is used as namespacing: each extension writes into its own namespace, or integrates with other projects by reading/writing in their namespaces, according to what they support and document.
 
 ```python
 import ast
@@ -456,10 +338,7 @@ class MyExtension(Extension):
         obj.extra[self_namespace]["some_key"] = "some_value"
 ```
 
-For example, [mkdocstrings-python](https://mkdocstrings.github.io/python)
-looks into the `mkdocstrings` namespace for a `template` key.
-Extensions can therefore provide a custom template value by writing
-into `extra["mkdocstrings"]["template"]`:
+For example, [mkdocstrings-python](https://mkdocstrings.github.io/python) looks into the `mkdocstrings` namespace for a `template` key. Extensions can therefore provide a custom template value by writing into `extra["mkdocstrings"]["template"]`:
 
 ```python
 import ast
@@ -478,9 +357,7 @@ class MyExtension(Extension):
 
 ### Options
 
-Extensions can be made to support options.
-These options can then be passed from the [command-line](#on-the-command-line) using JSON,
-from Python directly, or from other tools like MkDocs, in `mkdocs.yml`.
+Extensions can be made to support options. These options can then be passed from the [command-line](#on-the-command-line) using JSON, from Python directly, or from other tools like MkDocs, in `mkdocs.yml`.
 
 ```python
 import ast
@@ -500,8 +377,7 @@ class MyExtension(Extension):
 
 ### Logging
 
-To better integrate with Griffe and other tools in the ecosystem
-(notably MkDocs), use Griffe loggers to log messages:
+To better integrate with Griffe and other tools in the ecosystem (notably MkDocs), use Griffe loggers to log messages:
 
 ```python
 import ast
@@ -517,10 +393,7 @@ class MyExtension(Extension):
 
 ### Full example
 
-The following example shows how one could write a "dynamic docstrings" extension
-that dynamically import objects that declare their docstrings dynamically,
-to improve support for such docstrings.
-The extension is configurable to run only on user-selected objects.
+The following example shows how one could write a "dynamic docstrings" extension that dynamically import objects that declare their docstrings dynamically, to improve support for such docstrings. The extension is configurable to run only on user-selected objects.
 
 Package structure (or just write your extension in a local script):
 
@@ -532,7 +405,6 @@ Package structure (or just write your extension in a local script):
             __init__.py
             extension.py
 ```
-
 
 ```python title="./src/dynamic_docstrings/extension.py"
 import ast
@@ -580,11 +452,9 @@ from dynamic_docstrings.extension import DynamicDocstrings
 __all__ = ["DynamicDocstrings"]
 ```
 
-This will allow users to load and use this extension
-by referring to it as `dynamic_docstrings` (your Python package name).
+This will allow users to load and use this extension by referring to it as `dynamic_docstrings` (your Python package name).
 
-See [how to use extensions](#using-extensions) to learn more
-about how to load and use your new extension.
+See [how to use extensions](#using-extensions) to learn more about how to load and use your new extension.
 
 ## AST nodes
 
@@ -714,7 +584,7 @@ about how to load and use your new extension.
 > - [`withitem`][ast.withitem]
 > - [`Yield`][ast.Yield]
 > - [`YieldFrom`][ast.YieldFrom]
-> 
+>
 > </td></tr></tbody></table>
 
 [^1]: Deprecated since Python 3.8.
@@ -723,3 +593,8 @@ about how to load and use your new extension.
 [^4]: `print` became a builtin (instead of a keyword) in Python 3.
 [^5]: Now `ExceptHandler`, in the `handlers` attribute of `Try` nodes.
 [^6]: Now a list of expressions in the `finalbody` attribute of `Try` nodes.
+
+
+## Next steps
+
+Extensions are a powerful mechanism to customize or enhance the data loaded by Griffe. But sometimes, all you need to do to improve the data is to make Griffe happy by following a few conventions. We therefore invite you to read our recommendations on [public APIs](public-apis.md), [Python code best practices](python-code.md) and [docstrings](docstrings.md).

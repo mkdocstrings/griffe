@@ -12,3 +12,13 @@
 .md-button {
   margin-bottom: 0.2rem;
 }
+
+/* Prevent selection of prompts in pycon code blocks. */
+.language-pycon .gp, .language-pycon .go { /* Generic.Prompt, Generic.Output */
+  user-select: none;
+}
+
+/* Add space above bold ToC entries. */
+.md-sidebar--secondary .md-nav__item:not(:first-child):has(strong) {
+  margin-top: 1rem;
+}

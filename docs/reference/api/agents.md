@@ -34,6 +34,10 @@
     options:
         heading_level: 2
 
+::: griffe.ObjectKind
+    options:
+        heading_level: 2
+
 ## **Static analysis helpers**
 
 ::: griffe.ast_kind

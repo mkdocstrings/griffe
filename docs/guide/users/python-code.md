@@ -1,4 +1,4 @@
-# Best practices
+# Python code best practices
 
 This document describes some best practices to adopt when using Griffe,
 or when writing Python code that will be analyzed by Griffe.

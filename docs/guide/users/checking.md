@@ -1,10 +1,8 @@
-# Checking for API breakages
+# Checking APIs
 
-Griffe is able to compare two snapshots of your project
-to detect API breakages between the old and the new snapshot.
-By snapshot we mean a specific point in your Git history.
-For example, you can ask Griffe to compare your current code
-against a specific tag.
+Griffe is able to compare two snapshots of your project to detect API breakages between the old and the new snapshot. By snapshot we mean a specific point in your Git history. For example, you can ask Griffe to compare your current code against a specific tag.
+
+## Command-line
 
 By default, Griffe will compare the current code to the latest tag:
 
@@ -12,20 +10,15 @@ By default, Griffe will compare the current code to the latest tag:
 $ griffe check mypackage
 ```
 
-To specify another Git reference to check against,
-use the `--against` or `-a` option:
+To specify another Git reference to check against, use the `--against` or `-a` option:
 
 ```console
 $ griffe check mypackage -a 0.2.0
 ```
 
-You can specify a Git tag, commit (hash), or even a branch:
-Griffe will create a worktree at this reference in a temporary directory,
-and clean it up after finishing.
+You can specify a Git tag, commit (hash), or even a branch: Griffe will create a worktree at this reference in a temporary directory, and clean it up after finishing.
 
-If you want to also specify the *base* reference to use
-(instead of the current code), use the `--base` or `-b` option.
-Some examples:
+If you want to also specify the *base* reference to use (instead of the current code), use the `--base` or `-b` option. Some examples:
 
 ```console
 $ griffe check mypackage -b HEAD -a 2.0.0
@@ -34,14 +27,9 @@ $ griffe check mypackage -b fix-issue-90 -a 1.2.3
 $ griffe check mypackage -b 8afcfd6e 
 ```
 
-TIP: **Important:**  
-Remember that the base is the most recent reference,
-and the one we compare it against is the oldest one.
+TIP: **Important:** Remember that the base is the most recent reference, and the one we compare it against is the oldest one.
 
-The package name you pass to `griffe check` must be found
-relatively to the repository root. For Griffe to find
-packages in subfolders, pass the parent subfolder to the 
-`--search` or `-s` option. Example for `src`-layouts:
+The package name you pass to `griffe check` must be found relatively to the repository root. For Griffe to find packages in subfolders, pass the parent subfolder to the `--search` or `-s` option. Example for `src`-layouts:
 
 ```console
 $ griffe check -s src griffe
@@ -53,30 +41,29 @@ Example in a monorepo, within a deeper file tree:
 $ griffe check -s back/services/identity-provider/src identity_provider
 ```
 
+## Python API
+
+To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffe.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffe.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffe.Breakage]. It's up to you how you want to use these breakage instances.
+
+```python
+import griffe
+
+my_pkg_v1 = griffe.load_git("my_pkg", ref="v1")
+my_pkg_v2 = griffe.load_git("my_pkg", ref="v2")
+
+for breaking_change in find_breaking_changes(my_pkg_v1, my_pkg_v2):
+    print(breaking_change.explain())
+```
+
 ## Detected breakages
 
-In this section, we will describe the breakages that Griffe detects,
-giving some code examples and hints on how to properly communicate
-breakages with deprecation messages before actually releasing them.
+In this section, we will describe the breakages that Griffe detects, giving some code examples and hints on how to properly communicate breakages with deprecation messages before actually releasing them.
 
-Obviously, these explanations and the value of the hints we provide
-depend on your definition of what is a public Python API.
-There is no clear and generally agreed upon definition of "public Python API".
-A public Python API might vary from one project to another. 
-In essence, your public API is what you say it is.
+Obviously, these explanations and the value of the hints we provide depend on your definition of what is a public Python API. There is no clear and generally agreed upon definition of "public Python API". A public Python API might vary from one project to another. In essence, your public API is what you say it is.
 
-However, we do have conventions like prefixing objects
-with an underscore to tell users these objects are part of the private API,
-or internals, and therefore should not be used.
-For the rest, Griffe can detect changes that *will* trigger immediate errors
-in your users code', and changes that *might* cause issues in your users' code.
-Although the latter sound less impactful, they do have a serious impact,
-because they can *silently* change the behavior of your users' code,
-leading to issues that are hard to detect, understand and fix.
+However, we do have conventions like prefixing objects with an underscore to tell users these objects are part of the private API, or internals, and therefore should not be used. For the rest, Griffe can detect changes that *will* trigger immediate errors in your users code', and changes that *might* cause issues in your users' code. Although the latter sound less impactful, they do have a serious impact, because they can *silently* change the behavior of your users' code, leading to issues that are hard to detect, understand and fix.
 
-[Knowing that every change is a breaking change](https://xkcd.com/1172/),
-the more we detect and document (potentially) breaking changes
-in our changelogs, the better.
+[Knowing that every change is a breaking change](https://xkcd.com/1172/), the more we detect and document (potentially) breaking changes in our changelogs, the better.
 
 ### Parameter moved
 
@@ -102,31 +89,22 @@ def greet(name, prefix):
 greet("hello", "world")
 ```
 
-NOTE: Moving required parameters around is not really an API breakage,
-depending on our definition of API,
-since this won't raise immediate errors like `TypeError`.
-The function expects a number of arguments,
-and the developer pass it this same number of arguments:
-the contract is fulfilled. But parameters very often have specific meaning,
-and changing their order will *silently lead* (no immediate error) to incorrect behavior,
-potentially making it difficult to detect, understand and fix the issue.
-That is why it is important to warn developers about such changes.
+NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer pass it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-> TIP: **Hint**  
-> If you often add, move or remove parameters,
-> consider making them keyword-only, so that their order doesn't matter.
-> 
+> TIP: **Hint**
+> If you often add, move or remove parameters, consider making them keyword-only, so that their order doesn't matter.
+>
 > ```python title="before"
 > def greet(*, prefix, name):
 >     print(prefix + " " + name)
-> 
+>
 > greet(prefix="hello", name="world")
 > ```
-> 
+>
 > ```python title="after"
 > def greet(*, name, prefix):
 >     print(prefix + " " + name)
-> 
+>
 > # still working as expected
 > greet(prefix="hello", name="world")
 > ```
@@ -158,10 +136,8 @@ greet("hello", "world")
 greet(prefix="hello", name="world")
 ```
 
-> TIP: **Hint**  
-> Allow a deprecation period for the removed parameter
-> by swallowing it in a variadic positional parameter,
-> a variadic keyword parameter, or both.
+> TIP: **Hint**
+> Allow a deprecation period for the removed parameter by swallowing it in a variadic positional parameter, a variadic keyword parameter, or both.
 >
 > === "positional-only"
 >     ```python title="before"
@@ -210,7 +186,7 @@ greet(prefix="hello", name="world")
 >     # still working as expected
 >     greet(prefix="hello", name="world")
 >     ```
-> 
+>
 > === "positional or keyword"
 >     ```python title="before"
 >     # your parameters are positional or keyword parameters (very difficult deprecation)
@@ -247,9 +223,7 @@ greet(prefix="hello", name="world")
 
 > Parameter kind was changed
 
-Changing the kind of a parameter to another (positional-only, keyword-only,
-positional or keyword, variadic positional, variadic keyword) can immediately
-break your users' code.
+Changing the kind of a parameter to another (positional-only, keyword-only, positional or keyword, variadic positional, variadic keyword) can immediately break your users' code.
 
 ```python title="before"
 # your code
@@ -283,19 +257,12 @@ greet(name="tim")
 greet2("tim")
 ```
 
-> TIP: **Hint**  
-> Although it actually is a breaking change,
-> changing your positional or keyword parameters' kind
-> to keyword-only makes your public function more robust
-> to future changes (forward-compatibility).
+> TIP: **Hint**
+> Although it actually is a breaking change, changing your positional or keyword parameters' kind to keyword-only makes your public function more robust to future changes (forward-compatibility).
 >
-> For functions with lots of optional parameters,
-> and a few (one or two) required parameters,
-> it can be a good idea to accept the required parameters
-> as positional or keyword, while accepting the optional parameters
-> as keyword-only parameters:
+> For functions with lots of optional parameters, and a few (one or two) required parameters, it can be a good idea to accept the required parameters as positional or keyword, while accepting the optional parameters as keyword-only parameters:
 >
-> ```python 
+> ```python
 > def greet(name, *, punctuation=False, bold=False, italic=False):
 >     ...
 >
@@ -308,10 +275,7 @@ greet2("tim")
 > greet(name="tiff", bold=True, punctuation=True)
 > ```
 >
-> Positional-only parameters are useful in some specific cases,
-> such as when a function takes two or more numeric values,
-> and their order does not matter, and naming the parameters would
-> not make sense:
+> Positional-only parameters are useful in some specific cases, such as when a function takes two or more numeric values, and their order does not matter, and naming the parameters would not make sense:
 >
 > ```python
 > def multiply3(a, b, c, /):
@@ -356,19 +320,10 @@ if isinstance(compute_something(7), float):
     ...
 ```
 
-NOTE: Changing default value of parameters is not really an API breakage,
-depending on our definition of API,
-since this won't raise immediate errors like `TypeError`.
-Not using the parameter still provides the argument with a default value:
-the contract is fulfilled. But default values very often have specific meaning,
-and changing them will *silently lead* (no immediate error) to incorrect behavior,
-potentially making it difficult to detect, understand and fix the issue.
-That is why it is important to warn developers about such changes.
+NOTE: Changing default value of parameters is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. Not using the parameter still provides the argument with a default value: the contract is fulfilled. But default values very often have specific meaning, and changing them will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-> TIP: **Hint**  
-> Allow a deprecation period for the old default value
-> by using a sentinel value to detect when the parameter
-> wasn't used by the user:
+> TIP: **Hint**
+> Allow a deprecation period for the old default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
 > ```python title="in the coming release"
 > _sentinel = object()
@@ -387,8 +342,7 @@ That is why it is important to warn developers about such changes.
 >     return value
 > ```
 >
-> In a later release you can remove the sentinel,
-> the deprecation warning, and set `False` as default to `to_float`.
+> In a later release you can remove the sentinel, the deprecation warning, and set `False` as default to `to_float`.
 >
 > ```python title="in a later release"
 > def compute_something(value: int, to_float=False):
@@ -402,9 +356,7 @@ That is why it is important to warn developers about such changes.
 
 > Parameter is now required
 
-Changing an optional parameter to a required one
-(by removing its default value) can immediately
-break your users' code.
+Changing an optional parameter to a required one (by removing its default value) can immediately break your users' code.
 
 ```python title="before"
 # your code
@@ -424,10 +376,8 @@ def greet(name, prefix):
 greet("tiff")
 ```
 
-> TIP: **Hint**  
-> Allow a deprecation period for the default value
-> by using a sentinel value to detect when the parameter
-> wasn't used by the user:
+> TIP: **Hint**
+> Allow a deprecation period for the default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
 > ```python title="in the coming release"
 > _sentinel = object()
@@ -439,8 +389,7 @@ greet("tiff")
 >     print(prefix + " " + name)
 > ```
 >
-> In a later release you can remove the sentinel,
-> the deprecation warning, and the default value of `prefix`.
+> In a later release you can remove the sentinel, the deprecation warning, and the default value of `prefix`.
 >
 > ```python title="in a later release"
 > def greet(name, prefix):
@@ -471,9 +420,8 @@ def greet(name, prefix):
 greet("tiff")
 ```
 
-> TIP: **Hint**  
-> You can delay (or avoid) and inform your users about the upcoming breakage
-> by temporarily (or permanently) providing a default value for the new parameter:
+> TIP: **Hint**
+> You can delay (or avoid) and inform your users about the upcoming breakage by temporarily (or permanently) providing a default value for the new parameter:
 >
 > ```python title="in the coming release"
 > def greet(name, prefix="hello"):
@@ -484,9 +432,7 @@ greet("tiff")
 
 > Return types are incompatible
 
-WARNING: **Not yet supported!**
-Telling if a type construct is compatible with another one is not trivial,
-especially statically. Support for this will be implemented later.
+WARNING: **Not yet supported!** Telling if a type construct is compatible with another one is not trivial, especially statically. Support for this will be implemented later.
 
 ### Object removed
 
@@ -515,9 +461,8 @@ from your import module
 print(module.special_thing)
 ```
 
-> TIP: **Hint**  
-> Allow a deprecation period by declaring a module-level `__getattr__` function
-> that returns the given object while warning about its deprecation:
+> TIP: **Hint**
+> Allow a deprecation period by declaring a module-level `__getattr__` function that returns the given object while warning about its deprecation:
 >
 > ```python
 > def __getattr__(name):
@@ -530,8 +475,7 @@ print(module.special_thing)
 
 > Public object points to a different kind of object
 
-Changing the kind (attribute, function, class, module)
-of a public object can *silently* break your users' code.
+Changing the kind (attribute, function, class, module) of a public object can *silently* break your users' code.
 
 ```python title="before"
 # your code
@@ -559,22 +503,13 @@ if isinstance(factory, Factory):
     ...
 ```
 
-NOTE: Changing the kind of an object is not really an API breakage,
-depending on our definition of API,
-since this won't always raise immediate errors like `TypeError`.
-The object is still here and accessed: the contract is fulfilled.
-But developers sometimes rely on the kind of an object, so changing it
-will lead to incorrect behavior, potentially making it
-difficult to detect, understand and fix the issue.
-That is why it is important to warn developers about such changes.
+NOTE: Changing the kind of an object is not really an API breakage, depending on our definition of API, since this won't always raise immediate errors like `TypeError`. The object is still here and accessed: the contract is fulfilled. But developers sometimes rely on the kind of an object, so changing it will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
 ### Attribute changed type
 
 > Attribute types are incompatible
 
-WARNING: **Not yet supported!**
-Telling if a type construct is compatible with another one is not trivial,
-especially statically. Support for this will be implemented later.
+WARNING: **Not yet supported!** Telling if a type construct is compatible with another one is not trivial, especially statically. Support for this will be implemented later.
 
 ### Attribute changed value
 
@@ -600,19 +535,10 @@ if PY_VERSION is None:
     ...
 ```
 
-NOTE: Changing the value of an attribute is not really an API breakage,
-depending on our definition of API,
-since this won't raise immediate errors like `TypeError`.
-The attribute is still here and accessed: the contract is fulfilled.
-But developers heavily rely on the value of public attributes,
-so changing it will lead to incorrect behavior, potentially making it
-difficult to detect, understand and fix the issue.
-That is why it is important to warn developers about such changes.
+NOTE: Changing the value of an attribute is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The attribute is still here and accessed: the contract is fulfilled. But developers heavily rely on the value of public attributes, so changing it will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-TIP: **Hint**  
-Make sure to document the change of value of the attribute
-in your changelog, particularly the previous and new range of values
-it can take.
+TIP: **Hint**
+Make sure to document the change of value of the attribute in your changelog, particularly the previous and new range of values it can take.
 
 ### Class removed base
 
@@ -642,30 +568,24 @@ if B in klass.__bases__:
     ...
 ```
 
-NOTE: Unless inherited members are lost in the process,
-removing a class base is not really an API breakage,
-depending on our definition of API,
-since this won't raise immediate errors like `TypeError`.
-The class is here, its members as well: the contract is fulfilled.
-But developers sometimes rely on the actual bases of a class,
-so changing them will lead to incorrect behavior, potentially making it
-difficult to detect, understand and fix the issue.
-That is why it is important to warn developers about such changes.
+NOTE: Unless inherited members are lost in the process, removing a class base is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The class is here, its members as well: the contract is fulfilled. But developers sometimes rely on the actual bases of a class, so changing them will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
 ## Output style
 
 By default, Griffe will print each detected breakage on a single line, on `stderr`:
-
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
 
-Depending on the detected breakages, the lines might be hard to read (being too compact),
-so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
+Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
+
+## Next steps
+
+If you are using a third-party library to mark objects as public, or if you follow conventions different than the one Griffe understands, you might get false-positives, or breaking changes could go undetected. In that case, you might be interested in [extending](extending.md) how Griffe loads API data to support these third-party libraries or other conventions.

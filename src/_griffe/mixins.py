@@ -436,7 +436,8 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         Therefore, to decide whether an object is public, we follow this algorithm:
 
         - If the object's `public` attribute is set (boolean), return its value.
-        - If the object is exposed to wildcard imports, it is public.
+        - If the object is listed in its parent's (a module) `__all__` attribute, it is public.
+        - If the parent (module) defines `__all__` and the object is not listed in, it is private.
         - If the object has a private name, it is private.
         - If the object was imported from another module, it is private.
         - Otherwise, the object is public.
@@ -462,8 +463,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         # TODO: In a future version, we will support two conventions regarding imports:
         # - `from a import x as x` marks `x` as public.
         # - `from a import *` marks all wildcard imported objects as public.
-        # The following condition effectively filters out imported objects.
-        if self.is_alias and not (self.inherited or (self.parent and self.parent.is_alias)):  # type: ignore[attr-defined]
+        if self.is_imported:  # type: ignore[attr-defined]
             # YORE: Bump 1.0.0: Replace line with `return False`.
             return _False  # type: ignore[return-value]
 
