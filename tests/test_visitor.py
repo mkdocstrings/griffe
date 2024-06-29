@@ -6,8 +6,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe.loader import GriffeLoader
-from griffe.tests import temporary_pypackage, temporary_visited_module, temporary_visited_package
+from griffe import GriffeLoader, temporary_pypackage, temporary_visited_module, temporary_visited_package
 
 
 def test_not_defined_at_runtime() -> None:

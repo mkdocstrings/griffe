@@ -7,8 +7,7 @@ import json
 import pytest
 from jsonschema import ValidationError, validate
 
-from griffe.dataclasses import Function, Module, Object
-from griffe.loader import GriffeLoader
+from griffe import Function, GriffeLoader, Module, Object
 
 
 def test_minimal_data_is_enough() -> None:

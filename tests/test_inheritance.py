@@ -6,8 +6,7 @@ from typing import TYPE_CHECKING, Callable
 
 import pytest
 
-from griffe.collections import ModulesCollection
-from griffe.tests import temporary_inspected_module, temporary_visited_module
+from griffe import ModulesCollection, temporary_inspected_module, temporary_visited_module
 
 if TYPE_CHECKING:
     from griffe.dataclasses import Class

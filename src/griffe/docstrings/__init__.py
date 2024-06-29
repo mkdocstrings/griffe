@@ -1,6 +1,17 @@
-"""This module exposes objects related to docstrings."""
+"""Deprecated. Import from `griffe` directly."""
 
-from griffe.docstrings.parsers import parse, parsers
-from griffe.enumerations import Parser
+from __future__ import annotations
 
-__all__ = ["Parser", "parse", "parsers"]
+import warnings
+from typing import Any
+
+import griffe
+
+
+def __getattr__(name: str) -> Any:
+    warnings.warn(
+        "Importing from `griffe.docstrings` is deprecated. Import from `griffe` directly instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return getattr(griffe, name)

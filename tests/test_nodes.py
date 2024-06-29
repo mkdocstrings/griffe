@@ -7,9 +7,7 @@ from ast import PyCF_ONLY_AST
 
 import pytest
 
-from griffe.agents.nodes import relative_to_absolute
-from griffe.expressions import Expr, ExprName
-from griffe.tests import module_vtree, temporary_visited_module
+from griffe import Expr, ExprName, module_vtree, relative_to_absolute, temporary_visited_module
 
 syntax_examples = [
     # operations

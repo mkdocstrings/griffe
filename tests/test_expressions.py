@@ -6,10 +6,7 @@ import ast
 
 import pytest
 
-from griffe.dataclasses import Module
-from griffe.docstrings.parsers import Parser
-from griffe.expressions import get_expression
-from griffe.tests import temporary_visited_module
+from griffe import Module, Parser, get_expression, temporary_visited_module
 from tests.test_nodes import syntax_examples
 
 

@@ -1,21 +1,17 @@
-"""This module is the public interface to import elements from the base."""
+"""Deprecated. Import from `griffe` directly."""
 
-from griffe.enumerations import When
-from griffe.extensions.base import (
-    Extension,
-    Extensions,
-    ExtensionType,
-    InspectorExtension,
-    VisitorExtension,
-    load_extensions,
-)
+from __future__ import annotations
 
-__all__ = [
-    "Extension",
-    "Extensions",
-    "ExtensionType",
-    "InspectorExtension",
-    "load_extensions",
-    "VisitorExtension",
-    "When",
-]
+import warnings
+from typing import Any
+
+import griffe
+
+
+def __getattr__(name: str) -> Any:
+    warnings.warn(
+        "Importing from `griffe.extensions` is deprecated. Import from `griffe` directly instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return getattr(griffe, name)

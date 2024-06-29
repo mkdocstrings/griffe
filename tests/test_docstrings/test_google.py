@@ -7,10 +7,19 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
-from griffe.docstrings.dataclasses import DocstringReturn, DocstringSectionKind
-from griffe.docstrings.utils import parse_annotation
-from griffe.expressions import ExprName
+from griffe import (
+    Attribute,
+    Class,
+    Docstring,
+    DocstringReturn,
+    DocstringSectionKind,
+    ExprName,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
+    parse_annotation,
+)
 
 if TYPE_CHECKING:
     from tests.test_docstrings.helpers import ParserType

@@ -7,10 +7,9 @@ from pathlib import Path
 from textwrap import dedent
 
 import pytest
+from _griffe.finder import _handle_editable_module, _handle_pth_file
 
-from griffe.dataclasses import Module
-from griffe.finder import ModuleFinder, NamespacePackage, Package, _handle_editable_module, _handle_pth_file
-from griffe.tests import temporary_pypackage
+from griffe import Module, ModuleFinder, NamespacePackage, Package, temporary_pypackage
 
 
 @pytest.mark.parametrize(
@@ -190,7 +189,7 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
         "hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)",
     )
     search_paths = _handle_editable_module(pth_file)
-    assert all(sp.always_scan_for == "griffe" for sp in search_paths)
+    assert all(sp.always_scan_for in {"griffe", "_griffe"} for sp in search_paths)
     paths = [sp.path for sp in search_paths]
     assert paths == [Path("src")]
 

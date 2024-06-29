@@ -7,13 +7,18 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe.dataclasses import Attribute, Class, Function, Module, Parameter, Parameters
-from griffe.docstrings.dataclasses import (
+from griffe import (
+    Attribute,
+    Class,
     DocstringAttribute,
     DocstringParameter,
     DocstringRaise,
     DocstringReturn,
     DocstringSectionKind,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
 )
 from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
 

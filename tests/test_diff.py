@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from griffe.diff import Breakage, BreakageKind, find_breaking_changes
-from griffe.tests import temporary_visited_module, temporary_visited_package
+from griffe import Breakage, BreakageKind, find_breaking_changes, temporary_visited_module, temporary_visited_package
 
 
 @pytest.mark.parametrize(
