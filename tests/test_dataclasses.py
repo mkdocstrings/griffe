@@ -421,3 +421,27 @@ def test_dataclass_parameter_docstrings() -> None:
         assert param_b.docstring.value == "Parameter b"
         assert param_c.docstring is None
         assert param_d.docstring.value == "Parameter d"
+
+
+def test_attributes_that_have_no_annotations() -> None:
+    """Dataclass attributes that have no annotatations are not parameters."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class Base:
+            a: int
+            b: str = field(init=False)
+            c = 3  # class attribute
+
+        @dataclass
+        class Derived(Base):
+            a = 1  # no effect on the parameter status of a
+            b = "b"  # inherited non-parameter
+            d: float = 4
+    """
+    with temporary_visited_package("package", {"__init__.py": code}) as module:
+        base_params = [p.name for p in module["Base"].parameters]
+        derived_params = [p.name for p in module["Derived"].parameters]
+        assert base_params == ["self", "a"]
+        assert derived_params == ["self", "a", "d"]
