@@ -34,7 +34,7 @@ from _griffe.docstrings.dataclasses import (
     DocstringWarn,
     DocstringYield,
 )
-from _griffe.docstrings.utils import parse_annotation, warning
+from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
 from _griffe.enumerations import DocstringSectionKind
 from _griffe.expressions import ExprName
 from _griffe.logger import LogLevel
@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     from _griffe.dataclasses import Docstring
     from _griffe.expressions import Expr
 
-_warn = warning("griffe")
+_warn = docstring_warning("griffe")
 
 _section_kind = {
     "args": DocstringSectionKind.parameters,
@@ -206,7 +206,7 @@ def _read_parameters(
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
             # try to use the annotation from the signature
@@ -285,7 +285,7 @@ def _read_attributes_section(
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
             with suppress(AttributeError, KeyError):
@@ -397,7 +397,7 @@ def _read_raises_section(
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
             exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
     return DocstringSectionRaises(exceptions), new_offset
@@ -459,7 +459,7 @@ def _read_returns_section(
 
         if annotation:
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
@@ -515,7 +515,7 @@ def _read_yields_section(
 
         if annotation:
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
@@ -562,7 +562,7 @@ def _read_receives_section(
 
         if annotation:
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
@@ -691,7 +691,7 @@ _section_reader = {
 _sentinel = object()
 
 
-def parse(
+def parse_google(
     docstring: Docstring,
     *,
     ignore_init_summary: bool = False,
@@ -847,7 +847,7 @@ def parse(
             sections[0].value = "\n".join(lines)
             sections.append(
                 DocstringSectionReturns(
-                    [DocstringReturn("", description="", annotation=parse_annotation(annotation, docstring))],
+                    [DocstringReturn("", description="", annotation=parse_docstring_annotation(annotation, docstring))],
                 ),
             )
 

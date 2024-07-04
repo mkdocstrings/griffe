@@ -29,6 +29,7 @@ class Breakage:
     """Breakages can explain what broke from a version to another."""
 
     kind: BreakageKind
+    """The kind of breakage."""
 
     def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
         """Initialize the breakage.
@@ -40,9 +41,13 @@ class Breakage:
             details: Some details about the breakage.
         """
         self.obj = obj
+        """The object related to the breakage."""
         self.old_value = old_value
+        """The old value."""
         self.new_value = new_value
+        """The new, incompatible value."""
         self.details = details
+        """Some details about the breakage."""
 
     def __str__(self) -> str:
         return self.kind.value

@@ -1,12 +1,10 @@
 # Python code best practices
 
-This document describes some best practices to adopt when using Griffe,
-or when writing Python code that will be analyzed by Griffe.
+This document describes some best practices to adopt when using Griffe, or when writing Python code that will be analyzed by Griffe.
 
 ## Avoid member-submodule name shadowing
 
-Sometimes we find that an `__init__` module defines or import an object
-which has the same name as a submodule of the parent package.
+Sometimes we find that an `__init__` module defines or import an object which has the same name as a submodule of the parent package.
 
 **Case 1**
 
@@ -28,9 +26,7 @@ other_thing = "other thing from thing submodule"
 
 We recommend not doing that.
 
-Why? Because the `package.subpackage.thing` submodule
-can eventually **shadow** the `package.subpackage.thing` attribute.
-Try this:
+Why? Because the `package.subpackage.thing` submodule can eventually **shadow** the `package.subpackage.thing` attribute. Try this:
 
 ```bash
 # Replicate the file tree from above.
@@ -51,14 +47,11 @@ python
 <module 'package.subpackage.thing' from 'package/subpackage/thing.py'>
 ```
 
-By simply importing from the `thing` submodule,
-the `thing` attribute of `subpackage` was overwritten by the `thing` submodule.
+By simply importing from the `thing` submodule, the `thing` attribute of `subpackage` was overwritten by the `thing` submodule.
 
 **Case 2**
 
-In a particular case though, the situation improves: if we *import* `thing`
-in the init module instead of declaring it, then further imports will
-not overwrite anything:
+In a particular case though, the situation improves: if we *import* `thing` in the init module instead of declaring it, then further imports will not overwrite anything:
 
 ```python title="package/subpackage/__init__.py"
 from package.subpackage.thing import thing
@@ -87,15 +80,9 @@ python
 >>> # Still OK
 ```
 
-From an API perspective, and given that both cases are very similar
-but differ in behavior, we recommend not doing that either.
+From an API perspective, and given that both cases are very similar but differ in behavior, we recommend not doing that either.
 
-If the goal is to isolate a single object into its own module,
-to then expose it in the parent module,
-then it would make sense that this object is the only object
-of the submodule to be exposed in the public API,
-and therefore the submodule could be marked as private
-by prefixing its name with an underscore:
+If the goal is to isolate a single object into its own module, to then expose it in the parent module, then it would make sense that this object is the only object of the submodule to be exposed in the public API, and therefore the submodule could be marked as private by prefixing its name with an underscore:
 
 ```tree
 package/
@@ -107,17 +94,11 @@ package/
 
 With this, there is no ambiguity as to what `subpackage.thing` points to.
 
-For the reasons mentioned above,
-**Griffe does not support this kind of name shadowing.**
-During static analysis, the submodule will take precedence
-over the attribute. During dynamic analysis, Griffe's behavior
-is undefined.
+For the reasons mentioned above, **Griffe does not support this kind of name shadowing.** During static analysis, the submodule will take precedence over the attribute. During dynamic analysis, Griffe's behavior is undefined.
 
 ## Avoid wildcard imports
 
-Wildcard imports allow to import all public objects from a module.
-Public objects can either be explicitly listed in the module's `__all__` list/tuple,
-or implicitly marked as such by prefixing private objects with an underscore.
+Wildcard imports allow to import from a module all objects that do not start with an underscore `_`, or all objects that are listed in the module's `__all__` attribute, if it is defined.
 
 ```tree
 package/
@@ -125,7 +106,7 @@ package/
     module.py
 ```
 
-**Explicitly public**
+**Explicitly exposed to wildcard imports**
 
 ```python title="package/module.py"
 __all__ = [
@@ -144,7 +125,7 @@ some_attribute = 0
 some_other_attribute = 1
 ```
 
-**Implicitly public**
+**Implicitly exposed to wildcard imports**
 
 ```python title="package/module.py"
 class SomeClass: ...
@@ -157,19 +138,15 @@ some_attribute = 0
 _some_other_attribute = 1
 ```
 
-In both cases, using a wildcard import will only import
-`SomeClass`, `some_function` and `some_attribute`, and
-not their "other" counterparts:
+In both cases, using a wildcard import will only import `SomeClass`, `some_function` and `some_attribute`, and not their "other" counterparts:
 
 ```python title="package/__init__.py"
 from package.module import *
 ```
 
-While we recommend declaring your public API with `__all__` lists,
-we do not recommend using wildcard imports.
+While we recommend declaring your public API with `__all__` lists, we do not recommend using wildcard imports.
 
-In the implicit case, any other object imported in `module.py`
-will also be exported by the wildcard:
+In the implicit case, any other object imported in `module.py` will also be exported by the wildcard:
 
 ```python title="package/module.py"
 from somewhere_else import this, that
@@ -184,9 +161,7 @@ some_attribute = 0
 _some_other_attribute = 1
 ```
 
-Here, `this` and `that` will also be imported when we do
-`from package.module import *`. To prevent that, we would have
-to alias these names as such:
+Here, `this` and `that` will also be imported when we do `from package.module import *`. To prevent that, we would have to alias these names as such:
 
 ```python title="package/module.py"
 from somewhere_else import this as _this, that as _that
@@ -200,30 +175,15 @@ It gets even worse if `module.py` itself uses wildcard imports:
 from somewhere_else import *
 ```
 
-Now using `from package.module import *` will import all implicitly public objects
-declared in the module, but also all the implicitly public objects imported by it,
-and also all the implicitly public objects imported by the modules of the imported objects,
-etc., recursively. Soon enough, we end up with dozens and dozens of objects exposed in
-`package`, while just a few of them are useful/meaningful to users.
+Now using `from package.module import *` will import all objects that do not start with an underscore declared in the module, but also all the objects imported by it that do not start with an underscore, and also all the objects imported by the modules of the imported objects that do not start with an underscore, etc., recursively. Soon enough, we end up with dozens and dozens of objects exposed in `package`, while just a few of them are useful/meaningful to users.
 
-Not only that, but it also increases the risk of creating cycles in imports.
-Python can handle some of these cycles, but static analysis tools such as Griffe
-can have a much harder time trying to resolve them.
+Not only that, but it also increases the risk of creating cycles in imports. Python can handle some of these cycles, but static analysis tools such as Griffe can have a much harder time trying to resolve them.
 
-In the explicit case, the situation improves, as only the objects listed
-in `__all__` will be exported to the modules that wildcard imports them.
-It effectively stops namespace pollution, but it only decreases
-the risk of cyclic imports.
+In the explicit case, the situation improves, as only the objects listed in `__all__` will be exported to the modules that wildcard imports them. It effectively stops namespace pollution, but it does not remove the risk of cyclic imports, only decreases it.
 
-We have seen code bases where parent modules wildcard imports from submodules,
-while these submodules also wildcard imports from the parent modules...
-Python somehow handles this, but it is *hell* to handle statically,
-and it is just too error prone (cyclic imports, name shadowing,
-namespaces become dependent on the order of imports, etc.).
+We have seen code bases where parent modules wildcard imports from submodules, while these submodules also wildcard imports from the parent modules... Python somehow handles this, but it is *hell* to handle statically, and it is just too error prone (cyclic imports, name shadowing, namespaces become dependent on the order of imports, etc.).
 
-For these reasons, we recommend not using wildcard imports.
-Instead, we recommend declaring your public API explicitly with `__all__`,
-and combining `__all__` lists together if needed:
+For these reasons, we recommend not using wildcard imports. Instead, we recommend declaring your public API explicitly with `__all__`, and combining `__all__` lists together if needed:
 
 ```tree
 package/
@@ -267,9 +227,7 @@ Most Python linting tools allow to forbid the use of wildcard imports.
 
 ## Prefer canonical imports
 
-Within your own code base, we recommend using canonical imports.
-By canonical, we mean importing objects from the module
-they are declared in, and not from another module that also imports them.
+Within your own code base, we recommend using canonical imports. By canonical, we mean importing objects from the module they are declared in, and not from another module that also imports them.
 
 Given the following tree:
 
@@ -302,8 +260,7 @@ from package.module_b import thing  # Canonical import, good.
 
 ---
 
-We especially recommend canonical imports over indirect imports
-from sibling modules passing through the parent:
+We especially recommend canonical imports over indirect imports from sibling modules passing through the parent:
 
 ```python title="package/__init__.py"
 from package.module_a import thing  # Canonical import, good.
@@ -322,8 +279,7 @@ from package.module_a import thing  # Canonical import, good.
 
 ---
 
-Similarly, avoid exposing the API of external packages from your own package
-and recommending to use this indirect API.
+Similarly, avoid exposing the API of external packages from your own package and recommending to use this indirect API.
 
 ```python title="package.py"
 import numpy as np
@@ -334,30 +290,26 @@ __all__ = ["np"]  # Bad.
 # or `import package; package.np.etc`: bad.
 ```
 
-Instead, let users import Numpy themselves, with `import numpy as np`.
-This will help other analysis tools, for example to detect
-that Numpy is used directly and should therefore be listed as a dependency.
+Instead, let users import Numpy themselves, with `import numpy as np`. This will help other analysis tools, for example to detect that Numpy is used directly and should therefore be listed as a dependency. To quote [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
+
+> Imported names should always be considered an implementation detail. Other modules must not rely on indirect access to such imported names unless they are an explicitly documented part of the containing module’s API, such as os.path or a package’s `__init__` module that exposes functionality from submodules.
+
+Emphasis on *exposes functionality from submodules*: PEP 8 does not state *exposing functionality from external packages*.
 
 ---
 
 Using canonical imports provides several benefits:
 
 - it can reduce the risk of cyclic imports
-- it can increase performance by reducing hoops and importing less things
-  (for example by not passing through a parent module that imports many things
-  from siblings modules)
+- it can increase performance by reducing hoops and importing less things (for example by not passing through a parent module that imports many things from siblings modules)
 - it makes the code more readable and easier to refactor (less indirections)
 - it makes the life of static analysis tools easier (less indirections)
 
-We recommend using the [canonical-imports](https://github.com/15r10nk/canonical-imports) tool
-to automatically rewrite your imports as canonical.
+We recommend using the [canonical-imports](https://github.com/15r10nk/canonical-imports) tool to automatically rewrite your imports as canonical.
 
-Note however that we recommend using public imports
-(importing from the "public" locations rather than the canonical ones) when:
+Note however that we recommend using public imports (importing from the "public" locations rather than the canonical ones) when:
 
 - importing from other packages
 - importing from your own package within your tests suite
 
-Apply these recommandations at your discretion:
-there may be other special cases where it might not make sense
-to use canonical imports.
+Apply these recommandations at your discretion: there may be other special cases where it might not make sense to use canonical imports.

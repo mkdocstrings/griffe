@@ -23,13 +23,13 @@ from _griffe.docstrings.dataclasses import (
     DocstringSectionReturns,
     DocstringSectionText,
 )
-from _griffe.docstrings.utils import warning
+from _griffe.docstrings.utils import docstring_warning
 
 if TYPE_CHECKING:
     from _griffe.dataclasses import Docstring
     from _griffe.expressions import Expr
 
-_warn = warning("griffe")
+_warn = docstring_warning("griffe")
 
 # TODO: Examples: from the documentation, we're not sure there is a standard format for examples
 _PARAM_NAMES = frozenset(("param", "parameter", "arg", "argument", "key", "keyword"))
@@ -85,7 +85,7 @@ class _ParsedValues:
     return_type: str | None = None
 
 
-def parse(docstring: Docstring, *, warn_unknown_params: bool = True, **options: Any) -> list[DocstringSection]:
+def parse_sphinx(docstring: Docstring, *, warn_unknown_params: bool = True, **options: Any) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
 
     Parameters:

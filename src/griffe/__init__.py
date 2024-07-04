@@ -93,11 +93,11 @@ with lazy_importing():
         DocstringWarn,
         DocstringYield,
     )
-    from _griffe.docstrings.google import parse as parse_google
-    from _griffe.docstrings.numpy import parse as parse_numpy
+    from _griffe.docstrings.google import parse_google
+    from _griffe.docstrings.numpy import parse_numpy
     from _griffe.docstrings.parsers import parse, parsers
-    from _griffe.docstrings.sphinx import parse as parse_sphinx
-    from _griffe.docstrings.utils import WarningCallable, parse_annotation, warning
+    from _griffe.docstrings.sphinx import parse_sphinx
+    from _griffe.docstrings.utils import DocstringWarningCallable, docstring_warning, parse_docstring_annotation
     from _griffe.encoders import JSONEncoder, json_decoder
     from _griffe.enumerations import (
         BreakageKind,
@@ -206,7 +206,8 @@ with lazy_importing():
 
 # Regenerate this list with the following Python snippet:
 # import griffe
-# print('__all__ = [\n    "' + '",\n    "'.join(sorted(n for n in dir(griffe) if not n.startswith("_"))) + '",\n]')
+# names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("annotations", "lazy_importing"))
+# print('__all__ = [\n    "' + '",\n    "'.join(names) + '",\n]')
 __all__ = [
     "Alias",
     "AliasResolutionError",
@@ -344,9 +345,8 @@ __all__ = [
     "UnimportableModuleError",
     "Visitor",
     "VisitorExtension",
-    "WarningCallable",
+    "DocstringWarningCallable",
     "When",
-    "annotations",
     "assert_git_repo",
     "ast_children",
     "ast_first_child",
@@ -389,7 +389,7 @@ __all__ = [
     "merge_stubs",
     "module_vtree",
     "parse",
-    "parse_annotation",
+    "parse_docstring_annotation",
     "parse_google",
     "parse_numpy",
     "parse_sphinx",
@@ -413,5 +413,5 @@ __all__ = [
     "typing_overload",
     "visit",
     "vtree",
-    "warning",
+    "docstring_warning",
 ]

@@ -2,27 +2,15 @@
 
 from __future__ import annotations
 
-import warnings
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from _griffe.enumerations import Kind
 
 if TYPE_CHECKING:
     from _griffe.dataclasses import Alias, Object
     from _griffe.loader import GriffeLoader
-
-
-def __getattr__(name: str) -> Any:
-    if name == "stats":
-        warnings.warn(
-            "The 'stats' function was made into a class and renamed 'Stats'.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return Stats
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 class Stats:
@@ -35,6 +23,8 @@ class Stats:
             loader: The loader to compute stats for.
         """
         self.loader = loader
+        """The loader to compute stats for."""
+
         modules_by_extension = defaultdict(
             int,
             {
@@ -47,19 +37,35 @@ class Stats:
                 ".so": 0,
             },
         )
+
         top_modules = loader.modules_collection.members.values()
+
         self.by_kind = {
             Kind.MODULE: 0,
             Kind.CLASS: 0,
             Kind.FUNCTION: 0,
             Kind.ATTRIBUTE: 0,
         }
+        """Number of objects by kind."""
+
         self.packages = len(top_modules)
+        """Number of packages."""
+
         self.modules_by_extension = modules_by_extension
+        """Number of modules by extension."""
+
         self.lines = sum(len(lines) for lines in loader.lines_collection.values())
+        """Total number of lines."""
+
         self.time_spent_visiting = 0
+        """Time spent visiting modules."""
+
         self.time_spent_inspecting = 0
+        """Time spent inspecting modules."""
+
         self.time_spent_serializing = 0
+        """Time spent serializing objects."""
+
         for module in top_modules:
             self._itercount(module)
 

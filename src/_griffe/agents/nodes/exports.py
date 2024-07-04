@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import ast
-import warnings
 from contextlib import suppress
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
@@ -16,18 +15,6 @@ if TYPE_CHECKING:
 
 
 _logger = get_logger("griffe")
-
-
-# TODO: Remove for v1.0.0.
-def __getattr__(name: str) -> Any:
-    if name == "Name":
-        warnings.warn(
-            "The `Name` class has been renamed `ExportedName`.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return ExportedName
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 @dataclass

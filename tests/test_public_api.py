@@ -1,6 +1,6 @@
 """Tests for public API handling."""
 
-from griffe.tests import temporary_visited_module
+from griffe import temporary_visited_module
 
 
 def test_not_detecting_imported_objects_as_public() -> None:

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from _griffe.expressions import Expr
 
 
-class WarningCallable(Protocol):
+class DocstringWarningCallable(Protocol):
     """A callable that logs a warning message."""
 
     def __call__(self, docstring: Docstring, offset: int, message: str, log_level: LogLevel = ...) -> None:
@@ -29,7 +29,7 @@ class WarningCallable(Protocol):
         """
 
 
-def warning(name: str) -> WarningCallable:
+def docstring_warning(name: str) -> DocstringWarningCallable:
     """Create and return a warn function.
 
     Parameters:
@@ -60,7 +60,7 @@ def warning(name: str) -> WarningCallable:
     return warn
 
 
-def parse_annotation(
+def parse_docstring_annotation(
     annotation: str,
     docstring: Docstring,
     log_level: LogLevel = LogLevel.error,

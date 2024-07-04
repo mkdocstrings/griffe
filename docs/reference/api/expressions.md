@@ -8,6 +8,42 @@
         summary:
             classes: true
 
+## **Helpers**
+
+::: griffe.get_annotation
+    options:
+        heading_level: 2
+
+::: griffe.get_base_class
+    options:
+        heading_level: 2
+
+::: griffe.get_condition
+    options:
+        heading_level: 2
+
+::: griffe.get_expression
+    options:
+        heading_level: 2
+
+::: griffe.safe_get_annotation
+    options:
+        heading_level: 2
+
+::: griffe.safe_get_base_class
+    options:
+        heading_level: 2
+
+::: griffe.safe_get_condition
+    options:
+        heading_level: 2
+
+::: griffe.safe_get_expression
+    options:
+        heading_level: 2
+
+## **Expression nodes**
+
 ::: griffe.Expr
     options:
         heading_level: 2

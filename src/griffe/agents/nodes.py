@@ -14,4 +14,11 @@ def __getattr__(name: str) -> Any:
         DeprecationWarning,
         stacklevel=2,
     )
+    if name == "Name":
+        warnings.warn(
+            "The `Name` class was renamed `ExportedName`.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return griffe.ExportedName
     return getattr(griffe, name)

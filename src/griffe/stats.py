@@ -14,4 +14,11 @@ def __getattr__(name: str) -> Any:
         DeprecationWarning,
         stacklevel=2,
     )
+    if name == "stats":
+        warnings.warn(
+            "The 'stats' function was made into a class and renamed 'Stats'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return griffe.Stats
     return getattr(griffe, name)
