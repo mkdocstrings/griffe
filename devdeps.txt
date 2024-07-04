@@ -4,7 +4,7 @@ editables>=0.5
 # maintenance
 build>=1.2
 git-changelog>=2.5
-twine>=5.1; python_version < '3.13'
+twine>=5.0; python_version < '3.13'
 
 # ci
 duty>=1.4

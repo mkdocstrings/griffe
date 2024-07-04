@@ -42,18 +42,6 @@ PASTE TRACEBACK HERE
 
 </details>
 
-<!-- If using Griffe directly: -->
-```console
-$ griffe dump ... -LDEBUG
-PASTE LOGS HERE
-```
-
-<!-- If using Griffe through MkDocs and mkdocstrings: -->
-```console
-$ mkdocs build -v
-PASTE LOGS HERE
-```
-
 ### Expected behavior
 <!-- Please provide a clear and concise description of what you expected to happen. -->
 
@@ -65,7 +53,7 @@ PASTE LOGS HERE
 griffe --debug-info  # | xclip -selection clipboard
 ```
 
-PASTE OUTPUT HERE
+PASTE MARKDOWN OUTPUT HERE
 
 ### Additional context
 <!-- Add any other relevant context about the problem here,
