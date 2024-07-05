@@ -227,7 +227,7 @@ class ExprBinOp(Expr):
     right: str | Expr
     """Right part."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat)
         yield f" {self.operator} "
         yield from _yield(self.right, flat=flat)
@@ -243,7 +243,7 @@ class ExprBoolOp(Expr):
     values: Sequence[str | Expr]
     """Operands."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _join(self.values, f" {self.operator} ", flat=flat)
 
 
@@ -262,7 +262,7 @@ class ExprCall(Expr):
         """The canonical path of this subscript's left part."""
         return self.function.canonical_path
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.function, flat=flat)
         yield "("
         yield from _join(self.arguments, ", ", flat=flat)
@@ -281,7 +281,7 @@ class ExprCompare(Expr):
     comparators: Sequence[str | Expr]
     """Things compared."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat)
         yield " "
         yield from _join(zip_longest(self.operators, [], self.comparators, fillvalue=" "), " ", flat=flat)
@@ -301,7 +301,7 @@ class ExprComprehension(Expr):
     is_async: bool = False
     """Async comprehension or not."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         if self.is_async:
             yield "async "
         yield "for "
@@ -321,7 +321,7 @@ class ExprConstant(Expr):
     value: str
     """Constant value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002,D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
         yield self.value
 
 
@@ -335,7 +335,7 @@ class ExprDict(Expr):
     values: Sequence[str | Expr]
     """Dict values."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _join(
             (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
@@ -357,7 +357,7 @@ class ExprDictComp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _yield(self.key, flat=flat)
         yield ": "
@@ -374,7 +374,7 @@ class ExprExtSlice(Expr):
     dims: Sequence[str | Expr]
     """Dims."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _join(self.dims, ", ", flat=flat)
 
 
@@ -386,7 +386,7 @@ class ExprFormatted(Expr):
     value: str | Expr
     """Formatted value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _yield(self.value, flat=flat)
         yield "}"
@@ -402,7 +402,7 @@ class ExprGeneratorExp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.element, flat=flat)
         yield " "
         yield from _join(self.generators, " ", flat=flat)
@@ -420,7 +420,7 @@ class ExprIfExp(Expr):
     orelse: str | Expr
     """Other expression."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.body, flat=flat)
         yield " if "
         yield from _yield(self.test, flat=flat)
@@ -436,7 +436,7 @@ class ExprJoinedStr(Expr):
     values: Sequence[str | Expr]
     """Joined values."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "f'"
         yield from _join(self.values, "", flat=flat)
         yield "'"
@@ -477,7 +477,7 @@ class ExprKeyword(Expr):
             return f"{self.function.canonical_path}({self.name})"
         return super(ExprKeyword, self).canonical_path  # noqa: UP008
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.name
         yield "="
         yield from _yield(self.value, flat=flat)
@@ -491,7 +491,7 @@ class ExprVarPositional(Expr):
     value: Expr
     """Starred value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "*"
         yield from _yield(self.value, flat=flat)
 
@@ -504,7 +504,7 @@ class ExprVarKeyword(Expr):
     value: Expr
     """Double-starred value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "**"
         yield from _yield(self.value, flat=flat)
 
@@ -519,7 +519,7 @@ class ExprLambda(Expr):
     body: str | Expr
     """Lambda's body."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         pos_only = False
         pos_or_kw = False
         kw_only = False
@@ -560,7 +560,7 @@ class ExprList(Expr):
     elements: Sequence[Expr]
     """List elements."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "["
         yield from _join(self.elements, ", ", flat=flat)
         yield "]"
@@ -576,7 +576,7 @@ class ExprListComp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "["
         yield from _yield(self.element, flat=flat)
         yield " "
@@ -599,7 +599,7 @@ class ExprName(Expr):
             return self.name == other.name
         return NotImplemented
 
-    def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002,D102
+    def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002
         yield self
 
     @property
@@ -674,7 +674,7 @@ class ExprNamedExpr(Expr):
     value: str | Expr
     """Value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "("
         yield from _yield(self.target, flat=flat)
         yield " := "
@@ -705,7 +705,7 @@ class ExprSet(Expr):
     elements: Sequence[str | Expr]
     """Set elements."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _join(self.elements, ", ", flat=flat)
         yield "}"
@@ -721,7 +721,7 @@ class ExprSetComp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _yield(self.element, flat=flat)
         yield " "
@@ -741,7 +741,7 @@ class ExprSlice(Expr):
     step: str | Expr | None = None
     """Iteration step."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         if self.lower is not None:
             yield from _yield(self.lower, flat=flat)
         yield ":"
@@ -762,7 +762,7 @@ class ExprSubscript(Expr):
     slice: Expr
     """Slice part."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat)
         yield "["
         yield from _yield(self.slice, flat=flat)
@@ -793,7 +793,7 @@ class ExprTuple(Expr):
     implicit: bool = False
     """Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         if not self.implicit:
             yield "("
         yield from _join(self.elements, ", ", flat=flat)
@@ -811,7 +811,7 @@ class ExprUnaryOp(Expr):
     value: str | Expr
     """Value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.operator
         yield from _yield(self.value, flat=flat)
 
@@ -824,7 +824,7 @@ class ExprYield(Expr):
     value: str | Expr | None = None
     """Yielded value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "yield"
         if self.value is not None:
             yield " "

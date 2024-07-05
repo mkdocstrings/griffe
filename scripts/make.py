@@ -95,14 +95,17 @@ def _command(name: str) -> Callable[[Callable[..., None]], Callable[..., None]]:
 @_command("help")
 def help(*args: str) -> None:
     """Print this help. Add task name to print help.
+
     ```bash
     make help [TASK]
     ```
+
     When the Python dependencies are not installed,
     this command just print the available commands.
     When the Python dependencies are installed,
     [duty](https://github.com/pawamoy/duty) is available
     so the command can also print the available tasks.
+
     If you add a task name after the command, it will print help for this specific task.
     """
     if len(args) > 1:
@@ -123,20 +126,27 @@ def help(*args: str) -> None:
 @_command("setup")
 def setup() -> None:
     """Setup all virtual environments (install dependencies).
+
     ```bash
     make setup
     ```
+
     The `setup` command installs all the Python dependencies required to work on the project.
     It will create a virtual environment in the `.venv` folder,
     as well as one virtual environment per supported Python version in the `.venvs/3.x` folders.
+
     If you cloned the repository on the same file-system as uv's cache,
     everything will be hard linked from the cache, so don't worry about wasting disk space.
+
     Once dependencies are installed, try running `make` or `make help` again, to show additional tasks.
+
     ```console exec="1" source="console"
     $ make
     ```
+
     These tasks are written using [duty](https://github.com/pawamoy/duty) (a task runner),
     and located in the `duties.py` module in the repository root.
+
     Some of these tasks will run in the default virtual environment (`.venv`),
     while others will run in all the supported Python version environments (`.venvs/3.x`).
     """
@@ -162,9 +172,11 @@ def setup() -> None:
 @_command("run")
 def run(cmd: str, *args: str, **kwargs: Any) -> None:
     """Run a command in the default virtual environment.
+
     ```bash
     make run <CMD> [ARG...]
     ```
+
     This command runs an arbitrary command inside the default virtual environment (`.venv`).
     It is especially useful to start a Python interpreter without having to first activate
     the virtual environment: `make run python`.
@@ -175,9 +187,11 @@ def run(cmd: str, *args: str, **kwargs: Any) -> None:
 @_command("multirun")
 def multirun(cmd: str, *args: str, **kwargs: Any) -> None:
     """Run a command for all configured Python versions.
+
     ```bash
     make multirun <CMD> [ARG...]
     ```
+
     This command runs an arbitrary command inside the environments
     for all supported Python versions. It is especially useful for running tests.
     """
@@ -191,14 +205,18 @@ def multirun(cmd: str, *args: str, **kwargs: Any) -> None:
 @_command("allrun")
 def allrun(cmd: str, *args: str, **kwargs: Any) -> None:
     """Run a command in all virtual environments.
+
     ```bash
     make multirun <CMD> [ARG...]
     ```
+
     This command runs an arbitrary command inside the default environment,
     as well as the environments for all supported Python versions.
+
     This command is especially useful to install, remove or update dependencies
     in all environments at once. For example, if you want to install a dependency
     in editable mode, from a local source:
+
     ```bash
     make allrun uv pip install -e ../other-project
     ```
@@ -211,9 +229,11 @@ def allrun(cmd: str, *args: str, **kwargs: Any) -> None:
 @_command("3.x")
 def run3x(version: str, cmd: str, *args: str, **kwargs: Any) -> None:
     """Run a command in the virtual environment for Python 3.x.
+
     ```bash
     make 3.x <CMD> [ARG...]
     ```
+
     This command runs an arbitrary command inside the environment of the selected Python version.
     It can be useful if you want to run a task that usually runs in the default environment
     with a different Python version.
@@ -224,9 +244,11 @@ def run3x(version: str, cmd: str, *args: str, **kwargs: Any) -> None:
 @_command("clean")
 def clean() -> None:
     """Delete build artifacts and cache files.
+
     ```bash
     make clean
     ```
+
     This command simply deletes build artifacts and cache files and folders
     such as `build/`, `.cache/`, etc.. The virtual environments (`.venv` and `.venvs/*`)
     are not removed by this command.
@@ -246,14 +268,18 @@ def clean() -> None:
 @_command("vscode")
 def vscode() -> None:
     """Configure VSCode to work on this project.
+
     ```bash
     make vscode
     ```
+
     This command configures the [VSCode editor](https://code.visualstudio.com/)
     by copying the following files into the `.vscode` directory:
+
     - `launch.json`, for run configurations (to run debug sessions)
     - `settings.json`, for various editor settings like linting tools and their configuration
     - `tasks.json`, for running tasks directly from VSCode's interface
+
     Warning:
         These files will be overwritten everytime the command is run.
     """
