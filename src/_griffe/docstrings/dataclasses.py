@@ -160,6 +160,7 @@ class DocstringFunction(DocstringNamedElement):
 
     @property
     def signature(self) -> str | Expr | None:
+        """The function signature."""
         return self.annotation
 
 
@@ -168,6 +169,7 @@ class DocstringClass(DocstringNamedElement):
 
     @property
     def signature(self) -> str | Expr | None:
+        """The class signature."""
         return self.annotation
 
 
@@ -194,6 +196,7 @@ class DocstringSection:
         """The section value."""
 
     def __bool__(self) -> bool:
+        """Whether this section has a true-ish value."""
         return bool(self.value)
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:

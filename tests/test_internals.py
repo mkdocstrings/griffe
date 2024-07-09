@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import Iterator
 
@@ -46,7 +47,7 @@ def _yield_public_objects(
                 if modules:
                     yield member
                 yield from _yield_public_objects(
-                    member,
+                    member,  # type: ignore[arg-type]
                     modules=modules,
                     modulelevel=modulelevel,
                     inherited=inherited,
@@ -56,7 +57,7 @@ def _yield_public_objects(
                 yield member
             if member.is_class and not modulelevel:
                 yield from _yield_public_objects(
-                    member,
+                    member,  # type: ignore[arg-type]
                     modules=modules,
                     modulelevel=False,
                     inherited=inherited,
@@ -143,9 +144,14 @@ def test_single_locations(public_api: griffe.Module) -> None:
 def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffe.Alias]) -> None:
     """All public objects are added to the inventory."""
     not_in_inventory = []
-    ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__bool__", "__len__", "__iter__"}
+    ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
+    ignore_paths = {"griffe.DataclassesExtension.*"}
     for obj in public_objects:
-        if obj.name not in ignore_names and obj.path not in inventory:
+        if (
+            obj.name not in ignore_names
+            and not any(fnmatch(obj.path, pat) for pat in ignore_paths)
+            and obj.path not in inventory
+        ):
             not_in_inventory.append(obj.path)
     msg = "Objects not in the inventory (try running `make run mkdocs build`):\n{paths}"
     assert not not_in_inventory, msg.format(paths="\n".join(sorted(not_in_inventory)))
@@ -162,8 +168,8 @@ def test_inventory_matches_api(
     public_api_paths.add("griffe")
     for item in inventory.values():
         if item.domain == "py" and "(" not in item.name:
-            obj = loader.modules_collection[item]
+            obj = loader.modules_collection[item.name]
             if obj.path not in public_api_paths and not any(path in public_api_paths for path in obj.aliases):
-                not_in_api.append(item)
+                not_in_api.append(item.name)
     msg = "Inventory objects not in public API (try running `make run mkdocs build`):\n{paths}"
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))

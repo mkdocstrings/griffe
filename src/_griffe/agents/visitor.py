@@ -47,6 +47,7 @@ builtin_decorators = {
     "staticmethod": "staticmethod",
     "classmethod": "classmethod",
 }
+"""Mapping of builtin decorators to labels."""
 
 stdlib_decorators = {
     "abc.abstractmethod": {"abstractmethod"},
@@ -56,7 +57,13 @@ stdlib_decorators = {
     "functools.lru_cache": {"cached"},
     "dataclasses.dataclass": {"dataclass"},
 }
+"""Mapping of standard library decorators to labels."""
+
 typing_overload = {"typing.overload", "typing_extensions.overload"}
+"""Set of recognized typing overload decorators.
+
+When such a decorator is found, the decorated function becomes an overload.
+"""
 
 
 def visit(
@@ -132,17 +139,39 @@ class Visitor:
             modules_collection: A collection of modules.
         """
         super().__init__()
+
         self.module_name: str = module_name
+        """The module name."""
+
         self.filepath: Path = filepath
+        """The module filepath."""
+
         self.code: str = code
+        """The module source code."""
+
         self.extensions: Extensions = extensions.attach_visitor(self)
+        """The extensions to use when visiting the AST."""
+
         self.parent: Module | None = parent
+        """An optional parent for the final module object."""
+
         self.current: Module | Class = None  # type: ignore[assignment]
+        """The current object being visited."""
+
         self.docstring_parser: Parser | None = docstring_parser
+        """The docstring parser to use."""
+
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        """The docstring parsing options."""
+
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        """A collection of source code lines."""
+
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        """A collection of modules."""
+
         self.type_guarded: bool = False
+        """Whether the current code branch is type-guarded."""
 
     def _get_docstring(self, node: ast.AST, *, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)

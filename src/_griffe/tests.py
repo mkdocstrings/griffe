@@ -27,7 +27,11 @@ _TMPDIR_PREFIX = "griffe_"
 
 @dataclass
 class TmpPackage:
-    """A temporary package."""
+    """A temporary package.
+
+    The `tmpdir` and `path` parameters can be passed as relative path.
+    They will be resolved to absolute paths after initialization.
+    """
 
     tmpdir: Path
     """The temporary directory containing the package."""

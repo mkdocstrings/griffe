@@ -118,15 +118,33 @@ class Inspector:
             modules_collection: A collection of modules.
         """
         super().__init__()
+
         self.module_name: str = module_name
+        """The module name."""
+
         self.filepath: Path | None = filepath
+        """The module file path."""
+
         self.extensions: Extensions = extensions.attach_inspector(self)
+        """The extensions to use when inspecting."""
+
         self.parent: Module | None = parent
+        """An optional parent for the final module object."""
+
         self.current: Module | Class = None  # type: ignore[assignment]
+        """The current object being inspected."""
+
         self.docstring_parser: Parser | None = docstring_parser
+        """The docstring parser to use."""
+
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        """The docstring parsing options."""
+
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        """A collection of source code lines."""
+
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        """A collection of modules."""
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
         try:

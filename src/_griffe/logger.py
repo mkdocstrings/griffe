@@ -40,12 +40,19 @@ class LogLevel(Enum):
     """Enumeration of available log levels."""
 
     trace: str = "trace"
+    """The TRACE log level."""
     debug: str = "debug"
+    """The DEBUG log level."""
     info: str = "info"
+    """The INFO log level."""
     success: str = "success"
+    """The SUCCESS log level."""
     warning: str = "warning"
+    """The WARNING log level."""
     error: str = "error"
+    """The ERROR log level."""
     critical: str = "critical"
+    """The CRITICAL log level."""
 
 
 class _Logger:

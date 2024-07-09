@@ -16,11 +16,7 @@
 ## **Advanced API**
 
 ::: griffe.JSONEncoder
-    options:
-        heading_level: 2
 
 
 ::: griffe.json_decoder
-    options:
-        heading_level: 2
 

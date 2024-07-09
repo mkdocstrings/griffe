@@ -7,9 +7,11 @@ to generate API documentation or find breaking changes in your API.
 
 from __future__ import annotations
 
+from contextlib import nullcontext
+
 from slothy import lazy_importing
 
-with lazy_importing():
+with nullcontext():
     from _griffe.agents.inspector import Inspector, inspect
     from _griffe.agents.nodes.assignments import get_instance_names, get_name, get_names
     from _griffe.agents.nodes.ast import (
@@ -107,6 +109,7 @@ with lazy_importing():
         ObjectKind,
         ParameterKind,
         Parser,
+        # YORE: Bump 1.0.0: Remove line.
         When,
     )
     from _griffe.exceptions import (
@@ -169,14 +172,19 @@ with lazy_importing():
     from _griffe.extensions.base import (
         Extension,
         Extensions,
+        # YORE: Bump 1.0.0: Remove line.
         ExtensionType,
+        # YORE: Bump 1.0.0: Remove line.
         InspectorExtension,
         LoadableExtensionType,
+        # YORE: Bump 1.0.0: Remove line.
         VisitorExtension,
         builtin_extensions,
         load_extensions,
     )
     from _griffe.extensions.dataclasses import DataclassesExtension
+
+    # YORE: Bump 1.0.0: Remove line.
     from _griffe.extensions.hybrid import HybridExtension
     from _griffe.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
     from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
@@ -293,6 +301,7 @@ __all__ = [
     "Extension",
     "ExtensionError",
     "ExtensionNotLoadedError",
+    # YORE: Bump 1.0.0: Remove line.
     "ExtensionType",
     "Extensions",
     "Function",
@@ -300,8 +309,10 @@ __all__ = [
     "GitError",
     "GriffeError",
     "GriffeLoader",
+    # YORE: Bump 1.0.0: Remove line.
     "HybridExtension",
     "Inspector",
+    # YORE: Bump 1.0.0: Remove line.
     "InspectorExtension",
     "JSONEncoder",
     "Kind",
@@ -344,8 +355,10 @@ __all__ = [
     "UnhandledEditableModuleError",
     "UnimportableModuleError",
     "Visitor",
+    # YORE: Bump 1.0.0: Remove line.
     "VisitorExtension",
     "DocstringWarningCallable",
+    # YORE: Bump 1.0.0: Remove line.
     "When",
     "assert_git_repo",
     "ast_children",

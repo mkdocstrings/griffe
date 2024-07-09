@@ -157,8 +157,13 @@ class ObjectKind(enum.Enum):
         return self.value
 
 
+# YORE: Bump 1.0.0: Remove block.
 class When(enum.Enum):
-    """Enumeration of the different times at which an extension is used."""
+    """Enumeration of the different times at which an extension is used.
+
+    Deprecated. This enumeration is used with the `VisitorExtension` and `InspectorExtension` classes,
+    which are deprecated. Use the `Extension` class instead, which does not need `When`.
+    """
 
     before_all: int = 1
     """For each node, before the visit/inspection."""

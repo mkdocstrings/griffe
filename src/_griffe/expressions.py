@@ -87,6 +87,7 @@ class Expr:
         return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # type: ignore[attr-defined]
 
     def __iter__(self) -> Iterator[str | Expr]:
+        """Iterate on the expression syntax and elements."""
         yield from self.iterate(flat=False)
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
@@ -595,6 +596,7 @@ class ExprName(Expr):
     """Parent (for resolution in its scope)."""
 
     def __eq__(self, other: object) -> bool:
+        """Two name expressions are equal if they have the same `name` value (`parent` is ignored)."""
         if isinstance(other, ExprName):
             return self.name == other.name
         return NotImplemented

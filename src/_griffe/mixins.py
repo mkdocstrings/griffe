@@ -469,7 +469,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         # TODO: In a future version, we will support two conventions regarding imports:
         # - `from a import x as x` marks `x` as public.
         # - `from a import *` marks all wildcard imported objects as public.
-        if self.is_imported:  # type: ignore[attr-defined]
+        if self.is_imported:
             # YORE: Bump 1.0.0: Replace line with `return False`.
             return _False  # type: ignore[return-value]
 

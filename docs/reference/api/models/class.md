@@ -1,5 +1,7 @@
 # Class
 
 ::: griffe.Class
-    options:
-        heading_level: 2
+
+## **Utilities**
+
+::: griffe.c3linear_merge

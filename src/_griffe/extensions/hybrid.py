@@ -1,5 +1,7 @@
 """Deprecated. This extension provides an hybrid behavior while loading data."""
 
+# YORE: Bump 1.0.0: Remove module.
+
 from __future__ import annotations
 
 import re
@@ -34,6 +36,7 @@ class HybridExtension(VisitorExtension):
     """
 
     when = When.after_all
+    """The moment when the extension should be executed."""
 
     def __init__(
         self,
@@ -60,6 +63,7 @@ class HybridExtension(VisitorExtension):
                     "to your extensions configuration, without using 'hybrid'.",
                 )
         self.object_paths = [re.compile(op) if isinstance(op, str) else op for op in object_paths or []]
+        """The list of regular expressions to match against objects paths."""
         super().__init__()
 
     def attach(self, visitor: Visitor) -> None:

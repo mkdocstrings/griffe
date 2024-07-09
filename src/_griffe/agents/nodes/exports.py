@@ -22,7 +22,9 @@ class ExportedName:
     """An intermediate class to store names."""
 
     name: str
+    """The exported name."""
     parent: Module
+    """The parent module."""
 
 
 def _extract_constant(node: ast.Constant, parent: Module) -> list[str | ExportedName]:

@@ -132,8 +132,13 @@ def setup() -> None:
     ```
 
     The `setup` command installs all the Python dependencies required to work on the project.
-    It will create a virtual environment in the `.venv` folder,
+    Virtual environments and dependencies are managed by [uv](https://github.com/astral-sh/uv).
+    Development dependencies are listed in the `devdeps.txt` file.
+
+    The command will create a virtual environment in the `.venv` folder,
     as well as one virtual environment per supported Python version in the `.venvs/3.x` folders.
+    Supported Python versions are listed in the `scripts/make` file, and can be overridden
+    by setting the `PYTHON_VERSIONS` environment variable.
 
     If you cloned the repository on the same file-system as uv's cache,
     everything will be hard linked from the cache, so don't worry about wasting disk space.

@@ -14,6 +14,7 @@ $ make
 
 Commands are always available: they don't require any Python dependency to be installed.
 
+[](){#command-setup}
 ### `setup`
 
 ::: make.setup
@@ -24,6 +25,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-help}
 ### `help`
 
 ::: make.help
@@ -34,6 +36,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-run}
 ### `run`
 
 ::: make.run
@@ -44,6 +47,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-multirun}
 ### `multirun`
 
 ::: make.multirun
@@ -54,6 +58,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-allrun}
 ### `allrun`
 
 ::: make.allrun
@@ -64,6 +69,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-3.x}
 ### `3.x`
 
 ::: make.run3x
@@ -74,6 +80,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-clean}
 ### `clean`
 
 ::: make.clean
@@ -84,6 +91,7 @@ Commands are always available: they don't require any Python dependency to be in
         separate_signature: false
         parameter_headings: false
 
+[](){#command-vscode}
 ### `vscode`
 
 ::: make.vscode
@@ -104,6 +112,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
 - `make allrun duty TASK`, to run a task in *all* environments
 - `make 3.x duty TASK`, to run a task on a specific Python version
 
+[](){#task-build}
 ### `build`
 
 ::: duties.build
@@ -114,6 +123,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-changelog}
 ### `changelog`
 
 ::: duties.changelog
@@ -124,6 +134,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-check}
 ### `check`
 
 ::: duties.check
@@ -134,6 +145,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-check-api}
 ### `check-api`
 
 ::: duties.check_api
@@ -144,6 +156,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-check-docs}
 ### `check-docs`
 
 ::: duties.check_docs
@@ -154,6 +167,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-check-quality}
 ### `check-quality`
 
 ::: duties.check_quality
@@ -164,6 +178,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-check-types}
 ### `check-types`
 
 ::: duties.check_types
@@ -174,6 +189,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-coverage}
 ### `coverage`
 
 ::: duties.coverage
@@ -184,6 +200,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-docs}
 ### `docs`
 
 ::: duties.docs
@@ -194,6 +211,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-docs-deploy}
 ### `docs-deploy`
 
 ::: duties.docs_deploy
@@ -204,6 +222,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-format}
 ### `format`
 
 ::: duties.format
@@ -214,6 +233,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-fuzz}
 ### `fuzz`
 
 ::: duties.fuzz
@@ -224,6 +244,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-publish}
 ### `publish`
 
 ::: duties.publish
@@ -234,6 +255,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-release}
 ### `release`
 
 ::: duties.release
@@ -244,6 +266,7 @@ Tasks require the Python dependencies to be installed. They use various tools an
         separate_signature: false
         parameter_headings: false
 
+[](){#task-test}
 ### `test`
 
 ::: duties.test

@@ -53,6 +53,10 @@ class GriffeLoader:
     """The Griffe loader, allowing to load data from modules."""
 
     ignored_modules: ClassVar[set[str]] = {"debugpy", "_pydev"}
+    """Special modules to ignore when loading.
+
+    For example, `debugpy` and `_pydev` are used when debugging with VSCode and should generally never be loaded.
+    """
 
     def __init__(
         self,

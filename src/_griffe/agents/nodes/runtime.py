@@ -34,8 +34,8 @@ class ObjectNode:
     Each node stores an object, its name, and a reference to its parent node.
     """
 
-    # low level stuff known to cause issues when resolving aliases
     exclude_specials: ClassVar[set[str]] = {"__builtins__", "__loader__", "__spec__"}
+    """Low level attributes known to cause issues when resolving aliases."""
 
     def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
         """Initialize the object.

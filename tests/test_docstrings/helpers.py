@@ -63,7 +63,9 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
             parent.docstring = docstring_object
         warnings = []
         parser_module._warn = lambda _docstring, _offset, message, log_level=LogLevel.warning: warnings.append(message)  # type: ignore[attr-defined]
-        sections = parser_module.parse(docstring_object, **parser_opts)
+        func_name = f"parse_{parser_module.__name__.split('.')[-1]}"
+        func = getattr(parser_module, func_name)
+        sections = func(docstring_object, **parser_opts)
         return sections, warnings
 
     yield parse

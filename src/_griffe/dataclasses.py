@@ -223,6 +223,7 @@ class Parameter:
         return f"Parameter(name={self.name!r}, annotation={self.annotation!r}, kind={self.kind!r}, default={self.default!r})"
 
     def __eq__(self, __value: object) -> bool:
+        """Parameters are equal if all their attributes except `docstring` and `function` are equal."""
         if not isinstance(__value, Parameter):
             return NotImplemented
         return (
@@ -284,17 +285,21 @@ class Parameters:
         return f"Parameters({', '.join(repr(param) for param in self._parameters_list)})"
 
     def __getitem__(self, name_or_index: int | str) -> Parameter:
+        """Get a parameter by index or name."""
         if isinstance(name_or_index, int):
             return self._parameters_list[name_or_index]
         return self._parameters_dict[name_or_index.lstrip("*")]
 
     def __len__(self):
+        """The number of parameters."""
         return len(self._parameters_list)
 
     def __iter__(self):
+        """Iterate over the parameters, in order."""
         return iter(self._parameters_list)
 
     def __contains__(self, param_name: str):
+        """Whether a parameter with the given name is present."""
         return param_name.lstrip("*") in self._parameters_dict
 
     def add(self, parameter: Parameter) -> None:
@@ -424,11 +429,13 @@ class Object(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})"
 
+    # Prevent using `__len__`.
     def __bool__(self) -> bool:
-        # Prevent using `__len__`.
+        """An object is always true-ish."""
         return True
 
     def __len__(self) -> int:
+        """The number of members in this object, recursively."""
         return len(self.members) + sum(len(member) for member in self.members.values())
 
     @property
@@ -923,11 +930,13 @@ class Alias(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"Alias({self.name!r}, {self.target_path!r})"
 
+    # Prevent using `__len__`.
     def __bool__(self) -> bool:
-        # Prevent using `__len__`.
+        """An alias is always true-ish."""
         return True
 
     def __len__(self) -> int:
+        """The length of an alias is always 1."""
         return 1
 
     # SPECIAL PROXIES -------------------------------

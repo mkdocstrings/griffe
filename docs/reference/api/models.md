@@ -19,37 +19,23 @@ The 5 models:
 ## **Model kind enumeration**
 
 ::: griffe.Kind
-    options:
-        heading_level: 2
 
 ## **Models base classes**
 
 ::: griffe.GetMembersMixin
-    options:
-        heading_level: 2
         members: false
 
 ::: griffe.SetMembersMixin
-    options:
-        heading_level: 2
         members: false
 
 ::: griffe.DelMembersMixin
-    options:
-        heading_level: 2
         members: false
 
 ::: griffe.SerializationMixin
-    options:
-        heading_level: 2
         members: false
 
 ::: griffe.ObjectAliasMixin
-    options:
-        heading_level: 2
         members: false
         inherited_members: false
 
 ::: griffe.Object
-    options:
-        heading_level: 2

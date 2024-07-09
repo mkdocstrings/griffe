@@ -20,15 +20,19 @@ class LinesCollection:
         self._data: dict[Path, list[str]] = {}
 
     def __getitem__(self, key: Path) -> list[str]:
+        """Get the lines of a file path."""
         return self._data[key]
 
     def __setitem__(self, key: Path, value: list[str]) -> None:
+        """Set the lines of a file path."""
         self._data[key] = value
 
     def __contains__(self, item: Path) -> bool:
+        """Check if a file path is in the collection."""
         return item in self._data
 
     def __bool__(self) -> bool:
+        """A lines collection is always true-ish."""
         return True
 
     def keys(self) -> KeysView:
@@ -60,6 +64,7 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin, DelMembersMixin):
     """A collection of modules, allowing easy access to members."""
 
     is_collection = True
+    """Marked as collection to distinguish from objects."""
 
     def __init__(self) -> None:
         """Initialize the collection."""
@@ -67,9 +72,11 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin, DelMembersMixin):
         """Members (modules) of the collection."""
 
     def __bool__(self) -> bool:
+        """A modules collection is always true-ish."""
         return True
 
     def __contains__(self, item: Any) -> bool:
+        """Check if a module is in the collection."""
         return item in self.members
 
     @property

@@ -50,7 +50,7 @@ nav:
     - Environment setup: guide/contributors/setup.md
     - Management commands: guide/contributors/commands.md
     - Development workflow: guide/contributors/workflow.md
-    - Architecture: guide/contributors/architecture.md
+    - Project architecture: guide/contributors/architecture.md
     - Coverage report: guide/contributors/coverage.md
 - Reference:
   - reference.md
@@ -59,6 +59,7 @@ nav:
   # TODO: Sprinkle all enumerations.
   - Python API:
     - reference/api.md
+    - CLI entrypoints: reference/api/cli.md
     - Loaders: reference/api/loaders.md
     - Finder: reference/api/finder.md
     - Models:
@@ -182,6 +183,7 @@ plugins:
 - coverage:
     page_path: guide/contributors/coverage
 - mkdocstrings:
+    enabled: !ENV [MKDOCSTRINGS_ENABLED, true]
     handlers:
       python:
         import:
@@ -194,7 +196,7 @@ plugins:
           docstring_section_style: list
           extensions:
           - griffe_inherited_docstrings
-          heading_level: 1
+          heading_level: 2
           inherited_members: true
           merge_init_into_class: true
           parameter_headings: true
@@ -212,6 +214,9 @@ plugins:
 - git-committers:
     enabled: !ENV [DEPLOY, false]
     repository: mkdocstrings/griffe
+- git-revision-date-localized:
+    enable_creation_date: true
+    type: timeago
 - minify:
     minify_html: !ENV [DEPLOY, false]
 - group:

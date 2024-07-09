@@ -67,7 +67,9 @@ class JSONEncoder(json.JSONEncoder):
         self,
         *args: Any,
         full: bool = False,
+        # YORE: Bump 1.0.0: Remove line.
         docstring_parser: Parser | None = None,
+        # YORE: Bump 1.0.0: Remove line.
         docstring_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -81,16 +83,17 @@ class JSONEncoder(json.JSONEncoder):
                 you don't need the full data as it can be infered again
                 using the base data. If you want to feed a non-Python
                 tool instead, dump the full data.
-            docstring_parser: Deprecated. The docstring parser to use. By default, no parsing is done.
-            docstring_options: Deprecated. Additional docstring parsing options.
             **kwargs: See [`json.JSONEncoder`][].
         """
         super().__init__(*args, **kwargs)
         self.full: bool = full
+        """Whether to dump full data or base data."""
 
         # YORE: Bump 1.0.0: Remove block.
         self.docstring_parser: Parser | None = docstring_parser
+        """Deprecated. The docstring parser to use. By default, no parsing is done."""
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        """Deprecated. Additional docstring parsing options."""
         if docstring_parser is not None:
             warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
         if docstring_options is not None:

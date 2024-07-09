@@ -52,16 +52,36 @@ def changelog(ctx: Context, bump: str = "") -> None:
     make changelog [bump=VERSION]
     ```
 
-    Parameters:
-        bump: Bump option passed to git-changelog.
-
     Update the changelog in-place. The changelog task uses [git-changelog](https://pawamoy.github.io/git-changelog/)
     to read Git commits and parse their messages to infer the new version based
-    on the [Conventional Commits convention](https://www.conventionalcommits.org/en/v1.0.0/).
-    If you want to bump the latest changelog entry to a specific version,
-    pass it with the bump argument: `make changelog bump=1.0.0`.
+    on our [commit message convention][commit-message-convention].
+
+    The new version will be based on the types of the latest commits,
+    unless a specific version is provided with the `bump` parameter.
+
+    If the group of commits contains only bug fixes (`fix:`)
+    and/or commits that are not interesting for users (`chore:`, `style:`, etc.),
+    the changelog will gain a new **patch** entry.
+    It means that the new suggested version will be a patch bump
+    of the previous one: `0.1.1` becomes `0.1.2`.
+
+    If the group of commits contains at least one feature (`feat:`),
+    the changelog will gain a new **minor** entry.
+    It means that the new suggested version will be a minor bump
+    of the previous one: `0.1.1` becomes `0.2.0`.
+
+    If there is, in the group of commits, a commit whose body contains something like `Breaking change`,
+    the changelog will gain a new **major** entry, unless the version is still an "alpha" version (starting with 0),
+    in which case it gains a **minor** entry.
+    It means that the new suggested version will be a major bump
+    of the previous one: `1.2.1` becomes `2.0.0`, but `0.2.1` is only bumped up to `0.3.0`.
+    Moving from "alpha" status to "beta" or "stable" status is a choice left to the developers,
+    when they consider the package is ready for it.
 
     The configuration for git-changelog is located at `config/git-changelog.toml`.
+
+    Parameters:
+        bump: Bump option passed to git-changelog.
     """
     ctx.run(tools.git_changelog(bump=bump or None), title="Updating changelog")
 
@@ -94,6 +114,56 @@ def check_quality(ctx: Context) -> None:
     Check the code quality using [Ruff](https://astral.sh/ruff).
 
     The configuration for Ruff is located at `config/ruff.toml`.
+    In this file, you can deactivate rules or activate others to customize your analysis.
+    Rule identifiers always start with one or more capital letters, like `D`, `S` or `BLK`,
+    then followed by a number.
+
+    You can ignore a rule on a specific code line by appending
+    a `noqa` comment ("no quality analysis/assurance"):
+
+    ```python title="src/your_package/module.py"
+    print("a code line that triggers a Ruff warning")  # noqa: ID
+    ```
+
+    ...where ID is the identifier of the rule you want to ignore for this line.
+
+    Example:
+        ```python title="src/your_package/module.py"
+        import subprocess
+        ```
+
+        ```console
+        $ make check-quality
+        ✗ Checking code quality (1)
+        > ruff check --config=config/ruff.toml src/ tests/ scripts/
+        src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
+        ```
+
+        Now add a comment to ignore this warning.
+
+        ```python title="src/your_package/module.py"
+        import subprocess  # noqa: S404
+        ```
+
+        ```console
+        $ make check-quality
+        ✓ Checking code quality
+        ```
+
+        You can disable multiple different warnings on a single line
+        by separating them with commas, for example `# noqa: D300,D301`.
+
+    You can disable a warning globally by adding its ID
+    into the list in `config/ruff.toml`.
+
+    You can also disable warnings per file, like so:
+
+    ```toml title="config/ruff.toml"
+    [per-file-ignores]
+    "src/your_package/your_module.py" = [
+        "T201",  # Print statement
+    ]
+    ```
     """
     ctx.run(
         tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml"),
@@ -112,6 +182,11 @@ def check_docs(ctx: Context) -> None:
     Build the docs with [MkDocs](https://www.mkdocs.org/) in strict mode.
 
     The configuration for MkDocs is located at `mkdocs.yml`.
+
+    This task builds the documentation with strict behavior:
+    any warning will be considered an error and the command will fail.
+    The warnings/errors can be about incorrect docstring format,
+    or invalid cross-references.
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
@@ -133,6 +208,38 @@ def check_types(ctx: Context) -> None:
     Run type-checking on the code with [Mypy](https://mypy.readthedocs.io/).
 
     The configuration for Mypy is located at `config/mypy.ini`.
+
+    If you cannot or don't know how to fix a typing error in your code,
+    as a last resort you can ignore this specific error with a comment:
+
+    ```python title="src/your_package/module.py"
+    print("a code line that triggers a Mypy warning")  # type: ignore[ID]
+    ```
+
+    ...where ID is the name of the warning.
+
+    Example:
+        ```python title="src/your_package/module.py"
+        result = data_dict.get(key, None).value
+        ```
+
+        ```console
+        $ make check-types
+        ✗ Checking types (1)
+        > mypy --config-file=config/mypy.ini src/ tests/ scripts/
+        src/your_package/module.py:2:1: Item "None" of "Data | None" has no attribute "value" [union-attr]
+        ```
+
+        Now add a comment to ignore this warning.
+
+        ```python title="src/your_package/module.py"
+        result = data_dict.get(key, None).value  # type: ignore[union-attr]
+        ```
+
+        ```console
+        $ make check-types
+        ✓ Checking types
+        ```
     """
     ctx.run(
         tools.mypy(*PY_SRC_LIST, config_file="config/mypy.ini"),
@@ -149,7 +256,13 @@ def check_api(ctx: Context, *cli_args: str) -> None:
     ```
 
     Compare the current code to the latest version (Git tag)
-    using [Griffe](https://mkdocstrings.github.io/griffe/).
+    using [Griffe](https://mkdocstrings.github.io/griffe/),
+    to search for API breaking changes since latest version.
+    It is set to allow failures, and is more about providing information
+    than preventing CI to pass.
+
+    Parameters:
+        *cli_args: Additional Griffe CLI arguments.
     """
     ctx.run(
         tools.griffe.check("griffe", search=["src"], color=True).add_args(*cli_args),
@@ -166,11 +279,12 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
     make docs
     ```
 
+    This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
+
     Parameters:
+        *cli_args: Additional MkDocs CLI arguments.
         host: The host to serve the docs from.
         port: The port to serve the docs on.
-
-    Use [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
     """
     with material_insiders():
         ctx.run(
@@ -276,9 +390,6 @@ def release(ctx: Context, version: str = "") -> None:
     make release [version=VERSION]
     ```
 
-    Parameters:
-        version: The new version number to use. If not provided, you will be prompted for it.
-
     This task will:
 
     - Stage changes to `pyproject.toml` and `CHANGELOG.md`
@@ -288,6 +399,9 @@ def release(ctx: Context, version: str = "") -> None:
     - Build source and wheel distributions
     - Publish the distributions to PyPI
     - Deploy the documentation to GitHub pages
+
+    Parameters:
+        version: The new version number to use. If not provided, you will be prompted for it.
     """
     origin = ctx.run("git config --get remote.origin.url", silent=True)
     if "pawamoy-insiders/griffe" in origin:
@@ -329,10 +443,13 @@ def test(ctx: Context, *cli_args: str, match: str = "") -> None:
     make test [match=EXPR]
     ```
 
-    Parameters:
-        match: A pytest expression to filter selected tests.
-
     Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
+    Code source coverage is computed thanks to
+    [coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+
+    Parameters:
+        *cli_args: Additional Pytest CLI arguments.
+        match: A pytest expression to filter selected tests.
     """
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"

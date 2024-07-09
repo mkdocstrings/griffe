@@ -32,7 +32,7 @@ Other components *could* be considered for the public API, but usually require t
 
 Besides, logging and exception messages simply cannot allow deprecation periods where both old and new messages are emitted. Maintainers could however consider adding unique, short codes to message for more robust consumption.
 
-> RECO: **Our recommandation — Communicate your public API, verify what you can.**
+> GRIFFE: **Our recommandation — Communicate your public API, verify what you can.**
 > Take the time to learn about and use ways to declare, communicate and deprecate your public API. Your users will have an easier time using your library. On the maintenance side, you won't get bug reports for uses that are not supported, or you will be able to quickly close them by pointing at the documentation explaining what your public API is, or why something was deprecated, for how long, and how to upgrade.
 >
 > Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](checking.md) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
@@ -123,7 +123,7 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 
 ---
 
-> RECO: **Our recommandation — Use the underscore prefix and `__all__` conventions.**
+> GRIFFE: **Our recommandation — Use the underscore prefix and `__all__` conventions.**
 > Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](python-code.md#avoid-wildcard-imports). Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
 >
 > > To better support introspection, modules should explicitly declare the names in their public API using the `__all__` attribute. Setting `__all__` to an empty list indicates that the module has no public API.
@@ -280,7 +280,7 @@ Whatever *hidden* layout you choose (private modules, internals, private package
 WARNING: **Top-level-only exposition doesn't play well with large packages.**
 The *fully* hidden layout plays well with small to medium projects. If you maintain a large project, it can become very impractical for both you and your users to expose every single object in the top-level `__init__` module. For large projects, it therefore makes sense to keep at least one or two additional public layers in your module layout. Sometimes packages also implement many variations of the same abstract class, using the same name in many different modules: in these cases, the modules are effective namespaces that could be kept in the public API.
 
-RECO: **Our recommendation — Hide your module layout early.**
+GRIFFE: **Our recommendation — Hide your module layout early.**
 Start hiding your module layout early! It is much easier to (partially) expose the layout later than to hide it after your users started relying on it. It will also make code reorganizations much easier.
 
 ## Unique names and public locations
@@ -350,14 +350,14 @@ my_package/
 
     It feels weird to "unpublicize" the `Hello` class in `my_package.module` by declaring an empty `__all__`, so maybe the module should be made private instead: `my_package/_module.py`. See other hiding techniques in the [Module layout](#module-layout) section.
 
-RECO: **Our recommendation — Expose public objects in single locations, use meaningful names.**
+GRIFFE: **Our recommendation — Expose public objects in single locations, use meaningful names.**
 We recommend making sure that each public object is exposed in a single location. Ensuring unique names might be more tricky depending on the code base, so we recommend ensuring meaningful names at least, not requiring the context of modules above to understand what the objects are for.
 
 ## Documentation
 
 Obviously, your public API should be documented. Each object should have a docstring that explains why the object is useful and how it is used. More on that in our [docstrings recommendations](docstrings.md). Docstrings work well for offline documentation; we recommend exposing your public API online too, for example with [MkDocs](https://www.mkdocs.org/) and [mkdocstrings' Python handler](https://mkdocstrings.github.io/python/), or with other SSGs (Static Site Generators). Prefer a tool that is able to create a [Sphinx-like](https://sphobjinv.readthedocs.io/en/stable/syntax.html) inventory of objects (an `objects.inv` file) that will allow other projects to easily cross-reference your API from their own documentation. Make sure each and every object of your public API is documented in your web docs and therefore added to the objects inventory (and maybe that nothing else is added to this inventory as "public API").
 
-> RECO: **Our recommendation — Document your public API extensively.**
+> GRIFFE: **Our recommendation — Document your public API extensively.**
 > Write docstrings for each and every object of your public API. Deploy online documentation where each object is documented and added to an object inventory that can be consumed by third-party projects. If you find yourself reluctant to document a public object, it means that this object should maybe be internal instead.
 >
 > Our documentation framework of choice is of course [MkDocs](https://www.mkdocs.org) combined with our [mkdocstrings](https://mkdocstrings.github.io/) plugin.
@@ -374,14 +374,14 @@ We invite you to check out our own test file: [`test_internals.py`](https://gith
 - all public objects are added to the inventory (which means they are documented in our API docs)
 - no private object is added to the inventory
 
-RECO: **Our recommendation — Test your API declaration early.**
+GRIFFE: **Our recommendation — Test your API declaration early.**
 The sooner you test your API declaration, the better your code base will evolve. This will force you to really think about how your API is exposed to yours users. This will prevent mistakes like leaving a new object as public while you don't want users to start relying on it, or forgetting to expose a public object in your top-level module or to document it in your API docs.
 
 ## Linters
 
 Depending on their configuration, many popular Python linters will warn you that you access or import private objects. This doesn't play well with hidden module layouts, where modules are private or moved under a private (sub-)package. Sometimes it doesn't even play well with private methods
 
-> RECO: **Our recommendation — Ignore "protected access" warnings for your own package, or make the warnings smarter.**
+> GRIFFE: **Our recommendation — Ignore "protected access" warnings for your own package, or make the warnings smarter.**
 > To users of linters, we recommend adding `# noqa` comments on the relevant code lines, or globally disabling warnings related to "private object access" if per-line exclusion requires too much maintenance.
 >
 > To authors of linters, we recommend (if possible) making these warnings smarter: they shouldn't be triggered when private objects are accessed from within the *same package*. Marking objects as private is meant to prevent downstream code to use them, not to prevent the developers of the current package themselves to use them: they know what they are doing and should be allowed to use their own private objects without warnings. At the same time, they don't want to disable these warnings *globally*, so the warnings should be derived in multiple versions, or made smarter.
@@ -475,7 +475,7 @@ Now instead of having to call `main(["dump", "..."])` in your tests, you can dir
 
 The third and next users of your CLI as API are your users: just as you made your own life easier, you made their life easier for when they want to call some subcommands of your tool programmatically. No more messing with lists of strings without autocompletion or linting, no more patching of `sys.argv`, no more following the maze of transformations applied by this fancy CLI framework before finally reaching the crux of the subcommand you want to call, no more trying to replicate these transformations yourself with the CLI framework's API to avoid copy-pasting the dozens of lines you're only interested in.
 
-> RECO: **Our recommendation — Decouple command-line parsing from your CLI entrypoints.**
+> GRIFFE: **Our recommendation — Decouple command-line parsing from your CLI entrypoints.**
 > Do not tie the command parsing logic with your program's logic. Create functions early, make them accept arguments using basic types (`int`, `str`, `list`, etc.) so that your users can call your main command or subcommands with a single import and single statement. Do not encode all the logic in a single big `main` function. Decoupling the CLI-parsing logic from your entrypoints will make them much easier to test and use programmatically. Consider your entrypoints part of your API!
 >
 > Our CLI framework of choice if [Cappa](https://pypi.org/project/cappa/).
@@ -488,7 +488,7 @@ There are many different ways of deprecating previous usage of code, which depen
 
 In addition to emitting deprecation warnings, you should also update the docstrings and documentation for the old usage to point at the new usage, add "deprecated" labels where possible, and mark objects as deprecated when possible.
 
-RECO: **Our recommendation — Allow a deprecation periods, document deprecations.**
+GRIFFE: **Our recommendation — Allow a deprecation periods, document deprecations.**
 Try allowing deprecation periods for every breaking change. Most changes can be made backward-compatible at the cost of writing legacy code. Use tools like [Yore](https://pawamoy.github.io/yore) to manage legacy code, and standard utilities like [`warnings.deprecated`][] to mark objects as deprecated. Griffe extensions such as [griffe-warnings-deprecated](https://mkdocstrings.github.io/griffe-warnings-deprecated/) can help you by dynamically augmenting docstrings for your API documentation.
 
 ## Third-party libraries
