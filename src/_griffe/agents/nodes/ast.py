@@ -5,10 +5,11 @@ from __future__ import annotations
 from ast import AST
 from typing import Iterator
 
-from griffe.exceptions import LastNodeError
-from griffe.logger import get_logger
+from _griffe.exceptions import LastNodeError
+from _griffe.logger import get_logger
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._ast")
 
 
 def ast_kind(node: AST) -> str:
@@ -169,16 +170,3 @@ def ast_last_child(node: AST) -> AST:
     except ValueError as error:
         raise LastNodeError("there are no children node") from error
     return last
-
-
-__all__ = [
-    "ast_children",
-    "ast_first_child",
-    "ast_kind",
-    "ast_last_child",
-    "ast_next",
-    "ast_next_siblings",
-    "ast_previous",
-    "ast_previous_siblings",
-    "ast_siblings",
-]

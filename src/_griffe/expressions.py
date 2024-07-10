@@ -10,18 +10,19 @@ from functools import partial
 from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
 
-from griffe.agents.nodes import get_parameters
-from griffe.enumerations import ParameterKind
-from griffe.exceptions import NameResolutionError
-from griffe.logger import LogLevel, get_logger
+from _griffe.agents.nodes.parameters import get_parameters
+from _griffe.enumerations import LogLevel, ParameterKind
+from _griffe.exceptions import NameResolutionError
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.models import Class, Module
+    from _griffe.models import Class, Module
 
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.expressions")
 
 
 def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True) -> Iterator[str | Expr]:
@@ -74,9 +75,9 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
 
 
 # YORE: EOL 3.9: Remove block.
-dataclass_opts: dict[str, bool] = {}
+_dataclass_opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
-    dataclass_opts["slots"] = True
+    _dataclass_opts["slots"] = True
 
 
 @dataclass
@@ -87,6 +88,7 @@ class Expr:
         return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # type: ignore[attr-defined]
 
     def __iter__(self) -> Iterator[str | Expr]:
+        """Iterate on the expression syntax and elements."""
         yield from self.iterate(flat=False)
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
@@ -101,7 +103,7 @@ class Expr:
                 without them getting rendered as strings.
 
                 On the contrary, when flat is true, the whole tree is flattened as a sequence
-                of strings and instances of [Names][griffe.expressions.ExprName].
+                of strings and instances of [Names][griffe.ExprName].
 
         Yields:
             Strings and names when flat, strings and expressions otherwise.
@@ -171,15 +173,15 @@ class Expr:
         return isinstance(self, ExprSubscript) and self.canonical_name == "Generator"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprAttribute(Expr):
     """Attributes like `a.b`."""
 
     values: list[str | Expr]
     """The different parts of the dotted chain."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _join(self.values, ".", flat=flat)
 
     def append(self, value: ExprName) -> None:
@@ -215,8 +217,8 @@ class ExprAttribute(Expr):
         return self.last.canonical_path
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprBinOp(Expr):
     """Binary operations like `a + b`."""
 
@@ -227,14 +229,14 @@ class ExprBinOp(Expr):
     right: str | Expr
     """Right part."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat)
         yield f" {self.operator} "
         yield from _yield(self.right, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprBoolOp(Expr):
     """Boolean operations like `a or b`."""
 
@@ -243,12 +245,12 @@ class ExprBoolOp(Expr):
     values: Sequence[str | Expr]
     """Operands."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _join(self.values, f" {self.operator} ", flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprCall(Expr):
     """Calls like `f()`."""
 
@@ -262,15 +264,15 @@ class ExprCall(Expr):
         """The canonical path of this subscript's left part."""
         return self.function.canonical_path
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.function, flat=flat)
         yield "("
         yield from _join(self.arguments, ", ", flat=flat)
         yield ")"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprCompare(Expr):
     """Comparisons like `a > b`."""
 
@@ -281,14 +283,14 @@ class ExprCompare(Expr):
     comparators: Sequence[str | Expr]
     """Things compared."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat)
         yield " "
         yield from _join(zip_longest(self.operators, [], self.comparators, fillvalue=" "), " ", flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprComprehension(Expr):
     """Comprehensions like `a for b in c if d`."""
 
@@ -301,7 +303,7 @@ class ExprComprehension(Expr):
     is_async: bool = False
     """Async comprehension or not."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         if self.is_async:
             yield "async "
         yield "for "
@@ -313,20 +315,20 @@ class ExprComprehension(Expr):
             yield from _join(self.conditions, " if ", flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprConstant(Expr):
     """Constants like `"a"` or `1`."""
 
     value: str
     """Constant value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002,D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
         yield self.value
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprDict(Expr):
     """Dictionaries like `{"a": 0}`."""
 
@@ -335,7 +337,7 @@ class ExprDict(Expr):
     values: Sequence[str | Expr]
     """Dict values."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _join(
             (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
@@ -345,8 +347,8 @@ class ExprDict(Expr):
         yield "}"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprDictComp(Expr):
     """Dict comprehensions like `{k: v for k, v in a}`."""
 
@@ -357,7 +359,7 @@ class ExprDictComp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _yield(self.key, flat=flat)
         yield ": "
@@ -366,34 +368,34 @@ class ExprDictComp(Expr):
         yield "}"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprExtSlice(Expr):
     """Extended slice like `a[x:y, z]`."""
 
     dims: Sequence[str | Expr]
     """Dims."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _join(self.dims, ", ", flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprFormatted(Expr):
     """Formatted string like `{1 + 1}`."""
 
     value: str | Expr
     """Formatted value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _yield(self.value, flat=flat)
         yield "}"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprGeneratorExp(Expr):
     """Generator expressions like `a for b in c for d in e`."""
 
@@ -402,14 +404,14 @@ class ExprGeneratorExp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.element, flat=flat)
         yield " "
         yield from _join(self.generators, " ", flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprIfExp(Expr):
     """Conditions like `a if b else c`."""
 
@@ -420,7 +422,7 @@ class ExprIfExp(Expr):
     orelse: str | Expr
     """Other expression."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.body, flat=flat)
         yield " if "
         yield from _yield(self.test, flat=flat)
@@ -428,22 +430,22 @@ class ExprIfExp(Expr):
         yield from _yield(self.orelse, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprJoinedStr(Expr):
     """Joined strings like `f"a {b} c"`."""
 
     values: Sequence[str | Expr]
     """Joined values."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "f'"
         yield from _join(self.values, "", flat=flat)
         yield "'"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprKeyword(Expr):
     """Keyword arguments like `a=b`."""
 
@@ -477,40 +479,40 @@ class ExprKeyword(Expr):
             return f"{self.function.canonical_path}({self.name})"
         return super(ExprKeyword, self).canonical_path  # noqa: UP008
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.name
         yield "="
         yield from _yield(self.value, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprVarPositional(Expr):
     """Variadic positional parameters like `*args`."""
 
     value: Expr
     """Starred value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "*"
         yield from _yield(self.value, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprVarKeyword(Expr):
     """Variadic keyword parameters like `**kwargs`."""
 
     value: Expr
     """Double-starred value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "**"
         yield from _yield(self.value, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprLambda(Expr):
     """Lambda expressions like `lambda a: a.b`."""
 
@@ -519,7 +521,7 @@ class ExprLambda(Expr):
     body: str | Expr
     """Lambda's body."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         pos_only = False
         pos_or_kw = False
         kw_only = False
@@ -552,22 +554,22 @@ class ExprLambda(Expr):
         yield from _yield(self.body, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprList(Expr):
     """Lists like `[0, 1, 2]`."""
 
     elements: Sequence[Expr]
     """List elements."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "["
         yield from _join(self.elements, ", ", flat=flat)
         yield "]"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprListComp(Expr):
     """List comprehensions like `[a for b in c]`."""
 
@@ -576,7 +578,7 @@ class ExprListComp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "["
         yield from _yield(self.element, flat=flat)
         yield " "
@@ -584,8 +586,8 @@ class ExprListComp(Expr):
         yield "]"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=False, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=False, **_dataclass_opts)
 class ExprName(Expr):
     """This class represents a Python object identified by a name in a given scope."""
 
@@ -595,11 +597,12 @@ class ExprName(Expr):
     """Parent (for resolution in its scope)."""
 
     def __eq__(self, other: object) -> bool:
+        """Two name expressions are equal if they have the same `name` value (`parent` is ignored)."""
         if isinstance(other, ExprName):
             return self.name == other.name
         return NotImplemented
 
-    def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002,D102
+    def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002
         yield self
 
     @property
@@ -645,6 +648,7 @@ class ExprName(Expr):
             return False
 
         # TODO: Support inheritance?
+        # TODO: Support `StrEnum` and `IntEnum`.
         return any(isinstance(base, Expr) and base.canonical_path == "enum.Enum" for base in bases)
 
     @property
@@ -664,8 +668,8 @@ class ExprName(Expr):
             return False
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprNamedExpr(Expr):
     """Named/assignment expressions like `a := b`."""
 
@@ -674,7 +678,7 @@ class ExprNamedExpr(Expr):
     value: str | Expr
     """Value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "("
         yield from _yield(self.target, flat=flat)
         yield " := "
@@ -682,8 +686,8 @@ class ExprNamedExpr(Expr):
         yield ")"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprParameter(Expr):
     """Parameters in function signatures like `a: int = 0`."""
 
@@ -697,22 +701,22 @@ class ExprParameter(Expr):
     """Parameter default."""
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprSet(Expr):
     """Sets like `{0, 1, 2}`."""
 
     elements: Sequence[str | Expr]
     """Set elements."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _join(self.elements, ", ", flat=flat)
         yield "}"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprSetComp(Expr):
     """Set comprehensions like `{a for b in c}`."""
 
@@ -721,7 +725,7 @@ class ExprSetComp(Expr):
     generators: Sequence[Expr]
     """Generators iterated on."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _yield(self.element, flat=flat)
         yield " "
@@ -729,8 +733,8 @@ class ExprSetComp(Expr):
         yield "}"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprSlice(Expr):
     """Slices like `[a:b:c]`."""
 
@@ -741,7 +745,7 @@ class ExprSlice(Expr):
     step: str | Expr | None = None
     """Iteration step."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         if self.lower is not None:
             yield from _yield(self.lower, flat=flat)
         yield ":"
@@ -752,8 +756,8 @@ class ExprSlice(Expr):
             yield from _yield(self.step, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprSubscript(Expr):
     """Subscripts like `a[b]`."""
 
@@ -762,7 +766,7 @@ class ExprSubscript(Expr):
     slice: Expr
     """Slice part."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat)
         yield "["
         yield from _yield(self.slice, flat=flat)
@@ -783,8 +787,8 @@ class ExprSubscript(Expr):
         return self.left.canonical_path
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprTuple(Expr):
     """Tuples like `(0, 1, 2)`."""
 
@@ -793,7 +797,7 @@ class ExprTuple(Expr):
     implicit: bool = False
     """Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         if not self.implicit:
             yield "("
         yield from _join(self.elements, ", ", flat=flat)
@@ -801,8 +805,8 @@ class ExprTuple(Expr):
             yield ")"
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprUnaryOp(Expr):
     """Unary operations like `-1`."""
 
@@ -811,28 +815,28 @@ class ExprUnaryOp(Expr):
     value: str | Expr
     """Value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.operator
         yield from _yield(self.value, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprYield(Expr):
     """Yield statements like `yield a`."""
 
     value: str | Expr | None = None
     """Yielded value."""
 
-    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: D102
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "yield"
         if self.value is not None:
             yield " "
             yield from _yield(self.value, flat=flat)
 
 
-# YORE: EOL 3.9: Replace `**dataclass_opts` with `slots=True` within line.
-@dataclass(eq=True, **dataclass_opts)
+# YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
+@dataclass(eq=True, **_dataclass_opts)
 class ExprYieldFrom(Expr):
     """Yield statements like `yield from a`."""
 
@@ -965,7 +969,7 @@ def _build_constant(
                     optimize=1,
                 )
             except SyntaxError:
-                logger.debug(
+                _logger.debug(
                     f"Tried and failed to parse {node.value!r} as Python code, "
                     "falling back to using it as a string literal "
                     "(postponed annotations might help: https://peps.python.org/pep-0563/)",
@@ -1245,7 +1249,7 @@ def safe_get_expression(
         lineno = node.lineno  # type: ignore[union-attr]
         error_str = f"{error.__class__.__name__}: {error}"
         message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
-        getattr(logger, log_level.value)(message)
+        getattr(_logger, log_level.value)(message)
     return None
 
 
@@ -1268,46 +1272,3 @@ safe_get_condition = partial(
     parse_strings=False,
     msg_format=_msg_format % "condition",
 )
-
-
-__all__ = [
-    "Expr",
-    "ExprAttribute",
-    "ExprBinOp",
-    "ExprBoolOp",
-    "ExprCall",
-    "ExprCompare",
-    "ExprComprehension",
-    "ExprConstant",
-    "ExprDict",
-    "ExprDictComp",
-    "ExprExtSlice",
-    "ExprFormatted",
-    "ExprGeneratorExp",
-    "ExprIfExp",
-    "ExprJoinedStr",
-    "ExprKeyword",
-    "ExprVarPositional",
-    "ExprVarKeyword",
-    "ExprLambda",
-    "ExprList",
-    "ExprListComp",
-    "ExprName",
-    "ExprNamedExpr",
-    "ExprParameter",
-    "ExprSet",
-    "ExprSetComp",
-    "ExprSlice",
-    "ExprSubscript",
-    "ExprTuple",
-    "ExprUnaryOp",
-    "ExprYield",
-    "get_annotation",
-    "get_base_class",
-    "get_condition",
-    "get_expression",
-    "safe_get_annotation",
-    "safe_get_base_class",
-    "safe_get_condition",
-    "safe_get_expression",
-]

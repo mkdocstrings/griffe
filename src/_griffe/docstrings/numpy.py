@@ -24,7 +24,7 @@ from contextlib import suppress
 from textwrap import dedent
 from typing import TYPE_CHECKING
 
-from griffe.docstrings.models import (
+from _griffe.docstrings.models import (
     DocstringAttribute,
     DocstringClass,
     DocstringFunction,
@@ -52,19 +52,19 @@ from griffe.docstrings.models import (
     DocstringWarn,
     DocstringYield,
 )
-from griffe.docstrings.utils import parse_annotation, warning
-from griffe.enumerations import DocstringSectionKind
-from griffe.expressions import ExprName
-from griffe.logger import LogLevel
+from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
+from _griffe.enumerations import DocstringSectionKind, LogLevel
+from _griffe.expressions import ExprName
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern
 
-    from griffe.models import Docstring
-    from griffe.expressions import Expr
+    from _griffe.expressions import Expr
+    from _griffe.models import Docstring
 
 
-_warn = warning(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_warn = docstring_warning("griffe.docstrings.numpy")
 
 _section_kind = {
     "deprecated": DocstringSectionKind.deprecated,
@@ -257,7 +257,7 @@ def _read_parameters(
             else:
                 _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
+            annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
 
         if default is None:
             for name in names:
@@ -389,7 +389,7 @@ def _read_returns_section(
                         else:
                             annotation = return_item
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
+            annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReturns(returns), new_offset
 
@@ -437,7 +437,7 @@ def _read_yields_section(
                 else:
                     annotation = yield_item
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
+            annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=text))
     return DocstringSectionYields(yields), new_offset
 
@@ -481,7 +481,7 @@ def _read_receives_section(
                     else:
                         annotation = receives_item
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
+            annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=text))
     return DocstringSectionReceives(receives), new_offset
 
@@ -503,7 +503,7 @@ def _read_raises_section(
 
     raises = []
     for item in items:
-        annotation = parse_annotation(item[0], docstring)
+        annotation = parse_docstring_annotation(item[0], docstring)
         text = dedent("\n".join(item[1:]))
         raises.append(DocstringRaise(annotation=annotation, description=text))
     return DocstringSectionRaises(raises), new_offset
@@ -526,7 +526,7 @@ def _read_warns_section(
 
     warns = []
     for item in items:
-        annotation = parse_annotation(item[0], docstring)
+        annotation = parse_docstring_annotation(item[0], docstring)
         text = dedent("\n".join(item[1:]))
         warns.append(DocstringWarn(annotation=annotation, description=text))
     return DocstringSectionWarns(warns), new_offset
@@ -562,7 +562,7 @@ def _read_attributes_section(
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
         else:
-            annotation = parse_annotation(annotation, docstring, log_level=LogLevel.debug)
+            annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
         text = dedent("\n".join(item[1:]))
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=text))
     return DocstringSectionAttributes(attributes), new_offset
@@ -757,7 +757,7 @@ _section_reader = {
 }
 
 
-def parse(
+def parse_numpy(
     docstring: Docstring,
     *,
     ignore_init_summary: bool = False,
@@ -861,6 +861,3 @@ def parse(
     _append_section(sections, current_section, admonition_title)
 
     return sections
-
-
-__all__ = ["parse"]

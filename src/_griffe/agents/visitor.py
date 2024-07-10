@@ -1,8 +1,8 @@
 """Code parsing and data extraction utilies.
 
-This module exposes a public function, [`visit()`][griffe.agents.visitor.visit],
+This module exposes a public function, [`visit()`][griffe.visit],
 which parses the module code using [`parse()`][ast.parse],
-and returns a new [`Module`][griffe.models.Module] instance,
+and returns a new [`Module`][griffe.Module] instance,
 populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
 """
 
@@ -12,22 +12,20 @@ import ast
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any
 
-from griffe.agents.nodes import (
+from _griffe.agents.nodes.assignments import get_instance_names, get_names
+from _griffe.agents.nodes.ast import (
     ast_children,
     ast_kind,
     ast_next,
-    get_docstring,
-    get_instance_names,
-    get_names,
-    get_parameters,
-    relative_to_absolute,
-    safe_get__all__,
 )
-from griffe.collections import LinesCollection, ModulesCollection
-from griffe.models import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
-from griffe.enumerations import Kind
-from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
-from griffe.expressions import (
+from _griffe.agents.nodes.docstrings import get_docstring
+from _griffe.agents.nodes.exports import safe_get__all__
+from _griffe.agents.nodes.imports import relative_to_absolute
+from _griffe.agents.nodes.parameters import get_parameters
+from _griffe.collections import LinesCollection, ModulesCollection
+from _griffe.enumerations import Kind
+from _griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
+from _griffe.expressions import (
     Expr,
     ExprName,
     safe_get_annotation,
@@ -35,12 +33,13 @@ from griffe.expressions import (
     safe_get_condition,
     safe_get_expression,
 )
-from griffe.extensions.base import Extensions, load_extensions
+from _griffe.extensions.base import Extensions, load_extensions
+from _griffe.models import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.enumerations import Parser
+    from _griffe.enumerations import Parser
 
 
 builtin_decorators = {
@@ -48,6 +47,7 @@ builtin_decorators = {
     "staticmethod": "staticmethod",
     "classmethod": "classmethod",
 }
+"""Mapping of builtin decorators to labels."""
 
 stdlib_decorators = {
     "abc.abstractmethod": {"abstractmethod"},
@@ -57,7 +57,13 @@ stdlib_decorators = {
     "functools.lru_cache": {"cached"},
     "dataclasses.dataclass": {"dataclass"},
 }
+"""Mapping of standard library decorators to labels."""
+
 typing_overload = {"typing.overload", "typing_extensions.overload"}
+"""Set of recognized typing overload decorators.
+
+When such a decorator is found, the decorated function becomes an overload.
+"""
 
 
 def visit(
@@ -133,17 +139,39 @@ class Visitor:
             modules_collection: A collection of modules.
         """
         super().__init__()
+
         self.module_name: str = module_name
+        """The module name."""
+
         self.filepath: Path = filepath
+        """The module filepath."""
+
         self.code: str = code
+        """The module source code."""
+
         self.extensions: Extensions = extensions.attach_visitor(self)
+        """The extensions to use when visiting the AST."""
+
         self.parent: Module | None = parent
+        """An optional parent for the final module object."""
+
         self.current: Module | Class = None  # type: ignore[assignment]
+        """The current object being visited."""
+
         self.docstring_parser: Parser | None = docstring_parser
+        """The docstring parser to use."""
+
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        """The docstring parsing options."""
+
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        """A collection of source code lines."""
+
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        """A collection of modules."""
+
         self.type_guarded: bool = False
+        """Whether the current code branch is type-guarded."""
 
     def _get_docstring(self, node: ast.AST, *, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
@@ -637,6 +665,3 @@ class Visitor:
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
-
-
-__all__ = ["visit", "Visitor"]

@@ -6,12 +6,14 @@ import ast
 from itertools import zip_longest
 from typing import Iterable, List, Optional, Tuple, Union
 
-from griffe.enumerations import ParameterKind
-from griffe.logger import get_logger
+from _griffe.enumerations import ParameterKind
+from _griffe.logger import get_logger
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._parameters")
 
 ParametersType = List[Tuple[str, Optional[ast.AST], ParameterKind, Optional[Union[str, ast.AST]]]]
+"""Type alias for the list of parameters of a function."""
 
 
 def get_parameters(node: ast.arguments) -> ParametersType:
@@ -80,6 +82,3 @@ def get_parameters(node: ast.arguments) -> ParametersType:
         )
 
     return parameters
-
-
-__all__ = ["get_parameters"]

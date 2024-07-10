@@ -4,15 +4,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from griffe.logger import get_logger
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
     import ast
 
-    from griffe.models import Module
+    from _griffe.models import Module
 
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._imports")
 
 
 def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: Module) -> str:
@@ -35,6 +36,3 @@ def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: 
     base = current_module.path + "." if node.level > 0 else ""
     node_module = node.module + "." if node.module else ""
     return base + node_module + name.name
-
-
-__all__ = ["relative_to_absolute"]

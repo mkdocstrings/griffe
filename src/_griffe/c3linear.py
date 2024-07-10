@@ -9,14 +9,14 @@ from __future__ import annotations
 from itertools import islice
 from typing import Deque, TypeVar
 
-T = TypeVar("T")
+_T = TypeVar("_T")
 
 
-class _Dependency(Deque[T]):
+class _Dependency(Deque[_T]):
     """A class representing a (doubly-ended) queue of items."""
 
     @property
-    def head(self) -> T | None:
+    def head(self) -> _T | None:
         """Head of the dependency."""
         try:
             return self[0]
@@ -43,7 +43,7 @@ class _DependencyList:
     precedence order of direct parent classes.
     """
 
-    def __init__(self, *lists: list[T | None]) -> None:
+    def __init__(self, *lists: list[_T | None]) -> None:
         """Initialize the list.
 
         Parameters:
@@ -51,7 +51,7 @@ class _DependencyList:
         """
         self._lists = [_Dependency(lst) for lst in lists]
 
-    def __contains__(self, item: T) -> bool:
+    def __contains__(self, item: _T) -> bool:
         """Return True if any linearization's tail contains an item."""
         return any(item in lst.tail for lst in self._lists)
 
@@ -63,7 +63,7 @@ class _DependencyList:
         return self._lists.__repr__()
 
     @property
-    def heads(self) -> list[T | None]:
+    def heads(self) -> list[_T | None]:
         """Return the heads."""
         return [lst.head for lst in self._lists]
 
@@ -77,7 +77,7 @@ class _DependencyList:
         """True if all elements of the lists are exhausted."""
         return all(len(x) == 0 for x in self._lists)
 
-    def remove(self, item: T | None) -> None:
+    def remove(self, item: _T | None) -> None:
         """Remove an item from the lists.
 
         Once an item removed from heads, the leftmost elements of the tails
@@ -88,7 +88,7 @@ class _DependencyList:
                 i.popleft()
 
 
-def c3linear_merge(*lists: list[T]) -> list[T]:
+def c3linear_merge(*lists: list[_T]) -> list[_T]:
     """Merge lists of lists in the order defined by the C3Linear algorithm.
 
     Parameters:
@@ -97,7 +97,7 @@ def c3linear_merge(*lists: list[T]) -> list[T]:
     Returns:
         The merged list of items.
     """
-    result: list[T] = []
+    result: list[_T] = []
     linearizations = _DependencyList(*lists)  # type: ignore[arg-type]
 
     while True:
@@ -115,6 +115,3 @@ def c3linear_merge(*lists: list[T]) -> list[T]:
         else:
             # Loop never broke, no linearization could possibly be found.
             raise ValueError("Cannot compute C3 linearization")
-
-
-__all__ = ["c3linear_merge"]

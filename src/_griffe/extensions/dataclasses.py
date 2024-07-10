@@ -11,15 +11,15 @@ from contextlib import suppress
 from functools import lru_cache
 from typing import Any, cast
 
-from griffe.models import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
-from griffe.enumerations import ParameterKind
-from griffe.expressions import (
+from _griffe.enumerations import ParameterKind
+from _griffe.expressions import (
     Expr,
     ExprAttribute,
     ExprCall,
     ExprDict,
 )
-from griffe.extensions.base import Extension
+from _griffe.extensions.base import Extension
+from _griffe.models import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
 
 
 def _dataclass_decorator(decorators: list[Decorator]) -> Expr | None:

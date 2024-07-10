@@ -1,15 +1,15 @@
-"""This module contains the models related to docstrings."""
+"""This module contains the dataclasses related to docstrings."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from griffe.enumerations import DocstringSectionKind
+from _griffe.enumerations import DocstringSectionKind
 
 if TYPE_CHECKING:
     from typing import Any, Literal
 
-    from griffe.expressions import Expr
+    from _griffe.expressions import Expr
 
 
 # Elements -----------------------------------------------
@@ -160,6 +160,7 @@ class DocstringFunction(DocstringNamedElement):
 
     @property
     def signature(self) -> str | Expr | None:
+        """The function signature."""
         return self.annotation
 
 
@@ -168,6 +169,7 @@ class DocstringClass(DocstringNamedElement):
 
     @property
     def signature(self) -> str | Expr | None:
+        """The class signature."""
         return self.annotation
 
 
@@ -194,6 +196,7 @@ class DocstringSection:
         """The section value."""
 
     def __bool__(self) -> bool:
+        """Whether this section has a true-ish value."""
         return bool(self.value)
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -449,32 +452,3 @@ class DocstringSectionAdmonition(DocstringSection):
         """
         super().__init__(title)
         self.value: DocstringAdmonition = DocstringAdmonition(annotation=kind, description=text)
-
-
-__all__ = [
-    "DocstringAdmonition",
-    "DocstringAttribute",
-    "DocstringDeprecated",
-    "DocstringElement",
-    "DocstringNamedElement",
-    "DocstringParameter",
-    "DocstringRaise",
-    "DocstringReceive",
-    "DocstringReturn",
-    "DocstringSection",
-    "DocstringSectionAdmonition",
-    "DocstringSectionAttributes",
-    "DocstringSectionDeprecated",
-    "DocstringSectionExamples",
-    "DocstringSectionKind",
-    "DocstringSectionOtherParameters",
-    "DocstringSectionParameters",
-    "DocstringSectionRaises",
-    "DocstringSectionReceives",
-    "DocstringSectionReturns",
-    "DocstringSectionText",
-    "DocstringSectionWarns",
-    "DocstringSectionYields",
-    "DocstringWarn",
-    "DocstringYield",
-]

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import ast
 
-from griffe.logger import get_logger
+from _griffe.logger import get_logger
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._docstrings")
 
 
 def get_docstring(
@@ -33,6 +34,3 @@ def get_docstring(
     if isinstance(doc, ast.Constant) and isinstance(doc.value, str):
         return doc.value, doc.lineno, doc.end_lineno
     return None, None, None
-
-
-__all__ = ["get_docstring"]

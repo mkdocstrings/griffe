@@ -6,7 +6,7 @@ import ast
 import sys
 from typing import TYPE_CHECKING
 
-from griffe.logger import get_logger
+from _griffe.logger import get_logger
 
 # YORE: EOL 3.8: Replace block with line 4.
 if sys.version_info < (3, 9):
@@ -17,7 +17,8 @@ else:
 if TYPE_CHECKING:
     from pathlib import Path
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._values")
 
 
 def get_value(node: ast.AST | None) -> str | None:
@@ -51,8 +52,5 @@ def safe_get_value(node: ast.AST | None, filepath: str | Path | None = None) -> 
         if filepath:
             message += f" at {filepath}:{node.lineno}"  # type: ignore[union-attr]
         message += f": {error}"
-        logger.exception(message)
+        _logger.exception(message)
         return None
-
-
-__all__ = ["get_value", "safe_get_value"]

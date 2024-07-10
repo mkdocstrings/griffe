@@ -5,9 +5,10 @@ from __future__ import annotations
 import ast
 from typing import Any, Callable
 
-from griffe.logger import get_logger
+from _griffe.logger import get_logger
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._names")
 
 
 def _get_attribute_name(node: ast.Attribute) -> str:
@@ -74,6 +75,3 @@ def get_instance_names(node: ast.AST) -> list[str]:
         A list of names.
     """
     return [name.split(".", 1)[1] for name in get_names(node) if name.startswith("self.")]
-
-
-__all__ = ["get_instance_names", "get_name", "get_names"]

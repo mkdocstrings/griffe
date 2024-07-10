@@ -1,6 +1,6 @@
 """This module contains logging utilities.
 
-We provide the [`patch_loggers`][griffe.logger.patch_loggers]
+We provide the [`patch_loggers`][griffe.patch_loggers]
 function so dependant libraries can patch loggers as they see fit.
 
 For example, to fit in the MkDocs logging configuration
@@ -8,7 +8,7 @@ and prefix each log message with the module name:
 
 ```python
 import logging
-from griffe.logger import patch_loggers
+from griffe import patch_loggers
 
 
 class LoggerAdapter(logging.LoggerAdapter):
@@ -90,6 +90,3 @@ def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:
         get_logger_func: A function accepting a name as parameter and returning a logger.
     """
     _Logger._patch_loggers(get_logger_func)
-
-
-__all__ = ["get_logger", "LogLevel", "patch_loggers"]

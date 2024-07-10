@@ -5,30 +5,14 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
-import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Iterator
+from typing import Iterator
 
-from griffe.exceptions import GitError
+from _griffe.exceptions import GitError
 
-WORKTREE_PREFIX = "griffe-worktree-"
-
-
-# YORE: Bump 1.0.0: Remove block.
-def __getattr__(name: str) -> Any:
-    if name == "load_git":
-        warnings.warn(
-            f"Importing {name} from griffe.git is deprecated. Import it from griffe.loader instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-        from griffe.loader import load_git
-
-        return load_git
-    raise AttributeError
+_WORKTREE_PREFIX = "griffe-worktree-"
 
 
 def assert_git_repo(path: str | Path) -> None:
@@ -118,7 +102,7 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     """
     assert_git_repo(repo)
     repo_name = Path(repo).resolve().name
-    with TemporaryDirectory(prefix=f"{WORKTREE_PREFIX}{repo_name}-{ref}-") as tmp_dir:
+    with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{ref}-") as tmp_dir:
         branch = f"griffe_{ref}"
         location = os.path.join(tmp_dir, branch)
         process = subprocess.run(
@@ -135,6 +119,3 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
             subprocess.run(["git", "-C", repo, "worktree", "remove", branch], stdout=subprocess.DEVNULL, check=False)
             subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL, check=False)
             subprocess.run(["git", "-C", repo, "branch", "-D", branch], stdout=subprocess.DEVNULL, check=False)
-
-
-__all__ = ["assert_git_repo", "get_latest_tag", "get_repo_root", "tmp_worktree"]

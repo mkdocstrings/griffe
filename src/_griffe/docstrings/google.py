@@ -6,7 +6,7 @@ import re
 from contextlib import suppress
 from typing import TYPE_CHECKING, List, Tuple
 
-from griffe.docstrings.models import (
+from _griffe.docstrings.models import (
     DocstringAttribute,
     DocstringClass,
     DocstringFunction,
@@ -34,18 +34,18 @@ from griffe.docstrings.models import (
     DocstringWarn,
     DocstringYield,
 )
-from griffe.docstrings.utils import parse_annotation, warning
-from griffe.enumerations import DocstringSectionKind
-from griffe.expressions import ExprName
-from griffe.logger import LogLevel
+from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
+from _griffe.enumerations import DocstringSectionKind, LogLevel
+from _griffe.expressions import ExprName
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern
 
-    from griffe.models import Docstring
-    from griffe.expressions import Expr
+    from _griffe.expressions import Expr
+    from _griffe.models import Docstring
 
-_warn = warning(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_warn = docstring_warning("griffe.docstrings.google")
 
 _section_kind = {
     "args": DocstringSectionKind.parameters,
@@ -73,9 +73,9 @@ _section_kind = {
     "warnings": DocstringSectionKind.warns,
 }
 
-BlockItem = Tuple[int, List[str]]
-BlockItems = List[BlockItem]
-ItemsBlock = Tuple[BlockItems, int]
+_BlockItem = Tuple[int, List[str]]
+_BlockItems = List[_BlockItem]
+_ItemsBlock = Tuple[_BlockItems, int]
 
 _RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>[^\s].*))?\s*$", re.I)
 _RE_NAME_ANNOTATION_DESCRIPTION: Pattern = re.compile(r"^(?:(?P<name>\w+)?\s*(?:\((?P<type>.+)\))?:\s*)?(?P<desc>.*)$")
@@ -83,13 +83,13 @@ _RE_DOCTEST_BLANKLINE: Pattern = re.compile(r"^\s*<BLANKLINE>\s*$")
 _RE_DOCTEST_FLAGS: Pattern = re.compile(r"(\s*#\s*doctest:.+)$")
 
 
-def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> ItemsBlock:  # noqa: ARG001
+def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _ItemsBlock:  # noqa: ARG001
     lines = docstring.lines
     if offset >= len(lines):
         return [], offset
 
     new_offset = offset
-    items: BlockItems = []
+    items: _BlockItems = []
 
     # skip first empty lines
     while _is_empty_line(lines[new_offset]):
@@ -206,7 +206,7 @@ def _read_parameters(
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
             # try to use the annotation from the signature
@@ -285,7 +285,7 @@ def _read_attributes_section(
             if annotation.endswith(", optional"):
                 annotation = annotation[:-10]
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
             with suppress(AttributeError, KeyError):
@@ -397,7 +397,7 @@ def _read_raises_section(
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
             exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
     return DocstringSectionRaises(exceptions), new_offset
@@ -459,7 +459,7 @@ def _read_returns_section(
 
         if annotation:
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
@@ -515,7 +515,7 @@ def _read_yields_section(
 
         if annotation:
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
@@ -562,7 +562,7 @@ def _read_receives_section(
 
         if annotation:
             # try to compile the annotation to transform it into an expression
-            annotation = parse_annotation(annotation, docstring)
+            annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
@@ -691,7 +691,7 @@ _section_reader = {
 _sentinel = object()
 
 
-def parse(
+def parse_google(
     docstring: Docstring,
     *,
     ignore_init_summary: bool = False,
@@ -847,11 +847,8 @@ def parse(
             sections[0].value = "\n".join(lines)
             sections.append(
                 DocstringSectionReturns(
-                    [DocstringReturn("", description="", annotation=parse_annotation(annotation, docstring))],
+                    [DocstringReturn("", description="", annotation=parse_docstring_annotation(annotation, docstring))],
                 ),
             )
 
     return sections
-
-
-__all__ = ["parse"]

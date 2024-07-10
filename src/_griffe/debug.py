@@ -10,7 +10,7 @@ from importlib import metadata
 
 
 @dataclass
-class Variable:
+class _Variable:
     """Dataclass describing an environment variable."""
 
     name: str
@@ -20,7 +20,7 @@ class Variable:
 
 
 @dataclass
-class Package:
+class _Package:
     """Dataclass describing a Python package."""
 
     name: str
@@ -30,7 +30,7 @@ class Package:
 
 
 @dataclass
-class Environment:
+class _Environment:
     """Dataclass to store environment information."""
 
     interpreter_name: str
@@ -41,9 +41,9 @@ class Environment:
     """Path to Python executable."""
     platform: str
     """Operating System."""
-    packages: list[Package]
+    packages: list[_Package]
     """Installed packages."""
-    variables: list[Variable]
+    variables: list[_Variable]
     """Environment variables."""
 
 
@@ -58,7 +58,7 @@ def _interpreter_name_version() -> tuple[str, str]:
     return "", "0.0.0"
 
 
-def get_version(dist: str = "griffe") -> str:
+def _get_version(dist: str = "griffe") -> str:
     """Get version of the given distribution.
 
     Parameters:
@@ -73,7 +73,7 @@ def get_version(dist: str = "griffe") -> str:
         return "0.0.0"
 
 
-def get_debug_info() -> Environment:
+def _get_debug_info() -> _Environment:
     """Get debug/environment information.
 
     Returns:
@@ -82,19 +82,19 @@ def get_debug_info() -> Environment:
     py_name, py_version = _interpreter_name_version()
     packages = ["griffe"]
     variables = ["PYTHONPATH", *[var for var in os.environ if var.startswith("GRIFFE")]]
-    return Environment(
+    return _Environment(
         interpreter_name=py_name,
         interpreter_version=py_version,
         interpreter_path=sys.executable,
         platform=platform.platform(),
-        variables=[Variable(var, val) for var in variables if (val := os.getenv(var))],
-        packages=[Package(pkg, get_version(pkg)) for pkg in packages],
+        variables=[_Variable(var, val) for var in variables if (val := os.getenv(var))],
+        packages=[_Package(pkg, _get_version(pkg)) for pkg in packages],
     )
 
 
-def print_debug_info() -> None:
+def _print_debug_info() -> None:
     """Print debug/environment information."""
-    info = get_debug_info()
+    info = _get_debug_info()
     print(f"- __System__: {info.platform}")
     print(f"- __Python__: {info.interpreter_name} {info.interpreter_version} ({info.interpreter_path})")
     print("- __Environment variables__:")
@@ -103,7 +103,3 @@ def print_debug_info() -> None:
     print("- __Installed packages__:")
     for pkg in info.packages:
         print(f"  - `{pkg.name}` v{pkg.version}")
-
-
-if __name__ == "__main__":
-    print_debug_info()
