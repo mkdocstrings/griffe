@@ -506,8 +506,11 @@ def check(
     # Find and display API breakages.
     breakages = list(find_breaking_changes(old_package, new_package))
 
+    if color is None and (force_color := os.getenv("FORCE_COLOR", None)) is not None:
+        color = force_color.lower() in {"1", "true", "y", "yes", "on"}
     colorama.deinit()
     colorama.init(strip=color if color is None else not color)
+
     if style is None:
         style = ExplanationStyle.VERBOSE if verbose else ExplanationStyle.ONE_LINE
     else:
