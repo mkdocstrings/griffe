@@ -187,7 +187,8 @@ plugins:
     handlers:
       python:
         import:
-        - url: https://docs.python.org/3/objects.inv
+        # YORE: SOL 3.13: Replace `3.13` with `3` within line.
+        - url: https://docs.python.org/3.13/objects.inv
           domains: [std, py]
         paths: [src, scripts, .]
         options:
