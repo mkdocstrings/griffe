@@ -1250,15 +1250,6 @@ class Alias(ObjectAliasMixin):
         """
         return self.final_target.resolve(name)
 
-    def get_member(self, key: str | Sequence[str]) -> Object | Alias:  # noqa: D102
-        return self.final_target.get_member(key)
-
-    def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:  # noqa: D102
-        return self.final_target.set_member(key, value)
-
-    def del_member(self, key: str | Sequence[str]) -> None:  # noqa: D102
-        return self.final_target.del_member(key)
-
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
     # We first try to reach the final target, trigerring alias resolution errors
