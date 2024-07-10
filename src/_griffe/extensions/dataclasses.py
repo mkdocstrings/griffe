@@ -11,7 +11,7 @@ from contextlib import suppress
 from functools import lru_cache
 from typing import Any, cast
 
-from griffe.dataclasses import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
+from griffe.models import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
 from griffe.enumerations import ParameterKind
 from griffe.expressions import (
     Expr,

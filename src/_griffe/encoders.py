@@ -13,7 +13,7 @@ from pathlib import Path, PosixPath, WindowsPath
 from typing import TYPE_CHECKING, Any, Callable
 
 from griffe import expressions
-from griffe.dataclasses import (
+from griffe.models import (
     Alias,
     Attribute,
     Class,

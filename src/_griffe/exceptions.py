@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Alias
+    from griffe.models import Alias
 
 
 class GriffeError(Exception):

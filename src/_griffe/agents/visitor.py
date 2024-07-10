@@ -2,7 +2,7 @@
 
 This module exposes a public function, [`visit()`][griffe.agents.visitor.visit],
 which parses the module code using [`parse()`][ast.parse],
-and returns a new [`Module`][griffe.dataclasses.Module] instance,
+and returns a new [`Module`][griffe.models.Module] instance,
 populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
 """
 
@@ -24,7 +24,7 @@ from griffe.agents.nodes import (
     safe_get__all__,
 )
 from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
+from griffe.models import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
 from griffe.enumerations import Kind
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
 from griffe.expressions import (

@@ -8,7 +8,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe.dataclasses import Module
+from griffe.models import Module
 from griffe.finder import ModuleFinder, NamespacePackage, Package, _handle_editable_module, _handle_pth_file
 from griffe.tests import temporary_pypackage
 

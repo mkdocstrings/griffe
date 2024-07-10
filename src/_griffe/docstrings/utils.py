@@ -11,7 +11,7 @@ from griffe.expressions import safe_get_annotation
 from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Docstring
+    from griffe.models import Docstring
     from griffe.expressions import Expr
 
 

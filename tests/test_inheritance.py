@@ -10,7 +10,7 @@ from griffe.collections import ModulesCollection
 from griffe.tests import temporary_inspected_module, temporary_visited_module
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Class
+    from griffe.models import Class
 
 
 def _mro_paths(cls: Class) -> list[str]:

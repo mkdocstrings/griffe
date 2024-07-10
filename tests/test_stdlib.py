@@ -12,7 +12,7 @@ from griffe.exceptions import LoadingError
 from griffe.loader import GriffeLoader
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Alias, Object
+    from griffe.models import Alias, Object
 
 
 def _access_inherited_members(obj: Object | Alias) -> None:

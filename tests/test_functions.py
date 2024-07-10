@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from griffe.dataclasses import ParameterKind
+from griffe.models import ParameterKind
 from griffe.tests import temporary_visited_module
 
 

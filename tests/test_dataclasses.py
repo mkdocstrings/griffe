@@ -1,4 +1,4 @@
-"""Tests for the `dataclasses` module."""
+"""Tests for the `models` module."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from textwrap import dedent
 import pytest
 
 import griffe
-from griffe.dataclasses import Attribute, Docstring, Module
+from griffe.models import Attribute, Docstring, Module
 from griffe.loader import GriffeLoader
 from griffe.tests import module_vtree, temporary_inspected_module, temporary_pypackage, temporary_visited_package
 
@@ -78,12 +78,12 @@ def test_deepcopy() -> None:
 def test_alias_proxies() -> None:
     """Assert that the Alias class has all the necessary methods and properties."""
     api = griffe.load("griffe")
-    alias_members = set(api["dataclasses.Alias"].all_members.keys())
+    alias_members = set(api["models.Alias"].all_members.keys())
     for cls in (
-        api["dataclasses.Module"],
-        api["dataclasses.Class"],
-        api["dataclasses.Function"],
-        api["dataclasses.Attribute"],
+        api["models.Module"],
+        api["models.Class"],
+        api["models.Function"],
+        api["models.Attribute"],
     ):
         for name in cls.all_members:
             if not name.startswith("_") or name.startswith("__"):

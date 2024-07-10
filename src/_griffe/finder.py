@@ -30,7 +30,7 @@ from griffe.logger import get_logger
 if TYPE_CHECKING:
     from typing import Pattern
 
-    from griffe.dataclasses import Module
+    from griffe.models import Module
 
 
 NamePartsType = Tuple[str, ...]

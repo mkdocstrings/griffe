@@ -11,7 +11,7 @@ from griffe.agents.nodes._values import get_value
 from griffe.logger import LogLevel, get_logger
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Module
+    from griffe.models import Module
 
 
 logger = get_logger(__name__)

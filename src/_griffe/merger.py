@@ -9,7 +9,7 @@ from griffe.exceptions import AliasResolutionError, CyclicAliasError
 from griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Attribute, Class, Function, Module, Object
+    from griffe.models import Attribute, Class, Function, Module, Object
 
 
 logger = get_logger(__name__)

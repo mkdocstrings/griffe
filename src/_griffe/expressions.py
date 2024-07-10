@@ -18,7 +18,7 @@ from griffe.logger import LogLevel, get_logger
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.dataclasses import Class, Module
+    from griffe.models import Class, Module
 
 
 logger = get_logger(__name__)

@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 from griffe.agents.inspector import inspect
 from griffe.agents.visitor import visit
 from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import Alias, Module, Object
+from griffe.models import Alias, Module, Object
 from griffe.enumerations import Kind
 from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from griffe.expressions import ExprName
@@ -138,10 +138,10 @@ class GriffeLoader:
         with regular methods and properties (`parent`, `members`, etc.).
 
         Examples:
-            >>> loader.load("griffe.dataclasses.Module")
+            >>> loader.load("griffe.models.Module")
             Class("Module")
-            >>> loader.load("src/griffe/dataclasses.py")
-            Module("dataclasses")
+            >>> loader.load("src/griffe/models.py")
+            Module("models")
 
         Parameters:
             objspec: The Python path of an object, or file path to a module.

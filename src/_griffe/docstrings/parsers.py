@@ -4,14 +4,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal
 
-from griffe.docstrings.dataclasses import DocstringSection, DocstringSectionText
+from griffe.docstrings.models import DocstringSection, DocstringSectionText
 from griffe.docstrings.google import parse as parse_google
 from griffe.docstrings.numpy import parse as parse_numpy
 from griffe.docstrings.sphinx import parse as parse_sphinx
 from griffe.enumerations import Parser
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Docstring
+    from griffe.models import Docstring
 
 parsers = {
     Parser.google: parse_google,
