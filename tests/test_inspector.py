@@ -6,8 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from griffe.agents.inspector import inspect
-from griffe.tests import temporary_inspected_module, temporary_pypackage
+from griffe import inspect, temporary_inspected_module, temporary_pypackage
 from tests.helpers import clear_sys_modules
 
 

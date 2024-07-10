@@ -7,12 +7,18 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe.models import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
-from griffe.docstrings.models import (
+from griffe import (
+    Attribute,
+    Class,
+    Docstring,
     DocstringSectionKind,
+    ExprName,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
+    parse_docstring_annotation,
 )
-from griffe.docstrings.utils import parse_annotation
-from griffe.expressions import ExprName
 
 if TYPE_CHECKING:
     from tests.test_docstrings.helpers import ParserType
@@ -1047,7 +1053,7 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_numpy: ParserType, re
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))),
         ),
     )
     yields = sections[1].value
@@ -1083,7 +1089,7 @@ def test_extract_yielded_type_with_single_return_item(parse_numpy: ParserType, r
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))),
         ),
     )
     yields = sections[1].value
@@ -1112,7 +1118,10 @@ def test_parse_receives_tuple_in_generator(parse_numpy: ParserType) -> None:
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation("Generator[..., tuple[int, float], ...]", Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(
+                "Generator[..., tuple[int, float], ...]",
+                Docstring("d", parent=Function("f")),
+            ),
         ),
     )
     receives = sections[1].value
@@ -1147,7 +1156,7 @@ def test_extract_received_type_with_single_return_item(parse_numpy: ParserType, 
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))),
         ),
     )
     receives = sections[1].value
@@ -1176,7 +1185,10 @@ def test_parse_returns_tuple_in_generator(parse_numpy: ParserType) -> None:
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation("Generator[..., ..., tuple[int, float]]", Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(
+                "Generator[..., ..., tuple[int, float]]",
+                Docstring("d", parent=Function("f")),
+            ),
         ),
     )
     returns = sections[1].value

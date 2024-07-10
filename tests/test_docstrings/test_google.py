@@ -7,10 +7,19 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe.models import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
-from griffe.docstrings.models import DocstringReturn, DocstringSectionKind
-from griffe.docstrings.utils import parse_annotation
-from griffe.expressions import ExprName
+from griffe import (
+    Attribute,
+    Class,
+    Docstring,
+    DocstringReturn,
+    DocstringSectionKind,
+    ExprName,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
+    parse_docstring_annotation,
+)
 
 if TYPE_CHECKING:
     from tests.test_docstrings.helpers import ParserType
@@ -961,7 +970,7 @@ def test_parse_yields_tuple_in_iterator_or_generator(parse_google: ParserType, r
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))),
         ),
     )
     yields = sections[1].value
@@ -995,7 +1004,7 @@ def test_extract_yielded_type_with_single_return_item(parse_google: ParserType, 
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))),
         ),
     )
     yields = sections[1].value
@@ -1021,7 +1030,10 @@ def test_parse_receives_tuple_in_generator(parse_google: ParserType) -> None:
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation("Generator[..., tuple[int, float], ...]", Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(
+                "Generator[..., tuple[int, float], ...]",
+                Docstring("d", parent=Function("f")),
+            ),
         ),
     )
     receives = sections[1].value
@@ -1054,7 +1066,7 @@ def test_extract_received_type_with_single_return_item(parse_google: ParserType,
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))),
         ),
     )
     receives = sections[1].value
@@ -1080,7 +1092,10 @@ def test_parse_returns_tuple_in_generator(parse_google: ParserType) -> None:
         docstring,
         parent=Function(
             "func",
-            returns=parse_annotation("Generator[..., ..., tuple[int, float]]", Docstring("d", parent=Function("f"))),
+            returns=parse_docstring_annotation(
+                "Generator[..., ..., tuple[int, float]]",
+                Docstring("d", parent=Function("f")),
+            ),
         ),
     )
     returns = sections[1].value
@@ -1343,7 +1358,7 @@ def test_parse_returns_multiple_items(
         expected: The expected value of the parsed Returns section.
     """
     parent = (
-        Function("func", returns=parse_annotation(return_annotation, Docstring("d", parent=Function("f"))))
+        Function("func", returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))))
         if return_annotation is not None
         else None
     )
