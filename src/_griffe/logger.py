@@ -32,20 +32,7 @@ patch_loggers(get_logger)
 from __future__ import annotations
 
 import logging
-from enum import Enum
 from typing import Any, Callable, ClassVar
-
-
-class LogLevel(Enum):
-    """Enumeration of available log levels."""
-
-    trace: str = "trace"
-    debug: str = "debug"
-    info: str = "info"
-    success: str = "success"
-    warning: str = "warning"
-    error: str = "error"
-    critical: str = "critical"
 
 
 class _Logger:
