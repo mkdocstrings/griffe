@@ -42,12 +42,24 @@ class _Logger:
     def __init__(self, name: str) -> None:
         # Default logger that can be patched by third-party.
         self._logger = self.__class__._default_logger(name)
-        # Register instance.
-        self._instances[name] = self
 
     def __getattr__(self, name: str) -> Any:
         # Forward everything to the logger.
         return getattr(self._logger, name)
+
+    @classmethod
+    def get(cls, name: str) -> _Logger:
+        """Get a logger instance.
+
+        Parameters:
+            name: The logger name.
+
+        Returns:
+            The logger instance.
+        """
+        if name not in cls._instances:
+            cls._instances[name] = cls(name)
+        return cls._instances[name]
 
     @classmethod
     def _patch_loggers(cls, get_logger_func: Callable) -> None:
@@ -67,7 +79,7 @@ def get_logger(name: str) -> _Logger:
     Returns:
         The logger.
     """
-    return _Logger(name)
+    return _Logger.get(name)
 
 
 def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:
