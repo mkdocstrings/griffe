@@ -53,10 +53,10 @@ We are still in v0, so no major bump yet.
 ### Deprecations
 
 - As seen above in the breaking changes section, the only parameters of [`Object.has_labels()`][griffe.Object.has_labels] and [`load_extensions()`][griffe.load_extensions] both became variadic positional parameters. Passing a sequence as single argument is deprecated in favor of passing multiple arguments. This is an ergonomic change: I myself often forgot to wrap extensions in a list. Passing sequences of labels (lists, sets, tuples) is also difficult from Jinja templates.
-- The following methods and properties on objects and aliases are deprecated: [`member_is_exported()`][griffe.Object.member_is_exported], [`is_explicitely_exported`][griffe.mixins.ObjectAliasMixin.is_explicitely_exported], [`is_implicitely_exported`][griffe.mixins.ObjectAliasMixin.is_implicitely_exported]. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- The [`is_exported()`][griffe.mixins.ObjectAliasMixin.is_exported] and [`is_public()`][griffe.mixins.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The following methods and properties on objects and aliases are deprecated: [`member_is_exported()`][griffe.Object.member_is_exported], [`is_explicitely_exported`][griffe.ObjectAliasMixin.is_explicitely_exported], [`is_implicitely_exported`][griffe.ObjectAliasMixin.is_implicitely_exported]. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The [`is_exported()`][griffe.ObjectAliasMixin.is_exported] and [`is_public()`][griffe.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
 - The `ignore_private` parameter of the [`find_breaking_changes()`][griffe.find_breaking_changes] function is now deprecated and unused. With the reworked "exported" and "public" API, this parameter became useless. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- Using `stats()` instead of [`Stats`][griffe.stats.Stats] will now emit a deprecation warning.
+- Using `stats()` instead of [`Stats`][griffe.Stats] will now emit a deprecation warning.
 
 ### Features
 
@@ -487,8 +487,8 @@ We are still in v0, so no major bump yet.
 
 ### Breaking Changes
 
-- Removed `griffe.expressions.Expression` in favor of [`griffe.expressions.Expr`][] and subclasses
-- Removed `griffe.expressions.Name` in favor of [`griffe.expressions.ExprName`][]
+- Removed `griffe.expressions.Expression` in favor of [`griffe.Expr`][] and subclasses
+- Removed `griffe.expressions.Name` in favor of [`griffe.ExprName`][]
 
 ### Features
 
@@ -537,11 +537,11 @@ We are still in v0, so no major bump yet.
 
 ### Deprecations
 
-- Classes [`InspectorExtension`][griffe.extensions.base.InspectorExtension]
-    and [`VisitorExtension`][griffe.extensions.base.VisitorExtension]
-    are deprecated in favor of [`Extension`][griffe.extensions.base.Extension].
-    As a side-effect, the [`hybrid`][griffe.extensions.hybrid.HybridExtension] extension
-    is also deprecated. See [how to use and write extensions](extensions.md).
+- Classes [`InspectorExtension`][griffe.InspectorExtension]
+    and [`VisitorExtension`][griffe.VisitorExtension]
+    are deprecated in favor of [`Extension`][griffe.Extension].
+    As a side-effect, the [`hybrid`][griffe.HybridExtension] extension
+    is also deprecated. See [how to use and write extensions](guide/users/extending.md).
 
 ### Breaking Changes
 
@@ -554,7 +554,7 @@ We are still in v0, so no major bump yet.
 - Function `load_extension` was removed (made private)
 - Function `patch_ast` was removed
 - Function `tmp_worktree` was removed (made private)
-- Type [`Extension`][griffe.extensions.base.Extension] is now a class
+- Type [`Extension`][griffe.Extension] is now a class
 
 ### Features
 
@@ -590,11 +590,11 @@ We are still in v0, so no major bump yet.
 
 - Drop support for Python 3.7
 - API changes:
-    - [`GriffeLoader.resolve_aliases(only_exported)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
-    - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffe.loader.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
-    - [`LinesCollection.tokens`][griffe.collections.LinesCollection]: Public object was removed (Python 3.7)
+    - [`GriffeLoader.resolve_aliases(only_exported)`][griffe.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
+    - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffe.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
+    - [`LinesCollection.tokens`][griffe.LinesCollection]: Public object was removed (Python 3.7)
     - `ASTNode.end_lineno`: Public object was removed (Python 3.7)
-    - [`griffe.agents.extensions`][griffe.agents] Deprecated module was removed and replaced by [`griffe.extensions`][]
+    - `griffe.agents.extensions`: Deprecated module was removed and replaced by `griffe.extensions`
 
 ### Features
 
@@ -863,9 +863,8 @@ We are still in v0, so no major bump yet.
 
 <small>[Compare with 0.24.1](https://github.com/mkdocstrings/griffe/compare/0.24.1...0.25.0)</small>
 
-### Breaking Changes
-
-- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcards()`][griffe.loader.GriffeLoader.expand_wildcards] method of the loader.
+### Breaking changes
+- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcards()`][griffe.GriffeLoader.expand_wildcards] method of the loader.
 - Exception `UnhandledEditablesModuleError` was renamed `UnhandledEditableModuleError` since we now support editable installation from other packages than `editables`.
 
 ### Highlights
@@ -921,18 +920,18 @@ for the initial code allowing to compare two Griffe trees.
 
 ### Breaking Changes
 
-- All parameters of the [`load_git`][griffe.loader.load_git] function, except `module`, are now keyword-only.
-- Parameter `try_relative_path` of the [`load_git`][griffe.loader.load_git] function was removed.
-- Parameter `commit` was renamed `ref` in the [`load_git`][griffe.loader.load_git] function.
+- All parameters of the [`load_git`][griffe.load_git] function, except `module`, are now keyword-only.
+- Parameter `try_relative_path` of the [`load_git`][griffe.load_git] function was removed.
+- Parameter `commit` was renamed `ref` in the [`load_git`][griffe.load_git] function.
 - Parameter `commit` was renamed `ref` in the `tmp_worktree` helper, which will probably become private later.
 - Parameters `ref` and `repo` switched positions in the `tmp_worktree` helper.
-- All parameters of the [`resolve_aliases`][griffe.loader.GriffeLoader.resolve_aliases] method are now keyword-only.
-- Parameters `only_exported` and `only_known_modules` of the [`resolve_module_aliases`][griffe.loader.GriffeLoader.resolve_module_aliases]
+- All parameters of the [`resolve_aliases`][griffe.GriffeLoader.resolve_aliases] method are now keyword-only.
+- Parameters `only_exported` and `only_known_modules` of the [`resolve_module_aliases`][griffe.GriffeLoader.resolve_module_aliases]
     method were removed. This method is most probably not used by anyone, and will probably be made private in the future.
 
 ### Deprecations
 
-- Parameters `only_exported` and `only_known_modules` of the [`resolve_aliases`][griffe.loader.GriffeLoader.resolve_aliases]
+- Parameters `only_exported` and `only_known_modules` of the [`resolve_aliases`][griffe.GriffeLoader.resolve_aliases]
     method are deprecated in favor of their inverted counter-part `implicit` and `external` parameters.
 
     - Example before: `loader.resolve_aliases(only_exported=True, only_known_modules=True)`
