@@ -24,22 +24,24 @@ from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
 
 import colorama
 
-from griffe import debug
-from griffe.diff import find_breaking_changes
-from griffe.encoders import JSONEncoder
-from griffe.enumerations import ExplanationStyle, Parser
-from griffe.exceptions import ExtensionError, GitError
-from griffe.extensions.base import load_extensions
-from griffe.git import get_latest_tag, get_repo_root
-from griffe.loader import GriffeLoader, load, load_git
-from griffe.logger import get_logger
+from _griffe import debug
+from _griffe.diff import find_breaking_changes
+from _griffe.encoders import JSONEncoder
+from _griffe.enumerations import ExplanationStyle, Parser
+from _griffe.exceptions import ExtensionError, GitError
+from _griffe.extensions.base import load_extensions
+from _griffe.git import get_latest_tag, get_repo_root
+from _griffe.loader import GriffeLoader, load, load_git
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from griffe.extensions.base import Extensions, ExtensionType
+    from _griffe.extensions.base import Extensions, ExtensionType
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
-logger = get_logger(__name__)
+
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.cli")
 
 
 class _DebugInfo(argparse.Action):
@@ -47,7 +49,7 @@ class _DebugInfo(argparse.Action):
         super().__init__(nargs=nargs, **kwargs)
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ARG002
-        debug.print_debug_info()
+        debug._print_debug_info()
         sys.exit(0)
 
 
@@ -90,25 +92,25 @@ def _load_packages(
     # Load each package.
     for package in packages:
         if not package:
-            logger.debug("Empty package name, continuing")
+            _logger.debug("Empty package name, continuing")
             continue
-        logger.info(f"Loading package {package}")
+        _logger.info(f"Loading package {package}")
         try:
             loader.load(package, try_relative_path=True, find_stubs_package=find_stubs_package)
         except ModuleNotFoundError as error:
-            logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
+            _logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
         except ImportError as error:
-            logger.exception(f"Tried but could not import package {package}: {error}")  # noqa: TRY401
-    logger.info("Finished loading packages")
+            _logger.exception(f"Tried but could not import package {package}: {error}")  # noqa: TRY401
+    _logger.info("Finished loading packages")
 
     # Resolve aliases.
     if resolve_aliases:
-        logger.info("Starting alias resolution")
+        _logger.info("Starting alias resolution")
         unresolved, iterations = loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
         if unresolved:
-            logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
+            _logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
         else:
-            logger.info(f"All aliases were resolved after {iterations} iterations")
+            _logger.info(f"All aliases were resolved after {iterations} iterations")
     return loader
 
 
@@ -139,7 +141,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     global_options = parser.add_argument_group(title="Global options")
     global_options.add_argument("-h", "--help", action="help", help=main_help)
-    global_options.add_argument("-V", "--version", action="version", version=f"%(prog)s {debug.get_version()}")
+    global_options.add_argument("-V", "--version", action="version", version=f"%(prog)s {debug._get_version()}")
     global_options.add_argument("--debug-info", action=_DebugInfo, help="Print debug information.")
 
     def add_common_options(subparser: argparse.ArgumentParser) -> None:
@@ -378,7 +380,7 @@ def dump(
     try:
         loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError as error:
-        logger.exception(str(error))  # noqa: TRY401
+        _logger.exception(str(error))  # noqa: TRY401
         return 1
 
     # Load packages.
@@ -412,7 +414,7 @@ def dump(
     if stats:
         loader_stats = loader.stats()
         loader_stats.time_spent_serializing = elapsed.microseconds
-        logger.info(loader_stats.as_text())
+        _logger.info(loader_stats.as_text())
 
     return 0 if len(data_packages) == len(packages) else 1
 
@@ -466,7 +468,7 @@ def check(
     try:
         loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError as error:
-        logger.exception(str(error))  # noqa: TRY401
+        _logger.exception(str(error))  # noqa: TRY401
         return 1
 
     # Load old and new version of the package.
@@ -553,6 +555,3 @@ def main(args: list[str] | None = None) -> int:
     # Run subcommand.
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
     return commands[subcommand](**opts_dict)
-
-
-__all__ = ["check", "dump", "get_parser", "main"]

@@ -7,10 +7,11 @@ import sys
 from functools import cached_property
 from typing import Any, ClassVar, Sequence
 
-from griffe.enumerations import ObjectKind
-from griffe.logger import get_logger
+from _griffe.enumerations import ObjectKind
+from _griffe.logger import get_logger
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._runtime")
 
 _builtin_module_names = {_.lstrip("_") for _ in sys.builtin_module_names}
 _cyclic_relationships = {
@@ -34,8 +35,8 @@ class ObjectNode:
     Each node stores an object, its name, and a reference to its parent node.
     """
 
-    # low level stuff known to cause issues when resolving aliases
     exclude_specials: ClassVar[set[str]] = {"__builtins__", "__loader__", "__spec__"}
+    """Low level attributes known to cause issues when resolving aliases."""
 
     def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
         """Initialize the object.
@@ -53,7 +54,7 @@ class ObjectNode:
             # which triggers the __getattr__ method of the object, which in
             # turn can raise various exceptions. Probably not just __getattr__.
             # See https://github.com/pawamoy/pytkdocs/issues/45
-            logger.debug(f"Could not unwrap {name}: {error!r}")
+            _logger.debug(f"Could not unwrap {name}: {error!r}")
 
         # Unwrap cached properties (`inpsect.unwrap` doesn't do that).
         if isinstance(obj, cached_property):
@@ -275,6 +276,3 @@ class ObjectNode:
             return child_module_path
         child_name = getattr(self.obj, "__qualname__", self.path[len(self.module.path) + 1 :])
         return f"{child_module_path}.{child_name}"
-
-
-__all__ = ["ObjectKind", "ObjectNode"]

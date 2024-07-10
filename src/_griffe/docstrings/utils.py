@@ -6,20 +6,31 @@ from ast import PyCF_ONLY_AST
 from contextlib import suppress
 from typing import TYPE_CHECKING, Protocol
 
-from griffe.exceptions import BuiltinModuleError
-from griffe.expressions import safe_get_annotation
-from griffe.logger import LogLevel, get_logger
+from _griffe.enumerations import LogLevel
+from _griffe.exceptions import BuiltinModuleError
+from _griffe.expressions import safe_get_annotation
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from griffe.models import Docstring
-    from griffe.expressions import Expr
+    from _griffe.expressions import Expr
+    from _griffe.models import Docstring
 
 
-class WarningCallable(Protocol):
-    def __call__(self, docstring: Docstring, offset: int, message: str, log_level: LogLevel = ...) -> None: ...
+class DocstringWarningCallable(Protocol):
+    """A callable that logs a warning message."""
+
+    def __call__(self, docstring: Docstring, offset: int, message: str, log_level: LogLevel = ...) -> None:
+        """Log a warning message.
+
+        Parameters:
+            docstring: The docstring in which the warning occurred.
+            offset: The offset in the docstring lines.
+            message: The message to log.
+            log_level: The log level to use.
+        """
 
 
-def warning(name: str) -> WarningCallable:
+def docstring_warning(name: str) -> DocstringWarningCallable:
     """Create and return a warn function.
 
     Parameters:
@@ -50,7 +61,7 @@ def warning(name: str) -> WarningCallable:
     return warn
 
 
-def parse_annotation(
+def parse_docstring_annotation(
     annotation: str,
     docstring: Docstring,
     log_level: LogLevel = LogLevel.error,
@@ -79,6 +90,3 @@ def parse_annotation(
             )
             return name_or_expr or annotation
     return annotation
-
-
-__all__ = ["parse_annotation", "warning"]

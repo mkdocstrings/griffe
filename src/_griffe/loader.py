@@ -1,13 +1,21 @@
-"""This module contains the code allowing to load modules data.
+"""Griffe provides "loading" utilities.
 
-This is the entrypoint to use griffe programatically:
+In Griffe's context, loading means:
 
-```python
-from griffe.loader import GriffeLoader
+- searching for a package, and finding it on the file system or as a builtin module
+  (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)
+- extracting information from each of its (sub)modules, by either parsing
+  the source code (see the [`visit`][griffe.visit] function)
+  or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)
 
-griffe = GriffeLoader()
-fastapi = griffe.load("fastapi")
-```
+The extracted information is stored in a collection of modules, which can be queried later.
+Each collected module is a tree of objects, representing the structure of the module.
+See the [`Module`][griffe.Module], [`Class`][griffe.Class],
+[`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes
+for more information.
+
+The main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].
+Convenience functions [`load`][griffe.load] and [`load_git`][griffe.load_git] are also available.
 """
 
 from __future__ import annotations
@@ -19,25 +27,26 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 
-from griffe.agents.inspector import inspect
-from griffe.agents.visitor import visit
-from griffe.collections import LinesCollection, ModulesCollection
-from griffe.models import Alias, Module, Object
-from griffe.enumerations import Kind
-from griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
-from griffe.expressions import ExprName
-from griffe.extensions.base import Extensions, load_extensions
-from griffe.finder import ModuleFinder, NamespacePackage, Package
-from griffe.git import tmp_worktree
-from griffe.importer import dynamic_import
-from griffe.logger import get_logger
-from griffe.merger import merge_stubs
-from griffe.stats import Stats
+from _griffe.agents.inspector import inspect
+from _griffe.agents.visitor import visit
+from _griffe.collections import LinesCollection, ModulesCollection
+from _griffe.enumerations import Kind
+from _griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
+from _griffe.expressions import ExprName
+from _griffe.extensions.base import Extensions, load_extensions
+from _griffe.finder import ModuleFinder, NamespacePackage, Package
+from _griffe.git import tmp_worktree
+from _griffe.importer import dynamic_import
+from _griffe.logger import get_logger
+from _griffe.merger import merge_stubs
+from _griffe.models import Alias, Module, Object
+from _griffe.stats import Stats
 
 if TYPE_CHECKING:
-    from griffe.enumerations import Parser
+    from _griffe.enumerations import Parser
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.loader")
 _builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
@@ -45,6 +54,10 @@ class GriffeLoader:
     """The Griffe loader, allowing to load data from modules."""
 
     ignored_modules: ClassVar[set[str]] = {"debugpy", "_pydev"}
+    """Special modules to ignore when loading.
+
+    For example, `debugpy` and `_pydev` are used when debugging with VSCode and should generally never be loaded.
+    """
 
     def __init__(
         self,
@@ -105,7 +118,7 @@ class GriffeLoader:
     ) -> Object:
         """Renamed `load`. Load an object as a Griffe object, given its dotted path.
 
-        This method was renamed [`load`][griffe.loader.GriffeLoader.load].
+        This method was renamed [`load`][griffe.GriffeLoader.load].
         """
         warnings.warn(
             "The `load_module` method was renamed `load`, and is deprecated.",
@@ -138,10 +151,8 @@ class GriffeLoader:
         with regular methods and properties (`parent`, `members`, etc.).
 
         Examples:
-            >>> loader.load("griffe.models.Module")
-            Class("Module")
-            >>> loader.load("src/griffe/models.py")
-            Module("models")
+            >>> loader.load("griffe.Module")
+            Alias("Module", "_griffe.models.Module")
 
         Parameters:
             objspec: The Python path of an object, or file path to a module.
@@ -177,7 +188,7 @@ class GriffeLoader:
 
         # We always start by searching paths on the disk,
         # even if inspection is forced.
-        logger.debug(f"Searching path(s) for {objspec}")
+        _logger.debug(f"Searching path(s) for {objspec}")
         try:
             obj_path, package = self.finder.find_spec(
                 objspec,  # type: ignore[arg-type]
@@ -187,14 +198,14 @@ class GriffeLoader:
         except ModuleNotFoundError:
             # If we couldn't find paths on disk and inspection is disabled,
             # re-raise ModuleNotFoundError.
-            logger.debug(f"Could not find path for {objspec} on disk")
+            _logger.debug(f"Could not find path for {objspec} on disk")
             if not (self.allow_inspection or self.force_inspection):
                 raise
 
             # Otherwise we try to dynamically import the top-level module.
             obj_path = str(objspec)
             top_module_name = obj_path.split(".", 1)[0]
-            logger.debug(f"Trying to dynamically import {top_module_name}")
+            _logger.debug(f"Trying to dynamically import {top_module_name}")
             top_module_object = dynamic_import(top_module_name, self.finder.search_paths)
 
             try:
@@ -204,7 +215,7 @@ class GriffeLoader:
             except (AttributeError, ValueError):
                 # If the top-level module has no `__path__`, we inspect it as-is,
                 # and do not try to recurse into submodules (there shouldn't be any in builtin/compiled modules).
-                logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
+                _logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
                 top_module = self._inspect_module(top_module_name)
                 self.modules_collection.set_member(top_module.path, top_module)
                 obj = self.modules_collection.get_member(obj_path)
@@ -212,7 +223,7 @@ class GriffeLoader:
                 return obj
 
             # We found paths, and use them to build our intermediate Package or NamespacePackage struct.
-            logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
+            _logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
             top_module_path = [Path(path) for path in top_module_path]
             if len(top_module_path) > 1:
                 package = NamespacePackage(top_module_name, top_module_path)
@@ -220,11 +231,11 @@ class GriffeLoader:
                 package = Package(top_module_name, top_module_path[0])
 
         # We have an intermediate package, and an object path: we're ready to load.
-        logger.debug(f"Found {objspec}: loading")
+        _logger.debug(f"Found {objspec}: loading")
         try:
             top_module = self._load_package(package, submodules=submodules)
         except LoadingError as error:
-            logger.exception(str(error))  # noqa: TRY401
+            _logger.exception(str(error))  # noqa: TRY401
             raise
 
         # Package is loaded, we now retrieve the initially requested object and return it.
@@ -280,7 +291,7 @@ class GriffeLoader:
                 )
                 resolved |= next_resolved
                 unresolved |= next_unresolved
-            logger.debug(
+            _logger.debug(
                 f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go",
             )
         return unresolved, iteration
@@ -305,14 +316,14 @@ class GriffeLoader:
                 try:
                     next_module = self.modules_collection.get_member(module_path)
                 except KeyError:
-                    logger.debug(f"Cannot expand '{export.canonical_path}', try pre-loading corresponding package")
+                    _logger.debug(f"Cannot expand '{export.canonical_path}', try pre-loading corresponding package")
                     continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
                     try:
                         expanded |= next_module.exports
                     except TypeError:
-                        logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
+                        _logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
             # It's a string, simply add it to the current exports.
             else:
                 expanded.add(export)
@@ -352,14 +363,14 @@ class GriffeLoader:
                     try:
                         self.load(package, try_relative_path=False)
                     except (ImportError, LoadingError) as error:
-                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        _logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
 
                 # Try getting the module from which every public object is imported.
                 try:
                     target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
                 except KeyError:
-                    logger.debug(
+                    _logger.debug(
                         f"Could not expand wildcard import {member.name} in {obj.path}: "
                         f"{cast(Alias, member).target_path} not found in modules collection",
                     )
@@ -370,7 +381,7 @@ class GriffeLoader:
                     try:
                         self.expand_wildcards(target, external=external, seen=seen)
                     except (AliasResolutionError, CyclicAliasError) as error:
-                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        _logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
 
                 # Collect every imported object.
@@ -482,16 +493,17 @@ class GriffeLoader:
                         and package not in self.modules_collection
                     )
                     if load_module:
-                        logger.debug(f"Failed to resolve alias {member.path} -> {target}")
+                        _logger.debug(f"Failed to resolve alias {member.path} -> {target}")
                         try:
                             self.load(package, try_relative_path=False)
                         except (ImportError, LoadingError) as error:
-                            logger.debug(f"Could not follow alias {member.path}: {error}")
+                            _logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
+                        # TODO: Immediately try again?
                 except CyclicAliasError as error:
-                    logger.debug(str(error))
+                    _logger.debug(str(error))
                 else:
-                    logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
+                    _logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
                     resolved.add(member.path)
 
             # Recurse into unseen modules and classes.
@@ -562,7 +574,7 @@ class GriffeLoader:
         submodules: bool = True,
         parent: Module | None = None,
     ) -> Module:
-        logger.debug(f"Loading path {module_path}")
+        _logger.debug(f"Loading path {module_path}")
         if isinstance(module_path, list):
             module = self._create_module(module_name, module_path)
         elif self.force_inspection:
@@ -584,7 +596,7 @@ class GriffeLoader:
     def _load_submodule(self, module: Module, subparts: tuple[str, ...], subpath: Path) -> None:
         for subpart in subparts:
             if "." in subpart:
-                logger.debug(f"Skip {subpath}, dots in filenames are not supported")
+                _logger.debug(f"Skip {subpath}, dots in filenames are not supported")
                 return
         try:
             parent_module = self._get_or_create_parent_module(module, subparts, subpath)
@@ -608,7 +620,7 @@ class GriffeLoader:
             # It works when the namespace package appears in only one search path (`sys.path`),
             # but will fail if it appears in multiple search paths: Python will only find the first occurrence.
             # It's better to not falsely suuport this, and to warn users.
-            logger.debug(f"{error}. Missing __init__ module?")
+            _logger.debug(f"{error}. Missing __init__ module?")
             return
         submodule_name = subparts[-1]
         try:
@@ -619,12 +631,12 @@ class GriffeLoader:
                 parent=parent_module,
             )
         except LoadingError as error:
-            logger.debug(str(error))
+            _logger.debug(str(error))
         else:
             if submodule_name in parent_module.members:
                 member = parent_module.members[submodule_name]
                 if member.is_alias or not member.is_module:
-                    logger.debug(
+                    _logger.debug(
                         f"Submodule '{submodule.path}' is shadowing the member at the same path. "
                         "We recommend renaming the member or the submodule (for example prefixing it with `_`), "
                         "see https://mkdocstrings.github.io/griffe/best_practices/#avoid-member-submodule-name-shadowing.",
@@ -757,13 +769,13 @@ def load(
     This is a shortcut for:
 
     ```python
-    from griffe.loader import GriffeLoader
+    from griffe import GriffeLoader
 
     loader = GriffeLoader(...)
     module = loader.load(...)
     ```
 
-    See the documentation for the loader: [`GriffeLoader`][griffe.loader.GriffeLoader].
+    See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].
 
     Parameters:
         objspec: The Python path of an object, or file path to a module.
@@ -842,13 +854,13 @@ def load_git(
 
     This function will create a temporary
     [git worktree](https://git-scm.com/docs/git-worktree) at the requested reference
-    before loading `module` with [`griffe.load`][griffe.loader.load].
+    before loading `module` with [`griffe.load`][griffe.load].
 
     This function requires that the `git` executable is installed.
 
     Examples:
         ```python
-        from griffe.loader import load_git
+        from griffe import load_git
 
         old_api = load_git("my_module", ref="v0.1.0", repo="path/to/repo")
         ```
@@ -908,6 +920,3 @@ def load_git(
             resolve_external=resolve_external,
             resolve_implicit=resolve_implicit,
         )
-
-
-__all__ = ["GriffeLoader", "load", "load_git"]

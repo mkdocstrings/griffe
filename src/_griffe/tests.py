@@ -11,23 +11,27 @@ from pathlib import Path
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
 
-from griffe.agents.inspector import inspect
-from griffe.agents.visitor import visit
-from griffe.collections import LinesCollection
-from griffe.models import Module, Object
-from griffe.loader import GriffeLoader
+from _griffe.agents.inspector import inspect
+from _griffe.agents.visitor import visit
+from _griffe.collections import LinesCollection
+from _griffe.loader import GriffeLoader
+from _griffe.models import Module, Object
 
 if TYPE_CHECKING:
-    from griffe.collections import ModulesCollection
-    from griffe.enumerations import Parser
-    from griffe.extensions.base import Extensions
+    from _griffe.collections import ModulesCollection
+    from _griffe.enumerations import Parser
+    from _griffe.extensions.base import Extensions
 
-TMPDIR_PREFIX = "griffe_"
+_TMPDIR_PREFIX = "griffe_"
 
 
 @dataclass
 class TmpPackage:
-    """A temporary package."""
+    """A temporary package.
+
+    The `tmpdir` and `path` parameters can be passed as relative path.
+    They will be resolved to absolute paths after initialization.
+    """
 
     tmpdir: Path
     """The temporary directory containing the package."""
@@ -53,7 +57,7 @@ def temporary_pyfile(code: str, *, module_name: str = "module") -> Iterator[tupl
         module_name: The module name, as to dynamically import it.
         module_path: The module path.
     """
-    with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
+    with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpfile = Path(tmpdir) / f"{module_name}.py"
         tmpfile.write_text(dedent(code))
         yield module_name, tmpfile
@@ -88,7 +92,7 @@ def temporary_pypackage(
     if isinstance(modules, list):
         modules = {mod: "" for mod in modules}
     mkdir_kwargs = {"parents": True, "exist_ok": True}
-    with tempfile.TemporaryDirectory(prefix=TMPDIR_PREFIX) as tmpdir:
+    with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpdirpath = Path(tmpdir)
         package_name = ".".join(Path(package).parts)
         package_path = tmpdirpath / package
@@ -325,16 +329,3 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
 
         modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]
-
-
-__all__ = [
-    "htree",
-    "module_vtree",
-    "temporary_inspected_module",
-    "temporary_pyfile",
-    "temporary_pypackage",
-    "temporary_visited_module",
-    "temporary_visited_package",
-    "TmpPackage",
-    "vtree",
-]

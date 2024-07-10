@@ -9,26 +9,28 @@ from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 from colorama import Fore, Style
 
-from griffe.enumerations import BreakageKind, ExplanationStyle, ParameterKind
-from griffe.exceptions import AliasResolutionError
-from griffe.git import WORKTREE_PREFIX
-from griffe.logger import get_logger
+from _griffe.enumerations import BreakageKind, ExplanationStyle, ParameterKind
+from _griffe.exceptions import AliasResolutionError
+from _griffe.git import _WORKTREE_PREFIX
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from griffe.models import Alias, Attribute, Class, Function, Object
+    from _griffe.models import Alias, Attribute, Class, Function, Object
 
-POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
-KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
-POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
-VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
+_POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
+_KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
+_POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
+_VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.diff")
 
 
 class Breakage:
     """Breakages can explain what broke from a version to another."""
 
     kind: BreakageKind
+    """The kind of breakage."""
 
     def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
         """Initialize the breakage.
@@ -40,9 +42,13 @@ class Breakage:
             details: Some details about the breakage.
         """
         self.obj = obj
+        """The object related to the breakage."""
         self.old_value = old_value
+        """The old value."""
         self.new_value = new_value
+        """The new, incompatible value."""
         self.details = details
+        """Some details about the breakage."""
 
     def __str__(self) -> str:
         return self.kind.value
@@ -104,7 +110,7 @@ class Breakage:
         if self._relative_filepath.is_absolute():
             parts = self._relative_filepath.parts
             for index, part in enumerate(parts):
-                if part.startswith(WORKTREE_PREFIX):
+                if part.startswith(_WORKTREE_PREFIX):
                     return Path(*parts[index + 2 :])
         return self._relative_filepath
 
@@ -373,7 +379,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
             yield ParameterChangedRequiredBreakage(new_function, old_param, new_param)
 
         # Check if the parameter was moved.
-        if old_param.kind in POSITIONAL and new_param.kind in POSITIONAL:
+        if old_param.kind in _POSITIONAL and new_param.kind in _POSITIONAL:
             new_index = new_param_names.index(old_param.name)
             if new_index != old_index:
                 details = f"position: from {old_index} to {new_index} ({new_index - old_index:+})"
@@ -388,7 +394,8 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
                     # keyword-only to positional-only
                     old_param.kind is ParameterKind.keyword_only and new_param.kind is ParameterKind.positional_only,
                     # positional or keyword to positional-only/keyword-only
-                    old_param.kind is ParameterKind.positional_or_keyword and new_param.kind in POSITIONAL_KEYWORD_ONLY,
+                    old_param.kind is ParameterKind.positional_or_keyword
+                    and new_param.kind in _POSITIONAL_KEYWORD_ONLY,
                     # not keyword-only to variadic keyword, without variadic positional
                     new_param.kind is ParameterKind.var_keyword
                     and old_param.kind is not ParameterKind.keyword_only
@@ -405,7 +412,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
         # Check if the parameter changed default.
         breakage = ParameterChangedDefaultBreakage(new_function, old_param, new_param)
         non_required = not old_param.required and not new_param.required
-        non_variadic = old_param.kind not in VARIADIC and new_param.kind not in VARIADIC
+        non_variadic = old_param.kind not in _VARIADIC and new_param.kind not in _VARIADIC
         if non_required and non_variadic:
             try:
                 if old_param.default != new_param.default:
@@ -444,7 +451,7 @@ def _alias_incompatibilities(
         old_member = old_obj.target if old_obj.is_alias else old_obj  # type: ignore[union-attr]
         new_member = new_obj.target if new_obj.is_alias else new_obj  # type: ignore[union-attr]
     except AliasResolutionError:
-        logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
+        _logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
         return
 
     yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
@@ -459,9 +466,9 @@ def _member_incompatibilities(
     seen_paths = set() if seen_paths is None else seen_paths
     for name, old_member in old_obj.all_members.items():
         if not old_member.is_public:
-            logger.debug(f"API check: {old_obj.path}.{name}: skip non-public object")
+            _logger.debug(f"API check: {old_obj.path}.{name}: skip non-public object")
             continue
-        logger.debug(f"API check: {old_obj.path}.{name}")
+        _logger.debug(f"API check: {old_obj.path}.{name}")
         try:
             new_member = new_obj.all_members[name]
         except KeyError:
@@ -564,23 +571,3 @@ def find_breaking_changes(
             stacklevel=2,
         )
     yield from _member_incompatibilities(old_obj, new_obj)
-
-
-__all__ = [
-    "AttributeChangedTypeBreakage",
-    "AttributeChangedValueBreakage",
-    "Breakage",
-    "BreakageKind",
-    "ClassRemovedBaseBreakage",
-    "ExplanationStyle",
-    "find_breaking_changes",
-    "ObjectChangedKindBreakage",
-    "ObjectRemovedBreakage",
-    "ParameterAddedRequiredBreakage",
-    "ParameterChangedDefaultBreakage",
-    "ParameterChangedKindBreakage",
-    "ParameterChangedRequiredBreakage",
-    "ParameterMovedBreakage",
-    "ParameterRemovedBreakage",
-    "ReturnChangedTypeBreakage",
-]

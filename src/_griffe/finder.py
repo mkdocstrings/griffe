@@ -24,22 +24,26 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterator, Sequence, Tuple
 
-from griffe.exceptions import UnhandledEditableModuleError
-from griffe.logger import get_logger
+from _griffe.exceptions import UnhandledEditableModuleError
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
     from typing import Pattern
 
-    from griffe.models import Module
+    from _griffe.models import Module
 
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.finder")
 
-NamePartsType = Tuple[str, ...]
-NamePartsAndPathType = Tuple[NamePartsType, Path]
-logger = get_logger(__name__)
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", r"^_editable_impl_\w+\.py$")]
 _editable_setuptools_patterns = [re.compile(pat) for pat in (r"^__editable__\w+\.py$",)]
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
 _editable_meson_python_patterns = [re.compile(pat) for pat in (r"^_\w+_editable_loader.py$",)]
+
+NamePartsType = Tuple[str, ...]
+"""Type alias for the parts of a module name."""
+NamePartsAndPathType = Tuple[NamePartsType, Path]
+"""Type alias for the parts of a module name and its path."""
 
 
 def _match_pattern(string: str, patterns: Sequence[Pattern]) -> bool:
@@ -80,7 +84,13 @@ class NamespacePackage:
 
 
 class ModuleFinder:
-    """The Griffe finder, allowing to find modules on the file system."""
+    """The Griffe finder, allowing to find modules on the file system.
+
+    The module finder is generally not used directly.
+    Each [`GriffeLoader`][griffe.GriffeLoader] instance creates its own module finder instance.
+    The finder can be configured when instantiating the loader
+    thanks to the loader [`search_paths`][griffe.GriffeLoader(search_paths)] parameter.
+    """
 
     accepted_py_module_extensions: ClassVar[list[str]] = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
     """List of extensions supported by the finder."""
@@ -138,7 +148,7 @@ class ModuleFinder:
         try_relative_path: bool = True,
         find_stubs_package: bool = False,
     ) -> tuple[str, Package | NamespacePackage]:
-        """Find the top module of a module.
+        """Find the top-level parent module of a module.
 
         If a Path is passed, only try to find the module as a file path.
         If a string is passed, first try to find the module as a file path,
@@ -307,7 +317,7 @@ class ModuleFinder:
         for subpath in self._filter_py_modules(path):
             rel_subpath = subpath.relative_to(path)
             if rel_subpath.parent in skip:
-                logger.debug(f"Skip {subpath}, another module took precedence")
+                _logger.debug(f"Skip {subpath}, another module took precedence")
                 continue
             py_file = rel_subpath.suffix == ".py"
             stem = rel_subpath.stem
@@ -500,9 +510,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 and isinstance(node.value.args[1], ast.Constant)
             ):
                 build_path = Path(node.value.args[1].value, "src")
+                # NOTE: What if there are multiple packages?
                 pkg_name = next(build_path.iterdir()).name
                 return [_SP(build_path, always_scan_for=pkg_name)]
     raise UnhandledEditableModuleError(path)
-
-
-__all__ = ["ModuleFinder", "NamespacePackage", "Package"]

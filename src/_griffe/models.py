@@ -1,7 +1,18 @@
-"""This module contains the data classes that represent Python objects.
+"""Griffe stores information extracted from Python source code into data models.
 
-The different objects are modules, classes, functions, and attribute
-(variables like module/class/instance attributes).
+These models represent trees of objects, starting with modules,
+and containing classes, functions, and attributes.
+
+Modules can have submodules, classes, functions and attributes.
+Classes can have nested classes, methods and attributes.
+Functions and attributes do not have any members.
+
+Indirections to objects declared in other modules are represented as "aliases".
+An alias therefore represents an imported object,
+and behaves almost exactly like the object it points to:
+it is a light wrapper around the object,
+with special methods and properties
+that allow to access the target's data transparently.
 """
 
 from __future__ import annotations
@@ -14,22 +25,23 @@ from pathlib import Path
 from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Callable, Literal, Sequence, Union, cast
 
-from griffe.c3linear import c3linear_merge
-from griffe.docstrings.parsers import parse
-from griffe.enumerations import Kind, ParameterKind, Parser
-from griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
-from griffe.expressions import ExprCall, ExprName
-from griffe.logger import get_logger
-from griffe.mixins import ObjectAliasMixin
+from _griffe.c3linear import c3linear_merge
+from _griffe.docstrings.parsers import parse
+from _griffe.enumerations import Kind, ParameterKind, Parser
+from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
+from _griffe.expressions import ExprCall, ExprName
+from _griffe.logger import get_logger
+from _griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
-    from griffe.collections import LinesCollection, ModulesCollection
-    from griffe.docstrings.models import DocstringSection
-    from griffe.expressions import Expr
+    from _griffe.collections import LinesCollection, ModulesCollection
+    from _griffe.docstrings.models import DocstringSection
+    from _griffe.expressions import Expr
 
 from functools import cached_property
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Replace `.dataclasses` with `` within line.
+_logger = get_logger("griffe.dataclasses")
 
 
 class Decorator:
@@ -212,6 +224,7 @@ class Parameter:
         return f"Parameter(name={self.name!r}, annotation={self.annotation!r}, kind={self.kind!r}, default={self.default!r})"
 
     def __eq__(self, __value: object) -> bool:
+        """Parameters are equal if all their attributes except `docstring` and `function` are equal."""
         if not isinstance(__value, Parameter):
             return NotImplemented
         return (
@@ -273,17 +286,21 @@ class Parameters:
         return f"Parameters({', '.join(repr(param) for param in self._parameters_list)})"
 
     def __getitem__(self, name_or_index: int | str) -> Parameter:
+        """Get a parameter by index or name."""
         if isinstance(name_or_index, int):
             return self._parameters_list[name_or_index]
         return self._parameters_dict[name_or_index.lstrip("*")]
 
     def __len__(self):
+        """The number of parameters."""
         return len(self._parameters_list)
 
     def __iter__(self):
+        """Iterate over the parameters, in order."""
         return iter(self._parameters_list)
 
     def __contains__(self, param_name: str):
+        """Whether a parameter with the given name is present."""
         return param_name.lstrip("*") in self._parameters_dict
 
     def add(self, parameter: Parameter) -> None:
@@ -308,13 +325,13 @@ class Object(ObjectAliasMixin):
     kind: Kind
     """The object kind."""
     is_alias: bool = False
-    """Whether this object is an alias."""
+    """Always false for objects."""
     is_collection: bool = False
-    """Whether this object is a (modules) collection."""
+    """Always false for objects."""
     inherited: bool = False
-    """Whether this object (alias) is inherited.
+    """Always false for objects.
 
-    Objects can never be inherited, only aliases can.
+    Only aliases can be marked as inherited.
     """
 
     def __init__(
@@ -413,11 +430,13 @@ class Object(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.name!r}, {self.lineno!r}, {self.endlineno!r})"
 
+    # Prevent using `__len__`.
     def __bool__(self) -> bool:
-        # Prevent using `__len__`.
+        """An object is always true-ish."""
         return True
 
     def __len__(self) -> int:
+        """The number of members in this object, recursively."""
         return len(self.members) + sum(len(member) for member in self.members.values())
 
     @property
@@ -433,7 +452,7 @@ class Object(ObjectAliasMixin):
         return any(member.has_docstrings for member in self.members.values())
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
-        """Deprecated. Use [`member.is_exported`][griffe.models.Object.is_exported] instead."""
+        """Deprecated. Use [`member.is_exported`][griffe.Object.is_exported] instead."""
         warnings.warn(
             "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
             DeprecationWarning,
@@ -473,7 +492,7 @@ class Object(ObjectAliasMixin):
         try:
             mro = self.mro()
         except ValueError as error:
-            logger.debug(error)
+            _logger.debug(error)
             return {}
         inherited_members = {}
         for base in reversed(mro):
@@ -574,6 +593,15 @@ class Object(ObjectAliasMixin):
     def module(self) -> Module:
         """The parent module of this object.
 
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown["core.Markdown.references"].module
+            Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))
+            >>> # The `module` of a module is itself.
+            >>> markdown["core"].module
+            Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))
+
         Raises:
             ValueError: When the object is not a module and does not have a parent.
         """
@@ -585,7 +613,14 @@ class Object(ObjectAliasMixin):
 
     @property
     def package(self) -> Module:
-        """The absolute top module (the package) of this object."""
+        """The absolute top module (the package) of this object.
+
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown["core.Markdown.references"].package
+            Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py'))
+        """
         module = self.module
         while module.parent:
             module = module.parent  # type: ignore[assignment]  # always a module
@@ -593,7 +628,14 @@ class Object(ObjectAliasMixin):
 
     @property
     def filepath(self) -> Path | list[Path]:
-        """The file path (or directory list for namespace packages) where this object was defined."""
+        """The file path (or directory list for namespace packages) where this object was defined.
+
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown.filepath
+            PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py')
+        """
         return self.module.filepath
 
     @property
@@ -662,6 +704,12 @@ class Object(ObjectAliasMixin):
         """The dotted path of this object.
 
         On regular objects (not aliases), the path is the canonical path.
+
+        Examples:
+            >>> import griffe
+            >>> markdown = griffe.load("markdown")
+            >>> markdown["core.Markdown.references"].path
+            'markdown.core.Markdown.references'
         """
         return self.canonical_path
 
@@ -737,6 +785,9 @@ class Object(ObjectAliasMixin):
         Returns:
             The resolved name.
         """
+        # TODO: Better match Python's own scoping rules?
+        # Also, maybe return regular paths instead of canonical ones?
+
         # Name is a member this object.
         if name in self.members:
             if self.members[name].is_alias:
@@ -770,7 +821,7 @@ class Object(ObjectAliasMixin):
         Returns:
             A dictionary.
         """
-        base = {
+        base: dict[str, Any] = {
             "kind": self.kind,
             "name": self.name,
         }
@@ -811,11 +862,13 @@ class Alias(ObjectAliasMixin):
     - the path is the alias path, not the canonical one
     - the name can be different from the target's
     - if the target can be resolved, the kind is the target's kind
-    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.models.Kind]
+    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.Kind]
     """
 
     is_alias: bool = True
+    """Always true for aliases."""
     is_collection: bool = False
+    """Always false for aliases."""
 
     def __init__(
         self,
@@ -878,11 +931,13 @@ class Alias(ObjectAliasMixin):
     def __repr__(self) -> str:
         return f"Alias({self.name!r}, {self.target_path!r})"
 
+    # Prevent using `__len__`.
     def __bool__(self) -> bool:
-        # Prevent using `__len__`.
+        """An alias is always true-ish."""
         return True
 
     def __len__(self) -> int:
+        """The length of an alias is always 1."""
         return 1
 
     # SPECIAL PROXIES -------------------------------
@@ -1051,7 +1106,7 @@ class Alias(ObjectAliasMixin):
         return self.final_target.aliases
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
-        """Deprecated. Use [`member.is_exported`][griffe.models.Alias.is_exported] instead."""
+        """Deprecated. Use [`member.is_exported`][griffe.Alias.is_exported] instead."""
         warnings.warn(
             "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
             DeprecationWarning,
@@ -1435,7 +1490,7 @@ class Alias(ObjectAliasMixin):
         Returns:
             A dictionary.
         """
-        base = {
+        base: dict[str, Any] = {
             "kind": Kind.ALIAS,
             "name": self.name,
             "target_path": self.target_path,
@@ -1461,14 +1516,14 @@ class Module(Object):
         """Initialize the module.
 
         Parameters:
-            *args: See [`griffe.models.Object`][].
+            *args: See [`griffe.Object`][].
             filepath: The module file path (directory for namespace [sub]packages, none for builtin modules).
-            **kwargs: See [`griffe.models.Object`][].
+            **kwargs: See [`griffe.Object`][].
         """
         super().__init__(*args, **kwargs)
         self._filepath: Path | list[Path] | None = filepath
         self.overloads: dict[str, list[Function]] = defaultdict(list)
-        """The overloaded signature declared in this module."""
+        """The overloaded signatures declared in this module."""
 
     def __repr__(self) -> str:
         try:
@@ -1572,10 +1627,10 @@ class Class(Object):
         """Initialize the class.
 
         Parameters:
-            *args: See [`griffe.models.Object`][].
+            *args: See [`griffe.Object`][].
             bases: The list of base classes, if any.
             decorators: The class decorators, if any.
-            **kwargs: See [`griffe.models.Object`][].
+            **kwargs: See [`griffe.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.bases: list[Expr | str] = list(bases) if bases else []
@@ -1613,7 +1668,7 @@ class Class(Object):
                 if resolved_base.is_alias:
                     resolved_base = resolved_base.final_target
             except (AliasResolutionError, CyclicAliasError, KeyError):
-                logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
+                _logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
             else:
                 resolved_bases.append(resolved_base)
         return resolved_bases
@@ -1664,11 +1719,11 @@ class Function(Object):
         """Initialize the function.
 
         Parameters:
-            *args: See [`griffe.models.Object`][].
+            *args: See [`griffe.Object`][].
             parameters: The function parameters.
             returns: The function return annotation.
             decorators: The function decorators, if any.
-            **kwargs: See [`griffe.models.Object`][].
+            **kwargs: See [`griffe.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.parameters: Parameters = parameters or Parameters()
@@ -1723,10 +1778,10 @@ class Attribute(Object):
         """Initialize the function.
 
         Parameters:
-            *args: See [`griffe.models.Object`][].
+            *args: See [`griffe.Object`][].
             value: The attribute value, if any.
             annotation: The attribute annotation, if any.
-            **kwargs: See [`griffe.models.Object`][].
+            **kwargs: See [`griffe.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.value: str | Expr | None = value
@@ -1749,20 +1804,3 @@ class Attribute(Object):
         if self.annotation is not None:
             base["annotation"] = self.annotation
         return base
-
-
-__all__ = [
-    "Alias",
-    "Attribute",
-    "Class",
-    "Decorator",
-    "Docstring",
-    "Function",
-    "Kind",
-    "Module",
-    "Object",
-    "Parameter",
-    "ParameterKind",
-    "ParameterKind",
-    "Parameters",
-]

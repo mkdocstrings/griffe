@@ -7,15 +7,16 @@ import warnings
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 
-from griffe.enumerations import Kind
-from griffe.exceptions import AliasResolutionError, CyclicAliasError
-from griffe.logger import get_logger
-from griffe.merger import merge_stubs
+from _griffe.enumerations import Kind
+from _griffe.exceptions import AliasResolutionError, CyclicAliasError
+from _griffe.logger import get_logger
+from _griffe.merger import merge_stubs
 
 if TYPE_CHECKING:
-    from griffe.models import Alias, Attribute, Class, Function, Module, Object
+    from _griffe.models import Alias, Attribute, Class, Function, Module, Object
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.mixins")
 _ObjType = TypeVar("_ObjType")
 
 
@@ -32,7 +33,12 @@ def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
 
 
 class GetMembersMixin:
-    """Mixin class to share methods for accessing members."""
+    """Mixin class to share methods for accessing members.
+
+    Methods:
+        get_member: Get a member with its name or path.
+        __getitem__: Same as `get_member`, with the item syntax `[]`.
+    """
 
     def __getitem__(self, key: str | Sequence[str]) -> Any:
         """Get a member with its name or path.
@@ -79,8 +85,15 @@ class GetMembersMixin:
         return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
 
 
+# FIXME: Are `aliases` in other objects correctly updated when we delete a member?
+# Would weak references be useful there?
 class DelMembersMixin:
-    """Mixin class to share methods for deleting members."""
+    """Mixin class to share methods for deleting members.
+
+    Methods:
+        del_member: Delete a member with its name or path.
+        __delitem__: Same as `del_member`, with the item syntax `[]`.
+    """
 
     def __delitem__(self, key: str | Sequence[str]) -> None:
         """Delete a member with its name or path.
@@ -135,7 +148,12 @@ class DelMembersMixin:
 
 
 class SetMembersMixin:
-    """Mixin class to share methods for setting members."""
+    """Mixin class to share methods for setting members.
+
+    Methods:
+        set_member: Set a member with its name or path.
+        __setitem__: Same as `set_member`, with the item syntax `[]`.
+    """
 
     def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
         """Set a member with its name or path.
@@ -206,7 +224,12 @@ class SetMembersMixin:
 
 
 class SerializationMixin:
-    """A mixin that adds de/serialization conveniences."""
+    """Mixin class to share methods for de/serializing objects.
+
+    Methods:
+        as_json: Return this object's data as a JSON string.
+        from_json: Create an instance of this class from a JSON string.
+    """
 
     def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
         """Return this object's data as a JSON string.
@@ -218,7 +241,7 @@ class SerializationMixin:
         Returns:
             A JSON string.
         """
-        from griffe.encoders import JSONEncoder  # avoid circular import
+        from _griffe.encoders import JSONEncoder  # avoid circular import
 
         return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
 
@@ -237,7 +260,7 @@ class SerializationMixin:
             TypeError: When the json_string does not represent and object
                 of the class from which this classmethod has been called.
         """
-        from griffe.encoders import json_decoder  # avoid circular import
+        from _griffe.encoders import json_decoder  # avoid circular import
 
         kwargs.setdefault("object_hook", json_decoder)
         obj = json.loads(json_string, **kwargs)
@@ -247,7 +270,23 @@ class SerializationMixin:
 
 
 class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, SerializationMixin):
-    """A mixin for methods that appear both in objects and aliases, unchanged."""
+    """Mixin class to share methods that appear both in objects and aliases, unchanged.
+
+    Attributes:
+        all_members: All members (declared and inherited).
+        modules: The module members.
+        classes: The class members.
+        functions: The function members.
+        attributes: The attribute members.
+        is_private: Whether this object/alias is private (starts with `_`) but not special.
+        is_class_private: Whether this object/alias is class-private (starts with `__` and is a class member).
+        is_special: Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`).
+        is_imported: Whether this object/alias was imported from another module.
+        is_exported: Whether this object/alias is exported (listed in `__all__`).
+        is_wildcard_exposed: Whether this object/alias is exposed to wildcard imports.
+        is_public: Whether this object is considered public.
+        is_deprecated: Whether this object is deprecated.
+    """
 
     @property
     def all_members(self) -> dict[str, Object | Alias]:
@@ -342,7 +381,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
 
     @property
     def is_explicitely_exported(self) -> bool:
-        """Deprecated. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead."""
+        """Deprecated. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead."""
         warnings.warn(
             "The `is_explicitely_exported` property is deprecated. Use `is_exported` instead.",
             DeprecationWarning,
@@ -352,7 +391,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
 
     @property
     def is_implicitely_exported(self) -> bool:
-        """Deprecated. Use the [`is_exported`][griffe.mixins.ObjectAliasMixin.is_exported] property instead."""
+        """Deprecated. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead."""
         warnings.warn(
             "The `is_implicitely_exported` property is deprecated. Use `is_exported` instead.",
             DeprecationWarning,
@@ -402,7 +441,8 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         Therefore, to decide whether an object is public, we follow this algorithm:
 
         - If the object's `public` attribute is set (boolean), return its value.
-        - If the object is exposed to wildcard imports, it is public.
+        - If the object is listed in its parent's (a module) `__all__` attribute, it is public.
+        - If the parent (module) defines `__all__` and the object is not listed in, it is private.
         - If the object has a private name, it is private.
         - If the object was imported from another module, it is private.
         - Otherwise, the object is public.
@@ -467,11 +507,3 @@ class _Bool:
 
 _True = _Bool(True)  # noqa: FBT003
 _False = _Bool(False)  # noqa: FBT003
-
-__all__ = [
-    "DelMembersMixin",
-    "GetMembersMixin",
-    "ObjectAliasMixin",
-    "SerializationMixin",
-    "SetMembersMixin",
-]

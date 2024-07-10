@@ -1,23 +1,25 @@
 """Deprecated. This extension provides an hybrid behavior while loading data."""
 
+# YORE: Bump 1.0.0: Remove module.
+
 from __future__ import annotations
 
 import re
 from typing import TYPE_CHECKING, Any, Pattern, Sequence
 
-from griffe.agents.nodes import ObjectNode
-from griffe.enumerations import When
-from griffe.exceptions import ExtensionError
-from griffe.extensions.base import InspectorExtension, VisitorExtension, _load_extension
-from griffe.importer import dynamic_import
-from griffe.logger import get_logger
+from _griffe.agents.nodes.runtime import ObjectNode
+from _griffe.enumerations import When
+from _griffe.exceptions import ExtensionError
+from _griffe.extensions.base import InspectorExtension, VisitorExtension, _load_extension
+from _griffe.importer import dynamic_import
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
     import ast
 
-    from griffe.agents.visitor import Visitor
+    from _griffe.agents.visitor import Visitor
 
-logger = get_logger(__name__)
+_logger = get_logger("griffe.extensions.hybrid")
 
 
 class HybridExtension(VisitorExtension):
@@ -34,6 +36,7 @@ class HybridExtension(VisitorExtension):
     """
 
     when = When.after_all
+    """The moment when the extension should be executed."""
 
     def __init__(
         self,
@@ -60,14 +63,15 @@ class HybridExtension(VisitorExtension):
                     "to your extensions configuration, without using 'hybrid'.",
                 )
         self.object_paths = [re.compile(op) if isinstance(op, str) else op for op in object_paths or []]
+        """The list of regular expressions to match against objects paths."""
         super().__init__()
 
-    def attach(self, visitor: Visitor) -> None:  # noqa: D102
+    def attach(self, visitor: Visitor) -> None:
         super().attach(visitor)
         for extension in self._extensions:
             extension.attach(visitor)  # type: ignore[arg-type]  # tolerate hybrid behavior
 
-    def visit(self, node: ast.AST) -> None:  # noqa: D102
+    def visit(self, node: ast.AST) -> None:
         try:
             just_visited = self.visitor.current.get_member(node.name)  # type: ignore[attr-defined]
         except (KeyError, AttributeError, TypeError):
@@ -88,6 +92,3 @@ class HybridExtension(VisitorExtension):
         object_node = ObjectNode(value, name=node.name, parent=parent)  # type: ignore[attr-defined]
         for extension in self._extensions:
             extension.inspect(object_node)
-
-
-__all__ = ["HybridExtension"]

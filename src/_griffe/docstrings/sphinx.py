@@ -11,7 +11,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable
 
-from griffe.docstrings.models import (
+from _griffe.docstrings.models import (
     DocstringAttribute,
     DocstringParameter,
     DocstringRaise,
@@ -23,30 +23,31 @@ from griffe.docstrings.models import (
     DocstringSectionReturns,
     DocstringSectionText,
 )
-from griffe.docstrings.utils import warning
+from _griffe.docstrings.utils import docstring_warning
 
 if TYPE_CHECKING:
-    from griffe.models import Docstring
-    from griffe.expressions import Expr
+    from _griffe.expressions import Expr
+    from _griffe.models import Docstring
 
-_warn = warning(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_warn = docstring_warning("griffe.docstrings.sphinx")
 
 # TODO: Examples: from the documentation, we're not sure there is a standard format for examples
-PARAM_NAMES = frozenset(("param", "parameter", "arg", "argument", "key", "keyword"))
-PARAM_TYPE_NAMES = frozenset(("type",))
-ATTRIBUTE_NAMES = frozenset(("var", "ivar", "cvar"))
-ATTRIBUTE_TYPE_NAMES = frozenset(("vartype",))
-RETURN_NAMES = frozenset(("returns", "return"))
-RETURN_TYPE_NAMES = frozenset(("rtype",))
-EXCEPTION_NAMES = frozenset(("raises", "raise", "except", "exception"))
+_PARAM_NAMES = frozenset(("param", "parameter", "arg", "argument", "key", "keyword"))
+_PARAM_TYPE_NAMES = frozenset(("type",))
+_ATTRIBUTE_NAMES = frozenset(("var", "ivar", "cvar"))
+_ATTRIBUTE_TYPE_NAMES = frozenset(("vartype",))
+_RETURN_NAMES = frozenset(("returns", "return"))
+_RETURN_TYPE_NAMES = frozenset(("rtype",))
+_EXCEPTION_NAMES = frozenset(("raises", "raise", "except", "exception"))
 
 
 @dataclass(frozen=True)
-class FieldType:
+class _FieldType:
     """Maps directive names to parser functions."""
 
     names: frozenset[str]
-    reader: Callable[[Docstring, int, ParsedValues], int]
+    reader: Callable[[Docstring, int, _ParsedValues], int]
 
     def matches(self, line: str) -> bool:
         """Check if a line matches the field type.
@@ -61,7 +62,7 @@ class FieldType:
 
 
 @dataclass
-class ParsedDirective:
+class _ParsedDirective:
     """Directive information that has been parsed from a docstring."""
 
     line: str
@@ -72,7 +73,7 @@ class ParsedDirective:
 
 
 @dataclass
-class ParsedValues:
+class _ParsedValues:
     """Values parsed from the docstring to be used to produce sections."""
 
     description: list[str] = field(default_factory=list)
@@ -85,7 +86,7 @@ class ParsedValues:
     return_type: str | None = None
 
 
-def parse(docstring: Docstring, *, warn_unknown_params: bool = True, **options: Any) -> list[DocstringSection]:
+def parse_sphinx(docstring: Docstring, *, warn_unknown_params: bool = True, **options: Any) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
 
     Parameters:
@@ -96,7 +97,7 @@ def parse(docstring: Docstring, *, warn_unknown_params: bool = True, **options: 
     Returns:
         A list of docstring sections.
     """
-    parsed_values = ParsedValues()
+    parsed_values = _ParsedValues()
 
     options = {
         "warn_unknown_params": warn_unknown_params,
@@ -108,7 +109,7 @@ def parse(docstring: Docstring, *, warn_unknown_params: bool = True, **options: 
 
     while curr_line_index < len(lines):
         line = lines[curr_line_index]
-        for field_type in field_types:
+        for field_type in _field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
                 curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values, **options)
@@ -124,7 +125,7 @@ def parse(docstring: Docstring, *, warn_unknown_params: bool = True, **options: 
 def _read_parameter(
     docstring: Docstring,
     offset: int,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
     *,
     warn_unknown_params: bool = True,
     **options: Any,  # noqa: ARG001
@@ -183,7 +184,7 @@ def _determine_param_annotation(
     docstring: Docstring,
     name: str,
     directive_type: str | None,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
 ) -> Any:
     # Annotation precedence:
     # - in-line directive type
@@ -214,7 +215,7 @@ def _determine_param_annotation(
 def _read_parameter_type(
     docstring: Docstring,
     offset: int,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
     **options: Any,  # noqa: ARG001
 ) -> int:
     parsed_directive = _parse_directive(docstring, offset)
@@ -241,7 +242,7 @@ def _read_parameter_type(
 def _read_attribute(
     docstring: Docstring,
     offset: int,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
     **options: Any,  # noqa: ARG001
 ) -> int:
     parsed_directive = _parse_directive(docstring, offset)
@@ -283,7 +284,7 @@ def _read_attribute(
 def _read_attribute_type(
     docstring: Docstring,
     offset: int,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
     **options: Any,  # noqa: ARG001
 ) -> int:
     parsed_directive = _parse_directive(docstring, offset)
@@ -310,7 +311,7 @@ def _read_attribute_type(
 def _read_exception(
     docstring: Docstring,
     offset: int,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
     **options: Any,  # noqa: ARG001
 ) -> int:
     parsed_directive = _parse_directive(docstring, offset)
@@ -326,7 +327,7 @@ def _read_exception(
     return parsed_directive.next_index
 
 
-def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues, **options: Any) -> int:  # noqa: ARG001
+def _read_return(docstring: Docstring, offset: int, parsed_values: _ParsedValues, **options: Any) -> int:  # noqa: ARG001
     parsed_directive = _parse_directive(docstring, offset)
     if parsed_directive.invalid:
         return parsed_directive.next_index
@@ -354,7 +355,7 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: ParsedValues,
 def _read_return_type(
     docstring: Docstring,
     offset: int,
-    parsed_values: ParsedValues,
+    parsed_values: _ParsedValues,
     **options: Any,  # noqa: ARG001
 ) -> int:
     parsed_directive = _parse_directive(docstring, offset)
@@ -370,7 +371,7 @@ def _read_return_type(
     return parsed_directive.next_index
 
 
-def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[DocstringSection]:
+def _parsed_values_to_sections(parsed_values: _ParsedValues) -> list[DocstringSection]:
     text = "\n".join(_strip_blank_lines(parsed_values.description))
     result: list[DocstringSection] = [DocstringSectionText(text)]
     if parsed_values.parameters:
@@ -386,16 +387,16 @@ def _parsed_values_to_sections(parsed_values: ParsedValues) -> list[DocstringSec
     return result
 
 
-def _parse_directive(docstring: Docstring, offset: int) -> ParsedDirective:
+def _parse_directive(docstring: Docstring, offset: int) -> _ParsedDirective:
     line, next_index = _consolidate_continuation_lines(docstring.lines, offset)
     try:
         _, directive, value = line.split(":", 2)
     except ValueError:
         _warn(docstring, 0, f"Failed to get ':directive: value' pair from '{line}'")
-        return ParsedDirective(line, next_index, [], "", invalid=True)
+        return _ParsedDirective(line, next_index, [], "", invalid=True)
 
     value = value.strip()
-    return ParsedDirective(line, next_index, directive.split(" "), value)
+    return _ParsedDirective(line, next_index, directive.split(" "), value)
 
 
 def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str, int]:
@@ -433,15 +434,12 @@ def _strip_blank_lines(lines: list[str]) -> list[str]:
     return lines[initial_content : final_content + 1]
 
 
-field_types = [
-    FieldType(PARAM_TYPE_NAMES, _read_parameter_type),
-    FieldType(PARAM_NAMES, _read_parameter),
-    FieldType(ATTRIBUTE_TYPE_NAMES, _read_attribute_type),
-    FieldType(ATTRIBUTE_NAMES, _read_attribute),
-    FieldType(EXCEPTION_NAMES, _read_exception),
-    FieldType(RETURN_NAMES, _read_return),
-    FieldType(RETURN_TYPE_NAMES, _read_return_type),
+_field_types = [
+    _FieldType(_PARAM_TYPE_NAMES, _read_parameter_type),
+    _FieldType(_PARAM_NAMES, _read_parameter),
+    _FieldType(_ATTRIBUTE_TYPE_NAMES, _read_attribute_type),
+    _FieldType(_ATTRIBUTE_NAMES, _read_attribute),
+    _FieldType(_EXCEPTION_NAMES, _read_exception),
+    _FieldType(_RETURN_NAMES, _read_return),
+    _FieldType(_RETURN_TYPE_NAMES, _read_return_type),
 ]
-
-
-__all__ = ["parse"]

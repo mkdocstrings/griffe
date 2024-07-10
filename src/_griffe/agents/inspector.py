@@ -10,9 +10,9 @@ powerful enough to infer all these dynamic modifications. In this case,
 we always try to visit the code first, and only then we load the object
 to update the data with introspection.
 
-This module exposes a public function, [`inspect()`][griffe.agents.inspector.inspect],
+This module exposes a public function, [`inspect()`][griffe.inspect],
 which inspects the module using [`inspect.getmembers()`][inspect.getmembers],
-and returns a new [`Module`][griffe.models.Module] instance,
+and returns a new [`Module`][griffe.Module] instance,
 populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
 
 The inspection agent works similarly to the regular "node visitor" agent,
@@ -28,24 +28,25 @@ from inspect import Signature, cleandoc, getsourcelines
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any, Sequence
 
-from griffe.agents.nodes import ObjectNode
-from griffe.collections import LinesCollection, ModulesCollection
-from griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
-from griffe.enumerations import ObjectKind, ParameterKind
-from griffe.expressions import safe_get_annotation
-from griffe.extensions.base import Extensions, load_extensions
-from griffe.importer import dynamic_import
-from griffe.logger import get_logger
+from _griffe.agents.nodes.runtime import ObjectNode
+from _griffe.collections import LinesCollection, ModulesCollection
+from _griffe.enumerations import ObjectKind, ParameterKind
+from _griffe.expressions import safe_get_annotation
+from _griffe.extensions.base import Extensions, load_extensions
+from _griffe.importer import dynamic_import
+from _griffe.logger import get_logger
+from _griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.enumerations import Parser
-    from griffe.expressions import Expr
+    from _griffe.enumerations import Parser
+    from _griffe.expressions import Expr
 
 
-logger = get_logger(__name__)
-empty = Signature.empty
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.inspector")
+_empty = Signature.empty
 
 
 def inspect(
@@ -118,15 +119,33 @@ class Inspector:
             modules_collection: A collection of modules.
         """
         super().__init__()
+
         self.module_name: str = module_name
+        """The module name."""
+
         self.filepath: Path | None = filepath
+        """The module file path."""
+
         self.extensions: Extensions = extensions.attach_inspector(self)
+        """The extensions to use when inspecting."""
+
         self.parent: Module | None = parent
+        """An optional parent for the final module object."""
+
         self.current: Module | Class = None  # type: ignore[assignment]
+        """The current object being inspected."""
+
         self.docstring_parser: Parser | None = docstring_parser
+        """The docstring parser to use."""
+
         self.docstring_options: dict[str, Any] = docstring_options or {}
+        """The docstring parsing options."""
+
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
+        """A collection of source code lines."""
+
         self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+        """A collection of modules."""
 
     def _get_docstring(self, node: ObjectNode) -> Docstring | None:
         try:
@@ -239,7 +258,7 @@ class Inspector:
                 # so we skip it here (no member, no alias, just skip it).
                 if child.is_module and target_path == f"{self.current.path}.{child.name}":
                     if not hasattr(child.obj, "__file__"):
-                        logger.debug(f"Module {target_path} is not discoverable on disk, inspecting right now")
+                        _logger.debug(f"Module {target_path} is not discoverable on disk, inspecting right now")
                         inspector = Inspector(
                             child.name,
                             filepath=None,
@@ -422,7 +441,7 @@ class Inspector:
             return_annotation = signature.return_annotation
             returns = (
                 None
-                if return_annotation is empty
+                if return_annotation is _empty
                 else _convert_object_to_annotation(return_annotation, parent=self.current)
             )
 
@@ -524,10 +543,10 @@ _kind_map = {
 def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) -> Parameter:
     name = parameter.name
     annotation = (
-        None if parameter.annotation is empty else _convert_object_to_annotation(parameter.annotation, parent=parent)
+        None if parameter.annotation is _empty else _convert_object_to_annotation(parameter.annotation, parent=parent)
     )
     kind = _kind_map[parameter.kind]
-    if parameter.default is empty:
+    if parameter.default is _empty:
         default = None
     elif hasattr(parameter.default, "__name__"):
         # avoid repr containing chevrons and memory addresses
@@ -555,6 +574,3 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Exp
     except SyntaxError:
         return obj
     return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]
-
-
-__all__ = ["inspect", "Inspector"]

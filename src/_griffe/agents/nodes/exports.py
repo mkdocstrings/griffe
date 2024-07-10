@@ -7,50 +7,54 @@ from contextlib import suppress
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
 
-from griffe.agents.nodes._values import get_value
-from griffe.logger import LogLevel, get_logger
+from _griffe.agents.nodes.values import get_value
+from _griffe.enumerations import LogLevel
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from griffe.models import Module
+    from _griffe.models import Module
 
 
-logger = get_logger(__name__)
+# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+_logger = get_logger("griffe.agents.nodes._all")
 
 
 @dataclass
-class Name:
+class ExportedName:
     """An intermediate class to store names."""
 
     name: str
+    """The exported name."""
     parent: Module
+    """The parent module."""
 
 
-def _extract_constant(node: ast.Constant, parent: Module) -> list[str | Name]:
+def _extract_constant(node: ast.Constant, parent: Module) -> list[str | ExportedName]:
     return [node.value]
 
 
-def _extract_name(node: ast.Name, parent: Module) -> list[str | Name]:
-    return [Name(node.id, parent)]
+def _extract_name(node: ast.Name, parent: Module) -> list[str | ExportedName]:
+    return [ExportedName(node.id, parent)]
 
 
-def _extract_starred(node: ast.Starred, parent: Module) -> list[str | Name]:
+def _extract_starred(node: ast.Starred, parent: Module) -> list[str | ExportedName]:
     return _extract(node.value, parent)
 
 
-def _extract_sequence(node: ast.List | ast.Set | ast.Tuple, parent: Module) -> list[str | Name]:
+def _extract_sequence(node: ast.List | ast.Set | ast.Tuple, parent: Module) -> list[str | ExportedName]:
     sequence = []
     for elt in node.elts:
         sequence.extend(_extract(elt, parent))
     return sequence
 
 
-def _extract_binop(node: ast.BinOp, parent: Module) -> list[str | Name]:
+def _extract_binop(node: ast.BinOp, parent: Module) -> list[str | ExportedName]:
     left = _extract(node.left, parent)
     right = _extract(node.right, parent)
     return left + right
 
 
-_node_map: dict[type, Callable[[Any, Module], list[str | Name]]] = {
+_node_map: dict[type, Callable[[Any, Module], list[str | ExportedName]]] = {
     ast.Constant: _extract_constant,
     ast.Name: _extract_name,
     ast.Starred: _extract_starred,
@@ -61,11 +65,11 @@ _node_map: dict[type, Callable[[Any, Module], list[str | Name]]] = {
 }
 
 
-def _extract(node: ast.AST, parent: Module) -> list[str | Name]:
+def _extract(node: ast.AST, parent: Module) -> list[str | ExportedName]:
     return _node_map[type(node)](node, parent)
 
 
-def get__all__(node: ast.Assign | ast.AnnAssign | ast.AugAssign, parent: Module) -> list[str | Name]:
+def get__all__(node: ast.Assign | ast.AnnAssign | ast.AugAssign, parent: Module) -> list[str | ExportedName]:
     """Get the values declared in `__all__`.
 
     Parameters:
@@ -84,7 +88,7 @@ def safe_get__all__(
     node: ast.Assign | ast.AnnAssign | ast.AugAssign,
     parent: Module,
     log_level: LogLevel = LogLevel.debug,  # TODO: set to error when we handle more things
-) -> list[str | Name]:
+) -> list[str | ExportedName]:
     """Safely (no exception) extract values in `__all__`.
 
     Parameters:
@@ -105,8 +109,5 @@ def safe_get__all__(
             message += f": unsupported node {error}"
         else:
             message += f": {error}"
-        getattr(logger, log_level.value)(message)
+        getattr(_logger, log_level.value)(message)
         return []
-
-
-__all__ = ["get__all__", "safe_get__all__"]

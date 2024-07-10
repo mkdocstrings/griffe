@@ -118,6 +118,3 @@ def dynamic_import(import_path: str, import_paths: Sequence[str | Path] | None =
                 raise ImportError("; ".join(errors))  # noqa: B904,TRY200
 
     return value
-
-
-__all__ = ["dynamic_import", "sys_path"]
