@@ -313,3 +313,9 @@ Note however that we recommend using public imports (importing from the "public"
 - importing from your own package within your tests suite
 
 Apply these recommandations at your discretion: there may be other special cases where it might not make sense to use canonical imports.
+
+## Make your compiled objects tell their true location
+
+TODO
+
+See pymmcore and blake3

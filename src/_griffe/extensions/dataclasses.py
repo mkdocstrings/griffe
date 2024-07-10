@@ -11,7 +11,6 @@ from contextlib import suppress
 from functools import lru_cache
 from typing import Any, cast
 
-from _griffe.dataclasses import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
 from _griffe.enumerations import ParameterKind
 from _griffe.expressions import (
     Expr,
@@ -20,6 +19,7 @@ from _griffe.expressions import (
     ExprDict,
 )
 from _griffe.extensions.base import Extension
+from _griffe.models import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
 
 
 def _dataclass_decorator(decorators: list[Decorator]) -> Expr | None:

@@ -6,13 +6,14 @@ from ast import PyCF_ONLY_AST
 from contextlib import suppress
 from typing import TYPE_CHECKING, Protocol
 
+from _griffe.enumerations import LogLevel
 from _griffe.exceptions import BuiltinModuleError
 from _griffe.expressions import safe_get_annotation
-from _griffe.logger import LogLevel, get_logger
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from _griffe.dataclasses import Docstring
     from _griffe.expressions import Expr
+    from _griffe.models import Docstring
 
 
 class DocstringWarningCallable(Protocol):

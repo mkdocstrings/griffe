@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING
 from _griffe.enumerations import Kind
 
 if TYPE_CHECKING:
-    from _griffe.dataclasses import Alias, Object
     from _griffe.loader import GriffeLoader
+    from _griffe.models import Alias, Object
 
 
 class Stats:

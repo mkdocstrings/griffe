@@ -8,9 +8,6 @@ from griffe import (
     Attribute,
     Class,
     Docstring,
-    DocstringAttribute,
-    DocstringElement,
-    DocstringParameter,
     DocstringSection,
     Function,
     LogLevel,
@@ -71,42 +68,3 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
     yield parse
 
     parser_module._warn = original_warn  # type: ignore[attr-defined]
-
-
-def assert_parameter_equal(actual: DocstringParameter, expected: DocstringParameter) -> None:
-    """Help assert docstring parameters are equal.
-
-    Parameters:
-        actual: The actual parameter.
-        expected: The expected parameter.
-    """
-    assert actual.name == expected.name
-    assert_element_equal(actual, expected)
-    assert actual.value == expected.value
-
-
-def assert_attribute_equal(actual: DocstringAttribute, expected: DocstringAttribute) -> None:
-    """Help assert docstring attributes are equal.
-
-    Parameters:
-        actual: The actual attribute.
-        expected: The expected attribute.
-    """
-    assert actual.name == expected.name
-    assert_element_equal(actual, expected)
-
-
-def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -> None:
-    """Help assert docstring elements are equal.
-
-    Parameters:
-        actual: The actual element.
-        expected: The expected element.
-    """
-    assert isinstance(actual, type(expected))
-
-    for k in actual.as_dict():
-        src = getattr(actual, k)
-        dst = getattr(expected, k)
-
-        assert src == dst, f"attribute {k!r}, {src!r} != {dst!r}"

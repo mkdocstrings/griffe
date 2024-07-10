@@ -2,10 +2,36 @@
 
 from __future__ import annotations
 
-import enum
+import sys
+from enum import IntEnum
+
+# YORE: Bump 1.0.0: Replace block with line 2.
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    from backports.strenum import StrEnum
 
 
-class DocstringSectionKind(enum.Enum):
+class LogLevel(StrEnum):
+    """Enumeration of available log levels."""
+
+    trace: str = "trace"
+    """The TRACE log level."""
+    debug: str = "debug"
+    """The DEBUG log level."""
+    info: str = "info"
+    """The INFO log level."""
+    success: str = "success"
+    """The SUCCESS log level."""
+    warning: str = "warning"
+    """The WARNING log level."""
+    error: str = "error"
+    """The ERROR log level."""
+    critical: str = "critical"
+    """The CRITICAL log level."""
+
+
+class DocstringSectionKind(StrEnum):
     """Enumeration of the possible docstring section kinds."""
 
     text = "text"
@@ -40,7 +66,7 @@ class DocstringSectionKind(enum.Enum):
     """Admonition block."""
 
 
-class ParameterKind(enum.Enum):
+class ParameterKind(StrEnum):
     """Enumeration of the different parameter kinds."""
 
     positional_only: str = "positional-only"
@@ -55,7 +81,7 @@ class ParameterKind(enum.Enum):
     """Variadic keyword parameter."""
 
 
-class Kind(enum.Enum):
+class Kind(StrEnum):
     """Enumeration of the different object kinds."""
 
     MODULE: str = "module"
@@ -70,7 +96,7 @@ class Kind(enum.Enum):
     """Aliases (imported objects)."""
 
 
-class ExplanationStyle(enum.Enum):
+class ExplanationStyle(StrEnum):
     """Enumeration of the possible styles for explanations."""
 
     ONE_LINE: str = "oneline"
@@ -83,7 +109,7 @@ class ExplanationStyle(enum.Enum):
     """Explanation as GitHub workflow commands warnings, adapted to CI."""
 
 
-class BreakageKind(enum.Enum):
+class BreakageKind(StrEnum):
     """Enumeration of the possible API breakages."""
 
     PARAMETER_MOVED: str = "Positional parameter was moved"
@@ -112,7 +138,7 @@ class BreakageKind(enum.Enum):
     """Base class was removed"""
 
 
-class Parser(enum.Enum):
+class Parser(StrEnum):
     """Enumeration of the different docstring parsers."""
 
     google = "google"
@@ -123,7 +149,7 @@ class Parser(enum.Enum):
     """Numpydoc-style docstrings parser."""
 
 
-class ObjectKind(enum.Enum):
+class ObjectKind(StrEnum):
     """Enumeration of the different runtime object kinds."""
 
     MODULE: str = "module"
@@ -158,7 +184,7 @@ class ObjectKind(enum.Enum):
 
 
 # YORE: Bump 1.0.0: Remove block.
-class When(enum.Enum):
+class When(IntEnum):
     """Enumeration of the different times at which an extension is used.
 
     Deprecated. This enumeration is used with the `VisitorExtension` and `InspectorExtension` classes,

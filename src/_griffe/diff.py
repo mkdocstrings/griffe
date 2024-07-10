@@ -15,7 +15,7 @@ from _griffe.git import _WORKTREE_PREFIX
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from _griffe.dataclasses import Alias, Attribute, Class, Function, Object
+    from _griffe.models import Alias, Attribute, Class, Function, Object
 
 _POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
 _KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))

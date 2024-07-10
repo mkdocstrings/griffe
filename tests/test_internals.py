@@ -93,12 +93,12 @@ def _fixture_inventory() -> Inventory:  # noqa: PT005
 
 def test_alias_proxies(internal_api: griffe.Module) -> None:
     """The Alias class has all the necessary methods and properties."""
-    alias_members = set(internal_api["dataclasses.Alias"].all_members.keys())
+    alias_members = set(internal_api["models.Alias"].all_members.keys())
     for cls in (
-        internal_api["dataclasses.Module"],
-        internal_api["dataclasses.Class"],
-        internal_api["dataclasses.Function"],
-        internal_api["dataclasses.Attribute"],
+        internal_api["models.Module"],
+        internal_api["models.Class"],
+        internal_api["models.Function"],
+        internal_api["models.Attribute"],
     ):
         for name in cls.all_members:
             if not name.startswith("_") or name.startswith("__"):

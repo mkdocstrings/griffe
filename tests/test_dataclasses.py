@@ -299,12 +299,12 @@ def test_parameters_annotated_as_initvar() -> None:
 
     with temporary_visited_package("package", {"__init__.py": code}) as module:
         point_a = module["PointA"]
-        assert ["self", "x", "y", "z"] == [p.name for p in point_a.parameters]
-        assert ["x", "y", "__init__"] == list(point_a.members)
+        assert [p.name for p in point_a.parameters] == ["self", "x", "y", "z"]
+        assert list(point_a.members) == ["x", "y", "__init__"]
 
         point_b = module["PointB"]
-        assert ["self", "r"] == [p.name for p in point_b.parameters]
-        assert ["x", "y", "z", "__init__"] == list(point_b.members)
+        assert [p.name for p in point_b.parameters] == ["self", "r"]
+        assert list(point_b.members) == ["x", "y", "z", "__init__"]
 
 
 def test_visited_module_source() -> None:

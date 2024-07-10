@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from _griffe.agents.inspector import Inspector
     from _griffe.agents.nodes.runtime import ObjectNode
     from _griffe.agents.visitor import Visitor
-    from _griffe.dataclasses import Attribute, Class, Function, Module, Object
+    from _griffe.models import Attribute, Class, Function, Module, Object
 
 
 # YORE: Bump 1.0.0: Remove block.

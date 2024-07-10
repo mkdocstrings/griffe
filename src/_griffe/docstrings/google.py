@@ -6,7 +6,7 @@ import re
 from contextlib import suppress
 from typing import TYPE_CHECKING, List, Tuple
 
-from _griffe.docstrings.dataclasses import (
+from _griffe.docstrings.models import (
     DocstringAttribute,
     DocstringClass,
     DocstringFunction,
@@ -35,15 +35,14 @@ from _griffe.docstrings.dataclasses import (
     DocstringYield,
 )
 from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
-from _griffe.enumerations import DocstringSectionKind
+from _griffe.enumerations import DocstringSectionKind, LogLevel
 from _griffe.expressions import ExprName
-from _griffe.logger import LogLevel
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern
 
-    from _griffe.dataclasses import Docstring
     from _griffe.expressions import Expr
+    from _griffe.models import Docstring
 
 _warn = docstring_warning("griffe")
 

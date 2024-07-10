@@ -30,7 +30,7 @@ from _griffe.logger import get_logger
 if TYPE_CHECKING:
     from typing import Pattern
 
-    from _griffe.dataclasses import Module
+    from _griffe.models import Module
 
 _logger = get_logger("griffe")
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", r"^_editable_impl_\w+\.py$")]

@@ -22,7 +22,7 @@ Some components are obviously considered for the public API of a Python package:
 Other components *should* be considered for the public API but are often forgotten:
 
 - CLI options: see [The CLI is API too](#the-cli-is-api-too) section
-- logger names: users might rely on them to filter logs
+- logger names: users might rely on them to filter logs (see [Logger names](#logger-names))
 - exceptions raised: users definitely rely on them to catch errors
 
 Other components *could* be considered for the public API, but usually require too much maintenance:
@@ -352,6 +352,29 @@ my_package/
 
 GRIFFE: **Our recommendation — Expose public objects in single locations, use meaningful names.**
 We recommend making sure that each public object is exposed in a single location. Ensuring unique names might be more tricky depending on the code base, so we recommend ensuring meaningful names at least, not requiring the context of modules above to understand what the objects are for.
+
+## Logger names
+
+The documentation of the standard `logging` library recommends to use `__name__` as logger name when obtaining a logger with `logging.getLogger()`, *unless we have a specific reason for not doing that*. Unfortunately, no examples of such specific reasons are given. So let us give one.
+
+Using `__name__` as logger names means that your loggers have the same name as your module paths. For example, the module `package/module.py`, whose path and `__name__` value are `package.module`, will have a logger with the same name, i.e. `package.module`. If your module layout is public, that's fine: renaming the module or moving it around is already a breaking change that you must document.
+
+However if your module layout is hidden, or if this particular module is private, then even though renaming it or moving it around is *not* breaking change, the change of name of its logger *is*. Indeed, by renaming your module (or moving it), you changed its `__name__` value, and therefore you changed its logger name.
+
+Now, users that were relying on this name (for example to silence WARNING-level logs and below coming from this particular module) will see their logic break without any error and without any deprecation warning.
+
+```python
+# For example, the following would have zero effect if `_module` was renamed `_other_module`.
+package_module_logger = logging.getLogger("package._module")
+package_module_logger.setLevel(logging.ERROR)
+```
+
+Could we emit a deprecation warning when users obtain the logger with the old name? Unfortunately, there is no standard way to do that. This would require patching `logging.getLogger`, which means it would only work when users actually use this method, in a Python interpreter, and not for all the other ways logging can be configured (configuration files, configuration dicts, etc.).
+
+Since it is essentially impossible to deprecate a logger name, we recommend to avoid using `__name__` as logger name, at the very least in private modules.
+
+GRIFFE: **Our recommendation — Use a single logger.**
+Absolutely avoid using `__name__` as logger name in private modules. If your module layout is hidden, or does not matter for logging purposes, just use the same logger everywhere by using your package name as logger name. Example: `logger = logging.getLogger("griffe")`. Show your users how to temporarily alter your global logger (typically with context managers) so that altering subloggers becomes unnecessary. Maybe even provide the utilities to do that.
 
 ## Documentation
 

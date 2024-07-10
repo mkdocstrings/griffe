@@ -23,7 +23,6 @@ from _griffe.agents.nodes.exports import safe_get__all__
 from _griffe.agents.nodes.imports import relative_to_absolute
 from _griffe.agents.nodes.parameters import get_parameters
 from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.dataclasses import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
 from _griffe.enumerations import Kind
 from _griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
 from _griffe.expressions import (
@@ -35,6 +34,7 @@ from _griffe.expressions import (
     safe_get_expression,
 )
 from _griffe.extensions.base import Extensions, load_extensions
+from _griffe.models import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
 
 if TYPE_CHECKING:
     from pathlib import Path

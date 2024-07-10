@@ -1,6 +1,6 @@
 # Models
 
-::: _griffe.dataclasses
+::: _griffe.models
     options:
         members: false
         show_root_heading: false

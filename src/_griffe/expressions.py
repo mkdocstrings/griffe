@@ -11,14 +11,14 @@ from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
 
 from _griffe.agents.nodes.parameters import get_parameters
-from _griffe.enumerations import ParameterKind
+from _griffe.enumerations import LogLevel, ParameterKind
 from _griffe.exceptions import NameResolutionError
-from _griffe.logger import LogLevel, get_logger
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from _griffe.dataclasses import Class, Module
+    from _griffe.models import Class, Module
 
 
 _logger = get_logger("griffe")
@@ -647,6 +647,7 @@ class ExprName(Expr):
             return False
 
         # TODO: Support inheritance?
+        # TODO: Support `StrEnum` and `IntEnum`.
         return any(isinstance(base, Expr) and base.canonical_path == "enum.Enum" for base in bases)
 
     @property

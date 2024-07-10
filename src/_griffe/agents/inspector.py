@@ -30,12 +30,12 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 from _griffe.agents.nodes.runtime import ObjectNode
 from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.dataclasses import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from _griffe.enumerations import ObjectKind, ParameterKind
 from _griffe.expressions import safe_get_annotation
 from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.importer import dynamic_import
 from _griffe.logger import get_logger
+from _griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -8,10 +8,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
 
 from _griffe.agents.nodes.values import get_value
-from _griffe.logger import LogLevel, get_logger
+from _griffe.enumerations import LogLevel
+from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
-    from _griffe.dataclasses import Module
+    from _griffe.models import Module
 
 
 _logger = get_logger("griffe")

@@ -1,6 +1,6 @@
 # Docstrings
 
-::: _griffe.docstrings.dataclasses
+::: _griffe.docstrings.models
     options:
         members: false
         show_root_heading: false

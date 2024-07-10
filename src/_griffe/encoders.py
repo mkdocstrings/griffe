@@ -13,7 +13,8 @@ from pathlib import Path, PosixPath, WindowsPath
 from typing import TYPE_CHECKING, Any, Callable
 
 from _griffe import expressions
-from _griffe.dataclasses import (
+from _griffe.enumerations import Kind, ParameterKind
+from _griffe.models import (
     Alias,
     Attribute,
     Class,
@@ -25,25 +26,15 @@ from _griffe.dataclasses import (
     Parameter,
     Parameters,
 )
-from _griffe.enumerations import DocstringSectionKind, Kind, ParameterKind
 
 if TYPE_CHECKING:
-    from enum import Enum
-
     from _griffe.enumerations import Parser
-
-
-def _enum_value(obj: Enum) -> str | int:
-    return obj.value
 
 
 _json_encoder_map: dict[type, Callable[[Any], Any]] = {
     Path: str,
     PosixPath: str,
     WindowsPath: str,
-    ParameterKind: _enum_value,
-    Kind: _enum_value,
-    DocstringSectionKind: _enum_value,
     set: sorted,
 }
 

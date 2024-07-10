@@ -35,7 +35,7 @@ from _griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
     from _griffe.collections import LinesCollection, ModulesCollection
-    from _griffe.docstrings.dataclasses import DocstringSection
+    from _griffe.docstrings.models import DocstringSection
     from _griffe.expressions import Expr
 
 from functools import cached_property

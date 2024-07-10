@@ -30,7 +30,6 @@ from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
 from _griffe.agents.inspector import inspect
 from _griffe.agents.visitor import visit
 from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.dataclasses import Alias, Module, Object
 from _griffe.enumerations import Kind
 from _griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
 from _griffe.expressions import ExprName
@@ -40,6 +39,7 @@ from _griffe.git import tmp_worktree
 from _griffe.importer import dynamic_import
 from _griffe.logger import get_logger
 from _griffe.merger import merge_stubs
+from _griffe.models import Alias, Module, Object
 from _griffe.stats import Stats
 
 if TYPE_CHECKING:

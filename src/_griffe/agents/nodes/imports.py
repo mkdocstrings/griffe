@@ -9,7 +9,7 @@ from _griffe.logger import get_logger
 if TYPE_CHECKING:
     import ast
 
-    from _griffe.dataclasses import Module
+    from _griffe.models import Module
 
 
 _logger = get_logger("griffe")
