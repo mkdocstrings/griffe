@@ -140,9 +140,9 @@ The parser accepts a few options:
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
     Useful when merging `__init__` docstring into class' docstrings
     with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
-- `returns_multiple_items`: Parse [Returns sections](#returns) as if they contain multiple items.
+- `returns_multiple_items`: Parse [Returns sections](#google-section-returns) as if they contain multiple items.
     It means that continuation lines must be indented. Default: true.
-- `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#returns) as a name and description,
+- `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#google-section-returns) as a name and description,
     rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
     When false, parentheses are optional but the items cannot be named: `int: Description`. Default: true.
 - `returns_type_in_property_summary`: Whether to parse the return type of properties
@@ -729,7 +729,7 @@ Returns:
 ```
 
 If you don't want to indent continuation lines for the only returned value,
-use the [`returns_multiple_items=False`](#parser-options) parser option.
+use the [`returns_multiple_items=False`](#google-options) parser option.
 
 Type annotations can as usual be overridden using types in parentheses
 in the docstring itself:
@@ -755,7 +755,7 @@ Returns:
 ```
 
 If you don't want to wrap the type in parentheses,
-use the [`returns_named_value=False`](#parser-options) parser option.
+use the [`returns_named_value=False`](#google-options) parser option.
 Setting it to false will disallow specifying a name.
 
 TIP: **Types in docstrings are resolved using the docstrings' function scope.**  

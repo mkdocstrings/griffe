@@ -4,7 +4,7 @@
 import argparse
 import sys
 
-from griffe.cli import get_parser
+from griffe import get_parser
 
 parser = get_parser()
 

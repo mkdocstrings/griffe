@@ -25,3 +25,19 @@ a.external:hover::after,
 a.autorefs-external:hover::after {
   background-color: var(--md-accent-fg-color);
 }
+
+/* Light blue color for `param` symbols`. */
+[data-md-color-scheme="default"] {
+  --doc-symbol-parameter-fg-color: #829bd1;
+  --doc-symbol-parameter-bg-color: #829bd11a;
+}
+
+[data-md-color-scheme="slate"] {
+  --doc-symbol-parameter-fg-color: #829bd1;
+  --doc-symbol-parameter-bg-color: #829bd11a;
+}
+
+/* Hide parameters in ToC. */
+li.md-nav__item:has(> a[href*="("]) {
+  display: none;
+}
