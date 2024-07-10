@@ -8,7 +8,7 @@ to generate API documentation or find breaking changes in your API.
 from __future__ import annotations
 
 from griffe.agents.nodes import ObjectNode
-from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Object
+from griffe.models import Attribute, Class, Docstring, Function, Module, Object
 from griffe.diff import find_breaking_changes
 from griffe.docstrings.google import parse as parse_google
 from griffe.docstrings.numpy import parse as parse_numpy

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     import ast
 
     from griffe.agents.nodes import ObjectNode
-    from griffe.dataclasses import Attribute, Class, Function, Module, Object
+    from griffe.models import Attribute, Class, Function, Module, Object
 
 
 class ExtensionTest(Extension):  # noqa: D101

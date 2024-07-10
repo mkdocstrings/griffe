@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from griffe.agents.inspector import Inspector
     from griffe.agents.nodes import ObjectNode
     from griffe.agents.visitor import Visitor
-    from griffe.dataclasses import Attribute, Class, Function, Module, Object
+    from griffe.models import Attribute, Class, Function, Module, Object
 
 
 class VisitorExtension:

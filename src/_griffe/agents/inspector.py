@@ -12,7 +12,7 @@ to update the data with introspection.
 
 This module exposes a public function, [`inspect()`][griffe.agents.inspector.inspect],
 which inspects the module using [`inspect.getmembers()`][inspect.getmembers],
-and returns a new [`Module`][griffe.dataclasses.Module] instance,
+and returns a new [`Module`][griffe.models.Module] instance,
 populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
 
 The inspection agent works similarly to the regular "node visitor" agent,
@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 from griffe.agents.nodes import ObjectNode
 from griffe.collections import LinesCollection, ModulesCollection
-from griffe.dataclasses import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
+from griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 from griffe.enumerations import ObjectKind, ParameterKind
 from griffe.expressions import safe_get_annotation
 from griffe.extensions.base import Extensions, load_extensions

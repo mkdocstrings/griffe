@@ -24,7 +24,7 @@ from griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
     from griffe.collections import LinesCollection, ModulesCollection
-    from griffe.docstrings.dataclasses import DocstringSection
+    from griffe.docstrings.models import DocstringSection
     from griffe.expressions import Expr
 
 from functools import cached_property
@@ -433,7 +433,7 @@ class Object(ObjectAliasMixin):
         return any(member.has_docstrings for member in self.members.values())
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
-        """Deprecated. Use [`member.is_exported`][griffe.dataclasses.Object.is_exported] instead."""
+        """Deprecated. Use [`member.is_exported`][griffe.models.Object.is_exported] instead."""
         warnings.warn(
             "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
             DeprecationWarning,
@@ -811,7 +811,7 @@ class Alias(ObjectAliasMixin):
     - the path is the alias path, not the canonical one
     - the name can be different from the target's
     - if the target can be resolved, the kind is the target's kind
-    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.dataclasses.Kind]
+    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.models.Kind]
     """
 
     is_alias: bool = True
@@ -1051,7 +1051,7 @@ class Alias(ObjectAliasMixin):
         return self.final_target.aliases
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
-        """Deprecated. Use [`member.is_exported`][griffe.dataclasses.Alias.is_exported] instead."""
+        """Deprecated. Use [`member.is_exported`][griffe.models.Alias.is_exported] instead."""
         warnings.warn(
             "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
             DeprecationWarning,
@@ -1461,9 +1461,9 @@ class Module(Object):
         """Initialize the module.
 
         Parameters:
-            *args: See [`griffe.dataclasses.Object`][].
+            *args: See [`griffe.models.Object`][].
             filepath: The module file path (directory for namespace [sub]packages, none for builtin modules).
-            **kwargs: See [`griffe.dataclasses.Object`][].
+            **kwargs: See [`griffe.models.Object`][].
         """
         super().__init__(*args, **kwargs)
         self._filepath: Path | list[Path] | None = filepath
@@ -1572,10 +1572,10 @@ class Class(Object):
         """Initialize the class.
 
         Parameters:
-            *args: See [`griffe.dataclasses.Object`][].
+            *args: See [`griffe.models.Object`][].
             bases: The list of base classes, if any.
             decorators: The class decorators, if any.
-            **kwargs: See [`griffe.dataclasses.Object`][].
+            **kwargs: See [`griffe.models.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.bases: list[Expr | str] = list(bases) if bases else []
@@ -1664,11 +1664,11 @@ class Function(Object):
         """Initialize the function.
 
         Parameters:
-            *args: See [`griffe.dataclasses.Object`][].
+            *args: See [`griffe.models.Object`][].
             parameters: The function parameters.
             returns: The function return annotation.
             decorators: The function decorators, if any.
-            **kwargs: See [`griffe.dataclasses.Object`][].
+            **kwargs: See [`griffe.models.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.parameters: Parameters = parameters or Parameters()
@@ -1723,10 +1723,10 @@ class Attribute(Object):
         """Initialize the function.
 
         Parameters:
-            *args: See [`griffe.dataclasses.Object`][].
+            *args: See [`griffe.models.Object`][].
             value: The attribute value, if any.
             annotation: The attribute annotation, if any.
-            **kwargs: See [`griffe.dataclasses.Object`][].
+            **kwargs: See [`griffe.models.Object`][].
         """
         super().__init__(*args, **kwargs)
         self.value: str | Expr | None = value

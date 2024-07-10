@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 from griffe.enumerations import Kind
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Alias, Object
+    from griffe.models import Alias, Object
     from griffe.loader import GriffeLoader
 
 

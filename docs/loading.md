@@ -31,24 +31,24 @@ mkdocs = loader.load("mkdocs", submodules=False)
 ## Navigating into the loaded objects
 
 Both the `load` function and the `GriffeLoader.load` method
-return an [`Object`][griffe.dataclasses.Object] instance.
+return an [`Object`][griffe.models.Object] instance.
 There are several ways to access members of an object:
 
 - through its `members` attribute, which is a dictionary,
   with the usual `keys()`, `values()` and `items()` methods.
-- thanks to its `__getitem__` method. For example `griffe["dataclasses"]`
-  returns the `Module` instance representing Griffe's `dataclasses` module.
-  Since this module also has members, you can chain calls: `griffe["dataclasses"]["Module"]`.
-  Conveniently, you can chain the names with dots in a single call: `griffe["dataclasses.Module"]`.
-  You can even pass a tuple instead of a string: `griffe[("dataclasses", "Module")]`.
-- through the [`modules`][griffe.dataclasses.Object.modules],
-  [`classes`][griffe.dataclasses.Object.classes],
-  [`functions`][griffe.dataclasses.Object.functions] and
-  [`attributes`][griffe.dataclasses.Object.attributes] properties,
+- thanks to its `__getitem__` method. For example `griffe["models"]`
+  returns the `Module` instance representing Griffe's `models` module.
+  Since this module also has members, you can chain calls: `griffe["models"]["Module"]`.
+  Conveniently, you can chain the names with dots in a single call: `griffe["models.Module"]`.
+  You can even pass a tuple instead of a string: `griffe[("models", "Module")]`.
+- through the [`modules`][griffe.models.Object.modules],
+  [`classes`][griffe.models.Object.classes],
+  [`functions`][griffe.models.Object.functions] and
+  [`attributes`][griffe.models.Object.attributes] properties,
   which take care of filtering members based on their kind, and return dictionaries.
 
-Most of the time, you will only use classes from the [`griffe.dataclasses`][griffe.dataclasses]
-and [`griffe.docstrings.dataclasses`][griffe.docstrings.dataclasses] modules.
+Most of the time, you will only use classes from the [`griffe.models`][griffe.models]
+and [`griffe.docstrings.models`][griffe.docstrings.models] modules.
 
 
 ## Class inheritance
@@ -64,7 +64,7 @@ from using inheritance support in Griffe.
 Griffe supports class inheritance, both when visiting and inspecting modules.
 
 To access members of a class that are inherited from base classes,
-use [`Object.inherited_members`][griffe.dataclasses.Object.inherited_members].
+use [`Object.inherited_members`][griffe.models.Object.inherited_members].
 If this is the first time you access inherited members, the base classes
 of the given class will be resolved and cached, then the MRO (Method Resolution Order)
 will be computed for these bases classes, and a dictionary of inherited members
@@ -94,15 +94,15 @@ If a base class cannot be resolved during computation
 of inherited members, Griffe logs a DEBUG message.
 
 If you want to access all members at once (both declared and inherited),
-use [`Object.all_members`][griffe.dataclasses.Object.all_members].
+use [`Object.all_members`][griffe.models.Object.all_members].
 
 If you want to access only declared members,
-use [`Object.members`][griffe.dataclasses.Object].
+use [`Object.members`][griffe.models.Object].
 
-Accessing [`Object.attributes`][griffe.dataclasses.Object.attributes],
-[`Object.functions`][griffe.dataclasses.Object.functions],
-[`Object.classes`][griffe.dataclasses.Object.classes] or
-[`Object.modules`][griffe.dataclasses.Object.modules]
+Accessing [`Object.attributes`][griffe.models.Object.attributes],
+[`Object.functions`][griffe.models.Object.functions],
+[`Object.classes`][griffe.models.Object.classes] or
+[`Object.modules`][griffe.models.Object.modules]
 will trigger inheritance computation, so make sure to only call it
 once everything is loaded by Griffe. Don't access inherited members
 in extensions, while visiting or inspecting a module.

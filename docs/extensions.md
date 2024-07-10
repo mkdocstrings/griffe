@@ -146,11 +146,11 @@ both the visitor and inspector agents will trigger events.
 These events can be hooked on by extensions to alter or enhance
 Griffe's behavior. Some hooks will be passed just the current
 node being visited, others will be passed both the node
-and an instance of an [Object][griffe.dataclasses.Object] subclass,
-such as a [Module][griffe.dataclasses.Module],
-a [Class][griffe.dataclasses.Class],
-a [Function][griffe.dataclasses.Function],
-or an [Attribute][griffe.dataclasses.Attribute].
+and an instance of an [Object][griffe.models.Object] subclass,
+such as a [Module][griffe.models.Module],
+a [Class][griffe.models.Class],
+a [Function][griffe.models.Function],
+or an [Attribute][griffe.models.Attribute].
 Extensions will therefore be able to modify these instances.
 
 The following flow chart shows an example of an AST visit.
@@ -180,11 +180,11 @@ contains a single class, which itself contains a single method:
 
 - the agent (visitor or inspector) will walk through the tree
   by starting with the module node
-- it will instantiate a [Module][griffe.dataclasses.Module],
+- it will instantiate a [Module][griffe.models.Module],
   then walk through its members, continuing with the class node
-- it will instantiate a [Class][griffe.dataclasses.Class],
+- it will instantiate a [Class][griffe.models.Class],
   then walk through its members, continuing with the function node
-- it will instantiate a [Function][griffe.dataclasses.Function]
+- it will instantiate a [Function][griffe.models.Function]
 - then it will go back up and finish walking since there are
   no more nodes to walk through
 
@@ -296,10 +296,10 @@ The "on node" events are triggered when the agent (visitor or inspector)
 starts handling a node in the tree (AST or object tree).
 
 The "on instance" events are triggered when the agent
-just created an instance of [Module][griffe.dataclasses.Module],
-[Class][griffe.dataclasses.Class],
-[Function][griffe.dataclasses.Function],
-or [Attribute][griffe.dataclasses.Attribute],
+just created an instance of [Module][griffe.models.Module],
+[Class][griffe.models.Class],
+[Function][griffe.models.Function],
+or [Attribute][griffe.models.Attribute],
 and added it as a member of its parent.
 
 The "on members" events are triggered when the agent

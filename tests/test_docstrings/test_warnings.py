@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from griffe.dataclasses import Docstring, Function, Parameter, ParameterKind, Parameters
+from griffe.models import Docstring, Function, Parameter, ParameterKind, Parameters
 from griffe.docstrings.parsers import Parser, parse
 
 

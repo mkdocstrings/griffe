@@ -13,7 +13,7 @@ from griffe.logger import get_logger
 from griffe.merger import merge_stubs
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Alias, Attribute, Class, Function, Module, Object
+    from griffe.models import Alias, Attribute, Class, Function, Module, Object
 
 logger = get_logger(__name__)
 _ObjType = TypeVar("_ObjType")

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, List, Protocol, Tuple, Union
 
-from griffe.dataclasses import Attribute, Class, Docstring, Function, Module
-from griffe.docstrings.dataclasses import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
+from griffe.models import Attribute, Class, Docstring, Function, Module
+from griffe.docstrings.models import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
 from griffe.logger import LogLevel
 
 if TYPE_CHECKING:

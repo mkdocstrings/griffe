@@ -9,7 +9,7 @@ from griffe.mixins import DelMembersMixin, GetMembersMixin, SetMembersMixin
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.dataclasses import Module
+    from griffe.models import Module
 
 
 class LinesCollection:

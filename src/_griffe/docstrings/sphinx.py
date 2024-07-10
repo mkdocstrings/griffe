@@ -11,7 +11,7 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable
 
-from griffe.docstrings.dataclasses import (
+from griffe.docstrings.models import (
     DocstringAttribute,
     DocstringParameter,
     DocstringRaise,
@@ -26,7 +26,7 @@ from griffe.docstrings.dataclasses import (
 from griffe.docstrings.utils import warning
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Docstring
+    from griffe.models import Docstring
     from griffe.expressions import Expr
 
 _warn = warning(__name__)

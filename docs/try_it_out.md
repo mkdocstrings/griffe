@@ -11,7 +11,7 @@ Then we output the signature of the `Function` class as JSON.
 ```pyodide install="griffe"
 import griffe
 griffe_pkg = griffe.load("griffe")
-griffe_pkg["dataclasses.Function"].as_json(indent=2)
+griffe_pkg["models.Function"].as_json(indent=2)
 ```
 
 Try it out with another package of your choice!

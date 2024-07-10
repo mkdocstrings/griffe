@@ -7,7 +7,7 @@ import json
 import pytest
 from jsonschema import ValidationError, validate
 
-from griffe.dataclasses import Function, Module, Object
+from griffe.models import Function, Module, Object
 from griffe.loader import GriffeLoader
 
 

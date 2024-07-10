@@ -2,12 +2,12 @@
 
 You can use Griffe to parse arbitrary docstrings.
 You don't have to load anything through the Griffe loader.
-You just need to import the [`Docstring`][griffe.dataclasses.Docstring] class.
+You just need to import the [`Docstring`][griffe.models.Docstring] class.
 Then you can build a `Docstring` instance and call its `parse` method,
 choosing the parsing-style to use:
 
 ```python
-from griffe.dataclasses import Docstring
+from griffe.models import Docstring
 
 text = "Hello I'm a docstring!"
 docstring = Docstring(text, lineno=1)
@@ -19,7 +19,7 @@ annotations from the object from which the docstring originates,
 you can manually create the parent objects and link them to the docstring:
 
 ```python
-from griffe.dataclasses import Docstring, Function, Parameters, Parameter, ParameterKind
+from griffe.models import Docstring, Function, Parameters, Parameter, ParameterKind
 
 function = Function(
     "func",

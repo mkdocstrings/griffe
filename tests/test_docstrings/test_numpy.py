@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe.dataclasses import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
-from griffe.docstrings.dataclasses import (
+from griffe.models import Attribute, Class, Docstring, Function, Module, Parameter, Parameters
+from griffe.docstrings.models import (
     DocstringSectionKind,
 )
 from griffe.docstrings.utils import parse_annotation
