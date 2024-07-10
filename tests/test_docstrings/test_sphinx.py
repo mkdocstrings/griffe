@@ -3,19 +3,23 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from griffe.models import Attribute, Class, Function, Module, Parameter, Parameters
-from griffe.docstrings.models import (
+from griffe import (
+    Attribute,
+    Class,
     DocstringAttribute,
     DocstringParameter,
     DocstringRaise,
     DocstringReturn,
     DocstringSectionKind,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
 )
-from tests.test_docstrings.helpers import assert_attribute_equal, assert_element_equal, assert_parameter_equal
 
 if TYPE_CHECKING:
     from tests.test_docstrings.helpers import ParserType
@@ -101,7 +105,10 @@ def test_parse__param_field__param_section(parse_sphinx: ParserType) -> None:
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(sections[1].value[0], DocstringParameter(SOME_NAME, description=SOME_TEXT))
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__only_param_field__empty_markdown(parse_sphinx: ParserType) -> None:
@@ -143,7 +150,10 @@ def test_parse__all_param_names__param_section(parse_sphinx: ParserType, param_d
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(sections[1].value[0], DocstringParameter(SOME_NAME, description=SOME_TEXT))
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 @pytest.mark.parametrize(
@@ -173,10 +183,10 @@ def test_parse__param_field_multi_line__param_section(parse_sphinx: ParserType, 
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}")
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_field_for_function__param_section_with_kind(parse_sphinx: ParserType) -> None:
@@ -194,10 +204,10 @@ def test_parse__param_field_for_function__param_section_with_kind(parse_sphinx: 
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_field_docs_type__param_section_with_type(parse_sphinx: ParserType) -> None:
@@ -215,10 +225,10 @@ def test_parse__param_field_docs_type__param_section_with_type(parse_sphinx: Par
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_field_type_field__param_section_with_type(parse_sphinx: ParserType) -> None:
@@ -237,10 +247,10 @@ def test_parse__param_field_type_field__param_section_with_type(parse_sphinx: Pa
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_field_type_field_first__param_section_with_type(parse_sphinx: ParserType) -> None:
@@ -259,10 +269,10 @@ def test_parse__param_field_type_field_first__param_section_with_type(parse_sphi
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 @pytest.mark.parametrize("union", ["str or None", "None or str", "str or int", "str or int or float"])
@@ -286,10 +296,10 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional(
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, annotation=union.replace(" or ", " | "), description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation=union.replace(" or ", " | "), description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_field_annotate_type__param_section_with_type(parse_sphinx: ParserType) -> None:
@@ -310,10 +320,10 @@ def test_parse__param_field_annotate_type__param_section_with_type(parse_sphinx:
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
     assert not warnings
 
 
@@ -332,10 +342,10 @@ def test_parse__param_field_no_matching_param__result_from_docstring(parse_sphin
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter("other", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter("other", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_field_with_default__result_from_docstring(parse_sphinx: ParserType) -> None:
@@ -356,10 +366,10 @@ def test_parse__param_field_with_default__result_from_docstring(parse_sphinx: Pa
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
-    assert_parameter_equal(
-        sections[1].value[0],
-        DocstringParameter("foo", description=SOME_TEXT, value=repr("")),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringParameter("foo", description=SOME_TEXT, value=repr(""))
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
     assert not warnings
 
 
@@ -582,10 +592,10 @@ def test_parse__attribute_field_multi_line__param_section(parse_sphinx: ParserTy
     sections, warnings = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
-    assert_attribute_equal(
-        sections[1].value[0],
-        DocstringAttribute(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}"),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringAttribute(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}")
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
     assert not warnings
 
 
@@ -613,10 +623,10 @@ def test_parse__all_attribute_names__param_section(parse_sphinx: ParserType, att
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
-    assert_attribute_equal(
-        sections[1].value[0],
-        DocstringAttribute(SOME_NAME, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringAttribute(SOME_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
     assert not warnings
 
 
@@ -635,10 +645,10 @@ def test_parse__class_attributes__attributes_section(parse_sphinx: ParserType) -
     sections, _ = parse_sphinx(docstring, parent=Class("klass"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
-    assert_attribute_equal(
-        sections[1].value[0],
-        DocstringAttribute(SOME_NAME, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringAttribute(SOME_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__class_attributes_with_type__annotation_in_attributes_section(parse_sphinx: ParserType) -> None:
@@ -657,10 +667,10 @@ def test_parse__class_attributes_with_type__annotation_in_attributes_section(par
     sections, _ = parse_sphinx(docstring, parent=Class("klass"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
-    assert_attribute_equal(
-        sections[1].value[0],
-        DocstringAttribute(SOME_NAME, annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringAttribute(SOME_NAME, annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__attribute_invalid_directive___error(parse_sphinx: ParserType) -> None:
@@ -761,10 +771,10 @@ def test_parse__return_directive__return_section_no_type(parse_sphinx: ParserTyp
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringReturn(name="", annotation=None, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringReturn(name="", annotation=None, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__return_directive_rtype__return_section_with_type(parse_sphinx: ParserType) -> None:
@@ -783,10 +793,10 @@ def test_parse__return_directive_rtype__return_section_with_type(parse_sphinx: P
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringReturn(name="", annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__return_directive_rtype_first__return_section_with_type(parse_sphinx: ParserType) -> None:
@@ -805,10 +815,10 @@ def test_parse__return_directive_rtype_first__return_section_with_type(parse_sph
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringReturn(name="", annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__return_directive_annotation__return_section_with_type(parse_sphinx: ParserType) -> None:
@@ -826,10 +836,10 @@ def test_parse__return_directive_annotation__return_section_with_type(parse_sphi
     sections, _ = parse_sphinx(docstring, parent=Function("func", returns="str"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringReturn(name="", annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__return_directive_annotation__prefer_return_directive(parse_sphinx: ParserType) -> None:
@@ -848,10 +858,10 @@ def test_parse__return_directive_annotation__prefer_return_directive(parse_sphin
     sections, _ = parse_sphinx(docstring, parent=Function("func", returns="int"))
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.returns
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringReturn(name="", annotation="str", description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringReturn(name="", annotation="str", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__return_invalid__error(parse_sphinx: ParserType) -> None:
@@ -901,10 +911,10 @@ def test_parse__raises_directive__exception_section(parse_sphinx: ParserType) ->
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.raises
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__multiple_raises_directive__exception_section_with_two(parse_sphinx: ParserType) -> None:
@@ -923,14 +933,14 @@ def test_parse__multiple_raises_directive__exception_section_with_two(parse_sphi
     sections, _ = parse_sphinx(docstring)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.raises
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
-    )
-    assert_element_equal(
-        sections[1].value[1],
-        DocstringRaise(annotation=SOME_OTHER_EXCEPTION_NAME, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
+    actual = sections[1].value[1]
+    expected = DocstringRaise(annotation=SOME_OTHER_EXCEPTION_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 @pytest.mark.parametrize(
@@ -958,10 +968,10 @@ def test_parse__all_exception_names__param_section(parse_sphinx: ParserType, rai
     )
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.raises
-    assert_element_equal(
-        sections[1].value[0],
-        DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT),
-    )
+    actual = sections[1].value[0]
+    expected = DocstringRaise(annotation=SOME_EXCEPTION_NAME, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__raise_invalid__error(parse_sphinx: ParserType) -> None:
@@ -1025,15 +1035,19 @@ def test_parse__module_attributes_section__expected_attributes_section(parse_sph
     attr_section = sections[1]
     assert attr_section.kind is DocstringSectionKind.attributes
     assert len(attr_section.value) == 5
-    expected_kwargs = [
+    expected_data: list[dict[str, Any]] = [
         {"name": "A", "annotation": "int", "description": "Alpha."},
         {"name": "B", "annotation": "bytes", "description": "Beta."},
         {"name": "C", "annotation": "bool", "description": "Gamma."},
         {"name": "D", "annotation": None, "description": "Delta."},
         {"name": "E", "annotation": "float", "description": "Epsilon."},
     ]
-    for index, expected in enumerate(expected_kwargs):
-        assert_attribute_equal(attr_section.value[index], DocstringAttribute(**expected))  # type: ignore[arg-type]
+    for index, expected_kwargs in enumerate(expected_data):
+        actual = attr_section.value[index]
+        expected = DocstringAttribute(**expected_kwargs)
+        assert isinstance(actual, type(expected))
+        assert actual.name == expected.name
+        assert actual.as_dict() == expected.as_dict()
     assert not warnings
 
 

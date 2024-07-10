@@ -5,8 +5,7 @@ from __future__ import annotations
 import sys
 
 import pytest
-
-from griffe import cli, debug
+from _griffe import cli, debug
 
 
 def test_main() -> None:
@@ -38,7 +37,7 @@ def test_show_version(capsys: pytest.CaptureFixture) -> None:
     with pytest.raises(SystemExit):
         cli.main(["-V"])
     captured = capsys.readouterr()
-    assert debug.get_version() in captured.out
+    assert debug._get_version() in captured.out
 
 
 def test_show_debug_info(capsys: pytest.CaptureFixture) -> None:

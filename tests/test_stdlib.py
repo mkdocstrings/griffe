@@ -8,11 +8,10 @@ from typing import TYPE_CHECKING, Iterator
 
 import pytest
 
-from griffe.exceptions import LoadingError
-from griffe.loader import GriffeLoader
+from griffe import GriffeLoader, LoadingError
 
 if TYPE_CHECKING:
-    from griffe.models import Alias, Object
+    from griffe.dataclasses import Alias, Object
 
 
 def _access_inherited_members(obj: Object | Alias) -> None:

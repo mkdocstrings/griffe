@@ -4,9 +4,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, List, Protocol, Tuple, Union
 
-from griffe.models import Attribute, Class, Docstring, Function, Module
-from griffe.docstrings.models import DocstringAttribute, DocstringElement, DocstringParameter, DocstringSection
-from griffe.logger import LogLevel
+from griffe import (
+    Attribute,
+    Class,
+    Docstring,
+    DocstringSection,
+    Function,
+    LogLevel,
+    Module,
+)
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -54,48 +60,11 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
             parent.docstring = docstring_object
         warnings = []
         parser_module._warn = lambda _docstring, _offset, message, log_level=LogLevel.warning: warnings.append(message)  # type: ignore[attr-defined]
-        sections = parser_module.parse(docstring_object, **parser_opts)
+        func_name = f"parse_{parser_module.__name__.split('.')[-1]}"
+        func = getattr(parser_module, func_name)
+        sections = func(docstring_object, **parser_opts)
         return sections, warnings
 
     yield parse
 
     parser_module._warn = original_warn  # type: ignore[attr-defined]
-
-
-def assert_parameter_equal(actual: DocstringParameter, expected: DocstringParameter) -> None:
-    """Help assert docstring parameters are equal.
-
-    Parameters:
-        actual: The actual parameter.
-        expected: The expected parameter.
-    """
-    assert actual.name == expected.name
-    assert_element_equal(actual, expected)
-    assert actual.value == expected.value
-
-
-def assert_attribute_equal(actual: DocstringAttribute, expected: DocstringAttribute) -> None:
-    """Help assert docstring attributes are equal.
-
-    Parameters:
-        actual: The actual attribute.
-        expected: The expected attribute.
-    """
-    assert actual.name == expected.name
-    assert_element_equal(actual, expected)
-
-
-def assert_element_equal(actual: DocstringElement, expected: DocstringElement) -> None:
-    """Help assert docstring elements are equal.
-
-    Parameters:
-        actual: The actual element.
-        expected: The expected element.
-    """
-    assert isinstance(actual, type(expected))
-
-    for k in actual.as_dict():
-        src = getattr(actual, k)
-        dst = getattr(expected, k)
-
-        assert src == dst, f"attribute {k!r}, {src!r} != {dst!r}"
