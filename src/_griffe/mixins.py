@@ -452,6 +452,12 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
             # YORE: Bump 1.0.0: Replace line with `return self.public`.
             return _True if self.public else _False  # type: ignore[return-value,attr-defined]
 
+        # If the object is a module and its name does not start with an underscore, it is public.
+        # Modules are not subject to the `__all__` convention, only the underscore prefix one.
+        if not self.is_alias and self.is_module and not self.name.startswith("_"):  # type: ignore[attr-defined]
+            # YORE: Bump 1.0.0: Replace line with `return True`.
+            return _True  # type: ignore[return-value]
+
         # If the object is defined at the module-level and is listed in `__all__`, it is public.
         # If the parent module defines `__all__` but does not list the object, it is private.
         if self.parent and self.parent.is_module and bool(self.parent.exports):  # type: ignore[attr-defined]
