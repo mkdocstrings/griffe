@@ -11,7 +11,7 @@ from _griffe.enumerations import LogLevel
 from _griffe.exceptions import BuiltinModuleError
 from _griffe.expressions import safe_get_annotation
 
-# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
+# YORE: Bump 1: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from _griffe.models import Docstring
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 class DocstringWarningCallable(Protocol):
     """A callable that logs a warning message."""
 
@@ -34,16 +34,16 @@ class DocstringWarningCallable(Protocol):
         """
 
 
-# YORE: Bump 1.0.0: Remove line.
+# YORE: Bump 1: Remove line.
 _sentinel = object()
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 @overload
 def docstring_warning(name: str) -> DocstringWarningCallable: ...
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 @overload
 def docstring_warning(
     docstring: Docstring,
@@ -54,16 +54,16 @@ def docstring_warning(
 
 
 def docstring_warning(  # type: ignore[misc]
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     name: str | None = None,
-    # YORE: Bump 1.0.0: Replace line with `docstring: Docstring,`.
+    # YORE: Bump 1: Replace line with `docstring: Docstring,`.
     docstring: Docstring = _sentinel,  # type: ignore[assignment]
-    # YORE: Bump 1.0.0: Replace line with `offset: int,`.
+    # YORE: Bump 1: Replace line with `offset: int,`.
     offset: int = _sentinel,  # type: ignore[assignment]
-    # YORE: Bump 1.0.0: Replace line with `message: str,`.
+    # YORE: Bump 1: Replace line with `message: str,`.
     message: str = _sentinel,  # type: ignore[assignment]
     log_level: LogLevel = LogLevel.warning,
-    # YORE: Bump 1.0.0: Replace line with `) -> None:`.
+    # YORE: Bump 1: Replace line with `) -> None:`.
 ) -> DocstringWarningCallable | None:
     """Log a warning when parsing a docstring.
 
@@ -78,7 +78,7 @@ def docstring_warning(  # type: ignore[misc]
     Returns:
         A function used to log parsing warnings if `name` was passed, else none.
     """
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     if name is not None:
         warnings.warn("The `name` parameter is deprecated.", DeprecationWarning, stacklevel=1)
         logger = get_logger(name)

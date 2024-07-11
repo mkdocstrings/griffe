@@ -6,7 +6,7 @@
     options:
         annotations_path: full
 
-<!-- YORE: Bump 1.0.0: Uncomment line. -->
+<!-- YORE: Bump 1: Uncomment line. -->
 <!-- ::: griffe.logger -->
 
 ::: griffe.Logger

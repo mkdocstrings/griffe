@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from _griffe.models import Attribute, Class, Function, Module, Object
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 class VisitorExtension:
     """Deprecated in favor of `Extension`. The node visitor extension base class, to inherit from."""
 
@@ -61,7 +61,7 @@ class VisitorExtension:
         getattr(self, f"visit_{ast_kind(node)}", lambda _: None)(node)
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 class InspectorExtension:
     """Deprecated in favor of `Extension`. The object inspector extension base class, to inherit from."""
 
@@ -241,11 +241,11 @@ class Extension:
         """
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 ExtensionType = Union[VisitorExtension, InspectorExtension, Extension]
 """All the types that can be passed to `Extensions.add`. Deprecated. Use `Extension` instead."""
 
-# YORE: Bump 1.0.0: Regex-replace `\bExtensionType\b` with `Extension` within line.
+# YORE: Bump 1: Regex-replace `\bExtensionType\b` with `Extension` within line.
 LoadableExtensionType = Union[str, Dict[str, Any], ExtensionType, Type[ExtensionType]]
 """All the types that can be passed to `load_extensions`."""
 
@@ -253,21 +253,21 @@ LoadableExtensionType = Union[str, Dict[str, Any], ExtensionType, Type[Extension
 class Extensions:
     """This class helps iterating on extensions that should run at different times."""
 
-    # YORE: Bump 1.0.0: Replace `ExtensionType` with `Extension` within line.
+    # YORE: Bump 1: Replace `ExtensionType` with `Extension` within line.
     def __init__(self, *extensions: ExtensionType) -> None:
         """Initialize the extensions container.
 
         Parameters:
             *extensions: The extensions to add.
         """
-        # YORE: Bump 1.0.0: Remove block.
+        # YORE: Bump 1: Remove block.
         self._visitors: dict[When, list[VisitorExtension]] = defaultdict(list)
         self._inspectors: dict[When, list[InspectorExtension]] = defaultdict(list)
 
         self._extensions: list[Extension] = []
         self.add(*extensions)
 
-    # YORE: Bump 1.0.0: Replace `ExtensionType` with `Extension` within line.
+    # YORE: Bump 1: Replace `ExtensionType` with `Extension` within line.
     def add(self, *extensions: ExtensionType) -> None:
         """Add extensions to this container.
 
@@ -275,7 +275,7 @@ class Extensions:
             *extensions: The extensions to add.
         """
         for extension in extensions:
-            # YORE: Bump 1.0.0: Replace block with line 6
+            # YORE: Bump 1: Replace block with line 6
             if isinstance(extension, VisitorExtension):
                 self._visitors[extension.when].append(extension)
             elif isinstance(extension, InspectorExtension):
@@ -283,7 +283,7 @@ class Extensions:
             else:
                 self._extensions.append(extension)
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     def attach_visitor(self, parent_visitor: Visitor) -> Extensions:
         """Attach a parent visitor to the visitor extensions.
 
@@ -298,7 +298,7 @@ class Extensions:
                 visitor.attach(parent_visitor)
         return self
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     def attach_inspector(self, parent_inspector: Inspector) -> Extensions:
         """Attach a parent inspector to the inspector extensions.
 
@@ -313,49 +313,49 @@ class Extensions:
                 inspector.attach(parent_inspector)
         return self
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def before_visit(self) -> list[VisitorExtension]:
         """The visitors that run before the visit."""
         return self._visitors[When.before_all]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def before_children_visit(self) -> list[VisitorExtension]:
         """The visitors that run before the children visit."""
         return self._visitors[When.before_children]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def after_children_visit(self) -> list[VisitorExtension]:
         """The visitors that run after the children visit."""
         return self._visitors[When.after_children]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def after_visit(self) -> list[VisitorExtension]:
         """The visitors that run after the visit."""
         return self._visitors[When.after_all]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def before_inspection(self) -> list[InspectorExtension]:
         """The inspectors that run before the inspection."""
         return self._inspectors[When.before_all]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def before_children_inspection(self) -> list[InspectorExtension]:
         """The inspectors that run before the children inspection."""
         return self._inspectors[When.before_children]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def after_children_inspection(self) -> list[InspectorExtension]:
         """The inspectors that run after the children inspection."""
         return self._inspectors[When.after_children]
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     @property
     def after_inspection(self) -> list[InspectorExtension]:
         """The inspectors that run after the inspection."""
@@ -373,7 +373,7 @@ class Extensions:
 
 
 builtin_extensions: set[str] = {
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "hybrid",
     "dataclasses",
 }
@@ -391,7 +391,7 @@ def _load_extension_path(path: str) -> ModuleType:
     return module
 
 
-# YORE: Bump 1.0.0: Replace `ExtensionType` with `Extension` within block.
+# YORE: Bump 1: Replace `ExtensionType` with `Extension` within block.
 def _load_extension(
     extension: str | dict[str, Any] | ExtensionType | type[ExtensionType],
 ) -> ExtensionType | list[ExtensionType]:
@@ -411,16 +411,16 @@ def _load_extension(
     """
     ext_object = None
 
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     ext_classes = (VisitorExtension, InspectorExtension, Extension)
 
     # If it's already an extension instance, return it.
-    # YORE: Bump 1.0.0: Replace `ext_classes` with `Extension` within line.
+    # YORE: Bump 1: Replace `ext_classes` with `Extension` within line.
     if isinstance(extension, ext_classes):
         return extension
 
     # If it's an extension class, instantiate it (without options) and return it.
-    # YORE: Bump 1.0.0: Replace `ext_classes` with `Extension` within line.
+    # YORE: Bump 1: Replace `ext_classes` with `Extension` within line.
     if isclass(extension) and issubclass(extension, ext_classes):
         return extension()
 
@@ -467,7 +467,7 @@ def _load_extension(
             raise ExtensionNotLoadedError(f"Error while importing extension '{import_path}': {error}") from error
 
     # If the loaded object is an extension class, instantiate it with options and return it.
-    # YORE: Bump 1.0.0: Replace `ext_classes` with `Extension` within line.
+    # YORE: Bump 1: Replace `ext_classes` with `Extension` within line.
     if isclass(ext_object) and issubclass(ext_object, ext_classes):
         return ext_object(**options)  # type: ignore[misc]
 
@@ -485,15 +485,15 @@ def _load_extension(
     # instantiate each with the same options, and return them.
     extensions = []
     for obj in vars(ext_object).values():
-        # YORE: Bump 1.0.0: Replace `ext_classes` with `Extension` within line.
-        # YORE: Bump 1.0.0: Replace `not in` with `is not` within line.
+        # YORE: Bump 1: Replace `ext_classes` with `Extension` within line.
+        # YORE: Bump 1: Replace `not in` with `is not` within line.
         if isclass(obj) and issubclass(obj, ext_classes) and obj not in ext_classes:
             extensions.append(obj)
     return [ext(**options) for ext in extensions]
 
 
 def load_extensions(
-    # YORE: Bump 1.0.0: Replace ` | Sequence[LoadableExtension],` with `` within line.
+    # YORE: Bump 1: Replace ` | Sequence[LoadableExtension],` with `` within line.
     *exts: LoadableExtensionType | Sequence[LoadableExtensionType],
 ) -> Extensions:
     """Load configured extensions.
@@ -506,7 +506,7 @@ def load_extensions(
     """
     extensions = Extensions()
 
-    # YORE: Bump 1.0.0: Remove block.
+    # YORE: Bump 1: Remove block.
     all_exts: list[LoadableExtensionType] = []
     for ext in exts:
         if isinstance(ext, (list, tuple)):
@@ -520,7 +520,7 @@ def load_extensions(
         else:
             all_exts.append(ext)  # type: ignore[arg-type]
 
-    # YORE: Bump 1.0.0: Replace `all_exts` with `exts` within line.
+    # YORE: Bump 1: Replace `all_exts` with `exts` within line.
     for extension in all_exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):

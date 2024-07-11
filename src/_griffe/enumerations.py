@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 from enum import IntEnum
 
-# YORE: Bump 1.0.0: Replace block with line 2.
+# YORE: Bump 1: Replace block with line 2.
 if sys.version_info >= (3, 11):
     from enum import StrEnum
 else:
@@ -183,7 +183,7 @@ class ObjectKind(StrEnum):
         return self.value
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 class When(IntEnum):
     """Enumeration of the different times at which an extension is used.
 

@@ -106,7 +106,7 @@ from _griffe.enumerations import (
     ObjectKind,
     ParameterKind,
     Parser,
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     When,
 )
 from _griffe.exceptions import (
@@ -169,27 +169,27 @@ from _griffe.expressions import (
 from _griffe.extensions.base import (
     Extension,
     Extensions,
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     ExtensionType,
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     InspectorExtension,
     LoadableExtensionType,
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     VisitorExtension,
     builtin_extensions,
     load_extensions,
 )
 from _griffe.extensions.dataclasses import DataclassesExtension
 
-# YORE: Bump 1.0.0: Remove line.
+# YORE: Bump 1: Remove line.
 from _griffe.extensions.hybrid import HybridExtension
 from _griffe.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
 from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
 from _griffe.importer import dynamic_import, sys_path
 from _griffe.loader import GriffeLoader, load, load_git
 
-# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
-# YORE: Bump 1.0.0: Replace `, patch_loggers` with `` within line.
+# YORE: Bump 1: Replace `get_logger` with `logger` within line.
+# YORE: Bump 1: Replace `, patch_loggers` with `` within line.
 from _griffe.logger import Logger, get_logger, patch_logger, patch_loggers
 from _griffe.merger import merge_stubs
 from _griffe.mixins import (
@@ -275,7 +275,7 @@ __all__ = [
     "DocstringSectionWarns",
     "DocstringSectionYields",
     "DocstringWarn",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "DocstringWarningCallable",
     "DocstringYield",
     "ExplanationStyle",
@@ -315,7 +315,7 @@ __all__ = [
     "Extension",
     "ExtensionError",
     "ExtensionNotLoadedError",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "ExtensionType",
     "Extensions",
     "Function",
@@ -323,10 +323,10 @@ __all__ = [
     "GitError",
     "GriffeError",
     "GriffeLoader",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "HybridExtension",
     "Inspector",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "InspectorExtension",
     "JSONEncoder",
     "Kind",
@@ -370,9 +370,9 @@ __all__ = [
     "UnhandledEditableModuleError",
     "UnimportableModuleError",
     "Visitor",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "VisitorExtension",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "When",
     "assert_git_repo",
     "ast_children",
@@ -400,7 +400,7 @@ __all__ = [
     "get_expression",
     "get_instance_names",
     "get_latest_tag",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "get_logger",
     "get_name",
     "get_names",
@@ -414,7 +414,7 @@ __all__ = [
     "load",
     "load_extensions",
     "load_git",
-    # YORE: Bump 1.0.0: Uncomment line.
+    # YORE: Bump 1: Uncomment line.
     # "logger",
     "main",
     "merge_stubs",
@@ -426,7 +426,7 @@ __all__ = [
     "parse_sphinx",
     "parsers",
     "patch_logger",
-    # YORE: Bump 1.0.0: Remove line.
+    # YORE: Bump 1: Remove line.
     "patch_loggers",
     "relative_to_absolute",
     "safe_get__all__",

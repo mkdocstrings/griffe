@@ -10,15 +10,15 @@ from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 from _griffe.enumerations import Kind
 from _griffe.exceptions import AliasResolutionError, CyclicAliasError
 
-# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
-# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
+# YORE: Bump 1: Replace `_logger` with `logger` within file.
+# YORE: Bump 1: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 from _griffe.merger import merge_stubs
 
 if TYPE_CHECKING:
     from _griffe.models import Alias, Attribute, Class, Function, Module, Object
 
-# YORE: Bump 1.0.0: Remove line.
+# YORE: Bump 1: Remove line.
 _logger = get_logger("griffe.mixins")
 _ObjType = TypeVar("_ObjType")
 
@@ -452,37 +452,37 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         """
         # Give priority to the `public` attribute if it is set.
         if self.public is not None:  # type: ignore[attr-defined]
-            # YORE: Bump 1.0.0: Replace line with `return self.public`.
+            # YORE: Bump 1: Replace line with `return self.public`.
             return _True if self.public else _False  # type: ignore[return-value,attr-defined]
 
         # If the object is a module and its name does not start with an underscore, it is public.
         # Modules are not subject to the `__all__` convention, only the underscore prefix one.
         if not self.is_alias and self.is_module and not self.name.startswith("_"):  # type: ignore[attr-defined]
-            # YORE: Bump 1.0.0: Replace line with `return True`.
+            # YORE: Bump 1: Replace line with `return True`.
             return _True  # type: ignore[return-value]
 
         # If the object is defined at the module-level and is listed in `__all__`, it is public.
         # If the parent module defines `__all__` but does not list the object, it is private.
         if self.parent and self.parent.is_module and bool(self.parent.exports):  # type: ignore[attr-defined]
-            # YORE: Bump 1.0.0: Replace line with `return self.name in self.parent.exports`.
+            # YORE: Bump 1: Replace line with `return self.name in self.parent.exports`.
             return _True if self.name in self.parent.exports else _False  # type: ignore[attr-defined,return-value]
 
         # Special objects are always considered public.
         # Even if we don't access them directly, they are used through different *public* means
         # like instantiating classes (`__init__`), using operators (`__eq__`), etc..
         if self.is_private:
-            # YORE: Bump 1.0.0: Replace line with `return False`.
+            # YORE: Bump 1: Replace line with `return False`.
             return _False  # type: ignore[return-value]
 
         # TODO: In a future version, we will support two conventions regarding imports:
         # - `from a import x as x` marks `x` as public.
         # - `from a import *` marks all wildcard imported objects as public.
         if self.is_imported:
-            # YORE: Bump 1.0.0: Replace line with `return False`.
+            # YORE: Bump 1: Replace line with `return False`.
             return _False  # type: ignore[return-value]
 
         # If we reached this point, the object is public.
-        # YORE: Bump 1.0.0: Replace line with `return True`.
+        # YORE: Bump 1: Replace line with `return True`.
         return _True  # type: ignore[return-value]
 
     @property
