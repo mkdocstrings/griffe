@@ -113,12 +113,11 @@ Right now, the `griffe` package has a lot of public submodules: this is only for
 
 ### Internal API
 
-The internal API layout doesn't follow any particular paradigm: we simply orgnanize code in different modules, depending on what the code is used for. The main modules are:
+```python exec="1" idprefix="internal-" session="comment_blocks"
+--8<-- "scripts/gen_internal_api.py"
 
-- `models.py`, where the Python classes representing Python objects are defined
-- `loader.py`, where the logic for loading objects is defined
-- `agents/visitor.py` and `agents/inspector.py`, where static and dynamic analysis "agents" are defined
-
+render_internal_api(heading_level=4)
+```
 
 ### Public API
 
