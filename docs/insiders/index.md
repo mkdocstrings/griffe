@@ -59,7 +59,6 @@ a handful of them, [thanks to our awesome sponsors][sponsors]!
 data_source = "docs/insiders/goals.yml"
 ```
 
-<!-- blacken-docs:off -->
 ```python exec="1" session="insiders" idprefix=""
 --8<-- "scripts/insiders.py"
 
@@ -86,7 +85,6 @@ else:
         "to see what's coming, as well as **[the feature list for all Insiders projects](https://pawamoy.github.io/insiders/#whats-in-it-for-me).**"
     )
 ```
-<!-- blacken-docs:on -->
 
 ## How to become a sponsor
 
