@@ -29,8 +29,8 @@ if TYPE_CHECKING:
     from _griffe.expressions import Expr
     from _griffe.models import Docstring
 
-# YORE: Bump 1.0.0: Regex-replace `\b_warn\b` with `docstring_warning` within file.
-# YORE: Bump 1.0.0: Remove line.
+# YORE: Bump 1: Regex-replace `\b_warn\b` with `docstring_warning` within file.
+# YORE: Bump 1: Remove line.
 _warn = docstring_warning("griffe.docstrings.sphinx")
 
 # TODO: Examples: from the documentation, we're not sure there is a standard format for examples

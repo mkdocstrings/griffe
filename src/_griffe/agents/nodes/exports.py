@@ -10,15 +10,15 @@ from typing import TYPE_CHECKING, Any, Callable
 from _griffe.agents.nodes.values import get_value
 from _griffe.enumerations import LogLevel
 
-# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
-# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
+# YORE: Bump 1: Replace `_logger` with `logger` within file.
+# YORE: Bump 1: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
     from _griffe.models import Module
 
 
-# YORE: Bump 1.0.0: Remove line.
+# YORE: Bump 1: Remove line.
 _logger = get_logger("griffe.agents.nodes._all")
 
 

@@ -31,8 +31,8 @@ from _griffe.enumerations import Kind, ParameterKind, Parser
 from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from _griffe.expressions import ExprCall, ExprName
 
-# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
-# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
+# YORE: Bump 1: Replace `_logger` with `logger` within file.
+# YORE: Bump 1: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 from _griffe.mixins import ObjectAliasMixin
 
@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 
 from functools import cached_property
 
-# YORE: Bump 1.0.0: Remove line.
+# YORE: Bump 1: Remove line.
 _logger = get_logger("griffe.dataclasses")
 
 
@@ -167,7 +167,7 @@ class Docstring:
         Returns:
             A dictionary.
         """
-        # YORE: Bump 1.0.0: Remove block.
+        # YORE: Bump 1: Remove block.
         if docstring_parser is not None:
             warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
 
@@ -549,7 +549,7 @@ class Object(ObjectAliasMixin):
         """Whether this object is a namespace subpackage."""
         return False
 
-    # YORE: Bump 1.0.0: Replace ` | set[str]` with `` within line.
+    # YORE: Bump 1: Replace ` | set[str]` with `` within line.
     def has_labels(self, *labels: str | set[str]) -> bool:
         """Tell if this object has all the given labels.
 
@@ -559,7 +559,7 @@ class Object(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        # YORE: Bump 1.0.0: Remove block.
+        # YORE: Bump 1: Remove block.
         all_labels = set()
         for label in labels:
             if isinstance(label, str):
@@ -572,7 +572,7 @@ class Object(ObjectAliasMixin):
                 )
                 all_labels.update(label)
 
-        # YORE: Bump 1.0.0: Replace `all_labels` with `set(labels)` within line.
+        # YORE: Bump 1: Replace `all_labels` with `set(labels)` within line.
         return all_labels.issubset(self.labels)
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:

@@ -29,7 +29,7 @@ patch_loggers(get_logger)
 ```
 """
 
-# YORE: Bump 1.0.0: Replace `patch_loggers` with `patch_logger` within file.
+# YORE: Bump 1: Replace `patch_loggers` with `patch_logger` within file.
 from __future__ import annotations
 
 import logging
@@ -40,11 +40,11 @@ from typing import Any, Callable, ClassVar, Iterator
 
 class Logger:
     _default_logger: Any = logging.getLogger
-    # YORE: Bump 1.0.0: Replace line with `_instance: _Logger | None = None`.
+    # YORE: Bump 1: Replace line with `_instance: _Logger | None = None`.
     _instances: ClassVar[dict[str, Logger]] = {}
 
     def __init__(self, name: str) -> None:
-        # YORE: Bump 1.0.0: Uncomment block.
+        # YORE: Bump 1: Uncomment block.
         # if self._instance:
         #     raise ValueError("Logger is a singleton.")
 
@@ -67,21 +67,21 @@ class Logger:
 
     @classmethod
     def _get(cls, name: str = "griffe") -> Logger:
-        # YORE: Bump 1.0.0: Replace line with `if not cls._instance:`.
+        # YORE: Bump 1: Replace line with `if not cls._instance:`.
         if name not in cls._instances:
-            # YORE: Bump 1.0.0: Replace line with `cls._instance = cls(name)`.`
+            # YORE: Bump 1: Replace line with `cls._instance = cls(name)`.`
             cls._instances[name] = cls(name)
-        # YORE: Bump 1.0.0: Replace line with `return cls._instance`.`
+        # YORE: Bump 1: Replace line with `return cls._instance`.`
         return cls._instances[name]
 
     @classmethod
     def _patch_logger(cls, get_logger_func: Callable) -> None:
-        # YORE: Bump 1.0.0: Uncomment block.
+        # YORE: Bump 1: Uncomment block.
         # if not cls._instance:
         #     raise ValueError("Logger is not initialized.")
 
         # Patch current instance.
-        # YORE: Bump 1.0.0: Replace block with `cls._instance._logger = get_logger_func(cls._instance._logger.name)`.
+        # YORE: Bump 1: Replace block with `cls._instance._logger = get_logger_func(cls._instance._logger.name)`.
         for name, instance in cls._instances.items():
             instance._logger = get_logger_func(name)
 
@@ -89,14 +89,14 @@ class Logger:
         cls._default_logger = get_logger_func
 
 
-# YORE: Bump 1.0.0: Uncomment block.
+# YORE: Bump 1: Uncomment block.
 # logger: Logger = Logger._get()
 # """Our global logger, used throughout the library."""
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 def get_logger(name: str) -> Logger:
-    # YORE: Bump 1.0.0: Replace `Deprecated.` with `Deprecated, use [logger][griffe.logger] directly.`.
+    # YORE: Bump 1: Replace `Deprecated.` with `Deprecated, use [logger][griffe.logger] directly.`.
     """Deprecated. Create and return a new logger instance.
 
     Parameters:
@@ -105,7 +105,7 @@ def get_logger(name: str) -> Logger:
     Returns:
         The logger.
     """
-    # YORE: Bump 1.0.0: Replace `deprecated.` with `deprecated. Use [logger][griffe.logger] directly.`.
+    # YORE: Bump 1: Replace `deprecated.` with `deprecated. Use [logger][griffe.logger] directly.`.
     warnings.warn("The `get_logger` function is deprecated.", DeprecationWarning, stacklevel=1)
     return Logger._get(name)
 
@@ -119,7 +119,7 @@ def patch_logger(get_logger_func: Callable[[str], Any]) -> None:
     Logger._patch_logger(get_logger_func)
 
 
-# YORE: Bump 1.0.0: Remove block.
+# YORE: Bump 1: Remove block.
 def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:
     """Deprecated, use `patch_logger` instead."""
     warnings.warn(

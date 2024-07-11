@@ -58,9 +58,9 @@ class JSONEncoder(json.JSONEncoder):
         self,
         *args: Any,
         full: bool = False,
-        # YORE: Bump 1.0.0: Remove line.
+        # YORE: Bump 1: Remove line.
         docstring_parser: Parser | None = None,
-        # YORE: Bump 1.0.0: Remove line.
+        # YORE: Bump 1: Remove line.
         docstring_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
@@ -80,7 +80,7 @@ class JSONEncoder(json.JSONEncoder):
         self.full: bool = full
         """Whether to dump full data or base data."""
 
-        # YORE: Bump 1.0.0: Remove block.
+        # YORE: Bump 1: Remove block.
         self.docstring_parser: Parser | None = docstring_parser
         """Deprecated. The docstring parser to use. By default, no parsing is done."""
         self.docstring_options: dict[str, Any] = docstring_options or {}
