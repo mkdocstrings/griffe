@@ -12,6 +12,9 @@ from colorama import Fore, Style
 from _griffe.enumerations import BreakageKind, ExplanationStyle, ParameterKind
 from _griffe.exceptions import AliasResolutionError
 from _griffe.git import _WORKTREE_PREFIX
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
@@ -22,7 +25,7 @@ _KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_ke
 _POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
 _VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.diff")
 
 

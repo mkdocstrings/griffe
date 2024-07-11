@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import ast
 
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.agents.nodes._docstrings")
 
 

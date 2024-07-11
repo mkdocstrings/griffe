@@ -25,6 +25,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterator, Sequence, Tuple
 
 from _griffe.exceptions import UnhandledEditableModuleError
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
@@ -32,7 +35,7 @@ if TYPE_CHECKING:
 
     from _griffe.models import Module
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.finder")
 
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", r"^_editable_impl_\w+\.py$")]

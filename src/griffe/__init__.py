@@ -187,7 +187,10 @@ from _griffe.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, Na
 from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
 from _griffe.importer import dynamic_import, sys_path
 from _griffe.loader import GriffeLoader, load, load_git
-from _griffe.logger import get_logger, patch_loggers
+
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
+# YORE: Bump 1.0.0: Replace `, patch_loggers` with `` within line.
+from _griffe.logger import Logger, get_logger, patch_logger, patch_loggers
 from _griffe.merger import merge_stubs
 from _griffe.mixins import (
     DelMembersMixin,
@@ -272,6 +275,8 @@ __all__ = [
     "DocstringSectionWarns",
     "DocstringSectionYields",
     "DocstringWarn",
+    # YORE: Bump 1.0.0: Remove line.
+    "DocstringWarningCallable",
     "DocstringYield",
     "ExplanationStyle",
     "ExportedName",
@@ -329,6 +334,7 @@ __all__ = [
     "LinesCollection",
     "LoadableExtensionType",
     "LoadingError",
+    "Logger",
     "LogLevel",
     "Module",
     "ModuleFinder",
@@ -366,7 +372,6 @@ __all__ = [
     "Visitor",
     # YORE: Bump 1.0.0: Remove line.
     "VisitorExtension",
-    "DocstringWarningCallable",
     # YORE: Bump 1.0.0: Remove line.
     "When",
     "assert_git_repo",
@@ -384,6 +389,7 @@ __all__ = [
     "c3linear_merge",
     "check",
     "dump",
+    "docstring_warning",
     "dynamic_import",
     "find_breaking_changes",
     "get__all__",
@@ -394,6 +400,7 @@ __all__ = [
     "get_expression",
     "get_instance_names",
     "get_latest_tag",
+    # YORE: Bump 1.0.0: Remove line.
     "get_logger",
     "get_name",
     "get_names",
@@ -407,6 +414,8 @@ __all__ = [
     "load",
     "load_extensions",
     "load_git",
+    # YORE: Bump 1.0.0: Uncomment line.
+    # "logger",
     "main",
     "merge_stubs",
     "module_vtree",
@@ -416,6 +425,8 @@ __all__ = [
     "parse_numpy",
     "parse_sphinx",
     "parsers",
+    "patch_logger",
+    # YORE: Bump 1.0.0: Remove line.
     "patch_loggers",
     "relative_to_absolute",
     "safe_get__all__",
@@ -435,5 +446,4 @@ __all__ = [
     "typing_overload",
     "visit",
     "vtree",
-    "docstring_warning",
 ]

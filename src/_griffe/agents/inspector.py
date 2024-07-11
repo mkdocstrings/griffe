@@ -34,6 +34,9 @@ from _griffe.enumerations import ObjectKind, ParameterKind
 from _griffe.expressions import safe_get_annotation
 from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.importer import dynamic_import
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 from _griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 
@@ -44,7 +47,7 @@ if TYPE_CHECKING:
     from _griffe.expressions import Expr
 
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.agents.inspector")
 _empty = Signature.empty
 

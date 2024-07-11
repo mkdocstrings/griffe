@@ -6,6 +6,8 @@ import ast
 import sys
 from typing import TYPE_CHECKING
 
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 # YORE: EOL 3.8: Replace block with line 4.
@@ -17,7 +19,7 @@ else:
 if TYPE_CHECKING:
     from pathlib import Path
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.agents.nodes._values")
 
 

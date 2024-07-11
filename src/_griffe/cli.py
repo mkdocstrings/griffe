@@ -32,6 +32,9 @@ from _griffe.exceptions import ExtensionError, GitError
 from _griffe.extensions.base import load_extensions
 from _griffe.git import get_latest_tag, get_repo_root
 from _griffe.loader import GriffeLoader, load, load_git
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
@@ -40,7 +43,7 @@ if TYPE_CHECKING:
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.cli")
 
 

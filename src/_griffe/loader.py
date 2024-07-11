@@ -37,6 +37,9 @@ from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.finder import ModuleFinder, NamespacePackage, Package
 from _griffe.git import tmp_worktree
 from _griffe.importer import dynamic_import
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 from _griffe.merger import merge_stubs
 from _griffe.models import Alias, Module, Object
@@ -45,7 +48,7 @@ from _griffe.stats import Stats
 if TYPE_CHECKING:
     from _griffe.enumerations import Parser
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.loader")
 _builtin_modules: set[str] = set(sys.builtin_module_names)
 
