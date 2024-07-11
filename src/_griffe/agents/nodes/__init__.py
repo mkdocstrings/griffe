@@ -1,1 +1,1 @@
-"""This module contains utilities for extracting information from nodes."""
+# These submodules contain utilities for working with AST and object nodes.

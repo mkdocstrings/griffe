@@ -1,3 +1,6 @@
+# This module contains our models definitions,
+# to represent Python objects (and other aspects of Python APIs)... in Python.
+
 """Griffe stores information extracted from Python source code into data models.
 
 These models represent trees of objects, starting with modules,

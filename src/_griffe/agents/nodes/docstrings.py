@@ -1,4 +1,4 @@
-"""This module contains utilities for extracting information from nodes."""
+# This module contains utilities for extracting docstrings from nodes.
 
 from __future__ import annotations
 

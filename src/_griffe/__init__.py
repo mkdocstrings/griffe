@@ -1,6 +1,2 @@
-"""Griffe package.
-
-Signatures for entire Python programs.
-Extract the structure, the frame, the skeleton of your project,
-to generate API documentation or find breaking changes in your API.
-"""
+# The internal API layout doesn't follow any particular paradigm:
+# we simply organize code in different modules, depending on what the code is used for.

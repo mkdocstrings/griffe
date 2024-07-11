@@ -1,4 +1,4 @@
-"""This module defines functions to parse Google-style docstrings into structured data."""
+# This module defines functions to parse Google-style docstrings into structured data.
 
 from __future__ import annotations
 

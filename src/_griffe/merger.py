@@ -1,4 +1,4 @@
-"""This module contains utilities to merge data together."""
+# This module contains utilities to merge stubs data and concrete data.
 
 from __future__ import annotations
 

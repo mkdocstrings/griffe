@@ -1,3 +1,6 @@
+# This module contains our static analysis agent,
+# capable of parsing and visiting sources, statically.
+
 """Code parsing and data extraction utilies.
 
 This module exposes a public function, [`visit()`][griffe.visit],

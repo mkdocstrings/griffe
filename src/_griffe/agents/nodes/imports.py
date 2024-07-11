@@ -1,4 +1,4 @@
-"""This module contains utilities for extracting information from nodes."""
+# This module contains utilities for working with imports and relative imports.
 
 from __future__ import annotations
 

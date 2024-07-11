@@ -1,4 +1,6 @@
-"""Test helpers and pytest fixtures."""
+# This module contains helpers. They simplify programmatic use of Griffe,
+# for example to load data from strings or to create temporary packages.
+# They are particularly useful for our own tests suite.
 
 from __future__ import annotations
 

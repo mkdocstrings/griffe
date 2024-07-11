@@ -1,4 +1,5 @@
-"""This module imports all the defined parsers."""
+# This module imports all the defined parsers
+# and provides a generic function to parse docstrings.
 
 from __future__ import annotations
 

@@ -1,4 +1,5 @@
-"""This module contains utilities to compute loading statistics."""
+# This module contains utilities to compute loading statistics,
+# like time spent visiting modules statically or dynamically.
 
 from __future__ import annotations
 

@@ -1,1 +1,2 @@
-"""This module is the public interface to import elements from the base."""
+# These submodules contain our extension system,
+# as well as built-in extensions.

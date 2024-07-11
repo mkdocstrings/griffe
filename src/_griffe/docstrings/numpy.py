@@ -1,21 +1,21 @@
-"""This module defines functions to parse Numpy-style docstrings into structured data.
+# This module defines functions to parse Numpy-style docstrings into structured data.
+#
+# Based on https://numpydoc.readthedocs.io/en/latest/format.html,
+# it seems Numpydoc is a superset of RST.
+# Since fully parsing RST is a non-goal of this project,
+# some things are stripped from the Numpydoc specification.
+#
+# Rejected as non particularly Pythonic or useful as sections:
+#
+# - See also: this section feels too subjective (specially crafted as a standard for Numpy itself),
+#     and there are may ways to reference related items in a docstring, depending on the chosen markup.
+#
+# Rejected as naturally handled by the user-chosen markup:
+#
+# - Warnings: this is just markup.
+# - Notes: again, just markup.
+# - References: again, just markup.
 
-Based on https://numpydoc.readthedocs.io/en/latest/format.html,
-it seems Numpydoc is a superset of RST.
-Since fully parsing RST is a non-goal of this project,
-some things are stripped from the Numpydoc specification.
-
-Rejected as non particularly Pythonic or useful as sections:
-
-- See also: this section feels too subjective (specially crafted as a standard for Numpy itself),
-    and there are may ways to reference related items in a docstring, depending on the chosen markup.
-
-Rejected as naturally handled by the user-chosen markup:
-
-- Warnings: this is just markup.
-- Notes: again, just markup.
-- References: again, just markup.
-"""
 
 from __future__ import annotations
 

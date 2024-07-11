@@ -1,4 +1,7 @@
-"""This module defines introspection mechanisms.
+# This module contains our dynamic analysis agent,
+# capable of inspecting modules and objects in memory, at runtime.
+
+"""Griffe provides introspection mechanisms.
 
 Sometimes we cannot get the source code of a module or an object,
 typically built-in modules like `itertools`. The only way to know
@@ -10,7 +13,7 @@ powerful enough to infer all these dynamic modifications. In this case,
 we always try to visit the code first, and only then we load the object
 to update the data with introspection.
 
-This module exposes a public function, [`inspect()`][griffe.inspect],
+Griffe provides a public function, [`inspect()`][griffe.inspect],
 which inspects the module using [`inspect.getmembers()`][inspect.getmembers],
 and returns a new [`Module`][griffe.Module] instance,
 populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.

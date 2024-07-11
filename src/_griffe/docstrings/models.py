@@ -1,4 +1,4 @@
-"""This module contains the dataclasses related to docstrings."""
+# This module contains the models for storing docstrings structured data.
 
 from __future__ import annotations
 

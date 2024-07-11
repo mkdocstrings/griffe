@@ -1,4 +1,5 @@
-"""This module stores collections of data, useful during parsing."""
+# This module contains collection-related classes,
+# which are used throughout the API.
 
 from __future__ import annotations
 

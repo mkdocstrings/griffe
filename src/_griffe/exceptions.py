@@ -1,4 +1,4 @@
-"""This module contains all the exceptions specific to Griffe."""
+# This module contains all the exceptions specific to Griffe.
 
 from __future__ import annotations
 
