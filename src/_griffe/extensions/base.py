@@ -1,4 +1,5 @@
-"""This module contains the base classes for dealing with extensions."""
+# This module contains the base class for extensions
+# and the functions to load them.
 
 from __future__ import annotations
 

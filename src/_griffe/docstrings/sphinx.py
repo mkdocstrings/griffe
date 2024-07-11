@@ -1,9 +1,8 @@
-"""This module defines functions to parse Sphinx docstrings into structured data.
+# This module defines functions to parse Sphinx docstrings into structured data.
 
-Credits to Patrick Lannigan ([@plannigan](https://github.com/plannigan))
-who originally added the parser in the [pytkdocs project](https://github.com/mkdocstrings/pytkdocs).
-See https://github.com/mkdocstrings/pytkdocs/pull/71.
-"""
+# Credits to Patrick Lannigan ([@plannigan](https://github.com/plannigan))
+# who originally added the parser in the [pytkdocs project](https://github.com/mkdocstrings/pytkdocs).
+# See https://github.com/mkdocstrings/pytkdocs/pull/71.
 
 from __future__ import annotations
 

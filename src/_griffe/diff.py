@@ -1,4 +1,10 @@
-"""This module exports "breaking changes" related utilities."""
+# This module exports "breaking changes" related utilities.
+# The logic here is to iterate on objects and their members recursively,
+# to yield found breaking changes.
+#
+# The breakage class definitions might sound a bit verbose,
+# but declaring them this way helps with (de)serialization,
+# which we don't use yet, but could use in the future.
 
 from __future__ import annotations
 

@@ -1,4 +1,5 @@
-"""This module contains some mixins classes about accessing and setting members."""
+# This module contains some mixins classes that hold shared methods
+# of the different kinds of objects, and aliases.
 
 from __future__ import annotations
 

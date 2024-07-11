@@ -1,9 +1,5 @@
-"""This module contains data encoders/serializers and decoders/deserializers.
-
-The available formats are:
-
-- `JSON`: see the [`JSONEncoder`][griffe.JSONEncoder] and [`json_decoder`][griffe.json_decoder].
-"""
+# This module contains data encoders/serializers and decoders/deserializers.
+# We only support JSON for now, but might want to add more formats in the future.
 
 from __future__ import annotations
 

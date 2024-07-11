@@ -1,1 +1,1 @@
-"""This module exposes objects related to docstrings."""
+# These submodules define models and parsers for docstrings.

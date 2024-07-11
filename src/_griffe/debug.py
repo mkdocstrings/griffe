@@ -1,4 +1,8 @@
-"""Debugging utilities."""
+# This module is here to help users report bugs.
+# It provides a function to print environment information,
+# which is called from the public `griffe.debug` module
+# (when called with `python -m griffe.debug`)
+# or thanks to the `--debug-info` CLI flag.
 
 from __future__ import annotations
 

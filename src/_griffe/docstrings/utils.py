@@ -1,4 +1,4 @@
-"""This module contains utilities for docstrings parsers."""
+# This module contains utilities for docstrings parsers.
 
 from __future__ import annotations
 

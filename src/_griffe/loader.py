@@ -1,3 +1,5 @@
+# This module contains all the logic for loading API data from sources or compiled modules.
+
 """Griffe provides "loading" utilities.
 
 In Griffe's context, loading means:

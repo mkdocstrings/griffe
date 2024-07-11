@@ -1,6 +1,14 @@
-"""This module contains logging utilities.
+# This module contains the logger used throughout Griffe.
+# The logger is actually a wrapper around the standard Python logger.
+# We wrap it so that it is easier for other downstream libraries to patch it.
+# For example, mkdocstrings-python patches the logger to relocate it as a child
+# of `mkdocs.plugins` so that it fits in the MkDocs logging configuration.
+#
+# We use a single, global logger because our public API is exposed in a single module, `griffe`.
 
-We provide the [`patch_loggers`][griffe.patch_loggers]
+"""Griffe's output and error messages are logging messages.
+
+Griffe provides the [`patch_loggers`][griffe.patch_loggers]
 function so dependant libraries can patch Griffe's logger as they see fit.
 
 For example, to fit in the MkDocs logging configuration

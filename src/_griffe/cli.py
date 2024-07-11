@@ -1,11 +1,10 @@
-"""Module that contains the command line application."""
-
+# This module contains all CLI-related things.
 # Why does this file exist, and why not put this in `__main__`?
 #
-# You might be tempted to import things from `__main__` later,
-# but that will cause problems: the code will get executed twice:
+# We might be tempted to import things from `__main__` later,
+# but that will cause problems; the code will get executed twice:
 #
-# - When you run `python -m griffe` python will execute
+# - When we run `python -m griffe`, Python will execute
 #   `__main__.py` as a script. That means there won't be any
 #   `griffe.__main__` in `sys.modules`.
 # - When you import `__main__` it will get executed again (as a module) because
@@ -42,6 +41,10 @@ if TYPE_CHECKING:
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
+"""The default log level for the CLI.
+
+This can be overriden by the `GRIFFE_LOG_LEVEL` environment variable.
+"""
 
 # YORE: Bump 1: Remove line.
 _logger = get_logger("griffe.cli")

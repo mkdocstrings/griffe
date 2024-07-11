@@ -1,8 +1,9 @@
-"""Compute method resolution order. Implements `Class.mro` attribute."""
-
-# Copyright (c) 2019 Vitaly R. Samigullin
-# Adapted from https://github.com/pilosus/c3linear
-# Adapted from https://github.com/tristanlatr/pydocspec
+# This module contains a single function, `c3linear_merge`.
+# The function is generic enough to be in its own module.
+#
+# - Copyright (c) 2019 Vitaly R. Samigullin
+# - Adapted from https://github.com/pilosus/c3linear
+# - Adapted from https://github.com/tristanlatr/pydocspec
 
 from __future__ import annotations
 

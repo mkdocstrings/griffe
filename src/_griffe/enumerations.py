@@ -1,4 +1,4 @@
-"""This module contains all the enumerations of the package."""
+# This module contains all the enumerations of the package.
 
 from __future__ import annotations
 

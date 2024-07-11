@@ -1,8 +1,7 @@
-"""Built-in extension adding support for dataclasses.
-
-This extension re-creates `__init__` methods of dataclasses
-during static analysis.
-"""
+# Built-in extension adding support for dataclasses.
+#
+# This extension re-creates `__init__` methods of dataclasses
+# during static analysis.
 
 from __future__ import annotations
 
