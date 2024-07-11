@@ -63,7 +63,8 @@ if TYPE_CHECKING:
     from _griffe.models import Docstring
 
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Regex-replace `\b_warn\b` with `docstring_warning` within file.
+# YORE: Bump 1.0.0: Remove line.
 _warn = docstring_warning("griffe.docstrings.numpy")
 
 _section_kind = {

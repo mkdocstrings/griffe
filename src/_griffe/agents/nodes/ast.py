@@ -6,10 +6,6 @@ from ast import AST
 from typing import Iterator
 
 from _griffe.exceptions import LastNodeError
-from _griffe.logger import get_logger
-
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
-_logger = get_logger("griffe.agents.nodes._ast")
 
 
 def ast_kind(node: AST) -> str:

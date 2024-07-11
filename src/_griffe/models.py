@@ -30,6 +30,9 @@ from _griffe.docstrings.parsers import parse
 from _griffe.enumerations import Kind, ParameterKind, Parser
 from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from _griffe.expressions import ExprCall, ExprName
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 from _griffe.mixins import ObjectAliasMixin
 
@@ -40,7 +43,7 @@ if TYPE_CHECKING:
 
 from functools import cached_property
 
-# YORE: Bump 1.0.0: Replace `.dataclasses` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.dataclasses")
 
 

@@ -13,6 +13,9 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
 from _griffe.agents.nodes.parameters import get_parameters
 from _griffe.enumerations import LogLevel, ParameterKind
 from _griffe.exceptions import NameResolutionError
+
+# YORE: Bump 1.0.0: Replace `_logger` with `logger` within file.
+# YORE: Bump 1.0.0: Replace `get_logger` with `logger` within line.
 from _griffe.logger import get_logger
 
 if TYPE_CHECKING:
@@ -21,7 +24,7 @@ if TYPE_CHECKING:
     from _griffe.models import Class, Module
 
 
-# YORE: Bump 1.0.0: Regex-replace `\.[^"]+` with `` within line.
+# YORE: Bump 1.0.0: Remove line.
 _logger = get_logger("griffe.expressions")
 
 
