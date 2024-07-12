@@ -132,6 +132,7 @@ theme:
 
 extra_css:
 - css/custom.css
+- css/material.css
 - css/mkdocstrings.css
 - css/insiders.css
 
