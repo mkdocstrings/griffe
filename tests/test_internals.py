@@ -173,3 +173,19 @@ def test_inventory_matches_api(
                 not_in_api.append(item.name)
     msg = "Inventory objects not in public API (try running `make run mkdocs build`):\n{paths}"
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))
+
+
+def test_no_module_docstrings_in_internal_api(internal_api: griffe.Module) -> None:
+    """No module docstrings should be written in our internal API.
+
+    The reasoning is that docstrings are addressed to users of the public API,
+    but internal modules are not exposed to users, so they should not have docstrings.
+    """
+
+    def _modules(obj: griffe.Module) -> Iterator[griffe.Module]:
+        for member in obj.modules.values():
+            yield member
+            yield from _modules(member)
+
+    for obj in _modules(internal_api):
+        assert not obj.docstring
