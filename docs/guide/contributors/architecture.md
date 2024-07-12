@@ -100,6 +100,12 @@ The tools used in tasks have their configuration files stored in the `config` fo
 
 Sources are located in the `src` folder, following the [src-layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). We use [PDM-Backend](https://backend.pdm-project.org/) to build source and wheel distributions, and configure it in `pyproject.toml` to search for packages in the `src` folder.
 
+## Tests
+
+Our test suite is located in the `tests` folder. It is located outside of the sources as to not pollute distributions (it would be very wrong to publish a `tests` package as part of our distributions, since this name is extremely common), or worse, the public API. The `tests` folder is however included in our source distributions (`.tar.gz`), alongside most of our metadata and configuration files. Check out `pyproject.toml` to get the full list of files included in our source distributions.
+
+The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test modules reflect our internal API structure, and except for a few test modules that test specific aspects of our API, each test module tests the logic from the corresponding module in the internal API. For example, `test_finder.py` tests code of the `_griffe.finder` internal module, while `test_functions` tests our ability to extract correct information from function signatures, statically. The general rule of thumb when writing new tests is to mirror the internal API. If a test touches to many aspects of the loading process, it can be added to the `test_loader` test module. 
+
 ## Program structure
 
 Griffe is composed of two packages:
@@ -111,14 +117,96 @@ When installing the `griffe` distribution from PyPI.org (or any other index wher
 
 Right now, the `griffe` package has a lot of public submodules: this is only for backward-compatibility reasons. These submodules will be removed in version 1. Importing or accessing objects from these submodules will emit deprecation warnings, recommending to import things from `griffe` directly.
 
-### Internal API
+We'll be honest: our code organization is not the most elegant, but it works :shrug: Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
-```python exec="1" idprefix="internal-" session="comment_blocks"
---8<-- "scripts/gen_internal_api.py"
+```python exec="true" html="true"
+from pydeps import cli, colors, dot, py2depgraph
+from pydeps.pydeps import depgraph_to_dotsrc
+from pydeps.target import Target
 
-render_internal_api(heading_level=4)
+cli.verbose = cli._not_verbose
+options = cli.parse_args(["src/griffe", "--noshow", "--reverse"])
+colors.START_COLOR = 128
+target = Target(options["fname"])
+with target.chdir_work():
+    dep_graph = py2depgraph.py2dep(target, **options)
+dot_src = depgraph_to_dotsrc(target, dep_graph, **options)
+svg = dot.call_graphviz_dot(dot_src, "svg").decode()
+svg = "".join(svg.splitlines()[6:])
+svg = svg.replace('fill="white"', 'fill="transparent"')
+print(f'<div class="interactiveSVG pydeps">{svg}</div>')
+```
+
+<small><i>You can zoom and pan all diagrams on this page with mouse inputs.</i></small>
+
+The two following sections, Public API and Internal API, are generated automatically by iterating on the modules of our public and internal APIs respectively, and extracting the comment block at the top. The comment blocks at the top of modules are addressed to readers of the code (maintainers, contributors), while module docstrings are addressed to users of the API. Module docstrings in our internal API are never written, because our [module layout][module-layout] is hidden, and therefore modules aren't part of the public API, so it doesn't make much sense to write "user documentation" in them.
+
+```python exec="1" session="comment_blocks"
+--8<-- "scripts/gen_structure_docs.py"
+```
+
+### CLI entrypoint
+
+```python exec="1" idprefix="entrypoint-" session="comment_blocks"
+render_entrypoint(heading_level=4)
 ```
 
 ### Public API
 
-## Tests
+```python exec="1" idprefix="public-" session="comment_blocks"
+render_public_api(heading_level=4)
+```
+
+### Internal API
+
+```python exec="1" idprefix="internal-" session="comment_blocks"
+render_internal_api(heading_level=4)
+```
+
+<style>
+    .interactiveSVG svg {
+        min-height: 200px;
+    }
+    .graph > polygon {
+        fill-opacity: 0.0;
+    }
+
+    /* pydeps dependency graph. */
+    [data-md-color-scheme="default"] .pydeps .edge > path,
+    [data-md-color-scheme="default"] .pydeps .edge > polygon {
+        stroke: black;
+    }
+
+    [data-md-color-scheme="slate"] .pydeps .edge > path,
+    [data-md-color-scheme="slate"] .pydeps .edge > polygon {
+        stroke: white;
+    }
+
+
+    /* Code2Flow call graphs. */
+    [data-md-color-scheme="default"] .code2flow .cluster > polygon {
+        stroke: black;
+    }
+    [data-md-color-scheme="default"] .code2flow .cluster > text {
+        fill: black;
+    }
+
+    [data-md-color-scheme="slate"] .code2flow .cluster > polygon {
+        stroke: white;
+    }
+    [data-md-color-scheme="slate"] .code2flow .cluster > text {
+        fill: white;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        const divs = document.getElementsByClassName("interactiveSVG");
+        for (let i = 0; i < divs.length; i++) {
+            if (!divs[i].firstElementChild.id) {
+                divs[i].firstElementChild.id = `interactiveSVG-${i}`
+            }
+            svgPanZoom(`#${divs[i].firstElementChild.id}`, {});
+        }
+    });
+</script>
