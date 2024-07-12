@@ -1,3 +1,7 @@
+# This top-level module imports all public names from the package,
+# and exposes them as public objects. We have tests to make sure
+# no object is forgotten in this list.
+
 """Griffe package.
 
 Signatures for entire Python programs.

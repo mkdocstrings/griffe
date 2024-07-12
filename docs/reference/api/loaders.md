@@ -1,11 +1,5 @@
 # Loaders
 
-::: _griffe.loader
-    options:
-        members: false
-        show_root_heading: false
-        show_root_toc_entry: false
-
 ## **Main API**
 
 ::: griffe.load

@@ -1,14 +1,6 @@
 # This module contains our static analysis agent,
 # capable of parsing and visiting sources, statically.
 
-"""Code parsing and data extraction utilies.
-
-This module exposes a public function, [`visit()`][griffe.visit],
-which parses the module code using [`parse()`][ast.parse],
-and returns a new [`Module`][griffe.Module] instance,
-populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
-"""
-
 from __future__ import annotations
 
 import ast
@@ -82,6 +74,16 @@ def visit(
     modules_collection: ModulesCollection | None = None,
 ) -> Module:
     """Parse and visit a module file.
+
+    We provide this function for static analysis. It uses a [`NodeVisitor`][ast.NodeVisitor]-like class,
+    the [`Visitor`][griffe.Visitor], to compile and parse code (using [`compile`][])
+    then visit the resulting AST (Abstract Syntax Tree).
+
+    Important:
+        This function is generally not used directly.
+        In most cases, users can rely on the [`GriffeLoader`][griffe.GriffeLoader]
+        and its accompanying [`load`][griffe.load] shortcut and their respective options
+        to load modules using static analysis.
 
     Parameters:
         module_name: The module name (as when importing [from] it).

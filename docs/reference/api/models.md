@@ -1,12 +1,12 @@
 # Models
 
-::: _griffe.models
-    options:
-        members: false
-        show_root_heading: false
-        show_root_toc_entry: false
-        summary:
-            classes: true
+Griffe stores information extracted from Python source code into data models.
+
+These models represent trees of objects, starting with modules, and containing classes, functions, and attributes.
+
+Modules can have submodules, classes, functions and attributes. Classes can have nested classes, methods and attributes. Functions and attributes do not have any members.
+
+Indirections to objects declared in other modules are represented as "aliases". An alias therefore represents an imported object, and behaves almost exactly like the object it points to: it is a light wrapper around the object, with special methods and properties that allow to access the target's data transparently.
 
 The 5 models:
 

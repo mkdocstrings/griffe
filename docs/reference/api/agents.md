@@ -1,5 +1,7 @@
 # Agents
 
+Griffe is able to analyze code both statically and dynamically.
+
 ## **Main API**
 
 ::: griffe.visit
