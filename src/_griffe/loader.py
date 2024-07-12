@@ -1,25 +1,5 @@
 # This module contains all the logic for loading API data from sources or compiled modules.
 
-"""Griffe provides "loading" utilities.
-
-In Griffe's context, loading means:
-
-- searching for a package, and finding it on the file system or as a builtin module
-  (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)
-- extracting information from each of its (sub)modules, by either parsing
-  the source code (see the [`visit`][griffe.visit] function)
-  or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)
-
-The extracted information is stored in a collection of modules, which can be queried later.
-Each collected module is a tree of objects, representing the structure of the module.
-See the [`Module`][griffe.Module], [`Class`][griffe.Class],
-[`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes
-for more information.
-
-The main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].
-Convenience functions [`load`][griffe.load] and [`load_git`][griffe.load_git] are also available.
-"""
-
 from __future__ import annotations
 
 import sys
@@ -762,25 +742,42 @@ def load(
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
 ) -> Object | Alias:
-    """Load and return a module.
+    """Load and return a Griffe object.
+
+    In Griffe's context, loading means:
+
+    - searching for a package, and finding it on the file system or as a builtin module
+        (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)
+    - extracting information from each of its (sub)modules, by either parsing
+        the source code (see the [`visit`][griffe.visit] function)
+        or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)
+
+    The extracted information is stored in a collection of modules, which can be queried later.
+    Each collected module is a tree of objects, representing the structure of the module.
+    See the [`Module`][griffe.Module], [`Class`][griffe.Class],
+    [`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes
+    for more information.
+
+    The main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].
+    Convenience functions like this one and [`load_git`][griffe.load_git] are also available.
 
     Example:
-    ```python
-    import griffe
+        ```python
+        import griffe
 
-    module = griffe.load(...)
-    ```
+        module = griffe.load(...)
+        ```
 
-    This is a shortcut for:
+        This is a shortcut for:
 
-    ```python
-    from griffe import GriffeLoader
+        ```python
+        from griffe import GriffeLoader
 
-    loader = GriffeLoader(...)
-    module = loader.load(...)
-    ```
+        loader = GriffeLoader(...)
+        module = loader.load(...)
+        ```
 
-    See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].
+        See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].
 
     Parameters:
         objspec: The Python path of an object, or file path to a module.

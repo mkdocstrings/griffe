@@ -1,28 +1,6 @@
 # This module contains our dynamic analysis agent,
 # capable of inspecting modules and objects in memory, at runtime.
 
-"""Griffe provides introspection mechanisms.
-
-Sometimes we cannot get the source code of a module or an object,
-typically built-in modules like `itertools`. The only way to know
-what they are made of is to actually import them and inspect their contents.
-
-Sometimes, even if the source code is available, loading the object is desired
-because it was created or modified dynamically, and our node visitor is not
-powerful enough to infer all these dynamic modifications. In this case,
-we always try to visit the code first, and only then we load the object
-to update the data with introspection.
-
-Griffe provides a public function, [`inspect()`][griffe.inspect],
-which inspects the module using [`inspect.getmembers()`][inspect.getmembers],
-and returns a new [`Module`][griffe.Module] instance,
-populating its members recursively, by using a [`NodeVisitor`][ast.NodeVisitor]-like class.
-
-The inspection agent works similarly to the regular "node visitor" agent,
-in that it maintains a state with the current object being handled,
-and recursively handle its members.
-"""
-
 from __future__ import annotations
 
 import ast
@@ -68,6 +46,28 @@ def inspect(
     modules_collection: ModulesCollection | None = None,
 ) -> Module:
     """Inspect a module.
+
+    Sometimes we cannot get the source code of a module or an object,
+    typically built-in modules like `itertools`.
+    The only way to know what they are made of is to actually import them and inspect their contents.
+
+    Sometimes, even if the source code is available,
+    loading the object is desired because it was created or modified dynamically,
+    and our static agent is not powerful enough to infer all these dynamic modifications.
+    In this case, we load the module using introspection.
+
+    Griffe therefore provides this function for dynamic analysis.
+    It uses a [`NodeVisitor`][ast.NodeVisitor]-like class, the [`Inspector`][griffe.Inspector],
+    to inspect the module with [`inspect.getmembers()`][inspect.getmembers].
+
+    The inspection agent works similarly to the regular [`Visitor`][griffe.Visitor] agent,
+    in that it maintains a state with the current object being handled, and recursively handle its members.
+
+    Important:
+        This function is generally not used directly.
+        In most cases, users can rely on the [`GriffeLoader`][griffe.GriffeLoader]
+        and its accompanying [`load`][griffe.load] shortcut and their respective options
+        to load modules using dynamic analysis.
 
     Parameters:
         module_name: The module name (as when importing [from] it).

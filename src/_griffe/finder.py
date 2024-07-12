@@ -1,18 +1,18 @@
 # This module contains the code allowing to find modules.
 #
-# > NOTE: It might be possible to replace a good part of this module's logic
-# > with utilities from `importlib` (however the util in question is private):
-# >
-# > ```pycon
-# > >>> from importlib.util import _find_spec
-# > >>> _find_spec("griffe.agents", _find_spec("griffe", None).submodule_search_locations)
-# > ModuleSpec(
-# >     name='griffe.agents',
-# >     loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa5f34e8110>,
-# >     origin='/media/data/dev/griffe/src/griffe/agents/__init__.py',
-# >     submodule_search_locations=['/media/data/dev/griffe/src/griffe/agents'],
-# > )
-# > ```
+# Note: It might be possible to replace a good part of this module's logic
+# with utilities from `importlib` (however the util in question is private):
+#
+# ```pycon
+# >>> from importlib.util import _find_spec
+# >>> _find_spec("griffe.agents", _find_spec("griffe", None).submodule_search_locations)
+# ModuleSpec(
+#     name='griffe.agents',
+#     loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa5f34e8110>,
+#     origin='/media/data/dev/griffe/src/griffe/agents/__init__.py',
+#     submodule_search_locations=['/media/data/dev/griffe/src/griffe/agents'],
+# )
+# ```
 
 from __future__ import annotations
 

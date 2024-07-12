@@ -1,4 +1,4 @@
-# Deprecated. This extension provides an hybrid behavior while loading data."""
+# Deprecated. This extension provides an hybrid behavior while loading data.
 
 # YORE: Bump 1: Remove module.
 
