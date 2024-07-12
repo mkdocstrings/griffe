@@ -102,8 +102,10 @@ theme:
   - content.code.annotate
   - content.code.copy
   - content.tooltips
+  - navigation.expand
   - navigation.footer
   - navigation.indexes
+  - navigation.path
   - navigation.sections
   - navigation.tabs
   - navigation.tabs.sticky
