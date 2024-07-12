@@ -47,6 +47,9 @@ ignore = [
 ]
 
 [lint.per-file-ignores]
+"src/*/__main__.py" = [
+    "D100",  # Missing module docstring
+]
 "src/*/cli.py" = [
     "T201",  # Print statement
 ]
