@@ -141,6 +141,7 @@ extra_css:
 
 extra_javascript:
 - js/feedback.js
+- https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js
 
 markdown_extensions:
 - attr_list
