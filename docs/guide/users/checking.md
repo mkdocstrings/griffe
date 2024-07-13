@@ -650,8 +650,8 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 
 ### Markdown
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.0.0](insiders/changelog.md#1.0.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
 
 - **CLI**: `-f markdown`
 - **API**: `check(..., style="markdown")` / `check(..., style=ExplanationStyle.MARKDOWN)`
@@ -687,8 +687,8 @@ insert a summary of breaking changes in your changelog entries.
 
 ### GitHub
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.0.0](insiders/changelog.md#1.0.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
 
 - **CLI**: `-f github`
 - **API**: `check(..., style="github")` / `check(..., style=ExplanationStyle.GITHUB)`
@@ -700,11 +700,11 @@ When you create an annotation for a file that is part of the pull request,
 the annotations are also shown in the Files changed tab.
 
 /// tab | Files changed tab
-![gha_annotations_2](img/gha_annotations_2.png)
+![gha_annotations_2](../../img/gha_annotations_2.png)
 ///
 
 /// tab | Checks tab
-![gha_annotations_1](img/gha_annotations_1.png)
+![gha_annotations_1](../../img/gha_annotations_1.png)
 ///
 
 ```console

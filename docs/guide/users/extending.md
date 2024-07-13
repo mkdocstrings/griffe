@@ -597,4 +597,4 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 
 ## Next steps
 
-Extensions are a powerful mechanism to customize or enhance the data loaded by Griffe. But sometimes, all you need to do to improve the data is to make Griffe happy by following a few conventions. We therefore invite you to read our recommendations on [public APIs](public-apis.md), [Python code best practices](python-code.md) and [docstrings](docstrings.md).
+Extensions are a powerful mechanism to customize or enhance the data loaded by Griffe. But sometimes, all you need to do to improve the data is to make Griffe happy by following a few conventions. We therefore invite you to read our recommendations on [public APIs](recommendations/public-apis.md), [Python code best practices](recommendations/python-code.md) and [docstrings](recommendations/docstrings.md).

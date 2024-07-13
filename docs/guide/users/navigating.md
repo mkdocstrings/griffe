@@ -430,14 +430,14 @@ Ultimately, these expressions are what allow downstream tools such as [mkdocstri
 
 [mkdocstrings-python]: https://mkdocstrings.github.io/python
 
-During static analysis, these expressions also allow to analyze decorators, dataclass fields, and many more things in great details, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extensions.md).
+During static analysis, these expressions also allow to analyze decorators, dataclass fields, and many more things in great details, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extending.md).
 
 To learn more about expressions, read their [API reference][griffe.expressions].
 
 ### Modernization
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.2.0](insiders/changelog.md#1.2.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.2.0](../../insiders/changelog.md#1.2.0)
 
 The Python language keeps evolving, and often library developers must continue supporting a few minor versions of Python. Therefore they cannot use some features that were introduced in the latest versions.
 
