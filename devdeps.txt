@@ -22,6 +22,7 @@ types-pyyaml>=6.0
 
 # docs
 black>=24.4
+code2flow>=2.5
 griffe-inherited-docstrings>=1.0
 markdown-callouts>=0.4
 markdown-exec[ansi]>=1.8
@@ -29,10 +30,12 @@ mkdocs>=1.6
 mkdocs-coverage>=1.0
 mkdocs-gen-files>=0.5
 mkdocs-git-committers-plugin-2>=2.3
+mkdocs-git-revision-date-localized-plugin>=1.2
 mkdocs-literate-nav>=0.6
 mkdocs-material>=9.5
 mkdocs-minify-plugin>=0.8
 mkdocs-section-index>=0.3
 mkdocs-redirects>=1.2
 mkdocstrings[python]>=0.25
+pydeps>=1.12
 tomli>=2.0; python_version < '3.11'
