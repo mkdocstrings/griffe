@@ -316,6 +316,58 @@ Apply these recommandations at your discretion: there may be other special cases
 
 ## Make your compiled objects tell their true location
 
-TODO
+Python modules can be written in other languages (C, C++, Rust) and compiled. To extract information from such compiled modules, we have to use dynamic analysis, since sources are not available.
 
-See pymmcore and blake3
+A practice that seem common in projects including compiled modules in their distributions is to make the compiled modules private (prefix their names with an underscore), and to expose their objects from a public module higher-up in the module layout, for example by wildcard importing everything from it.
+
+```tree
+package/
+    __init__.py
+    module.py
+    _module.cpython-312-x86_64-linux-gnu.so
+```
+
+```python title="package/module.py"
+from package._module import *
+```
+
+Since the objects are exposed in `package.module` instead of `package._module`, developers sometimes decide to make their compiled objects lie about their location, and make them say that they are defined in `package.module` instead of `package._module`. Example:
+
+```pycon
+>>> from package._module import MyObject
+>>> MyObject.__module__
+'package.module'
+```
+
+**Don't do that.**
+
+When using dynamic analysis and inspecting modules, Griffe must distinguish objects that were declared in the inspected module from objects that were imported from other modules. The reason is that if we didn't care where objects come from, we could end up inspecting the same objects and their members again and again, since they can be imported in many places. This could lead to infinite loops, recursivity errors, and would generally decrease performance.
+
+So, when Griffe inspects a member of the compiled `_module`, and this member lies and says it comes from `package.module`, Griffe thinks it was imported. It means that Griffe will record the object as an indirection, or alias, instead of visiting it in-place. But that is wrong: the object was actually declared in the module, and should not have been recorded as an indirection.
+
+Fortunately, we were able to put some guard-rails in place, which means that the case above where the compiled and public modules have the same name, except for the leading underscore, is supported, and will not trigger errors. But other cases where modules have different names will trigger issues, and we have to special case them in Griffe itself, after issues are reported.
+
+Please, use your framework features to correctly set the `__module__` attribute of your objects (functions, classes and their methods too) as their *canonical location*, not their public location or any other location in the final package.
+
+For example with [PyO3](https://github.com/PyO3/pyo3):
+
+```rust
+// Your module is compiled and added as `_module` into `package`,
+// but its objects are exposed in `package` or `package.module`.
+// Set `module = "package._module"`, not `module = "package"` or `module = "package.module"`!
+#[pyclass(name = "MyClass", module = "package._module")]
+struct MyClass {
+    // ...
+}
+```
+
+Some modules of the standard library are guilty of this too, and do so inconsistently (`ast` and `_ast`, `io` and `_io`, depending on the Python version...). For this reason, when checking if an object was declared in the currently inspected module, Griffe ultimately considers that any qualified name is equal to itself with each component stripped from leading underscores:
+
+```
+a.b.c == _a.b.c
+a.b.c == _a._b._c
+a.__b._c == __a.b.c
+...
+```
+
+When the qualified name of the object's parent module and the currently inspected module match like above, the object is inspected in-place (added as a member of the currently inspected module) instead of created as an alias.
