@@ -139,7 +139,7 @@ print(f'<div class="interactiveSVG pydeps">{svg}</div>')
 
 <small><i>You can zoom and pan all diagrams on this page with mouse inputs.</i></small>
 
-The two following sections, Public API and Internal API, are generated automatically by iterating on the modules of our public and internal APIs respectively, and extracting the comment block at the top. The comment blocks at the top of modules are addressed to readers of the code (maintainers, contributors), while module docstrings are addressed to users of the API. Module docstrings in our internal API are never written, because our [module layout][module-layout] is hidden, and therefore modules aren't part of the public API, so it doesn't make much sense to write "user documentation" in them.
+The following sections are generated automatically by iterating on the modules of our public and internal APIs respectively, and extracting the comment blocks at the top of each module. The comment blocks are addressed to readers of the code (maintainers, contributors), while module docstrings are addressed to users of the API. Module docstrings in our internal API are never written, because our [module layout][module-layout] is hidden, and therefore modules aren't part of the public API, so it doesn't make much sense to write "user documentation" in them.
 
 ```python exec="1" session="comment_blocks"
 --8<-- "scripts/gen_structure_docs.py"
