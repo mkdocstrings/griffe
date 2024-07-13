@@ -56,7 +56,6 @@ nav:
   - reference.md
   - Command-line interface: reference/cli.md
   - Docstring parsers: reference/docstrings.md
-  # TODO: Sprinkle all enumerations.
   - Python API:
     - reference/api.md
     - CLI entrypoints: reference/api/cli.md
