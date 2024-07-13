@@ -146,6 +146,7 @@ def setup() -> None:
     Once dependencies are installed, try running `make` or `make help` again, to show additional tasks.
 
     ```console exec="1" source="console"
+    $ alias make="$PWD/scripts/make"  # markdown-exec: hide
     $ make
     ```
 
