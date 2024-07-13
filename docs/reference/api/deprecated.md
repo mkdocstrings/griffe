@@ -1,5 +1,7 @@
 # Deprecated API
 
+<!-- YORE: Bump 1: Remove file. -->
+
 Previously, Griffe exposed its [module layout][module-layout]. Before v1, it started hiding the module layout to expose the whole public API from the top-level [`griffe`][griffe] module.
 
 All the following submodules are deprecated, and all the objects they used to expose can now be imported or accessed from `griffe` directly.
