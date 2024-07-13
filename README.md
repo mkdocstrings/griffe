@@ -13,6 +13,10 @@ Signatures for entire Python programs. Extract the structure, the frame, the ske
 Griffe, pronounced "grif" (`/ɡʁif/`), is a french word that means "claw",
 but also "signature" in a familiar way. "On reconnaît bien là sa griffe."
 
+- [User guide](https://mkdocstrings.github.io/griffe/guide/users/)
+- [Contributor guide](https://mkdocstrings.github.io/griffe/guide/contributors/)
+- [API reference](https://mkdocstrings.github.io/griffe/reference/api/)
+
 ## Installation
 
 With `pip`:
@@ -46,7 +50,7 @@ $ griffe dump httpx fastapi
 }
 ```
 
-See [the Dumping data section](https://mkdocstrings.github.io/griffe/dumping/) for more examples.
+See the [Serializing chapter](https://mkdocstrings.github.io/griffe/guide/users/serializing/) for more examples.
 
 Or pass a relative path to the `griffe check` command:
 
@@ -68,7 +72,7 @@ Parameter kind was changed:
   New: keyword-only
 ```
 
-See [the API breakage section](https://mkdocstrings.github.io/griffe/checking/) for more examples.
+See the [Checking chapter](https://mkdocstrings.github.io/griffe/guide/users/checking/) for more examples.
 
 **With Python**, loading a package:
 
@@ -90,41 +94,4 @@ for breakage in griffe.find_breaking_changes(previous, current):
     ...
 ```
 
-See [the Loading data section](https://mkdocstrings.github.io/griffe/loading/) for more examples.
-
-## Todo
-
-- Extensions
-    - Post-processing extensions
-    - Third-party libraries we could provide support for:
-        - Django support
-        - Marshmallow support
-        - Pydantic support
-- Docstrings parsers
-    - epydoc
-    - New Markdown-based format? For graceful degradation
-- Serializer:
-    - Flat JSON
-- API diff:
-    - [ ] Mechanism to cache APIs? Should users version them, or store them somewhere (docs)?
-    - [ ] Ability to return warnings (things that are not backward-compatibility-friendly)
-    - List of things to consider for warnings
-        - Multiple positional-or-keyword parameters
-        - Public imports in public modules
-        - Private things made public through imports/assignments
-        - Too many public things? Generally annoying. Configuration?
-    - [x] Ability to compare two APIs to return breaking changes
-    - List of things to consider for breaking changes
-        - [x] Changed position of positional only parameter
-        - [x] Changed position of positional or keyword parameter
-        - [ ] Changed type of parameter
-        - [ ] Changed type of public module attribute
-        - [ ] Changed return type of a public function/method
-        - [x] Added parameter without a default value
-        - [x] Removed keyword-only parameter without a default value, without **kwargs to swallow it
-        - [x] Removed positional-only parameter without a default value, without *args to swallow it
-        - [x] Removed positional-or_keyword argument without a default value, without *args and **kwargs to swallow it
-        - [x] Removed public module/class/function/method/attribute
-        - [ ] All of the previous even when parent is private (could be publicly imported or assigned somewhere),
-            and later be smarter: public assign/import makes private things public!
-        - [ ] Inheritance: removed, added or changed base that changes MRO
+See the [Loading chapter](https://mkdocstrings.github.io/griffe/loading/) for more examples.
