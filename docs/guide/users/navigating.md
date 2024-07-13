@@ -337,7 +337,7 @@ Each object has an optional [`docstring`][griffe.Object.docstring] attached to i
 
 Docstrings can be parsed against several [docstring-styles](../../reference/docstrings.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
 
-When loading a package, it is possible to specify the docstring style to attach to every docstring (see [`griffe.load(docstring_parser)`][griffe.load(docstring_parser)]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of docstring sections.
+When loading a package, it is possible to specify the docstring style to attach to every docstring (see [`griffe.load(docstring_parser)`][griffe.load(docstring_parser)]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depend on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
 
 After a package is loaded, it is still possible to change the style used for specific docstrings by either overriding their [`parser`][griffe.Docstring.parser] and [`parser_options`][griffe.Docstring.parser_options] attributes, or by calling their [`parse()`][griffe.Docstring.parse] method with a different style:
 
@@ -393,6 +393,66 @@ Models have most fields in common, but also have specific fiels.
 - [`wildcard`][griffe.Alias.wildcard]: Whether this alias represents a wildcard import, and if so from which module.
 - [`resolve_target()`][griffe.Alias.resolve_target]: A method that resolves the target when called.
 
+## Expressions
+
+When parsing source code, Griffe builds enhanced ASTs for type annotations, decorators, parameter defaults, attribute values, etc.
+
+These "expressions" are very similar to what Python's [ast][] module gives you back when parsing source code, with a few differences: attributes like `a.b.c.` are flattened, and names like `a` have a parent object attached to them, a Griffe object, allowing to resolve this name to its full path given the scope of its parent.
+
+You can write some code below and print annotations or attribute values with [Rich][rich]'s pretty printer to see how expressions look like.
+
+[rich]: https://rich.readthedocs.io/en/stable/
+
+```pyodide install="griffe,rich"
+from griffe.tests import temporary_visited_module
+from rich.pretty import pprint
+
+code = """
+    from dataclasses import dataclass
+    from random import randint
+
+    @dataclass
+    class Bar:
+        baz: int
+
+    def get_some_baz() -> int:
+        return randint(0, 10)
+
+    foo: Bar = Bar(baz=get_some_baz())
+"""        
+
+with temporary_visited_module(code) as module:
+    pprint(module["foo"].annotation)
+    pprint(module["foo"].value)
+```
+
+Ultimately, these expressions are what allow downstream tools such as [mkdocstrings' Python handler][mkdocstrings-python] to render cross-references to every object it knows of, coming from the current code base or loaded from object inventories (objects.inv files).
+
+[mkdocstrings-python]: https://mkdocstrings.github.io/python
+
+During static analysis, these expressions also allow to analyze decorators, dataclass fields, and many more things in great details, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extensions.md).
+
+To learn more about expressions, read their [API reference][griffe.expressions].
+
+### Modernization
+
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.2.0](insiders/changelog.md#1.2.0)
+
+The Python language keeps evolving, and often library developers must continue supporting a few minor versions of Python. Therefore they cannot use some features that were introduced in the latest versions.
+
+Yet this doesn't mean they can't enjoy latest features in their own docs: Griffe allows to "modernize" expressions, for example by replacing `typing.Union` with PEP 604 type unions `|`. Thanks to this, downstream tools like [mkdocstrings][mkdocstrings-python] can automatically transform type annotations into their modern equivalent. This improves consistency in your docs, and shows users how to use your code with the latest features of the language.
+
+To modernize an expression, simply call its [`modernize()`][griffe.Expr.modernize] method. It returns a new, modernized expression. Some parts of the expression might be left unchanged, so be careful if you decide to mutate them.
+
+Modernizations applied:
+
+- `typing.Dict[A, B]` becomes `dict[A, B]`
+- `typing.List[A]` becomes `list[A]`
+- `typing.Set[A]` becomes `set[A]`
+- `typing.Tuple[A]` becomes `tuple[A]`
+- `typing.Union[A, B]` becomes `A | B`
+- `typing.Optional[A]` becomes `A | None`
 
 ## Next steps
 
