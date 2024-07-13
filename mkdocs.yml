@@ -40,9 +40,9 @@ nav:
       - Checking: guide/users/checking.md
       - Extending: guide/users/extending.md
     - Recommendations:
-      - Public APIs: guide/users/public-apis.md
-      - Python code: guide/users/python-code.md
-      - Docstrings: guide/users/docstrings.md
+      - Public APIs: guide/users/recommendations/public-apis.md
+      - Python code: guide/users/recommendations/python-code.md
+      - Docstrings: guide/users/recommendations/docstrings.md
     - How-to:
       - Parse docstrings: guide/users/how-to/parse-docstrings.md
   - Contributor guide:
