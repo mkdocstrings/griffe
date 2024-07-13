@@ -4,10 +4,22 @@ goals:
     features: []
   1000:
     name: GraviFridge Fluid Renewal
-    features: []
+    features:
+    - name: "Markdown output format for the `griffe check` command"
+      ref: /checking/#markdown
+      since: 2024/01/16
+    - name: "GitHub output format for the `griffe check` command"
+      ref: /checking/#github
+      since: 2024/01/16
   1500:
     name: HyperLamp Navigation Tips
-    features: []
+    features:
+    - name: "Check API of Python packages from PyPI"
+      ref: /checking/#using-pypi
+      since: 2024/03/02
+    - name: "Expressions modernization"
+      ref: /expressions/#modernization
+      since: 2024/03/11
   2000:
     name: FusionDrive Ejection Configuration
     features: []

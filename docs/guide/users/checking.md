@@ -4,6 +4,8 @@ Griffe is able to compare two snapshots of your project to detect API breakages 
 
 ## Command-line
 
+### Using Git
+
 By default, Griffe will compare the current code to the latest tag:
 
 ```console
@@ -40,6 +42,54 @@ Example in a monorepo, within a deeper file tree:
 ```console
 $ griffe check -s back/services/identity-provider/src identity_provider
 ```
+
+### Using PyPI
+
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0)
+
+It's also possible to directly **check packages from PyPI.org**
+(or other indexes configured through `PIP_INDEX_URL`).
+This feature is [available to sponsors only](../../insiders/index.md)
+and requires that you install Griffe with the `pypi` extra:
+
+```console
+$ pip install griffe[pypi]
+```
+
+The command syntax is:
+
+```console
+$ griffe check package_name -b project-name==2.0 -a project-name==1.0
+```
+
+You can let Griffe guess the package name by passing an empty string:
+
+```console
+$ griffe check "" -b project-name==2.0 -a project-name==1.0
+```
+
+[PEP 508 version specifiers](https://peps.python.org/pep-0508/) are supported
+(`<`, `<=`, `!=`, `==`, `>=`, `>`, `~=`).
+For example, to compare v2 against the version just before it:
+
+```console
+$ griffe check "" -b project-name==2.0 -a project-name<2.0
+```
+
+Without a version specifier on the base reference,
+or without a base reference at all,
+Griffe will use the latest available version.
+The two following commands compare the latest version against v1:
+
+```console
+$ griffe check "" -b project-name -a project-name==1.0
+$ griffe check "" -a project-name==1.0
+```
+
+Griffe will actually install packages in a cache directory.
+It means a few things: source distributions are supported,
+and only packages that are compatible with your current environment can be checked.
 
 ## Python API
 
@@ -572,18 +622,98 @@ NOTE: Unless inherited members are lost in the process, removing a class base is
 
 ## Output style
 
-By default, Griffe will print each detected breakage on a single line, on `stderr`:
+Griffe supports writing detected breakages in multiple formats, or styles.
+
+### One-line
+
+- **CLI**: `-f oneline` / no flags
+- **API**: `check(...)` / `check(..., style="oneline")` / `check(..., style=ExplanationStyle.ONE_LINE)`
+
+This is the default format.
+Griffe will print each detected breakage on a single line:
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
+### Verbose
+
+- **CLI**: `-f verbose` / `-v`
+- **API**: `check(..., style="verbose")` / `check(..., style=ExplanationStyle.VERBOSE)` / `check(..., verbose=True)`
 
 Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
+```
+
+### Markdown
+
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.0.0](insiders/changelog.md#1.0.0)
+
+- **CLI**: `-f markdown`
+- **API**: `check(..., style="markdown")` / `check(..., style=ExplanationStyle.MARKDOWN)`
+
+The Markdown format is adapted for changelogs.
+It doesn't show the file and line number, and instead
+prints out the complete path of your API objects.
+With a bit of automation, you will be able to automatically
+insert a summary of breaking changes in your changelog entries.
+
+```md exec="1" source="tabbed-left" tabs="Output|Result"
+- `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter default was changed*: `True` -> `None`
+- `griffe.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter default was changed*: `True` -> `None`
+- `griffe.loader.GriffeLoader.resolve_aliases(max_iterations)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.loader.GriffeLoader.resolve_module_aliases(only_exported)`: *Parameter was removed*
+- `griffe.loader.GriffeLoader.resolve_module_aliases(only_known_modules)`: *Parameter was removed*
+- `griffe.git.tmp_worktree(commit)`: *Parameter was removed*
+- `griffe.git.tmp_worktree(repo)`: *Positional parameter was moved*: position: from 2 to 1 (-1)
+- `griffe.git.load_git(commit)`: *Parameter was removed*
+- `griffe.git.load_git(repo)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(submodules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(try_relative_path)`: *Parameter was removed*
+- `griffe.git.load_git(extensions)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(search_paths)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(docstring_parser)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(docstring_options)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(lines_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(modules_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffe.git.load_git(allow_inspection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+```
+
+### GitHub
+
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.0.0](insiders/changelog.md#1.0.0)
+
+- **CLI**: `-f github`
+- **API**: `check(..., style="github")` / `check(..., style=ExplanationStyle.GITHUB)`
+
+When running `griffe check` in CI, you can enable GitHub's annotations
+thanks to the GitHub output style.
+Annotations are displayed on specific lines of code. They are visible in the Checks tab.
+When you create an annotation for a file that is part of the pull request,
+the annotations are also shown in the Files changed tab.
+
+/// tab | Files changed tab
+![gha_annotations_2](img/gha_annotations_2.png)
+///
+
+/// tab | Checks tab
+![gha_annotations_1](img/gha_annotations_1.png)
+///
+
+```console
+% python -m griffe check -fgithub -ssrc griffe
+::warning file=src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -> unset
+::warning file=src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -> unset
+::warning file=src/griffe/finder.py,line=62,title=Package.stubs::Attribute value was changed: `stubs` -> `None`
+::warning file=src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
+::warning file=src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
 ```
 
 ## Next steps
