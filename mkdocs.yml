@@ -181,7 +181,6 @@ plugins:
 - gen-files:
     scripts:
     - scripts/gen_griffe_json.py
-    - scripts/redirects.py
 - literate-nav:
     nav_file: SUMMARY.md
 - section-index
@@ -225,6 +224,20 @@ plugins:
     type: timeago
 - minify:
     minify_html: !ENV [DEPLOY, false]
+- redirects:
+    redirect_maps:
+      cli_reference.md: reference/cli.md
+      checking.md: guide/users/checking.md
+      dumping.md: guide/users/serializing.md
+      loading.md: guide/users/loading.md
+      expressions.md: guide/users/navigating.md#expressions
+      best_practices.md: guide/users/recommendations/python-code.md
+      extensions.md: guide/users/extending.md
+      docstrings.md: reference/docstrings.md
+      parsing_docstrings.md: guide/users/how-to/parse-docstrings.md
+      try_it_out.md: playground.md
+      reference/griffe.md: reference/api.md
+      code_of_conduct.md: code-of-conduct.md
 - group:
     enabled: !ENV [MATERIAL_INSIDERS, false]
     plugins:
