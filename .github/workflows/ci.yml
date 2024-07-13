@@ -30,7 +30,7 @@ jobs:
       run: git fetch --depth=1 --tags
 
     - name: Set up Graphviz
-      uses: ts-graphviz/setup-graphviz@v1
+      uses: ts-graphviz/setup-graphviz@v2
 
     - name: Set up Python
       uses: actions/setup-python@v5
