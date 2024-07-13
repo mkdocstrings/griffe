@@ -21,7 +21,11 @@ model.NODE_COLOR = "#e5e5e5"
 def _render_call_graph(module: Path) -> None:
     buffer = StringIO()
     code2flow(str(module), buffer)
-    svg = subprocess.check_output(["dot", "-Tsvg"], input=buffer.getvalue(), text=True)  # noqa: S603, S607
+    try:
+        svg = subprocess.check_output(["dot", "-Tsvg"], input=buffer.getvalue(), text=True)  # noqa: S603, S607
+    except subprocess.CalledProcessError:
+        # The subprocess dies with SIGSEGV in GHA...
+        return
     if 'class="node"' not in svg:
         print("")
     else:
