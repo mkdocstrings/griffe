@@ -62,7 +62,7 @@ These topics explore the user side: how to write code to better integrate with G
 
     See our recommendations for exposing public APIs to your users.
 
-    [:octicons-arrow-right-24: See our public API recommendations](users/public-apis.md)
+    [:octicons-arrow-right-24: See our public API recommendations](users/recommendations/public-apis.md)
 
 -   :material-star-face:{ .lg .middle } **Python code best practices**
 
@@ -70,7 +70,7 @@ These topics explore the user side: how to write code to better integrate with G
 
     See our best practices for writing Python code.
 
-    [:octicons-arrow-right-24: See our best practices](users/python-code.md)
+    [:octicons-arrow-right-24: See our best practices](users/recommendations/python-code.md)
 
 -   :material-text:{ .lg .middle } **Docstrings**
 
@@ -78,6 +78,6 @@ These topics explore the user side: how to write code to better integrate with G
 
     Griffe supports multiple docstring styles. Learn about these different styles, and see our recommendations to write docstrings.
 
-    [:octicons-arrow-right-24: See our docstring recommendations](users/docstrings.md)
+    [:octicons-arrow-right-24: See our docstring recommendations](users/recommendations/docstrings.md)
 
 </div>

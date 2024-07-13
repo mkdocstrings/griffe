@@ -35,7 +35,7 @@ Besides, logging and exception messages simply cannot allow deprecation periods 
 > GRIFFE: **Our recommandation — Communicate your public API, verify what you can.**
 > Take the time to learn about and use ways to declare, communicate and deprecate your public API. Your users will have an easier time using your library. On the maintenance side, you won't get bug reports for uses that are not supported, or you will be able to quickly close them by pointing at the documentation explaining what your public API is, or why something was deprecated, for how long, and how to upgrade.
 >
-> Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](checking.md) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
+> Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](../checking.md) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
 
 ## Conventions
 
@@ -507,7 +507,7 @@ The third and next users of your CLI as API are your users: just as you made you
 
 With time, the code base of your project evolves. You add features, you fix bugs, and you generally reorganize code. Some of these changes might make your project's public API incompatible with previous versions. In that case, you usually have to "deprecate" previous usage in favor of the new usage. That means you have to support both, and emit deprecation warnings when old usage is detected.
 
-There are many different ways of deprecating previous usage of code, which depend on the change itself. We invite you to read our [Checking APIs](checking.md) chapter, which describes all the API changes Griffe is able to detect, and provides hint on how to allow deprecation periods for each kind of change.
+There are many different ways of deprecating previous usage of code, which depend on the change itself. We invite you to read our [Checking APIs](../checking.md) chapter, which describes all the API changes Griffe is able to detect, and provides hint on how to allow deprecation periods for each kind of change.
 
 In addition to emitting deprecation warnings, you should also update the docstrings and documentation for the old usage to point at the new usage, add "deprecated" labels where possible, and mark objects as deprecated when possible.
 
