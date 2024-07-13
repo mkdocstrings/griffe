@@ -52,6 +52,7 @@ nav:
     - Development workflow: guide/contributors/workflow.md
     - Project architecture: guide/contributors/architecture.md
     - Coverage report: guide/contributors/coverage.md
+# TODO: Add an Extensions tab, with Built-in, Official and Third-Party sections.
 - Reference:
   - reference.md
   - Command-line interface: reference/cli.md
