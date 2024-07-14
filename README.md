@@ -72,6 +72,21 @@ Parameter kind was changed:
   New: keyword-only
 ```
 
+It's also possible to directly **check packages from PyPI.org**
+(or other indexes configured through `PIP_INDEX_URL`). 
+This feature is [available to sponsors only](https://mkdocstrings.github.io/griffe/insiders/)
+and requires that you install Griffe with the `pypi` extra:
+
+```bash
+pip install griffe[pypi]
+```
+
+The command syntax is:
+
+```bash
+griffe check package_name -b project-name==2.0 -a project-name==1.0
+```
+
 See the [Checking chapter](https://mkdocstrings.github.io/griffe/guide/users/checking/) for more examples.
 
 **With Python**, loading a package:
