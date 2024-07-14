@@ -169,7 +169,12 @@ def test_inventory_matches_api(
     for item in inventory.values():
         if item.domain == "py" and "(" not in item.name:
             obj = loader.modules_collection[item.name]
-            if obj.path not in public_api_paths and not any(path in public_api_paths for path in obj.aliases):
+            if (
+                obj.path not in public_api_paths
+                and not any(path in public_api_paths for path in obj.aliases)
+                # YORE: Bump 1: Remove line.
+                and not (obj.is_module and obj.package.name == "griffe")
+            ):
                 not_in_api.append(item.name)
     msg = "Inventory objects not in public API (try running `make run mkdocs build`):\n{paths}"
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))
