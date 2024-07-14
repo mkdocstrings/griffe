@@ -337,7 +337,7 @@ Each object has an optional [`docstring`][griffe.Object.docstring] attached to i
 
 Docstrings can be parsed against several [docstring-styles](../../reference/docstrings.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
 
-When loading a package, it is possible to specify the docstring style to attach to every docstring (see [`griffe.load(docstring_parser)`][griffe.load(docstring_parser)]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depend on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
+When loading a package, it is possible to specify the docstring style to attach to every docstring (see the `docstring_parser` parameter of [`griffe.load`][griffe.load]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depend on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
 
 After a package is loaded, it is still possible to change the style used for specific docstrings by either overriding their [`parser`][griffe.Docstring.parser] and [`parser_options`][griffe.Docstring.parser_options] attributes, or by calling their [`parse()`][griffe.Docstring.parse] method with a different style:
 

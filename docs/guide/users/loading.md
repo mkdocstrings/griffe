@@ -72,7 +72,7 @@ Reusing the same loader will also help resolving aliases across different packag
 
 ## Search paths
 
-To specify in which directories Griffe should search for packages and modules, you can use the `search_paths` parameter on both the [`load` function][griffe.load(search_paths)] and the [`GriffeLoader` class][griffe.GriffeLoader(search_paths)].
+To specify in which directories Griffe should search for packages and modules, you can use the `search_paths` parameter on both the [`load` function][griffe.load] and the [`GriffeLoader` class][griffe.GriffeLoader].
 
 === "`load`"
 

@@ -95,7 +95,7 @@ class ModuleFinder:
     The module finder is generally not used directly.
     Each [`GriffeLoader`][griffe.GriffeLoader] instance creates its own module finder instance.
     The finder can be configured when instantiating the loader
-    thanks to the loader [`search_paths`][griffe.GriffeLoader(search_paths)] parameter.
+    thanks to the [loader][griffe.GriffeLoader]'s `search_paths` parameter.
     """
 
     accepted_py_module_extensions: ClassVar[list[str]] = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
