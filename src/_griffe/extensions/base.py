@@ -534,7 +534,7 @@ def load_extensions(
     from _griffe.extensions.dataclasses import DataclassesExtension
 
     for ext in extensions._extensions:
-        if type(ext) == DataclassesExtension:
+        if type(ext) is DataclassesExtension:
             break
     else:
         extensions.add(*_load_extension("dataclasses"))  # type: ignore[misc]
