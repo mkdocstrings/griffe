@@ -5,6 +5,46 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.48.0](https://github.com/mkdocstrings/griffe/releases/tag/0.48.0) - 2024-07-15
+
+<small>[Compare with 0.47.0](https://github.com/mkdocstrings/griffe/compare/0.47.0...0.48.0)</small>
+
+WARNING: **⚡ Imminent v1! ⚡🚀 See [v0.46](#0460-2024-06-16).**
+
+### Deprecations
+
+- All submodules are deprecated. All objects are now exposed in the top-level `griffe` module.
+- All logger names are deprecated, and will be replaced with `"griffe"` in v1. In v1 our single `"griffe"` logger will provide a method to temporarily disable logging, [`logger.disable()`][griffe.Logger.disable], since that's the most common third-party use.
+- The `get_logger` function is deprecated. Instead, we'll use a global `logger` internally, and users are welcome to use it too.
+- The `patch_loggers` function is renamed `patch_logger`.
+- Following the logging changes, the [`docstring_warning`][griffe.docstring_warning] function can now directly log a warning message instead of returning a callable that does. Passing it a logger name (to get a callable) is deprecated in favor of passing it a docstring, message and offset directly.
+
+### Features
+
+- Support `FORCE_COLOR` environment variable ([e1b7bd9](https://github.com/mkdocstrings/griffe/commit/e1b7bd9c3a5be585815dc972a86a51cb1b63bfe7) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Don't take a shortcut to the end of an alias chain when getting/setting/deleting alias members ([1930609](https://github.com/mkdocstrings/griffe/commit/193060908aa1cecb9931553abbb0f9fa182c66a1) by Timothée Mazzucotelli).
+- Short-circuit `__all__` convention when checking if a module is public ([5abf4e3](https://github.com/mkdocstrings/griffe/commit/5abf4e3343410dbd41760415cff7c5f9e8c2b6b8) by Timothée Mazzucotelli).
+- Reuse existing loggers, preventing overwriting issues ([3c2825f](https://github.com/mkdocstrings/griffe/commit/3c2825f9cf34eb8b0dbedd9fb542e14af3d24c33) by Timothée Mazzucotelli).
+- Ignore .pth files that are not utf-8 encoded ([ea299dc](https://github.com/mkdocstrings/griffe/commit/ea299dcb38ad78c9b3de961e88da214ccadd31be) by Andrew Sansom). [Issue-300](https://github.com/mkdocstrings/griffe/issues/300), [PR-301](https://github.com/mkdocstrings/griffe/pull/301)
+- Attributes without annotations cannot be dataclass parameters ([c9b2e09](https://github.com/mkdocstrings/griffe/commit/c9b2e09344538778426c446dad306c4881a873b2) by Hassan Kibirige). [PR-297](https://github.com/mkdocstrings/griffe/pull/297)
+- When deciding to alias an object or not during inspection, consider module paths to be equivalent even with arbitrary private components ([8c9f6e6](https://github.com/mkdocstrings/griffe/commit/8c9f6e609a1bb93d0c8c41962bb5a9f410862769) by Timothée Mazzucotelli). [Issue-296](https://github.com/mkdocstrings/griffe/issues/296)
+- Fix target path computation: use qualified names to maintain classes in the path ([6e17def](https://github.com/mkdocstrings/griffe/commit/6e17def0759409c7d5148c1a2f7747d029f17594) by Timothée Mazzucotelli). [Issue-296](https://github.com/mkdocstrings/griffe/issues/296)
+
+### Code Refactoring
+
+- Prepare loggers for simplification ([381f10f](https://github.com/mkdocstrings/griffe/commit/381f10f9cc3c2e8b7e9f54db23c13334dacc1203) by Timothée Mazzucotelli).
+- Add all previous modules for backward compatibility ([a86e44e](https://github.com/mkdocstrings/griffe/commit/a86e44e14b8f7be5b6fa9fb2e6a1614da65a3918) by Timothée Mazzucotelli).
+- Add main public modules ([fb860b3](https://github.com/mkdocstrings/griffe/commit/fb860b3200699ae85fed52289f3a6136ea522618) by Timothée Mazzucotelli).
+- Simplify "is imported" check in `is_public` property ([c2bbc10](https://github.com/mkdocstrings/griffe/commit/c2bbc10082da8e3b11d2fe4576db9719b25054e0) by Timothée Mazzucotelli).
+- Use string and integer enumerations ([06b383b](https://github.com/mkdocstrings/griffe/commit/06b383b5d61bc5083c53745e2c19d0da75e55481) by Timothée Mazzucotelli).
+- Renamed agents nodes modules ([ddc5b0c](https://github.com/mkdocstrings/griffe/commit/ddc5b0cc5bba3e0901fe6c7e9f9fe5b70bd2883c) by Timothée Mazzucotelli).
+- Clean up and document internal API, mark legacy code ([92594a9](https://github.com/mkdocstrings/griffe/commit/92594a99fed42eb2daa3bbeb797edbf3507f3068) by Timothée Mazzucotelli).
+- Renamed `dataclasses` internal modules to `models` ([5555de6](https://github.com/mkdocstrings/griffe/commit/5555de62426063483196888f1bc73757e7492ce8) by Timothée Mazzucotelli).
+- Move sources under `_griffe` internal package ([cbce6a5](https://github.com/mkdocstrings/griffe/commit/cbce6a5c4740a5964f9b0eb605adbd6f554e99bc) by Timothée Mazzucotelli).
+
 ## [0.47.0](https://github.com/mkdocstrings/griffe/releases/tag/0.47.0) - 2024-06-18
 
 <small>[Compare with 0.46.1](https://github.com/mkdocstrings/griffe/compare/0.46.1...0.47.0)</small>
