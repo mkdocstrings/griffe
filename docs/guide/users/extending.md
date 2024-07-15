@@ -182,7 +182,7 @@ class event_mod_members event
 classDef event stroke:#3cc,stroke-width:2
 ```
 
-Hopefully this flowchart gave you a pretty good idea of what happens when Griffe collects data from a Python module. The next setion will explain in more details the different events that are triggered, and how to hook onto them in your extensions.
+Hopefully this flowchart gave you a pretty good idea of what happens when Griffe collects data from a Python module. The next section will explain in more details the different events that are triggered, and how to hook onto them in your extensions.
 
 ### Events and hooks
 

@@ -287,7 +287,7 @@ def vscode() -> None:
     - `tasks.json`, for running tasks directly from VSCode's interface
 
     Warning:
-        These files will be overwritten everytime the command is run.
+        These files will be overwritten every time the command is run.
     """
     Path(".vscode").mkdir(parents=True, exist_ok=True)
     _shell("cp -v config/vscode/* .vscode")

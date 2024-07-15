@@ -1,6 +1,6 @@
 # Guide
 
-Welcome to the Griffe guide! This guide is composed of a series of topics on how to use Griffe, as well as an explanation of the project's inner workings. Although the project's explanation is more targetted at contributors, users are welcome to read it too, as it helps understanding further how Griffe works and how to best use it.
+Welcome to the Griffe guide! This guide is composed of a series of topics on how to use Griffe, as well as an explanation of the project's inner workings. Although the project's explanation is more targeted at contributors, users are welcome to read it too, as it helps understanding further how Griffe works and how to best use it.
 
 
 <div class="grid cards" markdown>

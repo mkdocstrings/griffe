@@ -1,6 +1,6 @@
 # Docstrings
 
-Here are explanations on what docstrings are, and a few recommandations on how to write them. This guide uses the [Google-style](../../../reference/docstrings.md#google-style), because that is our preferred and recommended style, but you can also use any other supported style. Skip to the [Styles](#styles) section to learn about the existing docstring styles. We invite you to read their own style guides as they are full of examples and good advice.
+Here are explanations on what docstrings are, and a few recommendations on how to write them. This guide uses the [Google-style](../../../reference/docstrings.md#google-style), because that is our preferred and recommended style, but you can also use any other supported style. Skip to the [Styles](#styles) section to learn about the existing docstring styles. We invite you to read their own style guides as they are full of examples and good advice.
 
 ## Definition
 

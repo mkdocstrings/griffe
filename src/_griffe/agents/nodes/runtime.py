@@ -59,7 +59,7 @@ class ObjectNode:
             # See https://github.com/pawamoy/pytkdocs/issues/45
             _logger.debug(f"Could not unwrap {name}: {error!r}")
 
-        # Unwrap cached properties (`inpsect.unwrap` doesn't do that).
+        # Unwrap cached properties (`inspect.unwrap` doesn't do that).
         if isinstance(obj, cached_property):
             is_cached_property = True
             obj = obj.func

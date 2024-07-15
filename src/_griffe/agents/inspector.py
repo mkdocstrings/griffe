@@ -494,7 +494,7 @@ class Inspector:
 
         Parameters:
             node: The node to inspect.
-            annotation: A potentiel annotation.
+            annotation: A potential annotation.
         """
         self.extensions.call("on_node", node=node)
         self.extensions.call("on_attribute_node", node=node)

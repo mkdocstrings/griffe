@@ -73,7 +73,7 @@ def dynamic_import(import_path: str, import_paths: Sequence[str | Path] | None =
     we could add a loop to "roll the window" of given paths, shifting them to the left
     (for example: `("/a/a", "/a/b", "/a/c/")`, then `("/a/b", "/a/c", "/a/a/")`,
     then `("/a/c", "/a/a", "/a/b/")`), to make sure each entry is given highest priority
-    at least once, maintaining relative order, but we deem this unncessary for now.
+    at least once, maintaining relative order, but we deem this unnecessary for now.
 
     Parameters:
         import_path: The path of the object to import.

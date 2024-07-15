@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 """The default log level for the CLI.
 
-This can be overriden by the `GRIFFE_LOG_LEVEL` environment variable.
+This can be overridden by the `GRIFFE_LOG_LEVEL` environment variable.
 """
 
 # YORE: Bump 1: Remove line.
@@ -267,8 +267,8 @@ def get_parser() -> argparse.ArgumentParser:
         "-I",
         "--resolve-implicit",
         action="store_true",
-        help="Whether to resolve implicitely exported aliases as well. "
-        "Aliases are explicitely exported when defined in `__all__`.",
+        help="Whether to resolve implicitly exported aliases as well. "
+        "Aliases are explicitly exported when defined in `__all__`.",
     )
     dump_options.add_argument(
         "-U",

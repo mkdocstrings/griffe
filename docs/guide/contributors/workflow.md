@@ -1,6 +1,6 @@
 # Development workflow
 
-This document describes our workflow when developping features, fixing bugs and updating the documentation. It also includes guidelines for pull requests on GitHub.
+This document describes our workflow when developing features, fixing bugs and updating the documentation. It also includes guidelines for pull requests on GitHub.
 
 ## Features and bug fixes
 

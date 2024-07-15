@@ -461,7 +461,7 @@ class ExprKeyword(Expr):
     value: str | Expr
     """Value."""
 
-    # Griffe is desinged around accessing Python objects
+    # Griffe is designed around accessing Python objects
     # with the dot notation, for example `module.Class`.
     # Function parameters were not taken into account
     # because they are not accessible the same way.

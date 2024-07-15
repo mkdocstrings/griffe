@@ -13,17 +13,17 @@ When [loading an object](loading.md), Griffe will give you back an instance of o
 ```python
 >>> import griffe
 >>> type(griffe.load("markdown"))
-<class '_griffe.dataclasses.Module'>
+<class '_griffe.models.Module'>
 >>> type(griffe.load("markdown.core.Markdown"))
-<class '_griffe.dataclasses.Class'>
+<class '_griffe.models.Class'>
 >>> type(griffe.load("markdown.Markdown"))
-<class '_griffe.dataclasses.Alias'>
+<class '_griffe.models.Alias'>
 >>> type(griffe.load("markdown.core.markdown"))
-<class '_griffe.dataclasses.Function'>
+<class '_griffe.models.Function'>
 >>> type(griffe.load("markdown.markdown"))
-<class '_griffe.dataclasses.Alias'>
+<class '_griffe.models.Alias'>
 >>> type(griffe.load("markdown.Markdown.references"))
-<class '_griffe.dataclasses.Attribute'>
+<class '_griffe.models.Attribute'>
 ```
 
 However deep is the object, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.
@@ -228,11 +228,13 @@ The kind of an object (module, class, function, attribute or alias) can be obtai
 
 - With the [`kind`][griffe.Object.kind] attribute and the [`Kind`][griffe.Kind] enumeration: `obj.kind is Kind.MODULE`.
 - With the [`is_kind()`][griffe.Object.is_kind] method:
+
     - `obj.is_kind(Kind.MODULE)`
     - `obj.is_kind("class")`
     - `obj.is_kind({"function", Kind.ATTRIBUTE})`
 
     When given a set of kinds, the method returns true if the object is of one of the given kinds.
+
 - With the [`is_module`][griffe.Object.is_module], [`is_class`][griffe.Object.is_class], [`is_function`][griffe.Object.is_function], [`is_attribute`][griffe.Object.is_attribute], and [`is_alias`][griffe.Object.is_alias] attributes.
 
 Additionally, it is possible to check if an object is a sub-kind of module, with the following attributes:
@@ -278,7 +280,7 @@ Each object holds a reference to a [`lines_collection`][griffe.Object.lines_coll
 
 ## Object visibility
 
-Each object has fields that are related to visibility of the API.
+Each object has fields that are related to their visibility within the API.
 
 - [`is_public`][griffe.Object.is_public]: whether this object is public (destined to be consumed by your users). For module-level objects, Griffe considers that the object is public if:
     - it is listed in its parent module's `__all__` attribute
@@ -337,7 +339,7 @@ Each object has an optional [`docstring`][griffe.Object.docstring] attached to i
 
 Docstrings can be parsed against several [docstring-styles](../../reference/docstrings.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
 
-When loading a package, it is possible to specify the docstring style to attach to every docstring (see the `docstring_parser` parameter of [`griffe.load`][griffe.load]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depend on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
+When loading a package, it is possible to specify the docstring style to attach to every docstring (see the `docstring_parser` parameter of [`griffe.load`][griffe.load]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depends on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
 
 After a package is loaded, it is still possible to change the style used for specific docstrings by either overriding their [`parser`][griffe.Docstring.parser] and [`parser_options`][griffe.Docstring.parser_options] attributes, or by calling their [`parse()`][griffe.Docstring.parse] method with a different style:
 
@@ -354,7 +356,7 @@ Docstrings have a [`parent`][griffe.Docstring.parent] field too, that is a refer
 
 ## Model-specific fields
 
-Models have most fields in common, but also have specific fiels.
+Models have most fields in common, but also have specific fields.
 
 ### Modules
 
@@ -403,7 +405,7 @@ You can write some code below and print annotations or attribute values with [Ri
 
 [rich]: https://rich.readthedocs.io/en/stable/
 
-```pyodide install="griffe,rich"
+```pyodide install="griffe,rich" theme="tomorrow,dracula"
 from griffe.tests import temporary_visited_module
 from rich.pretty import pprint
 

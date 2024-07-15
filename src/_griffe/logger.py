@@ -73,7 +73,7 @@ class Logger:
 # Griffe's output and error messages are logging messages.
 #
 # Griffe provides the [`patch_loggers`][griffe.patch_loggers]
-# function so dependant libraries can patch Griffe's logger as they see fit.
+# function so dependent libraries can patch Griffe's logger as they see fit.
 #
 # For example, to fit in the MkDocs logging configuration
 # and prefix each log message with the module name:

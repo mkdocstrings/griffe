@@ -1031,7 +1031,7 @@ class Alias(ObjectAliasMixin):
 
     # GENERIC OBJECT PROXIES --------------------------------
     # The following methods and properties exist on the target(s).
-    # We first try to reach the final target, trigerring alias resolution errors
+    # We first try to reach the final target, triggering alias resolution errors
     # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property
@@ -1241,7 +1241,7 @@ class Alias(ObjectAliasMixin):
 
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
-    # We first try to reach the final target, trigerring alias resolution errors
+    # We first try to reach the final target, triggering alias resolution errors
     # and cyclic aliases errors early. We avoid recursing in the alias chain.
 
     @property

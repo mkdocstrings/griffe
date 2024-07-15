@@ -2,7 +2,7 @@
 
 ## What is a public API?
 
-An API (Application Programming Interface) in the interface with which developers interact with your software. In the Python world, the API of your Python library is the set of module, classes, functions and other attributes made available to your users. For example, users can do `from your_library import this_function`: `this_function` is part of the API of `your_library`. 
+An API (Application Programming Interface) in the interface with which developers interact with your software. In the Python world, the API of your Python library is the set of modules, classes, functions and other attributes made available to your users. For example, users can do `from your_library import this_function`: `this_function` is part of the API of `your_library`. 
 
 Often times, when you develop a library, you create functions, classes, etc. that are only useful internally: they are not supposed to be used by your users. Python does not provide easy or standard ways to actually *prevent* users from using internal objects, so, to distinguish public objects from internal objects, we usually rely on conventions, such as prefixing internal objects' names with an underscore, for example `def _internal_function(): ...`, to mark them as "internal".
 
@@ -32,7 +32,7 @@ Other components *could* be considered for the public API, but usually require t
 
 Besides, logging and exception messages simply cannot allow deprecation periods where both old and new messages are emitted. Maintainers could however consider adding unique, short codes to message for more robust consumption.
 
-> GRIFFE: **Our recommandation — Communicate your public API, verify what you can.**
+> GRIFFE: **Our recommendation — Communicate your public API, verify what you can.**
 > Take the time to learn about and use ways to declare, communicate and deprecate your public API. Your users will have an easier time using your library. On the maintenance side, you won't get bug reports for uses that are not supported, or you will be able to quickly close them by pointing at the documentation explaining what your public API is, or why something was deprecated, for how long, and how to upgrade.
 >
 > Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](../checking.md) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
@@ -123,7 +123,7 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 
 ---
 
-> GRIFFE: **Our recommandation — Use the underscore prefix and `__all__` conventions.**
+> GRIFFE: **Our recommendation — Use the underscore prefix and `__all__` conventions.**
 > Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](python-code.md#avoid-wildcard-imports). Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
 >
 > > To better support introspection, modules should explicitly declare the names in their public API using the `__all__` attribute. Setting `__all__` to an empty list indicates that the module has no public API.
@@ -411,9 +411,9 @@ Depending on their configuration, many popular Python linters will warn you that
 
 ## The CLI is API too
 
-This section deserves an entire article, but we will try to stay succint here.
+This section deserves an entire article, but we will try to stay succinct here.
 
-Generally, we distinguish the API (Application Programming Interface) from the CLI (Command Line Interface), TUI (Textual User Interface) or GUI (Graphical User Interface). Contrary to TUIs or GUIs which are not likely to be controled programmatically (they typically work with keyboard and mouse inputs), the CLI can easily be called by various scripts or programs, including from Python programs.
+Generally, we distinguish the API (Application Programming Interface) from the CLI (Command Line Interface), TUI (Textual User Interface) or GUI (Graphical User Interface). Contrary to TUIs or GUIs which are not likely to be controlled programmatically (they typically work with keyboard and mouse inputs), the CLI can easily be called by various scripts or programs, including from Python programs.
 
 Even if a project was not designed to be used programmatically (doesn't expose a public API), it is *a certainty* that with enough popularity, it *will* be used programmatically. And the CLI will even more so be used programmatically if there is no API. Even if there is an API, sometimes it makes more sense to hook into the CLI rather than the API (cross-language integrations, wrappers, etc.).
 
@@ -501,7 +501,7 @@ The third and next users of your CLI as API are your users: just as you made you
 > GRIFFE: **Our recommendation — Decouple command-line parsing from your CLI entrypoints.**
 > Do not tie the command parsing logic with your program's logic. Create functions early, make them accept arguments using basic types (`int`, `str`, `list`, etc.) so that your users can call your main command or subcommands with a single import and single statement. Do not encode all the logic in a single big `main` function. Decoupling the CLI-parsing logic from your entrypoints will make them much easier to test and use programmatically. Consider your entrypoints part of your API!
 >
-> Our CLI framework of choice if [Cappa](https://pypi.org/project/cappa/).
+> Our CLI framework of choice is [Cappa](https://pypi.org/project/cappa/).
 
 ## Deprecations
 

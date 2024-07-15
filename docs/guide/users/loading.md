@@ -93,7 +93,7 @@ To specify in which directories Griffe should search for packages and modules, y
 
 By default it will search in the paths found in [`sys.path`][sys.path], which can be influenced through the [`PYTHONPATH`][PYTHONPATH] environment variable.
 
-If Griffe cannot find sources for the specifed object in the given search paths, it will try to import the specified object and use dynamic analysis on it (introspection). See [Forcing dynamic analysis](#forcing-dynamic-analysis) and [Disallowing dynamic analysis](#disallowing-dynamic-analysis).
+If Griffe cannot find sources for the specified object in the given search paths, it will try to import the specified object and use dynamic analysis on it (introspection). See [Forcing dynamic analysis](#forcing-dynamic-analysis) and [Disallowing dynamic analysis](#disallowing-dynamic-analysis).
 
 ## Forcing dynamic analysis
 
@@ -143,9 +143,9 @@ griffe.load("itertools", allow_inspection=False)
 >
 > **To summarize, alias resolution is a post-process task that resolves imports after loading everything.**
 
-To resolve an alias, i.e. obtain a reference to the object it targets, we have to wait for this object to be loaded. Indeed, during analysis, objects are loaded in breadth-first order (in the object hierarcy, highest objects are loaded first, deepest ones are loaded last), so when we encounter an imported object, we often haven't loaded this object yet.
+To resolve an alias, i.e. obtain a reference to the object it targets, we have to wait for this object to be loaded. Indeed, during analysis, objects are loaded in breadth-first order (in the object hierarchy, highest objects are loaded first, deepest ones are loaded last), so when we encounter an imported object, we often haven't loaded this object yet.
 
-Once a whole package is loaded, we are ready to try and resolve all aliases. But we don't *have* to resolve them. First, because the user might not need aliases to be resolved, and second, because each alias can be resolved individually and transparently when accesing its target object properties.
+Once a whole package is loaded, we are ready to try and resolve all aliases. But we don't *have* to resolve them. First, because the user might not need aliases to be resolved, and second, because each alias can be resolved individually and transparently when accessing its target object properties.
 
 Therefore, alias resolution is optional and enabled with the `resolve_aliases` parameter.
 
@@ -239,7 +239,7 @@ _griffe.exceptions.AliasResolutionError: Could not resolve alias package2.X poin
 
 As you can see in the interpreter session above, Griffe did not resolve the `X` alias. When we tried to access its target object anyway, it failed with a `KeyError`, which was raised again as an [`AliasResolutionError`][griffe.AliasResolutionError].
 
-Lets try again, but this by loading both packages.
+Lets try again, but this time by loading both packages.
 
 ```pycon
 ```pycon
@@ -321,11 +321,11 @@ By default, when resolving aliases, Griffe loaders will not be able to resolve a
 ```python
 import griffe
 
-package2 = griffe.load("package1", resolve_aliases=True, resolve_external=True)
+package2 = griffe.load("package2", resolve_aliases=True, resolve_external=True)
 print(package2["X"].target.name)  # X
 ```
 
-Here Griffe automatically loaded `package2` while resolving aliases, even though we didn't explicitly load it ourselves.
+Here Griffe automatically loaded `package1` while resolving aliases, even though we didn't explicitly load it ourselves.
 
 While automatically resolving aliases pointing at external packages can be convenient, we advise cautiousness: this can trigger the loading of *a lot* of external packages, *recursively*.
 

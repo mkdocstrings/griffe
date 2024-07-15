@@ -238,7 +238,7 @@ class GriffeLoader:
         """Resolve aliases.
 
         Parameters:
-            implicit: When false, only try to resolve an alias if it is explicitely exported.
+            implicit: When false, only try to resolve an alias if it is explicitly exported.
             external: When false, don't try to load unspecified modules to resolve aliases.
             max_iterations: Maximum number of iterations on the loader modules collection.
 
@@ -439,7 +439,7 @@ class GriffeLoader:
 
         Parameters:
             obj: The object and its members to recurse on.
-            implicit: When false, only try to resolve an alias if it is explicitely exported.
+            implicit: When false, only try to resolve an alias if it is explicitly exported.
             external: When false, don't try to load unspecified modules to resolve aliases.
             seen: Used to avoid infinite recursion.
             load_failures: Set of external packages we failed to load (to prevent retries).
@@ -604,7 +604,7 @@ class GriffeLoader:
             # but that's because in that case Python acts like the whole tree is a regular package.
             # It works when the namespace package appears in only one search path (`sys.path`),
             # but will fail if it appears in multiple search paths: Python will only find the first occurrence.
-            # It's better to not falsely suuport this, and to warn users.
+            # It's better to not falsely support this, and to warn users.
             _logger.debug(f"{error}. Missing __init__ module?")
             return
         submodule_name = subparts[-1]
@@ -801,7 +801,7 @@ def load(
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
             or the origin module (for example when `ast` imports from `_ast`).
-        resolve_implicit: When false, only try to resolve an alias if it is explicitely exported.
+        resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
 
     Returns:
         A Griffe object.
@@ -889,7 +889,7 @@ def load_git(
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
             or the origin module (for example when `ast` imports from `_ast`).
-        resolve_implicit: When false, only try to resolve an alias if it is explicitely exported.
+        resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
 
     Returns:
         A Griffe object.

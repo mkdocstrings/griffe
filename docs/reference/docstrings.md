@@ -858,7 +858,7 @@ In particular, `Examples` is parsed as the [Examples section](#numpydoc-section-
 while `Example` is parsed as an admonition whose kind is `example`.
 
 The kind is obtained by lower-casing the identifier and replacing spaces with dashes.
-For example, an admonition whose identifer is `See also` will have a kind equal to `see-also`.
+For example, an admonition whose identifier is `See also` will have a kind equal to `see-also`.
 
 It is up to any downstream documentation renderer to make use of these kinds.
 

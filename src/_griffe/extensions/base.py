@@ -366,7 +366,7 @@ class Extensions:
         """Call the extension hook for the given event.
 
         Parameters:
-            event: The trigerred event.
+            event: The triggered event.
             **kwargs: Arguments passed to the hook.
         """
         for extension in self._extensions:

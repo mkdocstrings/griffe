@@ -266,7 +266,7 @@ We are still in v0, so no major bump yet.
 
 ### Code Refactoring
 
-- Remove `get_call_keyword_arguments` utility function, as it is implemented with a single line and creates a cyclic depdendency with expressions ([35cf170](https://github.com/mkdocstrings/griffe/commit/35cf170cc91ba740e6f997d76f99d6a07e8d4437) by Timothée Mazzucotelli).
+- Remove `get_call_keyword_arguments` utility function, as it is implemented with a single line and creates a cyclic dependency with expressions ([35cf170](https://github.com/mkdocstrings/griffe/commit/35cf170cc91ba740e6f997d76f99d6a07e8d4437) by Timothée Mazzucotelli).
 - Further prevent cyclic dependency between node utils and expressions ([9614c83](https://github.com/mkdocstrings/griffe/commit/9614c83c037637d7823a4c06f115c3e2e4b6e10f) by Timothée Mazzucotelli).
 - Avoid cyclic dependency between node utils and expressions ([aedf39c](https://github.com/mkdocstrings/griffe/commit/aedf39c3795197deb6067e039da8bdec182bd363) by Timothée Mazzucotelli).
 - Move arguments node-parsing logic into its own module (used by visitor and lambda expressions) ([ad68e65](https://github.com/mkdocstrings/griffe/commit/ad68e65363c4338d7f38ccade2f9cc05d41f8100) by Timothée Mazzucotelli).
@@ -590,7 +590,7 @@ We are still in v0, so no major bump yet.
 - Class `ASTNode` was removed
 - Class `BaseInspector` was removed
 - Class `BaseVisitor` was removed
-- Fucntion `get_parameter_default` was removed
+- Function `get_parameter_default` was removed
 - Function `load_extension` was removed (made private)
 - Function `patch_ast` was removed
 - Function `tmp_worktree` was removed (made private)
@@ -910,7 +910,7 @@ We are still in v0, so no major bump yet.
 ### Highlights
 
 - Properties are now fetched as attributes rather than functions, since that is how they are used. This was asked by users, and since Griffe generates signatures for Python APIs (emphasis on **APIs**), it makes sense to return data that matches the interface provided to users. Such property objects in Griffe's output will still have the associated `property` labels of course.
-- Lots of bug fixes. These bugs were discovered by running Griffe on *many* major packages as well as the standard library (again). Particularly, alias resolution should be more robust now, and should generate less issues like cyclic aliases, meaning indirect/wildcard imports should be better understood. We still highly discourage the use of wilcard imports :grinning:
+- Lots of bug fixes. These bugs were discovered by running Griffe on *many* major packages as well as the standard library (again). Particularly, alias resolution should be more robust now, and should generate less issues like cyclic aliases, meaning indirect/wildcard imports should be better understood. We still highly discourage the use of wildcard imports :grinning:
 
 ### Features
 
