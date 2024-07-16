@@ -2,17 +2,10 @@
 
 from __future__ import annotations
 
-import sys
-from enum import IntEnum
-
-# YORE: Bump 1: Replace block with line 2.
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    from backports.strenum import StrEnum
+from enum import Enum
 
 
-class LogLevel(StrEnum):
+class LogLevel(str, Enum):
     """Enumeration of available log levels."""
 
     trace: str = "trace"
@@ -31,7 +24,7 @@ class LogLevel(StrEnum):
     """The CRITICAL log level."""
 
 
-class DocstringSectionKind(StrEnum):
+class DocstringSectionKind(str, Enum):
     """Enumeration of the possible docstring section kinds."""
 
     text = "text"
@@ -66,7 +59,7 @@ class DocstringSectionKind(StrEnum):
     """Admonition block."""
 
 
-class ParameterKind(StrEnum):
+class ParameterKind(str, Enum):
     """Enumeration of the different parameter kinds."""
 
     positional_only: str = "positional-only"
@@ -81,7 +74,7 @@ class ParameterKind(StrEnum):
     """Variadic keyword parameter."""
 
 
-class Kind(StrEnum):
+class Kind(str, Enum):
     """Enumeration of the different object kinds."""
 
     MODULE: str = "module"
@@ -96,7 +89,7 @@ class Kind(StrEnum):
     """Aliases (imported objects)."""
 
 
-class ExplanationStyle(StrEnum):
+class ExplanationStyle(str, Enum):
     """Enumeration of the possible styles for explanations."""
 
     ONE_LINE: str = "oneline"
@@ -109,7 +102,7 @@ class ExplanationStyle(StrEnum):
     """Explanation as GitHub workflow commands warnings, adapted to CI."""
 
 
-class BreakageKind(StrEnum):
+class BreakageKind(str, Enum):
     """Enumeration of the possible API breakages."""
 
     PARAMETER_MOVED: str = "Positional parameter was moved"
@@ -138,7 +131,7 @@ class BreakageKind(StrEnum):
     """Base class was removed"""
 
 
-class Parser(StrEnum):
+class Parser(str, Enum):
     """Enumeration of the different docstring parsers."""
 
     google = "google"
@@ -149,7 +142,7 @@ class Parser(StrEnum):
     """Numpydoc-style docstrings parser."""
 
 
-class ObjectKind(StrEnum):
+class ObjectKind(str, Enum):
     """Enumeration of the different runtime object kinds."""
 
     MODULE: str = "module"
@@ -184,7 +177,7 @@ class ObjectKind(StrEnum):
 
 
 # YORE: Bump 1: Remove block.
-class When(IntEnum):
+class When(int, Enum):
     """Enumeration of the different times at which an extension is used.
 
     Deprecated. This enumeration is used with the `VisitorExtension` and `InspectorExtension` classes,
