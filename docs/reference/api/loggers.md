@@ -2,8 +2,8 @@
 
 ## **Main API**
 
-<!-- YORE: Bump 1: Uncomment line. -->
-<!-- ::: griffe.logger -->
+<!-- YORE: Bump 1: Replace line with `::: griffe.logger`.
+<!-- -->
 
 ::: griffe.Logger
 
