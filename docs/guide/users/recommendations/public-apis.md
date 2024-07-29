@@ -108,7 +108,7 @@ from elsewhere import something as something
 from my_package._internal_module import Thing as Thing
 ```
 
-Here `Thing` and `something` are considered public even though they were imported and `__all__`. If `__all__` was defined, it would take precedence and redundant aliases wouldn't apply.
+Here `Thing` and `something` are considered public even though they were imported. If `__all__` was defined, it would take precedence and redundant aliases wouldn't apply.
 
 ### Wildcard imports
 
@@ -285,7 +285,7 @@ Start hiding your module layout early! It is much easier to (partially) expose t
 
 ## Unique names and public locations
 
-Whether or not you are planning to hide your module layout, as recommended in the previous section, one thing that will both you and your users if making sure your object names are unique across your code base. Having unique names ensures that you can expose everything at the top-level module of your package without having to alias objects (using `from ... import x as y`). It will also ensure that your users don't end up importing multiple different objects with the same name, again having to alias them. Finally, it forces you to use meaningful names for your objects, names that don't need the context of the above namespaces (generally modules) to understand what they mean. For example, in Griffe we previously exposed `griffe.docstrings.utils.warning`. Exposing `warning` at the top-level made it very vague: what does it do? So we renamed it `docstring_warning`, which is much clearer. 
+Whether or not you are planning to hide your module layout, as recommended in the previous section, one thing that will help both you and your users is making sure your object names are unique across your code base. Having unique names ensures that you can expose everything at the top-level module of your package without having to alias objects (using `from ... import x as y`). It will also ensure that your users don't end up importing multiple different objects with the same name, again having to alias them. Finally, it forces you to use meaningful names for your objects, names that don't need the context of the above namespaces (generally modules) to understand what they mean. For example, in Griffe we previously exposed `griffe.docstrings.utils.warning`. Exposing `warning` at the top-level made it very vague: what does it do? So we renamed it `docstring_warning`, which is much clearer. 
 
 Ensuring unique names across a code base is sometimes not feasible, or not desirable; in this case, try to use namespacing while still hiding the module layout the best you can.
 
