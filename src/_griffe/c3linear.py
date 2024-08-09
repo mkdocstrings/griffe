@@ -66,7 +66,7 @@ class _DependencyList:
     @property
     def heads(self) -> list[_T | None]:
         """Return the heads."""
-        return [lst.head for lst in self._lists]
+        return [lst.head for lst in self._lists]  # type: ignore[misc]
 
     @property
     def tails(self) -> _DependencyList:

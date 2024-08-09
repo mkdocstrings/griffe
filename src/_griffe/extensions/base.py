@@ -470,7 +470,7 @@ def _load_extension(
     # If the loaded object is an extension class, instantiate it with options and return it.
     # YORE: Bump 1: Replace `ext_classes` with `Extension` within line.
     if isclass(ext_object) and issubclass(ext_object, ext_classes):
-        return ext_object(**options)  # type: ignore[misc]
+        return ext_object(**options)
 
     # Otherwise the loaded object is a module, so we get the extension class by name,
     # instantiate it with options and return it.

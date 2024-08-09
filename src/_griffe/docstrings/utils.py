@@ -128,7 +128,7 @@ def parse_docstring_annotation(
         if code.body:  # type: ignore[attr-defined]
             name_or_expr = safe_get_annotation(
                 code.body,  # type: ignore[attr-defined]
-                parent=docstring.parent,
+                parent=docstring.parent,  # type: ignore[arg-type]
                 log_level=log_level,
             )
             return name_or_expr or annotation
