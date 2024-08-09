@@ -104,7 +104,6 @@ class Logger:
 
 # YORE: Bump 1: Remove block.
 def get_logger(name: str) -> Logger:
-    # YORE: Bump 1: Replace `Deprecated.` with `Deprecated, use [logger][griffe.logger] directly.`.
     """Deprecated. Create and return a new logger instance.
 
     Parameters:
@@ -113,8 +112,8 @@ def get_logger(name: str) -> Logger:
     Returns:
         The logger.
     """
-    # YORE: Bump 1: Replace `deprecated.` with `deprecated. Use [logger][griffe.logger] directly.`.
-    warnings.warn("The `get_logger` function is deprecated.", DeprecationWarning, stacklevel=1)
+    if not name.startswith("griffe."):
+        warnings.warn("The `get_logger` function is deprecated.", DeprecationWarning, stacklevel=1)
     return Logger._get(name)
 
 

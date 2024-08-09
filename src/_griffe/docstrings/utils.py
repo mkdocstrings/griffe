@@ -80,7 +80,8 @@ def docstring_warning(  # type: ignore[misc]
     """
     # YORE: Bump 1: Remove block.
     if name is not None:
-        warnings.warn("The `name` parameter is deprecated.", DeprecationWarning, stacklevel=1)
+        if not name.startswith("griffe."):
+            warnings.warn("The `name` parameter is deprecated.", DeprecationWarning, stacklevel=1)
         logger = get_logger(name)
     else:
         if docstring is _sentinel or offset is _sentinel or message is _sentinel:
