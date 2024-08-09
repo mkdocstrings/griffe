@@ -114,6 +114,17 @@ class Docstring:
         """The lines of the docstring."""
         return self.value.split("\n")
 
+    @property
+    def source(self) -> str:
+        """The original, uncleaned value of the docstring as written in the source."""
+        if self.parent is None:
+            raise ValueError("Cannot get original docstring without parent object")
+        if isinstance(self.parent.filepath, list):
+            raise ValueError("Cannot get original docstring for namespace package")  # noqa: TRY004
+        if self.lineno is None or self.endlineno is None:
+            raise ValueError("Cannot get original docstring without line numbers")
+        return "\n".join(self.parent.lines_collection[self.parent.filepath][self.lineno - 1 : self.endlineno])
+
     @cached_property
     def parsed(self) -> list[DocstringSection]:
         """The docstring sections, parsed into structured data."""
