@@ -1011,6 +1011,30 @@ def test_extract_yielded_type_with_single_return_item(parse_google: ParserType, 
     assert yields[0].annotation.name == "int"
 
 
+def test_yield_section_in_property(parse_google: ParserType) -> None:
+    """No warnings when parsing Yields section in a property.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Yields:
+            A number.
+    """
+    sections, warnings = parse_google(
+        docstring,
+        parent=Attribute(
+            "prop",
+            annotation=parse_docstring_annotation("Iterator[int]", Docstring("d", parent=Attribute("a"))),
+        ),
+    )
+    assert not warnings
+    yields = sections[1].value
+    assert yields[0].annotation.name == "int"
+
+
 # =============================================================================================
 # Receives sections
 def test_parse_receives_tuple_in_generator(parse_google: ParserType) -> None:

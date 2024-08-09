@@ -520,7 +520,7 @@ def _read_yields_section(
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, IndexError, KeyError, ValueError):
-                annotation = docstring.parent.returns  # type: ignore[union-attr]
+                annotation = docstring.parent.annotation  # type: ignore[union-attr]
                 if annotation.is_iterator:
                     yield_item = annotation.slice
                 elif annotation.is_generator:

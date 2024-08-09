@@ -423,8 +423,8 @@ def _read_yields_section(
         text = dedent("\n".join(item[1:]))
         if annotation is None:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, KeyError, ValueError):
-                annotation = docstring.parent.returns  # type: ignore[union-attr]
+            with suppress(AttributeError, IndexError, KeyError, ValueError):
+                annotation = docstring.parent.annotation  # type: ignore[union-attr]
                 if annotation.is_iterator:
                     yield_item = annotation.slice
                 elif annotation.is_generator:
