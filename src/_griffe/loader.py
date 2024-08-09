@@ -922,3 +922,45 @@ def load_git(
             resolve_external=resolve_external,
             resolve_implicit=resolve_implicit,
         )
+
+
+def load_pypi(
+    package: str,  # noqa: ARG001
+    distribution: str,  # noqa: ARG001
+    version_spec: str,  # noqa: ARG001
+    *,
+    submodules: bool = True,  # noqa: ARG001
+    extensions: Extensions | None = None,  # noqa: ARG001
+    search_paths: Sequence[str | Path] | None = None,  # noqa: ARG001
+    docstring_parser: Parser | None = None,  # noqa: ARG001
+    docstring_options: dict[str, Any] | None = None,  # noqa: ARG001
+    lines_collection: LinesCollection | None = None,  # noqa: ARG001
+    modules_collection: ModulesCollection | None = None,  # noqa: ARG001
+    allow_inspection: bool = True,  # noqa: ARG001
+    force_inspection: bool = False,  # noqa: ARG001
+    find_stubs_package: bool = False,  # noqa: ARG001
+) -> Object | Alias:
+    """Load and return a module from a specific package version downloaded using pip.
+
+    [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
+    [:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0).
+
+    Parameters:
+        package: The package import name.
+        distribution: The distribution name.
+        version_spec: The version specifier to use when installing with pip.
+        submodules: Whether to recurse on the submodules.
+            This parameter only makes sense when loading a package (top-level module).
+        extensions: The extensions to use.
+        search_paths: The paths to search into (relative to the repository root).
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
+        allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        force_inspection: Whether to force using dynamic analysis when loading data.
+        find_stubs_package: Whether to search for stubs-only package.
+            If both the package and its stubs are found, they'll be merged together.
+            If only the stubs are found, they'll be used as the package itself.
+    """
+    raise ValueError("Not available in non-Insiders versions of Griffe")

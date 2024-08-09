@@ -197,7 +197,7 @@ from _griffe.extensions.hybrid import HybridExtension
 from _griffe.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
 from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
 from _griffe.importer import dynamic_import, sys_path
-from _griffe.loader import GriffeLoader, load, load_git
+from _griffe.loader import GriffeLoader, load, load_git, load_pypi
 
 # YORE: Bump 1: Replace `get_logger` with `logger` within line.
 # YORE: Bump 1: Replace `, patch_loggers` with `` within line.
@@ -428,6 +428,7 @@ __all__ = [
     "load",
     "load_extensions",
     "load_git",
+    "load_pypi",
     # YORE: Bump 1: Uncomment line.
     # "logger",
     "main",

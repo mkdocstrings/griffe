@@ -6,6 +6,8 @@
 
 ::: griffe.load_git
 
+::: griffe.load_pypi
+
 ## **Advanced API**
 
 ::: griffe.GriffeLoader
