@@ -10,6 +10,8 @@
 
 ::: griffe.parse_sphinx
 
+::: griffe.DocstringStyle
+
 ## **Advanced API**
 
 ::: griffe.Parser

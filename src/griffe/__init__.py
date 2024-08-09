@@ -97,7 +97,11 @@ from _griffe.docstrings.models import (
     DocstringYield,
 )
 from _griffe.docstrings.numpy import parse_numpy
-from _griffe.docstrings.parsers import parse, parsers
+from _griffe.docstrings.parsers import (
+    DocstringStyle,
+    parse,
+    parsers,
+)
 from _griffe.docstrings.sphinx import parse_sphinx
 from _griffe.docstrings.utils import DocstringWarningCallable, docstring_warning, parse_docstring_annotation
 from _griffe.encoders import JSONEncoder, json_decoder
@@ -278,6 +282,7 @@ __all__ = [
     "DocstringSectionText",
     "DocstringSectionWarns",
     "DocstringSectionYields",
+    "DocstringStyle",
     "DocstringWarn",
     # YORE: Bump 1: Remove line.
     "DocstringWarningCallable",

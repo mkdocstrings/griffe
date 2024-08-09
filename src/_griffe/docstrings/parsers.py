@@ -14,7 +14,10 @@ from _griffe.enumerations import Parser
 if TYPE_CHECKING:
     from _griffe.models import Docstring
 
-parsers = {
+DocstringStyle = Literal["google", "numpy", "sphinx"]
+"""The supported docstring styles (literal values of the Parser enumeration)."""
+parsers: dict[Parser, Callable[[Docstring], list[DocstringSection]]] = {
+    Parser.auto: parse_auto,
     Parser.google: parse_google,
     Parser.sphinx: parse_sphinx,
     Parser.numpy: parse_numpy,
@@ -23,7 +26,7 @@ parsers = {
 
 def parse(
     docstring: Docstring,
-    parser: Literal["google", "numpy", "sphinx"] | Parser | None,
+    parser: DocstringStyle | Parser | None,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse the docstring.
@@ -37,7 +40,7 @@ def parse(
         A list of docstring sections.
     """
     if parser:
-        if isinstance(parser, str):
+        if not isinstance(parser, Parser):
             parser = Parser(parser)
-        return parsers[parser](docstring, **options)  # type: ignore[operator]
+        return parsers[parser](docstring, **options)
     return [DocstringSectionText(docstring.value)]

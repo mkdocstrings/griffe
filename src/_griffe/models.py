@@ -9,10 +9,10 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Literal, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Sequence, Union, cast
 
 from _griffe.c3linear import c3linear_merge
-from _griffe.docstrings.parsers import parse
+from _griffe.docstrings.parsers import DocstringStyle, parse
 from _griffe.enumerations import Kind, ParameterKind, Parser
 from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from _griffe.expressions import ExprCall, ExprName
@@ -83,7 +83,7 @@ class Docstring:
         lineno: int | None = None,
         endlineno: int | None = None,
         parent: Object | None = None,
-        parser: Literal["google", "numpy", "sphinx"] | Parser | None = None,
+        parser: DocstringStyle | Parser | None = None,
         parser_options: dict[str, Any] | None = None,
     ) -> None:
         """Initialize the docstring.
@@ -104,7 +104,7 @@ class Docstring:
         """The ending line number of the docstring."""
         self.parent: Object | None = parent
         """The object this docstring is attached to."""
-        self.parser: Literal["google", "numpy", "sphinx"] | Parser | None = parser
+        self.parser: DocstringStyle | Parser | None = parser
         """The selected docstring parser."""
         self.parser_options: dict[str, Any] = parser_options or {}
         """The configured parsing options."""
@@ -121,7 +121,7 @@ class Docstring:
 
     def parse(
         self,
-        parser: Literal["google", "numpy", "sphinx"] | Parser | None = None,
+        parser: DocstringStyle | Parser | None = None,
         **options: Any,
     ) -> list[DocstringSection]:
         """Parse the docstring into structured data.
