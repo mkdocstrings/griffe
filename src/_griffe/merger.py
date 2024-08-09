@@ -71,7 +71,7 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                 # Devs usually declare stubs at the public location of the corresponding object,
                 # not the canonical one. Therefore, we must allow merging stubs into the target of an alias,
                 # as long as the stub and target are of the same kind.
-                if obj_member.kind is not stub_member.kind and not obj_member.is_alias:
+                if obj_member.kind is not stub_member.kind:
                     _logger.debug(
                         f"Cannot merge stubs for {obj_member.path}: kind {stub_member.kind.value} != {obj_member.kind.value}",
                     )
