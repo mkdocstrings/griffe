@@ -200,6 +200,7 @@ plugins:
         options:
           docstring_options:
             ignore_init_summary: true
+          docstring_style: google
           docstring_section_style: list
           extensions:
           - griffe_inherited_docstrings

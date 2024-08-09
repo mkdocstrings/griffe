@@ -8,6 +8,7 @@ The available parsers are:
 - `google`, to parse Google-style docstrings, see [Napoleon's documentation][napoleon]
 - `numpy`, to parse Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
 - `sphinx`, to parse Sphinx-style docstrings, see [Sphinx's documentation][sphinx]
+- `auto` (sponsors only), to automatically detect the docstring style, see [Auto-style](#auto-style)
 
 Most of the time, the syntax specified in the aforementioned docs is supported.
 In some cases, the original syntax is not supported, or is supported but with subtle differences.
@@ -1503,6 +1504,31 @@ precision : Decimal
 
 TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
 See previous tips for types in docstrings.
+
+## Auto-style
+
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders } &mdash;
+[:octicons-tag-24: Insiders 1.3.0](../insiders/changelog.md#1.3.0).
+
+Automatic style detection. This parser will first try to detect the style used in the docstring, and call the corresponding parser on it.
+
+### Parser options {#auto-options}
+
+The parser accepts a few options:
+
+- `method`: The method to use to detect the style and infer the parser.
+    Method 'heuristics' will use regular expressions, while method 'max_sections' will parse the docstring
+    with all parsers specified in `style_order` and return the one who parsed the most sections.
+    Default: `"heuristics"`.
+- `style_order`: If multiple parsers parsed the same number of sections,
+    `style_order` is used to decide which one to return. Default: `["sphinx", "google", "numpy"]`.
+- `default`: If heuristics fail, the `default` parser is returned.
+    The `default` parser is never used with the 'max_sections' method. Default: `None`.
+- Any other option is passed down to the detected parser, if any.
+
+For non-Insiders versions, `default` is returned if specified, else the first
+parser in `style_order` is returned. If `style_order` is not specified,
+`None` is returned.
 
 ## Parsers features
 

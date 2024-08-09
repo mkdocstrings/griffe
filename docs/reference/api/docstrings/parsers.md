@@ -4,6 +4,8 @@
 
 ::: griffe.parse
 
+::: griffe.parse_auto
+
 ::: griffe.parse_google
 
 ::: griffe.parse_numpy
@@ -23,3 +25,7 @@
 ::: griffe.docstring_warning
 
 ::: griffe.DocstringWarningCallable
+
+::: griffe.DocstringDetectionMethod
+
+::: griffe.infer_docstring_style

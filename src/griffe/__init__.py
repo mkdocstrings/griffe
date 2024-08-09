@@ -98,8 +98,11 @@ from _griffe.docstrings.models import (
 )
 from _griffe.docstrings.numpy import parse_numpy
 from _griffe.docstrings.parsers import (
+    DocstringDetectionMethod,
     DocstringStyle,
+    infer_docstring_style,
     parse,
+    parse_auto,
     parsers,
 )
 from _griffe.docstrings.sphinx import parse_sphinx
@@ -257,6 +260,7 @@ __all__ = [
     "DocstringAttribute",
     "DocstringClass",
     "DocstringDeprecated",
+    "DocstringDetectionMethod",
     "DocstringElement",
     "DocstringFunction",
     "DocstringModule",
@@ -418,6 +422,7 @@ __all__ = [
     "get_repo_root",
     "get_value",
     "htree",
+    "infer_docstring_style",
     "inspect",
     "json_decoder",
     "load",
@@ -429,6 +434,7 @@ __all__ = [
     "merge_stubs",
     "module_vtree",
     "parse",
+    "parse_auto",
     "parse_docstring_annotation",
     "parse_google",
     "parse_numpy",

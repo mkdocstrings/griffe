@@ -6,20 +6,23 @@ goals:
     name: GraviFridge Fluid Renewal
     features:
     - name: "Markdown output format for the `griffe check` command"
-      ref: /checking/#markdown
+      ref: /guide/users/checking/#markdown
       since: 2024/01/16
     - name: "GitHub output format for the `griffe check` command"
-      ref: /checking/#github
+      ref: /guide/users/checking/#github
       since: 2024/01/16
   1500:
     name: HyperLamp Navigation Tips
     features:
     - name: "Check API of Python packages from PyPI"
-      ref: /checking/#using-pypi
+      ref: /guide/users/checking/#using-pypi
       since: 2024/03/02
     - name: "Expressions modernization"
-      ref: /expressions/#modernization
+      ref: /guide/users/navigating/#modernization
       since: 2024/03/11
+    - name: "Automatic detection of docstring style"
+      ref: /reference/docstrings/#auto-style
+      since: 2024/08/09
   2000:
     name: FusionDrive Ejection Configuration
     features: []
