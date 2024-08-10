@@ -5,8 +5,8 @@
 # of `mkdocs.plugins` so that it fits in the MkDocs logging configuration.
 #
 # We use a single, global logger because our public API is exposed in a single module, `griffe`.
+# Extensions however should use their own logger, which is why we provide the `get_logger` function.
 
-# YORE: Bump 1: Replace `patch_loggers` with `patch_logger` within file.
 from __future__ import annotations
 
 import logging
@@ -17,14 +17,9 @@ from typing import Any, Callable, ClassVar, Iterator
 
 class Logger:
     _default_logger: Any = logging.getLogger
-    # YORE: Bump 1: Replace line with `_instance: _Logger | None = None`.
     _instances: ClassVar[dict[str, Logger]] = {}
 
     def __init__(self, name: str) -> None:
-        # YORE: Bump 1: Uncomment block.
-        # if self._instance:
-        #     raise ValueError("Logger is a singleton.")
-
         # Default logger that can be patched by third-party.
         self._logger = self.__class__._default_logger(name)
 
@@ -44,21 +39,13 @@ class Logger:
 
     @classmethod
     def _get(cls, name: str = "griffe") -> Logger:
-        # YORE: Bump 1: Replace line with `if not cls._instance:`.
         if name not in cls._instances:
-            # YORE: Bump 1: Replace line with `cls._instance = cls(name)`.`
             cls._instances[name] = cls(name)
-        # YORE: Bump 1: Replace line with `return cls._instance`.`
         return cls._instances[name]
 
     @classmethod
-    def _patch_logger(cls, get_logger_func: Callable) -> None:
-        # YORE: Bump 1: Uncomment block.
-        # if not cls._instance:
-        #     raise ValueError("Logger is not initialized.")
-
-        # Patch current instance.
-        # YORE: Bump 1: Replace block with `cls._instance._logger = get_logger_func(cls._instance._logger.name)`.
+    def _patch_loggers(cls, get_logger_func: Callable) -> None:
+        # Patch current instances.
         for name, instance in cls._instances.items():
             instance._logger = get_logger_func(name)
 
@@ -73,7 +60,7 @@ class Logger:
 # Griffe's output and error messages are logging messages.
 #
 # Griffe provides the [`patch_loggers`][griffe.patch_loggers]
-# function so dependent libraries can patch Griffe's logger as they see fit.
+# function so dependent libraries can patch Griffe loggers as they see fit.
 #
 # For example, to fit in the MkDocs logging configuration
 # and prefix each log message with the module name:
@@ -102,36 +89,37 @@ class Logger:
 # """
 
 
-# YORE: Bump 1: Remove block.
-def get_logger(name: str) -> Logger:
-    """Deprecated. Create and return a new logger instance.
+def get_logger(name: str = "griffe") -> Logger:
+    """Create and return a new logger instance.
 
     Parameters:
-        name: The logger name (unused).
+        name: The logger name.
 
     Returns:
         The logger.
     """
-    if not name.startswith("griffe."):
-        warnings.warn("The `get_logger` function is deprecated.", DeprecationWarning, stacklevel=1)
     return Logger._get(name)
 
 
+# YORE: Bump 1: Remove block.
 def patch_logger(get_logger_func: Callable[[str], Any]) -> None:
-    """Patch Griffe's logger.
+    """Deprecated. Use `patch_loggers` instead.
 
     Parameters:
         get_logger_func: A function accepting a name as parameter and returning a logger.
     """
-    Logger._patch_logger(get_logger_func)
-
-
-# YORE: Bump 1: Remove block.
-def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:
-    """Deprecated, use `patch_logger` instead."""
     warnings.warn(
-        "The `patch_loggers` function is deprecated. Use `patch_logger` instead.",
+        "The `patch_logger` function is deprecated. Use `patch_loggers` instead.",
         DeprecationWarning,
         stacklevel=1,
     )
-    return patch_logger(get_logger_func)
+    Logger._patch_loggers(get_logger_func)
+
+
+def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:
+    """Patch Griffe logger and Griffe extensions' loggers.
+
+    Parameters:
+        get_logger_func: A function accepting a name as parameter and returning a logger.
+    """
+    Logger._patch_loggers(get_logger_func)
