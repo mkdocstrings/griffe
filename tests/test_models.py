@@ -15,6 +15,7 @@ from griffe import (
     module_vtree,
     temporary_inspected_module,
     temporary_pypackage,
+    temporary_visited_module,
     temporary_visited_package,
 )
 
@@ -38,6 +39,12 @@ def test_submodule_exports() -> None:
 
 def test_has_docstrings() -> None:
     """Assert the `.has_docstrings` method is recursive."""
+    with temporary_visited_module("class A:\n    '''Hello.'''") as module:
+        assert module.has_docstrings
+
+
+def test_has_docstrings_submodules() -> None:
+    """Assert the `.has_docstrings` method descends into submodules."""
     module = module_vtree("a.b.c.d")
     module["b.c.d"].docstring = Docstring("Hello.")
     assert module.has_docstrings

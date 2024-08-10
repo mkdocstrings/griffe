@@ -444,12 +444,30 @@ class Object(ObjectAliasMixin):
         """Whether this object has a docstring (empty or not)."""
         return bool(self.docstring)
 
+    # NOTE: (pawamoy) I'm not happy with `has_docstrings`.
+    # It currently recurses into submodules, but that doesn't make sense
+    # if downstream projects use it to know if they should render an init module
+    # while not rendering submodules too: the property could tell them there are
+    # docstrings, but they could be in submodules, not in the init module.
+    # Maybe we should derive it into new properties: `has_local_docstrings`,
+    # `has_docstrings`, `has_public_docstrings`... Maybe we should make it a function?`
+    # For now it's used in mkdocstrings-python so we must be careful with changes.
     @property
     def has_docstrings(self) -> bool:
-        """Whether this object or any of its members has a docstring (empty or not)."""
+        """Whether this object or any of its members has a docstring (empty or not).
+
+        Inherited members are not considered. Imported members are not considered,
+        unless they are also public.
+        """
         if self.has_docstring:
             return True
-        return any(member.has_docstrings for member in self.members.values())
+        for member in self.members.values():
+            try:
+                if (not member.is_imported or member.is_public) and member.has_docstrings:
+                    return True
+            except AliasResolutionError:
+                continue
+        return False
 
     def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
         """Deprecated. Use [`member.is_exported`][griffe.Object.is_exported] instead."""
