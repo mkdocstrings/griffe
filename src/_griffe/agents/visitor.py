@@ -235,8 +235,8 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_module_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_module_node", node=node, agent=self)
         self.current = module = Module(
             name=self.module_name,
             filepath=self.filepath,
@@ -245,11 +245,11 @@ class Visitor:
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
-        self.extensions.call("on_instance", node=node, obj=module)
-        self.extensions.call("on_module_instance", node=node, mod=module)
+        self.extensions.call("on_instance", node=node, obj=module, agent=self)
+        self.extensions.call("on_module_instance", node=node, mod=module, agent=self)
         self.generic_visit(node)
-        self.extensions.call("on_members", node=node, obj=module)
-        self.extensions.call("on_module_members", node=node, mod=module)
+        self.extensions.call("on_members", node=node, obj=module, agent=self)
+        self.extensions.call("on_module_members", node=node, mod=module, agent=self)
 
     def visit_classdef(self, node: ast.ClassDef) -> None:
         """Visit a class definition node.
@@ -257,8 +257,8 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_class_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_class_node", node=node, agent=self)
 
         # handle decorators
         decorators = []
@@ -293,11 +293,11 @@ class Visitor:
         class_.labels |= self.decorators_to_labels(decorators)
         self.current.set_member(node.name, class_)
         self.current = class_
-        self.extensions.call("on_instance", node=node, obj=class_)
-        self.extensions.call("on_class_instance", node=node, cls=class_)
+        self.extensions.call("on_instance", node=node, obj=class_, agent=self)
+        self.extensions.call("on_class_instance", node=node, cls=class_, agent=self)
         self.generic_visit(node)
-        self.extensions.call("on_members", node=node, obj=class_)
-        self.extensions.call("on_class_members", node=node, cls=class_)
+        self.extensions.call("on_members", node=node, obj=class_, agent=self)
+        self.extensions.call("on_class_members", node=node, cls=class_, agent=self)
         self.current = self.current.parent  # type: ignore[assignment]
 
     def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:
@@ -349,8 +349,8 @@ class Visitor:
             node: The node to visit.
             labels: Labels to add to the data object.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_function_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_function_node", node=node, agent=self)
 
         labels = labels or set()
 
@@ -387,8 +387,8 @@ class Visitor:
             )
             attribute.labels |= labels
             self.current.set_member(node.name, attribute)
-            self.extensions.call("on_instance", node=node, obj=attribute)
-            self.extensions.call("on_attribute_instance", node=node, attr=attribute)
+            self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
+            self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
             return
 
         # handle parameters
@@ -438,8 +438,8 @@ class Visitor:
 
         function.labels |= labels
 
-        self.extensions.call("on_instance", node=node, obj=function)
-        self.extensions.call("on_function_instance", node=node, func=function)
+        self.extensions.call("on_instance", node=node, obj=function, agent=self)
+        self.extensions.call("on_function_instance", node=node, func=function, agent=self)
         if self.current.kind is Kind.CLASS and function.name == "__init__":
             self.current = function  # type: ignore[assignment]  # temporary assign a function
             self.generic_visit(node)
@@ -529,8 +529,8 @@ class Visitor:
             node: The node to visit.
             annotation: A potential annotation.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_attribute_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_attribute_node", node=node, agent=self)
         parent = self.current
         labels = set()
 
@@ -618,8 +618,8 @@ class Visitor:
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
                         for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
                     ]
-            self.extensions.call("on_instance", node=node, obj=attribute)
-            self.extensions.call("on_attribute_instance", node=node, attr=attribute)
+            self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
+            self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 
     def visit_assign(self, node: ast.Assign) -> None:
         """Visit an assignment node.

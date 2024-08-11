@@ -295,8 +295,8 @@ class Inspector:
         Parameters:
             node: The node to inspect.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_module_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_module_node", node=node, agent=self)
         self.current = module = Module(
             name=self.module_name,
             filepath=self.filepath,
@@ -305,11 +305,11 @@ class Inspector:
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
         )
-        self.extensions.call("on_instance", node=node, obj=module)
-        self.extensions.call("on_module_instance", node=node, mod=module)
+        self.extensions.call("on_instance", node=node, obj=module, agent=self)
+        self.extensions.call("on_module_instance", node=node, mod=module, agent=self)
         self.generic_inspect(node)
-        self.extensions.call("on_members", node=node, obj=module)
-        self.extensions.call("on_module_members", node=node, mod=module)
+        self.extensions.call("on_members", node=node, obj=module, agent=self)
+        self.extensions.call("on_module_members", node=node, mod=module, agent=self)
 
     def inspect_class(self, node: ObjectNode) -> None:
         """Inspect a class.
@@ -317,8 +317,8 @@ class Inspector:
         Parameters:
             node: The node to inspect.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_class_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_class_node", node=node, agent=self)
 
         bases = []
         for base in node.obj.__bases__:
@@ -336,11 +336,11 @@ class Inspector:
         )
         self.current.set_member(node.name, class_)
         self.current = class_
-        self.extensions.call("on_instance", node=node, obj=class_)
-        self.extensions.call("on_class_instance", node=node, cls=class_)
+        self.extensions.call("on_instance", node=node, obj=class_, agent=self)
+        self.extensions.call("on_class_instance", node=node, cls=class_, agent=self)
         self.generic_inspect(node)
-        self.extensions.call("on_members", node=node, obj=class_)
-        self.extensions.call("on_class_members", node=node, cls=class_)
+        self.extensions.call("on_members", node=node, obj=class_, agent=self)
+        self.extensions.call("on_class_members", node=node, cls=class_, agent=self)
         self.current = self.current.parent  # type: ignore[assignment]
 
     def inspect_staticmethod(self, node: ObjectNode) -> None:
@@ -430,8 +430,8 @@ class Inspector:
             node: The node to inspect.
             labels: Labels to add to the data object.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_function_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_function_node", node=node, agent=self)
 
         try:
             signature = getsignature(node.obj)
@@ -475,11 +475,11 @@ class Inspector:
             )
         obj.labels |= labels
         self.current.set_member(node.name, obj)
-        self.extensions.call("on_instance", node=node, obj=obj)
+        self.extensions.call("on_instance", node=node, obj=obj, agent=self)
         if obj.is_attribute:
-            self.extensions.call("on_attribute_instance", node=node, attr=obj)
+            self.extensions.call("on_attribute_instance", node=node, attr=obj, agent=self)
         else:
-            self.extensions.call("on_function_instance", node=node, func=obj)
+            self.extensions.call("on_function_instance", node=node, func=obj, agent=self)
 
     def inspect_attribute(self, node: ObjectNode) -> None:
         """Inspect an attribute.
@@ -496,8 +496,8 @@ class Inspector:
             node: The node to inspect.
             annotation: A potential annotation.
         """
-        self.extensions.call("on_node", node=node)
-        self.extensions.call("on_attribute_node", node=node)
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_attribute_node", node=node, agent=self)
 
         # TODO: to improve
         parent = self.current
@@ -533,8 +533,8 @@ class Inspector:
 
         if node.name == "__all__":
             parent.exports = set(node.obj)
-        self.extensions.call("on_instance", node=node, obj=attribute)
-        self.extensions.call("on_attribute_instance", node=node, attr=attribute)
+        self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
+        self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 
 
 _kind_map = {

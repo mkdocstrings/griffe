@@ -135,14 +135,21 @@ class Extension:
             if not child.alias_target_path:
                 self.inspect(child)
 
-    def on_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def on_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when visiting a new node during static/dynamic analysis.
 
         Parameters:
             node: The currently visited node.
         """
 
-    def on_instance(self, *, node: ast.AST | ObjectNode, obj: Object, **kwargs: Any) -> None:
+    def on_instance(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        obj: Object,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when an Object has been created.
 
         Parameters:
@@ -150,7 +157,7 @@ class Extension:
             obj: The object instance.
         """
 
-    def on_members(self, *, node: ast.AST | ObjectNode, obj: Object, **kwargs: Any) -> None:
+    def on_members(self, *, node: ast.AST | ObjectNode, obj: Object, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when members of an Object have been loaded.
 
         Parameters:
@@ -158,14 +165,21 @@ class Extension:
             obj: The object instance.
         """
 
-    def on_module_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def on_module_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when visiting a new module node during static/dynamic analysis.
 
         Parameters:
             node: The currently visited node.
         """
 
-    def on_module_instance(self, *, node: ast.AST | ObjectNode, mod: Module, **kwargs: Any) -> None:
+    def on_module_instance(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        mod: Module,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when a Module has been created.
 
         Parameters:
@@ -173,7 +187,14 @@ class Extension:
             mod: The module instance.
         """
 
-    def on_module_members(self, *, node: ast.AST | ObjectNode, mod: Module, **kwargs: Any) -> None:
+    def on_module_members(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        mod: Module,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when members of a Module have been loaded.
 
         Parameters:
@@ -181,14 +202,21 @@ class Extension:
             mod: The module instance.
         """
 
-    def on_class_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def on_class_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when visiting a new class node during static/dynamic analysis.
 
         Parameters:
             node: The currently visited node.
         """
 
-    def on_class_instance(self, *, node: ast.AST | ObjectNode, cls: Class, **kwargs: Any) -> None:
+    def on_class_instance(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        cls: Class,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when a Class has been created.
 
         Parameters:
@@ -196,7 +224,14 @@ class Extension:
             cls: The class instance.
         """
 
-    def on_class_members(self, *, node: ast.AST | ObjectNode, cls: Class, **kwargs: Any) -> None:
+    def on_class_members(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        cls: Class,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when members of a Class have been loaded.
 
         Parameters:
@@ -204,14 +239,21 @@ class Extension:
             cls: The class instance.
         """
 
-    def on_function_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def on_function_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when visiting a new function node during static/dynamic analysis.
 
         Parameters:
             node: The currently visited node.
         """
 
-    def on_function_instance(self, *, node: ast.AST | ObjectNode, func: Function, **kwargs: Any) -> None:
+    def on_function_instance(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        func: Function,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when a Function has been created.
 
         Parameters:
@@ -219,14 +261,21 @@ class Extension:
             func: The function instance.
         """
 
-    def on_attribute_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:
+    def on_attribute_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when visiting a new attribute node during static/dynamic analysis.
 
         Parameters:
             node: The currently visited node.
         """
 
-    def on_attribute_instance(self, *, node: ast.AST | ObjectNode, attr: Attribute, **kwargs: Any) -> None:
+    def on_attribute_instance(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        attr: Attribute,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
         """Run when an Attribute has been created.
 
         Parameters:
