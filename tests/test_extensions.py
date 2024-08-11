@@ -23,43 +23,43 @@ class ExtensionTest(Extension):  # noqa: D101
         self.args = args
         self.kwargs = kwargs
 
-    def on_attribute_instance(self, *, node: ast.AST | ObjectNode, attr: Attribute) -> None:  # noqa: D102,ARG002
+    def on_attribute_instance(self, *, node: ast.AST | ObjectNode, attr: Attribute, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_attribute_instance")
 
-    def on_attribute_node(self, *, node: ast.AST | ObjectNode) -> None:  # noqa: D102,ARG002
+    def on_attribute_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_attribute_node")
 
-    def on_class_instance(self, *, node: ast.AST | ObjectNode, cls: Class) -> None:  # noqa: D102,ARG002
+    def on_class_instance(self, *, node: ast.AST | ObjectNode, cls: Class, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_class_instance")
 
-    def on_class_members(self, *, node: ast.AST | ObjectNode, cls: Class) -> None:  # noqa: D102,ARG002
+    def on_class_members(self, *, node: ast.AST | ObjectNode, cls: Class, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_class_members")
 
-    def on_class_node(self, *, node: ast.AST | ObjectNode) -> None:  # noqa: D102,ARG002
+    def on_class_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_class_node")
 
-    def on_function_instance(self, *, node: ast.AST | ObjectNode, func: Function) -> None:  # noqa: D102,ARG002
+    def on_function_instance(self, *, node: ast.AST | ObjectNode, func: Function, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_function_instance")
 
-    def on_function_node(self, *, node: ast.AST | ObjectNode) -> None:  # noqa: D102,ARG002
+    def on_function_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_function_node")
 
-    def on_instance(self, *, node: ast.AST | ObjectNode, obj: Object) -> None:  # noqa: D102,ARG002
+    def on_instance(self, *, node: ast.AST | ObjectNode, obj: Object, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_instance")
 
-    def on_members(self, *, node: ast.AST | ObjectNode, obj: Object) -> None:  # noqa: D102,ARG002
+    def on_members(self, *, node: ast.AST | ObjectNode, obj: Object, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_members")
 
-    def on_module_instance(self, *, node: ast.AST | ObjectNode, mod: Module) -> None:  # noqa: D102,ARG002
+    def on_module_instance(self, *, node: ast.AST | ObjectNode, mod: Module, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_module_instance")
 
-    def on_module_members(self, *, node: ast.AST | ObjectNode, mod: Module) -> None:  # noqa: D102,ARG002
+    def on_module_members(self, *, node: ast.AST | ObjectNode, mod: Module, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_module_members")
 
-    def on_module_node(self, *, node: ast.AST | ObjectNode) -> None:  # noqa: D102,ARG002
+    def on_module_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_module_node")
 
-    def on_node(self, *, node: ast.AST | ObjectNode) -> None:  # noqa: D102,ARG002
+    def on_node(self, *, node: ast.AST | ObjectNode, **kwargs: Any) -> None:  # noqa: D102,ARG002
         self.records.append("on_node")
 
 

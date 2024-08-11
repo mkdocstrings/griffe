@@ -221,7 +221,7 @@ class DataclassesExtension(Extension):
     if they don't already exist.
     """
 
-    def on_package_loaded(self, *, pkg: Module) -> None:
+    def on_package_loaded(self, *, pkg: Module, **kwargs: Any) -> None:  # noqa: ARG002
         """Hook for loaded packages.
 
         Parameters:
