@@ -423,7 +423,7 @@ class Visitor:
         if overload:
             self.current.overloads[function.name].append(function)
         elif property_function:
-            base_property: Function = self.current.members[node.name]  # type: ignore[assignment]
+            base_property: Attribute = self.current.members[node.name]  # type: ignore[assignment]
             if property_function == "setter":
                 base_property.setter = function
                 base_property.labels.add("writable")

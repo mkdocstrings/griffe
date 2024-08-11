@@ -1741,12 +1741,13 @@ class Function(Object):
         """The function return type annotation."""
         self.decorators: list[Decorator] = decorators or []
         """The function decorators."""
-        self.setter: Function | None = None
-        """The setter linked to this function (property)."""
-        self.deleter: Function | None = None
-        """The deleter linked to this function (property)."""
         self.overloads: list[Function] | None = None
         """The overloaded signatures of this function."""
+        # YORE: Bump 1: Remove block.
+        self.setter: Function | None = None
+        """Deprecated. See [Attribute.setter][griffe.Attribute.setter]."""
+        self.deleter: Function | None = None
+        """Deprecated. See [Attribute.deleter][griffe.Attribute.deleter]."""
 
         for parameter in self.parameters:
             parameter.function = self
@@ -1797,6 +1798,10 @@ class Attribute(Object):
         """The attribute value."""
         self.annotation: str | Expr | None = annotation
         """The attribute type annotation."""
+        self.setter: Function | None = None
+        """The setter linked to this property."""
+        self.deleter: Function | None = None
+        """The deleter linked to this property."""
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
