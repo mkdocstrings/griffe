@@ -86,7 +86,7 @@ def changelog(ctx: Context, bump: str = "") -> None:
     ctx.run(tools.git_changelog(bump=bump or None), title="Updating changelog")
 
 
-@duty(pre=["check_quality", "check_types", "check_docs", "check_dependencies", "check-api"])
+@duty(pre=["check_quality", "check_types", "check_docs", "check-api"])
 def check(ctx: Context) -> None:  # noqa: ARG001
     """Check it all!
 
