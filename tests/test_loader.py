@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import ExprName, GriffeLoader, temporary_pyfile, temporary_pypackage, temporary_visited_package
+from griffe import ExprName, GriffeLoader, load, temporary_pyfile, temporary_pypackage, temporary_visited_package
 from tests.helpers import clear_sys_modules
 
 if TYPE_CHECKING:
@@ -101,7 +101,7 @@ def test_load_data_from_stubs() -> None:
         code = '''
             from typing import List, Literal, Optional, Protocol, Set, Tuple, Union
 
-            __all__ = 'RustNotify', 'WatchfilesRustInternalError'
+            __all__ = ['RustNotify']
 
             class AbstractEvent(Protocol):
                 def is_set(self) -> bool: ...
@@ -484,3 +484,24 @@ def test_not_calling_package_loaded_hook_on_something_else_than_package() -> Non
         alias: Alias = loader.load("pkg.L")
         assert alias.is_alias
         assert not alias.resolved
+
+
+@pytest.mark.parametrize("force_inspection", [True, False])
+def test_warning_on_objects_from_non_submodules_being_exported(
+    caplog: pytest.LogCaptureFixture,
+    force_inspection: bool,
+) -> None:
+    """Warn when objects from non-submodules are exported."""
+    with temporary_pypackage(
+        "pkg",
+        {
+            "__init__.py": "from typing import List\nfrom pkg import moda, modb\n__all__ = ['List']",
+            "moda.py": "class Thing: ...",
+            "modb.py": "from pkg.moda import Thing\n\n__all__ = ['Thing']",
+        },
+    ) as pkg:
+        with caplog.at_level(logging.DEBUG, logger="griffe"):
+            load("pkg", search_paths=[pkg.tmpdir], force_inspection=force_inspection, resolve_aliases=True)
+        messages = [record.message for record in caplog.records]
+        assert any("Name `List` exported by module" in msg for msg in messages)
+        assert any("Name `Thing` exported by module" in msg for msg in messages)

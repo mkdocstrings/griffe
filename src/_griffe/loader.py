@@ -13,7 +13,13 @@ from _griffe.agents.inspector import inspect
 from _griffe.agents.visitor import visit
 from _griffe.collections import LinesCollection, ModulesCollection
 from _griffe.enumerations import Kind
-from _griffe.exceptions import AliasResolutionError, CyclicAliasError, LoadingError, UnimportableModuleError
+from _griffe.exceptions import (
+    AliasResolutionError,
+    CyclicAliasError,
+    LoadingError,
+    NameResolutionError,
+    UnimportableModuleError,
+)
 from _griffe.expressions import ExprName
 from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.finder import ModuleFinder, NamespacePackage, Package
@@ -292,6 +298,7 @@ class GriffeLoader:
         seen.add(module.path)
         if module.exports is None:
             return
+
         expanded = set()
         for export in module.exports:
             # It's a name: we resolve it, get the module it comes from,
@@ -311,8 +318,20 @@ class GriffeLoader:
                         _logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
             # It's a string, simply add it to the current exports.
             else:
+                with suppress(NameResolutionError):
+                    if not module.resolve(export).startswith(module.path):
+                        # NOTE: This won't work for built-in attributes during inspection,
+                        # since their canonical module cannot be determined.
+                        _logger.debug(
+                            f"Name `{export}` exported by module `{module.path}` doesn't come from this module or from a submodule.",
+                        )
                 expanded.add(export)
         module.exports = expanded
+
+        # Make sure to expand exports in all modules.
+        for submodule in module.modules.values():
+            if not submodule.is_alias and submodule.path not in seen:
+                self.expand_exports(submodule, seen)
 
     def expand_wildcards(
         self,
