@@ -180,6 +180,77 @@ def temporary_visited_package(
 
 
 @contextmanager
+def temporary_inspected_package(
+    package: str,
+    modules: Sequence[str] | Mapping[str, str] | None = None,
+    *,
+    init: bool = True,
+    inits: bool = True,
+    extensions: Extensions | None = None,
+    docstring_parser: Parser | None = None,
+    docstring_options: dict[str, Any] | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+    allow_inspection: bool = True,
+    store_source: bool = True,
+    resolve_aliases: bool = False,
+    resolve_external: bool | None = None,
+    resolve_implicit: bool = False,
+) -> Iterator[Module]:
+    """Create and inspect a temporary package.
+
+    Parameters:
+        package: The package name. Example: `"a"` gives
+            a package named `a`, while `"a/b"` gives a namespace package
+            named `a` with a package inside named `b`.
+            If `init` is false, then `b` is also a namespace package.
+        modules: Additional modules to create in the package.
+            If a list, simply touch the files: `["b.py", "c/d.py", "e/f"]`.
+            If a dict, keys are the file names and values their contents:
+            `{"b.py": "b = 1", "c/d.py": "print('hey from c')"}`.
+        init: Whether to create an `__init__` module in the top package.
+        inits: Whether to create `__init__` modules in subpackages.
+        extensions: The extensions to use.
+        docstring_parser: The docstring parser to use. By default, no parsing is done.
+        docstring_options: Additional docstring parsing options.
+        lines_collection: A collection of source code lines.
+        modules_collection: A collection of modules.
+        allow_inspection: Whether to allow inspecting modules.
+        store_source: Whether to store code source in the lines collection.
+        resolve_aliases: Whether to resolve aliases.
+        resolve_external: Whether to try to load unspecified modules to resolve aliases.
+            Default value (`None`) means to load external modules only if they are the private sibling
+            or the origin module (for example when `ast` imports from `_ast`).
+        resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
+
+    Yields:
+        A module.
+    """
+    with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
+        try:
+            yield load(  # type: ignore[misc]
+                tmp_package.name,
+                search_paths=[tmp_package.tmpdir],
+                extensions=extensions,
+                docstring_parser=docstring_parser,
+                docstring_options=docstring_options,
+                lines_collection=lines_collection,
+                modules_collection=modules_collection,
+                allow_inspection=allow_inspection,
+                store_source=store_source,
+                resolve_aliases=resolve_aliases,
+                resolve_external=resolve_external,
+                resolve_implicit=resolve_implicit,
+                force_inspection=True,
+            )
+        finally:
+            for name in tuple(sys.modules.keys()):
+                if name == package or name.startswith(f"{package}."):
+                    sys.modules.pop(name, None)
+            invalidate_caches()
+
+
+@contextmanager
 def temporary_visited_module(
     code: str,
     *,
