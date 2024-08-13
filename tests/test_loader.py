@@ -8,8 +8,14 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import ExprName, GriffeLoader, load, temporary_pyfile, temporary_pypackage, temporary_visited_package
-from tests.helpers import clear_sys_modules
+from griffe import (
+    ExprName,
+    GriffeLoader,
+    temporary_inspected_package,
+    temporary_pyfile,
+    temporary_pypackage,
+    temporary_visited_package,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -454,16 +460,15 @@ def test_side_loading_sibling_private_module(wildcard: bool, external: bool | No
 
 def test_forcing_inspection() -> None:
     """Load a package with forced dynamic analysis."""
-    with temporary_pypackage("pkg", {"__init__.py": "a = 0", "mod.py": "b = 1"}) as pkg:
-        static_loader = GriffeLoader(force_inspection=False, search_paths=[pkg.tmpdir])
-        dynamic_loader = GriffeLoader(force_inspection=True, search_paths=[pkg.tmpdir])
-        static_package = static_loader.load("pkg")
-        dynamic_package = dynamic_loader.load("pkg")
+    modules = {"__init__.py": "a = 0", "mod.py": "b = 1"}
+    with temporary_visited_package("static_pkg", modules) as static_package, temporary_inspected_package(
+        "dynamic_pkg",
+        modules,
+    ) as dynamic_package:
         for name in static_package.members:
             assert name in dynamic_package.members
         for name in static_package["mod"].members:
             assert name in dynamic_package["mod"].members
-    clear_sys_modules("pkg")
 
 
 def test_relying_on_modules_path_attribute(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -486,22 +491,22 @@ def test_not_calling_package_loaded_hook_on_something_else_than_package() -> Non
         assert not alias.resolved
 
 
-@pytest.mark.parametrize("force_inspection", [True, False])
+@pytest.mark.parametrize("dynamic", [True, False])
 def test_warning_on_objects_from_non_submodules_being_exported(
     caplog: pytest.LogCaptureFixture,
-    force_inspection: bool,
+    dynamic: bool,
 ) -> None:
     """Warn when objects from non-submodules are exported."""
-    with temporary_pypackage(
+    temporary_package = temporary_inspected_package if dynamic else temporary_visited_package
+    with caplog.at_level(logging.DEBUG, logger="griffe"), temporary_package(
         "pkg",
         {
             "__init__.py": "from typing import List\nfrom pkg import moda, modb\n__all__ = ['List']",
             "moda.py": "class Thing: ...",
             "modb.py": "from pkg.moda import Thing\n\n__all__ = ['Thing']",
         },
-    ) as pkg:
-        with caplog.at_level(logging.DEBUG, logger="griffe"):
-            load("pkg", search_paths=[pkg.tmpdir], force_inspection=force_inspection, resolve_aliases=True)
+        resolve_aliases=True,
+    ):
         messages = [record.message for record in caplog.records]
         assert any("Name `List` exported by module" in msg for msg in messages)
         assert any("Name `Thing` exported by module" in msg for msg in messages)

@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
-from griffe import inspect, temporary_inspected_module, temporary_pypackage
+from griffe import inspect, temporary_inspected_module, temporary_inspected_package, temporary_pypackage
 from tests.helpers import clear_sys_modules
 
 
@@ -50,12 +48,10 @@ def test_class_level_imports() -> None:
 
 def test_missing_dependency() -> None:
     """Assert missing dependencies are handled during dynamic imports."""
-    with temporary_pypackage("package", ["module.py"]) as tmp_package:
-        filepath = Path(tmp_package.path, "module.py")
-        filepath.write_text("import missing")
-        with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"):
-            inspect("package.module", filepath=filepath, import_paths=[tmp_package.tmpdir])
-    clear_sys_modules("package")
+    with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"), temporary_inspected_module(
+        "import missing",
+    ):
+        pass
 
 
 def test_inspect_properties_as_attributes() -> None:
@@ -98,9 +94,8 @@ def test_inspecting_parameters_with_functions_as_default_values() -> None:
 
 def test_inspecting_package_and_module_with_same_names() -> None:
     """Package and module having same name shouldn't cause issues."""
-    with temporary_pypackage("package", {"package.py": "a = 0"}) as tmp_package:
-        inspect("package.package", filepath=tmp_package.path / "package.py", import_paths=[tmp_package.tmpdir])
-    clear_sys_modules("package")
+    with temporary_inspected_package("package", {"package.py": "a = 0"}):
+        pass
 
 
 def test_inspecting_module_with_submodules() -> None:
