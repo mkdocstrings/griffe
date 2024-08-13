@@ -120,6 +120,7 @@ def temporary_visited_package(
     modules: Sequence[str] | Mapping[str, str] | None = None,
     *,
     init: bool = True,
+    inits: bool = True,
     extensions: Extensions | None = None,
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
@@ -139,7 +140,8 @@ def temporary_visited_package(
             If a list, simply touch the files: `["b.py", "c/d.py", "e/f"]`.
             If a dict, keys are the file names and values their contents:
             `{"b.py": "b = 1", "c/d.py": "print('hey from c')"}`.
-        init: Whether to create an `__init__` module in the leaf package.
+        init: Whether to create an `__init__` module in the top package.
+        inits: Whether to create `__init__` modules in subpackages.
         extensions: The extensions to use.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
         docstring_options: Additional docstring parsing options.
@@ -151,7 +153,7 @@ def temporary_visited_package(
     Yields:
         A module.
     """
-    with temporary_pypackage(package, modules, init=init) as tmp_package:
+    with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         loader = GriffeLoader(
             search_paths=[tmp_package.tmpdir],
             extensions=extensions,
