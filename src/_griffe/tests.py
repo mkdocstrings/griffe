@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
 from _griffe.agents.inspector import inspect
 from _griffe.agents.visitor import visit
 from _griffe.collections import LinesCollection
-from _griffe.loader import GriffeLoader
+from _griffe.loader import load
 from _griffe.models import Module, Object
 
 if TYPE_CHECKING:
@@ -128,6 +128,9 @@ def temporary_visited_package(
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = False,
     store_source: bool = True,
+    resolve_aliases: bool = False,
+    resolve_external: bool | None = None,
+    resolve_implicit: bool = False,
 ) -> Iterator[Module]:
     """Create and visit a temporary package.
 
@@ -149,12 +152,18 @@ def temporary_visited_package(
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         store_source: Whether to store code source in the lines collection.
+        resolve_aliases: Whether to resolve aliases.
+        resolve_external: Whether to try to load unspecified modules to resolve aliases.
+            Default value (`None`) means to load external modules only if they are the private sibling
+            or the origin module (for example when `ast` imports from `_ast`).
+        resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
 
     Yields:
         A module.
     """
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
-        loader = GriffeLoader(
+        yield load(  # type: ignore[misc]
+            tmp_package.name,
             search_paths=[tmp_package.tmpdir],
             extensions=extensions,
             docstring_parser=docstring_parser,
@@ -163,8 +172,11 @@ def temporary_visited_package(
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
             store_source=store_source,
+            resolve_aliases=resolve_aliases,
+            resolve_external=resolve_external,
+            resolve_implicit=resolve_implicit,
+            force_inspection=False,
         )
-        yield loader.load(tmp_package.name)  # type: ignore[misc]
 
 
 @contextmanager
