@@ -410,10 +410,10 @@ def dump(
     started = datetime.now(tz=timezone.utc)
     if per_package_output:
         for package_name, data in data_packages.items():
-            serialized = data.as_json(indent=2, full=full)
+            serialized = data.as_json(indent=2, full=full, sort_keys=True)
             _print_data(serialized, output.format(package=package_name))  # type: ignore[union-attr]
     else:
-        serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full)
+        serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full, sort_keys=True)
         _print_data(serialized, output)
     elapsed = datetime.now(tz=timezone.utc) - started
 
