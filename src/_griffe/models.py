@@ -861,9 +861,10 @@ class Object(ObjectAliasMixin):
         if self.docstring:
             base["docstring"] = self.docstring
 
-        # doing this last for a prettier JSON dump
         base["labels"] = self.labels
+        # YORE: Bump 1: Replace line with `base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}`.
         base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
+        # Also replace array and items by object and additionalProperties in docs/schema.json line 163.
 
         return base
 

@@ -177,7 +177,13 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | 
 
 def _load_module(obj_dict: dict[str, Any]) -> Module:
     module = Module(name=obj_dict["name"], filepath=Path(obj_dict["filepath"]), docstring=_load_docstring(obj_dict))
-    for module_member in obj_dict.get("members", []):
+    # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
+    members = obj_dict.get("members", [])
+    # YORE: Bump 2: Remove block.
+    if isinstance(members, dict):
+        members = members.values()
+
+    for module_member in members:
         module.set_member(module_member.name, module_member)
         _attach_parent_to_exprs(module_member, module)
     module.labels |= set(obj_dict.get("labels", ()))
@@ -193,7 +199,13 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         decorators=_load_decorators(obj_dict),
         bases=obj_dict["bases"],
     )
-    for class_member in obj_dict.get("members", []):
+    # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
+    members = obj_dict.get("members", [])
+    # YORE: Bump 2: Remove block.
+    if isinstance(members, dict):
+        members = members.values()
+
+    for class_member in members:
         class_.set_member(class_member.name, class_member)
         _attach_parent_to_exprs(class_member, class_)
     class_.labels |= set(obj_dict.get("labels", ()))
