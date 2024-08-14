@@ -193,7 +193,7 @@ plugins:
     handlers:
       python:
         import:
-        # YORE: SOL 3.13: Replace `3.13` with `3` within line.
+        # YORE: BOL 3.13: Replace `3.13` with `3` within line.
         - url: https://docs.python.org/3.13/objects.inv
           domains: [std, py]
         paths: [src, scripts, .]

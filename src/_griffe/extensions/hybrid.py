@@ -1,6 +1,6 @@
 # Deprecated. This extension provides an hybrid behavior while loading data.
 
-# YORE: Bump 1: Remove module.
+# YORE: Bump 1: Remove file.
 
 from __future__ import annotations
 

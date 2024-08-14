@@ -2,7 +2,7 @@
 
 ## **Main API**
 
-<!-- YORE: Bump 1: Replace line with `::: griffe.logger`.
+<!-- YORE: Bump 1: Replace line with `::: griffe.logger`. -->
 <!-- -->
 
 ::: griffe.Logger

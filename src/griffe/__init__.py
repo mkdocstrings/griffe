@@ -199,8 +199,8 @@ from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_work
 from _griffe.importer import dynamic_import, sys_path
 from _griffe.loader import GriffeLoader, load, load_git, load_pypi
 
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-# YORE: Bump 1: Replace `, patch_loggers` with `` within line.
+# YORE: Bump 1: Replace `get_logger` with `get_logger, logger` within line.
+# YORE: Bump 1: Replace `patch_logger, ` with `` within line.
 from _griffe.logger import Logger, get_logger, patch_logger, patch_loggers
 from _griffe.merger import merge_stubs
 from _griffe.mixins import (
@@ -414,7 +414,6 @@ __all__ = [
     "get_expression",
     "get_instance_names",
     "get_latest_tag",
-    # YORE: Bump 1: Remove line.
     "get_logger",
     "get_name",
     "get_names",
@@ -430,7 +429,7 @@ __all__ = [
     "load_extensions",
     "load_git",
     "load_pypi",
-    # YORE: Bump 1: Uncomment line.
+    # YORE: Bump 1: Replace `# ` with ``.
     # "logger",
     "main",
     "merge_stubs",
@@ -442,8 +441,8 @@ __all__ = [
     "parse_numpy",
     "parse_sphinx",
     "parsers",
-    "patch_logger",
     # YORE: Bump 1: Remove line.
+    "patch_logger",
     "patch_loggers",
     "relative_to_absolute",
     "safe_get__all__",

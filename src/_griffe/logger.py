@@ -53,7 +53,7 @@ class Logger:
         cls._default_logger = get_logger_func
 
 
-# YORE: Bump 1: Uncomment block.
+# YORE: Bump 1: Regex-replace `^# ?` with `` within block.
 # logger: Logger = Logger._get()
 # """Our global logger, used throughout the library.
 #
