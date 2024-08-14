@@ -5,6 +5,48 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.49.0](https://github.com/mkdocstrings/griffe/releases/tag/0.49.0) - 2024-08-14
+
+<small>[Compare with 0.48.0](https://github.com/mkdocstrings/griffe/compare/0.48.0...0.49.0)</small>
+
+WARNING: **⚡ Imminent v1! ⚡🚀 See [v0.46](#0460-2024-06-16).**
+
+### Deprecations
+
+- Cancel deprecation of `get_logger` and `patch_loggers` (and deprecate `patch_logger` instead). Extensions need loggers too, distinct ones, and they were forgotten... Sorry for the back and forth 🙇
+- Attributes `setter` and `deleter` on `Function` are deprecated. They were moved into the `Attribute` class since properties are instantiated as attributes, not functions.
+- Extension hooks must accept `**kwargs` in their signature, to allow forward-compatibility. Accepting `**kwargs` also makes it possible to remove unused arguments from the signature.
+- In version 1, Griffe will serialize object members as dictionaries instead of lists. Lists were initially used to preserve source order, but source order can be re-obtained thanks to the line number attributes (`lineno`, `endlineno`). Version 0.49 is able to load both lists and dictionaries from JSON dumps, and version 1 will maintain this ability. However external tools loading JSON dumps will need to be updated.
+
+### Features
+
+- Add `temporary_inspected_package` helper ([3c4ba16](https://github.com/mkdocstrings/griffe/commit/3c4ba160ca4c3407bc60d9125e0d93ae5e08d8f3) by Timothée Mazzucotelli).
+- Accept alias resolution related parameters in `temporary_visited_package` ([7d5408a](https://github.com/mkdocstrings/griffe/commit/7d5408a3bf81d64841bbe620b883bc16cb633f82) by Timothée Mazzucotelli).
+- Accept `inits` parameter in `temporary_visited_package` ([a4859b7](https://github.com/mkdocstrings/griffe/commit/a4859b74bf52ca29cbb46c147a2b6df4532297e1) by Timothée Mazzucotelli).
+- Warn (DEBUG) when an object coming from a sibling, parent or external module instead of the current module or a submodule is exported (listed in `__all__`) ([f82317a](https://github.com/mkdocstrings/griffe/commit/f82317a00333e1b8971625f14e4452e93e9840ff) by Timothée Mazzucotelli). [Issue-249](https://github.com/mkdocstrings/griffe/issues/249), [Related-to-PR-251](https://github.com/mkdocstrings/griffe/pull/251)
+- Pass down agent to extension hooks ([71acb01](https://github.com/mkdocstrings/griffe/commit/71acb018716031331bc26d79bc27fd45f67735c1) by Timothée Mazzucotelli). [Issue-312](https://github.com/mkdocstrings/griffe/issues/312)
+- Add `source` property to docstrings, which return the docstring lines as written in the source ([3f6a71a](https://github.com/mkdocstrings/griffe/commit/3f6a71a34f503e95fad55038292e3c8ab2ce30b6) by Timothée Mazzucotelli). [Issue-90](https://github.com/mkdocstrings/griffe/issues/90)
+
+### Bug Fixes
+
+- Move `setter` and `deleter` to `Attribute` class instead of `Function`, since that's how properties are instantiated ([309c6e3](https://github.com/mkdocstrings/griffe/commit/309c6e34aded516dcfeab0dd81c2fbcecd2691ac) by Timothée Mazzucotelli). [Issue-311](https://github.com/mkdocstrings/griffe/issues/311)
+- Reduce risk of recursion errors by excluding imported objects from `has_docstrings`, unless they're public ([9296ca7](https://github.com/mkdocstrings/griffe/commit/9296ca7273eb1e6b7255b92793a09b82fd3bc4a9) by Timothée Mazzucotelli). [Issue-302](https://github.com/mkdocstrings/griffe/issues/302)
+- Fix retrieval of annotations from parent for Yields section in properties ([8a21f4d](https://github.com/mkdocstrings/griffe/commit/8a21f4db1743902c56875980a4aa2366609642c1) by Timothée Mazzucotelli). [Issue-298](https://github.com/mkdocstrings/griffe/issues/298)
+- Fix parsing Yields section (Google-style) when yielded values are tuples, and the description has more lines than tuple values ([9091776](https://github.com/mkdocstrings/griffe/commit/90917761ef7ea71ccda8147b3e1ebbc4675d9685) by Timothée Mazzucotelli).
+- Fix condition on objects kinds when merging stubs ([727f99b](https://github.com/mkdocstrings/griffe/commit/727f99b084c703937393d52e930aba4ee5739c3b) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Sort keys when dumping JSON from the command line ([8cdffe9](https://github.com/mkdocstrings/griffe/commit/8cdffe9a68383369f6598820ec867740bee58207) by Timothée Mazzucotelli). [Issue-310](https://github.com/mkdocstrings/griffe/issues/310)
+- Handle both lists and dicts for members when loading JSON data in preparation of v1 ([f89050c](https://github.com/mkdocstrings/griffe/commit/f89050c3dced88d5295971ab019e5c9a5706f6cc) by Timothée Mazzucotelli). [Issue-310](https://github.com/mkdocstrings/griffe/issues/310)
+- Accept `**kwargs` in extension hooks to allow forward-compatibility ([2621d52](https://github.com/mkdocstrings/griffe/commit/2621d52e4d1e89e043e022efb8eba087df5d321e) by Timothée Mazzucotelli). [Issue-312](https://github.com/mkdocstrings/griffe/issues/312)
+- Revert deprecation of `patch_loggers` in favor of `patch_logger` ([a20796a](https://github.com/mkdocstrings/griffe/commit/a20796ac821ac72b22082fde2a68ad9dac735076) by Timothée Mazzucotelli).
+- Expose dummy `load_pypi` in non-Insiders version ([a69cffd](https://github.com/mkdocstrings/griffe/commit/a69cffd89215dbe629cec892ccda3c259d5572ef) by Timothée Mazzucotelli).
+- Don't emit deprecation warnings through own usage of deprecated API ([9922d74](https://github.com/mkdocstrings/griffe/commit/9922d741dc1f9538e5e5f00dd115b297665ac6f8) by Timothée Mazzucotelli). [Issue-mkdocstrings#676](https://github.com/mkdocstrings/mkdocstrings/issues/676)
+- Finish preparing docstring style auto-detection feature ([03bdec6](https://github.com/mkdocstrings/griffe/commit/03bdec61bbba86b1fa1b98cb890c034bbfcd44c3) by Timothée Mazzucotelli). [Issue-5](https://github.com/mkdocstrings/griffe/issues/5)
+- Add DocstringStyle literal type to prepare docstring style auto detection feature ([b7aaf64](https://github.com/mkdocstrings/griffe/commit/b7aaf6487f04876b498237726b36d08f8e35b905) by Timothée Mazzucotelli). [Issue-5](https://github.com/mkdocstrings/griffe/issues/5)
+- Inherit from `str, Enum` instead of `StrEnum` which needs a backport ([77f1544](https://github.com/mkdocstrings/griffe/commit/77f15443540acd2d279e08675b41bd69470f76d9) by Timothée Mazzucotelli). [Issue-307](https://github.com/mkdocstrings/griffe/issues/307)
+
 ## [0.48.0](https://github.com/mkdocstrings/griffe/releases/tag/0.48.0) - 2024-07-15
 
 <small>[Compare with 0.47.0](https://github.com/mkdocstrings/griffe/compare/0.47.0...0.48.0)</small>
