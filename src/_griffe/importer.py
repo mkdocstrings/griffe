@@ -117,6 +117,6 @@ def dynamic_import(import_path: str, import_paths: Sequence[str | Path] | None =
                 value = getattr(value, part)
             except BaseException as error:  # noqa: BLE001
                 errors.append(_error_details(error, module_path + ":" + ".".join(object_parts)))
-                raise ImportError("; ".join(errors))  # noqa: B904,TRY200
+                raise ImportError("; ".join(errors))  # noqa: B904
 
     return value

@@ -106,7 +106,7 @@ from _griffe.docstrings.parsers import (
     parsers,
 )
 from _griffe.docstrings.sphinx import parse_sphinx
-from _griffe.docstrings.utils import DocstringWarningCallable, docstring_warning, parse_docstring_annotation
+from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
 from _griffe.encoders import JSONEncoder, json_decoder
 from _griffe.enumerations import (
     BreakageKind,
@@ -117,8 +117,6 @@ from _griffe.enumerations import (
     ObjectKind,
     ParameterKind,
     Parser,
-    # YORE: Bump 1: Remove line.
-    When,
 )
 from _griffe.exceptions import (
     AliasResolutionError,
@@ -180,28 +178,16 @@ from _griffe.expressions import (
 from _griffe.extensions.base import (
     Extension,
     Extensions,
-    # YORE: Bump 1: Remove line.
-    ExtensionType,
-    # YORE: Bump 1: Remove line.
-    InspectorExtension,
     LoadableExtensionType,
-    # YORE: Bump 1: Remove line.
-    VisitorExtension,
     builtin_extensions,
     load_extensions,
 )
 from _griffe.extensions.dataclasses import DataclassesExtension
-
-# YORE: Bump 1: Remove line.
-from _griffe.extensions.hybrid import HybridExtension
 from _griffe.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
 from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
 from _griffe.importer import dynamic_import, sys_path
 from _griffe.loader import GriffeLoader, load, load_git, load_pypi
-
-# YORE: Bump 1: Replace `get_logger` with `get_logger, logger` within line.
-# YORE: Bump 1: Replace `patch_logger, ` with `` within line.
-from _griffe.logger import Logger, get_logger, patch_logger, patch_loggers
+from _griffe.logger import Logger, get_logger, logger, patch_loggers
 from _griffe.merger import merge_stubs
 from _griffe.mixins import (
     DelMembersMixin,
@@ -289,8 +275,6 @@ __all__ = [
     "DocstringSectionYields",
     "DocstringStyle",
     "DocstringWarn",
-    # YORE: Bump 1: Remove line.
-    "DocstringWarningCallable",
     "DocstringYield",
     "ExplanationStyle",
     "ExportedName",
@@ -329,19 +313,13 @@ __all__ = [
     "Extension",
     "ExtensionError",
     "ExtensionNotLoadedError",
-    # YORE: Bump 1: Remove line.
-    "ExtensionType",
     "Extensions",
     "Function",
     "GetMembersMixin",
     "GitError",
     "GriffeError",
     "GriffeLoader",
-    # YORE: Bump 1: Remove line.
-    "HybridExtension",
     "Inspector",
-    # YORE: Bump 1: Remove line.
-    "InspectorExtension",
     "JSONEncoder",
     "Kind",
     "LastNodeError",
@@ -384,10 +362,6 @@ __all__ = [
     "UnhandledEditableModuleError",
     "UnimportableModuleError",
     "Visitor",
-    # YORE: Bump 1: Remove line.
-    "VisitorExtension",
-    # YORE: Bump 1: Remove line.
-    "When",
     "assert_git_repo",
     "ast_children",
     "ast_first_child",
@@ -429,8 +403,7 @@ __all__ = [
     "load_extensions",
     "load_git",
     "load_pypi",
-    # YORE: Bump 1: Replace `# ` with ``.
-    # "logger",
+    "logger",
     "main",
     "merge_stubs",
     "module_vtree",
@@ -441,8 +414,6 @@ __all__ = [
     "parse_numpy",
     "parse_sphinx",
     "parsers",
-    # YORE: Bump 1: Remove line.
-    "patch_logger",
     "patch_loggers",
     "relative_to_absolute",
     "safe_get__all__",

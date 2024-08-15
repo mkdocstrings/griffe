@@ -24,8 +24,6 @@
 
 ::: griffe.docstring_warning
 
-::: griffe.DocstringWarningCallable
-
 ::: griffe.DocstringDetectionMethod
 
 ::: griffe.infer_docstring_style

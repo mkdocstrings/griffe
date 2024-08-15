@@ -15,10 +15,7 @@ from _griffe.enumerations import ObjectKind, ParameterKind
 from _griffe.expressions import safe_get_annotation
 from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.importer import dynamic_import
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 from _griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 
 if TYPE_CHECKING:
@@ -28,8 +25,6 @@ if TYPE_CHECKING:
     from _griffe.expressions import Expr
 
 
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.agents.inspector")
 _empty = Signature.empty
 
 
@@ -132,7 +127,7 @@ class Inspector:
         self.filepath: Path | None = filepath
         """The module file path."""
 
-        self.extensions: Extensions = extensions.attach_inspector(self)
+        self.extensions: Extensions = extensions
         """The extensions to use when inspecting."""
 
         self.parent: Module | None = parent
@@ -239,11 +234,7 @@ class Inspector:
         Parameters:
             node: The node to inspect.
         """
-        for before_inspector in self.extensions.before_inspection:
-            before_inspector.inspect(node)
         getattr(self, f"inspect_{node.kind}", self.generic_inspect)(node)
-        for after_inspector in self.extensions.after_inspection:
-            after_inspector.inspect(node)
 
     def generic_inspect(self, node: ObjectNode) -> None:
         """Extend the base generic inspection with extensions.
@@ -251,9 +242,6 @@ class Inspector:
         Parameters:
             node: The node to inspect.
         """
-        for before_inspector in self.extensions.before_children_inspection:
-            before_inspector.inspect(node)
-
         for child in node.children:
             if target_path := child.alias_target_path:
                 # If the child is an actual submodule of the current module,
@@ -264,7 +252,7 @@ class Inspector:
                 # so we skip it here (no member, no alias, just skip it).
                 if child.is_module and target_path == f"{self.current.path}.{child.name}":
                     if not hasattr(child.obj, "__file__"):
-                        _logger.debug(f"Module {target_path} is not discoverable on disk, inspecting right now")
+                        logger.debug(f"Module {target_path} is not discoverable on disk, inspecting right now")
                         inspector = Inspector(
                             child.name,
                             filepath=None,
@@ -275,19 +263,13 @@ class Inspector:
                             lines_collection=self.lines_collection,
                             modules_collection=self.modules_collection,
                         )
-                        try:
-                            inspector.inspect_module(child)
-                        finally:
-                            self.extensions.attach_inspector(self)
+                        inspector.inspect_module(child)
                         self.current.set_member(child.name, inspector.current.module)
                 # Otherwise, alias the object.
                 else:
                     self.current.set_member(child.name, Alias(child.name, target_path))
             else:
                 self.inspect(child)
-
-        for after_inspector in self.extensions.after_children_inspection:
-            after_inspector.inspect(node)
 
     def inspect_module(self, node: ObjectNode) -> None:
         """Inspect a module.

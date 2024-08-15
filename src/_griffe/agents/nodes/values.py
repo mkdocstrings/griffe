@@ -6,9 +6,7 @@ import ast
 import sys
 from typing import TYPE_CHECKING
 
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 
 # YORE: EOL 3.8: Replace block with line 4.
 if sys.version_info < (3, 9):
@@ -18,9 +16,6 @@ else:
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.agents.nodes._values")
 
 
 def get_value(node: ast.AST | None) -> str | None:
@@ -49,10 +44,10 @@ def safe_get_value(node: ast.AST | None, filepath: str | Path | None = None) -> 
     """
     try:
         return get_value(node)
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001
         message = f"Failed to represent node {node}"
         if filepath:
             message += f" at {filepath}:{node.lineno}"  # type: ignore[union-attr]
         message += f": {error}"
-        _logger.exception(message)
+        logger.exception(message)
         return None

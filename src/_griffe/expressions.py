@@ -17,19 +17,12 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
 from _griffe.agents.nodes.parameters import get_parameters
 from _griffe.enumerations import LogLevel, ParameterKind
 from _griffe.exceptions import NameResolutionError
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 
 if TYPE_CHECKING:
     from pathlib import Path
 
     from _griffe.models import Class, Module
-
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.expressions")
 
 
 def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True) -> Iterator[str | Expr]:
@@ -976,7 +969,7 @@ def _build_constant(
                     optimize=1,
                 )
             except SyntaxError:
-                _logger.debug(
+                logger.debug(
                     f"Tried and failed to parse {node.value!r} as Python code, "
                     "falling back to using it as a string literal "
                     "(postponed annotations might help: https://peps.python.org/pep-0563/)",
@@ -1256,7 +1249,7 @@ def safe_get_expression(
         lineno = node.lineno  # type: ignore[union-attr]
         error_str = f"{error.__class__.__name__}: {error}"
         message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
-        getattr(_logger, log_level.value)(message)
+        getattr(logger, log_level.value)(message)
     return None
 
 

@@ -40,7 +40,7 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
     Yields:
         The wrapped function.
     """
-    original_warn = parser_module._warn
+    original_warn = parser_module.docstring_warning
 
     def parse(docstring: str, parent: ParentType | None = None, **parser_opts: Any) -> ParseResultType:
         """Parse a doctring.
@@ -59,7 +59,9 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
             docstring_object.parent = parent
             parent.docstring = docstring_object
         warnings = []
-        parser_module._warn = lambda _docstring, _offset, message, log_level=LogLevel.warning: warnings.append(message)  # type: ignore[attr-defined]
+        parser_module.docstring_warning = (  # type: ignore[attr-defined]
+            lambda _docstring, _offset, message, log_level=LogLevel.warning: warnings.append(message)
+        )
         func_name = f"parse_{parser_module.__name__.split('.')[-1]}"
         func = getattr(parser_module, func_name)
         sections = func(docstring_object, **parser_opts)
@@ -67,4 +69,4 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
 
     yield parse
 
-    parser_module._warn = original_warn  # type: ignore[attr-defined]
+    parser_module.docstring_warning = original_warn  # type: ignore[attr-defined]

@@ -63,10 +63,6 @@ if TYPE_CHECKING:
     from _griffe.models import Docstring
 
 
-# YORE: Bump 1: Regex-replace `\b_warn\b` with `docstring_warning` within file.
-# YORE: Bump 1: Remove line.
-_warn = docstring_warning("griffe.docstrings.numpy")
-
 _section_kind = {
     "deprecated": DocstringSectionKind.deprecated,
     "parameters": DocstringSectionKind.parameters,
@@ -130,7 +126,7 @@ def _read_block_items(
             # indent between initial and continuation: append but warn
             cont_indent = len(line) - len(line.lstrip())
             current_item.append(line[cont_indent:])
-            _warn(
+            docstring_warning(
                 docstring,
                 new_offset,
                 f"Confusing indentation for continuation line {new_offset+1} in docstring, "
@@ -230,7 +226,7 @@ def _read_parameters(
     for item in items:
         match = _RE_PARAMETER.match(item[0])
         if not match:
-            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         names = match.group("names").split(", ")
@@ -256,7 +252,7 @@ def _read_parameters(
                     annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
                     break
             else:
-                _warn(docstring, new_offset, f"No types or annotations for parameters {names}")
+                docstring_warning(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
             annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
 
@@ -276,7 +272,7 @@ def _read_parameters(
                             if starred_name in params:
                                 message += f". Did you mean '{starred_name}'?"
                                 break
-                        _warn(docstring, new_offset, message)
+                        docstring_warning(docstring, new_offset, message)
 
         for name in names:
             parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))
@@ -295,7 +291,7 @@ def _read_parameters_section(
     if parameters:
         return DocstringSectionParameters(parameters), new_offset
 
-    _warn(docstring, new_offset, f"Empty parameters section at line {offset}")
+    docstring_warning(docstring, new_offset, f"Empty parameters section at line {offset}")
     return None, new_offset
 
 
@@ -311,7 +307,7 @@ def _read_other_parameters_section(
     if parameters:
         return DocstringSectionOtherParameters(parameters), new_offset
 
-    _warn(docstring, new_offset, f"Empty other parameters section at line {offset}")
+    docstring_warning(docstring, new_offset, f"Empty other parameters section at line {offset}")
     return None, new_offset
 
 
@@ -327,11 +323,11 @@ def _read_deprecated_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty deprecated section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty deprecated section at line {offset}")
         return None, new_offset
 
     if len(items) > 1:
-        _warn(docstring, new_offset, f"Too many deprecated items at {offset}")
+        docstring_warning(docstring, new_offset, f"Too many deprecated items at {offset}")
 
     item = items[0]
     version = item[0]
@@ -350,14 +346,14 @@ def _read_returns_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty returns section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty returns section at line {offset}")
         return None, new_offset
 
     returns = []
     for index, item in enumerate(items):
         match = _RE_RETURNS.match(item[0])
         if not match:
-            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         groups = match.groupdict()
@@ -407,14 +403,14 @@ def _read_yields_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty yields section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty yields section at line {offset}")
         return None, new_offset
 
     yields = []
     for index, item in enumerate(items):
         match = _RE_YIELDS.match(item[0])
         if not match:
-            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         groups = match.groupdict()
@@ -455,14 +451,14 @@ def _read_receives_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty receives section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty receives section at line {offset}")
         return None, new_offset
 
     receives = []
     for index, item in enumerate(items):
         match = _RE_RECEIVES.match(item[0])
         if not match:
-            _warn(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         groups = match.groupdict()
@@ -499,7 +495,7 @@ def _read_raises_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty raises section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty raises section at line {offset}")
         return None, new_offset
 
     raises = []
@@ -522,7 +518,7 @@ def _read_warns_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty warns section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty warns section at line {offset}")
         return None, new_offset
 
     warns = []
@@ -545,7 +541,7 @@ def _read_attributes_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty attributes section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty attributes section at line {offset}")
         return None, new_offset
 
     annotation: str | Expr | None
@@ -580,7 +576,7 @@ def _read_functions_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty functions/methods section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty functions/methods section at line {offset}")
         return None, new_offset
 
     functions = []
@@ -610,7 +606,7 @@ def _read_classes_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty classes section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty classes section at line {offset}")
         return None, new_offset
 
     classes = []
@@ -640,7 +636,7 @@ def _read_modules_section(
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     if not items:
-        _warn(docstring, new_offset, f"Empty modules section at line {offset}")
+        docstring_warning(docstring, new_offset, f"Empty modules section at line {offset}")
         return None, new_offset
 
     modules = []
@@ -718,7 +714,7 @@ def _read_examples_section(
     if sub_sections:
         return DocstringSectionExamples(sub_sections), new_offset
 
-    _warn(docstring, new_offset, f"Empty examples section at line {offset}")
+    docstring_warning(docstring, new_offset, f"Empty examples section at line {offset}")
     return None, new_offset
 
 

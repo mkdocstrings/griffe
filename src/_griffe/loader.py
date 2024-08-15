@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import sys
-import warnings
 from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,10 +24,7 @@ from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.finder import ModuleFinder, NamespacePackage, Package
 from _griffe.git import tmp_worktree
 from _griffe.importer import dynamic_import
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 from _griffe.merger import merge_stubs
 from _griffe.models import Alias, Module, Object
 from _griffe.stats import Stats
@@ -36,8 +32,6 @@ from _griffe.stats import Stats
 if TYPE_CHECKING:
     from _griffe.enumerations import Parser
 
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.loader")
 _builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
@@ -98,31 +92,6 @@ class GriffeLoader:
             "time_spent_inspecting": 0,
         }
 
-    # YORE: Bump 1: Remove block.
-    def load_module(
-        self,
-        module: str | Path,
-        *,
-        submodules: bool = True,
-        try_relative_path: bool = True,
-        find_stubs_package: bool = False,
-    ) -> Object:
-        """Renamed `load`. Load an object as a Griffe object, given its dotted path.
-
-        This method was renamed [`load`][griffe.GriffeLoader.load].
-        """
-        warnings.warn(
-            "The `load_module` method was renamed `load`, and is deprecated.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.load(  # type: ignore[return-value]
-            module,
-            submodules=submodules,
-            try_relative_path=try_relative_path,
-            find_stubs_package=find_stubs_package,
-        )
-
     def load(
         self,
         objspec: str | Path | None = None,
@@ -131,8 +100,6 @@ class GriffeLoader:
         submodules: bool = True,
         try_relative_path: bool = True,
         find_stubs_package: bool = False,
-        # YORE: Bump 1: Remove line.
-        module: str | Path | None = None,
     ) -> Object | Alias:
         """Load an object as a Griffe object, given its Python or file path.
 
@@ -153,7 +120,6 @@ class GriffeLoader:
             find_stubs_package: Whether to search for stubs-only package.
                 If both the package and its stubs are found, they'll be merged together.
                 If only the stubs are found, they'll be used as the package itself.
-            module: Deprecated. Use `objspec` positional-only parameter instead.
 
         Raises:
             LoadingError: When loading a module failed for various reasons.
@@ -162,24 +128,13 @@ class GriffeLoader:
         Returns:
             A Griffe object.
         """
-        # YORE: Bump 1: Remove block.
-        if objspec is None and module is None:
-            raise TypeError("load() missing 1 required positional argument: 'objspec'")
-        if objspec is None:
-            objspec = module
-            warnings.warn(
-                "Parameter 'module' was renamed 'objspec' and made positional-only.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
         obj_path: str
         package = None
         top_module = None
 
         # We always start by searching paths on the disk,
         # even if inspection is forced.
-        _logger.debug(f"Searching path(s) for {objspec}")
+        logger.debug(f"Searching path(s) for {objspec}")
         try:
             obj_path, package = self.finder.find_spec(
                 objspec,  # type: ignore[arg-type]
@@ -189,14 +144,14 @@ class GriffeLoader:
         except ModuleNotFoundError:
             # If we couldn't find paths on disk and inspection is disabled,
             # re-raise ModuleNotFoundError.
-            _logger.debug(f"Could not find path for {objspec} on disk")
+            logger.debug(f"Could not find path for {objspec} on disk")
             if not (self.allow_inspection or self.force_inspection):
                 raise
 
             # Otherwise we try to dynamically import the top-level module.
             obj_path = str(objspec)
             top_module_name = obj_path.split(".", 1)[0]
-            _logger.debug(f"Trying to dynamically import {top_module_name}")
+            logger.debug(f"Trying to dynamically import {top_module_name}")
             top_module_object = dynamic_import(top_module_name, self.finder.search_paths)
 
             try:
@@ -206,7 +161,7 @@ class GriffeLoader:
             except (AttributeError, ValueError):
                 # If the top-level module has no `__path__`, we inspect it as-is,
                 # and do not try to recurse into submodules (there shouldn't be any in builtin/compiled modules).
-                _logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
+                logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
                 top_module = self._inspect_module(top_module_name)
                 self.modules_collection.set_member(top_module.path, top_module)
                 obj = self.modules_collection.get_member(obj_path)
@@ -214,7 +169,7 @@ class GriffeLoader:
                 return obj
 
             # We found paths, and use them to build our intermediate Package or NamespacePackage struct.
-            _logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
+            logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
             top_module_path = [Path(path) for path in top_module_path]
             if len(top_module_path) > 1:
                 package = NamespacePackage(top_module_name, top_module_path)
@@ -222,11 +177,11 @@ class GriffeLoader:
                 package = Package(top_module_name, top_module_path[0])
 
         # We have an intermediate package, and an object path: we're ready to load.
-        _logger.debug(f"Found {objspec}: loading")
+        logger.debug(f"Found {objspec}: loading")
         try:
             top_module = self._load_package(package, submodules=submodules)
         except LoadingError as error:
-            _logger.exception(str(error))  # noqa: TRY401
+            logger.exception(str(error))
             raise
 
         # Package is loaded, we now retrieve the initially requested object and return it.
@@ -282,7 +237,7 @@ class GriffeLoader:
                 )
                 resolved |= next_resolved
                 unresolved |= next_unresolved
-            _logger.debug(
+            logger.debug(
                 f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go",
             )
         return unresolved, iteration
@@ -308,21 +263,21 @@ class GriffeLoader:
                 try:
                     next_module = self.modules_collection.get_member(module_path)
                 except KeyError:
-                    _logger.debug(f"Cannot expand '{export.canonical_path}', try pre-loading corresponding package")
+                    logger.debug(f"Cannot expand '{export.canonical_path}', try pre-loading corresponding package")
                     continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
                     try:
                         expanded |= next_module.exports
                     except TypeError:
-                        _logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
+                        logger.warning(f"Unsupported item in {module.path}.__all__: {export} (use strings only)")
             # It's a string, simply add it to the current exports.
             else:
                 with suppress(NameResolutionError):
                     if not module.resolve(export).startswith(module.path):
                         # NOTE: This won't work for built-in attributes during inspection,
                         # since their canonical module cannot be determined.
-                        _logger.debug(
+                        logger.debug(
                             f"Name `{export}` exported by module `{module.path}` doesn't come from this module or from a submodule.",
                         )
                 expanded.add(export)
@@ -367,14 +322,14 @@ class GriffeLoader:
                     try:
                         self.load(package, try_relative_path=False)
                     except (ImportError, LoadingError) as error:
-                        _logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
 
                 # Try getting the module from which every public object is imported.
                 try:
                     target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
                 except KeyError:
-                    _logger.debug(
+                    logger.debug(
                         f"Could not expand wildcard import {member.name} in {obj.path}: "
                         f"{cast(Alias, member).target_path} not found in modules collection",
                     )
@@ -385,7 +340,7 @@ class GriffeLoader:
                     try:
                         self.expand_wildcards(target, external=external, seen=seen)
                     except (AliasResolutionError, CyclicAliasError) as error:
-                        _logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
+                        logger.debug(f"Could not expand wildcard import {member.name} in {obj.path}: {error}")
                         continue
 
                 # Collect every imported object.
@@ -497,17 +452,17 @@ class GriffeLoader:
                         and package not in self.modules_collection
                     )
                     if load_module:
-                        _logger.debug(f"Failed to resolve alias {member.path} -> {target}")
+                        logger.debug(f"Failed to resolve alias {member.path} -> {target}")
                         try:
                             self.load(package, try_relative_path=False)
                         except (ImportError, LoadingError) as error:
-                            _logger.debug(f"Could not follow alias {member.path}: {error}")
+                            logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
                         # TODO: Immediately try again?
                 except CyclicAliasError as error:
-                    _logger.debug(str(error))
+                    logger.debug(str(error))
                 else:
-                    _logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
+                    logger.debug(f"Alias {member.path} was resolved to {member.final_target.path}")  # type: ignore[union-attr]
                     resolved.add(member.path)
 
             # Recurse into unseen modules and classes.
@@ -578,7 +533,7 @@ class GriffeLoader:
         submodules: bool = True,
         parent: Module | None = None,
     ) -> Module:
-        _logger.debug(f"Loading path {module_path}")
+        logger.debug(f"Loading path {module_path}")
         if isinstance(module_path, list):
             module = self._create_module(module_name, module_path)
         elif self.force_inspection:
@@ -600,7 +555,7 @@ class GriffeLoader:
     def _load_submodule(self, module: Module, subparts: tuple[str, ...], subpath: Path) -> None:
         for subpart in subparts:
             if "." in subpart:
-                _logger.debug(f"Skip {subpath}, dots in filenames are not supported")
+                logger.debug(f"Skip {subpath}, dots in filenames are not supported")
                 return
         try:
             parent_module = self._get_or_create_parent_module(module, subparts, subpath)
@@ -624,7 +579,7 @@ class GriffeLoader:
             # It works when the namespace package appears in only one search path (`sys.path`),
             # but will fail if it appears in multiple search paths: Python will only find the first occurrence.
             # It's better to not falsely support this, and to warn users.
-            _logger.debug(f"{error}. Missing __init__ module?")
+            logger.debug(f"{error}. Missing __init__ module?")
             return
         submodule_name = subparts[-1]
         try:
@@ -635,12 +590,12 @@ class GriffeLoader:
                 parent=parent_module,
             )
         except LoadingError as error:
-            _logger.debug(str(error))
+            logger.debug(str(error))
         else:
             if submodule_name in parent_module.members:
                 member = parent_module.members[submodule_name]
                 if member.is_alias or not member.is_module:
-                    _logger.debug(
+                    logger.debug(
                         f"Submodule '{submodule.path}' is shadowing the member at the same path. "
                         "We recommend renaming the member or the submodule (for example prefixing it with `_`), "
                         "see https://mkdocstrings.github.io/griffe/best_practices/#avoid-member-submodule-name-shadowing.",
@@ -755,8 +710,6 @@ def load(
     force_inspection: bool = False,
     store_source: bool = True,
     find_stubs_package: bool = False,
-    # YORE: Bump 1: Remove line.
-    module: str | Path | None = None,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -815,7 +768,6 @@ def load(
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
-        module: Deprecated. Use `objspec` positional-only parameter instead.
         resolve_aliases: Whether to resolve aliases.
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
@@ -841,8 +793,6 @@ def load(
         submodules=submodules,
         try_relative_path=try_relative_path,
         find_stubs_package=find_stubs_package,
-        # YORE: Bump 1: Remove line.
-        module=module,
     )
     if resolve_aliases:
         loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
@@ -865,8 +815,6 @@ def load_git(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     find_stubs_package: bool = False,
-    # YORE: Bump 1: Remove line.
-    module: str | Path | None = None,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -903,7 +851,6 @@ def load_git(
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
-        module: Deprecated. Use `objspec` positional-only parameter instead.
         resolve_aliases: Whether to resolve aliases.
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
@@ -918,10 +865,6 @@ def load_git(
         if isinstance(objspec, Path):
             objspec = worktree / objspec
 
-        # YORE: Bump 1: Remove block.
-        if isinstance(module, Path):
-            module = worktree / module
-
         return load(
             objspec,
             submodules=submodules,
@@ -935,8 +878,6 @@ def load_git(
             allow_inspection=allow_inspection,
             force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
-            # YORE: Bump 1: Remove line.
-            module=module,
             resolve_aliases=resolve_aliases,
             resolve_external=resolve_external,
             resolve_implicit=resolve_implicit,

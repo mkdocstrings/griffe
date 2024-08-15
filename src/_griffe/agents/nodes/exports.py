@@ -9,17 +9,10 @@ from typing import TYPE_CHECKING, Any, Callable
 
 from _griffe.agents.nodes.values import get_value
 from _griffe.enumerations import LogLevel
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 
 if TYPE_CHECKING:
     from _griffe.models import Module
-
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.agents.nodes._all")
 
 
 @dataclass
@@ -112,5 +105,5 @@ def safe_get__all__(
             message += f": unsupported node {error}"
         else:
             message += f": {error}"
-        getattr(_logger, log_level.value)(message)
+        getattr(logger, log_level.value)(message)
         return []
