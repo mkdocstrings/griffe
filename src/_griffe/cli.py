@@ -31,13 +31,10 @@ from _griffe.exceptions import ExtensionError, GitError
 from _griffe.extensions.base import load_extensions
 from _griffe.git import get_latest_tag, get_repo_root
 from _griffe.loader import GriffeLoader, load, load_git
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 
 if TYPE_CHECKING:
-    from _griffe.extensions.base import Extensions, ExtensionType
+    from _griffe.extensions.base import Extension, Extensions
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
@@ -45,9 +42,6 @@ DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
 
 This can be overridden by the `GRIFFE_LOG_LEVEL` environment variable.
 """
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.cli")
 
 
 class _DebugInfo(argparse.Action):
@@ -98,25 +92,25 @@ def _load_packages(
     # Load each package.
     for package in packages:
         if not package:
-            _logger.debug("Empty package name, continuing")
+            logger.debug("Empty package name, continuing")
             continue
-        _logger.info(f"Loading package {package}")
+        logger.info(f"Loading package {package}")
         try:
             loader.load(package, try_relative_path=True, find_stubs_package=find_stubs_package)
         except ModuleNotFoundError as error:
-            _logger.error(f"Could not find package {package}: {error}")  # noqa: TRY400
+            logger.error(f"Could not find package {package}: {error}")
         except ImportError as error:
-            _logger.exception(f"Tried but could not import package {package}: {error}")  # noqa: TRY401
-    _logger.info("Finished loading packages")
+            logger.exception(f"Tried but could not import package {package}: {error}")
+    logger.info("Finished loading packages")
 
     # Resolve aliases.
     if resolve_aliases:
-        _logger.info("Starting alias resolution")
+        logger.info("Starting alias resolution")
         unresolved, iterations = loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
         if unresolved:
-            _logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
+            logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
         else:
-            _logger.info(f"All aliases were resolved after {iterations} iterations")
+            logger.info(f"All aliases were resolved after {iterations} iterations")
     return loader
 
 
@@ -338,7 +332,7 @@ def dump(
     full: bool = False,
     docstring_parser: Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
-    extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
     resolve_aliases: bool = False,
     resolve_implicit: bool = False,
     resolve_external: bool | None = None,
@@ -386,7 +380,7 @@ def dump(
     try:
         loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError as error:
-        _logger.exception(str(error))  # noqa: TRY401
+        logger.exception(str(error))
         return 1
 
     # Load packages.
@@ -420,7 +414,7 @@ def dump(
     if stats:
         loader_stats = loader.stats()
         loader_stats.time_spent_serializing = elapsed.microseconds
-        _logger.info(loader_stats.as_text())
+        logger.info(loader_stats.as_text())
 
     return 0 if len(data_packages) == len(packages) else 1
 
@@ -431,7 +425,7 @@ def check(
     against_path: str | Path | None = None,
     *,
     base_ref: str | None = None,
-    extensions: Sequence[str | dict[str, Any] | ExtensionType | type[ExtensionType]] | None = None,
+    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
     search_paths: Sequence[str | Path] | None = None,
     append_sys_path: bool = False,
     find_stubs_package: bool = False,
@@ -474,7 +468,7 @@ def check(
     try:
         loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError as error:
-        _logger.exception(str(error))  # noqa: TRY401
+        logger.exception(str(error))
         return 1
 
     # Load old and new version of the package.

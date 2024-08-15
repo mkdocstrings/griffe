@@ -13,8 +13,7 @@ requires-python = ">=3.8"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
 dynamic = ["version"]
 classifiers = [
-    # YORE: Bump 1: Replace `4 - Beta` with `5 - Production/Stable` within line.
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",

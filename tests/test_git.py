@@ -35,7 +35,7 @@ def _copy_contents(src: Path, dst: Path) -> None:
             shutil.copy(src_path, dst_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def git_repo(tmp_path: Path) -> Path:
     """Fixture that creates a git repo with multiple tagged versions.
 

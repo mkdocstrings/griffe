@@ -12,8 +12,6 @@
 
 ## **Types**
 
-::: griffe.ExtensionType
-
 ::: griffe.LoadableExtensionType
 
 ## **Builtin extensions**
@@ -21,14 +19,5 @@
 ::: griffe.builtin_extensions
 
 ::: griffe.DataclassesExtension
+    options:
         inherited_members: false
-
-## **Deprecated API**
-
-::: griffe.When
-
-::: griffe.VisitorExtension
-
-::: griffe.InspectorExtension
-
-::: griffe.HybridExtension

@@ -8,13 +8,7 @@ from functools import cached_property
 from typing import Any, ClassVar, Sequence
 
 from _griffe.enumerations import ObjectKind
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.agents.nodes._runtime")
+from _griffe.logger import logger
 
 _builtin_module_names = {_.lstrip("_") for _ in sys.builtin_module_names}
 _cyclic_relationships = {
@@ -57,7 +51,7 @@ class ObjectNode:
             # which triggers the __getattr__ method of the object, which in
             # turn can raise various exceptions. Probably not just __getattr__.
             # See https://github.com/pawamoy/pytkdocs/issues/45
-            _logger.debug(f"Could not unwrap {name}: {error!r}")
+            logger.debug(f"Could not unwrap {name}: {error!r}")
 
         # Unwrap cached properties (`inspect.unwrap` doesn't do that).
         if isinstance(obj, cached_property):

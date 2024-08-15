@@ -619,11 +619,10 @@ We are still in v0, so no major bump yet.
 
 ### Deprecations
 
-- Classes [`InspectorExtension`][griffe.InspectorExtension]
-    and [`VisitorExtension`][griffe.VisitorExtension]
+- Classes `InspectorExtension` and `VisitorExtension`
     are deprecated in favor of [`Extension`][griffe.Extension].
-    As a side-effect, the [`hybrid`][griffe.HybridExtension] extension
-    is also deprecated. See [how to use and write extensions](guide/users/extending.md).
+    As a side-effect, the `hybrid` extension is also deprecated.
+    See [how to use and write extensions](guide/users/extending.md).
 
 ### Breaking Changes
 

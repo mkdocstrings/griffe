@@ -7,8 +7,8 @@ from pathlib import Path
 from textwrap import dedent
 
 import pytest
-from _griffe.finder import _handle_editable_module, _handle_pth_file
 
+from _griffe.finder import _handle_editable_module, _handle_pth_file
 from griffe import Module, ModuleFinder, NamespacePackage, Package, temporary_pypackage
 
 

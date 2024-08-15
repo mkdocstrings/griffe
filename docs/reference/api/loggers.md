@@ -2,8 +2,9 @@
 
 ## **Main API**
 
-<!-- YORE: Bump 1: Replace line with `::: griffe.logger`. -->
-<!-- -->
+::: griffe.logger
+
+::: griffe.get_logger
 
 ::: griffe.Logger
 
@@ -14,11 +15,5 @@
         annotations_path: full
 
 ## **Advanced API**
-
-::: griffe.patch_logger
-
-## **Deprecated API**
-
-::: griffe.get_logger
 
 ::: griffe.patch_loggers

@@ -4,9 +4,8 @@
 from __future__ import annotations
 
 import json
-import warnings
 from pathlib import Path, PosixPath, WindowsPath
-from typing import TYPE_CHECKING, Any, Callable
+from typing import Any, Callable
 
 from _griffe import expressions
 from _griffe.enumerations import Kind, ParameterKind
@@ -22,10 +21,6 @@ from _griffe.models import (
     Parameter,
     Parameters,
 )
-
-if TYPE_CHECKING:
-    from _griffe.enumerations import Parser
-
 
 _json_encoder_map: dict[type, Callable[[Any], Any]] = {
     Path: str,
@@ -54,10 +49,6 @@ class JSONEncoder(json.JSONEncoder):
         self,
         *args: Any,
         full: bool = False,
-        # YORE: Bump 1: Remove line.
-        docstring_parser: Parser | None = None,
-        # YORE: Bump 1: Remove line.
-        docstring_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the encoder.
@@ -75,16 +66,6 @@ class JSONEncoder(json.JSONEncoder):
         super().__init__(*args, **kwargs)
         self.full: bool = full
         """Whether to dump full data or base data."""
-
-        # YORE: Bump 1: Remove block.
-        self.docstring_parser: Parser | None = docstring_parser
-        """Deprecated. The docstring parser to use. By default, no parsing is done."""
-        self.docstring_options: dict[str, Any] = docstring_options or {}
-        """Deprecated. Additional docstring parsing options."""
-        if docstring_parser is not None:
-            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
-        if docstring_options is not None:
-            warnings.warn("Parameter `docstring_options` is deprecated and has no effect.", stacklevel=1)
 
     def default(self, obj: Any) -> Any:
         """Return a serializable representation of the given object.

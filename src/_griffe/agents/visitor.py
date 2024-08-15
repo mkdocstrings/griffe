@@ -154,7 +154,7 @@ class Visitor:
         self.code: str = code
         """The module source code."""
 
-        self.extensions: Extensions = extensions.attach_visitor(self)
+        self.extensions: Extensions = extensions
         """The extensions to use when visiting the AST."""
 
         self.parent: Module | None = parent
@@ -210,11 +210,7 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        for before_visitor in self.extensions.before_visit:
-            before_visitor.visit(node)
         getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
-        for after_visitor in self.extensions.after_visit:
-            after_visitor.visit(node)
 
     def generic_visit(self, node: ast.AST) -> None:
         """Extend the base generic visit with extensions.
@@ -222,12 +218,8 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        for before_visitor in self.extensions.before_children_visit:
-            before_visitor.visit(node)
         for child in ast_children(node):
             self.visit(child)
-        for after_visitor in self.extensions.after_children_visit:
-            after_visitor.visit(node)
 
     def visit_module(self, node: ast.Module) -> None:
         """Visit a module node.

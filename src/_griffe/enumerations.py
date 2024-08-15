@@ -180,21 +180,3 @@ class ObjectKind(str, Enum):
 
     def __str__(self) -> str:
         return self.value
-
-
-# YORE: Bump 1: Remove block.
-class When(int, Enum):
-    """Enumeration of the different times at which an extension is used.
-
-    Deprecated. This enumeration is used with the `VisitorExtension` and `InspectorExtension` classes,
-    which are deprecated. Use the `Extension` class instead, which does not need `When`.
-    """
-
-    before_all: int = 1
-    """For each node, before the visit/inspection."""
-    before_children: int = 2
-    """For each node, after the visit has started, and before the children visit/inspection."""
-    after_children: int = 3
-    """For each node, after the children have been visited/inspected, and before finishing the visit/inspection."""
-    after_all: int = 4
-    """For each node, after the visit/inspection."""

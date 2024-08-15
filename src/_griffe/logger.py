@@ -10,7 +10,6 @@
 from __future__ import annotations
 
 import logging
-import warnings
 from contextlib import contextmanager
 from typing import Any, Callable, ClassVar, Iterator
 
@@ -53,40 +52,39 @@ class Logger:
         cls._default_logger = get_logger_func
 
 
-# YORE: Bump 1: Regex-replace `^# ?` with `` within block.
-# logger: Logger = Logger._get()
-# """Our global logger, used throughout the library.
-#
-# Griffe's output and error messages are logging messages.
-#
-# Griffe provides the [`patch_loggers`][griffe.patch_loggers]
-# function so dependent libraries can patch Griffe loggers as they see fit.
-#
-# For example, to fit in the MkDocs logging configuration
-# and prefix each log message with the module name:
-#
-# ```python
-# import logging
-# from griffe import patch_loggers
-#
-#
-# class LoggerAdapter(logging.LoggerAdapter):
-#     def __init__(self, prefix, logger):
-#         super().__init__(logger, {})
-#         self.prefix = prefix
-#
-#     def process(self, msg, kwargs):
-#         return f"{self.prefix}: {msg}", kwargs
-#
-#
-# def get_logger(name):
-#     logger = logging.getLogger(f"mkdocs.plugins.{name}")
-#     return LoggerAdapter(name, logger)
-#
-#
-# patch_loggers(get_logger)
-# ```
-# """
+logger: Logger = Logger._get()
+"""Our global logger, used throughout the library.
+
+Griffe's output and error messages are logging messages.
+
+Griffe provides the [`patch_loggers`][griffe.patch_loggers]
+function so dependent libraries can patch Griffe loggers as they see fit.
+
+For example, to fit in the MkDocs logging configuration
+and prefix each log message with the module name:
+
+```python
+import logging
+from griffe import patch_loggers
+
+
+class LoggerAdapter(logging.LoggerAdapter):
+    def __init__(self, prefix, logger):
+        super().__init__(logger, {})
+        self.prefix = prefix
+
+    def process(self, msg, kwargs):
+        return f"{self.prefix}: {msg}", kwargs
+
+
+def get_logger(name):
+    logger = logging.getLogger(f"mkdocs.plugins.{name}")
+    return LoggerAdapter(name, logger)
+
+
+patch_loggers(get_logger)
+```
+"""
 
 
 def get_logger(name: str = "griffe") -> Logger:
@@ -99,21 +97,6 @@ def get_logger(name: str = "griffe") -> Logger:
         The logger.
     """
     return Logger._get(name)
-
-
-# YORE: Bump 1: Remove block.
-def patch_logger(get_logger_func: Callable[[str], Any]) -> None:
-    """Deprecated. Use `patch_loggers` instead.
-
-    Parameters:
-        get_logger_func: A function accepting a name as parameter and returning a logger.
-    """
-    warnings.warn(
-        "The `patch_logger` function is deprecated. Use `patch_loggers` instead.",
-        DeprecationWarning,
-        stacklevel=1,
-    )
-    Logger._patch_loggers(get_logger_func)
 
 
 def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:

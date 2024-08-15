@@ -16,10 +16,7 @@ from _griffe.docstrings.parsers import DocstringStyle, parse
 from _griffe.enumerations import Kind, ParameterKind, Parser
 from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from _griffe.expressions import ExprCall, ExprName
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 from _griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
@@ -28,9 +25,6 @@ if TYPE_CHECKING:
     from _griffe.expressions import Expr
 
 from functools import cached_property
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.dataclasses")
 
 
 class Decorator:
@@ -151,23 +145,17 @@ class Docstring:
         self,
         *,
         full: bool = False,
-        docstring_parser: Parser | None = None,
         **kwargs: Any,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
         Parameters:
             full: Whether to return full info, or just base info.
-            docstring_parser: Deprecated. The docstring parser to parse the docstring with. By default, no parsing is done.
             **kwargs: Additional serialization options.
 
         Returns:
             A dictionary.
         """
-        # YORE: Bump 1: Remove block.
-        if docstring_parser is not None:
-            warnings.warn("Parameter `docstring_parser` is deprecated and has no effect.", stacklevel=1)
-
         base: dict[str, Any] = {
             "value": self.value,
             "lineno": self.lineno,
@@ -510,7 +498,7 @@ class Object(ObjectAliasMixin):
         try:
             mro = self.mro()
         except ValueError as error:
-            _logger.debug(error)
+            logger.debug(error)
             return {}
         inherited_members = {}
         for base in reversed(mro):
@@ -564,8 +552,7 @@ class Object(ObjectAliasMixin):
         """Whether this object is a namespace subpackage."""
         return False
 
-    # YORE: Bump 1: Replace ` | set[str]` with `` within line.
-    def has_labels(self, *labels: str | set[str]) -> bool:
+    def has_labels(self, *labels: str) -> bool:
         """Tell if this object has all the given labels.
 
         Parameters:
@@ -574,21 +561,7 @@ class Object(ObjectAliasMixin):
         Returns:
             True or False.
         """
-        # YORE: Bump 1: Remove block.
-        all_labels = set()
-        for label in labels:
-            if isinstance(label, str):
-                all_labels.add(label)
-            else:
-                warnings.warn(
-                    "Passing a set of labels to `has_labels` is deprecated. Pass multiple strings instead.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                all_labels.update(label)
-
-        # YORE: Bump 1: Replace `all_labels` with `set(labels)` within line.
-        return all_labels.issubset(self.labels)
+        return set(labels).issubset(self.labels)
 
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
         """Filter and return members based on predicates.
@@ -862,9 +835,7 @@ class Object(ObjectAliasMixin):
             base["docstring"] = self.docstring
 
         base["labels"] = self.labels
-        # YORE: Bump 1: Replace line with `base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}`.
-        base["members"] = [member.as_dict(full=full, **kwargs) for member in self.members.values()]
-        # Also replace array and items by object and additionalProperties in docs/schema.json line 163.
+        base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
 
         return base
 
@@ -1167,7 +1138,7 @@ class Alias(ObjectAliasMixin):
         """Whether this object is an attribute."""
         return self.final_target.is_attribute
 
-    def has_labels(self, *labels: str | set[str]) -> bool:
+    def has_labels(self, *labels: str) -> bool:
         """Tell if this object has all the given labels.
 
         Parameters:
@@ -1349,12 +1320,12 @@ class Alias(ObjectAliasMixin):
     @property
     def setter(self) -> Function | None:
         """The setter linked to this function (property)."""
-        return cast(Function, self.final_target).setter
+        return cast(Attribute, self.final_target).setter
 
     @property
     def deleter(self) -> Function | None:
         """The deleter linked to this function (property)."""
-        return cast(Function, self.final_target).deleter
+        return cast(Attribute, self.final_target).deleter
 
     @property
     def value(self) -> str | Expr | None:
@@ -1678,7 +1649,7 @@ class Class(Object):
                 if resolved_base.is_alias:
                     resolved_base = resolved_base.final_target
             except (AliasResolutionError, CyclicAliasError, KeyError):
-                _logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
+                logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
             else:
                 resolved_bases.append(resolved_base)
         return resolved_bases
@@ -1744,11 +1715,6 @@ class Function(Object):
         """The function decorators."""
         self.overloads: list[Function] | None = None
         """The overloaded signatures of this function."""
-        # YORE: Bump 1: Remove block.
-        self.setter: Function | None = None
-        """Deprecated. See [Attribute.setter][griffe.Attribute.setter]."""
-        self.deleter: Function | None = None
-        """Deprecated. See [Attribute.deleter][griffe.Attribute.deleter]."""
 
         for parameter in self.parameters:
             parameter.function = self

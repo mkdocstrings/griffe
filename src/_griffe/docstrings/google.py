@@ -44,9 +44,6 @@ if TYPE_CHECKING:
     from _griffe.expressions import Expr
     from _griffe.models import Docstring
 
-# YORE: Bump 1: Regex-replace `\b_warn\b` with `docstring_warning` within file.
-# YORE: Bump 1: Remove line.
-_warn = docstring_warning("griffe.docstrings.google")
 
 _section_kind = {
     "args": DocstringSectionKind.parameters,
@@ -123,7 +120,7 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _
             # indent between initial and continuation: append but warn
             cont_indent = len(line) - len(line.lstrip())
             current_item[1].append(line[cont_indent:])
-            _warn(
+            docstring_warning(
                 docstring,
                 new_offset,
                 f"Confusing indentation for continuation line {new_offset+1} in docstring, "
@@ -195,7 +192,7 @@ def _read_parameters(
         try:
             name_with_type, description = param_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'name: description' pair from '{param_lines[0]}'")
+            docstring_warning(docstring, line_number, f"Failed to get 'name: description' pair from '{param_lines[0]}'")
             continue
 
         description = "\n".join([description.lstrip(), *param_lines[1:]]).rstrip("\n")
@@ -222,7 +219,7 @@ def _read_parameters(
             default = None
 
         if annotation is None:
-            _warn(docstring, line_number, f"No type or annotation for parameter '{name}'")
+            docstring_warning(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
         if warn_unknown_params:
             with suppress(AttributeError):  # for parameters sections in objects without parameters
@@ -233,7 +230,7 @@ def _read_parameters(
                         if starred_name in params:
                             message += f". Did you mean '{starred_name}'?"
                             break
-                    _warn(docstring, line_number, message)
+                    docstring_warning(docstring, line_number, message)
 
         parameters.append(DocstringParameter(name=name, value=default, annotation=annotation, description=description))
 
@@ -275,7 +272,7 @@ def _read_attributes_section(
         try:
             name_with_type, description = attr_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'name: description' pair from '{attr_lines[0]}'")
+            docstring_warning(docstring, line_number, f"Failed to get 'name: description' pair from '{attr_lines[0]}'")
             continue
 
         description = "\n".join([description.lstrip(), *attr_lines[1:]]).rstrip("\n")
@@ -311,7 +308,11 @@ def _read_functions_section(
         try:
             name_with_signature, description = func_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'signature: description' pair from '{func_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'signature: description' pair from '{func_lines[0]}'",
+            )
             continue
 
         description = "\n".join([description.lstrip(), *func_lines[1:]]).rstrip("\n")
@@ -342,7 +343,11 @@ def _read_classes_section(
         try:
             name_with_signature, description = class_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'signature: description' pair from '{class_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'signature: description' pair from '{class_lines[0]}'",
+            )
             continue
 
         description = "\n".join([description.lstrip(), *class_lines[1:]]).rstrip("\n")
@@ -372,7 +377,11 @@ def _read_modules_section(
         try:
             name, description = module_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'name: description' pair from '{module_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'name: description' pair from '{module_lines[0]}'",
+            )
             continue
         description = "\n".join([description.lstrip(), *module_lines[1:]]).rstrip("\n")
         modules.append(DocstringModule(name=name, description=description))
@@ -394,7 +403,11 @@ def _read_raises_section(
         try:
             annotation, description = exception_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'exception: description' pair from '{exception_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'exception: description' pair from '{exception_lines[0]}'",
+            )
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
             # try to compile the annotation to transform it into an expression
@@ -417,7 +430,11 @@ def _read_warns_section(
         try:
             annotation, description = warning_lines[0].split(":", 1)
         except ValueError:
-            _warn(docstring, line_number, f"Failed to get 'warning: description' pair from '{warning_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'warning: description' pair from '{warning_lines[0]}'",
+            )
         else:
             description = "\n".join([description.lstrip(), *warning_lines[1:]]).rstrip("\n")
             warns.append(DocstringWarn(annotation=annotation, description=description))
@@ -445,7 +462,11 @@ def _read_returns_section(
         if returns_named_value:
             match = _RE_NAME_ANNOTATION_DESCRIPTION.match(return_lines[0])
             if not match:
-                _warn(docstring, line_number, f"Failed to get name, annotation or description from '{return_lines[0]}'")
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get name, annotation or description from '{return_lines[0]}'",
+                )
                 continue
             name, annotation, description = match.groups()
         else:
@@ -489,7 +510,7 @@ def _read_returns_section(
 
             if annotation is None:
                 returned_value = repr(name) if name else index + 1
-                _warn(docstring, line_number, f"No type or annotation for returned value {returned_value}")
+                docstring_warning(docstring, line_number, f"No type or annotation for returned value {returned_value}")
 
         returns.append(DocstringReturn(name=name or "", annotation=annotation, description=description))
 
@@ -508,7 +529,11 @@ def _read_yields_section(
     for index, (line_number, yield_lines) in enumerate(block):
         match = _RE_NAME_ANNOTATION_DESCRIPTION.match(yield_lines[0])
         if not match:
-            _warn(docstring, line_number, f"Failed to get name, annotation or description from '{yield_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get name, annotation or description from '{yield_lines[0]}'",
+            )
             continue
 
         name, annotation, description = match.groups()
@@ -536,7 +561,7 @@ def _read_yields_section(
 
             if annotation is None:
                 yielded_value = repr(name) if name else index + 1
-                _warn(docstring, line_number, f"No type or annotation for yielded value {yielded_value}")
+                docstring_warning(docstring, line_number, f"No type or annotation for yielded value {yielded_value}")
 
         yields.append(DocstringYield(name=name or "", annotation=annotation, description=description))
 
@@ -555,7 +580,11 @@ def _read_receives_section(
     for index, (line_number, receive_lines) in enumerate(block):
         match = _RE_NAME_ANNOTATION_DESCRIPTION.match(receive_lines[0])
         if not match:
-            _warn(docstring, line_number, f"Failed to get name, annotation or description from '{receive_lines[0]}'")
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get name, annotation or description from '{receive_lines[0]}'",
+            )
             continue
 
         name, annotation, description = match.groups()
@@ -579,7 +608,7 @@ def _read_receives_section(
 
         if annotation is None:
             received_value = repr(name) if name else index + 1
-            _warn(docstring, line_number, f"No type or annotation for received value {received_value}")
+            docstring_warning(docstring, line_number, f"No type or annotation for received value {received_value}")
 
         receives.append(DocstringReceive(name=name or "", annotation=annotation, description=description))
 
@@ -657,7 +686,7 @@ def _read_deprecated_section(
     try:
         version, text = text.split(":", 1)
     except ValueError:
-        _warn(docstring, new_offset, f"Could not parse version, text at line {offset}")
+        docstring_warning(docstring, new_offset, f"Could not parse version, text at line {offset}")
         return None, new_offset
 
     version = version.lstrip()
@@ -791,7 +820,7 @@ def parse_google(
                 reasons.append(f"Extraneous blank line below {kind} title")
             if reasons:
                 reasons_string = "; ".join(reasons)
-                _warn(
+                docstring_warning(
                     docstring,
                     offset,
                     f"Possible {kind} skipped, reasons: {reasons_string}",

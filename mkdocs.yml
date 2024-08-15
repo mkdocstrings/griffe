@@ -82,7 +82,6 @@ nav:
     - Git utilities: reference/api/git.md
     - Loggers: reference/api/loggers.md
     - Helpers: reference/api/helpers.md
-    - Deprecated: reference/api/deprecated.md
 - Changelog: changelog.md
 - Insiders:
   - insiders/index.md

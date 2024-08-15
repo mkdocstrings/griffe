@@ -5,12 +5,12 @@ from __future__ import annotations
 from typing import Iterator
 
 import pytest
-from _griffe.docstrings import google, numpy, sphinx
 
+from _griffe.docstrings import google, numpy, sphinx
 from tests.test_docstrings.helpers import ParserType, parser
 
 
-@pytest.fixture()
+@pytest.fixture
 def parse_google() -> Iterator[ParserType]:
     """Yield a function to parse Google docstrings.
 
@@ -20,7 +20,7 @@ def parse_google() -> Iterator[ParserType]:
     yield from parser(google)
 
 
-@pytest.fixture()
+@pytest.fixture
 def parse_numpy() -> Iterator[ParserType]:
     """Yield a function to parse Numpy docstrings.
 
@@ -30,7 +30,7 @@ def parse_numpy() -> Iterator[ParserType]:
     yield from parser(numpy)
 
 
-@pytest.fixture()
+@pytest.fixture
 def parse_sphinx() -> Iterator[ParserType]:
     """Yield a function to parse Sphinx docstrings.
 

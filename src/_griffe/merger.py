@@ -6,17 +6,10 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 
 from _griffe.exceptions import AliasResolutionError, CyclicAliasError
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 
 if TYPE_CHECKING:
     from _griffe.models import Attribute, Class, Function, Module, Object
-
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.merger")
 
 
 def _merge_module_stubs(module: Module, stubs: Module) -> None:
@@ -72,7 +65,7 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                 # not the canonical one. Therefore, we must allow merging stubs into the target of an alias,
                 # as long as the stub and target are of the same kind.
                 if obj_member.kind is not stub_member.kind:
-                    _logger.debug(
+                    logger.debug(
                         f"Cannot merge stubs for {obj_member.path}: kind {stub_member.kind.value} != {obj_member.kind.value}",
                     )
                 elif obj_member.is_module:
@@ -101,7 +94,7 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
     Returns:
         The regular module.
     """
-    _logger.debug(f"Trying to merge {mod1.filepath} and {mod2.filepath}")
+    logger.debug(f"Trying to merge {mod1.filepath} and {mod2.filepath}")
     if mod1.filepath.suffix == ".pyi":  # type: ignore[union-attr]
         stubs = mod1
         module = mod2

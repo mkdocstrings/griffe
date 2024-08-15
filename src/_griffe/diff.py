@@ -18,10 +18,7 @@ from colorama import Fore, Style
 from _griffe.enumerations import BreakageKind, ExplanationStyle, ParameterKind
 from _griffe.exceptions import AliasResolutionError
 from _griffe.git import _WORKTREE_PREFIX
-
-# YORE: Bump 1: Replace `_logger` with `logger` within file.
-# YORE: Bump 1: Replace `get_logger` with `logger` within line.
-from _griffe.logger import get_logger
+from _griffe.logger import logger
 
 if TYPE_CHECKING:
     from _griffe.models import Alias, Attribute, Class, Function, Object
@@ -30,9 +27,6 @@ _POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional
 _KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
 _POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
 _VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
-
-# YORE: Bump 1: Remove line.
-_logger = get_logger("griffe.diff")
 
 
 class Breakage:
@@ -460,7 +454,7 @@ def _alias_incompatibilities(
         old_member = old_obj.target if old_obj.is_alias else old_obj  # type: ignore[union-attr]
         new_member = new_obj.target if new_obj.is_alias else new_obj  # type: ignore[union-attr]
     except AliasResolutionError:
-        _logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
+        logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
         return
 
     yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
@@ -475,9 +469,9 @@ def _member_incompatibilities(
     seen_paths = set() if seen_paths is None else seen_paths
     for name, old_member in old_obj.all_members.items():
         if not old_member.is_public:
-            _logger.debug(f"API check: {old_obj.path}.{name}: skip non-public object")
+            logger.debug(f"API check: {old_obj.path}.{name}: skip non-public object")
             continue
-        _logger.debug(f"API check: {old_obj.path}.{name}")
+        logger.debug(f"API check: {old_obj.path}.{name}")
         try:
             new_member = new_obj.all_members[name]
         except KeyError:

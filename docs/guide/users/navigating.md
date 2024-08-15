@@ -375,8 +375,6 @@ Models have most fields in common, but also have specific fields.
 ### Functions
 
 - [`decorators`][griffe.Function.decorators]: The [decorators][griffe.Decorator] applied to the function.
-- [`deleter`][griffe.Function.deleter]: The property deleter, if the function is a property.
-- [`setter`][griffe.Function.setter]: The property setter, if the function is a property.
 - [`overloads`][griffe.Function.overloads]: The overloaded signatures of the function.
 - [`parameters`][griffe.Function.parameters]: The [parameters][griffe.Parameters] of the function.
 - [`returns`][griffe.Function.returns]: The type annotation of the returned value, in the form of an [expression][griffe.Expr]. The `annotation` field can also be used, for compatibility with attributes.
@@ -385,6 +383,8 @@ Models have most fields in common, but also have specific fields.
 
 - [`annotation`][griffe.Attribute.annotation]: The type annotation of the attribute, in the form of an [expression][griffe.Expr].
 - [`value`][griffe.Attribute.value]: The value of the attribute, in the form of an [expression][griffe.Expr].
+- [`deleter`][griffe.Attribute.deleter]: The property deleter.
+- [`setter`][griffe.Attribute.setter]: The property setter.
 
 ### Alias
 
@@ -434,7 +434,7 @@ Ultimately, these expressions are what allow downstream tools such as [mkdocstri
 
 During static analysis, these expressions also allow to analyze decorators, dataclass fields, and many more things in great details, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extending.md).
 
-To learn more about expressions, read their [API reference][griffe.expressions].
+To learn more about expressions, read their [API reference](../../reference/api/expressions.md).
 
 ### Modernization
 

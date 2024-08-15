@@ -160,8 +160,8 @@
           ]
         },
         "members": {
-          "type": "array",
-          "items": {
+          "type": "object",
+          "additionalProperties": {
             "$ref": "#"
           }
         },
