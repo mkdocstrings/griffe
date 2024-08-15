@@ -56,7 +56,15 @@ a handful of them, [thanks to our awesome sponsors][sponsors]!
 ## What's in it for me?
 
 ```python exec="1" session="insiders"
-data_source = "docs/insiders/goals.yml"
+data_source = [
+    "docs/insiders/goals.yml",
+    ("mkdocstrings/griffe2md", "https://mkdocstrings.github.io/griffe2md/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-inherited-docstrings", "https://mkdocstrings.github.io/griffe-inherited-docstrings/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-pydantic", "https://mkdocstrings.github.io/griffe-pydantic/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-sphinx", "https://mkdocstrings.github.io/griffe-sphinx/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-tui", "https://mkdocstrings.github.io/griffe-tui/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-warnings-deprecated", "https://mkdocstrings.github.io/griffe-warnings-deprecated/", "insiders/goals.yml"),
+]
 ```
 
 ```python exec="1" session="insiders" idprefix=""
