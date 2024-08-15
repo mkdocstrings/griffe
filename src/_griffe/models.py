@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import inspect
-import warnings
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
@@ -405,7 +404,7 @@ class Object(ObjectAliasMixin):
         self.public: bool | None = None
         """Whether this object is public."""
 
-        self.deprecated: str | None = None
+        self.deprecated: bool | str | None = None
         """Whether this object is deprecated (boolean or deprecation message)."""
 
         self._lines_collection: LinesCollection | None = lines_collection
@@ -456,15 +455,6 @@ class Object(ObjectAliasMixin):
             except AliasResolutionError:
                 continue
         return False
-
-    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
-        """Deprecated. Use [`member.is_exported`][griffe.Object.is_exported] instead."""
-        warnings.warn(
-            "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return member.is_exported
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
         """Tell if this object is of the given kind.
@@ -1094,15 +1084,6 @@ class Alias(ObjectAliasMixin):
     def aliases(self) -> dict[str, Alias]:
         """The aliases pointing to this object."""
         return self.final_target.aliases
-
-    def member_is_exported(self, member: Object | Alias, *, explicitely: bool = True) -> bool:  # noqa: ARG002
-        """Deprecated. Use [`member.is_exported`][griffe.Alias.is_exported] instead."""
-        warnings.warn(
-            "Method `member_is_exported` is deprecated. Use `member.is_exported` instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return member.is_exported
 
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
         """Tell if this object is of the given kind.

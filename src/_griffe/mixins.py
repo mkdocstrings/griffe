@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import json
-import warnings
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 
@@ -332,26 +331,6 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
 
     @property
-    def has_private_name(self) -> bool:
-        """Deprecated. Use [`is_private`][griffe.Object.is_private] instead."""
-        warnings.warn(
-            "The `has_private_name` property is deprecated. Use `is_private` instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.name.startswith("_")  # type: ignore[attr-defined]
-
-    @property
-    def has_special_name(self) -> bool:
-        """Deprecated. Use [`is_special`][griffe.Object.is_special] instead."""
-        warnings.warn(
-            "The `has_special_name` property is deprecated. Use `is_special` instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.name.startswith("__") and self.name.endswith("__")  # type: ignore[attr-defined]
-
-    @property
     def is_private(self) -> bool:
         """Whether this object/alias is private (starts with `_`) but not special."""
         return self.name.startswith("_") and not self.is_special  # type: ignore[attr-defined]
@@ -374,28 +353,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
     @property
     def is_exported(self) -> bool:
         """Whether this object/alias is exported (listed in `__all__`)."""
-        result = self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
-        return _True if result else _False  # type: ignore[return-value]
-
-    @property
-    def is_explicitely_exported(self) -> bool:
-        """Deprecated. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead."""
-        warnings.warn(
-            "The `is_explicitely_exported` property is deprecated. Use `is_exported` instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.is_exported
-
-    @property
-    def is_implicitely_exported(self) -> bool:
-        """Deprecated. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead."""
-        warnings.warn(
-            "The `is_implicitely_exported` property is deprecated. Use `is_exported` instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.is_exported
+        return self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
 
     @property
     def is_wildcard_exposed(self) -> bool:
@@ -479,28 +437,3 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         """Whether this object is deprecated."""
         # NOTE: We might want to add more ways to detect deprecations in the future.
         return bool(self.deprecated)  # type: ignore[attr-defined]
-
-
-# This is used to allow the `is_public` property to be "callable",
-# for backward compatibility with the previous implementation.
-class _Bool:
-    def __init__(self, value: bool) -> None:  # noqa: FBT001
-        self.value = value
-
-    def __bool__(self) -> bool:
-        return self.value
-
-    def __repr__(self) -> str:
-        return repr(self.value)
-
-    def __call__(self, *args: Any, **kwargs: Any) -> bool:  # noqa: ARG002
-        warnings.warn(
-            "This method is now a property and should be accessed as such (without parentheses).",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.value
-
-
-_True = _Bool(True)  # noqa: FBT003
-_False = _Bool(False)  # noqa: FBT003

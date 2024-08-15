@@ -9,7 +9,6 @@
 from __future__ import annotations
 
 import contextlib
-import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
@@ -545,8 +544,6 @@ _sentinel = object()
 def find_breaking_changes(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
-    *,
-    ignore_private: bool = _sentinel,  # type: ignore[assignment]
 ) -> Iterator[Breakage]:
     """Find breaking changes between two versions of the same API.
 
@@ -567,10 +564,4 @@ def find_breaking_changes(
         >>> for breakage in griffe.find_breaking_changes(old, new)
         ...     print(breakage.explain(style=style), file=sys.stderr)
     """
-    if ignore_private is not _sentinel:
-        warnings.warn(
-            "The `ignore_private` parameter is deprecated and will be removed in a future version.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
     yield from _member_incompatibilities(old_obj, new_obj)
