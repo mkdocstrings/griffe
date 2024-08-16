@@ -11,7 +11,7 @@ import pytest
 from griffe import GriffeLoader, LoadingError
 
 if TYPE_CHECKING:
-    from griffe.dataclasses import Alias, Object
+    from griffe import Alias, Object
 
 
 def _access_inherited_members(obj: Object | Alias) -> None:

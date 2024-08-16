@@ -495,7 +495,7 @@ def fuzz(
     from pysource_codegen import generate
     from pysource_minimize import minimize
 
-    from griffe.agents.visitor import visit
+    from griffe import visit
 
     warnings.simplefilter("ignore", SyntaxWarning)
 

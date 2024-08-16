@@ -12,8 +12,7 @@ from griffe import Extension, load_extensions, temporary_visited_module
 if TYPE_CHECKING:
     import ast
 
-    from griffe.agents.nodes import ObjectNode
-    from griffe.dataclasses import Attribute, Class, Function, Module, Object
+    from griffe import ObjectNode, Attribute, Class, Function, Module, Object
 
 
 class ExtensionTest(Extension):  # noqa: D101

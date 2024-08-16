@@ -20,7 +20,7 @@ from griffe import (
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe.dataclasses import Alias
+    from griffe import Alias
 
 
 def test_has_docstrings_does_not_try_to_resolve_alias() -> None:

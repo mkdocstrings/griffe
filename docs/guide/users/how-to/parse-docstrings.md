@@ -7,7 +7,7 @@ Then you can build a `Docstring` instance and call its `parse` method,
 choosing the parsing-style to use:
 
 ```python
-from griffe.dataclasses import Docstring
+from griffe import Docstring
 
 text = "Hello I'm a docstring!"
 docstring = Docstring(text, lineno=1)
@@ -19,7 +19,7 @@ annotations from the object from which the docstring originates,
 you can manually create the parent objects and link them to the docstring:
 
 ```python
-from griffe.dataclasses import Docstring, Function, Parameters, Parameter, ParameterKind
+from griffe import Docstring, Function, Parameters, Parameter, ParameterKind
 
 function = Function(
     "func",

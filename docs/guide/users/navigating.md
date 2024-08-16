@@ -406,7 +406,7 @@ You can write some code below and print annotations or attribute values with [Ri
 [rich]: https://rich.readthedocs.io/en/stable/
 
 ```pyodide install="griffe,rich" theme="tomorrow,dracula"
-from griffe.tests import temporary_visited_module
+from griffe import temporary_visited_module
 from rich.pretty import pprint
 
 code = """
