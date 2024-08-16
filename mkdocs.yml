@@ -52,7 +52,24 @@ nav:
     - Development workflow: guide/contributors/workflow.md
     - Project architecture: guide/contributors/architecture.md
     - Coverage report: guide/contributors/coverage.md
-# TODO: Add an Extensions tab, with Built-in, Official and Third-Party sections.
+- Extensions:
+  - Built-in:
+    - extensions/built-in.md
+    - dataclasses: extensions/built-in/dataclasses.md
+  - Official:
+    - extensions/official.md
+    - inherited-docstrings: extensions/official/inherited-docstrings.md
+    - pydantic: extensions/official/pydantic.md
+    - sphinx: extensions/official/sphinx.md
+    - typingdoc: extensions/official/typingdoc.md
+    - warnings-deprecated: extensions/official/warnings-deprecated.md
+  - Third-party:
+    - extensions/third-party.md
+    - docstring-inheritance: extensions/third-party/docstring-inheritance.md
+    - fieldz: extensions/third-party/fieldz.md
+    - generics: extensions/third-party/generics.md
+    - inherited-method-crossrefs: extensions/third-party/inherited-method-crossrefs.md
+    - modernized-annotations: extensions/third-party/modernized-annotations.md
 - Reference:
   - reference.md
   - Command-line interface: reference/cli.md
@@ -195,6 +212,7 @@ plugins:
         # YORE: BOL 3.13: Replace `3.13` with `3` within line.
         - url: https://docs.python.org/3.13/objects.inv
           domains: [std, py]
+        - https://typing-extensions.readthedocs.io/en/latest/objects.inv
         paths: [src, scripts, .]
         options:
           docstring_options:
