@@ -60,6 +60,7 @@ nav:
     - dataclasses: extensions/built-in/dataclasses.md
   - Official:
     - extensions/official.md
+    - autodocstringstyle: extensions/official/autodocstringstyle.md
     - inherited-docstrings: extensions/official/inherited-docstrings.md
     - pydantic: extensions/official/pydantic.md
     - sphinx: extensions/official/sphinx.md

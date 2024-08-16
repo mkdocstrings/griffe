@@ -59,6 +59,7 @@ a handful of them, [thanks to our awesome sponsors][sponsors]!
 data_source = [
     "docs/insiders/goals.yml",
     ("mkdocstrings/griffe2md", "https://mkdocstrings.github.io/griffe2md/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-autodocstringstyle", "https://mkdocstrings.github.io/griffe-autodocstringstyle/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-inherited-docstrings", "https://mkdocstrings.github.io/griffe-inherited-docstrings/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-pydantic", "https://mkdocstrings.github.io/griffe-pydantic/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-sphinx", "https://mkdocstrings.github.io/griffe-sphinx/", "insiders/goals.yml"),
