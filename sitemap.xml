@@ -101,6 +101,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/</loc>
+         <lastmod>2024-08-16</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/</loc>
          <lastmod>2024-08-16</lastmod>
          <changefreq>daily</changefreq>
