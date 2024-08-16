@@ -624,6 +624,7 @@ NOTE: Unless inherited members are lost in the process, removing a class base is
 
 Griffe supports writing detected breakages in multiple formats, or styles.
 
+[](){#format-oneline}
 ### One-line
 
 - **CLI**: `-f oneline` / no flags
@@ -636,6 +637,8 @@ Griffe will print each detected breakage on a single line:
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
+
+[](){#format-verbose}
 ### Verbose
 
 - **CLI**: `-f verbose` / `-v`
@@ -648,6 +651,7 @@ $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
 
+[](){#format-markdown}
 ### Markdown
 
 [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
@@ -685,6 +689,7 @@ insert a summary of breaking changes in your changelog entries.
 - `griffe.git.load_git(allow_inspection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
 ```
 
+[](){#format-github}
 ### GitHub
 
 [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
