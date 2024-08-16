@@ -28,6 +28,8 @@ nav:
     - Getting help: getting-help.md
     - Contributing: contributing.md
     - Code of conduct: code-of-conduct.md
+    - Alternatives: alternatives.md
+    - Downstream projects: downstream-projects.md
     - Credits: credits.md
 - Guide:
   - guide.md
