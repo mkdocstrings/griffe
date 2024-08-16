@@ -5,6 +5,66 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.0.0](https://github.com/mkdocstrings/griffe/releases/tag/1.0.0) - 2024-08-15
+
+<small>[Compare with 0.49.0](https://github.com/mkdocstrings/griffe/compare/0.49.0...1.0.0)</small>
+
+**V1!** :rocket: :fire: :rainbow:
+
+### Breaking changes
+
+Highlights:
+
+- Extensions inherit from `Extension`, (`VisitorExtension` and `InspectorExtension` are removed)
+- Members are serialized (`as_dict`/JSON) as a dictionary instead of a list
+- All objects are available in the top-level `griffe` module, nowhere else
+
+Removed objects:
+
+- all modules under the `griffe` package
+- the `griffe.DocstringWarningCallable` class
+- the `griffe.When` class
+- the `griffe.ExtensionType` type
+- the `griffe.InspectorExtension` class
+- the `griffe.VisitorExtension` class
+- the `griffe.HybridExtension` extension
+- the `griffe.patch_logger` function
+- the `griffe.JSONEncoder.docstring_parser` attribute
+- the `griffe.JSONEncoder.docstring_options` attribute
+- the `griffe.Extensions.attach_visitor` method
+- the `griffe.Extensions.attach_inspector` method
+- the `griffe.Extensions.before_visit` method
+- the `griffe.Extensions.before_children_visit` method
+- the `griffe.Extensions.after_children_visit` method
+- the `griffe.Extensions.after_visit` method
+- the `griffe.Extensions.before_inspection` method
+- the `griffe.Extensions.before_children_inspection` method
+- the `griffe.Extensions.after_children_inspection` method
+- the `griffe.Extensions.after_inspection` method
+- the `griffe.GriffeLoader.load_module` method
+- the `has_special_name` and `has_private_name` properties on objects
+- the `is_explicitely_exported` and `is_implicitely_exported` properties on objects
+- the `member_is_exported` method on objects
+
+
+Renamed/moved objects:
+
+- `griffe.Function.setter` -> `griffe.Attribute.setter`
+- `griffe.Function.deleter` -> `griffe.Attribute.deleter`
+
+Signatures:
+
+- `griffe.docstring_warning(name)` parameter was removed
+- `griffe.GriffeLoader.load(module)` parameter was removed
+- `griffe.load(module)` parameter was removed
+- `griffe.load_git(module)` parameter was removed
+- `griffe.find_breaking_changes(ignore_private)` parameter was removed
+- see previous deprecations
+
+### Code Refactoring
+
+- Remove all legacy code for v1 ([86d321e](https://github.com/mkdocstrings/griffe/commit/86d321ed1303f7bde28950f14ea75412be1d6888) and [fd72083](https://github.com/mkdocstrings/griffe/commit/fd72083fa06c3eb4ef76fe74c5126eef308766c0)by Timothée Mazzucotelli). [PR-314](https://github.com/mkdocstrings/griffe/pull/314)
+
 ## [0.49.0](https://github.com/mkdocstrings/griffe/releases/tag/0.49.0) - 2024-08-14
 
 <small>[Compare with 0.48.0](https://github.com/mkdocstrings/griffe/compare/0.48.0...0.49.0)</small>
