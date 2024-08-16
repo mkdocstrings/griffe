@@ -105,6 +105,36 @@ for breaking_change in find_breaking_changes(my_pkg_v1, my_pkg_v2):
     print(breaking_change.explain())
 ```
 
+## In CI
+
+It is of course possible to Griffe in CI (Continuous Integration) to make sure no breaking changes are introduced in pull/merge requests.
+
+### GitHub {#ci-github}
+
+Here is a quick example on how to use Griffe in a GitHub workflow:
+
+```yaml
+jobs:
+  check-api:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    # Griffe requires that Git tags are available.
+    - run: git fetch --depth=1 --tags
+    
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    # Install Griffe (use your preferred dependency manager).
+    - run: pip install griffe
+
+    - run: griffe check -ssrc your_package
+```
+
+The last step will fail the workflow if any breaking change is found. If you are part of [Insiders](../../insiders/index.md), you can format the output for GitHub, to enjoy GitHub annotations in PRs. See [GitHub format](#github) below.
+
 ## Detected breakages
 
 In this section, we will describe the breakages that Griffe detects, giving some code examples and hints on how to properly communicate breakages with deprecation messages before actually releasing them.
