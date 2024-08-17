@@ -190,11 +190,10 @@ There are two kinds of events in Griffe: **load events** and **analysis events**
 
 #### Load events
 
-There is only one **load event**:
+There are two **load events**:
 
-- [`on_package_loaded`][griffe.Extension.on_package_loaded]
-
-This event is triggered when the loader has finished loading a package entirely, i.e. when all its submodules were scanned and loaded. This event can be hooked by extensions which require the whole package to be loaded, to be able to navigate the object tree without raising lookup errors or alias resolution errors.
+- [`on_package_loaded`][griffe.Extension.on_package_loaded]: The "on package loaded" event is triggered when the loader has finished loading a package entirely, i.e. when all its submodules were scanned and loaded. This event can be hooked by extensions which require the whole package to be loaded, to be able to navigate the object tree without raising lookup errors or alias resolution errors.
+- [`on_wildcard_expansion`][griffe.Extension.on_wildcard_expansion]: The "on wildcard expansion" event is triggered for each alias that is created by expanding wildcard imports (`from ... import *`).
 
 #### Analysis events
 

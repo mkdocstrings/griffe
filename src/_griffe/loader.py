@@ -399,6 +399,7 @@ class GriffeLoader:
 
                 # Everything went right (supposedly), we add the alias as a member of the current object.
                 obj.set_member(new_member.name, alias)
+                self.extensions.call("on_wildcard_expansion", alias=alias, loader=self)
 
     def resolve_module_aliases(
         self,

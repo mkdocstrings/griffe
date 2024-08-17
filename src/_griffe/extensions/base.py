@@ -261,6 +261,21 @@ class Extension:
             **kwargs: For forward-compatibility.
         """
 
+    def on_wildcard_expansion(
+        self,
+        *,
+        alias: Alias,
+        loader: GriffeLoader,
+        **kwargs: Any,
+    ) -> None:
+        """Run when wildcard imports are expanded into aliases.
+
+        Parameters:
+            alias: The alias instance.
+            loader: The loader currently in use.
+            **kwargs: For forward-compatibility.
+        """
+
 
 LoadableExtensionType = Union[str, Dict[str, Any], Extension, Type[Extension]]
 """All the types that can be passed to `load_extensions`."""
