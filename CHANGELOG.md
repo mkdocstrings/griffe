@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.1.0](https://github.com/mkdocstrings/griffe/releases/tag/1.1.0) - 2024-08-17
+
+<small>[Compare with 1.0.0](https://github.com/mkdocstrings/griffe/compare/1.0.0...1.1.0)</small>
+
+### Features
+
+- Add `on_wildcard_expansion` event ([c6bc6fa](https://github.com/mkdocstrings/griffe/commit/c6bc6fa858a43ea2180f97fd270075d7ee7169e3) by Timothée Mazzucotelli). [Issue-282](https://github.com/mkdocstrings/griffe/issues/282)
+- Add `on_alias` event ([a760a8c](https://github.com/mkdocstrings/griffe/commit/a760a8c684cae0da6b6cc83e37d1d374bfeed662) by Timothée Mazzucotelli). [Issue-282](https://github.com/mkdocstrings/griffe/issues/282)
+- Pass `loader` to `on_package_loaded` hooks ([7f82dc3](https://github.com/mkdocstrings/griffe/commit/7f82dc382f1f20ee9e5f58a9ef7a775563894056) by Timothée Mazzucotelli).
+
 ## [1.0.0](https://github.com/mkdocstrings/griffe/releases/tag/1.0.0) - 2024-08-15
 
 <small>[Compare with 0.49.0](https://github.com/mkdocstrings/griffe/compare/0.49.0...1.0.0)</small>
