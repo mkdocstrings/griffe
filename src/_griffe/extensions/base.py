@@ -82,6 +82,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             obj: The object instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_members(self, *, node: ast.AST | ObjectNode, obj: Object, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -90,6 +92,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             obj: The object instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_module_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -97,6 +101,8 @@ class Extension:
 
         Parameters:
             node: The currently visited node.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_module_instance(
@@ -112,6 +118,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             mod: The module instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_module_members(
@@ -127,6 +135,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             mod: The module instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_class_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -134,6 +144,8 @@ class Extension:
 
         Parameters:
             node: The currently visited node.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_class_instance(
@@ -149,6 +161,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             cls: The class instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_class_members(
@@ -164,6 +178,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             cls: The class instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_function_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -171,6 +187,8 @@ class Extension:
 
         Parameters:
             node: The currently visited node.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_function_instance(
@@ -186,6 +204,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             func: The function instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_attribute_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -193,6 +213,8 @@ class Extension:
 
         Parameters:
             node: The currently visited node.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_attribute_instance(
@@ -208,6 +230,8 @@ class Extension:
         Parameters:
             node: The currently visited node.
             attr: The attribute instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
         """
 
     def on_package_loaded(self, *, pkg: Module, **kwargs: Any) -> None:
@@ -215,6 +239,7 @@ class Extension:
 
         Parameters:
             pkg: The package (Module) instance.
+            **kwargs: For forward-compatibility.
         """
 
 
