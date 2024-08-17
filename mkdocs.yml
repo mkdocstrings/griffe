@@ -63,6 +63,7 @@ nav:
     - autodocstringstyle: extensions/official/autodocstringstyle.md
     - inherited-docstrings: extensions/official/inherited-docstrings.md
     - pydantic: extensions/official/pydantic.md
+    - runtime-objects: extensions/official/runtime-objects.md
     - sphinx: extensions/official/sphinx.md
     - typingdoc: extensions/official/typingdoc.md
     - warnings-deprecated: extensions/official/warnings-deprecated.md
