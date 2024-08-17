@@ -460,6 +460,7 @@ class GriffeLoader:
                             logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
                         # TODO: Immediately try again?
+                        # TODO: self.extensions.call("on_package_loaded", pkg=top_module, loader=self)
                 except CyclicAliasError as error:
                     logger.debug(str(error))
                 else:
