@@ -200,9 +200,9 @@ This event is triggered when the loader has finished loading a package entirely,
 
 There are 3 generic **analysis events**:
 
-- [`on_node`][griffe.Extension.on_node]
-- [`on_instance`][griffe.Extension.on_instance]
-- [`on_members`][griffe.Extension.on_members]
+- [`on_node`][griffe.Extension.on_node]: The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
+- [`on_instance`][griffe.Extension.on_instance]: The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], or [Attribute][griffe.Attribute], and added it as a member of its parent. The "on instance" event is **not** triggered when an [Alias][griffe.Alias] is created.
+- [`on_members`][griffe.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions and attributes do not have members, so there are no "on members" event for these two kinds.
 
 There are also specific **analysis events** for each object kind:
 
@@ -217,11 +217,11 @@ There are also specific **analysis events** for each object kind:
 - [`on_attribute_node`][griffe.Extension.on_attribute_node]
 - [`on_attribute_instance`][griffe.Extension.on_attribute_instance]
 
-The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
+And a special event for aliases:
 
-The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], or [Attribute][griffe.Attribute], and added it as a member of its parent.
+- [`on_alias`][griffe.Extension.on_alias]: The "on alias" event is triggered when an [Alias][griffe.Alias] was just created and added as a member of its parent object.
 
-The "on members" events are triggered when the agent just finished handling all the members of an object. Functions and attributes do not have members, so there are no "on members" event for these two kinds.
+---
 
 **Hooks** are methods that are called when a particular event is triggered. To target a specific event, the hook must be named after it.
 

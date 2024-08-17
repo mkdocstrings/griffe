@@ -267,7 +267,9 @@ class Inspector:
                         self.current.set_member(child.name, inspector.current.module)
                 # Otherwise, alias the object.
                 else:
-                    self.current.set_member(child.name, Alias(child.name, target_path))
+                    alias = Alias(child.name, target_path)
+                    self.current.set_member(child.name, alias)
+                    self.extensions.call("on_alias", alias=alias, node=node, agent=self)
             else:
                 self.inspect(child)
 

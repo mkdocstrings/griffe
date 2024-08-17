@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from _griffe.agents.nodes.runtime import ObjectNode
     from _griffe.agents.visitor import Visitor
     from _griffe.loader import GriffeLoader
-    from _griffe.models import Attribute, Class, Function, Module, Object
+    from _griffe.models import Alias, Attribute, Class, Function, Module, Object
 
 
 class Extension:
@@ -231,6 +231,23 @@ class Extension:
         Parameters:
             node: The currently visited node.
             attr: The attribute instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_alias(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        alias: Alias,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
+        """Run when an Alias has been created.
+
+        Parameters:
+            node: The currently visited node.
+            alias: The alias instance.
             agent: The analysis agent currently running.
             **kwargs: For forward-compatibility.
         """

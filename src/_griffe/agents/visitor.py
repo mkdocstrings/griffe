@@ -463,16 +463,15 @@ class Visitor:
             alias_path = name.name if name.asname else name.name.split(".", 1)[0]
             alias_name = name.asname or alias_path.split(".", 1)[0]
             self.current.imports[alias_name] = alias_path
-            self.current.set_member(
+            alias = Alias(
                 alias_name,
-                Alias(
-                    alias_name,
-                    alias_path,
-                    lineno=node.lineno,
-                    endlineno=node.end_lineno,
-                    runtime=not self.type_guarded,
-                ),
+                alias_path,
+                lineno=node.lineno,
+                endlineno=node.end_lineno,
+                runtime=not self.type_guarded,
             )
+            self.current.set_member(alias_name, alias)
+            self.extensions.call("on_alias", alias=alias, node=node, agent=self)
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:
         """Visit an "import from" node.
@@ -499,16 +498,15 @@ class Visitor:
             # `from package.current_module import Thing as Thing` or
             # `from . import thing as thing`).
             if alias_path != f"{self.current.path}.{alias_name}":
-                self.current.set_member(
+                alias = Alias(
                     alias_name,
-                    Alias(
-                        alias_name,
-                        alias_path,
-                        lineno=node.lineno,
-                        endlineno=node.end_lineno,
-                        runtime=not self.type_guarded,
-                    ),
+                    alias_path,
+                    lineno=node.lineno,
+                    endlineno=node.end_lineno,
+                    runtime=not self.type_guarded,
                 )
+                self.current.set_member(alias_name, alias)
+                self.extensions.call("on_alias", alias=alias, node=node, agent=self)
 
     def handle_attribute(
         self,
