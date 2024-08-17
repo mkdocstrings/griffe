@@ -78,7 +78,7 @@
                   "lineno": 94,
                   "value": "This class is used to instantiate an inspector.\n\nInspectors iterate on objects members to extract data from them."
                 },
-                "endlineno": 519,
+                "endlineno": 521,
                 "kind": "class",
                 "labels": [],
                 "lineno": 93,
@@ -491,7 +491,7 @@
                       "lineno": 240,
                       "value": "Extend the base generic inspection with extensions.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 272,
+                    "endlineno": 274,
                     "kind": "function",
                     "labels": [],
                     "lineno": 239,
@@ -574,14 +574,14 @@
                   "handle_attribute": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 480,
-                      "lineno": 475,
+                      "endlineno": 482,
+                      "lineno": 477,
                       "value": "Handle an attribute.\n\nParameters:\n    node: The node to inspect.\n    annotation: A potential annotation."
                     },
-                    "endlineno": 519,
+                    "endlineno": 521,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 474,
+                    "lineno": 476,
                     "members": {},
                     "name": "handle_attribute",
                     "parameters": [
@@ -628,14 +628,14 @@
                   "handle_function": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 414,
-                      "lineno": 409,
+                      "endlineno": 416,
+                      "lineno": 411,
                       "value": "Handle a function.\n\nParameters:\n    node: The node to inspect.\n    labels: Labels to add to the data object."
                     },
-                    "endlineno": 464,
+                    "endlineno": 466,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 408,
+                    "lineno": 410,
                     "members": {},
                     "name": "handle_function",
                     "parameters": [
@@ -706,14 +706,14 @@
                   "inspect_attribute": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 471,
-                      "lineno": 467,
+                      "endlineno": 473,
+                      "lineno": 469,
                       "value": "Inspect an attribute.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 472,
+                    "endlineno": 474,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 466,
+                    "lineno": 468,
                     "members": {},
                     "name": "inspect_attribute",
                     "parameters": [
@@ -738,14 +738,14 @@
                   "inspect_builtin_function": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 381,
-                      "lineno": 377,
+                      "endlineno": 383,
+                      "lineno": 379,
                       "value": "Inspect a builtin function.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 382,
+                    "endlineno": 384,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 376,
+                    "lineno": 378,
                     "members": {},
                     "name": "inspect_builtin_function",
                     "parameters": [
@@ -770,14 +770,14 @@
                   "inspect_builtin_method": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 357,
-                      "lineno": 353,
+                      "endlineno": 359,
+                      "lineno": 355,
                       "value": "Inspect a builtin method.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 358,
+                    "endlineno": 360,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 352,
+                    "lineno": 354,
                     "members": {},
                     "name": "inspect_builtin_method",
                     "parameters": [
@@ -802,14 +802,14 @@
                   "inspect_cached_property": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 397,
-                      "lineno": 393,
+                      "endlineno": 399,
+                      "lineno": 395,
                       "value": "Inspect a cached property.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 398,
+                    "endlineno": 400,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 392,
+                    "lineno": 394,
                     "members": {},
                     "name": "inspect_cached_property",
                     "parameters": [
@@ -834,14 +834,14 @@
                   "inspect_class": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 301,
-                      "lineno": 297,
+                      "endlineno": 303,
+                      "lineno": 299,
                       "value": "Inspect a class.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 326,
+                    "endlineno": 328,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 296,
+                    "lineno": 298,
                     "members": {},
                     "name": "inspect_class",
                     "parameters": [
@@ -866,14 +866,14 @@
                   "inspect_classmethod": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 341,
-                      "lineno": 337,
+                      "endlineno": 343,
+                      "lineno": 339,
                       "value": "Inspect a class method.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 342,
+                    "endlineno": 344,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 336,
+                    "lineno": 338,
                     "members": {},
                     "name": "inspect_classmethod",
                     "parameters": [
@@ -898,14 +898,14 @@
                   "inspect_coroutine": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 373,
-                      "lineno": 369,
+                      "endlineno": 375,
+                      "lineno": 371,
                       "value": "Inspect a coroutine.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 374,
+                    "endlineno": 376,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 368,
+                    "lineno": 370,
                     "members": {},
                     "name": "inspect_coroutine",
                     "parameters": [
@@ -930,14 +930,14 @@
                   "inspect_function": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 389,
-                      "lineno": 385,
+                      "endlineno": 391,
+                      "lineno": 387,
                       "value": "Inspect a function.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 390,
+                    "endlineno": 392,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 384,
+                    "lineno": 386,
                     "members": {},
                     "name": "inspect_function",
                     "parameters": [
@@ -962,14 +962,14 @@
                   "inspect_method": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 365,
-                      "lineno": 361,
+                      "endlineno": 367,
+                      "lineno": 363,
                       "value": "Inspect a method.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 366,
+                    "endlineno": 368,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 360,
+                    "lineno": 362,
                     "members": {},
                     "name": "inspect_method",
                     "parameters": [
@@ -994,14 +994,14 @@
                   "inspect_method_descriptor": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 349,
-                      "lineno": 345,
+                      "endlineno": 351,
+                      "lineno": 347,
                       "value": "Inspect a method descriptor.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 350,
+                    "endlineno": 352,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 344,
+                    "lineno": 346,
                     "members": {},
                     "name": "inspect_method_descriptor",
                     "parameters": [
@@ -1026,14 +1026,14 @@
                   "inspect_module": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 279,
-                      "lineno": 275,
+                      "endlineno": 281,
+                      "lineno": 277,
                       "value": "Inspect a module.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 294,
+                    "endlineno": 296,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 274,
+                    "lineno": 276,
                     "members": {},
                     "name": "inspect_module",
                     "parameters": [
@@ -1058,14 +1058,14 @@
                   "inspect_property": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 405,
-                      "lineno": 401,
+                      "endlineno": 407,
+                      "lineno": 403,
                       "value": "Inspect a property.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 406,
+                    "endlineno": 408,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 400,
+                    "lineno": 402,
                     "members": {},
                     "name": "inspect_property",
                     "parameters": [
@@ -1090,14 +1090,14 @@
                   "inspect_staticmethod": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 333,
-                      "lineno": 329,
+                      "endlineno": 335,
+                      "lineno": 331,
                       "value": "Inspect a static method.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 334,
+                    "endlineno": 336,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 328,
+                    "lineno": 330,
                     "members": {},
                     "name": "inspect_staticmethod",
                     "parameters": [
@@ -1347,10 +1347,10 @@
               },
               "_convert_object_to_annotation": {
                 "decorators": [],
-                "endlineno": 564,
+                "endlineno": 566,
                 "kind": "function",
                 "labels": [],
-                "lineno": 547,
+                "lineno": 549,
                 "members": {},
                 "name": "_convert_object_to_annotation",
                 "parameters": [
@@ -1401,10 +1401,10 @@
               },
               "_convert_parameter": {
                 "decorators": [],
-                "endlineno": 544,
+                "endlineno": 546,
                 "kind": "function",
                 "labels": [],
-                "lineno": 531,
+                "lineno": 533,
                 "members": {},
                 "name": "_convert_parameter",
                 "parameters": [
@@ -1464,12 +1464,12 @@
                 }
               },
               "_kind_map": {
-                "endlineno": 528,
+                "endlineno": 530,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 522,
+                "lineno": 524,
                 "members": {},
                 "name": "_kind_map",
                 "value": {
@@ -5278,7 +5278,7 @@
                   "lineno": 116,
                   "value": "This class is used to instantiate a visitor.\n\nVisitors iterate on AST nodes to extract data from them."
                 },
-                "endlineno": 664,
+                "endlineno": 662,
                 "kind": "class",
                 "labels": [],
                 "lineno": 115,
@@ -5833,14 +5833,14 @@
                   "handle_attribute": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 523,
-                      "lineno": 518,
+                      "endlineno": 521,
+                      "lineno": 516,
                       "value": "Handle an attribute (assignment) node.\n\nParameters:\n    node: The node to visit.\n    annotation: A potential annotation."
                     },
-                    "endlineno": 614,
+                    "endlineno": 612,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 513,
+                    "lineno": 511,
                     "members": {},
                     "name": "handle_attribute",
                     "parameters": [
@@ -6171,14 +6171,14 @@
                   "visit_annassign": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 629,
-                      "lineno": 625,
+                      "endlineno": 627,
+                      "lineno": 623,
                       "value": "Visit an annotated assignment node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 630,
+                    "endlineno": 628,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 624,
+                    "lineno": 622,
                     "members": {},
                     "name": "visit_annassign",
                     "parameters": [
@@ -6212,14 +6212,14 @@
                   "visit_assign": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 621,
-                      "lineno": 617,
+                      "endlineno": 619,
+                      "lineno": 615,
                       "value": "Visit an assignment node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 622,
+                    "endlineno": 620,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 616,
+                    "lineno": 614,
                     "members": {},
                     "name": "visit_assign",
                     "parameters": [
@@ -6294,14 +6294,14 @@
                   "visit_augassign": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 637,
-                      "lineno": 633,
+                      "endlineno": 635,
+                      "lineno": 631,
                       "value": "Visit an augmented assignment node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 651,
+                    "endlineno": 649,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 632,
+                    "lineno": 630,
                     "members": {},
                     "name": "visit_augassign",
                     "parameters": [
@@ -6417,14 +6417,14 @@
                   "visit_if": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 658,
-                      "lineno": 654,
+                      "endlineno": 656,
+                      "lineno": 652,
                       "value": "Visit an \"if\" node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 664,
+                    "endlineno": 662,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 653,
+                    "lineno": 651,
                     "members": {},
                     "name": "visit_if",
                     "parameters": [
@@ -6462,7 +6462,7 @@
                       "lineno": 457,
                       "value": "Visit an import node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 475,
+                    "endlineno": 474,
                     "kind": "function",
                     "labels": [],
                     "lineno": 456,
@@ -6499,14 +6499,14 @@
                   "visit_importfrom": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 482,
-                      "lineno": 478,
+                      "endlineno": 481,
+                      "lineno": 477,
                       "value": "Visit an \"import from\" node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 511,
+                    "endlineno": 509,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 477,
+                    "lineno": 476,
                     "members": {},
                     "name": "visit_importfrom",
                     "parameters": [
@@ -37882,6 +37882,13 @@
             "kind": "module",
             "labels": [],
             "members": {
+              "Alias": {
+                "endlineno": 25,
+                "kind": "alias",
+                "lineno": 25,
+                "name": "Alias",
+                "target_path": "_griffe.models.Alias"
+              },
               "Any": {
                 "endlineno": 11,
                 "kind": "alias",
@@ -37890,16 +37897,16 @@
                 "target_path": "typing.Any"
               },
               "Attribute": {
-                "endlineno": 24,
+                "endlineno": 25,
                 "kind": "alias",
-                "lineno": 24,
+                "lineno": 25,
                 "name": "Attribute",
                 "target_path": "_griffe.models.Attribute"
               },
               "Class": {
-                "endlineno": 24,
+                "endlineno": 25,
                 "kind": "alias",
-                "lineno": 24,
+                "lineno": 25,
                 "name": "Class",
                 "target_path": "_griffe.models.Class"
               },
@@ -37914,26 +37921,26 @@
                 "bases": [],
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 28,
-                  "lineno": 28,
+                  "endlineno": 29,
+                  "lineno": 29,
                   "value": "Base class for Griffe extensions."
                 },
-                "endlineno": 218,
+                "endlineno": 277,
                 "kind": "class",
                 "labels": [],
-                "lineno": 27,
+                "lineno": 28,
                 "members": {
                   "generic_inspect": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 60,
-                      "lineno": 56,
+                      "endlineno": 61,
+                      "lineno": 57,
                       "value": "Extend the base generic inspection with extensions.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 63,
+                    "endlineno": 64,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 55,
+                    "lineno": 56,
                     "members": {},
                     "name": "generic_inspect",
                     "parameters": [
@@ -37958,14 +37965,14 @@
                   "generic_visit": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 43,
-                      "lineno": 39,
+                      "endlineno": 44,
+                      "lineno": 40,
                       "value": "Visit children nodes.\n\nParameters:\n    node: The node to visit the children of."
                     },
-                    "endlineno": 45,
+                    "endlineno": 46,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 38,
+                    "lineno": 39,
                     "members": {},
                     "name": "generic_visit",
                     "parameters": [
@@ -37999,14 +38006,14 @@
                   "inspect": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 52,
-                      "lineno": 48,
+                      "endlineno": 53,
+                      "lineno": 49,
                       "value": "Inspect a node.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 53,
+                    "endlineno": 54,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 47,
+                    "lineno": 48,
                     "members": {},
                     "name": "inspect",
                     "parameters": [
@@ -38028,17 +38035,101 @@
                     ],
                     "returns": "None"
                   },
+                  "on_alias": {
+                    "decorators": [],
+                    "docstring": {
+                      "endlineno": 253,
+                      "lineno": 246,
+                      "value": "Run when an Alias has been created.\n\nParameters:\n    node: The currently visited node.\n    alias: The alias instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
+                    },
+                    "endlineno": 253,
+                    "kind": "function",
+                    "labels": [],
+                    "lineno": 238,
+                    "members": {},
+                    "name": "on_alias",
+                    "parameters": [
+                      {
+                        "annotation": null,
+                        "default": null,
+                        "kind": "positional or keyword",
+                        "name": "self"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprBinOp",
+                          "left": {
+                            "cls": "ExprAttribute",
+                            "values": [
+                              {
+                                "cls": "ExprName",
+                                "name": "ast"
+                              },
+                              {
+                                "cls": "ExprName",
+                                "name": "AST"
+                              }
+                            ]
+                          },
+                          "operator": "|",
+                          "right": {
+                            "cls": "ExprName",
+                            "name": "ObjectNode"
+                          }
+                        },
+                        "default": null,
+                        "kind": "keyword-only",
+                        "name": "node"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "Alias"
+                        },
+                        "default": null,
+                        "kind": "keyword-only",
+                        "name": "alias"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprBinOp",
+                          "left": {
+                            "cls": "ExprName",
+                            "name": "Visitor"
+                          },
+                          "operator": "|",
+                          "right": {
+                            "cls": "ExprName",
+                            "name": "Inspector"
+                          }
+                        },
+                        "default": null,
+                        "kind": "keyword-only",
+                        "name": "agent"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "Any"
+                        },
+                        "default": "{}",
+                        "kind": "variadic keyword",
+                        "name": "kwargs"
+                      }
+                    ],
+                    "returns": "None"
+                  },
                   "on_attribute_instance": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 211,
-                      "lineno": 206,
-                      "value": "Run when an Attribute has been created.\n\nParameters:\n    node: The currently visited node.\n    attr: The attribute instance."
+                      "endlineno": 236,
+                      "lineno": 229,
+                      "value": "Run when an Attribute has been created.\n\nParameters:\n    node: The currently visited node.\n    attr: The attribute instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 211,
+                    "endlineno": 236,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 198,
+                    "lineno": 221,
                     "members": {},
                     "name": "on_attribute_instance",
                     "parameters": [
@@ -38115,14 +38206,14 @@
                   "on_attribute_node": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 196,
-                      "lineno": 192,
-                      "value": "Run when visiting a new attribute node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node."
+                      "endlineno": 219,
+                      "lineno": 213,
+                      "value": "Run when visiting a new attribute node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 196,
+                    "endlineno": 219,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 191,
+                    "lineno": 212,
                     "members": {},
                     "name": "on_attribute_node",
                     "parameters": [
@@ -38190,14 +38281,14 @@
                   "on_class_instance": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 152,
-                      "lineno": 147,
-                      "value": "Run when a Class has been created.\n\nParameters:\n    node: The currently visited node.\n    cls: The class instance."
+                      "endlineno": 167,
+                      "lineno": 160,
+                      "value": "Run when a Class has been created.\n\nParameters:\n    node: The currently visited node.\n    cls: The class instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 152,
+                    "endlineno": 167,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 139,
+                    "lineno": 152,
                     "members": {},
                     "name": "on_class_instance",
                     "parameters": [
@@ -38274,14 +38365,14 @@
                   "on_class_members": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 167,
-                      "lineno": 162,
-                      "value": "Run when members of a Class have been loaded.\n\nParameters:\n    node: The currently visited node.\n    cls: The class instance."
+                      "endlineno": 184,
+                      "lineno": 177,
+                      "value": "Run when members of a Class have been loaded.\n\nParameters:\n    node: The currently visited node.\n    cls: The class instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 167,
+                    "endlineno": 184,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 154,
+                    "lineno": 169,
                     "members": {},
                     "name": "on_class_members",
                     "parameters": [
@@ -38358,14 +38449,14 @@
                   "on_class_node": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 137,
-                      "lineno": 133,
-                      "value": "Run when visiting a new class node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node."
+                      "endlineno": 150,
+                      "lineno": 144,
+                      "value": "Run when visiting a new class node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 137,
+                    "endlineno": 150,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 132,
+                    "lineno": 143,
                     "members": {},
                     "name": "on_class_node",
                     "parameters": [
@@ -38433,14 +38524,14 @@
                   "on_function_instance": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 189,
-                      "lineno": 184,
-                      "value": "Run when a Function has been created.\n\nParameters:\n    node: The currently visited node.\n    func: The function instance."
+                      "endlineno": 210,
+                      "lineno": 203,
+                      "value": "Run when a Function has been created.\n\nParameters:\n    node: The currently visited node.\n    func: The function instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 189,
+                    "endlineno": 210,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 176,
+                    "lineno": 195,
                     "members": {},
                     "name": "on_function_instance",
                     "parameters": [
@@ -38517,14 +38608,14 @@
                   "on_function_node": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 174,
-                      "lineno": 170,
-                      "value": "Run when visiting a new function node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node."
+                      "endlineno": 193,
+                      "lineno": 187,
+                      "value": "Run when visiting a new function node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 174,
+                    "endlineno": 193,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 169,
+                    "lineno": 186,
                     "members": {},
                     "name": "on_function_node",
                     "parameters": [
@@ -38592,14 +38683,14 @@
                   "on_instance": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 85,
-                      "lineno": 80,
-                      "value": "Run when an Object has been created.\n\nParameters:\n    node: The currently visited node.\n    obj: The object instance."
+                      "endlineno": 88,
+                      "lineno": 81,
+                      "value": "Run when an Object has been created.\n\nParameters:\n    node: The currently visited node.\n    obj: The object instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 85,
+                    "endlineno": 88,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 72,
+                    "lineno": 73,
                     "members": {},
                     "name": "on_instance",
                     "parameters": [
@@ -38676,14 +38767,14 @@
                   "on_members": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 93,
-                      "lineno": 88,
-                      "value": "Run when members of an Object have been loaded.\n\nParameters:\n    node: The currently visited node.\n    obj: The object instance."
+                      "endlineno": 98,
+                      "lineno": 91,
+                      "value": "Run when members of an Object have been loaded.\n\nParameters:\n    node: The currently visited node.\n    obj: The object instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 93,
+                    "endlineno": 98,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 87,
+                    "lineno": 90,
                     "members": {},
                     "name": "on_members",
                     "parameters": [
@@ -38760,14 +38851,14 @@
                   "on_module_instance": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 115,
-                      "lineno": 110,
-                      "value": "Run when a Module has been created.\n\nParameters:\n    node: The currently visited node.\n    mod: The module instance."
+                      "endlineno": 124,
+                      "lineno": 117,
+                      "value": "Run when a Module has been created.\n\nParameters:\n    node: The currently visited node.\n    mod: The module instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 115,
+                    "endlineno": 124,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 102,
+                    "lineno": 109,
                     "members": {},
                     "name": "on_module_instance",
                     "parameters": [
@@ -38844,14 +38935,14 @@
                   "on_module_members": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 130,
-                      "lineno": 125,
-                      "value": "Run when members of a Module have been loaded.\n\nParameters:\n    node: The currently visited node.\n    mod: The module instance."
+                      "endlineno": 141,
+                      "lineno": 134,
+                      "value": "Run when members of a Module have been loaded.\n\nParameters:\n    node: The currently visited node.\n    mod: The module instance.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 130,
+                    "endlineno": 141,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 117,
+                    "lineno": 126,
                     "members": {},
                     "name": "on_module_members",
                     "parameters": [
@@ -38928,14 +39019,14 @@
                   "on_module_node": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 100,
-                      "lineno": 96,
-                      "value": "Run when visiting a new module node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node."
+                      "endlineno": 107,
+                      "lineno": 101,
+                      "value": "Run when visiting a new module node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node.\n    agent: The analysis agent currently running.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 100,
+                    "endlineno": 107,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 95,
+                    "lineno": 100,
                     "members": {},
                     "name": "on_module_node",
                     "parameters": [
@@ -39003,14 +39094,14 @@
                   "on_node": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 70,
-                      "lineno": 66,
+                      "endlineno": 71,
+                      "lineno": 67,
                       "value": "Run when visiting a new node during static/dynamic analysis.\n\nParameters:\n    node: The currently visited node."
                     },
-                    "endlineno": 70,
+                    "endlineno": 71,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 65,
+                    "lineno": 66,
                     "members": {},
                     "name": "on_node",
                     "parameters": [
@@ -39078,14 +39169,14 @@
                   "on_package_loaded": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 218,
-                      "lineno": 214,
-                      "value": "Run when a package has been completely loaded.\n\nParameters:\n    pkg: The package (Module) instance."
+                      "endlineno": 262,
+                      "lineno": 256,
+                      "value": "Run when a package has been completely loaded.\n\nParameters:\n    pkg: The package (Module) instance.\n    loader: The loader currently in use.\n    **kwargs: For forward-compatibility."
                     },
-                    "endlineno": 218,
+                    "endlineno": 262,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 213,
+                    "lineno": 255,
                     "members": {},
                     "name": "on_package_loaded",
                     "parameters": [
@@ -39107,6 +39198,65 @@
                       {
                         "annotation": {
                           "cls": "ExprName",
+                          "name": "GriffeLoader"
+                        },
+                        "default": null,
+                        "kind": "keyword-only",
+                        "name": "loader"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "Any"
+                        },
+                        "default": "{}",
+                        "kind": "variadic keyword",
+                        "name": "kwargs"
+                      }
+                    ],
+                    "returns": "None"
+                  },
+                  "on_wildcard_expansion": {
+                    "decorators": [],
+                    "docstring": {
+                      "endlineno": 277,
+                      "lineno": 271,
+                      "value": "Run when wildcard imports are expanded into aliases.\n\nParameters:\n    alias: The alias instance.\n    loader: The loader currently in use.\n    **kwargs: For forward-compatibility."
+                    },
+                    "endlineno": 277,
+                    "kind": "function",
+                    "labels": [],
+                    "lineno": 264,
+                    "members": {},
+                    "name": "on_wildcard_expansion",
+                    "parameters": [
+                      {
+                        "annotation": null,
+                        "default": null,
+                        "kind": "positional or keyword",
+                        "name": "self"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "Alias"
+                        },
+                        "default": null,
+                        "kind": "keyword-only",
+                        "name": "alias"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "GriffeLoader"
+                        },
+                        "default": null,
+                        "kind": "keyword-only",
+                        "name": "loader"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
                           "name": "Any"
                         },
                         "default": "{}",
@@ -39119,14 +39269,14 @@
                   "visit": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 35,
-                      "lineno": 31,
+                      "endlineno": 36,
+                      "lineno": 32,
                       "value": "Visit a node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 36,
+                    "endlineno": 37,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 30,
+                    "lineno": 31,
                     "members": {},
                     "name": "visit",
                     "parameters": [
@@ -39171,26 +39321,26 @@
                 "bases": [],
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 226,
-                  "lineno": 226,
+                  "endlineno": 285,
+                  "lineno": 285,
                   "value": "This class helps iterating on extensions that should run at different times."
                 },
-                "endlineno": 254,
+                "endlineno": 313,
                 "kind": "class",
                 "labels": [],
-                "lineno": 225,
+                "lineno": 284,
                 "members": {
                   "__init__": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 233,
-                      "lineno": 229,
+                      "endlineno": 292,
+                      "lineno": 288,
                       "value": "Initialize the extensions container.\n\nParameters:\n    *extensions: The extensions to add."
                     },
-                    "endlineno": 235,
+                    "endlineno": 294,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 228,
+                    "lineno": 287,
                     "members": {},
                     "name": "__init__",
                     "parameters": [
@@ -39224,12 +39374,12 @@
                         "name": "Extension"
                       }
                     },
-                    "endlineno": 234,
+                    "endlineno": 293,
                     "kind": "attribute",
                     "labels": [
                       "instance-attribute"
                     ],
-                    "lineno": 234,
+                    "lineno": 293,
                     "members": {},
                     "name": "_extensions",
                     "value": {
@@ -39240,14 +39390,14 @@
                   "add": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 242,
-                      "lineno": 238,
+                      "endlineno": 301,
+                      "lineno": 297,
                       "value": "Add extensions to this container.\n\nParameters:\n    *extensions: The extensions to add."
                     },
-                    "endlineno": 244,
+                    "endlineno": 303,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 237,
+                    "lineno": 296,
                     "members": {},
                     "name": "add",
                     "parameters": [
@@ -39272,14 +39422,14 @@
                   "call": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 252,
-                      "lineno": 247,
+                      "endlineno": 311,
+                      "lineno": 306,
                       "value": "Call the extension hook for the given event.\n\nParameters:\n    event: The triggered event.\n    **kwargs: Arguments passed to the hook."
                     },
-                    "endlineno": 254,
+                    "endlineno": 313,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 246,
+                    "lineno": 305,
                     "members": {},
                     "name": "call",
                     "parameters": [
@@ -39314,11 +39464,18 @@
                 "name": "Extensions"
               },
               "Function": {
+                "endlineno": 25,
+                "kind": "alias",
+                "lineno": 25,
+                "name": "Function",
+                "target_path": "_griffe.models.Function"
+              },
+              "GriffeLoader": {
                 "endlineno": 24,
                 "kind": "alias",
                 "lineno": 24,
-                "name": "Function",
-                "target_path": "_griffe.models.Function"
+                "name": "GriffeLoader",
+                "target_path": "_griffe.loader.GriffeLoader"
               },
               "Inspector": {
                 "endlineno": 21,
@@ -39329,16 +39486,16 @@
               },
               "LoadableExtensionType": {
                 "docstring": {
-                  "endlineno": 222,
-                  "lineno": 222,
+                  "endlineno": 281,
+                  "lineno": 281,
                   "value": "All the types that can be passed to `load_extensions`."
                 },
-                "endlineno": 221,
+                "endlineno": 280,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 221,
+                "lineno": 280,
                 "members": {},
                 "name": "LoadableExtensionType",
                 "value": {
@@ -39396,9 +39553,9 @@
                 }
               },
               "Module": {
-                "endlineno": 24,
+                "endlineno": 25,
                 "kind": "alias",
-                "lineno": 24,
+                "lineno": 25,
                 "name": "Module",
                 "target_path": "_griffe.models.Module"
               },
@@ -39410,9 +39567,9 @@
                 "target_path": "types.ModuleType"
               },
               "Object": {
-                "endlineno": 24,
+                "endlineno": 25,
                 "kind": "alias",
-                "lineno": 24,
+                "lineno": 25,
                 "name": "Object",
                 "target_path": "_griffe.models.Object"
               },
@@ -39461,14 +39618,14 @@
               "_load_extension": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 290,
-                  "lineno": 277,
+                  "endlineno": 349,
+                  "lineno": 336,
                   "value": "Load a configured extension.\n\nParameters:\n    extension: An extension, with potential configuration options.\n\nRaises:\n    ExtensionNotLoadedError: When the extension cannot be loaded,\n        either because the module is not found, or because it does not expose\n        the Extension attribute. ImportError will bubble up so users can see\n        the traceback.\n\nReturns:\n    An extension instance."
                 },
-                "endlineno": 363,
+                "endlineno": 422,
                 "kind": "function",
                 "labels": [],
-                "lineno": 274,
+                "lineno": 333,
                 "members": {},
                 "name": "_load_extension",
                 "parameters": [
@@ -39552,10 +39709,10 @@
               },
               "_load_extension_path": {
                 "decorators": [],
-                "endlineno": 271,
+                "endlineno": 330,
                 "kind": "function",
                 "labels": [],
-                "lineno": 263,
+                "lineno": 322,
                 "members": {},
                 "name": "_load_extension_path",
                 "parameters": [
@@ -39615,16 +39772,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 260,
-                  "lineno": 260,
+                  "endlineno": 319,
+                  "lineno": 319,
                   "value": "The names of built-in Griffe extensions."
                 },
-                "endlineno": 259,
+                "endlineno": 318,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 257,
+                "lineno": 316,
                 "members": {},
                 "name": "builtin_extensions",
                 "value": {
@@ -39651,14 +39808,14 @@
               "load_extensions": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 374,
-                  "lineno": 367,
+                  "endlineno": 433,
+                  "lineno": 426,
                   "value": "Load configured extensions.\n\nParameters:\n    exts: Extensions with potential configuration options.\n\nReturns:\n    An extensions container."
                 },
-                "endlineno": 394,
+                "endlineno": 453,
                 "kind": "function",
                 "labels": [],
-                "lineno": 366,
+                "lineno": 425,
                 "members": {},
                 "name": "load_extensions",
                 "parameters": [
@@ -42610,7 +42767,7 @@
               "lineno": 44,
               "value": "The Griffe loader, allowing to load data from modules."
             },
-            "endlineno": 699,
+            "endlineno": 701,
             "kind": "class",
             "labels": [],
             "lineno": 43,
@@ -42783,10 +42940,10 @@
               },
               "_create_module": {
                 "decorators": [],
-                "endlineno": 616,
+                "endlineno": 618,
                 "kind": "function",
                 "labels": [],
-                "lineno": 610,
+                "lineno": 612,
                 "members": {},
                 "name": "_create_module",
                 "parameters": [
@@ -42837,10 +42994,10 @@
               },
               "_expand_wildcard": {
                 "decorators": [],
-                "endlineno": 699,
+                "endlineno": 701,
                 "kind": "function",
                 "labels": [],
-                "lineno": 693,
+                "lineno": 695,
                 "members": {},
                 "name": "_expand_wildcard",
                 "parameters": [
@@ -42913,10 +43070,10 @@
               },
               "_get_or_create_parent_module": {
                 "decorators": [],
-                "endlineno": 691,
+                "endlineno": 693,
                 "kind": "function",
                 "labels": [],
-                "lineno": 663,
+                "lineno": 665,
                 "members": {},
                 "name": "_get_or_create_parent_module",
                 "parameters": [
@@ -42975,10 +43132,10 @@
               },
               "_inspect_module": {
                 "decorators": [],
-                "endlineno": 661,
+                "endlineno": 663,
                 "kind": "function",
                 "labels": [],
-                "lineno": 638,
+                "lineno": 640,
                 "members": {},
                 "name": "_inspect_module",
                 "parameters": [
@@ -43033,10 +43190,10 @@
               },
               "_load_module": {
                 "decorators": [],
-                "endlineno": 531,
+                "endlineno": 533,
                 "kind": "function",
                 "labels": [],
-                "lineno": 514,
+                "lineno": 516,
                 "members": {},
                 "name": "_load_module",
                 "parameters": [
@@ -43110,10 +43267,10 @@
               },
               "_load_module_path": {
                 "decorators": [],
-                "endlineno": 554,
+                "endlineno": 556,
                 "kind": "function",
                 "labels": [],
-                "lineno": 533,
+                "lineno": 535,
                 "members": {},
                 "name": "_load_module_path",
                 "parameters": [
@@ -43187,10 +43344,10 @@
               },
               "_load_package": {
                 "decorators": [],
-                "endlineno": 512,
+                "endlineno": 514,
                 "kind": "function",
                 "labels": [],
-                "lineno": 498,
+                "lineno": 500,
                 "members": {},
                 "name": "_load_package",
                 "parameters": [
@@ -43234,10 +43391,10 @@
               },
               "_load_submodule": {
                 "decorators": [],
-                "endlineno": 608,
+                "endlineno": 610,
                 "kind": "function",
                 "labels": [],
-                "lineno": 560,
+                "lineno": 562,
                 "members": {},
                 "name": "_load_submodule",
                 "parameters": [
@@ -43293,10 +43450,10 @@
               },
               "_load_submodules": {
                 "decorators": [],
-                "endlineno": 558,
+                "endlineno": 560,
                 "kind": "function",
                 "labels": [],
-                "lineno": 556,
+                "lineno": 558,
                 "members": {},
                 "name": "_load_submodules",
                 "parameters": [
@@ -43345,10 +43502,10 @@
               },
               "_visit_module": {
                 "decorators": [],
-                "endlineno": 636,
+                "endlineno": 638,
                 "kind": "function",
                 "labels": [],
-                "lineno": 618,
+                "lineno": 620,
                 "members": {},
                 "name": "_visit_module",
                 "parameters": [
@@ -43551,7 +43708,7 @@
                   "lineno": 303,
                   "value": "Expand wildcards: try to recursively expand all found wildcards.\n\nParameters:\n    obj: The object and its members to recurse on.\n    external: When true, try to load unspecified modules to expand wildcards.\n    seen: Used to avoid infinite recursion."
                 },
-                "endlineno": 406,
+                "endlineno": 407,
                 "kind": "function",
                 "labels": [],
                 "lineno": 296,
@@ -43976,14 +44133,14 @@
               "resolve_module_aliases": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 428,
-                  "lineno": 417,
+                  "endlineno": 429,
+                  "lineno": 418,
                   "value": "Follow aliases: try to recursively resolve all found aliases.\n\nParameters:\n    obj: The object and its members to recurse on.\n    implicit: When false, only try to resolve an alias if it is explicitly exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    seen: Used to avoid infinite recursion.\n    load_failures: Set of external packages we failed to load (to prevent retries).\n\nReturns:\n    Both sets of resolved and unresolved aliases."
                 },
-                "endlineno": 485,
+                "endlineno": 487,
                 "kind": "function",
                 "labels": [],
-                "lineno": 408,
+                "lineno": 409,
                 "members": {},
                 "name": "resolve_module_aliases",
                 "parameters": [
@@ -44115,14 +44272,14 @@
               "stats": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 492,
-                  "lineno": 488,
+                  "endlineno": 494,
+                  "lineno": 490,
                   "value": "Compute some statistics.\n\nReturns:\n    Some statistics."
                 },
-                "endlineno": 496,
+                "endlineno": 498,
                 "kind": "function",
                 "labels": [],
-                "lineno": 487,
+                "lineno": 489,
                 "members": {},
                 "name": "stats",
                 "parameters": [
@@ -44364,14 +44521,14 @@
           "load": {
             "decorators": [],
             "docstring": {
-              "endlineno": 784,
-              "lineno": 722,
+              "endlineno": 786,
+              "lineno": 724,
               "value": "Load and return a Griffe object.\n\nIn Griffe's context, loading means:\n\n- searching for a package, and finding it on the file system or as a builtin module\n    (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)\n- extracting information from each of its (sub)modules, by either parsing\n    the source code (see the [`visit`][griffe.visit] function)\n    or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)\n\nThe extracted information is stored in a collection of modules, which can be queried later.\nEach collected module is a tree of objects, representing the structure of the module.\nSee the [`Module`][griffe.Module], [`Class`][griffe.Class],\n[`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes\nfor more information.\n\nThe main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].\nConvenience functions like this one and [`load_git`][griffe.load_git] are also available.\n\nExample:\n    ```python\n    import griffe\n\n    module = griffe.load(...)\n    ```\n\n    This is a shortcut for:\n\n    ```python\n    from griffe import GriffeLoader\n\n    loader = GriffeLoader(...)\n    module = loader.load(...)\n    ```\n\n    See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    store_source: Whether to store code source in the lines collection.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nReturns:\n    A Griffe object."
             },
-            "endlineno": 804,
+            "endlineno": 806,
             "kind": "function",
             "labels": [],
-            "lineno": 702,
+            "lineno": 704,
             "members": {},
             "name": "load",
             "parameters": [
@@ -44623,14 +44780,14 @@
           "load_git": {
             "decorators": [],
             "docstring": {
-              "endlineno": 867,
-              "lineno": 827,
+              "endlineno": 869,
+              "lineno": 829,
               "value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.load].\n\nThis function requires that the `git` executable is installed.\n\nExamples:\n    ```python\n    from griffe import load_git\n\n    old_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n    ```\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nReturns:\n    A Griffe object."
             },
-            "endlineno": 889,
+            "endlineno": 891,
             "kind": "function",
             "labels": [],
-            "lineno": 807,
+            "lineno": 809,
             "members": {},
             "name": "load_git",
             "parameters": [
@@ -44883,14 +45040,14 @@
           "load_pypi": {
             "decorators": [],
             "docstring": {
-              "endlineno": 930,
-              "lineno": 908,
+              "endlineno": 932,
+              "lineno": 910,
               "value": "Load and return a module from a specific package version downloaded using pip.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0).\n\nParameters:\n    package: The package import name.\n    distribution: The distribution name.\n    version_spec: The version specifier to use when installing with pip.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself."
             },
-            "endlineno": 1006,
+            "endlineno": 1008,
             "kind": "function",
             "labels": [],
-            "lineno": 892,
+            "lineno": 894,
             "members": {},
             "name": "load_pypi",
             "parameters": [
