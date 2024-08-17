@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from _griffe.agents.inspector import Inspector
     from _griffe.agents.nodes.runtime import ObjectNode
     from _griffe.agents.visitor import Visitor
+    from _griffe.loader import GriffeLoader
     from _griffe.models import Attribute, Class, Function, Module, Object
 
 
@@ -234,11 +235,12 @@ class Extension:
             **kwargs: For forward-compatibility.
         """
 
-    def on_package_loaded(self, *, pkg: Module, **kwargs: Any) -> None:
+    def on_package_loaded(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> None:
         """Run when a package has been completely loaded.
 
         Parameters:
             pkg: The package (Module) instance.
+            loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
 

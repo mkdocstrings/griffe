@@ -165,7 +165,7 @@ class GriffeLoader:
                 top_module = self._inspect_module(top_module_name)
                 self.modules_collection.set_member(top_module.path, top_module)
                 obj = self.modules_collection.get_member(obj_path)
-                self.extensions.call("on_package_loaded", pkg=obj)
+                self.extensions.call("on_package_loaded", pkg=obj, loader=self)
                 return obj
 
             # We found paths, and use them to build our intermediate Package or NamespacePackage struct.
@@ -186,7 +186,7 @@ class GriffeLoader:
 
         # Package is loaded, we now retrieve the initially requested object and return it.
         obj = self.modules_collection.get_member(obj_path)
-        self.extensions.call("on_package_loaded", pkg=top_module)
+        self.extensions.call("on_package_loaded", pkg=top_module, loader=self)
         return obj
 
     def resolve_aliases(
