@@ -242,9 +242,6 @@ plugins:
           show_symbol_type_toc: true
           signature_crossrefs: true
           summary: true
-- git-committers:
-    enabled: !ENV [DEPLOY, false]
-    repository: mkdocstrings/griffe
 - git-revision-date-localized:
     enabled: !ENV [DEPLOY, false]
     enable_creation_date: true
