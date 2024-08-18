@@ -124,7 +124,9 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 ---
 
 > GRIFFE: **Our recommendation — Use the underscore prefix and `__all__` conventions.**
-> Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](python-code.md#avoid-wildcard-imports). Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
+> Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](python-code.md#avoid-wildcard-imports). We still provide the [`griffe-public-redundant-aliases`](https://mkdocstrings.github.io/griffe-public-redundant-aliases/) and [`griffe-public-wildcard-imports`](https://mkdocstrings.github.io/griffe-public-wildcard-imports/) extensions for those who would still like to rely on these conventions.
+>
+> Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
 >
 > > To better support introspection, modules should explicitly declare the names in their public API using the `__all__` attribute. Setting `__all__` to an empty list indicates that the module has no public API.
 >

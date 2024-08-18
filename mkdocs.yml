@@ -62,6 +62,8 @@ nav:
     - extensions/official.md
     - autodocstringstyle: extensions/official/autodocstringstyle.md
     - inherited-docstrings: extensions/official/inherited-docstrings.md
+    - public-redundant-aliases: extensions/official/public-redundant-aliases.md
+    - public-wildcard-imports: extensions/official/public-wildcard-imports.md
     - pydantic: extensions/official/pydantic.md
     - runtime-objects: extensions/official/runtime-objects.md
     - sphinx: extensions/official/sphinx.md

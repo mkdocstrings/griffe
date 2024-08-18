@@ -6,6 +6,8 @@ Available official extensions:
 
 - [`autodocstringstyle`](official/autodocstringstyle.md): Set docstring style to `auto` for external packages. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
 - [`inherited-docstrings`](official/inherited-docstrings.md): Inherit docstrings from parent classes.
+- [`public-redundant-aliases`](official/public-redundant-aliases.md): Mark objects imported with redundant aliases as public. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
+- [`public-wildcard-imports`](official/public-wildcard-imports.md): Mark wildcard imported objects as public. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
 - [`pydantic`](official/pydantic.md): Support for [Pydantic](https://docs.pydantic.dev/latest/) models. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
 - [`runtime-objects`](official/runtime-objects.md): Access runtime objects corresponding to each loaded Griffe object through their `extra` attribute. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
 - [`sphinx`](official/sphinx.md): Parse [Sphinx](https://www.sphinx-doc.org/)-comments above attributes (`#:`) as docstrings. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }

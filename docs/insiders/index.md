@@ -61,6 +61,8 @@ data_source = [
     ("mkdocstrings/griffe2md", "https://mkdocstrings.github.io/griffe2md/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-autodocstringstyle", "https://mkdocstrings.github.io/griffe-autodocstringstyle/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-inherited-docstrings", "https://mkdocstrings.github.io/griffe-inherited-docstrings/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-public-redundant-aliases", "https://mkdocstrings.github.io/griffe-public-redundant-aliases/", "insiders/goals.yml"),
+    ("mkdocstrings/griffe-public-wildcard-imports", "https://mkdocstrings.github.io/griffe-public-wildcard-imports/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-pydantic", "https://mkdocstrings.github.io/griffe-pydantic/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-runtime-objects", "https://mkdocstrings.github.io/griffe-runtime-objects/", "insiders/goals.yml"),
     ("mkdocstrings/griffe-sphinx", "https://mkdocstrings.github.io/griffe-sphinx/", "insiders/goals.yml"),
