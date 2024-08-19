@@ -164,9 +164,7 @@ class GriffeLoader:
                 logger.debug(f"Module {top_module_name} has no paths set (built-in module?). Inspecting it as-is.")
                 top_module = self._inspect_module(top_module_name)
                 self.modules_collection.set_member(top_module.path, top_module)
-                obj = self.modules_collection.get_member(obj_path)
-                self.extensions.call("on_package_loaded", pkg=obj, loader=self)
-                return obj
+                return self._post_load(top_module, obj_path)
 
             # We found paths, and use them to build our intermediate Package or NamespacePackage struct.
             logger.debug(f"Module {top_module_name} has paths set: {top_module_path}")
@@ -184,9 +182,33 @@ class GriffeLoader:
             logger.exception(str(error))
             raise
 
+        return self._post_load(top_module, obj_path)
+
+    def _post_load(self, module: Module, obj_path: str) -> Object | Alias:
+        # Pre-emptively expand exports (`__all__` values),
+        # as well as wildcard imports (without ever loading additional packages).
+        # This is a best-effort to return the most correct API data
+        # before firing the `on_package_loaded` event,
+        # because extensions registering hooks for this event
+        # might trigger computation of inherited members,
+        # which are cached, and could be cached too early
+        # (aliases to base class still being unresolvable,
+        # preventing to fetch some inherited members).
+        #
+        # Another solution to this "too-early-computation-of-inherited-members"
+        # issue would be to stop caching resolved bases and inherited members,
+        # but we would have to measure the performance impact of this change,
+        # as each use of `obj["name"]` would compute resolved bases, MRO
+        # and inherited members again.
+        #
+        # Packages that wildcard imports from external, non-loaded packages
+        # will still have incomplete data, requiring subsequent calls to
+        # `load()` and/or `resolve_aliases()`.
+        self.expand_exports(module)
+        self.expand_wildcards(module, external=False)
         # Package is loaded, we now retrieve the initially requested object and return it.
         obj = self.modules_collection.get_member(obj_path)
-        self.extensions.call("on_package_loaded", pkg=top_module, loader=self)
+        self.extensions.call("on_package_loaded", pkg=module, loader=self)
         return obj
 
     def resolve_aliases(
@@ -213,11 +235,11 @@ class GriffeLoader:
         iteration = 0
         collection = self.modules_collection.members
 
-        # We must first expand exports (`__all__` values),
-        # then expand wildcard imports (`from ... import *`),
-        # and then only we can start resolving aliases.
-        for exports_module in list(collection.values()):
-            self.expand_exports(exports_module)
+        # Before resolving aliases, we try to expand wildcard imports again
+        # (this was already done in `_post_load()`),
+        # this time with the user-configured `external` setting,
+        # and with potentially more packages loaded in the collection,
+        # allowing to resolve more aliases.
         for wildcards_module in list(collection.values()):
             self.expand_wildcards(wildcards_module, external=external)
 
@@ -459,8 +481,6 @@ class GriffeLoader:
                         except (ImportError, LoadingError) as error:
                             logger.debug(f"Could not follow alias {member.path}: {error}")
                             load_failures.add(package)
-                        # TODO: Immediately try again?
-                        # TODO: self.extensions.call("on_package_loaded", pkg=top_module, loader=self)
                 except CyclicAliasError as error:
                     logger.debug(str(error))
                 else:
