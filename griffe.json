@@ -5278,7 +5278,7 @@
                   "lineno": 116,
                   "value": "This class is used to instantiate a visitor.\n\nVisitors iterate on AST nodes to extract data from them."
                 },
-                "endlineno": 662,
+                "endlineno": 659,
                 "kind": "class",
                 "labels": [],
                 "lineno": 115,
@@ -5536,14 +5536,14 @@
                   "decorators_to_labels": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 303,
-                      "lineno": 296,
+                      "endlineno": 300,
+                      "lineno": 293,
                       "value": "Build and return a set of labels based on decorators.\n\nParameters:\n    decorators: The decorators to check.\n\nReturns:\n    A set of labels."
                     },
-                    "endlineno": 311,
+                    "endlineno": 308,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 295,
+                    "lineno": 292,
                     "members": {},
                     "name": "decorators_to_labels",
                     "parameters": [
@@ -5751,14 +5751,14 @@
                   "get_base_property": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 322,
-                      "lineno": 314,
+                      "endlineno": 319,
+                      "lineno": 311,
                       "value": "Check decorators to return the base property in case of setters and deleters.\n\nParameters:\n    decorators: The decorators to check.\n\nReturns:\n    base_property: The property for which the setter/deleted is set.\n    property_function: Either `\"setter\"` or `\"deleter\"`."
                     },
-                    "endlineno": 335,
+                    "endlineno": 332,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 313,
+                    "lineno": 310,
                     "members": {},
                     "name": "get_base_property",
                     "parameters": [
@@ -5833,14 +5833,14 @@
                   "handle_attribute": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 521,
-                      "lineno": 516,
+                      "endlineno": 518,
+                      "lineno": 513,
                       "value": "Handle an attribute (assignment) node.\n\nParameters:\n    node: The node to visit.\n    annotation: A potential annotation."
                     },
-                    "endlineno": 612,
+                    "endlineno": 609,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 511,
+                    "lineno": 508,
                     "members": {},
                     "name": "handle_attribute",
                     "parameters": [
@@ -5913,14 +5913,14 @@
                   "handle_function": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 343,
-                      "lineno": 338,
+                      "endlineno": 340,
+                      "lineno": 335,
                       "value": "Handle a function definition node.\n\nParameters:\n    node: The node to visit.\n    labels: Labels to add to the data object."
                     },
-                    "endlineno": 438,
+                    "endlineno": 435,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 337,
+                    "lineno": 334,
                     "members": {},
                     "name": "handle_function",
                     "parameters": [
@@ -6171,14 +6171,14 @@
                   "visit_annassign": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 627,
-                      "lineno": 623,
+                      "endlineno": 624,
+                      "lineno": 620,
                       "value": "Visit an annotated assignment node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 628,
+                    "endlineno": 625,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 622,
+                    "lineno": 619,
                     "members": {},
                     "name": "visit_annassign",
                     "parameters": [
@@ -6212,14 +6212,14 @@
                   "visit_assign": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 619,
-                      "lineno": 615,
+                      "endlineno": 616,
+                      "lineno": 612,
                       "value": "Visit an assignment node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 620,
+                    "endlineno": 617,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 614,
+                    "lineno": 611,
                     "members": {},
                     "name": "visit_assign",
                     "parameters": [
@@ -6253,14 +6253,14 @@
                   "visit_asyncfunctiondef": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 453,
-                      "lineno": 449,
+                      "endlineno": 450,
+                      "lineno": 446,
                       "value": "Visit an async function definition node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 454,
+                    "endlineno": 451,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 448,
+                    "lineno": 445,
                     "members": {},
                     "name": "visit_asyncfunctiondef",
                     "parameters": [
@@ -6294,14 +6294,14 @@
                   "visit_augassign": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 635,
-                      "lineno": 631,
+                      "endlineno": 632,
+                      "lineno": 628,
                       "value": "Visit an augmented assignment node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 649,
+                    "endlineno": 646,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 630,
+                    "lineno": 627,
                     "members": {},
                     "name": "visit_augassign",
                     "parameters": [
@@ -6339,7 +6339,7 @@
                       "lineno": 247,
                       "value": "Visit a class definition node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 293,
+                    "endlineno": 290,
                     "kind": "function",
                     "labels": [],
                     "lineno": 246,
@@ -6376,14 +6376,14 @@
                   "visit_functiondef": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 445,
-                      "lineno": 441,
+                      "endlineno": 442,
+                      "lineno": 438,
                       "value": "Visit a function definition node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 446,
+                    "endlineno": 443,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 440,
+                    "lineno": 437,
                     "members": {},
                     "name": "visit_functiondef",
                     "parameters": [
@@ -6417,14 +6417,14 @@
                   "visit_if": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 656,
-                      "lineno": 652,
+                      "endlineno": 653,
+                      "lineno": 649,
                       "value": "Visit an \"if\" node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 662,
+                    "endlineno": 659,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 651,
+                    "lineno": 648,
                     "members": {},
                     "name": "visit_if",
                     "parameters": [
@@ -6458,14 +6458,14 @@
                   "visit_import": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 461,
-                      "lineno": 457,
+                      "endlineno": 458,
+                      "lineno": 454,
                       "value": "Visit an import node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 474,
+                    "endlineno": 471,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 456,
+                    "lineno": 453,
                     "members": {},
                     "name": "visit_import",
                     "parameters": [
@@ -6499,14 +6499,14 @@
                   "visit_importfrom": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 481,
-                      "lineno": 477,
+                      "endlineno": 478,
+                      "lineno": 474,
                       "value": "Visit an \"import from\" node.\n\nParameters:\n    node: The node to visit."
                     },
-                    "endlineno": 509,
+                    "endlineno": 506,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 476,
+                    "lineno": 473,
                     "members": {},
                     "name": "visit_importfrom",
                     "parameters": [
@@ -12909,7 +12909,7 @@
                         },
                         {
                           "cls": "ExprName",
-                          "name": "I"
+                          "name": "IGNORECASE"
                         }
                       ]
                     }
@@ -18453,10 +18453,10 @@
               },
               "_append_section": {
                 "decorators": [],
-                "endlineno": 737,
+                "endlineno": 738,
                 "kind": "function",
                 "labels": [],
-                "lineno": 721,
+                "lineno": 722,
                 "members": {},
                 "name": "_append_section",
                 "parameters": [
@@ -18547,10 +18547,10 @@
               },
               "_read_attributes_section": {
                 "decorators": [],
-                "endlineno": 565,
+                "endlineno": 566,
                 "kind": "function",
                 "labels": [],
-                "lineno": 532,
+                "lineno": 533,
                 "members": {},
                 "name": "_read_attributes_section",
                 "parameters": [
@@ -18743,10 +18743,10 @@
               },
               "_read_classes_section": {
                 "decorators": [],
-                "endlineno": 625,
+                "endlineno": 626,
                 "kind": "function",
                 "labels": [],
-                "lineno": 598,
+                "lineno": 599,
                 "members": {},
                 "name": "_read_classes_section",
                 "parameters": [
@@ -18807,10 +18807,10 @@
               },
               "_read_deprecated_section": {
                 "decorators": [],
-                "endlineno": 335,
+                "endlineno": 336,
                 "kind": "function",
                 "labels": [],
-                "lineno": 314,
+                "lineno": 315,
                 "members": {},
                 "name": "_read_deprecated_section",
                 "parameters": [
@@ -18871,10 +18871,10 @@
               },
               "_read_examples_section": {
                 "decorators": [],
-                "endlineno": 718,
+                "endlineno": 719,
                 "kind": "function",
                 "labels": [],
-                "lineno": 658,
+                "lineno": 659,
                 "members": {},
                 "name": "_read_examples_section",
                 "parameters": [
@@ -18944,10 +18944,10 @@
               },
               "_read_functions_section": {
                 "decorators": [],
-                "endlineno": 595,
+                "endlineno": 596,
                 "kind": "function",
                 "labels": [],
-                "lineno": 568,
+                "lineno": 569,
                 "members": {},
                 "name": "_read_functions_section",
                 "parameters": [
@@ -19008,10 +19008,10 @@
               },
               "_read_modules_section": {
                 "decorators": [],
-                "endlineno": 655,
+                "endlineno": 656,
                 "kind": "function",
                 "labels": [],
-                "lineno": 628,
+                "lineno": 629,
                 "members": {},
                 "name": "_read_modules_section",
                 "parameters": [
@@ -19072,10 +19072,10 @@
               },
               "_read_other_parameters_section": {
                 "decorators": [],
-                "endlineno": 311,
+                "endlineno": 312,
                 "kind": "function",
                 "labels": [],
-                "lineno": 298,
+                "lineno": 299,
                 "members": {},
                 "name": "_read_other_parameters_section",
                 "parameters": [
@@ -19145,7 +19145,7 @@
               },
               "_read_parameters": {
                 "decorators": [],
-                "endlineno": 280,
+                "endlineno": 281,
                 "kind": "function",
                 "labels": [],
                 "lineno": 214,
@@ -19220,10 +19220,10 @@
               },
               "_read_parameters_section": {
                 "decorators": [],
-                "endlineno": 295,
+                "endlineno": 296,
                 "kind": "function",
                 "labels": [],
-                "lineno": 283,
+                "lineno": 284,
                 "members": {},
                 "name": "_read_parameters_section",
                 "parameters": [
@@ -19284,10 +19284,10 @@
               },
               "_read_raises_section": {
                 "decorators": [],
-                "endlineno": 506,
+                "endlineno": 507,
                 "kind": "function",
                 "labels": [],
-                "lineno": 486,
+                "lineno": 487,
                 "members": {},
                 "name": "_read_raises_section",
                 "parameters": [
@@ -19348,10 +19348,10 @@
               },
               "_read_receives_section": {
                 "decorators": [],
-                "endlineno": 483,
+                "endlineno": 484,
                 "kind": "function",
                 "labels": [],
-                "lineno": 442,
+                "lineno": 443,
                 "members": {},
                 "name": "_read_receives_section",
                 "parameters": [
@@ -19412,10 +19412,10 @@
               },
               "_read_returns_section": {
                 "decorators": [],
-                "endlineno": 391,
+                "endlineno": 392,
                 "kind": "function",
                 "labels": [],
-                "lineno": 338,
+                "lineno": 339,
                 "members": {},
                 "name": "_read_returns_section",
                 "parameters": [
@@ -19476,10 +19476,10 @@
               },
               "_read_warns_section": {
                 "decorators": [],
-                "endlineno": 529,
+                "endlineno": 530,
                 "kind": "function",
                 "labels": [],
-                "lineno": 509,
+                "lineno": 510,
                 "members": {},
                 "name": "_read_warns_section",
                 "parameters": [
@@ -19540,10 +19540,10 @@
               },
               "_read_yields_section": {
                 "decorators": [],
-                "endlineno": 439,
+                "endlineno": 440,
                 "kind": "function",
                 "labels": [],
-                "lineno": 394,
+                "lineno": 395,
                 "members": {},
                 "name": "_read_yields_section",
                 "parameters": [
@@ -19816,12 +19816,12 @@
                 }
               },
               "_section_reader": {
-                "endlineno": 754,
+                "endlineno": 755,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 740,
+                "lineno": 741,
                 "members": {},
                 "name": "_section_reader",
                 "value": {
@@ -20084,14 +20084,14 @@
               "parse_numpy": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 779,
-                  "lineno": 765,
+                  "endlineno": 780,
+                  "lineno": 766,
                   "value": "Parse a Numpydoc-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 860,
+                "endlineno": 861,
                 "kind": "function",
                 "labels": [],
-                "lineno": 757,
+                "lineno": 758,
                 "members": {},
                 "name": "parse_numpy",
                 "parameters": [
@@ -34229,10 +34229,10 @@
           },
           "_build": {
             "decorators": [],
-            "endlineno": 1237,
+            "endlineno": 1238,
             "kind": "function",
             "labels": [],
-            "lineno": 1236,
+            "lineno": 1237,
             "members": {},
             "name": "_build",
             "parameters": [
@@ -34642,7 +34642,7 @@
           },
           "_build_constant": {
             "decorators": [],
-            "endlineno": 1029,
+            "endlineno": 1030,
             "kind": "function",
             "labels": [],
             "lineno": 994,
@@ -34745,10 +34745,10 @@
           },
           "_build_dict": {
             "decorators": [],
-            "endlineno": 1036,
+            "endlineno": 1037,
             "kind": "function",
             "labels": [],
-            "lineno": 1032,
+            "lineno": 1033,
             "members": {},
             "name": "_build_dict",
             "parameters": [
@@ -34804,10 +34804,10 @@
           },
           "_build_dictcomp": {
             "decorators": [],
-            "endlineno": 1044,
+            "endlineno": 1045,
             "kind": "function",
             "labels": [],
-            "lineno": 1039,
+            "lineno": 1040,
             "members": {},
             "name": "_build_dictcomp",
             "parameters": [
@@ -34863,10 +34863,10 @@
           },
           "_build_extslice": {
             "decorators": [],
-            "endlineno": 1227,
+            "endlineno": 1228,
             "kind": "function",
             "labels": [],
-            "lineno": 1226,
+            "lineno": 1227,
             "members": {},
             "name": "_build_extslice",
             "parameters": [
@@ -34922,10 +34922,10 @@
           },
           "_build_formatted": {
             "decorators": [],
-            "endlineno": 1054,
+            "endlineno": 1055,
             "kind": "function",
             "labels": [],
-            "lineno": 1047,
+            "lineno": 1048,
             "members": {},
             "name": "_build_formatted",
             "parameters": [
@@ -34990,10 +34990,10 @@
           },
           "_build_generatorexp": {
             "decorators": [],
-            "endlineno": 1061,
+            "endlineno": 1062,
             "kind": "function",
             "labels": [],
-            "lineno": 1057,
+            "lineno": 1058,
             "members": {},
             "name": "_build_generatorexp",
             "parameters": [
@@ -35049,10 +35049,10 @@
           },
           "_build_ifexp": {
             "decorators": [],
-            "endlineno": 1069,
+            "endlineno": 1070,
             "kind": "function",
             "labels": [],
-            "lineno": 1064,
+            "lineno": 1065,
             "members": {},
             "name": "_build_ifexp",
             "parameters": [
@@ -35108,10 +35108,10 @@
           },
           "_build_index": {
             "decorators": [],
-            "endlineno": 1230,
+            "endlineno": 1231,
             "kind": "function",
             "labels": [],
-            "lineno": 1229,
+            "lineno": 1230,
             "members": {},
             "name": "_build_index",
             "parameters": [
@@ -35167,10 +35167,10 @@
           },
           "_build_joinedstr": {
             "decorators": [],
-            "endlineno": 1079,
+            "endlineno": 1080,
             "kind": "function",
             "labels": [],
-            "lineno": 1072,
+            "lineno": 1073,
             "members": {},
             "name": "_build_joinedstr",
             "parameters": [
@@ -35235,10 +35235,10 @@
           },
           "_build_keyword": {
             "decorators": [],
-            "endlineno": 1085,
+            "endlineno": 1086,
             "kind": "function",
             "labels": [],
-            "lineno": 1082,
+            "lineno": 1083,
             "members": {},
             "name": "_build_keyword",
             "parameters": [
@@ -35308,10 +35308,10 @@
           },
           "_build_lambda": {
             "decorators": [],
-            "endlineno": 1102,
+            "endlineno": 1103,
             "kind": "function",
             "labels": [],
-            "lineno": 1088,
+            "lineno": 1089,
             "members": {},
             "name": "_build_lambda",
             "parameters": [
@@ -35367,10 +35367,10 @@
           },
           "_build_list": {
             "decorators": [],
-            "endlineno": 1106,
+            "endlineno": 1107,
             "kind": "function",
             "labels": [],
-            "lineno": 1105,
+            "lineno": 1106,
             "members": {},
             "name": "_build_list",
             "parameters": [
@@ -35426,10 +35426,10 @@
           },
           "_build_listcomp": {
             "decorators": [],
-            "endlineno": 1110,
+            "endlineno": 1111,
             "kind": "function",
             "labels": [],
-            "lineno": 1109,
+            "lineno": 1110,
             "members": {},
             "name": "_build_listcomp",
             "parameters": [
@@ -35485,10 +35485,10 @@
           },
           "_build_name": {
             "decorators": [],
-            "endlineno": 1114,
+            "endlineno": 1115,
             "kind": "function",
             "labels": [],
-            "lineno": 1113,
+            "lineno": 1114,
             "members": {},
             "name": "_build_name",
             "parameters": [
@@ -35544,10 +35544,10 @@
           },
           "_build_named_expr": {
             "decorators": [],
-            "endlineno": 1118,
+            "endlineno": 1119,
             "kind": "function",
             "labels": [],
-            "lineno": 1117,
+            "lineno": 1118,
             "members": {},
             "name": "_build_named_expr",
             "parameters": [
@@ -35603,10 +35603,10 @@
           },
           "_build_set": {
             "decorators": [],
-            "endlineno": 1122,
+            "endlineno": 1123,
             "kind": "function",
             "labels": [],
-            "lineno": 1121,
+            "lineno": 1122,
             "members": {},
             "name": "_build_set",
             "parameters": [
@@ -35662,10 +35662,10 @@
           },
           "_build_setcomp": {
             "decorators": [],
-            "endlineno": 1126,
+            "endlineno": 1127,
             "kind": "function",
             "labels": [],
-            "lineno": 1125,
+            "lineno": 1126,
             "members": {},
             "name": "_build_setcomp",
             "parameters": [
@@ -35721,10 +35721,10 @@
           },
           "_build_slice": {
             "decorators": [],
-            "endlineno": 1134,
+            "endlineno": 1135,
             "kind": "function",
             "labels": [],
-            "lineno": 1129,
+            "lineno": 1130,
             "members": {},
             "name": "_build_slice",
             "parameters": [
@@ -35780,10 +35780,10 @@
           },
           "_build_starred": {
             "decorators": [],
-            "endlineno": 1138,
+            "endlineno": 1139,
             "kind": "function",
             "labels": [],
-            "lineno": 1137,
+            "lineno": 1138,
             "members": {},
             "name": "_build_starred",
             "parameters": [
@@ -35839,10 +35839,10 @@
           },
           "_build_subscript": {
             "decorators": [],
-            "endlineno": 1167,
+            "endlineno": 1168,
             "kind": "function",
             "labels": [],
-            "lineno": 1141,
+            "lineno": 1142,
             "members": {},
             "name": "_build_subscript",
             "parameters": [
@@ -35925,10 +35925,10 @@
           },
           "_build_tuple": {
             "decorators": [],
-            "endlineno": 1177,
+            "endlineno": 1178,
             "kind": "function",
             "labels": [],
-            "lineno": 1170,
+            "lineno": 1171,
             "members": {},
             "name": "_build_tuple",
             "parameters": [
@@ -35993,10 +35993,10 @@
           },
           "_build_unaryop": {
             "decorators": [],
-            "endlineno": 1181,
+            "endlineno": 1182,
             "kind": "function",
             "labels": [],
-            "lineno": 1180,
+            "lineno": 1181,
             "members": {},
             "name": "_build_unaryop",
             "parameters": [
@@ -36052,10 +36052,10 @@
           },
           "_build_yield": {
             "decorators": [],
-            "endlineno": 1185,
+            "endlineno": 1186,
             "kind": "function",
             "labels": [],
-            "lineno": 1184,
+            "lineno": 1185,
             "members": {},
             "name": "_build_yield",
             "parameters": [
@@ -36111,10 +36111,10 @@
           },
           "_build_yield_from": {
             "decorators": [],
-            "endlineno": 1189,
+            "endlineno": 1190,
             "kind": "function",
             "labels": [],
-            "lineno": 1188,
+            "lineno": 1189,
             "members": {},
             "name": "_build_yield_from",
             "parameters": [
@@ -36653,12 +36653,12 @@
             }
           },
           "_msg_format": {
-            "endlineno": 1306,
+            "endlineno": 1307,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1306,
+            "lineno": 1307,
             "members": {},
             "name": "_msg_format",
             "value": "'{path}:{lineno}: Failed to get %s expression from {node_class}: {error}'"
@@ -36719,12 +36719,12 @@
                 "implicit": true
               }
             },
-            "endlineno": 1221,
+            "endlineno": 1222,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1192,
+            "lineno": 1193,
             "members": {},
             "name": "_node_map",
             "value": {
@@ -37392,12 +37392,12 @@
             "target_path": "dataclasses.dataclass"
           },
           "get_annotation": {
-            "endlineno": 1307,
+            "endlineno": 1308,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1307,
+            "lineno": 1308,
             "members": {},
             "name": "get_annotation",
             "value": {
@@ -37424,12 +37424,12 @@
             }
           },
           "get_base_class": {
-            "endlineno": 1313,
+            "endlineno": 1314,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1313,
+            "lineno": 1314,
             "members": {},
             "name": "get_base_class",
             "value": {
@@ -37456,12 +37456,12 @@
             }
           },
           "get_condition": {
-            "endlineno": 1319,
+            "endlineno": 1320,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1319,
+            "lineno": 1320,
             "members": {},
             "name": "get_condition",
             "value": {
@@ -37490,14 +37490,14 @@
           "get_expression": {
             "decorators": [],
             "docstring": {
-              "endlineno": 1255,
-              "lineno": 1246,
+              "endlineno": 1256,
+              "lineno": 1247,
               "value": "Build an expression from an AST.\n\nParameters:\n    node: The annotation node.\n    parent: The parent used to resolve the name.\n    parse_strings: Whether to try and parse strings as type annotations.\n\nReturns:\n    A string or resovable name or expression."
             },
-            "endlineno": 1265,
+            "endlineno": 1266,
             "kind": "function",
             "labels": [],
-            "lineno": 1240,
+            "lineno": 1241,
             "members": {},
             "name": "get_expression",
             "parameters": [
@@ -37595,12 +37595,12 @@
             "target_path": "functools.partial"
           },
           "safe_get_annotation": {
-            "endlineno": 1312,
+            "endlineno": 1313,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1308,
+            "lineno": 1309,
             "members": {},
             "name": "safe_get_annotation",
             "value": {
@@ -37644,12 +37644,12 @@
             }
           },
           "safe_get_base_class": {
-            "endlineno": 1318,
+            "endlineno": 1319,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1314,
+            "lineno": 1315,
             "members": {},
             "name": "safe_get_base_class",
             "value": {
@@ -37693,12 +37693,12 @@
             }
           },
           "safe_get_condition": {
-            "endlineno": 1324,
+            "endlineno": 1325,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1320,
+            "lineno": 1321,
             "members": {},
             "name": "safe_get_condition",
             "value": {
@@ -37744,14 +37744,14 @@
           "safe_get_expression": {
             "decorators": [],
             "docstring": {
-              "endlineno": 1288,
-              "lineno": 1276,
+              "endlineno": 1289,
+              "lineno": 1277,
               "value": "Safely (no exception) build a resolvable annotation.\n\nParameters:\n    node: The annotation node.\n    parent: The parent used to resolve the name.\n    parse_strings: Whether to try and parse strings as type annotations.\n    log_level: Log level to use to log a message. None to disable logging.\n    msg_format: A format string for the log message. Available placeholders:\n        path, lineno, node, error.\n\nReturns:\n    A string or resovable name or expression."
             },
-            "endlineno": 1303,
+            "endlineno": 1304,
             "kind": "function",
             "labels": [],
-            "lineno": 1268,
+            "lineno": 1269,
             "members": {},
             "name": "safe_get_expression",
             "parameters": [
@@ -39622,7 +39622,7 @@
                   "lineno": 336,
                   "value": "Load a configured extension.\n\nParameters:\n    extension: An extension, with potential configuration options.\n\nRaises:\n    ExtensionNotLoadedError: When the extension cannot be loaded,\n        either because the module is not found, or because it does not expose\n        the Extension attribute. ImportError will bubble up so users can see\n        the traceback.\n\nReturns:\n    An extension instance."
                 },
-                "endlineno": 422,
+                "endlineno": 421,
                 "kind": "function",
                 "labels": [],
                 "lineno": 333,
@@ -39808,14 +39808,14 @@
               "load_extensions": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 433,
-                  "lineno": 426,
+                  "endlineno": 432,
+                  "lineno": 425,
                   "value": "Load configured extensions.\n\nParameters:\n    exts: Extensions with potential configuration options.\n\nReturns:\n    An extensions container."
                 },
-                "endlineno": 453,
+                "endlineno": 452,
                 "kind": "function",
                 "labels": [],
-                "lineno": 425,
+                "lineno": 424,
                 "members": {},
                 "name": "load_extensions",
                 "parameters": [
@@ -39878,16 +39878,16 @@
                 "target_path": "typing.Any"
               },
               "Attribute": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Attribute",
                 "target_path": "_griffe.models.Attribute"
               },
               "Class": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Class",
                 "target_path": "_griffe.models.Class"
               },
@@ -39900,26 +39900,26 @@
                 ],
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 222,
-                  "lineno": 218,
+                  "endlineno": 225,
+                  "lineno": 221,
                   "value": "Built-in extension adding support for dataclasses.\n\nThis extension creates `__init__` methods of dataclasses\nif they don't already exist."
                 },
-                "endlineno": 230,
+                "endlineno": 233,
                 "kind": "class",
                 "labels": [],
-                "lineno": 217,
+                "lineno": 220,
                 "members": {
                   "on_package_loaded": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 229,
-                      "lineno": 225,
+                      "endlineno": 232,
+                      "lineno": 228,
                       "value": "Hook for loaded packages.\n\nParameters:\n    pkg: The loaded package."
                     },
-                    "endlineno": 230,
+                    "endlineno": 233,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 224,
+                    "lineno": 227,
                     "members": {},
                     "name": "on_package_loaded",
                     "parameters": [
@@ -39954,9 +39954,9 @@
                 "name": "DataclassesExtension"
               },
               "Decorator": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Decorator",
                 "target_path": "_griffe.models.Decorator"
               },
@@ -39996,23 +39996,23 @@
                 "target_path": "_griffe.extensions.base.Extension"
               },
               "Function": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Function",
                 "target_path": "_griffe.models.Function"
               },
               "Module": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Module",
                 "target_path": "_griffe.models.Module"
               },
               "Parameter": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Parameter",
                 "target_path": "_griffe.models.Parameter"
               },
@@ -40024,18 +40024,18 @@
                 "target_path": "_griffe.enumerations.ParameterKind"
               },
               "Parameters": {
-                "endlineno": 21,
+                "endlineno": 22,
                 "kind": "alias",
-                "lineno": 21,
+                "lineno": 22,
                 "name": "Parameters",
                 "target_path": "_griffe.models.Parameters"
               },
               "_apply_recursively": {
                 "decorators": [],
-                "endlineno": 214,
+                "endlineno": 217,
                 "kind": "function",
                 "labels": [],
-                "lineno": 200,
+                "lineno": 203,
                 "members": {},
                 "name": "_apply_recursively",
                 "parameters": [
@@ -40077,10 +40077,10 @@
               },
               "_dataclass_arguments": {
                 "decorators": [],
-                "endlineno": 51,
+                "endlineno": 52,
                 "kind": "function",
                 "labels": [],
-                "lineno": 48,
+                "lineno": 49,
                 "members": {},
                 "name": "_dataclass_arguments",
                 "parameters": [
@@ -40125,10 +40125,10 @@
               },
               "_dataclass_decorator": {
                 "decorators": [],
-                "endlineno": 28,
+                "endlineno": 29,
                 "kind": "function",
                 "labels": [],
-                "lineno": 24,
+                "lineno": 25,
                 "members": {},
                 "name": "_dataclass_decorator",
                 "parameters": [
@@ -40162,8 +40162,8 @@
               "_dataclass_parameters": {
                 "decorators": [
                   {
-                    "endlineno": 64,
-                    "lineno": 64,
+                    "endlineno": 65,
+                    "lineno": 65,
                     "value": {
                       "arguments": [
                         {
@@ -40184,12 +40184,12 @@
                     }
                   }
                 ],
-                "endlineno": 135,
+                "endlineno": 136,
                 "kind": "function",
                 "labels": [
                   "cached"
                 ],
-                "lineno": 64,
+                "lineno": 65,
                 "members": {},
                 "name": "_dataclass_parameters",
                 "parameters": [
@@ -40217,10 +40217,10 @@
               },
               "_del_members_annotated_as_initvar": {
                 "decorators": [],
-                "endlineno": 197,
+                "endlineno": 200,
                 "kind": "function",
                 "labels": [],
-                "lineno": 192,
+                "lineno": 195,
                 "members": {},
                 "name": "_del_members_annotated_as_initvar",
                 "parameters": [
@@ -40238,10 +40238,10 @@
               },
               "_expr_args": {
                 "decorators": [],
-                "endlineno": 45,
+                "endlineno": 46,
                 "kind": "function",
                 "labels": [],
-                "lineno": 31,
+                "lineno": 32,
                 "members": {},
                 "name": "_expr_args",
                 "parameters": [
@@ -40287,10 +40287,10 @@
               },
               "_field_arguments": {
                 "decorators": [],
-                "endlineno": 61,
+                "endlineno": 62,
                 "kind": "function",
                 "labels": [],
-                "lineno": 54,
+                "lineno": 55,
                 "members": {},
                 "name": "_field_arguments",
                 "parameters": [
@@ -40328,10 +40328,10 @@
               },
               "_reorder_parameters": {
                 "decorators": [],
-                "endlineno": 153,
+                "endlineno": 154,
                 "kind": "function",
                 "labels": [],
-                "lineno": 138,
+                "lineno": 139,
                 "members": {},
                 "name": "_reorder_parameters",
                 "parameters": [
@@ -40366,10 +40366,10 @@
               },
               "_set_dataclass_init": {
                 "decorators": [],
-                "endlineno": 189,
+                "endlineno": 192,
                 "kind": "function",
                 "labels": [],
-                "lineno": 156,
+                "lineno": 157,
                 "members": {},
                 "name": "_set_dataclass_init",
                 "parameters": [
@@ -40405,6 +40405,13 @@
                 "lineno": 11,
                 "name": "cast",
                 "target_path": "typing.cast"
+              },
+              "logger": {
+                "endlineno": 21,
+                "kind": "alias",
+                "lineno": 21,
+                "name": "logger",
+                "target_path": "_griffe.logger.logger"
               },
               "lru_cache": {
                 "endlineno": 10,
@@ -42711,14 +42718,14 @@
         "labels": [],
         "members": {
           "Alias": {
-            "endlineno": 34,
+            "endlineno": 33,
             "kind": "alias",
-            "lineno": 34,
+            "lineno": 33,
             "name": "Alias",
             "target_path": "_griffe.models.Alias"
           },
           "AliasResolutionError": {
-            "endlineno": 26,
+            "endlineno": 25,
             "kind": "alias",
             "lineno": 20,
             "name": "AliasResolutionError",
@@ -42739,23 +42746,23 @@
             "target_path": "typing.ClassVar"
           },
           "CyclicAliasError": {
-            "endlineno": 26,
+            "endlineno": 25,
             "kind": "alias",
             "lineno": 20,
             "name": "CyclicAliasError",
             "target_path": "_griffe.exceptions.CyclicAliasError"
           },
           "ExprName": {
-            "endlineno": 27,
+            "endlineno": 26,
             "kind": "alias",
-            "lineno": 27,
+            "lineno": 26,
             "name": "ExprName",
             "target_path": "_griffe.expressions.ExprName"
           },
           "Extensions": {
-            "endlineno": 28,
+            "endlineno": 27,
             "kind": "alias",
-            "lineno": 28,
+            "lineno": 27,
             "name": "Extensions",
             "target_path": "_griffe.extensions.base.Extensions"
           },
@@ -42763,26 +42770,26 @@
             "bases": [],
             "decorators": [],
             "docstring": {
-              "endlineno": 44,
-              "lineno": 44,
+              "endlineno": 43,
+              "lineno": 43,
               "value": "The Griffe loader, allowing to load data from modules."
             },
-            "endlineno": 701,
+            "endlineno": 717,
             "kind": "class",
             "labels": [],
-            "lineno": 43,
+            "lineno": 42,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 76,
-                  "lineno": 65,
+                  "endlineno": 75,
+                  "lineno": 64,
                   "value": "Initialize the loader.\n\nParameters:\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    store_source: Whether to store code source in the lines collection."
                 },
-                "endlineno": 98,
+                "endlineno": 97,
                 "kind": "function",
                 "labels": [],
-                "lineno": 52,
+                "lineno": 51,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -42940,10 +42947,10 @@
               },
               "_create_module": {
                 "decorators": [],
-                "endlineno": 618,
+                "endlineno": 634,
                 "kind": "function",
                 "labels": [],
-                "lineno": 612,
+                "lineno": 628,
                 "members": {},
                 "name": "_create_module",
                 "parameters": [
@@ -42994,10 +43001,10 @@
               },
               "_expand_wildcard": {
                 "decorators": [],
-                "endlineno": 701,
+                "endlineno": 717,
                 "kind": "function",
                 "labels": [],
-                "lineno": 695,
+                "lineno": 711,
                 "members": {},
                 "name": "_expand_wildcard",
                 "parameters": [
@@ -43070,10 +43077,10 @@
               },
               "_get_or_create_parent_module": {
                 "decorators": [],
-                "endlineno": 693,
+                "endlineno": 709,
                 "kind": "function",
                 "labels": [],
-                "lineno": 665,
+                "lineno": 681,
                 "members": {},
                 "name": "_get_or_create_parent_module",
                 "parameters": [
@@ -43132,10 +43139,10 @@
               },
               "_inspect_module": {
                 "decorators": [],
-                "endlineno": 663,
+                "endlineno": 679,
                 "kind": "function",
                 "labels": [],
-                "lineno": 640,
+                "lineno": 656,
                 "members": {},
                 "name": "_inspect_module",
                 "parameters": [
@@ -43190,10 +43197,10 @@
               },
               "_load_module": {
                 "decorators": [],
-                "endlineno": 533,
+                "endlineno": 548,
                 "kind": "function",
                 "labels": [],
-                "lineno": 516,
+                "lineno": 531,
                 "members": {},
                 "name": "_load_module",
                 "parameters": [
@@ -43267,10 +43274,10 @@
               },
               "_load_module_path": {
                 "decorators": [],
-                "endlineno": 556,
+                "endlineno": 571,
                 "kind": "function",
                 "labels": [],
-                "lineno": 535,
+                "lineno": 550,
                 "members": {},
                 "name": "_load_module_path",
                 "parameters": [
@@ -43344,10 +43351,10 @@
               },
               "_load_package": {
                 "decorators": [],
-                "endlineno": 514,
+                "endlineno": 529,
                 "kind": "function",
                 "labels": [],
-                "lineno": 500,
+                "lineno": 515,
                 "members": {},
                 "name": "_load_package",
                 "parameters": [
@@ -43391,10 +43398,10 @@
               },
               "_load_submodule": {
                 "decorators": [],
-                "endlineno": 610,
+                "endlineno": 626,
                 "kind": "function",
                 "labels": [],
-                "lineno": 562,
+                "lineno": 577,
                 "members": {},
                 "name": "_load_submodule",
                 "parameters": [
@@ -43450,10 +43457,10 @@
               },
               "_load_submodules": {
                 "decorators": [],
-                "endlineno": 560,
+                "endlineno": 575,
                 "kind": "function",
                 "labels": [],
-                "lineno": 558,
+                "lineno": 573,
                 "members": {},
                 "name": "_load_submodules",
                 "parameters": [
@@ -43475,17 +43482,64 @@
                 ],
                 "returns": "None"
               },
+              "_post_load": {
+                "decorators": [],
+                "endlineno": 216,
+                "kind": "function",
+                "labels": [],
+                "lineno": 191,
+                "members": {},
+                "name": "_post_load",
+                "parameters": [
+                  {
+                    "annotation": null,
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "self"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "Module"
+                    },
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "module"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "str"
+                    },
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "obj_path"
+                  }
+                ],
+                "returns": {
+                  "cls": "ExprBinOp",
+                  "left": {
+                    "cls": "ExprName",
+                    "name": "Object"
+                  },
+                  "operator": "|",
+                  "right": {
+                    "cls": "ExprName",
+                    "name": "Alias"
+                  }
+                }
+              },
               "_time_stats": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "dict"
                 },
-                "endlineno": 98,
+                "endlineno": 97,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 95,
+                "lineno": 94,
                 "members": {},
                 "name": "_time_stats",
                 "value": {
@@ -43502,10 +43556,10 @@
               },
               "_visit_module": {
                 "decorators": [],
-                "endlineno": 638,
+                "endlineno": 654,
                 "kind": "function",
                 "labels": [],
-                "lineno": 620,
+                "lineno": 636,
                 "members": {},
                 "name": "_visit_module",
                 "parameters": [
@@ -43559,16 +43613,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 88,
-                  "lineno": 88,
+                  "endlineno": 87,
+                  "lineno": 87,
                   "value": "Whether to allow inspecting (importing) modules for which we can't find sources."
                 },
-                "endlineno": 87,
+                "endlineno": 86,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 87,
+                "lineno": 86,
                 "members": {},
                 "name": "allow_inspection",
                 "value": {
@@ -43599,16 +43653,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 82,
-                  "lineno": 82,
+                  "endlineno": 81,
+                  "lineno": 81,
                   "value": "Configured parsing options."
                 },
-                "endlineno": 81,
+                "endlineno": 80,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 81,
+                "lineno": 80,
                 "members": {},
                 "name": "docstring_options",
                 "value": {
@@ -43638,16 +43692,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 80,
-                  "lineno": 80,
+                  "endlineno": 79,
+                  "lineno": 79,
                   "value": "Selected docstring parser."
                 },
-                "endlineno": 79,
+                "endlineno": 78,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 79,
+                "lineno": 78,
                 "members": {},
                 "name": "docstring_parser",
                 "value": {
@@ -43658,14 +43712,14 @@
               "expand_exports": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 256,
-                  "lineno": 251,
+                  "endlineno": 278,
+                  "lineno": 273,
                   "value": "Expand exports: try to recursively expand all module exports (`__all__` values).\n\nParameters:\n    module: The module to recurse on.\n    seen: Used to avoid infinite recursion."
                 },
-                "endlineno": 294,
+                "endlineno": 309,
                 "kind": "function",
                 "labels": [],
-                "lineno": 250,
+                "lineno": 272,
                 "members": {},
                 "name": "expand_exports",
                 "parameters": [
@@ -43704,14 +43758,14 @@
               "expand_wildcards": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 309,
-                  "lineno": 303,
+                  "endlineno": 324,
+                  "lineno": 318,
                   "value": "Expand wildcards: try to recursively expand all found wildcards.\n\nParameters:\n    obj: The object and its members to recurse on.\n    external: When true, try to load unspecified modules to expand wildcards.\n    seen: Used to avoid infinite recursion."
                 },
-                "endlineno": 407,
+                "endlineno": 424,
                 "kind": "function",
                 "labels": [],
-                "lineno": 296,
+                "lineno": 311,
                 "members": {},
                 "name": "expand_wildcards",
                 "parameters": [
@@ -43767,16 +43821,16 @@
                   "name": "Extensions"
                 },
                 "docstring": {
-                  "endlineno": 78,
-                  "lineno": 78,
+                  "endlineno": 77,
+                  "lineno": 77,
                   "value": "Loaded Griffe extensions."
                 },
-                "endlineno": 77,
+                "endlineno": 76,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 77,
+                "lineno": 76,
                 "members": {},
                 "name": "extensions",
                 "value": {
@@ -43804,16 +43858,16 @@
                   "name": "ModuleFinder"
                 },
                 "docstring": {
-                  "endlineno": 94,
-                  "lineno": 94,
+                  "endlineno": 93,
+                  "lineno": 93,
                   "value": "The module source finder."
                 },
-                "endlineno": 93,
+                "endlineno": 92,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 93,
+                "lineno": 92,
                 "members": {},
                 "name": "finder",
                 "value": {
@@ -43836,16 +43890,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 90,
-                  "lineno": 90,
+                  "endlineno": 89,
+                  "lineno": 89,
                   "value": "Whether to force inspecting (importing) modules, even when sources were found."
                 },
-                "endlineno": 89,
+                "endlineno": 88,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 89,
+                "lineno": 88,
                 "members": {},
                 "name": "force_inspection",
                 "value": {
@@ -43866,16 +43920,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 50,
-                  "lineno": 47,
+                  "endlineno": 49,
+                  "lineno": 46,
                   "value": "Special modules to ignore when loading.\n\nFor example, `debugpy` and `_pydev` are used when debugging with VSCode and should generally never be loaded."
                 },
-                "endlineno": 46,
+                "endlineno": 45,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute"
                 ],
-                "lineno": 46,
+                "lineno": 45,
                 "members": {},
                 "name": "ignored_modules",
                 "value": {
@@ -43892,16 +43946,16 @@
                   "name": "LinesCollection"
                 },
                 "docstring": {
-                  "endlineno": 84,
-                  "lineno": 84,
+                  "endlineno": 83,
+                  "lineno": 83,
                   "value": "Collection of source code lines."
                 },
-                "endlineno": 83,
+                "endlineno": 82,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 83,
+                "lineno": 82,
                 "members": {},
                 "name": "lines_collection",
                 "value": {
@@ -43926,14 +43980,14 @@
               "load": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 135,
-                  "lineno": 109,
+                  "endlineno": 134,
+                  "lineno": 108,
                   "value": "Load an object as a Griffe object, given its Python or file path.\n\nNote that this will load the whole object's package,\nand return only the specified object.\nThe rest of the package can be accessed from the returned object\nwith regular methods and properties (`parent`, `members`, etc.).\n\nExamples:\n    >>> loader.load(\"griffe.Module\")\n    Alias(\"Module\", \"_griffe.models.Module\")\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n\nRaises:\n    LoadingError: When loading a module failed for various reasons.\n    ModuleNotFoundError: When a module was not found and inspection is disallowed.\n\nReturns:\n    A Griffe object."
                 },
-                "endlineno": 195,
+                "endlineno": 189,
                 "kind": "function",
                 "labels": [],
-                "lineno": 100,
+                "lineno": 99,
                 "members": {},
                 "name": "load",
                 "parameters": [
@@ -44012,16 +44066,16 @@
                   "name": "ModulesCollection"
                 },
                 "docstring": {
-                  "endlineno": 86,
-                  "lineno": 86,
+                  "endlineno": 85,
+                  "lineno": 85,
                   "value": "Collection of modules."
                 },
-                "endlineno": 85,
+                "endlineno": 84,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 85,
+                "lineno": 84,
                 "members": {},
                 "name": "modules_collection",
                 "value": {
@@ -44046,14 +44100,14 @@
               "resolve_aliases": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 213,
-                  "lineno": 204,
+                  "endlineno": 234,
+                  "lineno": 225,
                   "value": "Resolve aliases.\n\nParameters:\n    implicit: When false, only try to resolve an alias if it is explicitly exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    max_iterations: Maximum number of iterations on the loader modules collection.\n\nReturns:\n    The unresolved aliases and the number of iterations done."
                 },
-                "endlineno": 248,
+                "endlineno": 270,
                 "kind": "function",
                 "labels": [],
-                "lineno": 197,
+                "lineno": 218,
                 "members": {},
                 "name": "resolve_aliases",
                 "parameters": [
@@ -44133,14 +44187,14 @@
               "resolve_module_aliases": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 429,
-                  "lineno": 418,
+                  "endlineno": 446,
+                  "lineno": 435,
                   "value": "Follow aliases: try to recursively resolve all found aliases.\n\nParameters:\n    obj: The object and its members to recurse on.\n    implicit: When false, only try to resolve an alias if it is explicitly exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    seen: Used to avoid infinite recursion.\n    load_failures: Set of external packages we failed to load (to prevent retries).\n\nReturns:\n    Both sets of resolved and unresolved aliases."
                 },
-                "endlineno": 487,
+                "endlineno": 502,
                 "kind": "function",
                 "labels": [],
-                "lineno": 409,
+                "lineno": 426,
                 "members": {},
                 "name": "resolve_module_aliases",
                 "parameters": [
@@ -44272,14 +44326,14 @@
               "stats": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 494,
-                  "lineno": 490,
+                  "endlineno": 509,
+                  "lineno": 505,
                   "value": "Compute some statistics.\n\nReturns:\n    Some statistics."
                 },
-                "endlineno": 498,
+                "endlineno": 513,
                 "kind": "function",
                 "labels": [],
-                "lineno": 489,
+                "lineno": 504,
                 "members": {},
                 "name": "stats",
                 "parameters": [
@@ -44301,16 +44355,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 92,
-                  "lineno": 92,
+                  "endlineno": 91,
+                  "lineno": 91,
                   "value": "Whether to store source code in the lines collection."
                 },
-                "endlineno": 91,
+                "endlineno": 90,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 91,
+                "lineno": 90,
                 "members": {},
                 "name": "store_source",
                 "value": {
@@ -44336,23 +44390,23 @@
             "target_path": "_griffe.collections.LinesCollection"
           },
           "LoadingError": {
-            "endlineno": 26,
+            "endlineno": 25,
             "kind": "alias",
             "lineno": 20,
             "name": "LoadingError",
             "target_path": "_griffe.exceptions.LoadingError"
           },
           "Module": {
-            "endlineno": 34,
+            "endlineno": 33,
             "kind": "alias",
-            "lineno": 34,
+            "lineno": 33,
             "name": "Module",
             "target_path": "_griffe.models.Module"
           },
           "ModuleFinder": {
-            "endlineno": 29,
+            "endlineno": 28,
             "kind": "alias",
-            "lineno": 29,
+            "lineno": 28,
             "name": "ModuleFinder",
             "target_path": "_griffe.finder.ModuleFinder"
           },
@@ -44363,38 +44417,31 @@
             "name": "ModulesCollection",
             "target_path": "_griffe.collections.ModulesCollection"
           },
-          "NameResolutionError": {
-            "endlineno": 26,
-            "kind": "alias",
-            "lineno": 20,
-            "name": "NameResolutionError",
-            "target_path": "_griffe.exceptions.NameResolutionError"
-          },
           "NamespacePackage": {
-            "endlineno": 29,
+            "endlineno": 28,
             "kind": "alias",
-            "lineno": 29,
+            "lineno": 28,
             "name": "NamespacePackage",
             "target_path": "_griffe.finder.NamespacePackage"
           },
           "Object": {
-            "endlineno": 34,
+            "endlineno": 33,
             "kind": "alias",
-            "lineno": 34,
+            "lineno": 33,
             "name": "Object",
             "target_path": "_griffe.models.Object"
           },
           "Package": {
-            "endlineno": 29,
+            "endlineno": 28,
             "kind": "alias",
-            "lineno": 29,
+            "lineno": 28,
             "name": "Package",
             "target_path": "_griffe.finder.Package"
           },
           "Parser": {
-            "endlineno": 38,
+            "endlineno": 37,
             "kind": "alias",
-            "lineno": 38,
+            "lineno": 37,
             "name": "Parser",
             "target_path": "_griffe.enumerations.Parser"
           },
@@ -44413,9 +44460,9 @@
             "target_path": "typing.Sequence"
           },
           "Stats": {
-            "endlineno": 35,
+            "endlineno": 34,
             "kind": "alias",
-            "lineno": 35,
+            "lineno": 34,
             "name": "Stats",
             "target_path": "_griffe.stats.Stats"
           },
@@ -44427,7 +44474,7 @@
             "target_path": "typing.TYPE_CHECKING"
           },
           "UnimportableModuleError": {
-            "endlineno": 26,
+            "endlineno": 25,
             "kind": "alias",
             "lineno": 20,
             "name": "UnimportableModuleError",
@@ -44445,12 +44492,12 @@
                 "name": "str"
               }
             },
-            "endlineno": 40,
+            "endlineno": 39,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 40,
+            "lineno": 39,
             "members": {},
             "name": "_builtin_modules",
             "value": {
@@ -44498,9 +44545,9 @@
             "target_path": "datetime.datetime"
           },
           "dynamic_import": {
-            "endlineno": 31,
+            "endlineno": 30,
             "kind": "alias",
-            "lineno": 31,
+            "lineno": 30,
             "name": "dynamic_import",
             "target_path": "_griffe.importer.dynamic_import"
           },
@@ -44521,14 +44568,14 @@
           "load": {
             "decorators": [],
             "docstring": {
-              "endlineno": 786,
-              "lineno": 724,
+              "endlineno": 802,
+              "lineno": 740,
               "value": "Load and return a Griffe object.\n\nIn Griffe's context, loading means:\n\n- searching for a package, and finding it on the file system or as a builtin module\n    (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)\n- extracting information from each of its (sub)modules, by either parsing\n    the source code (see the [`visit`][griffe.visit] function)\n    or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)\n\nThe extracted information is stored in a collection of modules, which can be queried later.\nEach collected module is a tree of objects, representing the structure of the module.\nSee the [`Module`][griffe.Module], [`Class`][griffe.Class],\n[`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes\nfor more information.\n\nThe main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].\nConvenience functions like this one and [`load_git`][griffe.load_git] are also available.\n\nExample:\n    ```python\n    import griffe\n\n    module = griffe.load(...)\n    ```\n\n    This is a shortcut for:\n\n    ```python\n    from griffe import GriffeLoader\n\n    loader = GriffeLoader(...)\n    module = loader.load(...)\n    ```\n\n    See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    store_source: Whether to store code source in the lines collection.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nReturns:\n    A Griffe object."
             },
-            "endlineno": 806,
+            "endlineno": 822,
             "kind": "function",
             "labels": [],
-            "lineno": 704,
+            "lineno": 720,
             "members": {},
             "name": "load",
             "parameters": [
@@ -44771,23 +44818,23 @@
             }
           },
           "load_extensions": {
-            "endlineno": 28,
+            "endlineno": 27,
             "kind": "alias",
-            "lineno": 28,
+            "lineno": 27,
             "name": "load_extensions",
             "target_path": "_griffe.extensions.base.load_extensions"
           },
           "load_git": {
             "decorators": [],
             "docstring": {
-              "endlineno": 869,
-              "lineno": 829,
+              "endlineno": 885,
+              "lineno": 845,
               "value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.load].\n\nThis function requires that the `git` executable is installed.\n\nExamples:\n    ```python\n    from griffe import load_git\n\n    old_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n    ```\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nReturns:\n    A Griffe object."
             },
-            "endlineno": 891,
+            "endlineno": 907,
             "kind": "function",
             "labels": [],
-            "lineno": 809,
+            "lineno": 825,
             "members": {},
             "name": "load_git",
             "parameters": [
@@ -45040,14 +45087,14 @@
           "load_pypi": {
             "decorators": [],
             "docstring": {
-              "endlineno": 932,
-              "lineno": 910,
+              "endlineno": 948,
+              "lineno": 926,
               "value": "Load and return a module from a specific package version downloaded using pip.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0).\n\nParameters:\n    package: The package import name.\n    distribution: The distribution name.\n    version_spec: The version specifier to use when installing with pip.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself."
             },
-            "endlineno": 1008,
+            "endlineno": 1024,
             "kind": "function",
             "labels": [],
-            "lineno": 894,
+            "lineno": 910,
             "members": {},
             "name": "load_pypi",
             "parameters": [
@@ -45245,16 +45292,16 @@
             }
           },
           "logger": {
-            "endlineno": 32,
+            "endlineno": 31,
             "kind": "alias",
-            "lineno": 32,
+            "lineno": 31,
             "name": "logger",
             "target_path": "_griffe.logger.logger"
           },
           "merge_stubs": {
-            "endlineno": 33,
+            "endlineno": 32,
             "kind": "alias",
-            "lineno": 33,
+            "lineno": 32,
             "name": "merge_stubs",
             "target_path": "_griffe.merger.merge_stubs"
           },
@@ -45308,9 +45355,9 @@
             "target_path": "datetime.timezone"
           },
           "tmp_worktree": {
-            "endlineno": 30,
+            "endlineno": 29,
             "kind": "alias",
-            "lineno": 30,
+            "lineno": 29,
             "name": "tmp_worktree",
             "target_path": "_griffe.git.tmp_worktree"
           },
@@ -45993,7 +46040,7 @@
           },
           "_merge_stubs_members": {
             "decorators": [],
-            "endlineno": 81,
+            "endlineno": 84,
             "kind": "function",
             "labels": [],
             "lineno": 53,
@@ -46100,14 +46147,14 @@
           "merge_stubs": {
             "decorators": [],
             "docstring": {
-              "endlineno": 96,
-              "lineno": 85,
+              "endlineno": 99,
+              "lineno": 88,
               "value": "Merge stubs into a module.\n\nParameters:\n    mod1: A regular module or stubs module.\n    mod2: A regular module or stubs module.\n\nRaises:\n    ValueError: When both modules are regular modules (no stubs is passed).\n\nReturns:\n    The regular module."
             },
-            "endlineno": 107,
+            "endlineno": 110,
             "kind": "function",
             "labels": [],
-            "lineno": 84,
+            "lineno": 87,
             "members": {},
             "name": "merge_stubs",
             "parameters": [
@@ -47220,26 +47267,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 846,
-              "lineno": 834,
+              "endlineno": 845,
+              "lineno": 833,
               "value": "This class represents an alias, or indirection, to an object declared in another module.\n\nAliases represent objects that are in the scope of a module or class,\nbut were imported from another module.\n\nThey behave almost exactly like regular objects, to a few exceptions:\n\n- line numbers are those of the alias, not the target\n- the path is the alias path, not the canonical one\n- the name can be different from the target's\n- if the target can be resolved, the kind is the target's kind\n- if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.Kind]"
             },
-            "endlineno": 1469,
+            "endlineno": 1468,
             "kind": "class",
             "labels": [],
-            "lineno": 833,
+            "lineno": 832,
             "members": {
               "__bool__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 916,
-                  "lineno": 916,
+                  "endlineno": 915,
+                  "lineno": 915,
                   "value": "An alias is always true-ish."
                 },
-                "endlineno": 917,
+                "endlineno": 916,
                 "kind": "function",
                 "labels": [],
-                "lineno": 915,
+                "lineno": 914,
                 "members": {},
                 "name": "__bool__",
                 "parameters": [
@@ -47258,14 +47305,14 @@
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 875,
-                  "lineno": 864,
+                  "endlineno": 874,
+                  "lineno": 863,
                   "value": "Initialize the alias.\n\nParameters:\n    name: The alias name.\n    target: If it's a string, the target resolution is delayed until accessing the target property.\n        If it's an object, or even another alias, the target is immediately set.\n    lineno: The alias starting line number.\n    endlineno: The alias ending line number.\n    runtime: Whether this alias is present at runtime or not.\n    parent: The alias parent.\n    inherited: Whether this alias wraps an inherited member."
                 },
-                "endlineno": 909,
+                "endlineno": 908,
                 "kind": "function",
                 "labels": [],
-                "lineno": 853,
+                "lineno": 852,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -47391,14 +47438,14 @@
               "__len__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 920,
-                  "lineno": 920,
+                  "endlineno": 919,
+                  "lineno": 919,
                   "value": "The length of an alias is always 1."
                 },
-                "endlineno": 921,
+                "endlineno": 920,
                 "kind": "function",
                 "labels": [],
-                "lineno": 919,
+                "lineno": 918,
                 "members": {},
                 "name": "__len__",
                 "parameters": [
@@ -47416,10 +47463,10 @@
               },
               "__repr__": {
                 "decorators": [],
-                "endlineno": 912,
+                "endlineno": 911,
                 "kind": "function",
                 "labels": [],
-                "lineno": 911,
+                "lineno": 910,
                 "members": {},
                 "name": "__repr__",
                 "parameters": [
@@ -47460,12 +47507,12 @@
                   "operator": "|",
                   "right": "None"
                 },
-                "endlineno": 1231,
+                "endlineno": 1230,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1230,
+                "lineno": 1229,
                 "members": {},
                 "name": "_filepath"
               },
@@ -47495,12 +47542,12 @@
                   "operator": "|",
                   "right": "None"
                 },
-                "endlineno": 897,
+                "endlineno": 896,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 897,
+                "lineno": 896,
                 "members": {},
                 "name": "_parent",
                 "value": {
@@ -47513,22 +47560,22 @@
                   "cls": "ExprName",
                   "name": "bool"
                 },
-                "endlineno": 898,
+                "endlineno": 897,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 898,
+                "lineno": 897,
                 "members": {},
                 "name": "_passed_through",
                 "value": "False"
               },
               "_resolve_target": {
                 "decorators": [],
-                "endlineno": 1427,
+                "endlineno": 1426,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1413,
+                "lineno": 1412,
                 "members": {},
                 "name": "_resolve_target",
                 "parameters": [
@@ -47559,22 +47606,22 @@
                   "operator": "|",
                   "right": "None"
                 },
-                "endlineno": 904,
+                "endlineno": 903,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 904,
+                "lineno": 903,
                 "members": {},
                 "name": "_target",
                 "value": "None"
               },
               "_update_target_aliases": {
                 "decorators": [],
-                "endlineno": 1431,
+                "endlineno": 1430,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1429,
+                "lineno": 1428,
                 "members": {},
                 "name": "_update_target_aliases",
                 "parameters": [
@@ -47598,16 +47645,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 883,
-                  "lineno": 883,
+                  "endlineno": 882,
+                  "lineno": 882,
                   "value": "The ending line number of the alias."
                 },
-                "endlineno": 882,
+                "endlineno": 881,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 882,
+                "lineno": 881,
                 "members": {},
                 "name": "alias_endlineno",
                 "value": {
@@ -47626,16 +47673,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 880,
-                  "lineno": 880,
+                  "endlineno": 879,
+                  "lineno": 879,
                   "value": "The starting line number of the alias."
                 },
-                "endlineno": 879,
+                "endlineno": 878,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 879,
+                "lineno": 878,
                 "members": {},
                 "name": "alias_lineno",
                 "value": {
@@ -47666,16 +47713,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1085,
-                  "lineno": 1085,
+                  "endlineno": 1084,
+                  "lineno": 1084,
                   "value": "The aliases pointing to this object."
                 },
-                "endlineno": 1086,
+                "endlineno": 1085,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1084,
+                "lineno": 1083,
                 "members": {},
                 "name": "aliases"
               },
@@ -47698,31 +47745,31 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1318,
-                  "lineno": 1318,
+                  "endlineno": 1317,
+                  "lineno": 1317,
                   "value": "The attribute type annotation."
                 },
-                "endlineno": 1319,
+                "endlineno": 1318,
                 "kind": "attribute",
                 "labels": [
                   "property",
                   "writable"
                 ],
-                "lineno": 1317,
+                "lineno": 1316,
                 "members": {},
                 "name": "annotation"
               },
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1454,
-                  "lineno": 1446,
+                  "endlineno": 1453,
+                  "lineno": 1445,
                   "value": "Return this alias' data as a dictionary.\n\nParameters:\n    full: Whether to return full info, or just base info.\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 1469,
+                "endlineno": 1468,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1445,
+                "lineno": 1444,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -47776,14 +47823,14 @@
               "as_json": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1017,
-                  "lineno": 1009,
+                  "endlineno": 1016,
+                  "lineno": 1008,
                   "value": "Return this target's data as a JSON string.\n\nParameters:\n    full: Whether to return full info, or just base info.\n    **kwargs: Additional serialization options passed to encoder.\n\nReturns:\n    A JSON string."
                 },
-                "endlineno": 1021,
+                "endlineno": 1020,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1008,
+                "lineno": 1007,
                 "members": {},
                 "name": "as_json",
                 "parameters": [
@@ -47838,16 +47885,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1235,
-                  "lineno": 1235,
+                  "endlineno": 1234,
+                  "lineno": 1234,
                   "value": "The class bases."
                 },
-                "endlineno": 1236,
+                "endlineno": 1235,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1234,
+                "lineno": 1233,
                 "members": {},
                 "name": "bases"
               },
@@ -47857,16 +47904,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 1188,
-                  "lineno": 1185,
+                  "endlineno": 1187,
+                  "lineno": 1184,
                   "value": "The full dotted path of this object.\n\nThe canonical path is the path where the object was defined (not imported)."
                 },
-                "endlineno": 1189,
+                "endlineno": 1188,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1184,
+                "lineno": 1183,
                 "members": {},
                 "name": "canonical_path"
               },
@@ -47883,16 +47930,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1240,
-                  "lineno": 1240,
+                  "endlineno": 1239,
+                  "lineno": 1239,
                   "value": "The class/function decorators."
                 },
-                "endlineno": 1241,
+                "endlineno": 1240,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1239,
+                "lineno": 1238,
                 "members": {},
                 "name": "decorators"
               },
@@ -47907,16 +47954,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1308,
-                  "lineno": 1308,
+                  "endlineno": 1307,
+                  "lineno": 1307,
                   "value": "The deleter linked to this function (property)."
                 },
-                "endlineno": 1309,
+                "endlineno": 1308,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1307,
+                "lineno": 1306,
                 "members": {},
                 "name": "deleter"
               },
@@ -47939,16 +47986,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 895,
-                  "lineno": 895,
+                  "endlineno": 894,
+                  "lineno": 894,
                   "value": "Whether this alias is deprecated (boolean or deprecation message)."
                 },
-                "endlineno": 894,
+                "endlineno": 893,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 894,
+                "lineno": 893,
                 "members": {},
                 "name": "deprecated",
                 "value": "None"
@@ -47964,17 +48011,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1045,
-                  "lineno": 1045,
+                  "endlineno": 1044,
+                  "lineno": 1044,
                   "value": "The target docstring."
                 },
-                "endlineno": 1046,
+                "endlineno": 1045,
                 "kind": "attribute",
                 "labels": [
                   "property",
                   "writable"
                 ],
-                "lineno": 1044,
+                "lineno": 1043,
                 "members": {},
                 "name": "docstring"
               },
@@ -47989,16 +48036,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1040,
-                  "lineno": 1040,
+                  "endlineno": 1039,
+                  "lineno": 1039,
                   "value": "The ending line number of the target object."
                 },
-                "endlineno": 1041,
+                "endlineno": 1040,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1039,
+                "lineno": 1038,
                 "members": {},
                 "name": "endlineno"
               },
@@ -48043,16 +48090,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1080,
-                  "lineno": 1068,
+                  "endlineno": 1079,
+                  "lineno": 1067,
                   "value": "The names of the objects exported by this (module) object through the `__all__` variable.\n\nExports can contain string (object names) or resolvable names,\nlike other lists of exports coming from submodules:\n\n```python\nfrom .submodule import __all__ as submodule_all\n\n__all__ = [\"hello\", *submodule_all]\n```\n\nExports get expanded by the loader before it expands wildcards and resolves aliases."
                 },
-                "endlineno": 1081,
+                "endlineno": 1080,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1067,
+                "lineno": 1066,
                 "members": {},
                 "name": "exports"
               },
@@ -48062,16 +48109,16 @@
                   "name": "dict"
                 },
                 "docstring": {
-                  "endlineno": 1030,
-                  "lineno": 1030,
+                  "endlineno": 1029,
+                  "lineno": 1029,
                   "value": "Namespaced dictionaries storing extra metadata for this object, used by extensions."
                 },
-                "endlineno": 1031,
+                "endlineno": 1030,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1029,
+                "lineno": 1028,
                 "members": {},
                 "name": "extra"
               },
@@ -48096,30 +48143,30 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1160,
-                  "lineno": 1160,
+                  "endlineno": 1159,
+                  "lineno": 1159,
                   "value": "The file path (or directory list for namespace packages) where this object was defined."
                 },
-                "endlineno": 1161,
+                "endlineno": 1160,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1159,
+                "lineno": 1158,
                 "members": {},
                 "name": "filepath"
               },
               "filter_members": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1141,
-                  "lineno": 1134,
+                  "endlineno": 1140,
+                  "lineno": 1133,
                   "value": "Filter and return members based on predicates.\n\nParameters:\n    *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.\n\nReturns:\n    A dictionary of members."
                 },
-                "endlineno": 1142,
+                "endlineno": 1141,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1133,
+                "lineno": 1132,
                 "members": {},
                 "name": "filter_members",
                 "parameters": [
@@ -48205,16 +48252,16 @@
                   "name": "Object"
                 },
                 "docstring": {
-                  "endlineno": 1367,
-                  "lineno": 1364,
+                  "endlineno": 1366,
+                  "lineno": 1363,
                   "value": "The final, resolved target, if possible.\n\nThis will iterate through the targets until a non-alias object is found."
                 },
-                "endlineno": 1382,
+                "endlineno": 1381,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1363,
+                "lineno": 1362,
                 "members": {},
                 "name": "final_target"
               },
@@ -48224,16 +48271,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 938,
-                  "lineno": 938,
+                  "endlineno": 937,
+                  "lineno": 937,
                   "value": "Whether this alias' target has a non-empty docstring."
                 },
-                "endlineno": 942,
+                "endlineno": 941,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 937,
+                "lineno": 936,
                 "members": {},
                 "name": "has_docstring"
               },
@@ -48243,30 +48290,30 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 946,
-                  "lineno": 946,
+                  "endlineno": 945,
+                  "lineno": 945,
                   "value": "Whether this alias' target or any of its members has a non-empty docstring."
                 },
-                "endlineno": 950,
+                "endlineno": 949,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 945,
+                "lineno": 944,
                 "members": {},
                 "name": "has_docstrings"
               },
               "has_labels": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1130,
-                  "lineno": 1123,
+                  "endlineno": 1129,
+                  "lineno": 1122,
                   "value": "Tell if this object has all the given labels.\n\nParameters:\n    *labels: Labels that must be present.\n\nReturns:\n    True or False."
                 },
-                "endlineno": 1131,
+                "endlineno": 1130,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1122,
+                "lineno": 1121,
                 "members": {},
                 "name": "has_labels",
                 "parameters": [
@@ -48314,16 +48361,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1063,
-                  "lineno": 1059,
+                  "endlineno": 1062,
+                  "lineno": 1058,
                   "value": "The other objects imported by this alias' target.\n\nKeys are the names within the object (`from ... import ... as AS_NAME`),\nwhile the values are the actual names of the objects (`from ... import REAL_NAME as ...`)."
                 },
-                "endlineno": 1064,
+                "endlineno": 1063,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1058,
+                "lineno": 1057,
                 "members": {},
                 "name": "imports"
               },
@@ -48333,16 +48380,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1245,
-                  "lineno": 1245,
+                  "endlineno": 1244,
+                  "lineno": 1244,
                   "value": "Whether this module import future annotations."
                 },
-                "endlineno": 1246,
+                "endlineno": 1245,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1244,
+                "lineno": 1243,
                 "members": {},
                 "name": "imports_future_annotations"
               },
@@ -48352,16 +48399,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 889,
-                  "lineno": 889,
+                  "endlineno": 888,
+                  "lineno": 888,
                   "value": "Whether this alias represents an inherited member."
                 },
-                "endlineno": 888,
+                "endlineno": 887,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 888,
+                "lineno": 887,
                 "members": {},
                 "name": "inherited",
                 "value": {
@@ -48392,17 +48439,17 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 996,
-                  "lineno": 989,
+                  "endlineno": 995,
+                  "lineno": 988,
                   "value": "Members that are inherited from base classes.\n\nEach inherited member of the target will be wrapped in an alias,\nto preserve correct object access paths.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 1006,
+                "endlineno": 1005,
                 "kind": "attribute",
                 "labels": [
                   "cached",
                   "property"
                 ],
-                "lineno": 988,
+                "lineno": 987,
                 "members": {},
                 "name": "inherited_members"
               },
@@ -48412,17 +48459,17 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 849,
-                  "lineno": 849,
+                  "endlineno": 848,
+                  "lineno": 848,
                   "value": "Always true for aliases."
                 },
-                "endlineno": 848,
+                "endlineno": 847,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 848,
+                "lineno": 847,
                 "members": {},
                 "name": "is_alias",
                 "value": "True"
@@ -48433,16 +48480,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1119,
-                  "lineno": 1119,
+                  "endlineno": 1118,
+                  "lineno": 1118,
                   "value": "Whether this object is an attribute."
                 },
-                "endlineno": 1120,
+                "endlineno": 1119,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1118,
+                "lineno": 1117,
                 "members": {},
                 "name": "is_attribute"
               },
@@ -48452,16 +48499,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1109,
-                  "lineno": 1109,
+                  "endlineno": 1108,
+                  "lineno": 1108,
                   "value": "Whether this object is a class."
                 },
-                "endlineno": 1110,
+                "endlineno": 1109,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1108,
+                "lineno": 1107,
                 "members": {},
                 "name": "is_class"
               },
@@ -48471,17 +48518,17 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 851,
-                  "lineno": 851,
+                  "endlineno": 850,
+                  "lineno": 850,
                   "value": "Always false for aliases."
                 },
-                "endlineno": 850,
+                "endlineno": 849,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 850,
+                "lineno": 849,
                 "members": {},
                 "name": "is_collection",
                 "value": "False"
@@ -48492,16 +48539,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1114,
-                  "lineno": 1114,
+                  "endlineno": 1113,
+                  "lineno": 1113,
                   "value": "Whether this object is a function."
                 },
-                "endlineno": 1115,
+                "endlineno": 1114,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1113,
+                "lineno": 1112,
                 "members": {},
                 "name": "is_function"
               },
@@ -48511,30 +48558,30 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1250,
-                  "lineno": 1250,
+                  "endlineno": 1249,
+                  "lineno": 1249,
                   "value": "Whether this module is an `__init__.py` module."
                 },
-                "endlineno": 1251,
+                "endlineno": 1250,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1249,
+                "lineno": 1248,
                 "members": {},
                 "name": "is_init_module"
               },
               "is_kind": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1099,
-                  "lineno": 1089,
+                  "endlineno": 1098,
+                  "lineno": 1088,
                   "value": "Tell if this object is of the given kind.\n\nParameters:\n    kind: An instance or set of kinds (strings or enumerations).\n\nRaises:\n    ValueError: When an empty set is given as argument.\n\nReturns:\n    True or False."
                 },
-                "endlineno": 1100,
+                "endlineno": 1099,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1088,
+                "lineno": 1087,
                 "members": {},
                 "name": "is_kind",
                 "parameters": [
@@ -48596,16 +48643,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1104,
-                  "lineno": 1104,
+                  "endlineno": 1103,
+                  "lineno": 1103,
                   "value": "Whether this object is a module."
                 },
-                "endlineno": 1105,
+                "endlineno": 1104,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1103,
+                "lineno": 1102,
                 "members": {},
                 "name": "is_module"
               },
@@ -48615,16 +48662,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1265,
-                  "lineno": 1265,
+                  "endlineno": 1264,
+                  "lineno": 1264,
                   "value": "Whether this module is a namespace package (top folder, no `__init__.py`)."
                 },
-                "endlineno": 1266,
+                "endlineno": 1265,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1264,
+                "lineno": 1263,
                 "members": {},
                 "name": "is_namespace_package"
               },
@@ -48634,16 +48681,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1270,
-                  "lineno": 1270,
+                  "endlineno": 1269,
+                  "lineno": 1269,
                   "value": "Whether this module is a namespace subpackage."
                 },
-                "endlineno": 1271,
+                "endlineno": 1270,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1269,
+                "lineno": 1268,
                 "members": {},
                 "name": "is_namespace_subpackage"
               },
@@ -48653,16 +48700,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1255,
-                  "lineno": 1255,
+                  "endlineno": 1254,
+                  "lineno": 1254,
                   "value": "Whether this module is a package (top module)."
                 },
-                "endlineno": 1256,
+                "endlineno": 1255,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1254,
+                "lineno": 1253,
                 "members": {},
                 "name": "is_package"
               },
@@ -48672,16 +48719,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1260,
-                  "lineno": 1260,
+                  "endlineno": 1259,
+                  "lineno": 1259,
                   "value": "Whether this module is a subpackage."
                 },
-                "endlineno": 1261,
+                "endlineno": 1260,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1259,
+                "lineno": 1258,
                 "members": {},
                 "name": "is_subpackage"
               },
@@ -48691,16 +48738,16 @@
                   "name": "Kind"
                 },
                 "docstring": {
-                  "endlineno": 929,
-                  "lineno": 929,
+                  "endlineno": 928,
+                  "lineno": 928,
                   "value": "The target's kind, or `Kind.ALIAS` if the target cannot be resolved."
                 },
-                "endlineno": 934,
+                "endlineno": 933,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 928,
+                "lineno": 927,
                 "members": {},
                 "name": "kind"
               },
@@ -48717,16 +48764,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1054,
-                  "lineno": 1054,
+                  "endlineno": 1053,
+                  "lineno": 1053,
                   "value": "The target labels (`property`, `dataclass`, etc.)."
                 },
-                "endlineno": 1055,
+                "endlineno": 1054,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1053,
+                "lineno": 1052,
                 "members": {},
                 "name": "labels"
               },
@@ -48741,16 +48788,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1035,
-                  "lineno": 1035,
+                  "endlineno": 1034,
+                  "lineno": 1034,
                   "value": "The starting line number of the target object."
                 },
-                "endlineno": 1036,
+                "endlineno": 1035,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1034,
+                "lineno": 1033,
                 "members": {},
                 "name": "lineno"
               },
@@ -48767,16 +48814,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1202,
-                  "lineno": 1202,
+                  "endlineno": 1201,
+                  "lineno": 1201,
                   "value": "The lines containing the source of this object."
                 },
-                "endlineno": 1203,
+                "endlineno": 1202,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1201,
+                "lineno": 1200,
                 "members": {},
                 "name": "lines"
               },
@@ -48786,16 +48833,16 @@
                   "name": "LinesCollection"
                 },
                 "docstring": {
-                  "endlineno": 1197,
-                  "lineno": 1193,
+                  "endlineno": 1196,
+                  "lineno": 1192,
                   "value": "The lines collection attached to this object or its parents.\n\nRaises:\n    ValueError: When no modules collection can be found in the object or its parents."
                 },
-                "endlineno": 1198,
+                "endlineno": 1197,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1192,
+                "lineno": 1191,
                 "members": {},
                 "name": "lines_collection"
               },
@@ -48830,17 +48877,17 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 975,
-                  "lineno": 975,
+                  "endlineno": 974,
+                  "lineno": 974,
                   "value": "The target's members (modules, classes, functions, attributes)."
                 },
-                "endlineno": 985,
+                "endlineno": 984,
                 "kind": "attribute",
                 "labels": [
                   "cached",
                   "property"
                 ],
-                "lineno": 974,
+                "lineno": 973,
                 "members": {},
                 "name": "members"
               },
@@ -48850,16 +48897,16 @@
                   "name": "Module"
                 },
                 "docstring": {
-                  "endlineno": 1150,
-                  "lineno": 1146,
+                  "endlineno": 1149,
+                  "lineno": 1145,
                   "value": "The parent module of this object.\n\nRaises:\n    ValueError: When the object is not a module and does not have a parent."
                 },
-                "endlineno": 1151,
+                "endlineno": 1150,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1145,
+                "lineno": 1144,
                 "members": {},
                 "name": "module"
               },
@@ -48869,30 +48916,30 @@
                   "name": "ModulesCollection"
                 },
                 "docstring": {
-                  "endlineno": 969,
-                  "lineno": 969,
+                  "endlineno": 968,
+                  "lineno": 968,
                   "value": "The modules collection attached to the alias parents."
                 },
-                "endlineno": 971,
+                "endlineno": 970,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 968,
+                "lineno": 967,
                 "members": {},
                 "name": "modules_collection"
               },
               "mro": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1335,
-                  "lineno": 1335,
+                  "endlineno": 1334,
+                  "lineno": 1334,
                   "value": "Return a list of classes in order corresponding to Python's MRO."
                 },
-                "endlineno": 1336,
+                "endlineno": 1335,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1334,
+                "lineno": 1333,
                 "members": {},
                 "name": "mro",
                 "parameters": [
@@ -48921,16 +48968,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 877,
-                  "lineno": 877,
+                  "endlineno": 876,
+                  "lineno": 876,
                   "value": "The alias name."
                 },
-                "endlineno": 876,
+                "endlineno": 875,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 876,
+                "lineno": 875,
                 "members": {},
                 "name": "name",
                 "value": {
@@ -48988,17 +49035,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1275,
-                  "lineno": 1275,
+                  "endlineno": 1274,
+                  "lineno": 1274,
                   "value": "The overloaded signatures declared in this class/module or for this function."
                 },
-                "endlineno": 1276,
+                "endlineno": 1275,
                 "kind": "attribute",
                 "labels": [
                   "property",
                   "writable"
                 ],
-                "lineno": 1274,
+                "lineno": 1273,
                 "members": {},
                 "name": "overloads"
               },
@@ -49008,16 +49055,16 @@
                   "name": "Module"
                 },
                 "docstring": {
-                  "endlineno": 1155,
-                  "lineno": 1155,
+                  "endlineno": 1154,
+                  "lineno": 1154,
                   "value": "The absolute top module (the package) of this object."
                 },
-                "endlineno": 1156,
+                "endlineno": 1155,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1154,
+                "lineno": 1153,
                 "members": {},
                 "name": "package"
               },
@@ -49027,16 +49074,16 @@
                   "name": "Parameters"
                 },
                 "docstring": {
-                  "endlineno": 1289,
-                  "lineno": 1284,
+                  "endlineno": 1288,
+                  "lineno": 1283,
                   "value": "The parameters of the current function or `__init__` method for classes.\n\nThis property can fetch inherited members,\nand therefore is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 1290,
+                "endlineno": 1289,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1283,
+                "lineno": 1282,
                 "members": {},
                 "name": "parameters"
               },
@@ -49067,17 +49114,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 954,
-                  "lineno": 954,
+                  "endlineno": 953,
+                  "lineno": 953,
                   "value": "The parent of this alias."
                 },
-                "endlineno": 955,
+                "endlineno": 954,
                 "kind": "attribute",
                 "labels": [
                   "property",
                   "writable"
                 ],
-                "lineno": 953,
+                "lineno": 952,
                 "members": {},
                 "name": "parent"
               },
@@ -49087,16 +49134,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 964,
-                  "lineno": 964,
+                  "endlineno": 963,
+                  "lineno": 963,
                   "value": "The dotted path / import path of this object."
                 },
-                "endlineno": 965,
+                "endlineno": 964,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 963,
+                "lineno": 962,
                 "members": {},
                 "name": "path"
               },
@@ -49111,16 +49158,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 892,
-                  "lineno": 892,
+                  "endlineno": 891,
+                  "lineno": 891,
                   "value": "Whether this alias is public."
                 },
-                "endlineno": 891,
+                "endlineno": 890,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 891,
+                "lineno": 890,
                 "members": {},
                 "name": "public",
                 "value": "None"
@@ -49131,16 +49178,16 @@
                   "name": "Path"
                 },
                 "docstring": {
-                  "endlineno": 1171,
-                  "lineno": 1165,
+                  "endlineno": 1170,
+                  "lineno": 1164,
                   "value": "The file path where this object was defined, relative to the current working directory.\n\nIf this object's file path is not relative to the current working directory, return its absolute path.\n\nRaises:\n    ValueError: When the relative path could not be computed."
                 },
-                "endlineno": 1172,
+                "endlineno": 1171,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1164,
+                "lineno": 1163,
                 "members": {},
                 "name": "relative_filepath"
               },
@@ -49150,30 +49197,30 @@
                   "name": "Path"
                 },
                 "docstring": {
-                  "endlineno": 1180,
-                  "lineno": 1176,
+                  "endlineno": 1179,
+                  "lineno": 1175,
                   "value": "The file path where this object was defined, relative to the top module path.\n\nRaises:\n    ValueError: When the relative path could not be computed."
                 },
-                "endlineno": 1181,
+                "endlineno": 1180,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1175,
+                "lineno": 1174,
                 "members": {},
                 "name": "relative_package_filepath"
               },
               "resolve": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1221,
-                  "lineno": 1211,
+                  "endlineno": 1220,
+                  "lineno": 1210,
                   "value": "Resolve a name within this object's and parents' scope.\n\nParameters:\n    name: The name to resolve.\n\nRaises:\n    NameResolutionError: When the name could not be resolved.\n\nReturns:\n    The resolved name."
                 },
-                "endlineno": 1222,
+                "endlineno": 1221,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1210,
+                "lineno": 1209,
                 "members": {},
                 "name": "resolve",
                 "parameters": [
@@ -49201,14 +49248,14 @@
               "resolve_target": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1394,
-                  "lineno": 1385,
+                  "endlineno": 1393,
+                  "lineno": 1384,
                   "value": "Resolve the target.\n\nRaises:\n    AliasResolutionError: When the target cannot be resolved.\n        It happens when the target does not exist,\n        or could not be loaded (unhandled dynamic object?),\n        or when the target is from a module that was not loaded\n        and added to the collection.\n    CyclicAliasError: When the resolved target is the alias itself."
                 },
-                "endlineno": 1411,
+                "endlineno": 1410,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1384,
+                "lineno": 1383,
                 "members": {},
                 "name": "resolve_target",
                 "parameters": [
@@ -49227,16 +49274,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1435,
-                  "lineno": 1435,
+                  "endlineno": 1434,
+                  "lineno": 1434,
                   "value": "Whether this alias' target is resolved."
                 },
-                "endlineno": 1436,
+                "endlineno": 1435,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1434,
+                "lineno": 1433,
                 "members": {},
                 "name": "resolved"
               },
@@ -49253,16 +49300,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1331,
-                  "lineno": 1327,
+                  "endlineno": 1330,
+                  "lineno": 1326,
                   "value": "Resolved class bases.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 1332,
+                "endlineno": 1331,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1326,
+                "lineno": 1325,
                 "members": {},
                 "name": "resolved_bases"
               },
@@ -49285,17 +49332,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1294,
-                  "lineno": 1294,
+                  "endlineno": 1293,
+                  "lineno": 1293,
                   "value": "The function return type annotation."
                 },
-                "endlineno": 1295,
+                "endlineno": 1294,
                 "kind": "attribute",
                 "labels": [
                   "property",
                   "writable"
                 ],
-                "lineno": 1293,
+                "lineno": 1292,
                 "members": {},
                 "name": "returns"
               },
@@ -49305,16 +49352,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 886,
-                  "lineno": 886,
+                  "endlineno": 885,
+                  "lineno": 885,
                   "value": "Whether this alias is available at runtime."
                 },
-                "endlineno": 885,
+                "endlineno": 884,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 885,
+                "lineno": 884,
                 "members": {},
                 "name": "runtime",
                 "value": {
@@ -49333,16 +49380,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1303,
-                  "lineno": 1303,
+                  "endlineno": 1302,
+                  "lineno": 1302,
                   "value": "The setter linked to this function (property)."
                 },
-                "endlineno": 1304,
+                "endlineno": 1303,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1302,
+                "lineno": 1301,
                 "members": {},
                 "name": "setter"
               },
@@ -49352,16 +49399,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 1207,
-                  "lineno": 1207,
+                  "endlineno": 1206,
+                  "lineno": 1206,
                   "value": "The source code of this object."
                 },
-                "endlineno": 1208,
+                "endlineno": 1207,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1206,
+                "lineno": 1205,
                 "members": {},
                 "name": "source"
               },
@@ -49379,17 +49426,17 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1348,
-                  "lineno": 1344,
+                  "endlineno": 1347,
+                  "lineno": 1343,
                   "value": "The resolved target (actual object), if possible.\n\nUpon accessing this property, if the target is not already resolved,\na lookup is done using the modules collection to find the target."
                 },
-                "endlineno": 1351,
+                "endlineno": 1350,
                 "kind": "attribute",
                 "labels": [
                   "property",
                   "writable"
                 ],
-                "lineno": 1343,
+                "lineno": 1342,
                 "members": {},
                 "name": "target"
               },
@@ -49399,16 +49446,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 901,
-                  "lineno": 901,
+                  "endlineno": 900,
+                  "lineno": 900,
                   "value": "The path of this alias' target."
                 },
-                "endlineno": 900,
+                "endlineno": 899,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 900,
+                "lineno": 899,
                 "members": {},
                 "name": "target_path"
               },
@@ -49431,16 +49478,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1313,
-                  "lineno": 1313,
+                  "endlineno": 1312,
+                  "lineno": 1312,
                   "value": "The attribute value."
                 },
-                "endlineno": 1314,
+                "endlineno": 1313,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1312,
+                "lineno": 1311,
                 "members": {},
                 "name": "value"
               },
@@ -49455,16 +49502,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1440,
-                  "lineno": 1440,
+                  "endlineno": 1439,
+                  "lineno": 1439,
                   "value": "The module on which the wildcard import is performed (if any)."
                 },
-                "endlineno": 1443,
+                "endlineno": 1442,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1439,
+                "lineno": 1438,
                 "members": {},
                 "name": "wildcard"
               }
@@ -49494,26 +49541,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 1725,
-              "lineno": 1725,
+              "endlineno": 1724,
+              "lineno": 1724,
               "value": "The class representing a Python module/class/instance attribute."
             },
-            "endlineno": 1768,
+            "endlineno": 1767,
             "kind": "class",
             "labels": [],
-            "lineno": 1724,
+            "lineno": 1723,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1743,
-                  "lineno": 1736,
+                  "endlineno": 1742,
+                  "lineno": 1735,
                   "value": "Initialize the function.\n\nParameters:\n    *args: See [`griffe.Object`][].\n    value: The attribute value, if any.\n    annotation: The attribute annotation, if any.\n    **kwargs: See [`griffe.Object`][]."
                 },
-                "endlineno": 1752,
+                "endlineno": 1751,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1729,
+                "lineno": 1728,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -49607,16 +49654,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1748,
-                  "lineno": 1748,
+                  "endlineno": 1747,
+                  "lineno": 1747,
                   "value": "The attribute type annotation."
                 },
-                "endlineno": 1747,
+                "endlineno": 1746,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1747,
+                "lineno": 1746,
                 "members": {},
                 "name": "annotation",
                 "value": {
@@ -49627,14 +49674,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1762,
-                  "lineno": 1755,
+                  "endlineno": 1761,
+                  "lineno": 1754,
                   "value": "Return this function's data as a dictionary.\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 1768,
+                "endlineno": 1767,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1754,
+                "lineno": 1753,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -49687,28 +49734,28 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1752,
-                  "lineno": 1752,
+                  "endlineno": 1751,
+                  "lineno": 1751,
                   "value": "The deleter linked to this property."
                 },
-                "endlineno": 1751,
+                "endlineno": 1750,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1751,
+                "lineno": 1750,
                 "members": {},
                 "name": "deleter",
                 "value": "None"
               },
               "kind": {
-                "endlineno": 1727,
+                "endlineno": 1726,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 1727,
+                "lineno": 1726,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -49736,16 +49783,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1750,
-                  "lineno": 1750,
+                  "endlineno": 1749,
+                  "lineno": 1749,
                   "value": "The setter linked to this property."
                 },
-                "endlineno": 1749,
+                "endlineno": 1748,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1749,
+                "lineno": 1748,
                 "members": {},
                 "name": "setter",
                 "value": "None"
@@ -49769,16 +49816,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1746,
-                  "lineno": 1746,
+                  "endlineno": 1745,
+                  "lineno": 1745,
                   "value": "The attribute value."
                 },
-                "endlineno": 1745,
+                "endlineno": 1744,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1745,
+                "lineno": 1744,
                 "members": {},
                 "name": "value",
                 "value": {
@@ -49812,26 +49859,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 1578,
-              "lineno": 1578,
+              "endlineno": 1577,
+              "lineno": 1577,
               "value": "The class representing a Python class."
             },
-            "endlineno": 1665,
+            "endlineno": 1664,
             "kind": "class",
             "labels": [],
-            "lineno": 1577,
+            "lineno": 1576,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1596,
-                  "lineno": 1589,
+                  "endlineno": 1595,
+                  "lineno": 1588,
                   "value": "Initialize the class.\n\nParameters:\n    *args: See [`griffe.Object`][].\n    bases: The list of base classes, if any.\n    decorators: The class decorators, if any.\n    **kwargs: See [`griffe.Object`][]."
                 },
-                "endlineno": 1603,
+                "endlineno": 1602,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1582,
+                "lineno": 1581,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -49914,10 +49961,10 @@
               },
               "_mro": {
                 "decorators": [],
-                "endlineno": 1647,
+                "endlineno": 1646,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1638,
+                "lineno": 1637,
                 "members": {},
                 "name": "_mro",
                 "parameters": [
@@ -49970,14 +50017,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1661,
-                  "lineno": 1654,
+                  "endlineno": 1660,
+                  "lineno": 1653,
                   "value": "Return this class' data as a dictionary.\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 1665,
+                "endlineno": 1664,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1653,
+                "lineno": 1652,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -50040,16 +50087,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1599,
-                  "lineno": 1599,
+                  "endlineno": 1598,
+                  "lineno": 1598,
                   "value": "The class bases."
                 },
-                "endlineno": 1598,
+                "endlineno": 1597,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1598,
+                "lineno": 1597,
                 "members": {},
                 "name": "bases",
                 "value": {
@@ -50090,16 +50137,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1601,
-                  "lineno": 1601,
+                  "endlineno": 1600,
+                  "lineno": 1600,
                   "value": "The class decorators."
                 },
-                "endlineno": 1600,
+                "endlineno": 1599,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1600,
+                "lineno": 1599,
                 "members": {},
                 "name": "decorators",
                 "value": {
@@ -50118,13 +50165,13 @@
                 }
               },
               "kind": {
-                "endlineno": 1580,
+                "endlineno": 1579,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 1580,
+                "lineno": 1579,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -50144,14 +50191,14 @@
               "mro": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1650,
-                  "lineno": 1650,
+                  "endlineno": 1649,
+                  "lineno": 1649,
                   "value": "Return a list of classes in order corresponding to Python's MRO."
                 },
-                "endlineno": 1651,
+                "endlineno": 1650,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1649,
+                "lineno": 1648,
                 "members": {},
                 "name": "mro",
                 "parameters": [
@@ -50204,16 +50251,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1603,
-                  "lineno": 1603,
+                  "endlineno": 1602,
+                  "lineno": 1602,
                   "value": "The overloaded signatures declared in this class."
                 },
-                "endlineno": 1602,
+                "endlineno": 1601,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1602,
+                "lineno": 1601,
                 "members": {},
                 "name": "overloads",
                 "value": {
@@ -50236,16 +50283,16 @@
                   "name": "Parameters"
                 },
                 "docstring": {
-                  "endlineno": 1612,
-                  "lineno": 1607,
+                  "endlineno": 1611,
+                  "lineno": 1606,
                   "value": "The parameters of this class' `__init__` method, if any.\n\nThis property fetches inherited members,\nand therefore is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 1616,
+                "endlineno": 1615,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1606,
+                "lineno": 1605,
                 "members": {},
                 "name": "parameters"
               },
@@ -50262,17 +50309,17 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1624,
-                  "lineno": 1620,
+                  "endlineno": 1623,
+                  "lineno": 1619,
                   "value": "Resolved class bases.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 1636,
+                "endlineno": 1635,
                 "kind": "attribute",
                 "labels": [
                   "cached",
                   "property"
                 ],
-                "lineno": 1619,
+                "lineno": 1618,
                 "members": {},
                 "name": "resolved_bases"
               }
@@ -51137,26 +51184,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 1669,
-              "lineno": 1669,
+              "endlineno": 1668,
+              "lineno": 1668,
               "value": "The class representing a Python function."
             },
-            "endlineno": 1721,
+            "endlineno": 1720,
             "kind": "class",
             "labels": [],
-            "lineno": 1668,
+            "lineno": 1667,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1689,
-                  "lineno": 1681,
+                  "endlineno": 1688,
+                  "lineno": 1680,
                   "value": "Initialize the function.\n\nParameters:\n    *args: See [`griffe.Object`][].\n    parameters: The function parameters.\n    returns: The function return annotation.\n    decorators: The function decorators, if any.\n    **kwargs: See [`griffe.Object`][]."
                 },
-                "endlineno": 1701,
+                "endlineno": 1700,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1673,
+                "lineno": 1672,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -51263,30 +51310,30 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1705,
-                  "lineno": 1705,
+                  "endlineno": 1704,
+                  "lineno": 1704,
                   "value": "The type annotation of the returned value."
                 },
-                "endlineno": 1706,
+                "endlineno": 1705,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1704,
+                "lineno": 1703,
                 "members": {},
                 "name": "annotation"
               },
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1716,
-                  "lineno": 1709,
+                  "endlineno": 1715,
+                  "lineno": 1708,
                   "value": "Return this function's data as a dictionary.\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 1721,
+                "endlineno": 1720,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1708,
+                "lineno": 1707,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -51341,16 +51388,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1696,
-                  "lineno": 1696,
+                  "endlineno": 1695,
+                  "lineno": 1695,
                   "value": "The function decorators."
                 },
-                "endlineno": 1695,
+                "endlineno": 1694,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1695,
+                "lineno": 1694,
                 "members": {},
                 "name": "decorators",
                 "value": {
@@ -51369,13 +51416,13 @@
                 }
               },
               "kind": {
-                "endlineno": 1671,
+                "endlineno": 1670,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 1671,
+                "lineno": 1670,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -51410,16 +51457,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1698,
-                  "lineno": 1698,
+                  "endlineno": 1697,
+                  "lineno": 1697,
                   "value": "The overloaded signatures of this function."
                 },
-                "endlineno": 1697,
+                "endlineno": 1696,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1697,
+                "lineno": 1696,
                 "members": {},
                 "name": "overloads",
                 "value": "None"
@@ -51430,16 +51477,16 @@
                   "name": "Parameters"
                 },
                 "docstring": {
-                  "endlineno": 1692,
-                  "lineno": 1692,
+                  "endlineno": 1691,
+                  "lineno": 1691,
                   "value": "The function parameters."
                 },
-                "endlineno": 1691,
+                "endlineno": 1690,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1691,
+                "lineno": 1690,
                 "members": {},
                 "name": "parameters",
                 "value": {
@@ -51480,16 +51527,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 1694,
-                  "lineno": 1694,
+                  "endlineno": 1693,
+                  "lineno": 1693,
                   "value": "The function return type annotation."
                 },
-                "endlineno": 1693,
+                "endlineno": 1692,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1693,
+                "lineno": 1692,
                 "members": {},
                 "name": "returns",
                 "value": {
@@ -51523,26 +51570,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 1473,
-              "lineno": 1473,
+              "endlineno": 1472,
+              "lineno": 1472,
               "value": "The class representing a Python module."
             },
-            "endlineno": 1574,
+            "endlineno": 1573,
             "kind": "class",
             "labels": [],
-            "lineno": 1472,
+            "lineno": 1471,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1484,
-                  "lineno": 1478,
+                  "endlineno": 1483,
+                  "lineno": 1477,
                   "value": "Initialize the module.\n\nParameters:\n    *args: See [`griffe.Object`][].\n    filepath: The module file path (directory for namespace [sub]packages, none for builtin modules).\n    **kwargs: See [`griffe.Object`][]."
                 },
-                "endlineno": 1488,
+                "endlineno": 1487,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1477,
+                "lineno": 1476,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -51604,10 +51651,10 @@
               },
               "__repr__": {
                 "decorators": [],
-                "endlineno": 1494,
+                "endlineno": 1493,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1490,
+                "lineno": 1489,
                 "members": {},
                 "name": "__repr__",
                 "parameters": [
@@ -51648,12 +51695,12 @@
                   "operator": "|",
                   "right": "None"
                 },
-                "endlineno": 1486,
+                "endlineno": 1485,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1486,
+                "lineno": 1485,
                 "members": {},
                 "name": "_filepath",
                 "value": {
@@ -51664,14 +51711,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 1566,
-                  "lineno": 1559,
+                  "endlineno": 1565,
+                  "lineno": 1558,
                   "value": "Return this module's data as a dictionary.\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 1574,
+                "endlineno": 1573,
                 "kind": "function",
                 "labels": [],
-                "lineno": 1558,
+                "lineno": 1557,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -51734,16 +51781,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1502,
-                  "lineno": 1498,
+                  "endlineno": 1501,
+                  "lineno": 1497,
                   "value": "The file path of this module.\n\nRaises:\n    BuiltinModuleError: When the instance filepath is None."
                 },
-                "endlineno": 1505,
+                "endlineno": 1504,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1497,
+                "lineno": 1496,
                 "members": {},
                 "name": "filepath"
               },
@@ -51753,16 +51800,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1509,
-                  "lineno": 1509,
+                  "endlineno": 1508,
+                  "lineno": 1508,
                   "value": "Whether this module import future annotations."
                 },
-                "endlineno": 1514,
+                "endlineno": 1513,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1508,
+                "lineno": 1507,
                 "members": {},
                 "name": "imports_future_annotations"
               },
@@ -51772,16 +51819,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1518,
-                  "lineno": 1518,
+                  "endlineno": 1517,
+                  "lineno": 1517,
                   "value": "Whether this module is an `__init__.py` module."
                 },
-                "endlineno": 1524,
+                "endlineno": 1523,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1517,
+                "lineno": 1516,
                 "members": {},
                 "name": "is_init_module"
               },
@@ -51791,16 +51838,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1538,
-                  "lineno": 1538,
+                  "endlineno": 1537,
+                  "lineno": 1537,
                   "value": "Whether this module is a namespace package (top folder, no `__init__.py`)."
                 },
-                "endlineno": 1542,
+                "endlineno": 1541,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1537,
+                "lineno": 1536,
                 "members": {},
                 "name": "is_namespace_package"
               },
@@ -51810,16 +51857,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1546,
-                  "lineno": 1546,
+                  "endlineno": 1545,
+                  "lineno": 1545,
                   "value": "Whether this module is a namespace subpackage."
                 },
-                "endlineno": 1556,
+                "endlineno": 1555,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1545,
+                "lineno": 1544,
                 "members": {},
                 "name": "is_namespace_subpackage"
               },
@@ -51829,16 +51876,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1528,
-                  "lineno": 1528,
+                  "endlineno": 1527,
+                  "lineno": 1527,
                   "value": "Whether this module is a package (top module)."
                 },
-                "endlineno": 1529,
+                "endlineno": 1528,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1527,
+                "lineno": 1526,
                 "members": {},
                 "name": "is_package"
               },
@@ -51848,27 +51895,27 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 1533,
-                  "lineno": 1533,
+                  "endlineno": 1532,
+                  "lineno": 1532,
                   "value": "Whether this module is a subpackage."
                 },
-                "endlineno": 1534,
+                "endlineno": 1533,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 1532,
+                "lineno": 1531,
                 "members": {},
                 "name": "is_subpackage"
               },
               "kind": {
-                "endlineno": 1475,
+                "endlineno": 1474,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 1475,
+                "lineno": 1474,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -51915,16 +51962,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 1488,
-                  "lineno": 1488,
+                  "endlineno": 1487,
+                  "lineno": 1487,
                   "value": "The overloaded signatures declared in this module."
                 },
-                "endlineno": 1487,
+                "endlineno": 1486,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 1487,
+                "lineno": 1486,
                 "members": {},
                 "name": "overloads",
                 "value": {
@@ -51971,7 +52018,7 @@
               "lineno": 310,
               "value": "An abstract class representing a Python object."
             },
-            "endlineno": 830,
+            "endlineno": 829,
             "kind": "class",
             "labels": [],
             "lineno": 309,
@@ -52272,14 +52319,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 804,
-                  "lineno": 796,
+                  "endlineno": 803,
+                  "lineno": 795,
                   "value": "Return this object's data as a dictionary.\n\nParameters:\n    full: Whether to return full info, or just base info.\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 830,
+                "endlineno": 829,
                 "kind": "function",
                 "labels": [],
-                "lineno": 795,
+                "lineno": 794,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -52336,16 +52383,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 702,
-                  "lineno": 699,
+                  "endlineno": 701,
+                  "lineno": 698,
                   "value": "The full dotted path of this object.\n\nThe canonical path is the path where the object was defined (not imported)."
                 },
-                "endlineno": 705,
+                "endlineno": 704,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 698,
+                "lineno": 697,
                 "members": {},
                 "name": "canonical_path"
               },
@@ -52580,16 +52627,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 619,
-                  "lineno": 612,
+                  "endlineno": 618,
+                  "lineno": 611,
                   "value": "The file path (or directory list for namespace packages) where this object was defined.\n\nExamples:\n    >>> import griffe\n    >>> markdown = griffe.load(\"markdown\")\n    >>> markdown.filepath\n    PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py')"
                 },
-                "endlineno": 620,
+                "endlineno": 619,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 611,
+                "lineno": 610,
                 "members": {},
                 "name": "filepath"
               },
@@ -52600,7 +52647,7 @@
                   "lineno": 557,
                   "value": "Filter and return members based on predicates.\n\nParameters:\n    *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.\n\nReturns:\n    A dictionary of members."
                 },
-                "endlineno": 571,
+                "endlineno": 570,
                 "kind": "function",
                 "labels": [],
                 "lineno": 556,
@@ -53228,16 +53275,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 735,
-                  "lineno": 735,
+                  "endlineno": 734,
+                  "lineno": 734,
                   "value": "The lines containing the source of this object."
                 },
-                "endlineno": 750,
+                "endlineno": 749,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 734,
+                "lineno": 733,
                 "members": {},
                 "name": "lines"
               },
@@ -53247,16 +53294,16 @@
                   "name": "LinesCollection"
                 },
                 "docstring": {
-                  "endlineno": 726,
-                  "lineno": 722,
+                  "endlineno": 725,
+                  "lineno": 721,
                   "value": "The lines collection attached to this object or its parents.\n\nRaises:\n    ValueError: When no modules collection can be found in the object or its parents."
                 },
-                "endlineno": 731,
+                "endlineno": 730,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 721,
+                "lineno": 720,
                 "members": {},
                 "name": "lines_collection"
               },
@@ -53315,16 +53362,16 @@
                   "name": "Module"
                 },
                 "docstring": {
-                  "endlineno": 588,
-                  "lineno": 575,
+                  "endlineno": 587,
+                  "lineno": 574,
                   "value": "The parent module of this object.\n\nExamples:\n    >>> import griffe\n    >>> markdown = griffe.load(\"markdown\")\n    >>> markdown[\"core.Markdown.references\"].module\n    Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))\n    >>> # The `module` of a module is itself.\n    >>> markdown[\"core\"].module\n    Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))\n\nRaises:\n    ValueError: When the object is not a module and does not have a parent."
                 },
-                "endlineno": 593,
+                "endlineno": 592,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 574,
+                "lineno": 573,
                 "members": {},
                 "name": "module"
               },
@@ -53334,16 +53381,16 @@
                   "name": "ModulesCollection"
                 },
                 "docstring": {
-                  "endlineno": 713,
-                  "lineno": 709,
+                  "endlineno": 712,
+                  "lineno": 708,
                   "value": "The modules collection attached to this object or its parents.\n\nRaises:\n    ValueError: When no modules collection can be found in the object or its parents."
                 },
-                "endlineno": 718,
+                "endlineno": 717,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 708,
+                "lineno": 707,
                 "members": {},
                 "name": "modules_collection"
               },
@@ -53376,16 +53423,16 @@
                   "name": "Module"
                 },
                 "docstring": {
-                  "endlineno": 604,
-                  "lineno": 597,
+                  "endlineno": 603,
+                  "lineno": 596,
                   "value": "The absolute top module (the package) of this object.\n\nExamples:\n    >>> import griffe\n    >>> markdown = griffe.load(\"markdown\")\n    >>> markdown[\"core.Markdown.references\"].package\n    Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py'))"
                 },
-                "endlineno": 608,
+                "endlineno": 607,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 596,
+                "lineno": 595,
                 "members": {},
                 "name": "package"
               },
@@ -53431,16 +53478,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 694,
-                  "lineno": 685,
+                  "endlineno": 693,
+                  "lineno": 684,
                   "value": "The dotted path of this object.\n\nOn regular objects (not aliases), the path is the canonical path.\n\nExamples:\n    >>> import griffe\n    >>> markdown = griffe.load(\"markdown\")\n    >>> markdown[\"core.Markdown.references\"].path\n    'markdown.core.Markdown.references'"
                 },
-                "endlineno": 695,
+                "endlineno": 694,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 684,
+                "lineno": 683,
                 "members": {},
                 "name": "path"
               },
@@ -53475,16 +53522,16 @@
                   "name": "Path"
                 },
                 "docstring": {
-                  "endlineno": 671,
-                  "lineno": 665,
+                  "endlineno": 670,
+                  "lineno": 664,
                   "value": "The file path where this object was defined, relative to the current working directory.\n\nIf this object's file path is not relative to the current working directory, return its absolute path.\n\nRaises:\n    ValueError: When the relative path could not be computed."
                 },
-                "endlineno": 681,
+                "endlineno": 680,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 664,
+                "lineno": 663,
                 "members": {},
                 "name": "relative_filepath"
               },
@@ -53494,30 +53541,30 @@
                   "name": "Path"
                 },
                 "docstring": {
-                  "endlineno": 628,
-                  "lineno": 624,
+                  "endlineno": 627,
+                  "lineno": 623,
                   "value": "The file path where this object was defined, relative to the top module path.\n\nRaises:\n    ValueError: When the relative path could not be computed."
                 },
-                "endlineno": 661,
+                "endlineno": 660,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 623,
+                "lineno": 622,
                 "members": {},
                 "name": "relative_package_filepath"
               },
               "resolve": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 768,
-                  "lineno": 758,
+                  "endlineno": 767,
+                  "lineno": 757,
                   "value": "Resolve a name within this object's and parents' scope.\n\nParameters:\n    name: The name to resolve.\n\nRaises:\n    NameResolutionError: When the name could not be resolved.\n\nReturns:\n    The resolved name."
                 },
-                "endlineno": 793,
+                "endlineno": 792,
                 "kind": "function",
                 "labels": [],
-                "lineno": 757,
+                "lineno": 756,
                 "members": {},
                 "name": "resolve",
                 "parameters": [
@@ -53571,16 +53618,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 754,
-                  "lineno": 754,
+                  "endlineno": 753,
+                  "lineno": 753,
                   "value": "The source code of this object."
                 },
-                "endlineno": 755,
+                "endlineno": 754,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 753,
+                "lineno": 752,
                 "members": {},
                 "name": "source"
               }
