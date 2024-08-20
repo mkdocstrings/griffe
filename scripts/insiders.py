@@ -81,7 +81,7 @@ class Goal:
         if self.features:
             for feature in self.features:
                 feature.render(rel_base)
-            print("")
+            print()
         else:
             print("There are no features in this goal for this project.  ")
             print(

@@ -14,7 +14,7 @@ import griffe
 
 
 @pytest.fixture(name="loader", scope="module")
-def _fixture_loader() -> griffe.GriffeLoader:  # noqa: PT005
+def _fixture_loader() -> griffe.GriffeLoader:
     loader = griffe.GriffeLoader()
     loader.load("griffe")
     loader.resolve_aliases()
@@ -22,12 +22,12 @@ def _fixture_loader() -> griffe.GriffeLoader:  # noqa: PT005
 
 
 @pytest.fixture(name="internal_api", scope="module")
-def _fixture_internal_api(loader: griffe.GriffeLoader) -> griffe.Module:  # noqa: PT005
+def _fixture_internal_api(loader: griffe.GriffeLoader) -> griffe.Module:
     return loader.modules_collection["_griffe"]
 
 
 @pytest.fixture(name="public_api", scope="module")
-def _fixture_public_api(loader: griffe.GriffeLoader) -> griffe.Module:  # noqa: PT005
+def _fixture_public_api(loader: griffe.GriffeLoader) -> griffe.Module:
     return loader.modules_collection["griffe"]
 
 
@@ -68,22 +68,22 @@ def _yield_public_objects(
 
 
 @pytest.fixture(name="modulelevel_internal_objects", scope="module")
-def _fixture_modulelevel_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:  # noqa: PT005
+def _fixture_modulelevel_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
     return list(_yield_public_objects(internal_api, modulelevel=True))
 
 
 @pytest.fixture(name="internal_objects", scope="module")
-def _fixture_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:  # noqa: PT005
+def _fixture_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
     return list(_yield_public_objects(internal_api, modulelevel=False, special=True))
 
 
 @pytest.fixture(name="public_objects", scope="module")
-def _fixture_public_objects(public_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:  # noqa: PT005
+def _fixture_public_objects(public_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
     return list(_yield_public_objects(public_api, modulelevel=False, inherited=True, special=True))
 
 
 @pytest.fixture(name="inventory", scope="module")
-def _fixture_inventory() -> Inventory:  # noqa: PT005
+def _fixture_inventory() -> Inventory:
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
         raise pytest.skip("The objects inventory is not available.")
@@ -107,10 +107,11 @@ def test_alias_proxies(internal_api: griffe.Module) -> None:
 
 def test_exposed_objects(modulelevel_internal_objects: list[griffe.Object | griffe.Alias]) -> None:
     """All public objects in the internal API are exposed under `griffe`."""
-    not_exposed = []
-    for obj in modulelevel_internal_objects:
-        if obj.name not in griffe.__all__ or not hasattr(griffe, obj.name):
-            not_exposed.append(obj.path)
+    not_exposed = [
+        obj.path
+        for obj in modulelevel_internal_objects
+        if obj.name not in griffe.__all__ or not hasattr(griffe, obj.name)
+    ]
     assert not not_exposed, "Objects not exposed:\n" + "\n".join(sorted(not_exposed))
 
 
@@ -143,16 +144,17 @@ def test_single_locations(public_api: griffe.Module) -> None:
 
 def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffe.Alias]) -> None:
     """All public objects are added to the inventory."""
-    not_in_inventory = []
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
     ignore_paths = {"griffe.DataclassesExtension.*"}
-    for obj in public_objects:
+    not_in_inventory = [
+        obj.path
+        for obj in public_objects
         if (
             obj.name not in ignore_names
             and not any(fnmatch(obj.path, pat) for pat in ignore_paths)
             and obj.path not in inventory
-        ):
-            not_in_inventory.append(obj.path)
+        )
+    ]
     msg = "Objects not in the inventory (try running `make run mkdocs build`):\n{paths}"
     assert not not_in_inventory, msg.format(paths="\n".join(sorted(not_in_inventory)))
 

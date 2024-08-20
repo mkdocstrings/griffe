@@ -451,7 +451,7 @@ logger = griffe.get_logger(__name__)
 
 class MyExtension(griffe.Extension):
     def on_module_members(self, mod: griffe.Module, **kwargs) -> None:
-        logger.info(f"Doing some work on module {mod.path} and its members")
+        logger.info("Doing some work on module %s and its members", mod.path)
 ```
 
 ### Full example

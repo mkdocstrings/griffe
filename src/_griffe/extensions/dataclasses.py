@@ -18,6 +18,7 @@ from _griffe.expressions import (
     ExprDict,
 )
 from _griffe.extensions.base import Extension
+from _griffe.logger import logger
 from _griffe.models import Attribute, Class, Decorator, Function, Module, Parameter, Parameters
 
 
@@ -170,6 +171,8 @@ def _set_dataclass_init(class_: Class) -> None:
     # If the class is not decorated with `@dataclass`, skip it.
     if not _dataclass_decorator(class_.decorators):
         return
+
+    logger.debug("Handling dataclass: %s", class_.path)
 
     # Add current class parameters.
     parameters.extend(_dataclass_parameters(class_))

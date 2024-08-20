@@ -318,7 +318,7 @@ class ModuleFinder:
         for subpath in self._filter_py_modules(path):
             rel_subpath = subpath.relative_to(path)
             if rel_subpath.parent in skip:
-                logger.debug(f"Skip {subpath}, another module took precedence")
+                logger.debug("Skip %s, another module took precedence", subpath)
                 continue
             py_file = rel_subpath.suffix == ".py"
             stem = rel_subpath.stem
@@ -397,7 +397,7 @@ class ModuleFinder:
             # Optimization: modify dirs in-place to exclude `__pycache__` directories.
             dirs[:] = [dir for dir in dirs if dir != "__pycache__"]
             for relfile in files:
-                if os.path.splitext(relfile)[1] in self.extensions_set:
+                if os.path.splitext(relfile)[1] in self.extensions_set:  # noqa: PTH122
                     yield Path(root, relfile)
 
     def _top_module_name(self, path: Path) -> str:
@@ -464,7 +464,7 @@ def _handle_pth_file(path: Path) -> list[_SP]:
             editable_module = path.parent / f"{line[len('import'):].lstrip()}.py"
             with suppress(UnhandledEditableModuleError):
                 return _handle_editable_module(editable_module)
-        if line and not line.startswith("#") and os.path.exists(line):
+        if line and not line.startswith("#") and os.path.exists(line):  # noqa: PTH110
             directories.append(_SP(Path(line)))
     return directories
 

@@ -77,10 +77,11 @@ def _set_license(metadata: PackageMetadata) -> None:
     license_name = license_field if isinstance(license_field, str) else " + ".join(license_field)
     check_classifiers = license_name in ("UNKNOWN", "Dual License", "") or license_name.count("\n")
     if check_classifiers:
-        license_names = []
-        for classifier in metadata["classifier"]:
-            if classifier.startswith("License ::"):
-                license_names.append(classifier.rsplit("::", 1)[1].strip())
+        license_names = [
+            classifier.rsplit("::", 1)[1].strip()
+            for classifier in metadata["classifier"]
+            if classifier.startswith("License ::")
+        ]
         license_name = " + ".join(license_names)
     metadata["license"] = license_name or "?"
 

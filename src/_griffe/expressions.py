@@ -970,9 +970,10 @@ def _build_constant(
                 )
             except SyntaxError:
                 logger.debug(
-                    f"Tried and failed to parse {node.value!r} as Python code, "
+                    "Tried and failed to parse %r as Python code, "
                     "falling back to using it as a string literal "
                     "(postponed annotations might help: https://peps.python.org/pep-0563/)",
+                    node.value,
                 )
             else:
                 return _build(parsed.body, parent, **kwargs)  # type: ignore[attr-defined]

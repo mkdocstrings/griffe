@@ -264,7 +264,7 @@ def clean() -> None:
         _shell(f"rm -rf {path}")
 
     cache_dirs = [".cache", ".pytest_cache", ".mypy_cache", ".ruff_cache", "__pycache__"]
-    for dirpath in Path(".").rglob("*"):
+    for dirpath in Path().rglob("*"):
         if any(dirpath.match(pattern) for pattern in cache_dirs) and not (
             dirpath.match(".venv") or dirpath.match(".venvs")
         ):

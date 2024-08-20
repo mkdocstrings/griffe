@@ -55,7 +55,7 @@ class _DebugInfo(argparse.Action):
 
 def _print_data(data: str, output_file: str | IO | None) -> None:
     if isinstance(output_file, str):
-        with open(output_file, "w") as fd:
+        with open(output_file, "w") as fd:  # noqa: PTH123
             print(data, file=fd)
     else:
         if output_file is None:
@@ -94,13 +94,13 @@ def _load_packages(
         if not package:
             logger.debug("Empty package name, continuing")
             continue
-        logger.info(f"Loading package {package}")
+        logger.info("Loading package %s", package)
         try:
             loader.load(package, try_relative_path=True, find_stubs_package=find_stubs_package)
         except ModuleNotFoundError as error:
-            logger.error(f"Could not find package {package}: {error}")
-        except ImportError as error:
-            logger.exception(f"Tried but could not import package {package}: {error}")
+            logger.error("Could not find package %s: %s", package, error)  # noqa: TRY400
+        except ImportError:
+            logger.exception("Tried but could not import package %s", package)
     logger.info("Finished loading packages")
 
     # Resolve aliases.
@@ -108,9 +108,9 @@ def _load_packages(
         logger.info("Starting alias resolution")
         unresolved, iterations = loader.resolve_aliases(implicit=resolve_implicit, external=resolve_external)
         if unresolved:
-            logger.info(f"{len(unresolved)} aliases were still unresolved after {iterations} iterations")
+            logger.info("%s aliases were still unresolved after %s iterations", len(unresolved), iterations)
         else:
-            logger.info(f"All aliases were resolved after {iterations} iterations")
+            logger.info("All aliases were resolved after %s iterations", iterations)
     return loader
 
 
@@ -379,8 +379,8 @@ def dump(
 
     try:
         loaded_extensions = load_extensions(*(extensions or ()))
-    except ExtensionError as error:
-        logger.exception(str(error))
+    except ExtensionError:
+        logger.exception("Could not load extensions")
         return 1
 
     # Load packages.
@@ -467,8 +467,8 @@ def check(
 
     try:
         loaded_extensions = load_extensions(*(extensions or ()))
-    except ExtensionError as error:
-        logger.exception(str(error))
+    except ExtensionError:
+        logger.exception("Could not load extensions")
         return 1
 
     # Load old and new version of the package.

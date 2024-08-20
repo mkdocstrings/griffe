@@ -218,7 +218,7 @@ def _read_parameters(
     warn_unknown_params: bool = True,
     **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
-    parameters = []
+    parameters: list[DocstringParameter] = []
     annotation: str | Expr | None
 
     items, new_offset = _read_block_items(docstring, offset=offset, **options)
@@ -274,8 +274,9 @@ def _read_parameters(
                                 break
                         docstring_warning(docstring, new_offset, message)
 
-        for name in names:
-            parameters.append(DocstringParameter(name, value=default, annotation=annotation, description=description))
+        parameters.extend(
+            DocstringParameter(name, value=default, annotation=annotation, description=description) for name in names
+        )
 
     return parameters, new_offset
 

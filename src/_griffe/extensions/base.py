@@ -320,7 +320,7 @@ builtin_extensions: set[str] = {
 
 
 def _load_extension_path(path: str) -> ModuleType:
-    module_name = os.path.basename(path).rsplit(".", 1)[0]
+    module_name = os.path.basename(path).rsplit(".", 1)[0]  # noqa: PTH119
     spec = spec_from_file_location(module_name, path)
     if not spec:
         raise ExtensionNotLoadedError(f"Could not import module from path '{path}'")
@@ -383,7 +383,7 @@ def _load_extension(
     if import_path in builtin_extensions:
         import_path = f"_griffe.extensions.{import_path}"
     # If the import path is a path to an existing file, load it.
-    elif os.path.exists(import_path):
+    elif os.path.exists(import_path):  # noqa: PTH110
         try:
             ext_object = _load_extension_path(import_path)
         except ImportError as error:
@@ -415,10 +415,9 @@ def _load_extension(
 
     # No class name was specified so we search all extension classes in the module,
     # instantiate each with the same options, and return them.
-    extensions = []
-    for obj in vars(ext_object).values():
-        if isclass(obj) and issubclass(obj, Extension) and obj is not Extension:
-            extensions.append(obj)
+    extensions = [
+        obj for obj in vars(ext_object).values() if isclass(obj) and issubclass(obj, Extension) and obj is not Extension
+    ]
     return [ext(**options) for ext in extensions]
 
 

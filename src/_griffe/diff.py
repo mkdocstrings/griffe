@@ -453,7 +453,7 @@ def _alias_incompatibilities(
         old_member = old_obj.target if old_obj.is_alias else old_obj  # type: ignore[union-attr]
         new_member = new_obj.target if new_obj.is_alias else new_obj  # type: ignore[union-attr]
     except AliasResolutionError:
-        logger.debug(f"API check: {old_obj.path} | {new_obj.path}: skip alias with unknown target")
+        logger.debug("API check: %s | %s: skip alias with unknown target", old_obj.path, new_obj.path)
         return
 
     yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
@@ -468,9 +468,9 @@ def _member_incompatibilities(
     seen_paths = set() if seen_paths is None else seen_paths
     for name, old_member in old_obj.all_members.items():
         if not old_member.is_public:
-            logger.debug(f"API check: {old_obj.path}.{name}: skip non-public object")
+            logger.debug("API check: %s.%s: skip non-public object", old_obj.path, name)
             continue
-        logger.debug(f"API check: {old_obj.path}.{name}")
+        logger.debug("API check: %s.%s", old_obj.path, name)
         try:
             new_member = new_obj.all_members[name]
         except KeyError:

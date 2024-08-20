@@ -52,6 +52,6 @@ def test_json_schema() -> None:
     module = loader.load("griffe")
     loader.resolve_aliases()
     data = json.loads(module.as_json(full=True))
-    with open("docs/schema.json") as f:
+    with open("docs/schema.json") as f:  # noqa: PTH123
         schema = json.load(f)
     validate(data, schema)

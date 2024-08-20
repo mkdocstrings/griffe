@@ -51,7 +51,7 @@ class ObjectNode:
             # which triggers the __getattr__ method of the object, which in
             # turn can raise various exceptions. Probably not just __getattr__.
             # See https://github.com/pawamoy/pytkdocs/issues/45
-            logger.debug(f"Could not unwrap {name}: {error!r}")
+            logger.debug("Could not unwrap %s: %r", name, error)
 
         # Unwrap cached properties (`inspect.unwrap` doesn't do that).
         if isinstance(obj, cached_property):

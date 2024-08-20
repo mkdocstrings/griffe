@@ -291,7 +291,7 @@ def test_scanning_package_and_module_with_same_names(namespace_package: bool) ->
         # so we pass `.` and actually enter the temporary directory.
         path = Path(tmp_package.name)
         filepath: Path | list[Path] = [path] if namespace_package else path
-        old = os.getcwd()
+        old = Path.cwd()
         os.chdir(tmp_package.path.parent)
         try:
             finder = ModuleFinder(search_paths=[])
@@ -309,10 +309,10 @@ def test_scanning_package_and_module_with_same_names(namespace_package: bool) ->
 def test_not_finding_namespace_package_twice() -> None:
     """Deduplicate paths when finding namespace packages."""
     with temporary_pypackage("pkg", ["pkg/mod.py", "mod/mod.py"], init=False, inits=False) as tmp_package:
-        old = os.getcwd()
+        old = Path.cwd()
         os.chdir(tmp_package.tmpdir)
         try:
-            finder = ModuleFinder(search_paths=[Path("."), tmp_package.tmpdir])
+            finder = ModuleFinder(search_paths=[Path(), tmp_package.tmpdir])
             found = finder.find_package("pkg")
         finally:
             os.chdir(old)

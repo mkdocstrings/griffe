@@ -564,10 +564,9 @@ class Object(ObjectAliasMixin):
         """
         if not predicates:
             return self.members
-        members: dict[str, Object | Alias] = {}
-        for name, member in self.members.items():
-            if all(predicate(member) for predicate in predicates):
-                members[name] = member
+        members: dict[str, Object | Alias] = {
+            name: member for name, member in self.members.items() if all(predicate(member) for predicate in predicates)
+        }
         return members
 
     @property
@@ -702,7 +701,7 @@ class Object(ObjectAliasMixin):
         """
         if self.parent is None:
             return self.name
-        return ".".join((self.parent.path, self.name))
+        return f"{self.parent.path}.{self.name}"
 
     @property
     def modules_collection(self) -> ModulesCollection:
@@ -962,7 +961,7 @@ class Alias(ObjectAliasMixin):
     @property
     def path(self) -> str:
         """The dotted path / import path of this object."""
-        return ".".join((self.parent.path, self.name))  # type: ignore[union-attr]  # we assume there's always a parent
+        return f"{self.parent.path}.{self.name}"  # type: ignore[union-attr]  # we assume there's always a parent
 
     @property
     def modules_collection(self) -> ModulesCollection:
@@ -1630,7 +1629,7 @@ class Class(Object):
                 if resolved_base.is_alias:
                     resolved_base = resolved_base.final_target
             except (AliasResolutionError, CyclicAliasError, KeyError):
-                logger.debug(f"Base class {base_path} is not loaded, or not static, it cannot be resolved")
+                logger.debug("Base class %s is not loaded, or not static, it cannot be resolved", base_path)
             else:
                 resolved_bases.append(resolved_base)
         return resolved_bases

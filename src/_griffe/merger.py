@@ -66,7 +66,10 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                 # as long as the stub and target are of the same kind.
                 if obj_member.kind is not stub_member.kind:
                     logger.debug(
-                        f"Cannot merge stubs for {obj_member.path}: kind {stub_member.kind.value} != {obj_member.kind.value}",
+                        "Cannot merge stubs for %s: kind %s != %s",
+                        obj_member.path,
+                        stub_member.kind.value,
+                        obj_member.kind.value,
                     )
                 elif obj_member.is_module:
                     _merge_module_stubs(obj_member, stub_member)  # type: ignore[arg-type]
@@ -94,7 +97,7 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
     Returns:
         The regular module.
     """
-    logger.debug(f"Trying to merge {mod1.filepath} and {mod2.filepath}")
+    logger.debug("Trying to merge %s and %s", mod1.filepath, mod2.filepath)
     if mod1.filepath.suffix == ".pyi":  # type: ignore[union-attr]
         stubs = mod1
         module = mod2

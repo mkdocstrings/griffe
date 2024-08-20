@@ -252,7 +252,7 @@ class Inspector:
                 # so we skip it here (no member, no alias, just skip it).
                 if child.is_module and target_path == f"{self.current.path}.{child.name}":
                     if not hasattr(child.obj, "__file__"):
-                        logger.debug(f"Module {target_path} is not discoverable on disk, inspecting right now")
+                        logger.debug("Module %s is not discoverable on disk, inspecting right now", target_path)
                         inspector = Inspector(
                             child.name,
                             filepath=None,

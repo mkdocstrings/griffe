@@ -27,7 +27,7 @@ def _render_call_graph(module: Path) -> None:
         # The subprocess dies with SIGSEGV in GHA...
         return
     if 'class="node"' not in svg:
-        print("")
+        print()
     else:
         print(f'<div class="interactiveSVG code2flow">{svg}</div>')
 

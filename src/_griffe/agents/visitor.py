@@ -253,25 +253,22 @@ class Visitor:
         self.extensions.call("on_class_node", node=node, agent=self)
 
         # handle decorators
-        decorators = []
+        decorators: list[Decorator] = []
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
-            for decorator_node in node.decorator_list:
-                decorators.append(
-                    Decorator(
-                        safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # type: ignore[arg-type]
-                        lineno=decorator_node.lineno,
-                        endlineno=decorator_node.end_lineno,
-                    ),
+            decorators.extend(
+                Decorator(
+                    safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # type: ignore[arg-type]
+                    lineno=decorator_node.lineno,
+                    endlineno=decorator_node.end_lineno,
                 )
+                for decorator_node in node.decorator_list
+            )
         else:
             lineno = node.lineno
 
         # handle base classes
-        bases = []
-        if node.bases:
-            for base in node.bases:
-                bases.append(safe_get_base_class(base, parent=self.current))
+        bases = [safe_get_base_class(base, parent=self.current) for base in node.bases]
 
         class_ = Class(
             name=node.name,

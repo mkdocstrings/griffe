@@ -106,7 +106,7 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     repo_name = Path(repo).resolve().name
     with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{ref}-") as tmp_dir:
         branch = f"griffe_{ref}"
-        location = os.path.join(tmp_dir, branch)
+        location = os.path.join(tmp_dir, branch)  # noqa: PTH118
         process = subprocess.run(
             ["git", "-C", repo, "worktree", "add", "-b", branch, location, ref],
             capture_output=True,

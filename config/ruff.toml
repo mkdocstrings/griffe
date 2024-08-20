@@ -5,26 +5,7 @@ line-length = 120
 exclude = [
     "tests/fixtures/*.py",
 ]
-select = [
-    "A", "ANN", "ARG",
-    "B", "BLE",
-    "C", "C4",
-    "COM",
-    "D", "DTZ",
-    "E", "ERA", "EXE",
-    "F", "FBT",
-    "G",
-    "I", "ICN", "INP", "ISC",
-    "N",
-    "PGH", "PIE", "PL", "PLC", "PLE", "PLR", "PLW", "PT", "PYI",
-    "Q",
-    "RUF", "RSE", "RET",
-    "S", "SIM", "SLF",
-    "T", "T10", "T20", "TCH", "TID", "TRY",
-    "UP",
-    "W",
-    "YTT",
-]
+select = ["ALL"]
 ignore = [
     "A001",  # Variable is shadowing a Python builtin
     "ANN101",  # Missing type annotation for self
@@ -36,15 +17,24 @@ ignore = [
     "D105",  # Missing docstring in magic method
     "D417",  # Missing argument description in the docstring
     "E501",  # Line too long
+    "EM",  # Raw strings in exceptions
+    "FIX001",  # Line contains FIXME
+    "FIX002",  # Line contains TODO
     "ERA001",  # Commented out code
-    "G004",  # Logging statement uses f-string
+    "PD",  # Pandas-related
+    "PERF203",  # Try-except block in for loop (zero-cost with Python 3.11+)
     "PLR0911",  # Too many return statements
     "PLR0912",  # Too many branches
     "PLR0913",  # Too many arguments to function call
     "PLR0915",  # Too many statements
-    "SLF001", # Private member accessed
+    "SLF001",  # Private member accessed
+    "TD001",  # Invalid TODO tag: FIXME
+    "TD002",  # Missing author in TODO
+    "TD003",  # Missing issue link on the line following this TODO
     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
+
+logger-objects = ["_griffe.logger.logger"]
 
 [lint.per-file-ignores]
 "src/*/__main__.py" = [
