@@ -16,7 +16,6 @@ from _griffe.exceptions import (
     AliasResolutionError,
     CyclicAliasError,
     LoadingError,
-    NameResolutionError,
     UnimportableModuleError,
 )
 from _griffe.expressions import ExprName
@@ -296,15 +295,6 @@ class GriffeLoader:
                         logger.warning("Unsupported item in %s.__all__: %s (use strings only)", module.path, export)
             # It's a string, simply add it to the current exports.
             else:
-                with suppress(NameResolutionError):
-                    if not module.resolve(export).startswith(module.path):
-                        # NOTE: This won't work for built-in attributes during inspection,
-                        # since their canonical module cannot be determined.
-                        logger.debug(
-                            "Name `%s` exported by module `%s` doesn't come from this module or from a submodule.",
-                            export,
-                            module.path,
-                        )
                 expanded.add(export)
         module.exports = expanded
 
