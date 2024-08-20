@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.1.1](https://github.com/mkdocstrings/griffe/releases/tag/1.1.1) - 2024-08-20
+
+<small>[Compare with 1.1.0](https://github.com/mkdocstrings/griffe/compare/1.1.0...1.1.1)</small>
+
+### Bug Fixes
+
+- Pre-emptively expand `__all__` values and wildcard imports before firing the `on_package_loaded` event ([21b3780](https://github.com/mkdocstrings/griffe/commit/21b3780b1a3f7ac62a3380089857a720b646dc4a) by Timothée Mazzucotelli).
+
 ## [1.1.0](https://github.com/mkdocstrings/griffe/releases/tag/1.1.0) - 2024-08-17
 
 <small>[Compare with 1.0.0](https://github.com/mkdocstrings/griffe/compare/1.0.0...1.1.0)</small>
