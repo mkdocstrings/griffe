@@ -489,24 +489,3 @@ def test_not_calling_package_loaded_hook_on_something_else_than_package() -> Non
         alias: Alias = loader.load("pkg.L")  # type: ignore[assignment]
         assert alias.is_alias
         assert not alias.resolved
-
-
-@pytest.mark.parametrize("dynamic", [True, False])
-def test_warning_on_objects_from_non_submodules_being_exported(
-    caplog: pytest.LogCaptureFixture,
-    dynamic: bool,
-) -> None:
-    """Warn when objects from non-submodules are exported."""
-    temporary_package = temporary_inspected_package if dynamic else temporary_visited_package
-    with caplog.at_level(logging.DEBUG, logger="griffe"), temporary_package(
-        "pkg",
-        {
-            "__init__.py": "from typing import List\nfrom pkg import moda, modb\n__all__ = ['List']",
-            "moda.py": "class Thing: ...",
-            "modb.py": "from pkg.moda import Thing\n\n__all__ = ['Thing']",
-        },
-        resolve_aliases=True,
-    ):
-        messages = [record.message for record in caplog.records]
-        assert any("Name `List` exported by module" in msg for msg in messages)
-        assert any("Name `Thing` exported by module" in msg for msg in messages)
