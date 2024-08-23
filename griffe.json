@@ -2812,8 +2812,8 @@
                     "bases": [],
                     "decorators": [
                       {
-                        "endlineno": 18,
-                        "lineno": 18,
+                        "endlineno": 20,
+                        "lineno": 20,
                         "value": {
                           "cls": "ExprName",
                           "name": "dataclass"
@@ -2821,16 +2821,16 @@
                       }
                     ],
                     "docstring": {
-                      "endlineno": 20,
-                      "lineno": 20,
-                      "value": "An intermediate class to store names."
+                      "endlineno": 25,
+                      "lineno": 22,
+                      "value": "Deprecated. An intermediate class to store names.\n\nThe [`get__all__`][griffe.get__all__] function now returns instances of [`ExprName`][griffe.ExprName] instead."
                     },
-                    "endlineno": 25,
+                    "endlineno": 30,
                     "kind": "class",
                     "labels": [
                       "dataclass"
                     ],
-                    "lineno": 18,
+                    "lineno": 20,
                     "members": {
                       "__init__": {
                         "decorators": [],
@@ -2854,8 +2854,8 @@
                             },
                             "default": null,
                             "docstring": {
-                              "endlineno": 23,
-                              "lineno": 23,
+                              "endlineno": 28,
+                              "lineno": 28,
                               "value": "The exported name."
                             },
                             "kind": "positional or keyword",
@@ -2868,8 +2868,8 @@
                             },
                             "default": null,
                             "docstring": {
-                              "endlineno": 25,
-                              "lineno": 25,
+                              "endlineno": 30,
+                              "lineno": 30,
                               "value": "The parent module."
                             },
                             "kind": "positional or keyword",
@@ -2884,16 +2884,16 @@
                           "name": "str"
                         },
                         "docstring": {
-                          "endlineno": 23,
-                          "lineno": 23,
+                          "endlineno": 28,
+                          "lineno": 28,
                           "value": "The exported name."
                         },
-                        "endlineno": 22,
+                        "endlineno": 27,
                         "kind": "attribute",
                         "labels": [
                           "instance-attribute"
                         ],
-                        "lineno": 22,
+                        "lineno": 27,
                         "members": {},
                         "name": "name"
                       },
@@ -2903,21 +2903,28 @@
                           "name": "Module"
                         },
                         "docstring": {
-                          "endlineno": 25,
-                          "lineno": 25,
+                          "endlineno": 30,
+                          "lineno": 30,
                           "value": "The parent module."
                         },
-                        "endlineno": 24,
+                        "endlineno": 29,
                         "kind": "attribute",
                         "labels": [
                           "instance-attribute"
                         ],
-                        "lineno": 24,
+                        "lineno": 29,
                         "members": {},
                         "name": "parent"
                       }
                     },
                     "name": "ExportedName"
+                  },
+                  "ExprName": {
+                    "endlineno": 12,
+                    "kind": "alias",
+                    "lineno": 12,
+                    "name": "ExprName",
+                    "target_path": "_griffe.expressions.ExprName"
                   },
                   "LogLevel": {
                     "endlineno": 11,
@@ -2927,9 +2934,9 @@
                     "target_path": "_griffe.enumerations.LogLevel"
                   },
                   "Module": {
-                    "endlineno": 15,
+                    "endlineno": 16,
                     "kind": "alias",
-                    "lineno": 15,
+                    "lineno": 16,
                     "name": "Module",
                     "target_path": "_griffe.models.Module"
                   },
@@ -2942,10 +2949,10 @@
                   },
                   "_extract": {
                     "decorators": [],
-                    "endlineno": 65,
+                    "endlineno": 75,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 64,
+                    "lineno": 74,
                     "members": {},
                     "name": "_extract",
                     "parameters": [
@@ -2992,17 +2999,74 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
+                        }
+                      }
+                    }
+                  },
+                  "_extract_attribute": {
+                    "decorators": [],
+                    "endlineno": 34,
+                    "kind": "function",
+                    "labels": [],
+                    "lineno": 33,
+                    "members": {},
+                    "name": "_extract_attribute",
+                    "parameters": [
+                      {
+                        "annotation": {
+                          "cls": "ExprAttribute",
+                          "values": [
+                            {
+                              "cls": "ExprName",
+                              "name": "ast"
+                            },
+                            {
+                              "cls": "ExprName",
+                              "name": "Attribute"
+                            }
+                          ]
+                        },
+                        "default": null,
+                        "kind": "positional or keyword",
+                        "name": "node"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "Module"
+                        },
+                        "default": null,
+                        "kind": "positional or keyword",
+                        "name": "parent"
+                      }
+                    ],
+                    "returns": {
+                      "cls": "ExprSubscript",
+                      "left": {
+                        "cls": "ExprName",
+                        "name": "list"
+                      },
+                      "slice": {
+                        "cls": "ExprBinOp",
+                        "left": {
+                          "cls": "ExprName",
+                          "name": "str"
+                        },
+                        "operator": "|",
+                        "right": {
+                          "cls": "ExprName",
+                          "name": "ExprName"
                         }
                       }
                     }
                   },
                   "_extract_binop": {
                     "decorators": [],
-                    "endlineno": 50,
+                    "endlineno": 40,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 47,
+                    "lineno": 37,
                     "members": {},
                     "name": "_extract_binop",
                     "parameters": [
@@ -3049,17 +3113,17 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
                   },
                   "_extract_constant": {
                     "decorators": [],
-                    "endlineno": 29,
+                    "endlineno": 44,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 28,
+                    "lineno": 43,
                     "members": {},
                     "name": "_extract_constant",
                     "parameters": [
@@ -3106,17 +3170,17 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
                   },
                   "_extract_name": {
                     "decorators": [],
-                    "endlineno": 33,
+                    "endlineno": 48,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 32,
+                    "lineno": 47,
                     "members": {},
                     "name": "_extract_name",
                     "parameters": [
@@ -3163,17 +3227,17 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
                   },
                   "_extract_sequence": {
                     "decorators": [],
-                    "endlineno": 44,
+                    "endlineno": 55,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 40,
+                    "lineno": 51,
                     "members": {},
                     "name": "_extract_sequence",
                     "parameters": [
@@ -3254,17 +3318,17 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
                   },
                   "_extract_starred": {
                     "decorators": [],
-                    "endlineno": 37,
+                    "endlineno": 59,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 36,
+                    "lineno": 58,
                     "members": {},
                     "name": "_extract_starred",
                     "parameters": [
@@ -3311,7 +3375,7 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
@@ -3367,7 +3431,7 @@
                                     "operator": "|",
                                     "right": {
                                       "cls": "ExprName",
-                                      "name": "ExportedName"
+                                      "name": "ExprName"
                                     }
                                   }
                                 }
@@ -3379,12 +3443,12 @@
                         "implicit": true
                       }
                     },
-                    "endlineno": 61,
+                    "endlineno": 71,
                     "kind": "attribute",
                     "labels": [
                       "module-attribute"
                     ],
-                    "lineno": 53,
+                    "lineno": 62,
                     "members": {},
                     "name": "_node_map",
                     "value": {
@@ -3399,33 +3463,33 @@
                             },
                             {
                               "cls": "ExprName",
+                              "name": "Attribute"
+                            }
+                          ]
+                        },
+                        {
+                          "cls": "ExprAttribute",
+                          "values": [
+                            {
+                              "cls": "ExprName",
+                              "name": "ast"
+                            },
+                            {
+                              "cls": "ExprName",
+                              "name": "BinOp"
+                            }
+                          ]
+                        },
+                        {
+                          "cls": "ExprAttribute",
+                          "values": [
+                            {
+                              "cls": "ExprName",
+                              "name": "ast"
+                            },
+                            {
+                              "cls": "ExprName",
                               "name": "Constant"
-                            }
-                          ]
-                        },
-                        {
-                          "cls": "ExprAttribute",
-                          "values": [
-                            {
-                              "cls": "ExprName",
-                              "name": "ast"
-                            },
-                            {
-                              "cls": "ExprName",
-                              "name": "Name"
-                            }
-                          ]
-                        },
-                        {
-                          "cls": "ExprAttribute",
-                          "values": [
-                            {
-                              "cls": "ExprName",
-                              "name": "ast"
-                            },
-                            {
-                              "cls": "ExprName",
-                              "name": "Starred"
                             }
                           ]
                         },
@@ -3451,7 +3515,33 @@
                             },
                             {
                               "cls": "ExprName",
+                              "name": "Name"
+                            }
+                          ]
+                        },
+                        {
+                          "cls": "ExprAttribute",
+                          "values": [
+                            {
+                              "cls": "ExprName",
+                              "name": "ast"
+                            },
+                            {
+                              "cls": "ExprName",
                               "name": "Set"
+                            }
+                          ]
+                        },
+                        {
+                          "cls": "ExprAttribute",
+                          "values": [
+                            {
+                              "cls": "ExprName",
+                              "name": "ast"
+                            },
+                            {
+                              "cls": "ExprName",
+                              "name": "Starred"
                             }
                           ]
                         },
@@ -3467,29 +3557,32 @@
                               "name": "Tuple"
                             }
                           ]
-                        },
-                        {
-                          "cls": "ExprAttribute",
-                          "values": [
-                            {
-                              "cls": "ExprName",
-                              "name": "ast"
-                            },
-                            {
-                              "cls": "ExprName",
-                              "name": "BinOp"
-                            }
-                          ]
                         }
                       ],
                       "values": [
+                        {
+                          "cls": "ExprName",
+                          "name": "_extract_attribute"
+                        },
+                        {
+                          "cls": "ExprName",
+                          "name": "_extract_binop"
+                        },
                         {
                           "cls": "ExprName",
                           "name": "_extract_constant"
                         },
                         {
                           "cls": "ExprName",
+                          "name": "_extract_sequence"
+                        },
+                        {
+                          "cls": "ExprName",
                           "name": "_extract_name"
+                        },
+                        {
+                          "cls": "ExprName",
+                          "name": "_extract_sequence"
                         },
                         {
                           "cls": "ExprName",
@@ -3498,18 +3591,6 @@
                         {
                           "cls": "ExprName",
                           "name": "_extract_sequence"
-                        },
-                        {
-                          "cls": "ExprName",
-                          "name": "_extract_sequence"
-                        },
-                        {
-                          "cls": "ExprName",
-                          "name": "_extract_sequence"
-                        },
-                        {
-                          "cls": "ExprName",
-                          "name": "_extract_binop"
                         }
                       ]
                     }
@@ -3538,14 +3619,14 @@
                   "get__all__": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 77,
-                      "lineno": 69,
+                      "endlineno": 87,
+                      "lineno": 79,
                       "value": "Get the values declared in `__all__`.\n\nParameters:\n    node: The assignment node.\n    parent: The parent module.\n\nReturns:\n    A set of names."
                     },
-                    "endlineno": 80,
+                    "endlineno": 90,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 68,
+                    "lineno": 78,
                     "members": {},
                     "name": "get__all__",
                     "parameters": [
@@ -3626,7 +3707,7 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
@@ -3639,23 +3720,23 @@
                     "target_path": "_griffe.agents.nodes.values.get_value"
                   },
                   "logger": {
-                    "endlineno": 12,
+                    "endlineno": 13,
                     "kind": "alias",
-                    "lineno": 12,
+                    "lineno": 13,
                     "name": "logger",
                     "target_path": "_griffe.logger.logger"
                   },
                   "safe_get__all__": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 97,
-                      "lineno": 88,
+                      "endlineno": 107,
+                      "lineno": 98,
                       "value": "Safely (no exception) extract values in `__all__`.\n\nParameters:\n    node: The `__all__` assignment node.\n    parent: The parent used to resolve the names.\n    log_level: Log level to use to log a message.\n\nReturns:\n    A list of strings or resovable names."
                     },
-                    "endlineno": 109,
+                    "endlineno": 119,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 83,
+                    "lineno": 93,
                     "members": {},
                     "name": "safe_get__all__",
                     "parameters": [
@@ -3757,7 +3838,7 @@
                         "operator": "|",
                         "right": {
                           "cls": "ExprName",
-                          "name": "ExportedName"
+                          "name": "ExprName"
                         }
                       }
                     }
@@ -56386,966 +56467,966 @@
   },
   "griffe": {
     "docstring": {
-      "endlineno": 23,
+      "endlineno": 161,
       "lineno": 5,
-      "value": "Griffe package.\n\nSignatures for entire Python programs.\nExtract the structure, the frame, the skeleton of your project,\nto generate API documentation or find breaking changes in your API.\n\nThe entirety of the public API is exposed here, in the top-level `griffe` module.\n\nAll messages written to standard output or error are logged using the `logging` module.\nOur logger's name is set to `\"griffe\"` and is public (you can rely on it).\nYou can obtain the logger from the standard `logging` module: `logging.getLogger(\"griffe\")`.\n\nIf you need to alter our logger, do so temporarily and restore it to its original state,\nfor example using [context managers][contextlib.contextmanager].\nActual logging messages are not part of the public API (they might change without notice).\n\nRaised exceptions throughout the package are part of the public API (you can rely on them).\nTheir actual messages are not part of the public API (they might change without notice)."
+      "value": "Griffe package.\n\nSignatures for entire Python programs.\nExtract the structure, the frame, the skeleton of your project,\nto generate API documentation or find breaking changes in your API.\n\nThe entirety of the public API is exposed here, in the top-level `griffe` module.\n\nAll messages written to standard output or error are logged using the `logging` module.\nOur logger's name is set to `\"griffe\"` and is public (you can rely on it).\nYou can obtain the logger from the standard `logging` module: `logging.getLogger(\"griffe\")`.\nActual logging messages are not part of the public API (they might change without notice).\n\nRaised exceptions throughout the package are part of the public API (you can rely on them).\nTheir actual messages are not part of the public API (they might change without notice).\n\nThe following paragraphs will help you discover the package's content.\n\n## CLI entrypoints\n\nGriffe provides a command-line interface (CLI) to interact with the package. The CLI entrypoints can be called from Python code.\n\n- [`griffe.main`][]: Run the main program.\n- [`griffe.check`][]: Check for API breaking changes in two versions of the same package.\n- [`griffe.dump`][]: Load packages data and dump it as JSON.\n\n## Loaders\n\nTo load API data, Griffe provides several high-level functions.\n\n- [`griffe.load`][]: Load and return a Griffe object.\n- [`griffe.load_git`][]: Load and return a module from a specific Git reference.\n- [`griffe.load_pypi`][]: Load and return a module from a specific package version downloaded using pip.\n\n## Models\n\nThe data loaded by Griffe is represented by several classes.\n\n- [`griffe.Module`][]: The class representing a Python module.\n- [`griffe.Class`][]: The class representing a Python class.\n- [`griffe.Function`][]: The class representing a Python function or method.\n- [`griffe.Attribute`][]: The class representing a Python attribute.\n- [`griffe.Alias`][]: This class represents an alias, or indirection, to an object declared in another module.\n\nAdditional classes are available to represent other concepts.\n\n- [`griffe.Decorator`][]: This class represents a decorator.\n- [`griffe.Parameters`][]: This class is a container for parameters.\n- [`griffe.Parameter`][]: This class represent a function parameter.\n\n## Agents\n\nGriffe is able to analyze code both statically and dynamically, using the following \"agents\".\nHowever most of the time you will only need to use the loaders above.\n\n- [`griffe.visit`][]: Parse and visit a module file.\n- [`griffe.inspect`][]: Inspect a module.\n\n## Serializers\n\nGriffe can serizalize data to dictionary and JSON.\n\n- [`griffe.Object.as_json`][griffe.Object.as_json]\n- [`griffe.Object.from_json`][griffe.Object.from_json]\n- [`griffe.JSONEncoder`][]: JSON encoder for Griffe objects.\n- [`griffe.json_decoder`][]: JSON decoder for Griffe objects.\n\n## API checks\n\nGriffe can compare two versions of the same package to find breaking changes.\n\n- [`griffe.find_breaking_changes`][]: Find breaking changes between two versions of the same API.\n- [`griffe.Breakage`][]: Breakage classes can explain what broke from a version to another.\n\n## Extensions\n\nGriffe supports extensions. You can create your own extension by subclassing the `griffe.Extension` class.\n\n- [`griffe.load_extensions`][]: Load configured extensions.\n- [`griffe.Extension`][]: Base class for Griffe extensions.\n\n## Docstrings\n\nGriffe can parse docstrings into structured data.\n\nMain class:\n\n- [`griffe.Docstring`][]: This class represents docstrings.\n\nDocstring section and element classes all start with `Docstring`.\n\nDocstring parsers:\n\n- [`griffe.parse`][]: Parse the docstring.\n- [`griffe.parse_auto`][]: Parse a docstring by automatically detecting the style it uses.\n- [`griffe.parse_google`][]: Parse a Google-style docstring.\n- [`griffe.parse_numpy`][]: Parse a Numpydoc-style docstring.\n- [`griffe.parse_sphinx`][]: Parse a Sphinx-style docstring.\n\n## Exceptions\n\nGriffe uses several exceptions to signal errors.\n\n- [`griffe.GriffeError`][]: The base exception for all Griffe errors.\n- [`griffe.LoadingError`][]: Exception for loading errors.\n- [`griffe.NameResolutionError`][]: Exception for names that cannot be resolved in a object scope.\n- [`griffe.UnhandledEditableModuleError`][]: Exception for unhandled editables modules, when searching modules.\n- [`griffe.UnimportableModuleError`][]: Exception for modules that cannot be imported.\n- [`griffe.AliasResolutionError`][]: Exception for aliases that cannot be resolved.\n- [`griffe.CyclicAliasError`][]: Exception raised when a cycle is detected in aliases.\n- [`griffe.LastNodeError`][]: Exception raised when trying to access a next or previous node.\n- [`griffe.RootNodeError`][]: Exception raised when trying to use siblings properties on a root node.\n- [`griffe.BuiltinModuleError`][]: Exception raised when trying to access the filepath of a builtin module.\n- [`griffe.ExtensionError`][]: Base class for errors raised by extensions.\n- [`griffe.ExtensionNotLoadedError`][]: Exception raised when an extension could not be loaded.\n- [`griffe.GitError`][]: Exception raised for errors related to Git.\n\n# Expressions\n\nGriffe stores snippets of code (attribute values, decorators, base class, type annotations) as expressions.\nExpressions are basically abstract syntax trees (AST) with a few differences compared to the nodes returned by [`ast`][].\nGriffe provides a few helpers to extract expressions from regular AST nodes.\n\n- [`griffe.get_annotation`][]: Get a type annotation as expression.\n- [`griffe.get_base_class`][]: Get a base class as expression.\n- [`griffe.get_condition`][]: Get a condition as expression.\n- [`griffe.get_expression`][]: Get an expression from an AST node.\n- [`griffe.safe_get_annotation`][]: Get a type annotation as expression, safely (returns `None` on error).\n- [`griffe.safe_get_base_class`][]: Get a base class as expression, safely (returns `None` on error).\n- [`griffe.safe_get_condition`][]: Get a condition as expression, safely (returns `None` on error).\n- [`griffe.safe_get_expression`][]: Get an expression from an AST node, safely (returns `None` on error).\n\nThe base class for expressions.\n\n- [`griffe.Expr`][]\n\nExpression classes all start with `Expr`.\n\n# Loggers\n\nIf you want to log messages from extensions, get a logger with `get_logger`.\nThe `logger` attribute is used by Griffe itself. You can use it to temporarily disable Griffe logging.\n\n- [`griffe.logger`][]: Our global logger, used throughout the library.\n- [`griffe.get_logger`][]: Create and return a new logger instance.\n\n# Helpers\n\nTo test your Griffe extensions, or to load API data from code in memory, Griffe provides the following helpers.\n\n- [`griffe.temporary_pyfile`][]: Create a Python file containing the given code in a temporary directory.\n- [`griffe.temporary_pypackage`][]: Create a package containing the given modules in a temporary directory.\n- [`griffe.temporary_visited_module`][]: Create and visit a temporary module with the given code.\n- [`griffe.temporary_visited_package`][]: Create and visit a temporary package.\n- [`griffe.temporary_inspected_module`][]: Create and inspect a temporary module with the given code.\n- [`griffe.temporary_inspected_package`][]: Create and inspect a temporary package."
     },
     "filepath": "/media/data/dev/insiders/griffe/src/griffe/__init__.py",
     "kind": "module",
     "labels": [],
     "members": {
       "Alias": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Alias",
         "target_path": "_griffe.models.Alias"
       },
       "AliasResolutionError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "AliasResolutionError",
         "target_path": "_griffe.exceptions.AliasResolutionError"
       },
       "Attribute": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Attribute",
         "target_path": "_griffe.models.Attribute"
       },
       "AttributeChangedTypeBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "AttributeChangedTypeBreakage",
         "target_path": "_griffe.diff.AttributeChangedTypeBreakage"
       },
       "AttributeChangedValueBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "AttributeChangedValueBreakage",
         "target_path": "_griffe.diff.AttributeChangedValueBreakage"
       },
       "Breakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "Breakage",
         "target_path": "_griffe.diff.Breakage"
       },
       "BreakageKind": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "BreakageKind",
         "target_path": "_griffe.enumerations.BreakageKind"
       },
       "BuiltinModuleError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "BuiltinModuleError",
         "target_path": "_griffe.exceptions.BuiltinModuleError"
       },
       "Class": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Class",
         "target_path": "_griffe.models.Class"
       },
       "ClassRemovedBaseBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ClassRemovedBaseBreakage",
         "target_path": "_griffe.diff.ClassRemovedBaseBreakage"
       },
       "CyclicAliasError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "CyclicAliasError",
         "target_path": "_griffe.exceptions.CyclicAliasError"
       },
       "DEFAULT_LOG_LEVEL": {
-        "endlineno": 48,
+        "endlineno": 188,
         "kind": "alias",
-        "lineno": 48,
+        "lineno": 188,
         "name": "DEFAULT_LOG_LEVEL",
         "target_path": "_griffe.cli.DEFAULT_LOG_LEVEL"
       },
       "DataclassesExtension": {
-        "endlineno": 185,
+        "endlineno": 325,
         "kind": "alias",
-        "lineno": 185,
+        "lineno": 325,
         "name": "DataclassesExtension",
         "target_path": "_griffe.extensions.dataclasses.DataclassesExtension"
       },
       "Decorator": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Decorator",
         "target_path": "_griffe.models.Decorator"
       },
       "DelMembersMixin": {
-        "endlineno": 198,
+        "endlineno": 338,
         "kind": "alias",
-        "lineno": 192,
+        "lineno": 332,
         "name": "DelMembersMixin",
         "target_path": "_griffe.mixins.DelMembersMixin"
       },
       "Docstring": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Docstring",
         "target_path": "_griffe.models.Docstring"
       },
       "DocstringAdmonition": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringAdmonition",
         "target_path": "_griffe.docstrings.models.DocstringAdmonition"
       },
       "DocstringAttribute": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringAttribute",
         "target_path": "_griffe.docstrings.models.DocstringAttribute"
       },
       "DocstringClass": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringClass",
         "target_path": "_griffe.docstrings.models.DocstringClass"
       },
       "DocstringDeprecated": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringDeprecated",
         "target_path": "_griffe.docstrings.models.DocstringDeprecated"
       },
       "DocstringDetectionMethod": {
-        "endlineno": 107,
+        "endlineno": 247,
         "kind": "alias",
-        "lineno": 100,
+        "lineno": 240,
         "name": "DocstringDetectionMethod",
         "target_path": "_griffe.docstrings.parsers.DocstringDetectionMethod"
       },
       "DocstringElement": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringElement",
         "target_path": "_griffe.docstrings.models.DocstringElement"
       },
       "DocstringFunction": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringFunction",
         "target_path": "_griffe.docstrings.models.DocstringFunction"
       },
       "DocstringModule": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringModule",
         "target_path": "_griffe.docstrings.models.DocstringModule"
       },
       "DocstringNamedElement": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringNamedElement",
         "target_path": "_griffe.docstrings.models.DocstringNamedElement"
       },
       "DocstringParameter": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringParameter",
         "target_path": "_griffe.docstrings.models.DocstringParameter"
       },
       "DocstringRaise": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringRaise",
         "target_path": "_griffe.docstrings.models.DocstringRaise"
       },
       "DocstringReceive": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringReceive",
         "target_path": "_griffe.docstrings.models.DocstringReceive"
       },
       "DocstringReturn": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringReturn",
         "target_path": "_griffe.docstrings.models.DocstringReturn"
       },
       "DocstringSection": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSection",
         "target_path": "_griffe.docstrings.models.DocstringSection"
       },
       "DocstringSectionAdmonition": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionAdmonition",
         "target_path": "_griffe.docstrings.models.DocstringSectionAdmonition"
       },
       "DocstringSectionAttributes": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionAttributes",
         "target_path": "_griffe.docstrings.models.DocstringSectionAttributes"
       },
       "DocstringSectionClasses": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionClasses",
         "target_path": "_griffe.docstrings.models.DocstringSectionClasses"
       },
       "DocstringSectionDeprecated": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionDeprecated",
         "target_path": "_griffe.docstrings.models.DocstringSectionDeprecated"
       },
       "DocstringSectionExamples": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionExamples",
         "target_path": "_griffe.docstrings.models.DocstringSectionExamples"
       },
       "DocstringSectionFunctions": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionFunctions",
         "target_path": "_griffe.docstrings.models.DocstringSectionFunctions"
       },
       "DocstringSectionKind": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "DocstringSectionKind",
         "target_path": "_griffe.enumerations.DocstringSectionKind"
       },
       "DocstringSectionModules": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionModules",
         "target_path": "_griffe.docstrings.models.DocstringSectionModules"
       },
       "DocstringSectionOtherParameters": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionOtherParameters",
         "target_path": "_griffe.docstrings.models.DocstringSectionOtherParameters"
       },
       "DocstringSectionParameters": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionParameters",
         "target_path": "_griffe.docstrings.models.DocstringSectionParameters"
       },
       "DocstringSectionRaises": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionRaises",
         "target_path": "_griffe.docstrings.models.DocstringSectionRaises"
       },
       "DocstringSectionReceives": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionReceives",
         "target_path": "_griffe.docstrings.models.DocstringSectionReceives"
       },
       "DocstringSectionReturns": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionReturns",
         "target_path": "_griffe.docstrings.models.DocstringSectionReturns"
       },
       "DocstringSectionText": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionText",
         "target_path": "_griffe.docstrings.models.DocstringSectionText"
       },
       "DocstringSectionWarns": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionWarns",
         "target_path": "_griffe.docstrings.models.DocstringSectionWarns"
       },
       "DocstringSectionYields": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringSectionYields",
         "target_path": "_griffe.docstrings.models.DocstringSectionYields"
       },
       "DocstringStyle": {
-        "endlineno": 107,
+        "endlineno": 247,
         "kind": "alias",
-        "lineno": 100,
+        "lineno": 240,
         "name": "DocstringStyle",
         "target_path": "_griffe.docstrings.parsers.DocstringStyle"
       },
       "DocstringWarn": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringWarn",
         "target_path": "_griffe.docstrings.models.DocstringWarn"
       },
       "DocstringYield": {
-        "endlineno": 98,
+        "endlineno": 238,
         "kind": "alias",
-        "lineno": 67,
+        "lineno": 207,
         "name": "DocstringYield",
         "target_path": "_griffe.docstrings.models.DocstringYield"
       },
       "ExplanationStyle": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "ExplanationStyle",
         "target_path": "_griffe.enumerations.ExplanationStyle"
       },
       "ExportedName": {
-        "endlineno": 41,
+        "endlineno": 181,
         "kind": "alias",
-        "lineno": 41,
+        "lineno": 181,
         "name": "ExportedName",
         "target_path": "_griffe.agents.nodes.exports.ExportedName"
       },
       "Expr": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "Expr",
         "target_path": "_griffe.expressions.Expr"
       },
       "ExprAttribute": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprAttribute",
         "target_path": "_griffe.expressions.ExprAttribute"
       },
       "ExprBinOp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprBinOp",
         "target_path": "_griffe.expressions.ExprBinOp"
       },
       "ExprBoolOp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprBoolOp",
         "target_path": "_griffe.expressions.ExprBoolOp"
       },
       "ExprCall": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprCall",
         "target_path": "_griffe.expressions.ExprCall"
       },
       "ExprCompare": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprCompare",
         "target_path": "_griffe.expressions.ExprCompare"
       },
       "ExprComprehension": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprComprehension",
         "target_path": "_griffe.expressions.ExprComprehension"
       },
       "ExprConstant": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprConstant",
         "target_path": "_griffe.expressions.ExprConstant"
       },
       "ExprDict": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprDict",
         "target_path": "_griffe.expressions.ExprDict"
       },
       "ExprDictComp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprDictComp",
         "target_path": "_griffe.expressions.ExprDictComp"
       },
       "ExprExtSlice": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprExtSlice",
         "target_path": "_griffe.expressions.ExprExtSlice"
       },
       "ExprFormatted": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprFormatted",
         "target_path": "_griffe.expressions.ExprFormatted"
       },
       "ExprGeneratorExp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprGeneratorExp",
         "target_path": "_griffe.expressions.ExprGeneratorExp"
       },
       "ExprIfExp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprIfExp",
         "target_path": "_griffe.expressions.ExprIfExp"
       },
       "ExprJoinedStr": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprJoinedStr",
         "target_path": "_griffe.expressions.ExprJoinedStr"
       },
       "ExprKeyword": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprKeyword",
         "target_path": "_griffe.expressions.ExprKeyword"
       },
       "ExprLambda": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprLambda",
         "target_path": "_griffe.expressions.ExprLambda"
       },
       "ExprList": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprList",
         "target_path": "_griffe.expressions.ExprList"
       },
       "ExprListComp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprListComp",
         "target_path": "_griffe.expressions.ExprListComp"
       },
       "ExprName": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprName",
         "target_path": "_griffe.expressions.ExprName"
       },
       "ExprNamedExpr": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprNamedExpr",
         "target_path": "_griffe.expressions.ExprNamedExpr"
       },
       "ExprParameter": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprParameter",
         "target_path": "_griffe.expressions.ExprParameter"
       },
       "ExprSet": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprSet",
         "target_path": "_griffe.expressions.ExprSet"
       },
       "ExprSetComp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprSetComp",
         "target_path": "_griffe.expressions.ExprSetComp"
       },
       "ExprSlice": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprSlice",
         "target_path": "_griffe.expressions.ExprSlice"
       },
       "ExprSubscript": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprSubscript",
         "target_path": "_griffe.expressions.ExprSubscript"
       },
       "ExprTuple": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprTuple",
         "target_path": "_griffe.expressions.ExprTuple"
       },
       "ExprUnaryOp": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprUnaryOp",
         "target_path": "_griffe.expressions.ExprUnaryOp"
       },
       "ExprVarKeyword": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprVarKeyword",
         "target_path": "_griffe.expressions.ExprVarKeyword"
       },
       "ExprVarPositional": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprVarPositional",
         "target_path": "_griffe.expressions.ExprVarPositional"
       },
       "ExprYield": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprYield",
         "target_path": "_griffe.expressions.ExprYield"
       },
       "ExprYieldFrom": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "ExprYieldFrom",
         "target_path": "_griffe.expressions.ExprYieldFrom"
       },
       "Extension": {
-        "endlineno": 184,
+        "endlineno": 324,
         "kind": "alias",
-        "lineno": 178,
+        "lineno": 318,
         "name": "Extension",
         "target_path": "_griffe.extensions.base.Extension"
       },
       "ExtensionError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "ExtensionError",
         "target_path": "_griffe.exceptions.ExtensionError"
       },
       "ExtensionNotLoadedError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "ExtensionNotLoadedError",
         "target_path": "_griffe.exceptions.ExtensionNotLoadedError"
       },
       "Extensions": {
-        "endlineno": 184,
+        "endlineno": 324,
         "kind": "alias",
-        "lineno": 178,
+        "lineno": 318,
         "name": "Extensions",
         "target_path": "_griffe.extensions.base.Extensions"
       },
       "Function": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Function",
         "target_path": "_griffe.models.Function"
       },
       "GetMembersMixin": {
-        "endlineno": 198,
+        "endlineno": 338,
         "kind": "alias",
-        "lineno": 192,
+        "lineno": 332,
         "name": "GetMembersMixin",
         "target_path": "_griffe.mixins.GetMembersMixin"
       },
       "GitError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "GitError",
         "target_path": "_griffe.exceptions.GitError"
       },
       "GriffeError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "GriffeError",
         "target_path": "_griffe.exceptions.GriffeError"
       },
       "GriffeLoader": {
-        "endlineno": 189,
+        "endlineno": 329,
         "kind": "alias",
-        "lineno": 189,
+        "lineno": 329,
         "name": "GriffeLoader",
         "target_path": "_griffe.loader.GriffeLoader"
       },
       "Inspector": {
-        "endlineno": 27,
+        "endlineno": 165,
         "kind": "alias",
-        "lineno": 27,
+        "lineno": 165,
         "name": "Inspector",
         "target_path": "_griffe.agents.inspector.Inspector"
       },
       "JSONEncoder": {
-        "endlineno": 110,
+        "endlineno": 250,
         "kind": "alias",
-        "lineno": 110,
+        "lineno": 250,
         "name": "JSONEncoder",
         "target_path": "_griffe.encoders.JSONEncoder"
       },
       "Kind": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "Kind",
         "target_path": "_griffe.enumerations.Kind"
       },
       "LastNodeError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "LastNodeError",
         "target_path": "_griffe.exceptions.LastNodeError"
       },
       "LinesCollection": {
-        "endlineno": 49,
+        "endlineno": 189,
         "kind": "alias",
-        "lineno": 49,
+        "lineno": 189,
         "name": "LinesCollection",
         "target_path": "_griffe.collections.LinesCollection"
       },
       "LoadableExtensionType": {
-        "endlineno": 184,
+        "endlineno": 324,
         "kind": "alias",
-        "lineno": 178,
+        "lineno": 318,
         "name": "LoadableExtensionType",
         "target_path": "_griffe.extensions.base.LoadableExtensionType"
       },
       "LoadingError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "LoadingError",
         "target_path": "_griffe.exceptions.LoadingError"
       },
       "LogLevel": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "LogLevel",
         "target_path": "_griffe.enumerations.LogLevel"
       },
       "Logger": {
-        "endlineno": 190,
+        "endlineno": 330,
         "kind": "alias",
-        "lineno": 190,
+        "lineno": 330,
         "name": "Logger",
         "target_path": "_griffe.logger.Logger"
       },
       "Module": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Module",
         "target_path": "_griffe.models.Module"
       },
       "ModuleFinder": {
-        "endlineno": 186,
+        "endlineno": 326,
         "kind": "alias",
-        "lineno": 186,
+        "lineno": 326,
         "name": "ModuleFinder",
         "target_path": "_griffe.finder.ModuleFinder"
       },
       "ModulesCollection": {
-        "endlineno": 49,
+        "endlineno": 189,
         "kind": "alias",
-        "lineno": 49,
+        "lineno": 189,
         "name": "ModulesCollection",
         "target_path": "_griffe.collections.ModulesCollection"
       },
       "NamePartsAndPathType": {
-        "endlineno": 186,
+        "endlineno": 326,
         "kind": "alias",
-        "lineno": 186,
+        "lineno": 326,
         "name": "NamePartsAndPathType",
         "target_path": "_griffe.finder.NamePartsAndPathType"
       },
       "NamePartsType": {
-        "endlineno": 186,
+        "endlineno": 326,
         "kind": "alias",
-        "lineno": 186,
+        "lineno": 326,
         "name": "NamePartsType",
         "target_path": "_griffe.finder.NamePartsType"
       },
       "NameResolutionError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "NameResolutionError",
         "target_path": "_griffe.exceptions.NameResolutionError"
       },
       "NamespacePackage": {
-        "endlineno": 186,
+        "endlineno": 326,
         "kind": "alias",
-        "lineno": 186,
+        "lineno": 326,
         "name": "NamespacePackage",
         "target_path": "_griffe.finder.NamespacePackage"
       },
       "Object": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Object",
         "target_path": "_griffe.models.Object"
       },
       "ObjectAliasMixin": {
-        "endlineno": 198,
+        "endlineno": 338,
         "kind": "alias",
-        "lineno": 192,
+        "lineno": 332,
         "name": "ObjectAliasMixin",
         "target_path": "_griffe.mixins.ObjectAliasMixin"
       },
       "ObjectChangedKindBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ObjectChangedKindBreakage",
         "target_path": "_griffe.diff.ObjectChangedKindBreakage"
       },
       "ObjectKind": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "ObjectKind",
         "target_path": "_griffe.enumerations.ObjectKind"
       },
       "ObjectNode": {
-        "endlineno": 44,
+        "endlineno": 184,
         "kind": "alias",
-        "lineno": 44,
+        "lineno": 184,
         "name": "ObjectNode",
         "target_path": "_griffe.agents.nodes.runtime.ObjectNode"
       },
       "ObjectRemovedBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ObjectRemovedBreakage",
         "target_path": "_griffe.diff.ObjectRemovedBreakage"
       },
       "Package": {
-        "endlineno": 186,
+        "endlineno": 326,
         "kind": "alias",
-        "lineno": 186,
+        "lineno": 326,
         "name": "Package",
         "target_path": "_griffe.finder.Package"
       },
       "Parameter": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Parameter",
         "target_path": "_griffe.models.Parameter"
       },
       "ParameterAddedRequiredBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ParameterAddedRequiredBreakage",
         "target_path": "_griffe.diff.ParameterAddedRequiredBreakage"
       },
       "ParameterChangedDefaultBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ParameterChangedDefaultBreakage",
         "target_path": "_griffe.diff.ParameterChangedDefaultBreakage"
       },
       "ParameterChangedKindBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ParameterChangedKindBreakage",
         "target_path": "_griffe.diff.ParameterChangedKindBreakage"
       },
       "ParameterChangedRequiredBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ParameterChangedRequiredBreakage",
         "target_path": "_griffe.diff.ParameterChangedRequiredBreakage"
       },
       "ParameterKind": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "ParameterKind",
         "target_path": "_griffe.enumerations.ParameterKind"
       },
       "ParameterMovedBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ParameterMovedBreakage",
         "target_path": "_griffe.diff.ParameterMovedBreakage"
       },
       "ParameterRemovedBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ParameterRemovedBreakage",
         "target_path": "_griffe.diff.ParameterRemovedBreakage"
       },
       "Parameters": {
-        "endlineno": 210,
+        "endlineno": 350,
         "kind": "alias",
-        "lineno": 199,
+        "lineno": 339,
         "name": "Parameters",
         "target_path": "_griffe.models.Parameters"
       },
       "ParametersType": {
-        "endlineno": 43,
+        "endlineno": 183,
         "kind": "alias",
-        "lineno": 43,
+        "lineno": 183,
         "name": "ParametersType",
         "target_path": "_griffe.agents.nodes.parameters.ParametersType"
       },
       "Parser": {
-        "endlineno": 120,
+        "endlineno": 260,
         "kind": "alias",
-        "lineno": 111,
+        "lineno": 251,
         "name": "Parser",
         "target_path": "_griffe.enumerations.Parser"
       },
       "ReturnChangedTypeBreakage": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "ReturnChangedTypeBreakage",
         "target_path": "_griffe.diff.ReturnChangedTypeBreakage"
       },
       "RootNodeError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "RootNodeError",
         "target_path": "_griffe.exceptions.RootNodeError"
       },
       "SerializationMixin": {
-        "endlineno": 198,
+        "endlineno": 338,
         "kind": "alias",
-        "lineno": 192,
+        "lineno": 332,
         "name": "SerializationMixin",
         "target_path": "_griffe.mixins.SerializationMixin"
       },
       "SetMembersMixin": {
-        "endlineno": 198,
+        "endlineno": 338,
         "kind": "alias",
-        "lineno": 192,
+        "lineno": 332,
         "name": "SetMembersMixin",
         "target_path": "_griffe.mixins.SetMembersMixin"
       },
       "Stats": {
-        "endlineno": 211,
+        "endlineno": 351,
         "kind": "alias",
-        "lineno": 211,
+        "lineno": 351,
         "name": "Stats",
         "target_path": "_griffe.stats.Stats"
       },
       "TmpPackage": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "TmpPackage",
         "target_path": "_griffe.tests.TmpPackage"
       },
       "UnhandledEditableModuleError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "UnhandledEditableModuleError",
         "target_path": "_griffe.exceptions.UnhandledEditableModuleError"
       },
       "UnimportableModuleError": {
-        "endlineno": 135,
+        "endlineno": 275,
         "kind": "alias",
-        "lineno": 121,
+        "lineno": 261,
         "name": "UnimportableModuleError",
         "target_path": "_griffe.exceptions.UnimportableModuleError"
       },
       "Visitor": {
-        "endlineno": 46,
+        "endlineno": 186,
         "kind": "alias",
-        "lineno": 46,
+        "lineno": 186,
         "name": "Visitor",
         "target_path": "_griffe.agents.visitor.Visitor"
       },
       "__all__": {
-        "endlineno": 437,
+        "endlineno": 578,
         "kind": "attribute",
         "labels": [
           "module-attribute"
         ],
-        "lineno": 229,
+        "lineno": 369,
         "members": {},
         "name": "__all__",
         "value": {
@@ -57584,513 +57665,513 @@
         "name": "__main__"
       },
       "annotations": {
-        "endlineno": 25,
+        "endlineno": 163,
         "kind": "alias",
-        "lineno": 25,
+        "lineno": 163,
         "name": "annotations",
         "target_path": "__future__.annotations"
       },
       "assert_git_repo": {
-        "endlineno": 187,
+        "endlineno": 327,
         "kind": "alias",
-        "lineno": 187,
+        "lineno": 327,
         "name": "assert_git_repo",
         "target_path": "_griffe.git.assert_git_repo"
       },
       "ast_children": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_children",
         "target_path": "_griffe.agents.nodes.ast.ast_children"
       },
       "ast_first_child": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_first_child",
         "target_path": "_griffe.agents.nodes.ast.ast_first_child"
       },
       "ast_kind": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_kind",
         "target_path": "_griffe.agents.nodes.ast.ast_kind"
       },
       "ast_last_child": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_last_child",
         "target_path": "_griffe.agents.nodes.ast.ast_last_child"
       },
       "ast_next": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_next",
         "target_path": "_griffe.agents.nodes.ast.ast_next"
       },
       "ast_next_siblings": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_next_siblings",
         "target_path": "_griffe.agents.nodes.ast.ast_next_siblings"
       },
       "ast_previous": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_previous",
         "target_path": "_griffe.agents.nodes.ast.ast_previous"
       },
       "ast_previous_siblings": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_previous_siblings",
         "target_path": "_griffe.agents.nodes.ast.ast_previous_siblings"
       },
       "ast_siblings": {
-        "endlineno": 39,
+        "endlineno": 177,
         "kind": "alias",
-        "lineno": 29,
+        "lineno": 167,
         "name": "ast_siblings",
         "target_path": "_griffe.agents.nodes.ast.ast_siblings"
       },
       "builtin_decorators": {
-        "endlineno": 46,
+        "endlineno": 186,
         "kind": "alias",
-        "lineno": 46,
+        "lineno": 186,
         "name": "builtin_decorators",
         "target_path": "_griffe.agents.visitor.builtin_decorators"
       },
       "builtin_extensions": {
-        "endlineno": 184,
+        "endlineno": 324,
         "kind": "alias",
-        "lineno": 178,
+        "lineno": 318,
         "name": "builtin_extensions",
         "target_path": "_griffe.extensions.base.builtin_extensions"
       },
       "c3linear_merge": {
-        "endlineno": 47,
+        "endlineno": 187,
         "kind": "alias",
-        "lineno": 47,
+        "lineno": 187,
         "name": "c3linear_merge",
         "target_path": "_griffe.c3linear.c3linear_merge"
       },
       "check": {
-        "endlineno": 48,
+        "endlineno": 188,
         "kind": "alias",
-        "lineno": 48,
+        "lineno": 188,
         "name": "check",
         "target_path": "_griffe.cli.check"
       },
       "docstring_warning": {
-        "endlineno": 109,
+        "endlineno": 249,
         "kind": "alias",
-        "lineno": 109,
+        "lineno": 249,
         "name": "docstring_warning",
         "target_path": "_griffe.docstrings.utils.docstring_warning"
       },
       "dump": {
-        "endlineno": 48,
+        "endlineno": 188,
         "kind": "alias",
-        "lineno": 48,
+        "lineno": 188,
         "name": "dump",
         "target_path": "_griffe.cli.dump"
       },
       "dynamic_import": {
-        "endlineno": 188,
+        "endlineno": 328,
         "kind": "alias",
-        "lineno": 188,
+        "lineno": 328,
         "name": "dynamic_import",
         "target_path": "_griffe.importer.dynamic_import"
       },
       "find_breaking_changes": {
-        "endlineno": 65,
+        "endlineno": 205,
         "kind": "alias",
-        "lineno": 50,
+        "lineno": 190,
         "name": "find_breaking_changes",
         "target_path": "_griffe.diff.find_breaking_changes"
       },
       "get__all__": {
-        "endlineno": 41,
+        "endlineno": 181,
         "kind": "alias",
-        "lineno": 41,
+        "lineno": 181,
         "name": "get__all__",
         "target_path": "_griffe.agents.nodes.exports.get__all__"
       },
       "get_annotation": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "get_annotation",
         "target_path": "_griffe.expressions.get_annotation"
       },
       "get_base_class": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "get_base_class",
         "target_path": "_griffe.expressions.get_base_class"
       },
       "get_condition": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "get_condition",
         "target_path": "_griffe.expressions.get_condition"
       },
       "get_docstring": {
-        "endlineno": 40,
+        "endlineno": 178,
         "kind": "alias",
-        "lineno": 40,
+        "lineno": 178,
         "name": "get_docstring",
         "target_path": "_griffe.agents.nodes.docstrings.get_docstring"
       },
       "get_expression": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "get_expression",
         "target_path": "_griffe.expressions.get_expression"
       },
       "get_instance_names": {
-        "endlineno": 28,
+        "endlineno": 166,
         "kind": "alias",
-        "lineno": 28,
+        "lineno": 166,
         "name": "get_instance_names",
         "target_path": "_griffe.agents.nodes.assignments.get_instance_names"
       },
       "get_latest_tag": {
-        "endlineno": 187,
+        "endlineno": 327,
         "kind": "alias",
-        "lineno": 187,
+        "lineno": 327,
         "name": "get_latest_tag",
         "target_path": "_griffe.git.get_latest_tag"
       },
       "get_logger": {
-        "endlineno": 190,
+        "endlineno": 330,
         "kind": "alias",
-        "lineno": 190,
+        "lineno": 330,
         "name": "get_logger",
         "target_path": "_griffe.logger.get_logger"
       },
       "get_name": {
-        "endlineno": 28,
+        "endlineno": 166,
         "kind": "alias",
-        "lineno": 28,
+        "lineno": 166,
         "name": "get_name",
         "target_path": "_griffe.agents.nodes.assignments.get_name"
       },
       "get_names": {
-        "endlineno": 28,
+        "endlineno": 166,
         "kind": "alias",
-        "lineno": 28,
+        "lineno": 166,
         "name": "get_names",
         "target_path": "_griffe.agents.nodes.assignments.get_names"
       },
       "get_parameters": {
-        "endlineno": 43,
+        "endlineno": 183,
         "kind": "alias",
-        "lineno": 43,
+        "lineno": 183,
         "name": "get_parameters",
         "target_path": "_griffe.agents.nodes.parameters.get_parameters"
       },
       "get_parser": {
-        "endlineno": 48,
+        "endlineno": 188,
         "kind": "alias",
-        "lineno": 48,
+        "lineno": 188,
         "name": "get_parser",
         "target_path": "_griffe.cli.get_parser"
       },
       "get_repo_root": {
-        "endlineno": 187,
+        "endlineno": 327,
         "kind": "alias",
-        "lineno": 187,
+        "lineno": 327,
         "name": "get_repo_root",
         "target_path": "_griffe.git.get_repo_root"
       },
       "get_value": {
-        "endlineno": 45,
+        "endlineno": 185,
         "kind": "alias",
-        "lineno": 45,
+        "lineno": 185,
         "name": "get_value",
         "target_path": "_griffe.agents.nodes.values.get_value"
       },
       "htree": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "htree",
         "target_path": "_griffe.tests.htree"
       },
       "infer_docstring_style": {
-        "endlineno": 107,
+        "endlineno": 247,
         "kind": "alias",
-        "lineno": 100,
+        "lineno": 240,
         "name": "infer_docstring_style",
         "target_path": "_griffe.docstrings.parsers.infer_docstring_style"
       },
       "inspect": {
-        "endlineno": 27,
+        "endlineno": 165,
         "kind": "alias",
-        "lineno": 27,
+        "lineno": 165,
         "name": "inspect",
         "target_path": "_griffe.agents.inspector.inspect"
       },
       "json_decoder": {
-        "endlineno": 110,
+        "endlineno": 250,
         "kind": "alias",
-        "lineno": 110,
+        "lineno": 250,
         "name": "json_decoder",
         "target_path": "_griffe.encoders.json_decoder"
       },
       "load": {
-        "endlineno": 189,
+        "endlineno": 329,
         "kind": "alias",
-        "lineno": 189,
+        "lineno": 329,
         "name": "load",
         "target_path": "_griffe.loader.load"
       },
       "load_extensions": {
-        "endlineno": 184,
+        "endlineno": 324,
         "kind": "alias",
-        "lineno": 178,
+        "lineno": 318,
         "name": "load_extensions",
         "target_path": "_griffe.extensions.base.load_extensions"
       },
       "load_git": {
-        "endlineno": 189,
+        "endlineno": 329,
         "kind": "alias",
-        "lineno": 189,
+        "lineno": 329,
         "name": "load_git",
         "target_path": "_griffe.loader.load_git"
       },
       "load_pypi": {
-        "endlineno": 189,
+        "endlineno": 329,
         "kind": "alias",
-        "lineno": 189,
+        "lineno": 329,
         "name": "load_pypi",
         "target_path": "_griffe.loader.load_pypi"
       },
       "logger": {
-        "endlineno": 190,
+        "endlineno": 330,
         "kind": "alias",
-        "lineno": 190,
+        "lineno": 330,
         "name": "logger",
         "target_path": "_griffe.logger.logger"
       },
       "main": {
-        "endlineno": 48,
+        "endlineno": 188,
         "kind": "alias",
-        "lineno": 48,
+        "lineno": 188,
         "name": "main",
         "target_path": "_griffe.cli.main"
       },
       "merge_stubs": {
-        "endlineno": 191,
+        "endlineno": 331,
         "kind": "alias",
-        "lineno": 191,
+        "lineno": 331,
         "name": "merge_stubs",
         "target_path": "_griffe.merger.merge_stubs"
       },
       "module_vtree": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "module_vtree",
         "target_path": "_griffe.tests.module_vtree"
       },
       "parse": {
-        "endlineno": 107,
+        "endlineno": 247,
         "kind": "alias",
-        "lineno": 100,
+        "lineno": 240,
         "name": "parse",
         "target_path": "_griffe.docstrings.parsers.parse"
       },
       "parse_auto": {
-        "endlineno": 107,
+        "endlineno": 247,
         "kind": "alias",
-        "lineno": 100,
+        "lineno": 240,
         "name": "parse_auto",
         "target_path": "_griffe.docstrings.parsers.parse_auto"
       },
       "parse_docstring_annotation": {
-        "endlineno": 109,
+        "endlineno": 249,
         "kind": "alias",
-        "lineno": 109,
+        "lineno": 249,
         "name": "parse_docstring_annotation",
         "target_path": "_griffe.docstrings.utils.parse_docstring_annotation"
       },
       "parse_google": {
-        "endlineno": 66,
+        "endlineno": 206,
         "kind": "alias",
-        "lineno": 66,
+        "lineno": 206,
         "name": "parse_google",
         "target_path": "_griffe.docstrings.google.parse_google"
       },
       "parse_numpy": {
-        "endlineno": 99,
+        "endlineno": 239,
         "kind": "alias",
-        "lineno": 99,
+        "lineno": 239,
         "name": "parse_numpy",
         "target_path": "_griffe.docstrings.numpy.parse_numpy"
       },
       "parse_sphinx": {
-        "endlineno": 108,
+        "endlineno": 248,
         "kind": "alias",
-        "lineno": 108,
+        "lineno": 248,
         "name": "parse_sphinx",
         "target_path": "_griffe.docstrings.sphinx.parse_sphinx"
       },
       "parsers": {
-        "endlineno": 107,
+        "endlineno": 247,
         "kind": "alias",
-        "lineno": 100,
+        "lineno": 240,
         "name": "parsers",
         "target_path": "_griffe.docstrings.parsers.parsers"
       },
       "patch_loggers": {
-        "endlineno": 190,
+        "endlineno": 330,
         "kind": "alias",
-        "lineno": 190,
+        "lineno": 330,
         "name": "patch_loggers",
         "target_path": "_griffe.logger.patch_loggers"
       },
       "relative_to_absolute": {
-        "endlineno": 42,
+        "endlineno": 182,
         "kind": "alias",
-        "lineno": 42,
+        "lineno": 182,
         "name": "relative_to_absolute",
         "target_path": "_griffe.agents.nodes.imports.relative_to_absolute"
       },
       "safe_get__all__": {
-        "endlineno": 41,
+        "endlineno": 181,
         "kind": "alias",
-        "lineno": 41,
+        "lineno": 181,
         "name": "safe_get__all__",
         "target_path": "_griffe.agents.nodes.exports.safe_get__all__"
       },
       "safe_get_annotation": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "safe_get_annotation",
         "target_path": "_griffe.expressions.safe_get_annotation"
       },
       "safe_get_base_class": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "safe_get_base_class",
         "target_path": "_griffe.expressions.safe_get_base_class"
       },
       "safe_get_condition": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "safe_get_condition",
         "target_path": "_griffe.expressions.safe_get_condition"
       },
       "safe_get_expression": {
-        "endlineno": 177,
+        "endlineno": 317,
         "kind": "alias",
-        "lineno": 136,
+        "lineno": 276,
         "name": "safe_get_expression",
         "target_path": "_griffe.expressions.safe_get_expression"
       },
       "safe_get_value": {
-        "endlineno": 45,
+        "endlineno": 185,
         "kind": "alias",
-        "lineno": 45,
+        "lineno": 185,
         "name": "safe_get_value",
         "target_path": "_griffe.agents.nodes.values.safe_get_value"
       },
       "stdlib_decorators": {
-        "endlineno": 46,
+        "endlineno": 186,
         "kind": "alias",
-        "lineno": 46,
+        "lineno": 186,
         "name": "stdlib_decorators",
         "target_path": "_griffe.agents.visitor.stdlib_decorators"
       },
       "sys_path": {
-        "endlineno": 188,
+        "endlineno": 328,
         "kind": "alias",
-        "lineno": 188,
+        "lineno": 328,
         "name": "sys_path",
         "target_path": "_griffe.importer.sys_path"
       },
       "temporary_inspected_module": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "temporary_inspected_module",
         "target_path": "_griffe.tests.temporary_inspected_module"
       },
       "temporary_inspected_package": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "temporary_inspected_package",
         "target_path": "_griffe.tests.temporary_inspected_package"
       },
       "temporary_pyfile": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "temporary_pyfile",
         "target_path": "_griffe.tests.temporary_pyfile"
       },
       "temporary_pypackage": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "temporary_pypackage",
         "target_path": "_griffe.tests.temporary_pypackage"
       },
       "temporary_visited_module": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "temporary_visited_module",
         "target_path": "_griffe.tests.temporary_visited_module"
       },
       "temporary_visited_package": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "temporary_visited_package",
         "target_path": "_griffe.tests.temporary_visited_package"
       },
       "tmp_worktree": {
-        "endlineno": 187,
+        "endlineno": 327,
         "kind": "alias",
-        "lineno": 187,
+        "lineno": 327,
         "name": "tmp_worktree",
         "target_path": "_griffe.git.tmp_worktree"
       },
       "typing_overload": {
-        "endlineno": 46,
+        "endlineno": 186,
         "kind": "alias",
-        "lineno": 46,
+        "lineno": 186,
         "name": "typing_overload",
         "target_path": "_griffe.agents.visitor.typing_overload"
       },
       "visit": {
-        "endlineno": 46,
+        "endlineno": 186,
         "kind": "alias",
-        "lineno": 46,
+        "lineno": 186,
         "name": "visit",
         "target_path": "_griffe.agents.visitor.visit"
       },
       "vtree": {
-        "endlineno": 223,
+        "endlineno": 363,
         "kind": "alias",
-        "lineno": 212,
+        "lineno": 352,
         "name": "vtree",
         "target_path": "_griffe.tests.vtree"
       }
