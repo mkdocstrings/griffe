@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.2.0](https://github.com/mkdocstrings/griffe/releases/tag/1.2.0) - 2024-08-23
+
+<small>[Compare with 1.1.1](https://github.com/mkdocstrings/griffe/compare/1.1.1...1.2.0)</small>
+
+### Features
+
+- Support attribute syntax in `__all__` values ([ad99794](https://github.com/mkdocstrings/griffe/commit/ad997940b136d315787fcb11c03fc70a40c7e8c2) by Timothée Mazzucotelli). [Issue-316](https://github.com/mkdocstrings/griffe/issues/316)
+
 ## [1.1.1](https://github.com/mkdocstrings/griffe/releases/tag/1.1.1) - 2024-08-20
 
 <small>[Compare with 1.1.0](https://github.com/mkdocstrings/griffe/compare/1.1.0...1.1.1)</small>
