@@ -360,3 +360,28 @@ def test_visiting_relative_imports_triggering_cyclic_aliases() -> None:
         assert "a" not in pkg.imports
         assert "b" in pkg["a"].imports
         assert pkg["a"].imports["b"] == "pkg.b"
+
+
+def test_parse_attributes_in__all__() -> None:
+    """Parse attributes in `__all__`."""
+    with temporary_visited_package(
+        "package",
+        {
+            "__init__.py": "from package import module\n__all__ = module.__all__",
+            "module.py": "def hello(): ...\n__all__ = ['hello']",
+        },
+    ) as package:
+        assert "hello" in package.exports  # type: ignore[operator]
+
+
+def test_parse_deep_attributes_in__all__() -> None:
+    """Parse deep attributes in `__all__`."""
+    with temporary_visited_package(
+        "package",
+        {
+            "__init__.py": "from package import subpackage\n__all__ = subpackage.module.__all__",
+            "subpackage/__init__.py": "from package.subpackage import module",
+            "subpackage/module.py": "def hello(): ...\n__all__ = ['hello']",
+        },
+    ) as package:
+        assert "hello" in package.exports  # type: ignore[operator]

@@ -58,8 +58,6 @@ Griffe is able to analyze code both statically and dynamically.
 
 ::: griffe.get_instance_names
 
-::: griffe.ExportedName
-
 ::: griffe.get__all__
 
 ::: griffe.safe_get__all__
@@ -71,3 +69,9 @@ Griffe is able to analyze code both statically and dynamically.
 ::: griffe.get_value
 
 ::: griffe.safe_get_value
+
+<!-- YORE: Bump 2: Remove line. -->
+## **Deprecated API**
+
+<!-- YORE: Bump 2: Remove line. -->
+::: griffe.ExportedName

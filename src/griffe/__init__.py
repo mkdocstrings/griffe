@@ -38,6 +38,8 @@ from _griffe.agents.nodes.ast import (
     ast_siblings,
 )
 from _griffe.agents.nodes.docstrings import get_docstring
+
+# YORE: Bump 2: Replace `ExportedName, ` with `` within line.
 from _griffe.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
 from _griffe.agents.nodes.imports import relative_to_absolute
 from _griffe.agents.nodes.parameters import ParametersType, get_parameters
@@ -277,6 +279,7 @@ __all__ = [
     "DocstringWarn",
     "DocstringYield",
     "ExplanationStyle",
+    # YORE: Bump 2: Remove line.
     "ExportedName",
     "Expr",
     "ExprAttribute",
