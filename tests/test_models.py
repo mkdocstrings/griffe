@@ -12,6 +12,7 @@ from griffe import (
     Docstring,
     GriffeLoader,
     Module,
+    NameResolutionError,
     module_vtree,
     temporary_inspected_module,
     temporary_pypackage,
@@ -443,3 +444,52 @@ def test_attributes_that_have_no_annotations() -> None:
         derived_params = [p.name for p in module["Derived"].parameters]
         assert base_params == ["self", "a"]
         assert derived_params == ["self", "a", "d"]
+
+
+def test_name_resolution() -> None:
+    """Name are correctly resolved in the scope of an object."""
+    code = """
+    module_attribute = 0
+
+    class Class:
+        import imported
+
+        class_attribute = 0
+
+        def __init__(self):
+            self.instance_attribute = 0
+
+        def method(self):
+            local_variable = 0
+    """
+    with temporary_visited_module(code) as module:
+        assert module.resolve("module_attribute") == "module.module_attribute"
+        assert module.resolve("Class") == "module.Class"
+
+        assert module["module_attribute"].resolve("Class") == "module.Class"
+        with pytest.raises(NameResolutionError):
+            module["module_attribute"].resolve("class_attribute")
+
+        assert module["Class"].resolve("module_attribute") == "module.module_attribute"
+        assert module["Class"].resolve("imported") == "imported"
+        assert module["Class"].resolve("class_attribute") == "module.Class.class_attribute"
+        assert module["Class"].resolve("instance_attribute") == "module.Class.instance_attribute"
+        assert module["Class"].resolve("method") == "module.Class.method"
+
+        assert module["Class.class_attribute"].resolve("module_attribute") == "module.module_attribute"
+        assert module["Class.class_attribute"].resolve("Class") == "module.Class"
+        assert module["Class.class_attribute"].resolve("imported") == "imported"
+        assert module["Class.class_attribute"].resolve("instance_attribute") == "module.Class.instance_attribute"
+        assert module["Class.class_attribute"].resolve("method") == "module.Class.method"
+
+        assert module["Class.instance_attribute"].resolve("module_attribute") == "module.module_attribute"
+        assert module["Class.instance_attribute"].resolve("Class") == "module.Class"
+        assert module["Class.instance_attribute"].resolve("imported") == "imported"
+        assert module["Class.instance_attribute"].resolve("class_attribute") == "module.Class.class_attribute"
+        assert module["Class.instance_attribute"].resolve("method") == "module.Class.method"
+
+        assert module["Class.method"].resolve("module_attribute") == "module.module_attribute"
+        assert module["Class.method"].resolve("Class") == "module.Class"
+        assert module["Class.method"].resolve("imported") == "imported"
+        assert module["Class.method"].resolve("class_attribute") == "module.Class.class_attribute"
+        assert module["Class.method"].resolve("instance_attribute") == "module.Class.instance_attribute"

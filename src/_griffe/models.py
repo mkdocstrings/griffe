@@ -774,17 +774,12 @@ class Object(ObjectAliasMixin):
                 return self.members[name].target_path  # type: ignore[union-attr]
             return self.members[name].path
 
-        # Name was imported.
-        if name in self.imports:
-            return self.imports[name]
-
         # Name unknown and no more parent scope.
         if self.parent is None:
             # could be a built-in
             raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
 
         # Name is parent, non-module object.
-        # NOTE: possibly useless branch.
         if name == self.parent.name and not self.parent.is_module:
             return self.parent.path
 
