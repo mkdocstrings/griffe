@@ -442,6 +442,76 @@ def _read_warns_section(
     return DocstringSectionWarns(warns), new_offset
 
 
+def _read_block_items_maybe(
+    docstring: Docstring,
+    *,
+    offset: int,
+    multiple: bool = True,
+    **options: Any,
+) -> _ItemsBlock:
+    if multiple:
+        return _read_block_items(docstring, offset=offset, **options)
+    one_block, new_offset = _read_block(docstring, offset=offset, **options)
+    return [(new_offset, one_block.splitlines())], new_offset
+
+
+def _get_name_annotation_description(
+    docstring: Docstring,
+    line_number: int,
+    lines: list[str],
+    *,
+    named: bool = True,
+) -> tuple[str | None, Any, str]:
+    if named:
+        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(lines[0])
+        if not match:
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get name, annotation or description from '{lines[0]}'",
+            )
+            raise ValueError
+        name, annotation, description = match.groups()
+    else:
+        name = None
+        if ":" in lines[0]:
+            annotation, description = lines[0].split(":", 1)
+            annotation = annotation.lstrip("(").rstrip(")")
+        else:
+            annotation = None
+            description = lines[0]
+    description = "\n".join([description.lstrip(), *lines[1:]]).rstrip("\n")
+    return name, annotation, description
+
+
+def _unpack_generators(
+    annotation: Any,
+    generator_pos: int,
+    *,
+    mandatory: bool = False,
+) -> Any:
+    if annotation.is_generator:
+        return annotation.slice.elements[generator_pos]
+    if annotation.is_iterator:
+        return annotation.slice
+    if mandatory:
+        raise ValueError(f"must be a Generator: {annotation!r}")
+    return annotation
+
+
+def _maybe_destructure_annotation(
+    annotation: Any,
+    index: int,
+    *,
+    multiple: bool = True,
+) -> Any:
+    if isinstance(annotation, ExprName):
+        return annotation
+    if multiple and annotation.is_tuple:
+        return annotation.slice.elements[index]
+    return annotation
+
+
 def _read_returns_section(
     docstring: Docstring,
     *,
@@ -452,32 +522,23 @@ def _read_returns_section(
 ) -> tuple[DocstringSectionReturns | None, int]:
     returns = []
 
-    if returns_multiple_items:
-        block, new_offset = _read_block_items(docstring, offset=offset, **options)
-    else:
-        one_block, new_offset = _read_block(docstring, offset=offset, **options)
-        block = [(new_offset, one_block.splitlines())]
+    block, new_offset = _read_block_items_maybe(
+        docstring,
+        offset=offset,
+        multiple=returns_multiple_items,
+        **options,
+    )
 
     for index, (line_number, return_lines) in enumerate(block):
-        if returns_named_value:
-            match = _RE_NAME_ANNOTATION_DESCRIPTION.match(return_lines[0])
-            if not match:
-                docstring_warning(
-                    docstring,
-                    line_number,
-                    f"Failed to get name, annotation or description from '{return_lines[0]}'",
-                )
-                continue
-            name, annotation, description = match.groups()
-        else:
-            name = None
-            if ":" in return_lines[0]:
-                annotation, description = return_lines[0].split(":", 1)
-                annotation = annotation.lstrip("(").rstrip(")")
-            else:
-                annotation = None
-                description = return_lines[0]
-        description = "\n".join([description.lstrip(), *return_lines[1:]]).rstrip("\n")
+        try:
+            name, annotation, description = _get_name_annotation_description(
+                docstring,
+                line_number,
+                return_lines,
+                named=returns_named_value,
+            )
+        except ValueError:
+            continue
 
         if annotation:
             # try to compile the annotation to transform it into an expression
@@ -491,22 +552,11 @@ def _read_returns_section(
                     annotation = docstring.parent.annotation  # type: ignore[union-attr]
                 else:
                     raise ValueError
-                if len(block) > 1:
-                    if annotation.is_tuple:
-                        annotation = annotation.slice.elements[index]
-                    else:
-                        if annotation.is_iterator:
-                            return_item = annotation.slice
-                        elif annotation.is_generator:
-                            return_item = annotation.slice.elements[2]
-                        else:
-                            raise ValueError
-                        if isinstance(return_item, ExprName):
-                            annotation = return_item
-                        elif return_item.is_tuple:
-                            annotation = return_item.slice.elements[index]
-                        else:
-                            annotation = return_item
+                annotation = _maybe_destructure_annotation(
+                    _unpack_generators(annotation, 2),
+                    index,
+                    multiple=returns_multiple_items,
+                )
 
             if annotation is None:
                 returned_value = repr(name) if name else index + 1
@@ -527,32 +577,23 @@ def _read_yields_section(
 ) -> tuple[DocstringSectionYields | None, int]:
     yields = []
 
-    if returns_multiple_items:
-        block, new_offset = _read_block_items(docstring, offset=offset, **options)
-    else:
-        one_block, new_offset = _read_block(docstring, offset=offset, **options)
-        block = [(new_offset, one_block.splitlines())]
+    block, new_offset = _read_block_items_maybe(
+        docstring,
+        offset=offset,
+        multiple=returns_multiple_items,
+        **options,
+    )
 
     for index, (line_number, yield_lines) in enumerate(block):
-        if returns_named_value:
-            match = _RE_NAME_ANNOTATION_DESCRIPTION.match(yield_lines[0])
-            if not match:
-                docstring_warning(
-                    docstring,
-                    line_number,
-                    f"Failed to get name, annotation or description from '{yield_lines[0]}'",
-                )
-                continue
-            name, annotation, description = match.groups()
-        else:
-            name = None
-            if ":" in yield_lines[0]:
-                annotation, description = yield_lines[0].split(":", 1)
-                annotation = annotation.lstrip("(").rstrip(")")
-            else:
-                annotation = None
-                description = yield_lines[0]
-        description = "\n".join([description.lstrip(), *yield_lines[1:]]).rstrip("\n")
+        try:
+            name, annotation, description = _get_name_annotation_description(
+                docstring,
+                line_number,
+                yield_lines,
+                named=returns_named_value,
+            )
+        except ValueError:
+            continue
 
         if annotation:
             # try to compile the annotation to transform it into an expression
@@ -561,18 +602,11 @@ def _read_yields_section(
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, IndexError, KeyError, ValueError):
                 annotation = docstring.parent.annotation  # type: ignore[union-attr]
-                if annotation.is_iterator:
-                    yield_item = annotation.slice
-                elif annotation.is_generator:
-                    yield_item = annotation.slice.elements[0]
-                else:
-                    raise ValueError
-                if isinstance(yield_item, ExprName):
-                    annotation = yield_item
-                elif yield_item.is_tuple and returns_multiple_items:
-                    annotation = yield_item.slice.elements[index]
-                else:
-                    annotation = yield_item
+                annotation = _maybe_destructure_annotation(
+                    _unpack_generators(annotation, 0, mandatory=True),
+                    index,
+                    multiple=returns_multiple_items,
+                )
 
             if annotation is None:
                 yielded_value = repr(name) if name else index + 1
@@ -593,32 +627,23 @@ def _read_receives_section(
 ) -> tuple[DocstringSectionReceives | None, int]:
     receives = []
 
-    if receives_multiple_items:
-        block, new_offset = _read_block_items(docstring, offset=offset, **options)
-    else:
-        one_block, new_offset = _read_block(docstring, offset=offset, **options)
-        block = [(new_offset, one_block.splitlines())]
+    block, new_offset = _read_block_items_maybe(
+        docstring,
+        offset=offset,
+        multiple=receives_multiple_items,
+        **options,
+    )
 
     for index, (line_number, receive_lines) in enumerate(block):
-        if receives_multiple_items:
-            match = _RE_NAME_ANNOTATION_DESCRIPTION.match(receive_lines[0])
-            if not match:
-                docstring_warning(
-                    docstring,
-                    line_number,
-                    f"Failed to get name, annotation or description from '{receive_lines[0]}'",
-                )
-                continue
-            name, annotation, description = match.groups()
-        else:
-            name = None
-            if ":" in receive_lines[0]:
-                annotation, description = receive_lines[0].split(":", 1)
-                annotation = annotation.lstrip("(").rstrip(")")
-            else:
-                annotation = None
-                description = receive_lines[0]
-        description = "\n".join([description.lstrip(), *receive_lines[1:]]).rstrip("\n")
+        try:
+            name, annotation, description = _get_name_annotation_description(
+                docstring,
+                line_number,
+                receive_lines,
+                named=receives_named_value,
+            )
+        except ValueError:
+            continue
 
         if annotation:
             # try to compile the annotation to transform it into an expression
@@ -627,14 +652,11 @@ def _read_receives_section(
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
                 annotation = docstring.parent.returns  # type: ignore[union-attr]
-                if annotation.is_generator:
-                    receives_item = annotation.slice.elements[1]
-                    if isinstance(receives_item, ExprName):
-                        annotation = receives_item
-                    elif receives_item.is_tuple and receives_multiple_items:
-                        annotation = receives_item.slice.elements[index]
-                    else:
-                        annotation = receives_item
+                annotation = _maybe_destructure_annotation(
+                    _unpack_generators(annotation, 1, mandatory=True),
+                    index,
+                    multiple=receives_multiple_items,
+                )
 
         if annotation is None:
             received_value = repr(name) if name else index + 1
