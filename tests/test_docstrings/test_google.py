@@ -11,8 +11,10 @@ from griffe import (
     Attribute,
     Class,
     Docstring,
+    DocstringReceive,
     DocstringReturn,
     DocstringSectionKind,
+    DocstringYield,
     ExprName,
     Function,
     Module,
@@ -1407,6 +1409,148 @@ def test_parse_returns_multiple_items(
         assert annotated.description == expected_.description
 
 
+@pytest.mark.parametrize(
+    ("returns_multiple_items", "return_annotation", "expected"),
+    [
+        (
+            False,
+            None,
+            [DocstringYield("", description="XXXXXXX\n    YYYYYYY\nZZZZZZZ", annotation=None)],
+        ),
+        (
+            False,
+            "Iterator[tuple[int, int]]",
+            [DocstringYield("", description="XXXXXXX\n    YYYYYYY\nZZZZZZZ", annotation="tuple[int, int]")],
+        ),
+        (
+            True,
+            None,
+            [
+                DocstringYield("", description="XXXXXXX\nYYYYYYY", annotation=None),
+                DocstringYield("", description="ZZZZZZZ", annotation=None),
+            ],
+        ),
+        (
+            True,
+            "Iterator[tuple[int,int]]",
+            [
+                DocstringYield("", description="XXXXXXX\nYYYYYYY", annotation="int"),
+                DocstringYield("", description="ZZZZZZZ", annotation="int"),
+            ],
+        ),
+    ],
+)
+def test_parse_yields_multiple_items(
+    parse_google: ParserType,
+    returns_multiple_items: bool,
+    return_annotation: str,
+    expected: list[DocstringYield],
+) -> None:
+    """Parse Returns section with and without multiple items.
+
+    Parameters:
+        parse_google: Fixture parser.
+        returns_multiple_items: Whether the `Returns` and `Yields` sections have multiple items.
+        return_annotation: The return annotation of the function to parse. Usually an `Iterator`.
+        expected: The expected value of the parsed Yields section.
+    """
+    parent = (
+        Function("func", returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))))
+        if return_annotation is not None
+        else None
+    )
+    docstring = """
+        Yields:
+            XXXXXXX
+                YYYYYYY
+            ZZZZZZZ
+    """
+    sections, _ = parse_google(
+        docstring,
+        returns_multiple_items=returns_multiple_items,
+        parent=parent,
+    )
+
+    assert len(sections) == 1
+    assert len(sections[0].value) == len(expected)
+
+    for annotated, expected_ in zip(sections[0].value, expected):
+        assert annotated.name == expected_.name
+        assert str(annotated.annotation) == str(expected_.annotation)
+        assert annotated.description == expected_.description
+
+
+@pytest.mark.parametrize(
+    ("receives_multiple_items", "return_annotation", "expected"),
+    [
+        (
+            False,
+            None,
+            [DocstringReceive("", description="XXXXXXX\n    YYYYYYY\nZZZZZZZ", annotation=None)],
+        ),
+        (
+            False,
+            "Generator[..., tuple[int, int], ...]",
+            [DocstringReceive("", description="XXXXXXX\n    YYYYYYY\nZZZZZZZ", annotation="tuple[int, int]")],
+        ),
+        (
+            True,
+            None,
+            [
+                DocstringReceive("", description="XXXXXXX\nYYYYYYY", annotation=None),
+                DocstringReceive("", description="ZZZZZZZ", annotation=None),
+            ],
+        ),
+        (
+            True,
+            "Generator[..., tuple[int, int], ...]",
+            [
+                DocstringReceive("", description="XXXXXXX\nYYYYYYY", annotation="int"),
+                DocstringReceive("", description="ZZZZZZZ", annotation="int"),
+            ],
+        ),
+    ],
+)
+def test_parse_receives_multiple_items(
+    parse_google: ParserType,
+    receives_multiple_items: bool,
+    return_annotation: str,
+    expected: list[DocstringReceive],
+) -> None:
+    """Parse Returns section with and without multiple items.
+
+    Parameters:
+        parse_google: Fixture parser.
+        receives_multiple_items: Whether the `Receives` section has multiple items.
+        return_annotation: The return annotation of the function to parse. Usually a `Generator`.
+        expected: The expected value of the parsed Receives section.
+    """
+    parent = (
+        Function("func", returns=parse_docstring_annotation(return_annotation, Docstring("d", parent=Function("f"))))
+        if return_annotation is not None
+        else None
+    )
+    docstring = """
+        Receives:
+            XXXXXXX
+                YYYYYYY
+            ZZZZZZZ
+    """
+    sections, _ = parse_google(
+        docstring,
+        receives_multiple_items=receives_multiple_items,
+        parent=parent,
+    )
+
+    assert len(sections) == 1
+    assert len(sections[0].value) == len(expected)
+
+    for annotated, expected_ in zip(sections[0].value, expected):
+        assert annotated.name == expected_.name
+        assert str(annotated.annotation) == str(expected_.annotation)
+        assert annotated.description == expected_.description
+
+
 def test_avoid_false_positive_sections(parse_google: ParserType) -> None:
     """Avoid false positive when parsing sections.
 
@@ -1482,6 +1626,80 @@ def test_type_in_returns_without_parentheses(parse_google: ParserType) -> None:
                 on several lines.
     """
     sections, warnings = parse_google(docstring, returns_named_value=False)
+    assert len(sections) == 2
+    assert len(warnings) == 1
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation is None
+    assert retval.description == "Description\non several lines."
+
+
+def test_type_in_yields_without_parentheses(parse_google: ParserType) -> None:
+    """Assert we can parse the return type without parentheses.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Yields:
+            int: Description
+                on several lines.
+    """
+    sections, warnings = parse_google(docstring, returns_named_value=False)
+    assert len(sections) == 2
+    assert not warnings
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation == "int"
+    assert retval.description == "Description\non several lines."
+
+    docstring = """
+        Summary.
+
+        Yields:
+            Description
+                on several lines.
+    """
+    sections, warnings = parse_google(docstring, returns_named_value=False)
+    assert len(sections) == 2
+    assert len(warnings) == 1
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation is None
+    assert retval.description == "Description\non several lines."
+
+
+def test_type_in_receives_without_parentheses(parse_google: ParserType) -> None:
+    """Assert we can parse the return type without parentheses.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Receives:
+            int: Description
+                on several lines.
+    """
+    sections, warnings = parse_google(docstring, receives_named_value=False)
+    assert len(sections) == 2
+    assert not warnings
+    retval = sections[1].value[0]
+    assert retval.name == ""
+    assert retval.annotation == "int"
+    assert retval.description == "Description\non several lines."
+
+    docstring = """
+        Summary.
+
+        Receives:
+            Description
+                on several lines.
+    """
+    sections, warnings = parse_google(docstring, receives_named_value=False)
     assert len(sections) == 2
     assert len(warnings) == 1
     retval = sections[1].value[0]

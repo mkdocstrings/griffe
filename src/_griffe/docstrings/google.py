@@ -521,22 +521,37 @@ def _read_yields_section(
     docstring: Docstring,
     *,
     offset: int,
+    returns_multiple_items: bool = True,
+    returns_named_value: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionYields | None, int]:
     yields = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    if returns_multiple_items:
+        block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    else:
+        one_block, new_offset = _read_block(docstring, offset=offset, **options)
+        block = [(new_offset, one_block.splitlines())]
 
     for index, (line_number, yield_lines) in enumerate(block):
-        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(yield_lines[0])
-        if not match:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get name, annotation or description from '{yield_lines[0]}'",
-            )
-            continue
-
-        name, annotation, description = match.groups()
+        if returns_named_value:
+            match = _RE_NAME_ANNOTATION_DESCRIPTION.match(yield_lines[0])
+            if not match:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get name, annotation or description from '{yield_lines[0]}'",
+                )
+                continue
+            name, annotation, description = match.groups()
+        else:
+            name = None
+            if ":" in yield_lines[0]:
+                annotation, description = yield_lines[0].split(":", 1)
+                annotation = annotation.lstrip("(").rstrip(")")
+            else:
+                annotation = None
+                description = yield_lines[0]
         description = "\n".join([description.lstrip(), *yield_lines[1:]]).rstrip("\n")
 
         if annotation:
@@ -554,7 +569,7 @@ def _read_yields_section(
                     raise ValueError
                 if isinstance(yield_item, ExprName):
                     annotation = yield_item
-                elif yield_item.is_tuple:
+                elif yield_item.is_tuple and returns_multiple_items:
                     annotation = yield_item.slice.elements[index]
                 else:
                     annotation = yield_item
@@ -572,22 +587,37 @@ def _read_receives_section(
     docstring: Docstring,
     *,
     offset: int,
+    receives_multiple_items: bool = True,
+    receives_named_value: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReceives | None, int]:
     receives = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    if receives_multiple_items:
+        block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    else:
+        one_block, new_offset = _read_block(docstring, offset=offset, **options)
+        block = [(new_offset, one_block.splitlines())]
 
     for index, (line_number, receive_lines) in enumerate(block):
-        match = _RE_NAME_ANNOTATION_DESCRIPTION.match(receive_lines[0])
-        if not match:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get name, annotation or description from '{receive_lines[0]}'",
-            )
-            continue
-
-        name, annotation, description = match.groups()
+        if receives_multiple_items:
+            match = _RE_NAME_ANNOTATION_DESCRIPTION.match(receive_lines[0])
+            if not match:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get name, annotation or description from '{receive_lines[0]}'",
+                )
+                continue
+            name, annotation, description = match.groups()
+        else:
+            name = None
+            if ":" in receive_lines[0]:
+                annotation, description = receive_lines[0].split(":", 1)
+                annotation = annotation.lstrip("(").rstrip(")")
+            else:
+                annotation = None
+                description = receive_lines[0]
         description = "\n".join([description.lstrip(), *receive_lines[1:]]).rstrip("\n")
 
         if annotation:
@@ -601,7 +631,7 @@ def _read_receives_section(
                     receives_item = annotation.slice.elements[1]
                     if isinstance(receives_item, ExprName):
                         annotation = receives_item
-                    elif receives_item.is_tuple:
+                    elif receives_item.is_tuple and receives_multiple_items:
                         annotation = receives_item.slice.elements[index]
                     else:
                         annotation = receives_item
