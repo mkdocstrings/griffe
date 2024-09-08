@@ -141,9 +141,14 @@ The parser accepts a few options:
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings.
     Useful when merging `__init__` docstring into class' docstrings
     with mkdocstrings-python's [`merge_init_into_class`][merge_init] option. Default: false.
-- `returns_multiple_items`: Parse [Returns sections](#google-section-returns) as if they contain multiple items.
+- `returns_multiple_items`: Parse [Returns sections](#google-section-returns) and [Yields sections](#google-section-yields) as if they contain multiple items.
     It means that continuation lines must be indented. Default: true.
-- `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#google-section-returns) as a name and description,
+- `returns_named_value`: Whether to parse `thing: Description` in [Returns sections](#google-section-returns) and [Yields sections](#google-section-yields) as a name and description,
+    rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
+    When false, parentheses are optional but the items cannot be named: `int: Description`. Default: true.
+- `receives_multiple_items`: Parse [Receives sections](#google-section-receives) as if they contain multiple items.
+    It means that continuation lines must be indented. Default: true.
+- `receives_named_value`: Whether to parse `thing: Description` in [Receives sections](#google-section-receives) as a name and description,
     rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
     When false, parentheses are optional but the items cannot be named: `int: Description`. Default: true.
 - `returns_type_in_property_summary`: Whether to parse the return type of properties
@@ -580,6 +585,22 @@ def foo() -> Iterator[tuple[float, float, datetime]]:
     ...
 ```
 
+You have to indent each continuation line when documenting yielded values,
+even if there's only one value yielded:
+
+```python
+"""Foo.
+
+Yields:
+    partial_result: Some partial result.
+        A longer description of details and other information
+        for this partial result.
+"""
+```
+
+If you don't want to indent continuation lines for the only yielded value,
+use the [`returns_multiple_items=False`](#google-options) parser option.
+
 Type annotations can as usual be overridden using types in parentheses
 in the docstring itself:
 
@@ -592,6 +613,22 @@ Yields:
     t (int): Timestamp.
 """
 ```
+
+If you want to specify the type without a name, you still have to wrap the type in parentheses:
+
+```python
+"""Foo.
+
+Yields:
+    (int): Absissa.
+    (int): Ordinate.
+    (int): Timestamp.
+"""
+```
+
+If you don't want to wrap the type in parentheses,
+use the [`returns_named_value=False`](#google-options) parser option.
+Setting it to false will disallow specifying a name.
 
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See previous tips for types in docstrings.
@@ -663,6 +700,22 @@ def foo() -> Generator[int, tuple[str, bool], None]:
     ...
 ```
 
+You have to indent each continuation line when documenting received values,
+even if there's only one value received:
+
+```python
+"""Foo.
+
+Receives:
+    data: Input data.
+        A longer description of what this data actually is,
+        and what it isn't.
+"""
+```
+
+If you don't want to indent continuation lines for the only received value,
+use the [`receives_multiple_items=False`](#google-options) parser option.
+
 Type annotations can as usual be overridden using types in parentheses
 in the docstring itself:
 
@@ -674,6 +727,21 @@ Receives:
     flag (int): Some flag.
 """
 ```
+
+If you want to specify the type without a name, you still have to wrap the type in parentheses:
+
+```python
+"""Foo.
+
+Receives:
+    (ModeEnum): Some mode.
+    (int): Some flag.
+"""
+```
+
+If you don't want to wrap the type in parentheses,
+use the [`receives_named_value=False`](#google-options) parser option.
+Setting it to false will disallow specifying a name.
 
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
 See previous tips for types in docstrings.
