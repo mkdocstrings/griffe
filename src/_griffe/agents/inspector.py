@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 from _griffe.agents.nodes.runtime import ObjectNode
 from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.enumerations import ObjectKind, ParameterKind
+from _griffe.enumerations import Kind, ParameterKind
 from _griffe.expressions import safe_get_annotation
 from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.importer import dynamic_import
@@ -483,18 +483,18 @@ class Inspector:
         self.extensions.call("on_node", node=node, agent=self)
         self.extensions.call("on_attribute_node", node=node, agent=self)
 
-        # TODO: to improve
+        # TODO: To improve.
         parent = self.current
         labels: set[str] = set()
 
-        if parent.kind is ObjectKind.MODULE:
+        if parent.kind is Kind.MODULE:
             labels.add("module")
-        elif parent.kind is ObjectKind.CLASS:
+        elif parent.kind is Kind.CLASS:
             labels.add("class")
-        elif parent.kind is ObjectKind.FUNCTION:
+        elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
-            parent = parent.parent
+            parent = parent.parent  # type: ignore[assignment]
             labels.add("instance")
 
         try:
