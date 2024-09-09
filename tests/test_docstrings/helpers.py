@@ -43,7 +43,7 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
     original_warn = parser_module.docstring_warning
 
     def parse(docstring: str, parent: ParentType | None = None, **parser_opts: Any) -> ParseResultType:
-        """Parse a doctring.
+        """Parse a docstring.
 
         Parameters:
             docstring: The docstring to parse.

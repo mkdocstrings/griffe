@@ -164,7 +164,7 @@ class ObjectKind(str, Enum):
     METHOD: str = "method"
     """Methods."""
     BUILTIN_METHOD: str = "builtin_method"
-    """Built-in ethods."""
+    """Built-in methods."""
     COROUTINE: str = "coroutine"
     """Coroutines"""
     FUNCTION: str = "function"

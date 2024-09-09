@@ -80,7 +80,7 @@ exptree(".")
 
 ## Boilerplate
 
-This project's skeleton (the file-tree shown above) is actually generated from a [Copier](https://copier.readthedocs.io/en/stable/) called [copier-uv](https://pawamoy.github.io/copier-uv/). When generating the project, Copier asks a series of questions (configuref by the template itself), and the answers are used to render the file and directory names, as well as the file contents. Copier also records answers in the `.copier-answers.yml` file, allowing to update the project with latest changes from the template while reusing previous answers.
+This project's skeleton (the file-tree shown above) is actually generated from a [Copier](https://copier.readthedocs.io/en/stable/) called [copier-uv](https://pawamoy.github.io/copier-uv/). When generating the project, Copier asks a series of questions (configured by the template itself), and the answers are used to render the file and directory names, as well as the file contents. Copier also records answers in the `.copier-answers.yml` file, allowing to update the project with latest changes from the template while reusing previous answers.
 
 To update the project (in order to apply latest changes from the template), we use the following command:
 

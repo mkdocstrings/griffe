@@ -2,7 +2,7 @@
 # First we declare data classes for each kind of expression, mostly corresponding to Python's AST nodes.
 # Then we declare builder methods, that iterate AST nodes and build the corresponding data classes,
 # and two utilities `_yield` and `_join` to help iterate on expressions.
-# Finally we declare a few public helpersto safely get expressions from AST nodes in different scenarios.
+# Finally we declare a few public helpers to safely get expressions from AST nodes in different scenarios.
 
 from __future__ import annotations
 

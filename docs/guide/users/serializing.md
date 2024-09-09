@@ -108,4 +108,4 @@ The other fields do not require explanations, except maybe for expressions. You 
 
 ## Next steps
 
-That's it! There is not much to say about serialization. We are interested in getting your feedback regarding serialization as we didn't see it being used a lot. Next you might be interested in learning 
+That's it! There is not much to say about serialization. We are interested in getting your feedback regarding serialization as we didn't see it being used a lot. Next you might be interested in learning how to [check](checking.md) or [extend](extending.md) your API data.

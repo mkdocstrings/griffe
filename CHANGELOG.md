@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Bug Fixes
 
-- Pre-emptively expand `__all__` values and wildcard imports before firing the `on_package_loaded` event ([21b3780](https://github.com/mkdocstrings/griffe/commit/21b3780b1a3f7ac62a3380089857a720b646dc4a) by Timothée Mazzucotelli).
+- Preemptively expand `__all__` values and wildcard imports before firing the `on_package_loaded` event ([21b3780](https://github.com/mkdocstrings/griffe/commit/21b3780b1a3f7ac62a3380089857a720b646dc4a) by Timothée Mazzucotelli).
 
 ## [1.1.0](https://github.com/mkdocstrings/griffe/releases/tag/1.1.0) - 2024-08-17
 
@@ -505,7 +505,7 @@ We are still in v0, so no major bump yet.
 
 ### Code Refactoring
 
-- Expose parser enuemration and parser functions in top-level module ([785baa0](https://github.com/mkdocstrings/griffe/commit/785baa04e3081fcf80756f56dddb95a00cb9b025) by Timothée Mazzucotelli).
+- Expose parser enumeration and parser functions in top-level module ([785baa0](https://github.com/mkdocstrings/griffe/commit/785baa04e3081fcf80756f56dddb95a00cb9b025) by Timothée Mazzucotelli).
 
 ## [0.36.8](https://github.com/mkdocstrings/griffe/releases/tag/0.36.8) - 2023-10-25
 
@@ -898,7 +898,7 @@ We are still in v0, so no major bump yet.
 
 ### Bug Fixes
 
-- Allow setting doctring through alias ([2e0f553](https://github.com/mkdocstrings/griffe/commit/2e0f553c833e9b27f5e97c05065c2127212b603c) by Timothée Mazzucotelli).
+- Allow setting docstring through alias ([2e0f553](https://github.com/mkdocstrings/griffe/commit/2e0f553c833e9b27f5e97c05065c2127212b603c) by Timothée Mazzucotelli).
 - Prevent infinite recursion ([0e98546](https://github.com/mkdocstrings/griffe/commit/0e985460eb886ea832e7cbefca261620eedb0e56) by Timothée Mazzucotelli). [Issue #155](https://github.com/mkdocstrings/griffe/issues/155)
 
 ## [0.27.2](https://github.com/mkdocstrings/griffe/releases/tag/0.27.2) - 2023-05-03
@@ -1264,7 +1264,7 @@ for the initial code allowing to compare two Griffe trees.
 ### Code Refactoring
 
 - Improve "unknown parameter" messages ([7191799](https://github.com/mkdocstrings/griffe/commit/7191799c92d7544f949c5870cf2867e02d406c57) by Timothée Mazzucotelli). [Issue mkdocstrings/mkdocstrings#423](https://github.com/mkdocstrings/mkdocstrings/issues/423)
-- Set property label on `@cached_property`-decoratored methods ([bc068f8](https://github.com/mkdocstrings/griffe/commit/bc068f8123c5bcbe4dce272dda52840019141b06) by Timothée Mazzucotelli).
+- Set property label on `@cached_property`-decorated methods ([bc068f8](https://github.com/mkdocstrings/griffe/commit/bc068f8123c5bcbe4dce272dda52840019141b06) by Timothée Mazzucotelli).
 
 ## [0.17.0](https://github.com/mkdocstrings/griffe/releases/tag/0.17.0) - 2022-04-15
 
@@ -1659,7 +1659,7 @@ for the initial code allowing to compare two Griffe trees.
 - Allow passing extensions config as JSON on the CLI ([9a7fa8b](https://github.com/mkdocstrings/griffe/commit/9a7fa8bd88752ca1a074179db3a4c7fc41b68028) by Timothée Mazzucotelli).
 - Support names for returns, yields and receives sections items ([1c5a4c9](https://github.com/mkdocstrings/griffe/commit/1c5a4c95738615ea9bb6a816c61d078e6133100a) by Timothée Mazzucotelli).
 - Store aliases on each object ([91ba643](https://github.com/mkdocstrings/griffe/commit/91ba643b3e8e9a8f56f3280f699a18b1e654ccd7) by Timothée Mazzucotelli).
-- Support in[tro]spection ([3a0587d](https://github.com/mkdocstrings/griffe/commit/3a0587dbf26f288722c7d27e781d0887c5cdf641) by Timothée Mazzucotelli).
+- Support inspection/introspection ([3a0587d](https://github.com/mkdocstrings/griffe/commit/3a0587dbf26f288722c7d27e781d0887c5cdf641) by Timothée Mazzucotelli).
 - Support multiple return, yield and receive items ([0fc70cb](https://github.com/mkdocstrings/griffe/commit/0fc70cbcc07c63ecf1026e4bef30bd0ff3f73958) by Timothée Mazzucotelli).
 - Support namespace packages ([2414c8e](https://github.com/mkdocstrings/griffe/commit/2414c8e24b7ba7ee986d95b301662fd06ef350fe) by Timothée Mazzucotelli).
 
