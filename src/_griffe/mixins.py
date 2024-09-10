@@ -8,7 +8,7 @@ from contextlib import suppress
 from typing import TYPE_CHECKING, Any, Sequence, TypeVar
 
 from _griffe.enumerations import Kind
-from _griffe.exceptions import AliasResolutionError, CyclicAliasError
+from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError
 from _griffe.merger import merge_stubs
 
 if TYPE_CHECKING:
@@ -204,7 +204,9 @@ class SetMembersMixin:
                     # try to merge them as one regular and one stubs module
                     # (implicit support for .pyi modules).
                     if member.is_module and not (member.is_namespace_package or member.is_namespace_subpackage):
-                        with suppress(AliasResolutionError, CyclicAliasError):
+                        # Accessing attributes of the value or member can trigger alias errors.
+                        # Accessing file paths can trigger a builtin module error.
+                        with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                             if value.is_module and value.filepath != member.filepath:
                                 with suppress(ValueError):
                                     value = merge_stubs(member, value)  # type: ignore[arg-type]
