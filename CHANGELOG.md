@@ -5,6 +5,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.3.0](https://github.com/mkdocstrings/griffe/releases/tag/1.3.0) - 2024-09-10
+
+<small>[Compare with 1.2.0](https://github.com/mkdocstrings/griffe/compare/1.2.0...1.3.0)</small>
+
+### Features
+
+- Allow deselecting multiple or named items in Yields and Receives ([344df50](https://github.com/mkdocstrings/griffe/commit/344df50bfcd66ddb3b8d8250babb40012cbc82b5) by Marco Ricci). [Issue-263](https://github.com/mkdocstrings/griffe/issues/263)
+
+### Bug Fixes
+
+- Don't crash when trying to merge stubs into a compiled module that has no file path ([e1f3ed9](https://github.com/mkdocstrings/griffe/commit/e1f3ed9ad3b046bf137de22f855bb392a76ca116) by Timothée Mazzucotelli). [Issue-323](https://github.com/mkdocstrings/griffe/issues/323)
+- Fix identity checks in inspector when handling attributes ([676cfb4](https://github.com/mkdocstrings/griffe/commit/676cfb44a79e059f74514ff492035e930ed57d03) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Extract common functionality in Returns, Yields and Receives parsing ([c768356](https://github.com/mkdocstrings/griffe/commit/c768356023e1fedaaa3f896b073457a0af34ce0e) by Marco Ricci). [Issue-263](https://github.com/mkdocstrings/griffe/issues/263)
+- Remove useless branch in `resolve` method, add tests for it ([aa6c7e4](https://github.com/mkdocstrings/griffe/commit/aa6c7e4d3dbabef384193b778cfdafd05a7102c2) by Timothée Mazzucotelli).
+
 ## [1.2.0](https://github.com/mkdocstrings/griffe/releases/tag/1.2.0) - 2024-08-23
 
 <small>[Compare with 1.1.1](https://github.com/mkdocstrings/griffe/compare/1.1.1...1.2.0)</small>
