@@ -601,9 +601,8 @@ def _read_yields_section(
         else:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, IndexError, KeyError, ValueError):
-                annotation = docstring.parent.annotation  # type: ignore[union-attr]
                 annotation = _maybe_destructure_annotation(
-                    _unpack_generators(annotation, 0, mandatory=True),
+                    _unpack_generators(docstring.parent.annotation, 0, mandatory=True),  # type: ignore[union-attr]
                     index,
                     multiple=returns_multiple_items,
                 )
@@ -650,10 +649,9 @@ def _read_receives_section(
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, KeyError):
-                annotation = docstring.parent.returns  # type: ignore[union-attr]
+            with suppress(AttributeError, IndexError, KeyError, ValueError):
                 annotation = _maybe_destructure_annotation(
-                    _unpack_generators(annotation, 1, mandatory=True),
+                    _unpack_generators(docstring.parent.returns, 1, mandatory=True),  # type: ignore[union-attr]
                     index,
                     multiple=receives_multiple_items,
                 )
