@@ -4,7 +4,18 @@ To work on the project, whether to update the code or the documentation, you wil
 
 ## Requirements
 
-The only requirement is that you have [Python](https://www.python.org/) and [uv](https://github.com/astral-sh/uv) installed and available on your command line path.
+The only requirement is that you have [Python](https://www.python.org/) and [uv](https://docs.astral.sh/uv/) installed and available on your command line path.
+
+=== ":simple-astral: official installer"
+    ```bash
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+
+    <div class="result" markdown>
+
+    See [Installation methods](https://docs.astral.sh/uv/getting-started/installation/).
+
+    </div>
 
 === ":simple-python: pip"
     ```bash
@@ -89,7 +100,7 @@ If you installed [direnv](https://direnv.net/):
 
 If you didn't install [direnv](https://direnv.net/), just run `./scripts/make setup`.
 
-The setup command will install all the Python dependencies required to work on the project. This command will create a virtual environment in the `.venv` folder, as well as one virtual environment per supported Python version in the `.venvs/3.x` folders. If you cloned the repository on the same file-system as [uv](https://github.com/astral-sh/uv)'s cache, everything will be hard linked from the cache, so don't worry about wasting disk space.
+The setup command will install all the Python dependencies required to work on the project. This command will create a virtual environment in the `.venv` folder, as well as one virtual environment per supported Python version in the `.venvs/3.x` folders. If you cloned the repository on the same file-system as [uv](https://docs.astral.sh/uv/)'s cache, everything will be hard linked from the cache, so don't worry about wasting disk space.
 
 ## IDE setup
 

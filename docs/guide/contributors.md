@@ -14,7 +14,7 @@ If you are unsure about what to contribute to, you can check out [our issue trac
 
 ## TL;DR
 
-- Install [Python](https://www.python.org/), [uv](https://github.com/astral-sh/uv) and [direnv](https://direnv.net/)
+- Install [Python](https://www.python.org/), [uv](https://docs.astral.sh/uv/) and [direnv](https://direnv.net/)
 - Fork, clone, and enter repository
 - Run `direnv allow` and `make setup`
 - Checkout a new branch

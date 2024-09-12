@@ -50,14 +50,14 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
 
     </div>
 
-=== ":simple-ruff: uv"
+=== ":simple-astral: uv"
     ```bash
-    uv pip install griffe
+    uv add griffe
     ```
 
     <div class="result" markdown>
 
-    [uv](https://github.com/astral-sh/uv) is an ultra fast dependency resolver and package installer, written in Rust.
+    [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
     </div>
 
@@ -93,5 +93,16 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     <div class="result" markdown>
 
     [Rye](https://rye.astral.sh/) is an all-in-one solution for Python project management, written in Rust.
+
+    </div>
+
+=== ":simple-astral: uv"
+    ```bash
+    uv tool install griffe
+    ```
+
+    <div class="result" markdown>
+
+    [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
     </div>
