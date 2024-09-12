@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.3.1](https://github.com/mkdocstrings/griffe/releases/tag/1.3.1) - 2024-09-12
+
+<small>[Compare with 1.3.0](https://github.com/mkdocstrings/griffe/compare/1.3.0...1.3.1)</small>
+
+### Bug Fixes
+
+- Refactor and fix logic again for fetching returns/yields/receives annotation from parents ([a80bd3c](https://github.com/mkdocstrings/griffe/commit/a80bd3c0cc14e5f6efc30fb804b8c7fccb319276) by Timothée Mazzucotelli). [Follow-up-of-PR-322](https://github.com/mkdocstrings/griffe/pull/322)
+- Don't crash on invalid signature given "Receives" section ([1cb8f51](https://github.com/mkdocstrings/griffe/commit/1cb8f514eae9d588cfce8cbbfc3ef84d7deadb47) by Timothée Mazzucotelli).
+
 ## [1.3.0](https://github.com/mkdocstrings/griffe/releases/tag/1.3.0) - 2024-09-10
 
 <small>[Compare with 1.2.0](https://github.com/mkdocstrings/griffe/compare/1.2.0...1.3.0)</small>
