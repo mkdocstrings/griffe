@@ -10,4 +10,3 @@
 ---
 
 This extension sets the docstring parser to `auto` for all the docstrings of external packages. Packages are considered "external" when their sources are found in a virtual environment instead of a folder under the current working directory. Setting their docstring style to `auto` is useful if you plan on rendering the docstring of these objects in your own documentation.
-

@@ -7,7 +7,6 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
 ## Install as a tool & library
 
 === ":simple-python: pip"
-
     ```bash
     pip install griffe
     ```
@@ -15,11 +14,10 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     <div class="result" markdown>
 
     [pip](https://pip.pypa.io/en/stable/) is the main package installer for Python.
-    
+
     </div>
 
 === ":simple-pdm: pdm"
-
     ```bash
     pdm add griffe
     ```
@@ -31,7 +29,6 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     </div>
 
 === ":simple-poetry: poetry"
-
     ```bash
     poetry add griffe
     ```
@@ -43,7 +40,6 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     </div>
 
 === ":simple-rye: rye"
-
     ```bash
     rye add griffe
     ```
@@ -55,7 +51,6 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     </div>
 
 === ":simple-ruff: uv"
-
     ```bash
     uv pip install griffe
     ```
@@ -69,7 +64,6 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
 ## Install as a tool only
 
 === ":simple-python: pip"
-
     ```bash
     pip install --user griffe
     ```
@@ -77,11 +71,10 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     <div class="result" markdown>
 
     [pip](https://pip.pypa.io/en/stable/) is the main package installer for Python.
-    
+
     </div>
 
 === ":simple-pipx: pipx"
-
     ```bash
     pipx install griffe
     ```
@@ -93,7 +86,6 @@ TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](in
     </div>
 
 === ":simple-rye: rye"
-
     ```bash
     rye install griffe
     ```

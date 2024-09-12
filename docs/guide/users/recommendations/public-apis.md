@@ -2,7 +2,7 @@
 
 ## What is a public API?
 
-An API (Application Programming Interface) in the interface with which developers interact with your software. In the Python world, the API of your Python library is the set of modules, classes, functions and other attributes made available to your users. For example, users can do `from your_library import this_function`: `this_function` is part of the API of `your_library`. 
+An API (Application Programming Interface) in the interface with which developers interact with your software. In the Python world, the API of your Python library is the set of modules, classes, functions and other attributes made available to your users. For example, users can do `from your_library import this_function`: `this_function` is part of the API of `your_library`.
 
 Often times, when you develop a library, you create functions, classes, etc. that are only useful internally: they are not supposed to be used by your users. Python does not provide easy or standard ways to actually *prevent* users from using internal objects, so, to distinguish public objects from internal objects, we usually rely on conventions, such as prefixing internal objects' names with an underscore, for example `def _internal_function(): ...`, to mark them as "internal".
 
@@ -16,7 +16,7 @@ Some components are obviously considered for the public API of a Python package:
 
 - the module layout
 - functions and their signature
-- classes (their inheritance), their methods and signatures 
+- classes (their inheritance), their methods and signatures
 - the rest of the module or class attributes, their types and values
 
 Other components *should* be considered for the public API but are often forgotten:
@@ -32,7 +32,7 @@ Other components *could* be considered for the public API, but usually require t
 
 Besides, logging and exception messages simply cannot allow deprecation periods where both old and new messages are emitted. Maintainers could however consider adding unique, short codes to message for more robust consumption.
 
-> GRIFFE: **Our recommendation — Communicate your public API, verify what you can.**
+> GRIFFE: **Our recommendation — Communicate your public API, verify what you can.**  
 > Take the time to learn about and use ways to declare, communicate and deprecate your public API. Your users will have an easier time using your library. On the maintenance side, you won't get bug reports for uses that are not supported, or you will be able to quickly close them by pointing at the documentation explaining what your public API is, or why something was deprecated, for how long, and how to upgrade.
 >
 > Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](../checking.md) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
@@ -123,7 +123,7 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 
 ---
 
-> GRIFFE: **Our recommendation — Use the underscore prefix and `__all__` conventions.**
+> GRIFFE: **Our recommendation — Use the underscore prefix and `__all__` conventions.**  
 > Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](python-code.md#avoid-wildcard-imports). We still provide the [`griffe-public-redundant-aliases`](https://mkdocstrings.github.io/griffe-public-redundant-aliases/) and [`griffe-public-wildcard-imports`](https://mkdocstrings.github.io/griffe-public-wildcard-imports/) extensions for those who would still like to rely on these conventions.
 >
 > Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
@@ -132,7 +132,7 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 >
 > > Even with `__all__` set appropriately, internal interfaces (packages, modules, classes, functions, attributes or other names) should still be prefixed with a single leading underscore.
 
-> TIP: **Concatenating `__all__` for easier maintenance of `__init__` modules.**
+> TIP: **Concatenating `__all__` for easier maintenance of `__init__` modules.**  
 > If you worry about maintenance of your `__init__` modules, know that you can very well concatenate `__all__` lists from submodules into the current one:
 >
 > ```tree
@@ -279,15 +279,15 @@ If you don't want to bother prefixing every module with an underscore, you could
 
 Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python, so we are happy with the result.
 
-WARNING: **Top-level-only exposition doesn't play well with large packages.**
+WARNING: **Top-level-only exposition doesn't play well with large packages.**  
 The *fully* hidden layout plays well with small to medium projects. If you maintain a large project, it can become very impractical for both you and your users to expose every single object in the top-level `__init__` module. For large projects, it therefore makes sense to keep at least one or two additional public layers in your module layout. Sometimes packages also implement many variations of the same abstract class, using the same name in many different modules: in these cases, the modules are effective namespaces that could be kept in the public API.
 
-GRIFFE: **Our recommendation — Hide your module layout early.**
+GRIFFE: **Our recommendation — Hide your module layout early.**  
 Start hiding your module layout early! It is much easier to (partially) expose the layout later than to hide it after your users started relying on it. It will also make code reorganizations much easier.
 
 ## Unique names and public locations
 
-Whether or not you are planning to hide your module layout, as recommended in the previous section, one thing that will help both you and your users is making sure your object names are unique across your code base. Having unique names ensures that you can expose everything at the top-level module of your package without having to alias objects (using `from ... import x as y`). It will also ensure that your users don't end up importing multiple different objects with the same name, again having to alias them. Finally, it forces you to use meaningful names for your objects, names that don't need the context of the above namespaces (generally modules) to understand what they mean. For example, in Griffe we previously exposed `griffe.docstrings.utils.warning`. Exposing `warning` at the top-level made it very vague: what does it do? So we renamed it `docstring_warning`, which is much clearer. 
+Whether or not you are planning to hide your module layout, as recommended in the previous section, one thing that will help both you and your users is making sure your object names are unique across your code base. Having unique names ensures that you can expose everything at the top-level module of your package without having to alias objects (using `from ... import x as y`). It will also ensure that your users don't end up importing multiple different objects with the same name, again having to alias them. Finally, it forces you to use meaningful names for your objects, names that don't need the context of the above namespaces (generally modules) to understand what they mean. For example, in Griffe we previously exposed `griffe.docstrings.utils.warning`. Exposing `warning` at the top-level made it very vague: what does it do? So we renamed it `docstring_warning`, which is much clearer.
 
 Ensuring unique names across a code base is sometimes not feasible, or not desirable; in this case, try to use namespacing while still hiding the module layout the best you can.
 
@@ -300,7 +300,6 @@ my_package/
 ```
 
 === "Multiple locations, bad"
-
     Here the `Hello` class is exposed in both `my_package.module` and `my_package`.
 
     ```python title="my_package/module.py"
@@ -317,7 +316,6 @@ my_package/
     ```
 
 === "Single location, good"
-
     Here the `Hello` class is only exposed in `my_package.module`.
 
     ```python title="my_package/module.py"
@@ -334,7 +332,6 @@ my_package/
     If you wanted to expose it in the top-level `__init__` module instead, then you should hide your module layout by making `module.py` private, renaming it `_module.py`, or using other hiding techniques such as described in the [Module layout](#module-layout) section.
 
 === "Single location (top-level), good"
-
     Here the `Hello` class is only exposed in `package`.
 
     ```python title="my_package/module.py"
@@ -352,7 +349,7 @@ my_package/
 
     It feels weird to "unpublicize" the `Hello` class in `my_package.module` by declaring an empty `__all__`, so maybe the module should be made private instead: `my_package/_module.py`. See other hiding techniques in the [Module layout](#module-layout) section.
 
-GRIFFE: **Our recommendation — Expose public objects in single locations, use meaningful names.**
+GRIFFE: **Our recommendation — Expose public objects in single locations, use meaningful names.**  
 We recommend making sure that each public object is exposed in a single location. Ensuring unique names might be more tricky depending on the code base, so we recommend ensuring meaningful names at least, not requiring the context of modules above to understand what the objects are for.
 
 ## Logger names
@@ -375,14 +372,14 @@ Could we emit a deprecation warning when users obtain the logger with the old na
 
 Since it is essentially impossible to deprecate a logger name, we recommend to avoid using `__name__` as logger name, at the very least in private modules.
 
-GRIFFE: **Our recommendation — Use a single logger.**
+GRIFFE: **Our recommendation — Use a single logger.**  
 Absolutely avoid using `__name__` as logger name in private modules. If your module layout is hidden, or does not matter for logging purposes, just use the same logger everywhere by using your package name as logger name. Example: `logger = logging.getLogger("griffe")`. Show your users how to temporarily alter your global logger (typically with context managers) so that altering subloggers becomes unnecessary. Maybe even provide the utilities to do that.
 
 ## Documentation
 
 Obviously, your public API should be documented. Each object should have a docstring that explains why the object is useful and how it is used. More on that in our [docstrings recommendations](docstrings.md). Docstrings work well for offline documentation; we recommend exposing your public API online too, for example with [MkDocs](https://www.mkdocs.org/) and [mkdocstrings' Python handler](https://mkdocstrings.github.io/python/), or with other SSGs (Static Site Generators). Prefer a tool that is able to create a [Sphinx-like](https://sphobjinv.readthedocs.io/en/stable/syntax.html) inventory of objects (an `objects.inv` file) that will allow other projects to easily cross-reference your API from their own documentation. Make sure each and every object of your public API is documented in your web docs and therefore added to the objects inventory (and maybe that nothing else is added to this inventory as "public API").
 
-> GRIFFE: **Our recommendation — Document your public API extensively.**
+> GRIFFE: **Our recommendation — Document your public API extensively.**  
 > Write docstrings for each and every object of your public API. Deploy online documentation where each object is documented and added to an object inventory that can be consumed by third-party projects. If you find yourself reluctant to document a public object, it means that this object should maybe be internal instead.
 >
 > Our documentation framework of choice is of course [MkDocs](https://www.mkdocs.org) combined with our [mkdocstrings](https://mkdocstrings.github.io/) plugin.
@@ -399,14 +396,14 @@ We invite you to check out our own test file: [`test_internals.py`](https://gith
 - all public objects are added to the inventory (which means they are documented in our API docs)
 - no private object is added to the inventory
 
-GRIFFE: **Our recommendation — Test your API declaration early.**
+GRIFFE: **Our recommendation — Test your API declaration early.**  
 The sooner you test your API declaration, the better your code base will evolve. This will force you to really think about how your API is exposed to yours users. This will prevent mistakes like leaving a new object as public while you don't want users to start relying on it, or forgetting to expose a public object in your top-level module or to document it in your API docs.
 
 ## Linters
 
 Depending on their configuration, many popular Python linters will warn you that you access or import private objects. This doesn't play well with hidden module layouts, where modules are private or moved under a private (sub-)package. Sometimes it doesn't even play well with private methods
 
-> GRIFFE: **Our recommendation — Ignore "protected access" warnings for your own package, or make the warnings smarter.**
+> GRIFFE: **Our recommendation — Ignore "protected access" warnings for your own package, or make the warnings smarter.**  
 > To users of linters, we recommend adding `# noqa` comments on the relevant code lines, or globally disabling warnings related to "private object access" if per-line exclusion requires too much maintenance.
 >
 > To authors of linters, we recommend (if possible) making these warnings smarter: they shouldn't be triggered when private objects are accessed from within the *same package*. Marking objects as private is meant to prevent downstream code to use them, not to prevent the developers of the current package themselves to use them: they know what they are doing and should be allowed to use their own private objects without warnings. At the same time, they don't want to disable these warnings *globally*, so the warnings should be derived in multiple versions, or made smarter.
@@ -500,7 +497,7 @@ Now instead of having to call `main(["dump", "..."])` in your tests, you can dir
 
 The third and next users of your CLI as API are your users: just as you made your own life easier, you made their life easier for when they want to call some subcommands of your tool programmatically. No more messing with lists of strings without autocompletion or linting, no more patching of `sys.argv`, no more following the maze of transformations applied by this fancy CLI framework before finally reaching the crux of the subcommand you want to call, no more trying to replicate these transformations yourself with the CLI framework's API to avoid copy-pasting the dozens of lines you're only interested in.
 
-> GRIFFE: **Our recommendation — Decouple command-line parsing from your CLI entrypoints.**
+> GRIFFE: **Our recommendation — Decouple command-line parsing from your CLI entrypoints.**  
 > Do not tie the command parsing logic with your program's logic. Create functions early, make them accept arguments using basic types (`int`, `str`, `list`, etc.) so that your users can call your main command or subcommands with a single import and single statement. Do not encode all the logic in a single big `main` function. Decoupling the CLI-parsing logic from your entrypoints will make them much easier to test and use programmatically. Consider your entrypoints part of your API!
 >
 > Our CLI framework of choice is [Cappa](https://pypi.org/project/cappa/).
@@ -513,7 +510,7 @@ There are many different ways of deprecating previous usage of code, which depen
 
 In addition to emitting deprecation warnings, you should also update the docstrings and documentation for the old usage to point at the new usage, add "deprecated" labels where possible, and mark objects as deprecated when possible.
 
-GRIFFE: **Our recommendation — Allow a deprecation periods, document deprecations.**
+GRIFFE: **Our recommendation — Allow a deprecation periods, document deprecations.**  
 Try allowing deprecation periods for every breaking change. Most changes can be made backward-compatible at the cost of writing legacy code. Use tools like [Yore](https://pawamoy.github.io/yore) to manage legacy code, and standard utilities like [`warnings.deprecated`][] to mark objects as deprecated. Griffe extensions such as [griffe-warnings-deprecated](https://mkdocstrings.github.io/griffe-warnings-deprecated/) can help you by dynamically augmenting docstrings for your API documentation.
 
 ## Third-party libraries

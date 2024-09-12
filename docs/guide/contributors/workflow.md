@@ -9,24 +9,24 @@ The development worklow is rather usual.
 **For a new feature:**
 
 1. create a new branch: `git switch -c feat-summary`
-1. edit the code and the documentation
-1. write new tests
+2. edit the code and the documentation
+3. write new tests
 
 **For a bug fix:**
 
 1. create a new branch: `git switch -c fix-summary`
-1. write tests that fail but are expected to pass once the bug is fixed
-1. run [`make test`][task-test] to make sure the new tests fail
-1. fix the code
+2. write tests that fail but are expected to pass once the bug is fixed
+3. run [`make test`][task-test] to make sure the new tests fail
+4. fix the code
 
 **For a docs update:**
 
 <div class="annotate" markdown>
 
 1. create a new branch: `git switch -c docs-summary`
-1. start the live reloading server: `make docs` (1)
-1. update the documentation
-1. preview changes at http://localhost:8000
+2. start the live reloading server: `make docs` (1)
+3. update the documentation
+4. preview changes at http://localhost:8000
 
 </div>
 
@@ -35,15 +35,15 @@ The development worklow is rather usual.
 **Before committing:**
 
 1. run [`make format`][task-format] to auto-format the code
-1. run [`make check`][task-check] to check everything (fix any warning)
-1. run [`make test`][task-test] to run the tests (fix any issue)
-1. if you updated the documentation or the project dependencies:
+2. run [`make check`][task-check] to check everything (fix any warning)
+3. run [`make test`][task-test] to run the tests (fix any issue)
+4. if you updated the documentation or the project dependencies:
     1. run [`make docs`][task-docs]
-    1. go to http://localhost:8000 and check that everything looks good
+    2. go to http://localhost:8000 and check that everything looks good
 
 Once you are ready to commit, follow our [commit message convention](#commit-message-convention).
 
-NOTE: **Occasional contributors**
+NOTE: **Occasional contributors**  
 If you are unsure about how to fix or ignore a warning, just let the continuous integration fail, and we will help you during review. Don't bother updating the changelog, we will take care of this.
 
 ## Breaking changes and deprecations
@@ -72,7 +72,7 @@ except ImportError:
 
 Check [Yore's docs](https://pawamoy.github.io/yore/), and Yore-comments in our own code base (`git grep -A1 YORE`) to learn how to use it.
 
-NOTE: **Occasional contributors**
+NOTE: **Occasional contributors**  
 If you are unsure about how to deprecate something or mark legacy code, let us do it during review.
 
 ## Commit message convention
@@ -114,11 +114,11 @@ Issue-10: https://github.com/namespace/project/issues/10
 Related-to-PR-namespace/other-project#15: https://github.com/namespace/other-project/pull/15
 ```
 
-These "trailers" must appear at the end of the body, without any blank lines between them. The trailer title can contain any character except colons `:`. We expect a full URI for each trailer, not just GitHub autolinks (for example, full GitHub URLs for commits and issues, not the hash or the #issue-number). 
+These "trailers" must appear at the end of the body, without any blank lines between them. The trailer title can contain any character except colons `:`. We expect a full URI for each trailer, not just GitHub autolinks (for example, full GitHub URLs for commits and issues, not the hash or the #issue-number).
 
 We do not enforce a line length on commit messages summary and body.
 
-NOTE: **Occasional contributors**
+NOTE: **Occasional contributors**  
 If this convention seems unclear to you, just write the message of your choice, and we will rewrite it ourselves before merging.
 
 ## Pull requests guidelines
@@ -144,7 +144,7 @@ And force-push:
 git push -f
 ```
 
-NOTE: **Occasional contributors**
+NOTE: **Occasional contributors**  
 If this seems all too complicated, you can push or force-push each new commit, and we will squash them ourselves if needed, before merging.
 
 ## Release process

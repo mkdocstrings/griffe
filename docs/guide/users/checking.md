@@ -45,13 +45,9 @@ $ griffe check -s back/services/identity-provider/src identity_provider
 
 ### Using PyPI
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0)
 
-It's also possible to directly **check packages from PyPI.org**
-(or other indexes configured through `PIP_INDEX_URL`).
-This feature is [available to sponsors only](../../insiders/index.md)
-and requires that you install Griffe with the `pypi` extra:
+It's also possible to directly **check packages from PyPI.org** (or other indexes configured through `PIP_INDEX_URL`). This feature is [available to sponsors only](../../insiders/index.md) and requires that you install Griffe with the `pypi` extra:
 
 ```console
 $ pip install griffe[pypi]
@@ -69,27 +65,20 @@ You can let Griffe guess the package name by passing an empty string:
 $ griffe check "" -b project-name==2.0 -a project-name==1.0
 ```
 
-[PEP 508 version specifiers](https://peps.python.org/pep-0508/) are supported
-(`<`, `<=`, `!=`, `==`, `>=`, `>`, `~=`).
-For example, to compare v2 against the version just before it:
+[PEP 508 version specifiers](https://peps.python.org/pep-0508/) are supported (`<`, `<=`, `!=`, `==`, `>=`, `>`, `~=`). For example, to compare v2 against the version just before it:
 
 ```console
 $ griffe check "" -b project-name==2.0 -a project-name<2.0
 ```
 
-Without a version specifier on the base reference,
-or without a base reference at all,
-Griffe will use the latest available version.
-The two following commands compare the latest version against v1:
+Without a version specifier on the base reference, or without a base reference at all, Griffe will use the latest available version. The two following commands compare the latest version against v1:
 
 ```console
 $ griffe check "" -b project-name -a project-name==1.0
 $ griffe check "" -a project-name==1.0
 ```
 
-Griffe will actually install packages in a cache directory.
-It means a few things: source distributions are supported,
-and only packages that are compatible with your current environment can be checked.
+Griffe will actually install packages in a cache directory. It means a few things: source distributions are supported, and only packages that are compatible with your current environment can be checked.
 
 ## Python API
 
@@ -171,7 +160,7 @@ greet("hello", "world")
 
 NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer pass it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > If you often add, move or remove parameters, consider making them keyword-only, so that their order doesn't matter.
 >
 > ```python title="before"
@@ -216,7 +205,7 @@ greet("hello", "world")
 greet(prefix="hello", name="world")
 ```
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > Allow a deprecation period for the removed parameter by swallowing it in a variadic positional parameter, a variadic keyword parameter, or both.
 >
 > === "positional-only"
@@ -337,7 +326,7 @@ greet(name="tim")
 greet2("tim")
 ```
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > Although it actually is a breaking change, changing your positional or keyword parameters' kind to keyword-only makes your public function more robust to future changes (forward-compatibility).
 >
 > For functions with lots of optional parameters, and a few (one or two) required parameters, it can be a good idea to accept the required parameters as positional or keyword, while accepting the optional parameters as keyword-only parameters:
@@ -402,7 +391,7 @@ if isinstance(compute_something(7), float):
 
 NOTE: Changing default value of parameters is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. Not using the parameter still provides the argument with a default value: the contract is fulfilled. But default values very often have specific meaning, and changing them will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > Allow a deprecation period for the old default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
 > ```python title="in the coming release"
@@ -456,7 +445,7 @@ def greet(name, prefix):
 greet("tiff")
 ```
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > Allow a deprecation period for the default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
 > ```python title="in the coming release"
@@ -500,7 +489,7 @@ def greet(name, prefix):
 greet("tiff")
 ```
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > You can delay (or avoid) and inform your users about the upcoming breakage by temporarily (or permanently) providing a default value for the new parameter:
 >
 > ```python title="in the coming release"
@@ -541,7 +530,7 @@ from your import module
 print(module.special_thing)
 ```
 
-> TIP: **Hint**
+> TIP: **Hint**  
 > Allow a deprecation period by declaring a module-level `__getattr__` function that returns the given object while warning about its deprecation:
 >
 > ```python
@@ -617,7 +606,7 @@ if PY_VERSION is None:
 
 NOTE: Changing the value of an attribute is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The attribute is still here and accessed: the contract is fulfilled. But developers heavily rely on the value of public attributes, so changing it will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-TIP: **Hint**
+TIP: **Hint**  
 Make sure to document the change of value of the attribute in your changelog, particularly the previous and new range of values it can take.
 
 ### Class removed base
@@ -660,8 +649,7 @@ Griffe supports writing detected breakages in multiple formats, or styles.
 - **CLI**: `-f oneline` / no flags
 - **API**: `check(...)` / `check(..., style="oneline")` / `check(..., style=ExplanationStyle.ONE_LINE)`
 
-This is the default format.
-Griffe will print each detected breakage on a single line:
+This is the default format. Griffe will print each detected breakage on a single line:
 
 ```console exec="1" source="console" result="ansi" returncode="1"
 $ export FORCE_COLOR=1  # markdown-exec: hide
@@ -684,17 +672,12 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 [](){#format-markdown}
 ### Markdown
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
 
 - **CLI**: `-f markdown`
 - **API**: `check(..., style="markdown")` / `check(..., style=ExplanationStyle.MARKDOWN)`
 
-The Markdown format is adapted for changelogs.
-It doesn't show the file and line number, and instead
-prints out the complete path of your API objects.
-With a bit of automation, you will be able to automatically
-insert a summary of breaking changes in your changelog entries.
+The Markdown format is adapted for changelogs. It doesn't show the file and line number, and instead prints out the complete path of your API objects. With a bit of automation, you will be able to automatically insert a summary of breaking changes in your changelog entries.
 
 ```md exec="1" source="tabbed-left" tabs="Output|Result"
 - `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter kind was changed*: positional or keyword -> keyword-only
@@ -722,17 +705,12 @@ insert a summary of breaking changes in your changelog entries.
 [](){#format-github}
 ### GitHub
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
 
 - **CLI**: `-f github`
 - **API**: `check(..., style="github")` / `check(..., style=ExplanationStyle.GITHUB)`
 
-When running `griffe check` in CI, you can enable GitHub's annotations
-thanks to the GitHub output style.
-Annotations are displayed on specific lines of code. They are visible in the Checks tab.
-When you create an annotation for a file that is part of the pull request,
-the annotations are also shown in the Files changed tab.
+When running `griffe check` in CI, you can enable GitHub's annotations thanks to the GitHub output style. Annotations are displayed on specific lines of code. They are visible in the Checks tab. When you create an annotation for a file that is part of the pull request, the annotations are also shown in the Files changed tab.
 
 /// tab | Files changed tab
 ![gha_annotations_2](../../img/gha_annotations_2.png)

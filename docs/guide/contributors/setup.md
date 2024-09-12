@@ -7,7 +7,6 @@ To work on the project, whether to update the code or the documentation, you wil
 The only requirement is that you have [Python](https://www.python.org/) and [uv](https://github.com/astral-sh/uv) installed and available on your command line path.
 
 === ":simple-python: pip"
-
     ```bash
     pip install --user uv
     ```
@@ -15,11 +14,10 @@ The only requirement is that you have [Python](https://www.python.org/) and [uv]
     <div class="result" markdown>
 
     [pip](https://pip.pypa.io/en/stable/) is the main package installer for Python.
-    
+
     </div>
 
 === ":simple-pipx: pipx"
-
     ```bash
     pipx install uv
     ```
@@ -31,7 +29,6 @@ The only requirement is that you have [Python](https://www.python.org/) and [uv]
     </div>
 
 === ":simple-rye: rye"
-
     ```bash
     rye install uv
     ```
@@ -49,7 +46,6 @@ Optionally, we recommend using [direnv](https://direnv.net/), which will add our
 [Fork the repository on GitHub](https://github.com/mkdocstrings/griffe/fork), then clone it locally:
 
 === "GitHub CLI"
-
     ```bash
     gh repo clone griffe
     ```
@@ -61,7 +57,6 @@ Optionally, we recommend using [direnv](https://direnv.net/), which will add our
     </div>
 
 === "Git + SSH"
-
     ```bash
     git clone git@github.com:your-username/griffe
     ```
@@ -73,7 +68,6 @@ Optionally, we recommend using [direnv](https://direnv.net/), which will add our
     </div>
 
 === "Git + HTTPS"
-
     ```bash
     git clone https://github.com/your-username/griffe
     ```

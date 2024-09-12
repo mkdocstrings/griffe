@@ -4,7 +4,7 @@ Griffe is used by various projects in the Python ecosystem.
 
 ## griffe2md
 
-[griffe2md](https://mkdocstrings.github.io/griffe2md/) outputs API docs in Markdown. It uses Griffe to load the data, and then use Jinja templates to render documentation in Markdown, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but in Markdown instead of HTML. 
+[griffe2md](https://mkdocstrings.github.io/griffe2md/) outputs API docs in Markdown. It uses Griffe to load the data, and then use Jinja templates to render documentation in Markdown, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but in Markdown instead of HTML.
 
 ## Griffe TUI
 
@@ -14,7 +14,7 @@ Griffe is used by various projects in the Python ecosystem.
 
 ## quartodoc
 
-[quartodoc](https://machow.github.io/quartodoc/) lets you quickly generate Python package API reference documentation using Markdown and [Quarto](https://quarto.org/). quartodoc is designed as an alternative to [Sphinx](https://www.sphinx-doc.org/en/master/). It uses Griffe to load API data and parse docstrings in order to render HTML documentation, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but for Quarto instead of Mkdocs. 
+[quartodoc](https://machow.github.io/quartodoc/) lets you quickly generate Python package API reference documentation using Markdown and [Quarto](https://quarto.org/). quartodoc is designed as an alternative to [Sphinx](https://www.sphinx-doc.org/en/master/). It uses Griffe to load API data and parse docstrings in order to render HTML documentation, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but for Quarto instead of Mkdocs.
 
 ## pydanclick
 

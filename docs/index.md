@@ -13,23 +13,21 @@ hide:
 
 <div class="grid cards" markdown>
 
--   :material-run-fast:{ .lg .middle } **Getting started**
+- :material-run-fast:{ .lg .middle } **Getting started**
 
     ---
 
     Learn how to quickly install and use Griffe.
 
-    [:octicons-download-16: Installation](installation.md){ .md-button .md-button--primary }
-    [:material-book-open-variant: Introduction](introduction.md){ .md-button .md-button--primary }
+    [:octicons-download-16: Installation](installation.md){ .md-button .md-button--primary } [:material-book-open-variant: Introduction](introduction.md){ .md-button .md-button--primary }
 
--   :material-diving-scuba:{ .lg .middle } **Deep dive**
+- :material-diving-scuba:{ .lg .middle } **Deep dive**
 
     ---
 
     Learn everything you can do with Griffe.
 
-    [:fontawesome-solid-book: Guide](guide/users.md){ .md-button .md-button--primary }
-    [:material-code-parentheses: API reference](reference/api.md){ .md-button .md-button--primary }
+    [:fontawesome-solid-book: Guide](guide/users.md){ .md-button .md-button--primary } [:material-code-parentheses: API reference](reference/api.md){ .md-button .md-button--primary }
 
 </div>
 

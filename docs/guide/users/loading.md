@@ -75,7 +75,6 @@ Reusing the same loader will also help resolving aliases across different packag
 To specify in which directories Griffe should search for packages and modules, you can use the `search_paths` parameter on both the [`load` function][griffe.load] and the [`GriffeLoader` class][griffe.GriffeLoader].
 
 === "`load`"
-
     ```python
     import griffe
 
@@ -83,7 +82,6 @@ To specify in which directories Griffe should search for packages and modules, y
     ```
 
 === "`GriffeLoader`"
-
     ```python
     import griffe
 
@@ -134,7 +132,7 @@ griffe.load("itertools", allow_inspection=False)
 
 ## Alias resolution
 
->? QUESTION: **What's that?**
+>? QUESTION: **What's that?**  
 > In Griffe, indirections to objects are called *aliases*. These indirections, or aliases, represent two kinds of objects: imported objects and inherited objects. Indeed, an imported object is "aliased" in the module that imports it, while its true location is in the module it was imported from. Similarly, a method inherited from a parent class is "aliased" in the subclass, while its true location is in the parent class.
 >
 > The name "alias" comes from the fact that imported objects can be aliased under a different name: `from X import A as B`. In the case of inherited members, this doesn't really apply, but we reuse the concept for conciseness.
@@ -166,7 +164,6 @@ from my_package.my_module import my_function
 def my_function():
     print("hello")
 ```
-
 
 When loading this package, `my_package.my_function` will be an alias pointing at `my_package.my_module.my_function`:
 
@@ -242,7 +239,6 @@ As you can see in the interpreter session above, Griffe did not resolve the `X` 
 Lets try again, but this time by loading both packages.
 
 ```pycon
-```pycon
 >>> import griffe
 >>> package1 = griffe.load("package1")  # nothing to resolve
 >>> package2 = griffe.load("package2", resolve_aliases=True)
@@ -271,7 +267,6 @@ Therefore, to resolve aliases *across different packages*, these packages must b
 - create your own modules collection, and pass it to the different instances of [`GriffeLoader`][griffe.GriffeLoader] you create
 
 === "Same loader"
-
     ```pycon
     >>> import griffe
     >>> loader = griffe.GriffeLoader()
@@ -285,7 +280,6 @@ Therefore, to resolve aliases *across different packages*, these packages must b
     ```
 
 === "Same collection with `load`"
-
     ```pycon
     >>> import griffe
     >>> collection = griffe.ModulesCollection()
@@ -298,7 +292,6 @@ Therefore, to resolve aliases *across different packages*, these packages must b
     ```
 
 === "Same collection, different loaders"
-
     ```pycon
     >>> import griffe
     >>> collection = griffe.ModulesCollection()

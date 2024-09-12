@@ -48,6 +48,7 @@ To access an object's members, there are a few options:
     ```
 
 - Access to both regular and inherited members through the [`all_members`][griffe.Object.all_members] attribute, which is a dictionary again. See [Inherited members](#inherited-members).
+
 - Convenient dictionary-like item access, thanks to the subscript syntax `[]`. With this syntax, you will not only be able to chain accesses, but also merge them into a single access by using dot-separated paths to objects:
 
     ```pycon
@@ -126,9 +127,7 @@ Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Obj
 
 Currently, there are three limitations to our class inheritance support:
 
-1. when visiting (static analysis), some objects are not yet properly recognized as classes,
-    for example named tuples. If you inherit from a named tuple,
-    its members won't be added to the inherited members of the inheriting class.
+1. when visiting (static analysis), some objects are not yet properly recognized as classes, for example named tuples. If you inherit from a named tuple, its members won't be added to the inherited members of the inheriting class.
 
     ```python
     MyTuple = namedtuple("MyTuple", "attr1 attr2")
@@ -138,28 +137,23 @@ Currently, there are three limitations to our class inheritance support:
         ...
     ```
 
-2. when visiting (static analysis), subclasses using the same name
-    as one of their parent class will prevent Griffe from computing the MRO
-    and therefore the inherited members. To circumvent that, give a
-    different name to your subclass:
+2. when visiting (static analysis), subclasses using the same name as one of their parent class will prevent Griffe from computing the MRO and therefore the inherited members. To circumvent that, give a different name to your subclass:
 
     ```python
     from package import SomeClass
-    
-    
+
+
     # instead of
     class SomeClass(SomeClass):
         ...
 
-    
+
     # do
     class SomeOtherClass(SomeClass):
         ...
     ```
 
-3. when inspecting (dynamic analysis), ephemeral base classes won't be resolved,
-    and therefore their members won't appear in child classes. To circumvent that,
-    assign these dynamic classes to variables:
+3. when inspecting (dynamic analysis), ephemeral base classes won't be resolved, and therefore their members won't appear in child classes. To circumvent that, assign these dynamic classes to variables:
 
     ```python
     # instead of
@@ -227,6 +221,7 @@ Aliases chains are never partially resolved: either they are resolved down to th
 The kind of an object (module, class, function, attribute or alias) can be obtained in several ways.
 
 - With the [`kind`][griffe.Object.kind] attribute and the [`Kind`][griffe.Kind] enumeration: `obj.kind is Kind.MODULE`.
+
 - With the [`is_kind()`][griffe.Object.is_kind] method:
 
     - `obj.is_kind(Kind.MODULE)`
@@ -283,6 +278,7 @@ Each object holds a reference to a [`lines_collection`][griffe.Object.lines_coll
 Each object has fields that are related to their visibility within the API.
 
 - [`is_public`][griffe.Object.is_public]: whether this object is public (destined to be consumed by your users). For module-level objects, Griffe considers that the object is public if:
+
     - it is listed in its parent module's `__all__` attribute
     - or if its parent module does not declare `__all__`, and the object doesn't have a private name, and the object is not imported from elsewhere
 
@@ -314,15 +310,18 @@ Each object has fields that are related to their visibility within the API.
         def __eq__(self, other):  # public
             ...
     ```
-        
+
 - [`is_deprecated`][griffe.Object.is_deprecated]: whether this object is deprecated and shouldn't be used.
+
 - [`is_special`][griffe.Object.is_special]: whether this object has a special name like `__special__`
+
 - [`is_private`][griffe.Object.is_private]: whether this object has a private name like `_private` or `__private`, but not `__special__`
+
 - [`is_class_private`][griffe.Object.is_class_private]: whether this object has a class-private name like `__private` and is a member of a class
 
 Since `is_private` only check the name of the object, it is not mutually exclusive with `is_public`. It means an object can return true for both `is_public` and `is_private`. We invite Griffe users to mostly rely on `is_public` and `not is_public`.
 
-It is possible to force `is_public` and `is_deprecated` to return true or false by setting the [`public`][griffe.Object.public] and [`deprecated`][griffe.Object.deprecated] fields respectively. These fields are typically set by extensions that support new ways of marking objects as public or deprecated. 
+It is possible to force `is_public` and `is_deprecated` to return true or false by setting the [`public`][griffe.Object.public] and [`deprecated`][griffe.Object.deprecated] fields respectively. These fields are typically set by extensions that support new ways of marking objects as public or deprecated.
 
 ## Imports/exports
 
@@ -401,9 +400,7 @@ When parsing source code, Griffe builds enhanced ASTs for type annotations, deco
 
 These "expressions" are very similar to what Python's [ast][] module gives you back when parsing source code, with a few differences: attributes like `a.b.c.` are flattened, and names like `a` have a parent object attached to them, a Griffe object, allowing to resolve this name to its full path given the scope of its parent.
 
-You can write some code below and print annotations or attribute values with [Rich][rich]'s pretty printer to see how expressions look like.
-
-[rich]: https://rich.readthedocs.io/en/stable/
+You can write some code below and print annotations or attribute values with [Rich]'s pretty printer to see how expressions look like.
 
 ```pyodide install="griffe,rich" theme="tomorrow,dracula"
 from griffe import temporary_visited_module
@@ -430,16 +427,13 @@ with temporary_visited_module(code) as module:
 
 Ultimately, these expressions are what allow downstream tools such as [mkdocstrings' Python handler][mkdocstrings-python] to render cross-references to every object it knows of, coming from the current code base or loaded from object inventories (objects.inv files).
 
-[mkdocstrings-python]: https://mkdocstrings.github.io/python
-
 During static analysis, these expressions also allow to analyze decorators, dataclass fields, and many more things in great details, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extending.md).
 
 To learn more about expressions, read their [API reference](../../reference/api/expressions.md).
 
 ### Modernization
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
-[:octicons-tag-24: Insiders 1.2.0](../../insiders/changelog.md#1.2.0)
+[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.2.0](../../insiders/changelog.md#1.2.0)
 
 The Python language keeps evolving, and often library developers must continue supporting a few minor versions of Python. Therefore they cannot use some features that were introduced in the latest versions.
 
@@ -459,3 +453,6 @@ Modernizations applied:
 ## Next steps
 
 In this chapter we saw many of the fields that compose our models, and how and why to use them. Now you might be interested in [extending](extending.md) or [serializing](serializing.md) the API data, or [checking for API breaking changes](checking.md).
+
+[mkdocstrings-python]: https://mkdocstrings.github.io/python
+[rich]: https://rich.readthedocs.io/en/stable/
