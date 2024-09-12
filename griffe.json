@@ -12617,16 +12617,16 @@
             "labels": [],
             "members": {
               "Any": {
-                "endlineno": 42,
+                "endlineno": 41,
                 "kind": "alias",
-                "lineno": 42,
+                "lineno": 41,
                 "name": "Any",
                 "target_path": "typing.Any"
               },
               "Docstring": {
-                "endlineno": 45,
+                "endlineno": 44,
                 "kind": "alias",
-                "lineno": 45,
+                "lineno": 44,
                 "name": "Docstring",
                 "target_path": "_griffe.models.Docstring"
               },
@@ -12820,18 +12820,11 @@
                 "target_path": "_griffe.docstrings.models.DocstringYield"
               },
               "Expr": {
-                "endlineno": 44,
+                "endlineno": 43,
                 "kind": "alias",
-                "lineno": 44,
+                "lineno": 43,
                 "name": "Expr",
                 "target_path": "_griffe.expressions.Expr"
-              },
-              "ExprName": {
-                "endlineno": 39,
-                "kind": "alias",
-                "lineno": 39,
-                "name": "ExprName",
-                "target_path": "_griffe.expressions.ExprName"
               },
               "List": {
                 "endlineno": 7,
@@ -12841,9 +12834,9 @@
                 "target_path": "typing.List"
               },
               "Literal": {
-                "endlineno": 42,
+                "endlineno": 41,
                 "kind": "alias",
-                "lineno": 42,
+                "lineno": 41,
                 "name": "Literal",
                 "target_path": "typing.Literal"
               },
@@ -12855,9 +12848,9 @@
                 "target_path": "_griffe.enumerations.LogLevel"
               },
               "Pattern": {
-                "endlineno": 42,
+                "endlineno": 41,
                 "kind": "alias",
-                "lineno": 42,
+                "lineno": 41,
                 "name": "Pattern",
                 "target_path": "typing.Pattern"
               },
@@ -12876,12 +12869,12 @@
                 "target_path": "typing.Tuple"
               },
               "_BlockItem": {
-                "endlineno": 74,
+                "endlineno": 73,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 74,
+                "lineno": 73,
                 "members": {},
                 "name": "_BlockItem",
                 "value": {
@@ -12914,12 +12907,12 @@
                 }
               },
               "_BlockItems": {
-                "endlineno": 75,
+                "endlineno": 74,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 75,
+                "lineno": 74,
                 "members": {},
                 "name": "_BlockItems",
                 "value": {
@@ -12935,12 +12928,12 @@
                 }
               },
               "_ItemsBlock": {
-                "endlineno": 76,
+                "endlineno": 75,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 76,
+                "lineno": 75,
                 "members": {},
                 "name": "_ItemsBlock",
                 "value": {
@@ -12970,12 +12963,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 78,
+                "endlineno": 77,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 78,
+                "lineno": 77,
                 "members": {},
                 "name": "_RE_ADMONITION",
                 "value": {
@@ -13016,12 +13009,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 80,
+                "endlineno": 79,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 80,
+                "lineno": 79,
                 "members": {},
                 "name": "_RE_DOCTEST_BLANKLINE",
                 "value": {
@@ -13049,12 +13042,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 81,
+                "endlineno": 80,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 81,
+                "lineno": 80,
                 "members": {},
                 "name": "_RE_DOCTEST_FLAGS",
                 "value": {
@@ -13082,12 +13075,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 79,
+                "endlineno": 78,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 79,
+                "lineno": 78,
                 "members": {},
                 "name": "_RE_NAME_ANNOTATION_DESCRIPTION",
                 "value": {
@@ -13110,12 +13103,88 @@
                   }
                 }
               },
-              "_get_name_annotation_description": {
+              "_annotation_from_parent": {
                 "decorators": [],
-                "endlineno": 484,
+                "endlineno": 502,
                 "kind": "function",
                 "labels": [],
-                "lineno": 458,
+                "lineno": 486,
+                "members": {},
+                "name": "_annotation_from_parent",
+                "parameters": [
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "Docstring"
+                    },
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "docstring"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprSubscript",
+                      "left": {
+                        "cls": "ExprName",
+                        "name": "Literal"
+                      },
+                      "slice": {
+                        "cls": "ExprTuple",
+                        "elements": [
+                          "0",
+                          "1",
+                          "2"
+                        ],
+                        "implicit": true
+                      }
+                    },
+                    "default": null,
+                    "kind": "keyword-only",
+                    "name": "gen_index"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "False",
+                    "kind": "keyword-only",
+                    "name": "multiple"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "int"
+                    },
+                    "default": "0",
+                    "kind": "keyword-only",
+                    "name": "index"
+                  }
+                ],
+                "returns": {
+                  "cls": "ExprBinOp",
+                  "left": {
+                    "cls": "ExprBinOp",
+                    "left": {
+                      "cls": "ExprName",
+                      "name": "str"
+                    },
+                    "operator": "|",
+                    "right": {
+                      "cls": "ExprName",
+                      "name": "Expr"
+                    }
+                  },
+                  "operator": "|",
+                  "right": "None"
+                }
+              },
+              "_get_name_annotation_description": {
+                "decorators": [],
+                "endlineno": 483,
+                "kind": "function",
+                "labels": [],
+                "lineno": 457,
                 "members": {},
                 "name": "_get_name_annotation_description",
                 "parameters": [
@@ -13196,10 +13265,10 @@
               },
               "_is_empty_line": {
                 "decorators": [],
-                "endlineno": 754,
+                "endlineno": 721,
                 "kind": "function",
                 "labels": [],
-                "lineno": 753,
+                "lineno": 720,
                 "members": {},
                 "name": "_is_empty_line",
                 "parameters": [
@@ -13218,54 +13287,12 @@
                   "name": "bool"
                 }
               },
-              "_maybe_destructure_annotation": {
-                "decorators": [],
-                "endlineno": 512,
-                "kind": "function",
-                "labels": [],
-                "lineno": 502,
-                "members": {},
-                "name": "_maybe_destructure_annotation",
-                "parameters": [
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "Any"
-                    },
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "annotation"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "int"
-                    },
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "index"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "bool"
-                    },
-                    "default": "True",
-                    "kind": "keyword-only",
-                    "name": "multiple"
-                  }
-                ],
-                "returns": {
-                  "cls": "ExprName",
-                  "name": "Any"
-                }
-              },
               "_read_attributes_section": {
                 "decorators": [],
-                "endlineno": 294,
+                "endlineno": 293,
                 "kind": "function",
                 "labels": [],
-                "lineno": 261,
+                "lineno": 260,
                 "members": {},
                 "name": "_read_attributes_section",
                 "parameters": [
@@ -13326,10 +13353,10 @@
               },
               "_read_block": {
                 "decorators": [],
-                "endlineno": 175,
+                "endlineno": 174,
                 "kind": "function",
                 "labels": [],
-                "lineno": 147,
+                "lineno": 146,
                 "members": {},
                 "name": "_read_block",
                 "parameters": [
@@ -13385,10 +13412,10 @@
               },
               "_read_block_items": {
                 "decorators": [],
-                "endlineno": 144,
+                "endlineno": 143,
                 "kind": "function",
                 "labels": [],
-                "lineno": 84,
+                "lineno": 83,
                 "members": {},
                 "name": "_read_block_items",
                 "parameters": [
@@ -13427,10 +13454,10 @@
               },
               "_read_block_items_maybe": {
                 "decorators": [],
-                "endlineno": 455,
+                "endlineno": 454,
                 "kind": "function",
                 "labels": [],
-                "lineno": 445,
+                "lineno": 444,
                 "members": {},
                 "name": "_read_block_items_maybe",
                 "parameters": [
@@ -13478,10 +13505,10 @@
               },
               "_read_classes_section": {
                 "decorators": [],
-                "endlineno": 364,
+                "endlineno": 363,
                 "kind": "function",
                 "labels": [],
-                "lineno": 332,
+                "lineno": 331,
                 "members": {},
                 "name": "_read_classes_section",
                 "parameters": [
@@ -13542,10 +13569,10 @@
               },
               "_read_deprecated_section": {
                 "decorators": [],
-                "endlineno": 750,
+                "endlineno": 717,
                 "kind": "function",
                 "labels": [],
-                "lineno": 729,
+                "lineno": 696,
                 "members": {},
                 "name": "_read_deprecated_section",
                 "parameters": [
@@ -13606,10 +13633,10 @@
               },
               "_read_examples_section": {
                 "decorators": [],
-                "endlineno": 726,
+                "endlineno": 693,
                 "kind": "function",
                 "labels": [],
-                "lineno": 670,
+                "lineno": 637,
                 "members": {},
                 "name": "_read_examples_section",
                 "parameters": [
@@ -13679,10 +13706,10 @@
               },
               "_read_functions_section": {
                 "decorators": [],
-                "endlineno": 329,
+                "endlineno": 328,
                 "kind": "function",
                 "labels": [],
-                "lineno": 297,
+                "lineno": 296,
                 "members": {},
                 "name": "_read_functions_section",
                 "parameters": [
@@ -13743,10 +13770,10 @@
               },
               "_read_modules_section": {
                 "decorators": [],
-                "endlineno": 389,
+                "endlineno": 388,
                 "kind": "function",
                 "labels": [],
-                "lineno": 367,
+                "lineno": 366,
                 "members": {},
                 "name": "_read_modules_section",
                 "parameters": [
@@ -13807,10 +13834,10 @@
               },
               "_read_other_parameters_section": {
                 "decorators": [],
-                "endlineno": 258,
+                "endlineno": 257,
                 "kind": "function",
                 "labels": [],
-                "lineno": 250,
+                "lineno": 249,
                 "members": {},
                 "name": "_read_other_parameters_section",
                 "parameters": [
@@ -13880,10 +13907,10 @@
               },
               "_read_parameters": {
                 "decorators": [],
-                "endlineno": 237,
+                "endlineno": 236,
                 "kind": "function",
                 "labels": [],
-                "lineno": 178,
+                "lineno": 177,
                 "members": {},
                 "name": "_read_parameters",
                 "parameters": [
@@ -13955,10 +13982,10 @@
               },
               "_read_parameters_section": {
                 "decorators": [],
-                "endlineno": 247,
+                "endlineno": 246,
                 "kind": "function",
                 "labels": [],
-                "lineno": 240,
+                "lineno": 239,
                 "members": {},
                 "name": "_read_parameters_section",
                 "parameters": [
@@ -14019,10 +14046,10 @@
               },
               "_read_raises_section": {
                 "decorators": [],
-                "endlineno": 417,
+                "endlineno": 416,
                 "kind": "function",
                 "labels": [],
-                "lineno": 392,
+                "lineno": 391,
                 "members": {},
                 "name": "_read_raises_section",
                 "parameters": [
@@ -14083,10 +14110,10 @@
               },
               "_read_receives_section": {
                 "decorators": [],
-                "endlineno": 667,
+                "endlineno": 634,
                 "kind": "function",
                 "labels": [],
-                "lineno": 620,
+                "lineno": 593,
                 "members": {},
                 "name": "_read_receives_section",
                 "parameters": [
@@ -14165,10 +14192,10 @@
               },
               "_read_returns_section": {
                 "decorators": [],
-                "endlineno": 567,
+                "endlineno": 546,
                 "kind": "function",
                 "labels": [],
-                "lineno": 515,
+                "lineno": 505,
                 "members": {},
                 "name": "_read_returns_section",
                 "parameters": [
@@ -14247,10 +14274,10 @@
               },
               "_read_warns_section": {
                 "decorators": [],
-                "endlineno": 442,
+                "endlineno": 441,
                 "kind": "function",
                 "labels": [],
-                "lineno": 420,
+                "lineno": 419,
                 "members": {},
                 "name": "_read_warns_section",
                 "parameters": [
@@ -14311,10 +14338,10 @@
               },
               "_read_yields_section": {
                 "decorators": [],
-                "endlineno": 617,
+                "endlineno": 590,
                 "kind": "function",
                 "labels": [],
-                "lineno": 570,
+                "lineno": 549,
                 "members": {},
                 "name": "_read_yields_section",
                 "parameters": [
@@ -14392,12 +14419,12 @@
                 }
               },
               "_section_kind": {
-                "endlineno": 72,
+                "endlineno": 71,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 48,
+                "lineno": 47,
                 "members": {},
                 "name": "_section_kind",
                 "value": {
@@ -14731,12 +14758,12 @@
                 }
               },
               "_section_reader": {
-                "endlineno": 771,
+                "endlineno": 738,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 757,
+                "lineno": 724,
                 "members": {},
                 "name": "_section_reader",
                 "value": {
@@ -14969,12 +14996,12 @@
                 }
               },
               "_sentinel": {
-                "endlineno": 773,
+                "endlineno": 740,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 773,
+                "lineno": 740,
                 "members": {},
                 "name": "_sentinel",
                 "value": {
@@ -14984,48 +15011,6 @@
                     "cls": "ExprName",
                     "name": "object"
                   }
-                }
-              },
-              "_unpack_generators": {
-                "decorators": [],
-                "endlineno": 499,
-                "kind": "function",
-                "labels": [],
-                "lineno": 487,
-                "members": {},
-                "name": "_unpack_generators",
-                "parameters": [
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "Any"
-                    },
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "annotation"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "int"
-                    },
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "generator_pos"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "bool"
-                    },
-                    "default": "False",
-                    "kind": "keyword-only",
-                    "name": "mandatory"
-                  }
-                ],
-                "returns": {
-                  "cls": "ExprName",
-                  "name": "Any"
                 }
               },
               "annotations": {
@@ -15052,14 +15037,14 @@
               "parse_google": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 807,
-                  "lineno": 787,
+                  "endlineno": 774,
+                  "lineno": 754,
                   "value": "Parse a Google-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    returns_multiple_items: Whether the `Returns` section has multiple items.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    returns_named_value: Whether to parse `thing: Description` in returns sections as a name and description,\n        rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    returns_type_in_property_summary: Whether to parse the return type of properties\n        at the beginning of their summary: `str: Summary of the property`.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 936,
+                "endlineno": 903,
                 "kind": "function",
                 "labels": [],
-                "lineno": 776,
+                "lineno": 743,
                 "members": {},
                 "name": "parse_google",
                 "parameters": [
