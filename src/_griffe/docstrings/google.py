@@ -36,7 +36,6 @@ from _griffe.docstrings.models import (
 )
 from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
 from _griffe.enumerations import DocstringSectionKind, LogLevel
-from _griffe.expressions import ExprName
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Pattern
@@ -484,31 +483,22 @@ def _get_name_annotation_description(
     return name, annotation, description
 
 
-def _unpack_generators(
-    annotation: Any,
-    generator_pos: int,
+def _annotation_from_parent(
+    docstring: Docstring,
     *,
-    mandatory: bool = False,
-) -> Any:
-    if annotation.is_generator:
-        return annotation.slice.elements[generator_pos]
-    if annotation.is_iterator:
-        return annotation.slice
-    if mandatory:
-        raise ValueError(f"must be a Generator: {annotation!r}")
-    return annotation
-
-
-def _maybe_destructure_annotation(
-    annotation: Any,
-    index: int,
-    *,
-    multiple: bool = True,
-) -> Any:
-    if isinstance(annotation, ExprName):
-        return annotation
-    if multiple and annotation.is_tuple:
-        return annotation.slice.elements[index]
+    gen_index: Literal[0, 1, 2],
+    multiple: bool = False,
+    index: int = 0,
+) -> str | Expr | None:
+    annotation = None
+    with suppress(Exception):
+        annotation = docstring.parent.annotation  # type: ignore[union-attr]
+        if annotation.is_generator:
+            annotation = annotation.slice.elements[gen_index]
+        elif annotation.is_iterator and gen_index == 0:
+            annotation = annotation.slice
+        if multiple and annotation.is_tuple:
+            annotation = annotation.slice.elements[index]
     return annotation
 
 
@@ -545,18 +535,7 @@ def _read_returns_section(
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, KeyError, ValueError):
-                if docstring.parent.is_function:  # type: ignore[union-attr]
-                    annotation = docstring.parent.returns  # type: ignore[union-attr]
-                elif docstring.parent.is_attribute:  # type: ignore[union-attr]
-                    annotation = docstring.parent.annotation  # type: ignore[union-attr]
-                else:
-                    raise ValueError
-                annotation = _maybe_destructure_annotation(
-                    _unpack_generators(annotation, 2),
-                    index,
-                    multiple=returns_multiple_items,
-                )
+            annotation = _annotation_from_parent(docstring, gen_index=2, multiple=len(block) > 1, index=index)
 
             if annotation is None:
                 returned_value = repr(name) if name else index + 1
@@ -600,12 +579,7 @@ def _read_yields_section(
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, IndexError, KeyError, ValueError):
-                annotation = _maybe_destructure_annotation(
-                    _unpack_generators(docstring.parent.annotation, 0, mandatory=True),  # type: ignore[union-attr]
-                    index,
-                    multiple=returns_multiple_items,
-                )
+            annotation = _annotation_from_parent(docstring, gen_index=0, multiple=len(block) > 1, index=index)
 
             if annotation is None:
                 yielded_value = repr(name) if name else index + 1
@@ -649,12 +623,7 @@ def _read_receives_section(
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             # try to retrieve the annotation from the docstring parent
-            with suppress(AttributeError, IndexError, KeyError, ValueError):
-                annotation = _maybe_destructure_annotation(
-                    _unpack_generators(docstring.parent.returns, 1, mandatory=True),  # type: ignore[union-attr]
-                    index,
-                    multiple=receives_multiple_items,
-                )
+            annotation = _annotation_from_parent(docstring, gen_index=1, multiple=len(block) > 1, index=index)
 
         if annotation is None:
             received_value = repr(name) if name else index + 1
