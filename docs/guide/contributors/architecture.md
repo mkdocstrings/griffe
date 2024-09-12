@@ -80,7 +80,7 @@ exptree(".")
 
 ## Boilerplate
 
-This project's skeleton (the file-tree shown above) is actually generated from a [Copier](https://copier.readthedocs.io/en/stable/) called [copier-uv](https://pawamoy.github.io/copier-uv/). When generating the project, Copier asks a series of questions (configured by the template itself), and the answers are used to render the file and directory names, as well as the file contents. Copier also records answers in the `.copier-answers.yml` file, allowing to update the project with latest changes from the template while reusing previous answers.
+This project's skeleton (the file-tree shown above) is actually generated from a [Copier](https://copier.readthedocs.io/en/stable/) template called [copier-uv](https://pawamoy.github.io/copier-uv/). When generating the project, Copier asks a series of questions (configured by the template itself), and the answers are used to render the file and directory names, as well as the file contents. Copier also records answers in the `.copier-answers.yml` file, allowing to update the project with latest changes from the template while reusing previous answers.
 
 To update the project (in order to apply latest changes from the template), we use the following command:
 
@@ -114,8 +114,6 @@ Griffe is composed of two packages:
 - `griffe`, which is our public API, exposed to users
 
 When installing the `griffe` distribution from PyPI.org (or any other index where it is published), both the `_griffe` and `griffe` packages are installed. Users then import `griffe` directly, or import objects from it. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `_griffe`.
-
-Right now, the `griffe` package has a lot of public submodules: this is only for backward-compatibility reasons. These submodules will be removed in version 1. Importing or accessing objects from these submodules will emit deprecation warnings, recommending to import things from `griffe` directly.
 
 We'll be honest: our code organization is not the most elegant, but it works :shrug: Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
