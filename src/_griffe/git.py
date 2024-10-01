@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import subprocess
+import unicodedata
 from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -15,6 +17,12 @@ from typing import Iterator
 from _griffe.exceptions import GitError
 
 _WORKTREE_PREFIX = "griffe-worktree-"
+
+
+def _normalize(value: str) -> str:
+    value = unicodedata.normalize("NFKC", value)
+    value = re.sub(r"[^\w]+", "-", value)
+    return re.sub(r"[-\s]+", "-", value).strip("-")
 
 
 def assert_git_repo(path: str | Path) -> None:
@@ -104,11 +112,11 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     """
     assert_git_repo(repo)
     repo_name = Path(repo).resolve().name
-    with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{ref}-") as tmp_dir:
-        branch = f"griffe_{ref}"
-        location = os.path.join(tmp_dir, branch)  # noqa: PTH118
+    normref = _normalize(ref)
+    with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{normref}-") as tmp_dir:
+        location = os.path.join(tmp_dir, normref)  # noqa: PTH118
         process = subprocess.run(
-            ["git", "-C", repo, "worktree", "add", "-b", branch, location, ref],
+            ["git", "-C", repo, "worktree", "add", "-b", normref, location, ref],
             capture_output=True,
             check=False,
         )
@@ -118,6 +126,6 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         try:
             yield Path(location)
         finally:
-            subprocess.run(["git", "-C", repo, "worktree", "remove", branch], stdout=subprocess.DEVNULL, check=False)
+            subprocess.run(["git", "-C", repo, "worktree", "remove", normref], stdout=subprocess.DEVNULL, check=False)
             subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL, check=False)
-            subprocess.run(["git", "-C", repo, "branch", "-D", branch], stdout=subprocess.DEVNULL, check=False)
+            subprocess.run(["git", "-C", repo, "branch", "-D", normref], stdout=subprocess.DEVNULL, check=False)
