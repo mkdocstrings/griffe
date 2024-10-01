@@ -42575,43 +42575,67 @@
         "labels": [],
         "members": {
           "GitError": {
-            "endlineno": 15,
+            "endlineno": 17,
             "kind": "alias",
-            "lineno": 15,
+            "lineno": 17,
             "name": "GitError",
             "target_path": "_griffe.exceptions.GitError"
           },
           "Iterator": {
-            "endlineno": 13,
+            "endlineno": 15,
             "kind": "alias",
-            "lineno": 13,
+            "lineno": 15,
             "name": "Iterator",
             "target_path": "typing.Iterator"
           },
           "Path": {
-            "endlineno": 11,
+            "endlineno": 13,
             "kind": "alias",
-            "lineno": 11,
+            "lineno": 13,
             "name": "Path",
             "target_path": "pathlib.Path"
           },
           "TemporaryDirectory": {
-            "endlineno": 12,
+            "endlineno": 14,
             "kind": "alias",
-            "lineno": 12,
+            "lineno": 14,
             "name": "TemporaryDirectory",
             "target_path": "tempfile.TemporaryDirectory"
           },
           "_WORKTREE_PREFIX": {
-            "endlineno": 17,
+            "endlineno": 19,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 17,
+            "lineno": 19,
             "members": {},
             "name": "_WORKTREE_PREFIX",
             "value": "'griffe-worktree-'"
+          },
+          "_normalize": {
+            "decorators": [],
+            "endlineno": 25,
+            "kind": "function",
+            "labels": [],
+            "lineno": 22,
+            "members": {},
+            "name": "_normalize",
+            "parameters": [
+              {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "default": null,
+                "kind": "positional or keyword",
+                "name": "value"
+              }
+            ],
+            "returns": {
+              "cls": "ExprName",
+              "name": "str"
+            }
           },
           "annotations": {
             "endlineno": 5,
@@ -42623,14 +42647,14 @@
           "assert_git_repo": {
             "decorators": [],
             "docstring": {
-              "endlineno": 28,
-              "lineno": 21,
+              "endlineno": 36,
+              "lineno": 29,
               "value": "Assert that a directory is a Git repository.\n\nParameters:\n    path: Path to a directory.\n\nRaises:\n    OSError: When the directory is not a Git repository."
             },
-            "endlineno": 40,
+            "endlineno": 48,
             "kind": "function",
             "labels": [],
-            "lineno": 20,
+            "lineno": 28,
             "members": {},
             "name": "assert_git_repo",
             "parameters": [
@@ -42655,23 +42679,23 @@
             "returns": "None"
           },
           "contextmanager": {
-            "endlineno": 10,
+            "endlineno": 12,
             "kind": "alias",
-            "lineno": 10,
+            "lineno": 12,
             "name": "contextmanager",
             "target_path": "contextlib.contextmanager"
           },
           "get_latest_tag": {
             "decorators": [],
             "docstring": {
-              "endlineno": 51,
-              "lineno": 44,
+              "endlineno": 59,
+              "lineno": 52,
               "value": "Get latest tag of a Git repository.\n\nParameters:\n    repo: The path to Git repository.\n\nReturns:\n    The latest tag."
             },
-            "endlineno": 67,
+            "endlineno": 75,
             "kind": "function",
             "labels": [],
-            "lineno": 43,
+            "lineno": 51,
             "members": {},
             "name": "get_latest_tag",
             "parameters": [
@@ -42701,14 +42725,14 @@
           "get_repo_root": {
             "decorators": [],
             "docstring": {
-              "endlineno": 78,
-              "lineno": 71,
+              "endlineno": 86,
+              "lineno": 79,
               "value": "Get the root of a Git repository.\n\nParameters:\n    repo: The path to a Git repository.\n\nReturns:\n    The root of the repository."
             },
-            "endlineno": 87,
+            "endlineno": 95,
             "kind": "function",
             "labels": [],
-            "lineno": 70,
+            "lineno": 78,
             "members": {},
             "name": "get_repo_root",
             "parameters": [
@@ -42742,25 +42766,32 @@
             "name": "os",
             "target_path": "os"
           },
-          "shutil": {
+          "re": {
             "endlineno": 8,
             "kind": "alias",
             "lineno": 8,
+            "name": "re",
+            "target_path": "re"
+          },
+          "shutil": {
+            "endlineno": 9,
+            "kind": "alias",
+            "lineno": 9,
             "name": "shutil",
             "target_path": "shutil"
           },
           "subprocess": {
-            "endlineno": 9,
+            "endlineno": 10,
             "kind": "alias",
-            "lineno": 9,
+            "lineno": 10,
             "name": "subprocess",
             "target_path": "subprocess"
           },
           "tmp_worktree": {
             "decorators": [
               {
-                "endlineno": 90,
-                "lineno": 90,
+                "endlineno": 98,
+                "lineno": 98,
                 "value": {
                   "cls": "ExprName",
                   "name": "contextmanager"
@@ -42768,14 +42799,14 @@
               }
             ],
             "docstring": {
-              "endlineno": 104,
-              "lineno": 92,
+              "endlineno": 112,
+              "lineno": 100,
               "value": "Context manager that checks out the given reference in the given repository to a temporary worktree.\n\nParameters:\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    ref: A Git reference such as a commit, tag or branch.\n\nYields:\n    The path to the temporary worktree.\n\nRaises:\n    OSError: If `repo` is not a valid `.git` repository\n    RuntimeError: If the `git` executable is unavailable, or if it cannot create a worktree"
             },
-            "endlineno": 123,
+            "endlineno": 131,
             "kind": "function",
             "labels": [],
-            "lineno": 90,
+            "lineno": 98,
             "members": {},
             "name": "tmp_worktree",
             "parameters": [
@@ -42817,6 +42848,13 @@
                 "name": "Path"
               }
             }
+          },
+          "unicodedata": {
+            "endlineno": 11,
+            "kind": "alias",
+            "lineno": 11,
+            "name": "unicodedata",
+            "target_path": "unicodedata"
           }
         },
         "name": "git"
