@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.3.2](https://github.com/mkdocstrings/griffe/releases/tag/1.3.2) - 2024-10-01
+
+<small>[Compare with 1.3.1](https://github.com/mkdocstrings/griffe/compare/1.3.1...1.3.2)</small>
+
+### Bug Fixes
+
+- Normalize paths of temporary Git worktrees ([0821e67](https://github.com/mkdocstrings/griffe/commit/0821e6784e5a3aeb56020867c8b46f9477621ed3) by Timothée Mazzucotelli). [Issue-324](https://github.com/mkdocstrings/griffe/issues/324)
+
 ## [1.3.1](https://github.com/mkdocstrings/griffe/releases/tag/1.3.1) - 2024-09-12
 
 <small>[Compare with 1.3.0](https://github.com/mkdocstrings/griffe/compare/1.3.0...1.3.1)</small>
