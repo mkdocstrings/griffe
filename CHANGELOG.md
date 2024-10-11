@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.4.0](https://github.com/mkdocstrings/griffe/releases/tag/1.4.0) - 2024-10-11
+
+<small>[Compare with 1.3.2](https://github.com/mkdocstrings/griffe/compare/1.3.2...1.4.0)</small>
+
+### Features
+
+- Add Markdown and GitHub output formats to the `griffe check` command ([806805c](https://github.com/mkdocstrings/griffe/commit/806805c3970a7cf3f32eec436255ea1323a60e1a) by Timothée Mazzucotelli).
+
 ## [1.3.2](https://github.com/mkdocstrings/griffe/releases/tag/1.3.2) - 2024-10-01
 
 <small>[Compare with 1.3.1](https://github.com/mkdocstrings/griffe/compare/1.3.1...1.3.2)</small>
