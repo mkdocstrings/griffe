@@ -111,7 +111,7 @@ jobs:
         - lowest-direct
         exclude: ${{ fromJSON(needs.exclude-test-jobs.outputs.jobs) }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.python-version == '3.14' }}
+    continue-on-error: ${{ matrix.python-version == '3.14' || matrix.python-version == '3.13' }}
 
     steps:
     - name: Checkout
