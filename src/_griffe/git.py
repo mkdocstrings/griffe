@@ -12,9 +12,12 @@ import unicodedata
 from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Iterator
+from typing import TYPE_CHECKING
 
 from _griffe.exceptions import GitError
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 _WORKTREE_PREFIX = "griffe-worktree-"
 

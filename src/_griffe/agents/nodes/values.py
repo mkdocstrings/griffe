@@ -3,16 +3,10 @@
 from __future__ import annotations
 
 import ast
-import sys
+from ast import unparse
 from typing import TYPE_CHECKING
 
 from _griffe.logger import logger
-
-# YORE: EOL 3.8: Replace block with line 4.
-if sys.version_info < (3, 9):
-    from astunparse import unparse
-else:
-    from ast import unparse
 
 if TYPE_CHECKING:
     from pathlib import Path

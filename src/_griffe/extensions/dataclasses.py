@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import ast
 from contextlib import suppress
-from functools import lru_cache
+from functools import cache
 from typing import Any, cast
 
 from _griffe.enumerations import ParameterKind
@@ -62,7 +62,7 @@ def _field_arguments(attribute: Attribute) -> dict[str, Any]:
     return {}
 
 
-@lru_cache(maxsize=None)
+@cache
 def _dataclass_parameters(class_: Class) -> list[Parameter]:
     # Fetch `@dataclass` arguments if any.
     dec_args = _dataclass_arguments(class_.decorators)

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterator, List, Protocol, Tuple, Union
+from typing import TYPE_CHECKING, Any, Protocol, Union
 
 from griffe import (
     Attribute,
@@ -15,11 +15,12 @@ from griffe import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from types import ModuleType
 
 
 ParentType = Union[Module, Class, Function, Attribute, None]
-ParseResultType = Tuple[List[DocstringSection], List[str]]
+ParseResultType = tuple[list[DocstringSection], list[str]]
 
 
 class ParserType(Protocol):  # noqa: D101

@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from importlib import invalidate_caches
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Iterator, Mapping, Sequence
+from typing import TYPE_CHECKING, Any
 
 from _griffe.agents.inspector import inspect
 from _griffe.agents.visitor import visit
@@ -20,6 +20,8 @@ from _griffe.loader import load
 from _griffe.models import Module, Object
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator, Mapping, Sequence
+
     from _griffe.collections import ModulesCollection
     from _griffe.enumerations import Parser
     from _griffe.extensions.base import Extensions
@@ -408,11 +410,6 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
     parts = path.split(".")
     modules = [Module(name, filepath=Path(*parts[:index], "__init__.py")) for index, name in enumerate(parts)]
     if not leaf_package:
-        # YORE: EOL 3.8: Replace block with line 2.
-        try:
-            filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[union-attr]
-        except AttributeError:
-            filepath = modules[-1].filepath.with_name(f"{parts[-1]}.py")  # type: ignore[union-attr]
-
+        filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[union-attr]
         modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]

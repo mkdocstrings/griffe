@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import contextlib
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Iterator
+from typing import TYPE_CHECKING, Any
 
 from colorama import Fore, Style
 
@@ -20,6 +20,8 @@ from _griffe.git import _WORKTREE_PREFIX
 from _griffe.logger import logger
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
+
     from _griffe.models import Alias, Attribute, Class, Function, Object
 
 _POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))

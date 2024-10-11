@@ -11,7 +11,10 @@ from __future__ import annotations
 
 import logging
 from contextlib import contextmanager
-from typing import Any, Callable, ClassVar, Iterator
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class Logger:

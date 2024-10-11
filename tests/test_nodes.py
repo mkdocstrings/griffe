@@ -264,12 +264,15 @@ def test_parsing_dynamic_base_classes(caplog: pytest.LogCaptureFixture) -> None:
     Parameters:
         caplog: Pytest fixture to capture logs.
     """
-    with caplog.at_level(logging.ERROR), temporary_visited_module(
-        """
+    with (
+        caplog.at_level(logging.ERROR),
+        temporary_visited_module(
+            """
             from collections import namedtuple
             class Thing(namedtuple('Thing', 'attr1 attr2')):
                 ...
             """,
+        ),
     ):
         pass
     assert not caplog.records

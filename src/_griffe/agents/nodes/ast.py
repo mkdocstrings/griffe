@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from ast import AST
-from typing import Iterator
+from typing import TYPE_CHECKING
 
 from _griffe.exceptions import LastNodeError
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def ast_kind(node: AST) -> str:

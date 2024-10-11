@@ -5,12 +5,15 @@ from __future__ import annotations
 from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Iterator
+from typing import TYPE_CHECKING
 
 import pytest
 from mkdocstrings.inventory import Inventory
 
 import griffe
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 @pytest.fixture(name="loader", scope="module")

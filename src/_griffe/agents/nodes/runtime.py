@@ -5,10 +5,13 @@ from __future__ import annotations
 import inspect
 import sys
 from functools import cached_property
-from typing import Any, ClassVar, Sequence
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from _griffe.enumerations import ObjectKind
 from _griffe.logger import logger
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 _builtin_module_names = {_.lstrip("_") for _ in sys.builtin_module_names}
 _cyclic_relationships = {
@@ -19,7 +22,6 @@ _cyclic_relationships = {
 
 
 def _same_components(a: str, b: str, /) -> bool:
-    # YORE: EOL 3.8: Replace `lstrip` with `removeprefix` within line.
     return [cpn.lstrip("_") for cpn in a.split(".")] == [cpn.lstrip("_") for cpn in b.split(".")]
 
 

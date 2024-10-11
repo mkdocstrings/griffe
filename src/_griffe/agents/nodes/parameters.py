@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import ast
 from itertools import zip_longest
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from _griffe.enumerations import ParameterKind
 
-ParametersType = List[Tuple[str, Optional[ast.AST], ParameterKind, Optional[Union[str, ast.AST]]]]
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+ParametersType = list[tuple[str, Optional[ast.AST], ParameterKind, Optional[Union[str, ast.AST]]]]
 """Type alias for the list of parameters of a function."""
 
 

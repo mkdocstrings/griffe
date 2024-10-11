@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ItemsView, KeysView, ValuesView
+from typing import TYPE_CHECKING, Any
 
 from _griffe.mixins import DelMembersMixin, GetMembersMixin, SetMembersMixin
 
 if TYPE_CHECKING:
+    from collections.abc import ItemsView, KeysView, ValuesView
     from pathlib import Path
 
     from _griffe.models import Module

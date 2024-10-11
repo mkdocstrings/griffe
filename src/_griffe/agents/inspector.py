@@ -7,7 +7,7 @@ import ast
 from inspect import Parameter as SignatureParameter
 from inspect import Signature, cleandoc, getsourcelines
 from inspect import signature as getsignature
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any
 
 from _griffe.agents.nodes.runtime import ObjectNode
 from _griffe.collections import LinesCollection, ModulesCollection
@@ -19,6 +19,7 @@ from _griffe.logger import logger
 from _griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from pathlib import Path
 
     from _griffe.enumerations import Parser

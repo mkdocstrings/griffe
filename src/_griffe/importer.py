@@ -7,9 +7,10 @@ from __future__ import annotations
 import sys
 from contextlib import contextmanager
 from importlib import import_module
-from typing import TYPE_CHECKING, Any, Iterator, Sequence
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
     from pathlib import Path
 
 

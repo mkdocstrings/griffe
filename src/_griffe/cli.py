@@ -19,7 +19,7 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Callable, Sequence
+from typing import IO, TYPE_CHECKING, Any, Callable
 
 import colorama
 
@@ -34,6 +34,8 @@ from _griffe.loader import GriffeLoader, load, load_git
 from _griffe.logger import logger
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from _griffe.extensions.base import Extension, Extensions
 
 

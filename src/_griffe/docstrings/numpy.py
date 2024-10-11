@@ -57,7 +57,8 @@ from _griffe.enumerations import DocstringSectionKind, LogLevel
 from _griffe.expressions import ExprName
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Pattern
+    from re import Pattern
+    from typing import Any, Literal
 
     from _griffe.expressions import Expr
     from _griffe.models import Docstring

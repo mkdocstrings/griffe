@@ -461,10 +461,10 @@ def test_side_loading_sibling_private_module(wildcard: bool, external: bool | No
 def test_forcing_inspection() -> None:
     """Load a package with forced dynamic analysis."""
     modules = {"__init__.py": "a = 0", "mod.py": "b = 1"}
-    with temporary_visited_package("static_pkg", modules) as static_package, temporary_inspected_package(
-        "dynamic_pkg",
-        modules,
-    ) as dynamic_package:
+    with (
+        temporary_visited_package("static_pkg", modules) as static_package,
+        temporary_inspected_package("dynamic_pkg", modules) as dynamic_package,
+    ):
         for name in static_package.members:
             assert name in dynamic_package.members
         for name in static_package["mod"].members:

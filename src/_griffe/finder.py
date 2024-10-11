@@ -25,13 +25,14 @@ from contextlib import suppress
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Iterator, Sequence, Tuple
+from typing import TYPE_CHECKING, ClassVar
 
 from _griffe.exceptions import UnhandledEditableModuleError
 from _griffe.logger import logger
 
 if TYPE_CHECKING:
-    from typing import Pattern
+    from collections.abc import Iterator, Sequence
+    from re import Pattern
 
     from _griffe.models import Module
 
@@ -41,9 +42,9 @@ _editable_setuptools_patterns = [re.compile(pat) for pat in (r"^__editable__\w+\
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
 _editable_meson_python_patterns = [re.compile(pat) for pat in (r"^_\w+_editable_loader.py$",)]
 
-NamePartsType = Tuple[str, ...]
+NamePartsType = tuple[str, ...]
 """Type alias for the parts of a module name."""
-NamePartsAndPathType = Tuple[NamePartsType, Path]
+NamePartsAndPathType = tuple[NamePartsType, Path]
 """Type alias for the parts of a module name and its path."""
 
 

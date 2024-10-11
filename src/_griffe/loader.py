@@ -6,7 +6,7 @@ import sys
 from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Sequence, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from _griffe.agents.inspector import inspect
 from _griffe.agents.visitor import visit
@@ -29,6 +29,8 @@ from _griffe.models import Alias, Module, Object
 from _griffe.stats import Stats
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from _griffe.enumerations import Parser
 
 _builtin_modules: set[str] = set(sys.builtin_module_names)

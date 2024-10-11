@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Iterator
+from typing import TYPE_CHECKING
 
 import pytest
 
 from _griffe.docstrings import google, numpy, sphinx
 from tests.test_docstrings.helpers import ParserType, parser
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 @pytest.fixture

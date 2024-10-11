@@ -5,13 +5,15 @@ from __future__ import annotations
 
 import json
 from contextlib import suppress
-from typing import TYPE_CHECKING, Any, Sequence, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from _griffe.enumerations import Kind
 from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError
 from _griffe.merger import merge_stubs
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from _griffe.models import Alias, Attribute, Class, Function, Module, Object
 
 _ObjType = TypeVar("_ObjType")

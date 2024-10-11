@@ -7,13 +7,14 @@
 
 from __future__ import annotations
 
+from collections import deque
 from itertools import islice
-from typing import Deque, TypeVar
+from typing import TypeVar
 
 _T = TypeVar("_T")
 
 
-class _Dependency(Deque[_T]):
+class _Dependency(deque[_T]):
     """A class representing a (doubly-ended) queue of items."""
 
     @property

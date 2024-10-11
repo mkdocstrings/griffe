@@ -8,7 +8,7 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Union, cast
 
 from _griffe.c3linear import c3linear_merge
 from _griffe.docstrings.parsers import DocstringStyle, parse
@@ -19,6 +19,8 @@ from _griffe.logger import logger
 from _griffe.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from _griffe.collections import LinesCollection, ModulesCollection
     from _griffe.docstrings.models import DocstringSection
     from _griffe.expressions import Expr

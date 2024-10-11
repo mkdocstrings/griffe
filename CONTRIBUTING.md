@@ -10,4 +10,4 @@ We provide a guide for contributors. If you are reading this locally or directly
     - Development workflow: [docs/guide/contributors/workflow.md](docs/guide/contributors/workflow.md)
     - Project architecture: [docs/guide/contributors/architecture.md](docs/guide/contributors/architecture.md)
 
-However we strongly recommend reading the online version at https://mkdocstrings.github.io/griffe/guide/contributors/, as some content is dynamically generated when building the documentation pages.
+We strongly recommend reading the online version at https://mkdocstrings.github.io/griffe/guide/contributors/, as some content is dynamically generated when building the documentation pages.

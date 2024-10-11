@@ -48,8 +48,9 @@ def test_class_level_imports() -> None:
 
 def test_missing_dependency() -> None:
     """Assert missing dependencies are handled during dynamic imports."""
-    with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"), temporary_inspected_module(
-        "import missing",
+    with (
+        pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"),
+        temporary_inspected_module("import missing"),
     ):
         pass
 

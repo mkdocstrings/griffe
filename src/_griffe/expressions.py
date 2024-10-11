@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from dataclasses import fields as getfields
 from functools import partial
 from itertools import zip_longest
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Callable
 
 from _griffe.agents.nodes.parameters import get_parameters
 from _griffe.enumerations import LogLevel, ParameterKind
@@ -20,6 +20,7 @@ from _griffe.exceptions import NameResolutionError
 from _griffe.logger import logger
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator, Sequence
     from pathlib import Path
 
     from _griffe.models import Class, Module
@@ -1170,18 +1171,6 @@ _node_map: dict[type, Callable[[Any, Module | Class], Expr]] = {
     ast.Yield: _build_yield,
     ast.YieldFrom: _build_yield_from,
 }
-
-# YORE: EOL 3.8: Remove block.
-if sys.version_info < (3, 9):
-
-    def _build_extslice(node: ast.ExtSlice, parent: Module | Class, **kwargs: Any) -> Expr:
-        return ExprExtSlice([_build(dim, parent, **kwargs) for dim in node.dims])
-
-    def _build_index(node: ast.Index, parent: Module | Class, **kwargs: Any) -> Expr:
-        return _build(node.value, parent, **kwargs)
-
-    _node_map[ast.ExtSlice] = _build_extslice
-    _node_map[ast.Index] = _build_index
 
 
 def _build(node: ast.AST, parent: Module | Class, **kwargs: Any) -> Expr:

@@ -9,9 +9,12 @@ import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Callable, Iterator
+from typing import TYPE_CHECKING, Any, Callable
 
-PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.8 3.9 3.10 3.11 3.12 3.13").split()
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.9 3.10 3.11 3.12 3.13 3.14").split()
 
 _commands = []
 

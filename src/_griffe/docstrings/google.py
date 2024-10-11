@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from contextlib import suppress
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING
 
 from _griffe.docstrings.models import (
     DocstringAttribute,
@@ -38,7 +38,8 @@ from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotati
 from _griffe.enumerations import DocstringSectionKind, LogLevel
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Pattern
+    from re import Pattern
+    from typing import Any, Literal
 
     from _griffe.expressions import Expr
     from _griffe.models import Docstring
@@ -70,9 +71,9 @@ _section_kind = {
     "warnings": DocstringSectionKind.warns,
 }
 
-_BlockItem = Tuple[int, List[str]]
-_BlockItems = List[_BlockItem]
-_ItemsBlock = Tuple[_BlockItems, int]
+_BlockItem = tuple[int, list[str]]
+_BlockItems = list[_BlockItem]
+_ItemsBlock = tuple[_BlockItems, int]
 
 _RE_ADMONITION: Pattern = re.compile(r"^(?P<type>[\w][\s\w-]*):(\s+(?P<title>[^\s].*))?\s*$", re.IGNORECASE)
 _RE_NAME_ANNOTATION_DESCRIPTION: Pattern = re.compile(r"^(?:(?P<name>\w+)?\s*(?:\((?P<type>.+)\))?:\s*)?(?P<desc>.*)$")

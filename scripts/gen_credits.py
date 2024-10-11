@@ -5,11 +5,12 @@ from __future__ import annotations
 import os
 import sys
 from collections import defaultdict
+from collections.abc import Iterable
 from importlib.metadata import distributions
 from itertools import chain
 from pathlib import Path
 from textwrap import dedent
-from typing import Dict, Iterable, Union
+from typing import Union
 
 from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
@@ -28,8 +29,8 @@ project = pyproject["project"]
 project_name = project["name"]
 devdeps = [dep for dep in pyproject["tool"]["uv"]["dev-dependencies"] if not dep.startswith("-e")]
 
-PackageMetadata = Dict[str, Union[str, Iterable[str]]]
-Metadata = Dict[str, PackageMetadata]
+PackageMetadata = dict[str, Union[str, Iterable[str]]]
+Metadata = dict[str, PackageMetadata]
 
 
 def _merge_fields(metadata: dict) -> PackageMetadata:

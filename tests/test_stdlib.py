@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import sys
 from contextlib import suppress
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 import pytest
 
 from griffe import GriffeLoader, LoadingError
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from griffe import Alias, Object
 
 

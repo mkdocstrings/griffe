@@ -8,8 +8,7 @@ description = "Signatures for entire Python programs. Extract the structure, the
 authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
 license = {text = "ISC"}
 readme = "README.md"
-# YORE: EOL 3.8: Remove `3.8` with `3.9` within line.
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
 dynamic = ["version"]
 classifiers = [
@@ -18,8 +17,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    # YORE: EOL 3.8: Remove line.
-    "Programming Language :: Python :: 3.8",
     # YORE: EOL 3.9: Remove line.
     "Programming Language :: Python :: 3.9",
     # YORE: EOL 3.10: Remove line.
@@ -30,6 +27,8 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     # YORE: EOL 3.13: Remove line.
     "Programming Language :: Python :: 3.13",
+    # YORE: EOL 3.14: Remove line.
+    "Programming Language :: Python :: 3.14",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
@@ -87,7 +86,7 @@ dev-dependencies = [
     # maintenance
     "build>=1.2",
     "git-changelog>=2.5",
-    "twine>=5.0; python_version < '3.13'",
+    "twine>=5.1",
 
     # ci
     "duty>=1.4",
@@ -120,5 +119,6 @@ dev-dependencies = [
     "mkdocs-redirects>=1.2",
     "mkdocstrings[python]>=0.25",
     "pydeps>=1.12",
+    # YORE: EOL 3.10: Remove line.
     "tomli>=2.0; python_version < '3.11'",
 ]
