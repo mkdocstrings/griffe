@@ -34,6 +34,8 @@ pipx install griffe
 
 ## Usage
 
+### Dump JSON-serialized API
+
 **On the command line**, pass the names of packages to the `griffe dump` command:
 
 ```console
@@ -52,7 +54,9 @@ $ griffe dump httpx fastapi
 
 See the [Serializing chapter](https://mkdocstrings.github.io/griffe/guide/users/serializing/) for more examples.
 
-Or pass a relative path to the `griffe check` command:
+### Check for API breaking changes
+
+Pass a relative path to the `griffe check` command:
 
 ```console
 $ griffe check mypackage --verbose
@@ -88,6 +92,8 @@ griffe check package_name -b project-name==2.0 -a project-name==1.0
 ```
 
 See the [Checking chapter](https://mkdocstrings.github.io/griffe/guide/users/checking/) for more examples.
+
+### Load and navigate data with Python
 
 **With Python**, loading a package:
 
