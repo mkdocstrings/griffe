@@ -13,8 +13,6 @@ from typing import Any, Callable, Iterator
 
 PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.8 3.9 3.10 3.11 3.12 3.13").split()
 
-_exe = ""
-_prefix = ""
 _commands = []
 
 
@@ -39,45 +37,25 @@ def _environ(**kwargs: str) -> Iterator[None]:
         os.environ.update(original)
 
 
-def _uv_install() -> None:
-    uv_opts = ""
-    if "UV_RESOLUTION" in os.environ:
-        uv_opts = f"--resolution={os.getenv('UV_RESOLUTION')}"
-    requirements = _shell(f"uv pip compile {uv_opts} pyproject.toml devdeps.txt", capture_output=True)
-    _shell("uv pip install -r -", input=requirements, text=True)
-    if "CI" not in os.environ:
-        _shell("uv pip install --no-deps -e .")
-    else:
-        _shell("uv pip install --no-deps .")
+def _uv_install(venv: Path) -> None:
+    with _environ(UV_PROJECT_ENVIRONMENT=str(venv)):
+        if "CI" in os.environ:
+            _shell("uv sync --no-editable")
+        else:
+            _shell("uv sync")
 
 
-def _activate(path: str) -> None:
-    global _exe, _prefix  # noqa: PLW0603
-
-    if (bin := Path(path, "bin")).exists():
-        activate_script = bin / "activate_this.py"
-    elif (scripts := Path(path, "Scripts")).exists():
-        activate_script = scripts / "activate_this.py"
-        _exe = ".exe"
-        _prefix = f"{path}/Scripts/"
-    else:
-        raise ValueError(f"make: activate: Cannot find activation script in {path}")
-
-    if not activate_script.exists():
-        raise ValueError(f"make: activate: Cannot find activation script in {path}")
-
-    exec(activate_script.read_text(), {"__file__": str(activate_script)})  # noqa: S102
-
-
-def _run(version: str, cmd: str, *args: str, **kwargs: Any) -> None:
+def _run(version: str, cmd: str, *args: str, no_sync: bool = False, **kwargs: Any) -> None:
     kwargs = {"check": True, **kwargs}
+    uv_run = ["uv", "run"]
+    if no_sync:
+        uv_run.append("--no-sync")
     if version == "default":
-        _activate(".venv")
-        subprocess.run([f"{_prefix}{cmd}{_exe}", *args], **kwargs)  # noqa: S603, PLW1510
+        with _environ(UV_PROJECT_ENVIRONMENT=".venv"):
+            subprocess.run([*uv_run, cmd, *args], **kwargs)  # noqa: S603, PLW1510
     else:
-        _activate(f".venvs/{version}")
-        os.environ["MULTIRUN"] = "1"
-        subprocess.run([f"{_prefix}{cmd}{_exe}", *args], **kwargs)  # noqa: S603, PLW1510
+        with _environ(UV_PROJECT_ENVIRONMENT=f".venvs/{version}", MULTIRUN="1"):
+            subprocess.run([*uv_run, cmd, *args], **kwargs)  # noqa: S603, PLW1510
 
 
 def _command(name: str) -> Callable[[Callable[..., None]], Callable[..., None]]:
@@ -111,14 +89,10 @@ def help(*args: str) -> None:
     if len(args) > 1:
         _run("default", "duty", "--help", args[1])
     else:
-        print("Available commands")
+        print("Available commands", flush=True)
         for cmd in _commands:
-            print(f"  {cmd.__cmdname__:21} {cmd.__doc__.splitlines()[0]}")  # type: ignore[attr-defined,union-attr]
-        try:
-            _run("default", "python", "-V", capture_output=True)
-        except (subprocess.CalledProcessError, ValueError):
-            pass
-        else:
+            print(f"  {cmd.__cmdname__:21} {cmd.__doc__.splitlines()[0]}", flush=True)  # type: ignore[attr-defined,union-attr]
+        if Path(".venv").exists():
             print("\nAvailable tasks", flush=True)
             run("duty", "--list")
 
@@ -163,7 +137,7 @@ def setup() -> None:
     default_venv = Path(".venv")
     if not default_venv.exists():
         _shell("uv venv --python python")
-    _uv_install()
+    _uv_install(default_venv)
 
     if PYTHON_VERSIONS:
         for version in PYTHON_VERSIONS:
@@ -172,7 +146,7 @@ def setup() -> None:
             if not venv_path.exists():
                 _shell(f"uv venv --python {version} {venv_path}")
             with _environ(VIRTUAL_ENV=str(venv_path.resolve())):
-                _uv_install()
+                _uv_install(venv_path)
 
 
 @_command("run")
@@ -264,11 +238,9 @@ def clean() -> None:
         _shell(f"rm -rf {path}")
 
     cache_dirs = [".cache", ".pytest_cache", ".mypy_cache", ".ruff_cache", "__pycache__"]
-    for dirpath in Path().rglob("*"):
-        if any(dirpath.match(pattern) for pattern in cache_dirs) and not (
-            dirpath.match(".venv") or dirpath.match(".venvs")
-        ):
-            shutil.rmtree(path, ignore_errors=True)
+    for dirpath in Path().rglob("*/"):
+        if dirpath.parts[0] not in (".venv", ".venvs") and dirpath.name in cache_dirs:
+            shutil.rmtree(dirpath, ignore_errors=True)
 
 
 @_command("vscode")

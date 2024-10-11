@@ -86,7 +86,7 @@ def changelog(ctx: Context, bump: str = "") -> None:
     ctx.run(tools.git_changelog(bump=bump or None), title="Updating changelog")
 
 
-@duty(pre=["check_quality", "check_types", "check_docs", "check-api"])
+@duty(pre=["check-quality", "check-types", "check-docs", "check-api"])
 def check(ctx: Context) -> None:
     """Check it all!
 
@@ -310,7 +310,12 @@ def docs_deploy(ctx: Context) -> None:
             ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
         origin = ctx.run("git config --get remote.origin.url", silent=True, allow_overrides=False)
         if "pawamoy-insiders/griffe" in origin:
-            ctx.run("git remote add upstream git@github.com:mkdocstrings/griffe", silent=True, nofail=True)
+            ctx.run(
+                "git remote add upstream git@github.com:mkdocstrings/griffe",
+                silent=True,
+                nofail=True,
+                allow_overrides=False,
+            )
             ctx.run(
                 tools.mkdocs.gh_deploy(remote_name="upstream", force=True),
                 title="Deploying documentation",

@@ -26,8 +26,7 @@ with project_dir.joinpath("pyproject.toml").open("rb") as pyproject_file:
     pyproject = tomllib.load(pyproject_file)
 project = pyproject["project"]
 project_name = project["name"]
-with project_dir.joinpath("devdeps.txt").open() as devdeps_file:
-    devdeps = [line.strip() for line in devdeps_file if line.strip() and not line.strip().startswith(("-e", "#"))]
+devdeps = [dep for dep in pyproject["tool"]["uv"]["dev-dependencies"] if not dep.startswith("-e")]
 
 PackageMetadata = Dict[str, Union[str, Iterable[str]]]
 Metadata = Dict[str, PackageMetadata]
