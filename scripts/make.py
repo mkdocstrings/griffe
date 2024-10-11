@@ -41,7 +41,7 @@ def _environ(**kwargs: str) -> Iterator[None]:
 
 
 def _uv_install(venv: Path) -> None:
-    with _environ(UV_PROJECT_ENVIRONMENT=str(venv)):
+    with _environ(UV_PROJECT_ENVIRONMENT=str(venv), PYO3_USE_ABI3_FORWARD_COMPATIBILITY="1"):
         if "CI" in os.environ:
             _shell("uv sync --no-editable")
         else:
