@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.4.1](https://github.com/mkdocstrings/griffe/releases/tag/1.4.1) - 2024-10-12
+
+<small>[Compare with 1.4.0](https://github.com/mkdocstrings/griffe/compare/1.4.0...1.4.1)</small>
+
+### Code Refactoring
+
+- Drop support for Python 3.8 ([f2d39b8](https://github.com/mkdocstrings/griffe/commit/f2d39b8ed40f2b90ac15fd7ad818b3c59b657a43) by Timothée Mazzucotelli).
+
 ## [1.4.0](https://github.com/mkdocstrings/griffe/releases/tag/1.4.0) - 2024-10-11
 
 <small>[Compare with 1.3.2](https://github.com/mkdocstrings/griffe/compare/1.3.2...1.4.0)</small>
