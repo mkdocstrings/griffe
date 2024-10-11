@@ -66,8 +66,8 @@
             <a id="indexLink" class="nav" href="covindex.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_eb24e90c7b74ae12_test_sphinx_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-08-15 16:47 +0200
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.2">coverage.py v7.6.2</a>,
+            created at 2024-10-12 01:34 +0200
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1095,16 +1095,16 @@
     <p class="pln"><span class="n"><a id="t1011" href="#t1011">1011</a></span><span class="t"><span class="str">    """</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1012" href="#t1012">1012</a></span><span class="t">    <span class="nam">nl</span> <span class="op">=</span> <span class="str">"\n"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1013" href="#t1013">1013</a></span><span class="t">    <span class="nam">nlindent</span> <span class="op">=</span> <span class="str">"\n"</span> <span class="op">+</span> <span class="str">" "</span> <span class="op">*</span> <span class="num">12</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1014" href="#t1014">1014</a></span><span class="t">    <span class="nam">docstring</span> <span class="op">=</span> <span class="str">f"""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1015" href="#t1015">1015</a></span><span class="t"><span class="str">        Parameters</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1016" href="#t1016">1016</a></span><span class="t"><span class="str">        ----------</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1017" href="#t1017">1017</a></span><span class="t"><span class="str">        a : str</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1018" href="#t1018">1018</a></span><span class="t"><span class="str">            Summary.{nlindent * newlines}Body.</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1019" href="#t1019">1019</a></span><span class="t"><span class="str">    """</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1014" href="#t1014">1014</a></span><span class="t">    <span class="nam">docstring</span> <span class="op">=</span> <span class="fst">f"""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t1015" href="#t1015">1015</a></span><span class="t"><span class="fst">        Parameters</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t1016" href="#t1016">1016</a></span><span class="t"><span class="fst">        ----------</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t1017" href="#t1017">1017</a></span><span class="t"><span class="fst">        a : str</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t1018" href="#t1018">1018</a></span><span class="t"><span class="fst">            Summary.</span><span class="op">{</span><span class="nam">nlindent</span> <span class="op">*</span> <span class="nam">newlines</span><span class="op">}</span><span class="fst">Body.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t1019" href="#t1019">1019</a></span><span class="t"><span class="fst">    </span><span class="fst">"""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1020" href="#t1020">1020</a></span><span class="t">    <span class="nam">sections</span><span class="op">,</span> <span class="nam">_</span> <span class="op">=</span> <span class="nam">parse_numpy</span><span class="op">(</span><span class="nam">docstring</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1021" href="#t1021">1021</a></span><span class="t">    <span class="key">assert</span> <span class="nam">len</span><span class="op">(</span><span class="nam">sections</span><span class="op">)</span> <span class="op">==</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1022" href="#t1022">1022</a></span><span class="t">    <span class="key">assert</span> <span class="nam">sections</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">value</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">annotation</span> <span class="op">==</span> <span class="str">"str"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t1023" href="#t1023">1023</a></span><span class="t">    <span class="key">assert</span> <span class="nam">sections</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">value</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">description</span> <span class="op">==</span> <span class="str">f"Summary.{nl * newlines}Body."</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t1023" href="#t1023">1023</a></span><span class="t">    <span class="key">assert</span> <span class="nam">sections</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">value</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">.</span><span class="nam">description</span> <span class="op">==</span> <span class="fst">f"</span><span class="fst">Summary.</span><span class="op">{</span><span class="nam">nl</span> <span class="op">*</span> <span class="nam">newlines</span><span class="op">}</span><span class="fst">Body.</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1024" href="#t1024">1024</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1025" href="#t1025">1025</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1026" href="#t1026">1026</a></span><span class="t"><span class="com"># =============================================================================================</span>&nbsp;</span><span class="r"></span></p>
@@ -1443,8 +1443,8 @@
             <a class="nav" href="covindex.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_eb24e90c7b74ae12_test_sphinx_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-08-15 16:47 +0200
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.2">coverage.py v7.6.2</a>,
+            created at 2024-10-12 01:34 +0200
         </p>
     </div>
 </footer>
