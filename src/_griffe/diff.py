@@ -193,10 +193,46 @@ class Breakage:
         return "\n".join(lines)
 
     def _explain_markdown(self) -> str:
-        return self._explain_oneline()
+        explanation = f"- `{self._canonical_path}`: *{self.kind.value}*"
+        old = self._format_old_value()
+        if old != "unset":
+            old = f"`{old}`"
+        new = self._format_new_value()
+        if new != "unset":
+            new = f"`{new}`"
+        if old and new:
+            change = f"{old} -> {new}"
+        elif old:
+            change = old
+        elif new:
+            change = new
+        else:
+            change = ""
+        if change:
+            return f"{explanation}: {change}"
+        return explanation
 
     def _explain_github(self) -> str:
-        return self._explain_oneline()
+        location = f"file={self._location},line={self._lineno}"
+        title = f"title={self._format_title()}"
+        explanation = f"::warning {location},{title}::{self.kind.value}"
+        old = self._format_old_value()
+        if old != "unset":
+            old = f"`{old}`"
+        new = self._format_new_value()
+        if new != "unset":
+            new = f"`{new}`"
+        if old and new:
+            change = f"{old} -> {new}"
+        elif old:
+            change = old
+        elif new:
+            change = new
+        else:
+            change = ""
+        if change:
+            return f"{explanation}: {change}"
+        return explanation
 
 
 class ParameterMovedBreakage(Breakage):

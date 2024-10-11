@@ -318,7 +318,7 @@ def get_parser() -> argparse.ArgumentParser:
         help="Force disable colors in the output.",
     )
     check_options.add_argument("-v", "--verbose", action="store_true", help="Verbose output.")
-    formats = ("oneline", "verbose")
+    formats = [fmt.value for fmt in ExplanationStyle]
     check_options.add_argument("-f", "--format", dest="style", choices=formats, default=None, help="Output format.")
     add_common_options(check_parser)
 
