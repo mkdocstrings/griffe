@@ -1,7 +1,5 @@
 # `griffe-pydantic`
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders }
-
 - **PyPI**: [`griffe-pydantic`](https://pypi.org/project/griffe-pydantic/)
 - **GitHub**: [mkdocstrings/griffe-pydantic](https://github.com/mkdocstrings/griffe-pydantic)
 - **Documentation:** [mkdocstrings.github.io/griffe-pydantic](https://mkdocstrings.github.io/griffe-pydantic)
