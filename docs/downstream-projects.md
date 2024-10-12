@@ -8,8 +8,6 @@ Griffe is used by various projects in the Python ecosystem.
 
 ## Griffe TUI
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](insiders/index.md){ .insiders }
-
 [Griffe TUI](https://mkdocstrings.github.io/griffe-tui/) is a textual user interface for Griffe. It offers 100% offline, beautiful Python API docs, in your terminal, thanks to Griffe and [Textual](https://textual.textualize.io/).
 
 ## quartodoc
