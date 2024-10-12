@@ -1,7 +1,5 @@
 # `griffe-warnings-deprecated`
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders }
-
 - **PyPI**: [`griffe-warnings-deprecated`](https://pypi.org/project/griffe-warnings-deprecated/)
 - **GitHub**: [mkdocstrings/griffe-warnings-deprecated](https://github.com/mkdocstrings/griffe-warnings-deprecated)
 - **Documentation:** [mkdocstrings.github.io/griffe-warnings-deprecated](https://mkdocstrings.github.io/griffe-warnings-deprecated)

@@ -12,4 +12,4 @@ Available official extensions:
 - [`runtime-objects`](official/runtime-objects.md): Access runtime objects corresponding to each loaded Griffe object through their `extra` attribute. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
 - [`sphinx`](official/sphinx.md): Parse [Sphinx](https://www.sphinx-doc.org/)-comments above attributes (`#:`) as docstrings. [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
 - [`typing-doc`](official/typingdoc.md): Support for [PEP 727](https://peps.python.org/pep-0727/)'s [`typing.Doc`][typing_extensions.Doc], "Documentation in Annotated Metadata".
-- [`warnings-deprecated`](official/warnings-deprecated.md): Support for [PEP 702](https://peps.python.org/pep-0702/)'s [`warnings.deprecated`][], "Marking deprecations using the type system". [:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders }
+- [`warnings-deprecated`](official/warnings-deprecated.md): Support for [PEP 702](https://peps.python.org/pep-0702/)'s [`warnings.deprecated`][], "Marking deprecations using the type system".
