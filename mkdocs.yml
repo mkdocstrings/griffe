@@ -126,7 +126,6 @@ theme:
   - content.tooltips
   - navigation.expand
   - navigation.footer
-  - navigation.indexes
   - navigation.path
   - navigation.sections
   - navigation.tabs
