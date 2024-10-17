@@ -14,6 +14,10 @@ Griffe is used by various projects in the Python ecosystem.
 
 [quartodoc](https://machow.github.io/quartodoc/) lets you quickly generate Python package API reference documentation using Markdown and [Quarto](https://quarto.org/). quartodoc is designed as an alternative to [Sphinx](https://www.sphinx-doc.org/en/master/). It uses Griffe to load API data and parse docstrings in order to render HTML documentation, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but for Quarto instead of Mkdocs.
 
+## mkdocstrings-python
+
+Of course, Griffe is what powers [the Python handler of mkdocstrings](https://mkdocstrings.github.io/python/). mkdocstrings is a plugin for [MkDocs](https://www.mkdocs.org/) that allows rendering API docs easily.
+
 ## pydanclick
 
 [Pydanclick](https://pypi.org/project/pydanclick/) allows to use [Pydantic](https://docs.pydantic.dev/latest/) models as [Click](https://click.palletsprojects.com/en/8.1.x/) options. It uses Griffe to parse docstrings and find Attributes sections, to help itself build Click options.
