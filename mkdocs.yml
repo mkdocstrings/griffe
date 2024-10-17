@@ -55,6 +55,7 @@ nav:
     - Project architecture: guide/contributors/architecture.md
     - Coverage report: guide/contributors/coverage.md
 - Extensions:
+  - extensions.md
   - Built-in:
     - extensions/built-in.md
     - dataclasses: extensions/built-in/dataclasses.md
@@ -255,7 +256,6 @@ plugins:
       loading.md: guide/users/loading.md
       expressions.md: guide/users/navigating.md#expressions
       best_practices.md: guide/users/recommendations/python-code.md
-      extensions.md: guide/users/extending.md
       docstrings.md: reference/docstrings.md
       parsing_docstrings.md: guide/users/how-to/parse-docstrings.md
       try_it_out.md: playground.md
