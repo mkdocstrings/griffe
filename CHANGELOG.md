@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.0](https://github.com/mkdocstrings/griffe/releases/tag/1.5.0) - 2024-10-18
+
+<small>[Compare with 1.4.1](https://github.com/mkdocstrings/griffe/compare/1.4.1...1.5.0)</small>
+
+### Features
+
+- Allow setting and deleting parameters within container ([19f354d](https://github.com/mkdocstrings/griffe/commit/19f354da6a331a12d80a61bd3005cdcc30a3c42c) by Timothée Mazzucotelli).
+
 ## [1.4.1](https://github.com/mkdocstrings/griffe/releases/tag/1.4.1) - 2024-10-12
 
 <small>[Compare with 1.4.0](https://github.com/mkdocstrings/griffe/compare/1.4.0...1.4.1)</small>
