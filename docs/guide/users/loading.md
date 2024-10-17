@@ -103,6 +103,7 @@ import griffe
 my_package = griffe.load("my_package", force_inspection=True)
 ```
 
+[](){#forcing-dynamic-analysis-not-recommended}
 Forcing inspection can be useful when your code is highly dynamic, and static analysis has trouble keeping up.
 
 **However we don't recommend forcing inspection**, for a few reasons:
@@ -112,7 +113,7 @@ Forcing inspection can be useful when your code is highly dynamic, and static an
 - dynamic analysis will potentially consume more resources (CPU, RAM) since it executes code
 - dynamic analysis will sometimes give you less precise or incomplete information
 - it's possible to write Griffe extensions that will *statically handle* the highly dynamic parts of your code (like custom decorators) that Griffe doesn't understand by default
-- if really needed, it's possible to handle only a subset of objects with dynamic analysis, while the rest is loaded with static analysis, again thanks to Griffe extensions
+- if really needed, it's possible to [handle only a subset of objects with dynamic analysis](how-to/selectively-inspect.md), while the rest is loaded with static analysis, again thanks to Griffe extensions
 
 The [Extending](extending.md) topic will explain how to write and use extensions for Griffe.
 

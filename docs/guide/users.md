@@ -81,3 +81,27 @@ These topics explore the user side: how to write code to better integrate with G
     [:octicons-arrow-right-24: See our docstring recommendations](users/recommendations/docstrings.md)
 
 </div>
+
+## How-to
+
+These how-tos will show you how to achieve specific things with Griffe.
+
+<div class="grid cards" markdown>
+
+- :octicons-ai-model-24:{ .lg .middle } **Parse docstrings**
+
+    ---
+
+    Griffe can be used as a docstring-parsing library.
+
+    [:octicons-arrow-right-24: See how to parse docstrings](users/how-to/parse-docstrings.md)
+
+- :material-select:{ .lg .middle } **Selectively inspect objects**
+
+    ---
+
+    Sometimes static analysis is not enough, so you might want to use dynamic analysis (inspection) on certain objects.
+
+    [:octicons-arrow-right-24: See how selectively inspect objects](users/how-to/selectively-inspect.md)
+
+</div>

@@ -47,6 +47,7 @@ nav:
       - Docstrings: guide/users/recommendations/docstrings.md
     - How-to:
       - Parse docstrings: guide/users/how-to/parse-docstrings.md
+      - Selectively inspect objects: guide/users/how-to/selectively-inspect.md
   - Contributor guide:
     - guide/contributors.md
     - Environment setup: guide/contributors/setup.md
