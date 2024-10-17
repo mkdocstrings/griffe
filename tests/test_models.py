@@ -13,6 +13,8 @@ from griffe import (
     GriffeLoader,
     Module,
     NameResolutionError,
+    Parameter,
+    Parameters,
     module_vtree,
     temporary_inspected_module,
     temporary_pypackage,
@@ -493,3 +495,34 @@ def test_name_resolution() -> None:
         assert module["Class.method"].resolve("imported") == "imported"
         assert module["Class.method"].resolve("class_attribute") == "module.Class.class_attribute"
         assert module["Class.method"].resolve("instance_attribute") == "module.Class.instance_attribute"
+
+
+def test_set_parameters() -> None:
+    """We can set parameters."""
+    parameters = Parameters()
+    # Does not exist yet.
+    parameters["x"] = Parameter(name="x")
+    assert "x" in parameters
+    # Already exists, by name.
+    parameters["x"] = Parameter(name="x")
+    assert "x" in parameters
+    assert len(parameters) == 1
+    # Already exists, by index.
+    parameters[0] = Parameter(name="y")
+    assert "y" in parameters
+    assert len(parameters) == 1
+
+
+def test_delete_parameters() -> None:
+    """We can delete parameters."""
+    parameters = Parameters()
+    # By name.
+    parameters["x"] = Parameter(name="x")
+    del parameters["x"]
+    assert "x" not in parameters
+    assert len(parameters) == 0
+    # By index.
+    parameters["x"] = Parameter(name="x")
+    del parameters[0]
+    assert "x" not in parameters
+    assert len(parameters) == 0

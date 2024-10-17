@@ -182,7 +182,7 @@ class Parameter:
         """Initialize the parameter.
 
         Parameters:
-            name: The parameter name.
+            name: The parameter name, without leading stars (`*` or `**`).
             annotation: The parameter annotation, if any.
             kind: The parameter kind.
             default: The parameter default, if any.
@@ -266,31 +266,61 @@ class Parameters:
         Parameters:
             *parameters: The initial parameters to add to the container.
         """
-        self._parameters_list: list[Parameter] = []
-        self._parameters_dict: dict[str, Parameter] = {}
-        for parameter in parameters:
-            self.add(parameter)
+        self._params: list[Parameter] = list(parameters)
 
     def __repr__(self) -> str:
-        return f"Parameters({', '.join(repr(param) for param in self._parameters_list)})"
+        return f"Parameters({', '.join(repr(param) for param in self._params)})"
 
     def __getitem__(self, name_or_index: int | str) -> Parameter:
         """Get a parameter by index or name."""
         if isinstance(name_or_index, int):
-            return self._parameters_list[name_or_index]
-        return self._parameters_dict[name_or_index.lstrip("*")]
+            return self._params[name_or_index]
+        name = name_or_index.lstrip("*")
+        try:
+            return next(param for param in self._params if param.name == name)
+        except StopIteration as error:
+            raise KeyError(f"parameter {name_or_index} not found") from error
+
+    def __setitem__(self, name_or_index: int | str, parameter: Parameter) -> None:
+        """Set a parameter by index or name."""
+        if isinstance(name_or_index, int):
+            self._params[name_or_index] = parameter
+        else:
+            name = name_or_index.lstrip("*")
+            try:
+                index = next(idx for idx, param in enumerate(self._params) if param.name == name)
+            except StopIteration:
+                self._params.append(parameter)
+            else:
+                self._params[index] = parameter
+
+    def __delitem__(self, name_or_index: int | str) -> None:
+        """Delete a parameter by index or name."""
+        if isinstance(name_or_index, int):
+            del self._params[name_or_index]
+        else:
+            name = name_or_index.lstrip("*")
+            try:
+                index = next(idx for idx, param in enumerate(self._params) if param.name == name)
+            except StopIteration as error:
+                raise KeyError(f"parameter {name_or_index} not found") from error
+            del self._params[index]
 
     def __len__(self):
         """The number of parameters."""
-        return len(self._parameters_list)
+        return len(self._params)
 
     def __iter__(self):
         """Iterate over the parameters, in order."""
-        return iter(self._parameters_list)
+        return iter(self._params)
 
     def __contains__(self, param_name: str):
         """Whether a parameter with the given name is present."""
-        return param_name.lstrip("*") in self._parameters_dict
+        try:
+            next(param for param in self._params if param.name == param_name.lstrip("*"))
+        except StopIteration:
+            return False
+        return True
 
     def add(self, parameter: Parameter) -> None:
         """Add a parameter to the container.
@@ -301,11 +331,9 @@ class Parameters:
         Raises:
             ValueError: When a parameter with the same name is already present.
         """
-        if parameter.name not in self._parameters_dict:
-            self._parameters_dict[parameter.name] = parameter
-            self._parameters_list.append(parameter)
-        else:
+        if parameter.name in self:
             raise ValueError(f"parameter {parameter.name} already present")
+        self._params.append(parameter)
 
 
 class Object(ObjectAliasMixin):
