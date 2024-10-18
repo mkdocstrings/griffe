@@ -65,7 +65,7 @@ def get_latest_tag(repo: str | Path) -> str:
     if not repo.is_dir():
         repo = repo.parent
     process = subprocess.run(
-        ["git", "tag", "-l", "--sort=-committerdate"],
+        ["git", "tag", "-l", "--sort=-creatordate"],
         cwd=repo,
         text=True,
         stdout=subprocess.PIPE,
