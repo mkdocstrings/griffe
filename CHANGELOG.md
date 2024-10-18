@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.1](https://github.com/mkdocstrings/griffe/releases/tag/1.5.1) - 2024-10-18
+
+<small>[Compare with 1.5.0](https://github.com/mkdocstrings/griffe/compare/1.5.0...1.5.1)</small>
+
+### Bug Fixes
+
+- Sort Git tags using `creatordate` field, which works with both lightweight and annotated tags ([3bfa401](https://github.com/mkdocstrings/griffe/commit/3bfa4015c333dd7e56e535aa31bd2296701b6fa5) by Timothée Mazzucotelli). [Issue-327](https://github.com/mkdocstrings/griffe/issues/327)
+
 ## [1.5.0](https://github.com/mkdocstrings/griffe/releases/tag/1.5.0) - 2024-10-18
 
 <small>[Compare with 1.4.1](https://github.com/mkdocstrings/griffe/compare/1.4.1...1.5.0)</small>
