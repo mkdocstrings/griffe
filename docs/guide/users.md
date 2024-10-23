@@ -88,7 +88,7 @@ These how-tos will show you how to achieve specific things with Griffe.
 
 <div class="grid cards" markdown>
 
-- :octicons-ai-model-24:{ .lg .middle } **Parse docstrings**
+-   :octicons-ai-model-24:{ .lg .middle } **Parse docstrings**
 
     ---
 
@@ -96,12 +96,20 @@ These how-tos will show you how to achieve specific things with Griffe.
 
     [:octicons-arrow-right-24: See how to parse docstrings](users/how-to/parse-docstrings.md)
 
-- :material-select:{ .lg .middle } **Selectively inspect objects**
+-   **@ Support custom decorators**
+
+    ---
+
+    Griffe will rarely support custom decorators through static analysis, but you can easily write extensions to do so.
+
+    [:octicons-arrow-right-24: See how to support custom decorators](users/how-to/support-decorators.md)
+
+-   :material-select:{ .lg .middle } **Selectively inspect objects**
 
     ---
 
     Sometimes static analysis is not enough, so you might want to use dynamic analysis (inspection) on certain objects.
 
-    [:octicons-arrow-right-24: See how selectively inspect objects](users/how-to/selectively-inspect.md)
+    [:octicons-arrow-right-24: See how to selectively inspect objects](users/how-to/selectively-inspect.md)
 
 </div>
