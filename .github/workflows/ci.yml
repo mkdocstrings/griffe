@@ -25,9 +25,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-
-    - name: Fetch all tags
-      run: git fetch --depth=1 --tags
+      with:
+        fetch-depth: 0
+        fetch-tags: true
 
     - name: Setup Graphviz
       uses: ts-graphviz/setup-graphviz@v2
@@ -116,6 +116,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
 
     - name: Fetch all tags
       run: git fetch --depth=1 --tags

@@ -297,7 +297,7 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
 
 
 @duty
-def docs_deploy(ctx: Context) -> None:
+def docs_deploy(ctx: Context, *, force: bool = False) -> None:
     """Deploy the documentation to GitHub pages.
 
     ```bash
@@ -305,6 +305,9 @@ def docs_deploy(ctx: Context) -> None:
     ```
 
     Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
+
+    Parameters:
+        force: Whether to force deployment, even from non-Insiders version.
     """
     os.environ["DEPLOY"] = "true"
     with material_insiders() as insiders:
@@ -320,6 +323,11 @@ def docs_deploy(ctx: Context) -> None:
             )
             ctx.run(
                 tools.mkdocs.gh_deploy(remote_name="upstream", force=True),
+                title="Deploying documentation",
+            )
+        elif force:
+            ctx.run(
+                tools.mkdocs.gh_deploy(force=True),
                 title="Deploying documentation",
             )
         else:
