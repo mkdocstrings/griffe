@@ -261,8 +261,7 @@ class GriffeLoader:
                 resolved |= next_resolved
                 unresolved |= next_unresolved
             logger.debug(
-                "Iteration %s finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go",
-                iteration,
+                f"Iteration {iteration} finished, {len(resolved)} aliases resolved, still {len(unresolved)} to go",
             )
         return unresolved, iteration
 
