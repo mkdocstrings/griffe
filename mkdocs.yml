@@ -120,6 +120,7 @@ theme:
   name: material
   custom_dir: docs/.overrides
   logo: logo.svg
+  favicon: img/favicon.ico
   features:
   - announce.dismiss
   - content.action.edit
