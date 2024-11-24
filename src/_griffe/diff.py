@@ -1,6 +1,5 @@
-# This module exports "breaking changes" related utilities.
-# The logic here is to iterate on objects and their members recursively,
-# to yield found breaking changes.
+# This module exports utilities to compute the differences between two versions of an API.
+# The logic here is to iterate on objects and their members recursively.
 #
 # The breakage class definitions might sound a bit verbose,
 # but declaring them this way helps with (de)serialization,
@@ -9,8 +8,9 @@
 from __future__ import annotations
 
 import contextlib
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar, Literal
 
 from colorama import Fore, Style
 
@@ -576,9 +576,6 @@ def _returns_are_compatible(old_function: Function, new_function: Function) -> b
     return True
 
 
-_sentinel = object()
-
-
 def find_breaking_changes(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
@@ -603,3 +600,85 @@ def find_breaking_changes(
         ...     print(breakage.explain(style=style), file=sys.stderr)
     """
     yield from _member_incompatibilities(old_obj, new_obj)
+
+
+unset = object()
+
+
+ChangeKind = Literal[
+    "added object",
+    "added parameter",
+    "added base class",
+    "removed object",
+    "removed parameter",
+    "removed base class",
+    "moved parameter",
+    "changed object kind",
+    "changed attribute type",
+    "changed attribute value",
+    "changed return type",
+    "changed parameter type",
+    "changed parameter default",
+    "changed parameter kind",
+    "deprecated object",
+    "deprecated parameter",
+    "deprecated parameter type",
+    "deprecated parameter default",
+    "deprecated parameter kind",
+    "deprecated parameter value",
+]
+
+
+@dataclass(kw_only=True)
+class AddedObject:
+    kind: ClassVar[ChangeKind] = "added object"
+    obj: Object | Alias
+
+
+@dataclass(kw_only=True)
+class AddedParameter:
+    kind: ClassVar[ChangeKind] = "added parameter"
+
+
+@dataclass(kw_only=True)
+class RemovedObject: ...
+
+
+@dataclass(kw_only=True)
+class RemovedParameter: ...
+
+
+@dataclass(kw_only=True)
+class MovedObject: ...
+
+
+@dataclass(kw_only=True)
+class MovedParameter: ...
+
+
+@dataclass(kw_only=True)
+class ChangedObjectKind: ...
+
+
+@dataclass(kw_only=True)
+class ChangedAttributeValue: ...  # added, removed, moved, changed in ordered/unordered sequences/mappings?
+
+
+@dataclass(kw_only=True)
+class ChangedAttributeType: ...
+
+
+@dataclass(kw_only=True)
+class ChangedReturnType: ...
+
+
+@dataclass(kw_only=True)
+class ChangedParameterType: ...
+
+
+@dataclass(kw_only=True)
+class ChangedParameterDefault: ...
+
+
+@dataclass(kw_only=True)
+class ChangedParameterKind: ...
