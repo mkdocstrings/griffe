@@ -286,8 +286,9 @@ def _read_attributes_section(
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
-            with suppress(AttributeError, KeyError):
-                annotation = docstring.parent.members[name].annotation  # type: ignore[union-attr]
+            with suppress(AttributeError, KeyError, TypeError):
+                # Use subscript syntax to fetch annotation from inherited members too.
+                annotation = docstring.parent[name].annotation  # type: ignore[index]
 
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=description))
 

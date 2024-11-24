@@ -264,8 +264,9 @@ def _read_attribute(
         annotation = parsed_attribute_type
     else:
         # try to use the annotation from the parent
-        with suppress(AttributeError, KeyError):
-            annotation = docstring.parent.attributes[name].annotation  # type: ignore[union-attr]
+        with suppress(AttributeError, KeyError, TypeError):
+            # Use subscript syntax to fetch annotation from inherited members too.
+            annotation = docstring.parent[name].annotation  # type: ignore[index]
     if name in parsed_values.attributes:
         docstring_warning(docstring, 0, f"Duplicate attribute entry for '{name}'")
     else:
