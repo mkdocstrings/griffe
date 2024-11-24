@@ -22,7 +22,7 @@ def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: 
         The absolute import path.
     """
     level = node.level
-    if level > 0 and current_module.is_package or current_module.is_subpackage:
+    if (level > 0 and current_module.is_package) or current_module.is_subpackage:
         level -= 1
     while level > 0 and current_module.parent is not None:
         current_module = current_module.parent  # type: ignore[assignment]

@@ -367,6 +367,7 @@ from _griffe.tests import (
 # names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("annotations", "lazy_importing"))
 # print('__all__ = [\n    "' + '",\n    "'.join(names) + '",\n]')
 __all__ = [
+    "DEFAULT_LOG_LEVEL",
     "Alias",
     "AliasResolutionError",
     "Attribute",
@@ -378,7 +379,6 @@ __all__ = [
     "Class",
     "ClassRemovedBaseBreakage",
     "CyclicAliasError",
-    "DEFAULT_LOG_LEVEL",
     "DataclassesExtension",
     "Decorator",
     "DelMembersMixin",
@@ -467,8 +467,8 @@ __all__ = [
     "LinesCollection",
     "LoadableExtensionType",
     "LoadingError",
-    "Logger",
     "LogLevel",
+    "Logger",
     "Module",
     "ModuleFinder",
     "ModulesCollection",
@@ -517,8 +517,8 @@ __all__ = [
     "builtin_extensions",
     "c3linear_merge",
     "check",
-    "dump",
     "docstring_warning",
+    "dump",
     "dynamic_import",
     "find_breaking_changes",
     "get__all__",

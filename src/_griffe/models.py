@@ -212,15 +212,15 @@ class Parameter:
     def __repr__(self) -> str:
         return f"Parameter(name={self.name!r}, annotation={self.annotation!r}, kind={self.kind!r}, default={self.default!r})"
 
-    def __eq__(self, __value: object) -> bool:
+    def __eq__(self, value: object, /) -> bool:
         """Parameters are equal if all their attributes except `docstring` and `function` are equal."""
-        if not isinstance(__value, Parameter):
+        if not isinstance(value, Parameter):
             return NotImplemented
         return (
-            self.name == __value.name
-            and self.annotation == __value.annotation
-            and self.kind == __value.kind
-            and self.default == __value.default
+            self.name == value.name
+            and self.annotation == value.annotation
+            and self.kind == value.kind
+            and self.default == value.default
         )
 
     @property

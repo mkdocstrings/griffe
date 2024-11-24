@@ -27,10 +27,7 @@ def clear_sys_modules(name: str | None = None) -> None:
     else:
         prefix = os.path.join(gettempdir(), _TMPDIR_PREFIX)  # noqa: PTH118
         for module_name, module in tuple(sys.modules.items()):
-            if (
-                (file := getattr(module, "__file__", ""))
-                and file.startswith(prefix)
-                or (paths := getattr(module, "__path__", ()))
-                and any(path.startswith(prefix) for path in paths)
+            if ((file := getattr(module, "__file__", "")) and file.startswith(prefix)) or (
+                (paths := getattr(module, "__path__", ())) and any(path.startswith(prefix) for path in paths)
             ):
                 sys.modules.pop(module_name, None)
