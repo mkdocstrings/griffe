@@ -371,3 +371,44 @@ a.__b._c == __a.b.c
 ```
 
 When the qualified name of the object's parent module and the currently inspected module match like above, the object is inspected in-place (added as a member of the currently inspected module) instead of created as an alias.
+
+## Avoid forward references in base classes
+
+Python's type system will let you use forward references in generic types when they are used as base classes. For example:
+
+=== "Before Python 3.12"
+
+    ```python
+    from typing import TypeVar, Generic
+
+    T = TypeVar('T')
+
+
+    class Foo(Generic[T]):
+        ...
+
+
+    class FooBar(Foo['Bar']):
+        ...
+
+
+    class Bar:
+        ...
+    ```
+
+=== "Python 3.12+"
+
+    ```python
+    class Foo[T]:
+        ...
+
+
+    class FooBar(Foo['Bar']):
+        ...
+
+
+    class Bar:
+        ...
+    ```
+
+While Griffe will load this code without error, the `'Bar'` forward reference won't be resolved to the actual `Bar` class. As a consequence, downstream tools like documentation renderers won't be able to output a link to the `Bar` class. We therefore recommend to avoid using forward references in base classes, if possible.
