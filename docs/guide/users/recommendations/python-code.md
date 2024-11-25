@@ -413,17 +413,38 @@ Python's type system will let you use forward references in generic types when t
 
 While Griffe will load this code without error, the `'Bar'` forward reference won't be resolved to the actual `Bar` class. As a consequence, downstream tools like documentation renderers won't be able to output a link to the `Bar` class. We therefore recommend to avoid using forward references in base classes, if possible.
 
-Instead, you can try to declare or import the `Bar` class earlier, or make `FooBar` generic again but with a default type:
+Instead, you can try one of the following approach:
 
-```python
-class Foo[T]:
-    ...
+- declare or import the `Bar` class earlier
+- declare a proper type:
+
+    ```python
+    class Foo[T]:
+        ...
 
 
-class FooBar[T=Bar](Foo[T]):
-    ...
+    type TBar = Bar
 
 
-class Bar:
-    ...
-```
+    class FooBar(Foo[TBar]):
+        ...
+
+
+    class Bar:
+        ...
+    ```
+
+- make `FooBar` generic again but with a default type:
+
+    ```python
+    class Foo[T]:
+        ...
+
+
+    class FooBar[T=Bar](Foo[T]):
+        ...
+
+
+    class Bar:
+        ...
+    ```
