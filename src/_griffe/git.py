@@ -115,11 +115,12 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
     """
     assert_git_repo(repo)
     repo_name = Path(repo).resolve().name
-    normref = _normalize(ref)
+    normref = _normalize(ref)  # Branch names can contain slashes.
     with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{normref}-") as tmp_dir:
         location = os.path.join(tmp_dir, normref)  # noqa: PTH118
+        tmp_branch = f"griffe-{normref}"  # Temporary branch name must not already exist.
         process = subprocess.run(
-            ["git", "-C", repo, "worktree", "add", "-b", normref, location, ref],
+            ["git", "-C", repo, "worktree", "add", "-b", tmp_branch, location, ref],
             capture_output=True,
             check=False,
         )
@@ -129,6 +130,6 @@ def tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         try:
             yield Path(location)
         finally:
-            subprocess.run(["git", "-C", repo, "worktree", "remove", normref], stdout=subprocess.DEVNULL, check=False)
+            subprocess.run(["git", "-C", repo, "worktree", "remove", location], stdout=subprocess.DEVNULL, check=False)
             subprocess.run(["git", "-C", repo, "worktree", "prune"], stdout=subprocess.DEVNULL, check=False)
-            subprocess.run(["git", "-C", repo, "branch", "-D", normref], stdout=subprocess.DEVNULL, check=False)
+            subprocess.run(["git", "-C", repo, "branch", "-D", tmp_branch], stdout=subprocess.DEVNULL, check=False)
