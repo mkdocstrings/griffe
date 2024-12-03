@@ -482,6 +482,8 @@ def check(
         search_paths=search_paths,
         allow_inspection=allow_inspection,
         force_inspection=force_inspection,
+        resolve_aliases=True,
+        resolve_external=None,
     )
     if base_ref:
         new_package = load_git(
@@ -493,6 +495,8 @@ def check(
             allow_inspection=allow_inspection,
             force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
+            resolve_aliases=True,
+            resolve_external=None,
         )
     else:
         new_package = load(
@@ -503,6 +507,8 @@ def check(
             allow_inspection=allow_inspection,
             force_inspection=force_inspection,
             find_stubs_package=find_stubs_package,
+            resolve_aliases=True,
+            resolve_external=None,
         )
 
     # Find and display API breakages.
