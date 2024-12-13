@@ -18,6 +18,10 @@ Of course, Griffe is what powers [the Python handler of mkdocstrings](https://mk
 
 [Pydanclick](https://pypi.org/project/pydanclick/) allows to use [Pydantic](https://docs.pydantic.dev/latest/) models as [Click](https://click.palletsprojects.com/en/8.1.x/) options. It uses Griffe to parse docstrings and find Attributes sections, to help itself build Click options.
 
+## PydanticAI
+
+[PydanticAI](https://ai.pydantic.dev/) is a Python Agent Framework designed to make it less painful to build production grade applications with Generative AI. It uses Griffe to extract tool and parameter descriptions from docstrings.
+
 ## quartodoc
 
 [quartodoc](https://machow.github.io/quartodoc/) lets you quickly generate Python package API reference documentation using Markdown and [Quarto](https://quarto.org/). quartodoc is designed as an alternative to [Sphinx](https://www.sphinx-doc.org/en/master/). It uses Griffe to load API data and parse docstrings in order to render HTML documentation, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but for Quarto instead of Mkdocs.
