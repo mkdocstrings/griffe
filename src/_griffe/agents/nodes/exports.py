@@ -103,7 +103,7 @@ def safe_get__all__(
         log_level: Log level to use to log a message.
 
     Returns:
-        A list of strings or resovable names.
+        A list of strings or resolvable names.
     """
     try:
         return get__all__(node, parent)
