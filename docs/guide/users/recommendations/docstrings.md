@@ -4,10 +4,13 @@ Here are explanations on what docstrings are, and a few recommendations on how t
 
 ## Definition
 
-A docstring is a line or block of text describing objects such as modules, classes, functions and attributes. They are written below the object signature or assignment, or appear as first expression in a module:
+A docstring is a line or block of text describing objects such as modules, classes, functions, attributes and type aliases. They are written below the object signature or assignment, or appear as first expression in a module:
 
 ```python title="module.py"
 """This is the module docstring."""
+
+type X = dict[str, int]
+"""This is a type alias docstring."""
 
 a = 0
 """This is an attribute docstring."""
@@ -51,7 +54,7 @@ Whatever markup you choose, try to stay consistent within your code base.
 
 ## Styles
 
-Docstrings can be written for modules, classes, functions, and attributes. But there are other aspects of a Python API that need to be documented, such as function parameters, returned values, and raised exceptions, to name a few. We could document everything in natural language, but that would make it hard for downstream tools such as documentation generators to extract information in a structured way, to allow dedicated rendering such as tables for parameters.
+Docstrings can be written for modules, classes, functions, attributes, and type aliases. But there are other aspects of a Python API that need to be documented, such as function parameters, returned values, and raised exceptions, to name a few. We could document everything in natural language, but that would make it hard for downstream tools such as documentation generators to extract information in a structured way, to allow dedicated rendering such as tables for parameters.
 
 To compensate for the lack of structure in natural languages, docstring "styles" emerged. A docstring style is a micro-format for docstrings, allowing to structure the information by following a specific format. With the most popular Google and Numpydoc styles, information in docstrings is decomposed into **sections** of different kinds, for example "parameter" sections or "return" sections. Some kinds of section then support documenting multiple items, or support a single block of markup. For example, we can document multiple parameters in "parameter" sections, but a "note" section is only composed of a text block.
 
@@ -136,7 +139,7 @@ When documenting objects acting as namespaces (modules, classes, enumerations), 
 
 ## Modules
 
-Module docstrings should briefly explain what the module contains, and for what purposes these objects can be used. If the documentation generator you chose does not support generating member summaries automatically, you might want to add docstrings sections for attributes, functions, classes and submodules.
+Module docstrings should briefly explain what the module contains, and for what purposes these objects can be used. If the documentation generator you chose does not support generating member summaries automatically, you might want to add docstrings sections for attributes, functions, classes, type aliases and submodules.
 
 ```python title="package/__init__.py"
 """A generic package to demonstrate docstrings.
@@ -303,6 +306,19 @@ class GhostTown:
 
         self.size = size
         """The town's size."""
+```
+
+## Type aliases
+
+Type alias docstrings are written below their assignment. As usual, they should have a short summary, and an optional, longer body.
+
+```python
+type Callback = typing.Callable[[int, str], typing.Any]
+"""Callback type for Frobnicators.
+
+The first argument is the number of rounds to run, the second argument
+is the name of the widget being frobnicated.
+"""
 ```
 
 ## Exceptions, warnings

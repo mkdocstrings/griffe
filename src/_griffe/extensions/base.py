@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from _griffe.agents.nodes.runtime import ObjectNode
     from _griffe.agents.visitor import Visitor
     from _griffe.loader import GriffeLoader
-    from _griffe.models import Alias, Attribute, Class, Function, Module, Object
+    from _griffe.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
 
 
 class Extension:
@@ -231,6 +231,32 @@ class Extension:
         Parameters:
             node: The currently visited node.
             attr: The attribute instance.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_type_alias_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
+        """Run when visiting a new type alias node during static/dynamic analysis.
+
+        Parameters:
+            node: The currently visited node.
+            agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_type_alias_instance(
+        self,
+        *,
+        node: ast.AST | ObjectNode,
+        type_alias: TypeAlias,
+        agent: Visitor | Inspector,
+        **kwargs: Any,
+    ) -> None:
+        """Run when a TypeAlias has been created.
+
+        Parameters:
+            node: The currently visited node.
+            type_alias: The type alias instance.
             agent: The analysis agent currently running.
             **kwargs: For forward-compatibility.
         """

@@ -102,7 +102,7 @@ If the source code is not available (the modules are built-in or compiled), Grif
 
 Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pattern) to walk the tree and extract information. For ASTs, Griffe uses its [Visitor agent][griffe.Visitor] and for object trees, it uses its [Inspector agent][griffe.Inspector].
 
-Sometimes during the walk through the tree (depth-first order), both the visitor and inspector agents will trigger events. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], or an [Attribute][griffe.Attribute]. Extensions will therefore be able to modify these instances.
+Sometimes during the walk through the tree (depth-first order), both the visitor and inspector agents will trigger events. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], an [Attribute][griffe.Attribute], or a [Type Alias][griffe.TypeAlias]. Extensions will therefore be able to modify these instances.
 
 The following flow chart shows an example of an AST visit. The tree is simplified: actual trees have a lot more nodes like `if/elif/else` nodes, `try/except/else/finally` nodes, [and many more][ast.AST].
 
@@ -200,8 +200,8 @@ There are two **load events**:
 There are 3 generic **analysis events**:
 
 - [`on_node`][griffe.Extension.on_node]: The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
-- [`on_instance`][griffe.Extension.on_instance]: The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], or [Attribute][griffe.Attribute], and added it as a member of its parent. The "on instance" event is **not** triggered when an [Alias][griffe.Alias] is created.
-- [`on_members`][griffe.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions and attributes do not have members, so there are no "on members" event for these two kinds.
+- [`on_instance`][griffe.Extension.on_instance]: The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], [Attribute][griffe.Attribute], or [Type Alias][griffe.TypeAlias], and added it as a member of its parent. The "on instance" event is **not** triggered when an [Alias][griffe.Alias] is created.
+- [`on_members`][griffe.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions, attributes and type aliases do not have members, so there are no "on members" event for these two kinds.
 
 There are also specific **analysis events** for each object kind:
 
@@ -215,6 +215,8 @@ There are also specific **analysis events** for each object kind:
 - [`on_function_instance`][griffe.Extension.on_function_instance]
 - [`on_attribute_node`][griffe.Extension.on_attribute_node]
 - [`on_attribute_instance`][griffe.Extension.on_attribute_instance]
+- [`on_type_alias_node`][griffe.Extension.on_type_alias_node]
+- [`on_type_alias_instance`][griffe.Extension.on_type_alias_instance]
 
 And a special event for aliases:
 
@@ -315,7 +317,7 @@ class MyExtension(Extension):
 
 The preferred method is to check the type of the received node rather than the agent.
 
-Since hooks also receive instantiated modules, classes, functions and attributes, most of the time you will not need to use the `node` argument other than for checking its type and deciding what to do based on the result. And since we always add `**kwargs` to the hooks' signatures, you can drop any parameter you don't use from the signature:
+Since hooks also receive instantiated modules, classes, functions, attributes and type aliases, most of the time you will not need to use the `node` argument other than for checking its type and deciding what to do based on the result. And since we always add `**kwargs` to the hooks' signatures, you can drop any parameter you don't use from the signature:
 
 ```python
 import griffe
@@ -391,7 +393,7 @@ class MyExtension(griffe.Extension):
 
 ### Extra data
 
-All Griffe objects (modules, classes, functions, attributes) can store additional (meta)data in their `extra` attribute. This attribute is a dictionary of dictionaries. The first layer is used as namespacing: each extension writes into its own namespace, or integrates with other projects by reading/writing in their namespaces, according to what they support and document.
+All Griffe objects (modules, classes, functions, attributes, type aliases) can store additional (meta)data in their `extra` attribute. This attribute is a dictionary of dictionaries. The first layer is used as namespacing: each extension writes into its own namespace, or integrates with other projects by reading/writing in their namespaces, according to what they support and document.
 
 ```python
 import griffe
@@ -563,10 +565,10 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 > - [`Continue`][ast.Continue]
 > - [`Del`][ast.Del]
 > - [`Delete`][ast.Delete]
+> - [`Dict`][ast.Dict]
 >
 > </td><td>
 >
-> - [`Dict`][ast.Dict]
 > - [`DictComp`][ast.DictComp]
 > - [`Div`][ast.Div]
 > - `Ellipsis`[^1]
@@ -595,11 +597,11 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 > - [`IsNot`][ast.IsNot]
 > - [`JoinedStr`][ast.JoinedStr]
 > - [`keyword`][ast.keyword]
+> - [`Lambda`][ast.Lambda]
+> - [`List`][ast.List]
 >
 > </td><td>
 >
-> - [`Lambda`][ast.Lambda]
-> - [`List`][ast.List]
 > - [`ListComp`][ast.ListComp]
 > - [`Load`][ast.Load]
 > - [`LShift`][ast.LShift]
@@ -627,11 +629,12 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 > - [`NotEq`][ast.NotEq]
 > - [`NotIn`][ast.NotIn]
 > - `Num`[^1]
+> - [`Or`][ast.Or]
+> - [`ParamSpec`][ast.ParamSpec]
+> - [`Pass`][ast.Pass]
 >
 > </td><td>
 >
-> - [`Or`][ast.Or]
-> - [`Pass`][ast.Pass]
 > - `pattern`[^3]
 > - [`Pow`][ast.Pow]
 > - `Print`[^4]
@@ -650,6 +653,9 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 > - `TryExcept`[^5]
 > - `TryFinally`[^6]
 > - [`Tuple`][ast.Tuple]
+> - [`TypeAlias`][ast.TypeAlias]
+> - [`TypeVar`][ast.TypeVar]
+> - [`TypeVarTuple`][ast.TypeVarTuple]
 > - [`UAdd`][ast.UAdd]
 > - [`UnaryOp`][ast.UnaryOp]
 > - [`USub`][ast.USub]

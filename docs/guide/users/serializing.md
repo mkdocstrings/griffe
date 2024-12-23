@@ -52,7 +52,7 @@ See all the options for the `dump` command in the [CLI reference](../../referenc
 
 ## Python API
 
-If you have read through the [Navigating](navigating.md) chapter, you know about our five data models for modules, classes, functions, attributes and aliases. Each one of these model provide the two following methods:
+If you have read through the [Navigating](navigating.md) chapter, you know about our six data models for modules, classes, functions, attributes, type aliases and aliases. Each one of these model provide the two following methods:
 
 - [`as_json`][griffe.Object.as_json], which allows to serialize an object into JSON,
 - [`from_json`][griffe.Object.from_json], which allows to load JSON back into a model instance.

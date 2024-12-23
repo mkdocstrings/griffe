@@ -257,6 +257,7 @@ from _griffe.enumerations import (
     ObjectKind,
     ParameterKind,
     Parser,
+    TypeParameterKind,
 )
 from _griffe.exceptions import (
     AliasResolutionError,
@@ -347,6 +348,9 @@ from _griffe.models import (
     Object,
     Parameter,
     Parameters,
+    TypeAlias,
+    TypeParameter,
+    TypeParameters,
 )
 from _griffe.stats import Stats
 from _griffe.tests import (
@@ -500,6 +504,10 @@ __all__ = [
     "SetMembersMixin",
     "Stats",
     "TmpPackage",
+    "TypeAlias",
+    "TypeParameter",
+    "TypeParameterKind",
+    "TypeParameters",
     "UnhandledEditableModuleError",
     "UnimportableModuleError",
     "Visitor",

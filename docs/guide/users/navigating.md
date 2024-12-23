@@ -6,6 +6,7 @@ Griffe loads API data into data models. These models provide various attributes 
 - [`Class`][griffe.Class], representing Python classes;
 - [`Function`][griffe.Function], representing Python functions and class methods;
 - [`Attribute`][griffe.Attribute], representing object attributes that weren't identified as modules, classes or functions;
+- [`Type Alias`][griffe.TypeAlias], representing Python type aliases;
 - [`Alias`][griffe.Alias], representing indirections such as imported objects or class members inherited from parent classes.
 
 When [loading an object](loading.md), Griffe will give you back an instance of one of these models. A few examples:
@@ -84,7 +85,7 @@ To access an object's members, there are a few options:
 
     In particular, Griffe extensions should always use `get_member` instead of the subscript syntax `[]`. The `get_member` method only looks into regular members, while the subscript syntax looks into inherited members too (for classes), which cannot be correctly computed until a package is fully loaded (which is generally not the case when an extension is running).
 
-- In addition to this, models provide the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes] or [`modules`][griffe.Object.modules] attributes, which return only members of the corresponding kind. These attributes are computed dynamically each time (they are Python properties).
+- In addition to this, models provide the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes, which return only members of the corresponding kind. These attributes are computed dynamically each time (they are Python properties).
 
 The same way members are accessed, they can also be set:
 
@@ -121,7 +122,7 @@ If a base class cannot be resolved during computation of inherited members, Grif
 
 If you want to access all members at once (both declared and inherited), use the [`all_members`][griffe.Object.all_members] attribute. If you want to access only declared members, use the [`members`][griffe.Object] attribute.
 
-Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by Griffe. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by Griffe. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
 #### Limitations
 
@@ -218,7 +219,7 @@ Aliases chains are never partially resolved: either they are resolved down to th
 
 ## Object kind
 
-The kind of an object (module, class, function, attribute or alias) can be obtained in several ways.
+The kind of an object (module, class, function, attribute, type alias or alias) can be obtained in several ways.
 
 - With the [`kind`][griffe.Object.kind] attribute and the [`Kind`][griffe.Kind] enumeration: `obj.kind is Kind.MODULE`.
 
@@ -230,7 +231,7 @@ The kind of an object (module, class, function, attribute or alias) can be obtai
 
     When given a set of kinds, the method returns true if the object is of one of the given kinds.
 
-- With the [`is_module`][griffe.Object.is_module], [`is_class`][griffe.Object.is_class], [`is_function`][griffe.Object.is_function], [`is_attribute`][griffe.Object.is_attribute], and [`is_alias`][griffe.Object.is_alias] attributes.
+- With the [`is_module`][griffe.Object.is_module], [`is_class`][griffe.Object.is_class], [`is_function`][griffe.Object.is_function], [`is_attribute`][griffe.Object.is_attribute], [`is_type_alias`][griffe.Object.is_type_alias], and [`is_alias`][griffe.Object.is_alias] attributes.
 
 Additionally, it is possible to check if an object is a sub-kind of module, with the following attributes:
 
@@ -351,7 +352,7 @@ After a package is loaded, it is still possible to change the style used for spe
 
 Do note, however, that the `parsed` attribute is cached, and won't be reset when overriding the `parser` or `parser_options` values.
 
-Docstrings have a [`parent`][griffe.Docstring.parent] field too, that is a reference to their respective module, class, function or attribute.
+Docstrings have a [`parent`][griffe.Docstring.parent] field too, that is a reference to their respective module, class, function, attribute or type alias.
 
 ## Model-specific fields
 
@@ -370,6 +371,7 @@ Models have most fields in common, but also have specific fields.
 - [`overloads`][griffe.Class.overloads]: A dictionary to store overloads for class-level methods.
 - [`decorators`][griffe.Class.decorators]: The [decorators][griffe.Decorator] applied to the class.
 - [`parameters`][griffe.Class.parameters]: The [parameters][griffe.Parameters] of the class' `__init__` method, if any.
+- [`type_parameters`][griffe.Class.type_parameters]: The [type parameters][griffe.TypeParameters] of the class.
 
 ### Functions
 
@@ -377,6 +379,7 @@ Models have most fields in common, but also have specific fields.
 - [`overloads`][griffe.Function.overloads]: The overloaded signatures of the function.
 - [`parameters`][griffe.Function.parameters]: The [parameters][griffe.Parameters] of the function.
 - [`returns`][griffe.Function.returns]: The type annotation of the returned value, in the form of an [expression][griffe.Expr]. The `annotation` field can also be used, for compatibility with attributes.
+- [`type_parameters`][griffe.Function.type_parameters]: The [type parameters][griffe.TypeParameters] of the function.
 
 ### Attributes
 
@@ -384,6 +387,10 @@ Models have most fields in common, but also have specific fields.
 - [`value`][griffe.Attribute.value]: The value of the attribute, in the form of an [expression][griffe.Expr].
 - [`deleter`][griffe.Attribute.deleter]: The property deleter.
 - [`setter`][griffe.Attribute.setter]: The property setter.
+
+### Type aliases
+- [`value`][griffe.TypeAlias.value]: The value of the type alias, in the form of an [expression][griffe.Expr].
+- [`type_parameters`][griffe.TypeAlias.type_parameters]: The [type parameters][griffe.TypeParameters] of the type alias.
 
 ### Alias
 

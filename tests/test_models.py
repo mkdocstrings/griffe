@@ -7,6 +7,8 @@ from textwrap import dedent
 
 import pytest
 
+from _griffe.enumerations import TypeParameterKind
+from _griffe.models import TypeParameter, TypeParameters
 from griffe import (
     Attribute,
     Docstring,
@@ -526,3 +528,38 @@ def test_delete_parameters() -> None:
     del parameters[0]
     assert "x" not in parameters
     assert len(parameters) == 0
+
+
+def test_set_type_parameters() -> None:
+    """We can set type parameters."""
+    type_parameters = TypeParameters()
+    # Does not exist yet.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    assert "x" in type_parameters
+    # Already exists, by name.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    assert "x" in type_parameters
+    assert len(type_parameters) == 1
+    # Already exists, by name, with different kind.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.param_spec)
+    assert "x" in type_parameters
+    assert len(type_parameters) == 1
+    # Already exists, by index.
+    type_parameters[0] = TypeParameter(name="y", kind=TypeParameterKind.type_var)
+    assert "y" in type_parameters
+    assert len(type_parameters) == 1
+
+
+def test_delete_type_parameters() -> None:
+    """We can delete type parameters."""
+    type_parameters = TypeParameters()
+    # By name.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    del type_parameters["x"]
+    assert "x" not in type_parameters
+    assert len(type_parameters) == 0
+    # By index.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    del type_parameters[0]
+    assert "x" not in type_parameters
+    assert len(type_parameters) == 0
