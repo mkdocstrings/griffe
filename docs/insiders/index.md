@@ -67,6 +67,8 @@ else:
     )
 ```
 
+Additionally, your sponsorship will give more weight to your upvotes on issues, helping us prioritize work items in our backlog. For more information on how we prioritize work, see this page: [Backlog management](https://pawamoy.github.io/backlog/).
+
 ## How to become a sponsor
 
 Thanks for your interest in sponsoring! In order to become an eligible sponsor with your GitHub account, visit [pawamoy's sponsor profile][github sponsor profile], and complete a sponsorship of **$10 a month or more**. You can use your individual or organization GitHub account for sponsoring.

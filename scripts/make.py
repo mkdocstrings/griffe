@@ -48,11 +48,9 @@ def _uv_install(venv: Path) -> None:
             _shell("uv sync")
 
 
-def _run(version: str, cmd: str, *args: str, no_sync: bool = False, **kwargs: Any) -> None:
+def _run(version: str, cmd: str, *args: str, **kwargs: Any) -> None:
     kwargs = {"check": True, **kwargs}
-    uv_run = ["uv", "run"]
-    if no_sync:
-        uv_run.append("--no-sync")
+    uv_run = ["uv", "run", "--no-sync"]
     if version == "default":
         with _environ(UV_PROJECT_ENVIRONMENT=".venv"):
             subprocess.run([*uv_run, cmd, *args], **kwargs)  # noqa: S603, PLW1510
