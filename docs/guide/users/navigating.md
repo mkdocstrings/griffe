@@ -88,21 +88,21 @@ To access an object's members, there are a few options:
 
 The same way members are accessed, they can also be set:
 
-- Dictionary-like item assignment: `markdown["thing"] = ...`, also supporting dotted-paths and string tuples. This will (re)assign both regular and inherited members for classes.
-- Safer method for extensions: `markdown.set_member("thing", ...)`, also supporting dotted-paths and string tuples. This will not (re)assign inherited members for classes.
+- Dictionary-like item assignment: `markdown["thing"] = ...`, also supporting dotted-paths and string tuples. This will (re)assign only regular members: inherited members (classes only) are re-computed everytime they are accessed.
+- Safer method for extensions: `markdown.set_member("thing", ...)`, also supporting dotted-paths and string tuples.
 - Regular member assignment: `markdown.members["thing"] = ...`. **This is not recommended, as the assigned member's `parent` attribute will not be automatically updated.**
 
 ...and deleted:
 
-- Dictionary-like item deletion: `del markdown["thing"]`, also supporting dotted-paths and string tuples. This will delete both regular and inherited members for classes.
-- Safer method for extensions: `markdown.del_member("thing")`, also supporting dotted-paths and string tuples. This will not delete inherited members for classes.
+- Dictionary-like item deletion: `del markdown["thing"]`, also supporting dotted-paths and string tuples. This will delete only regular members: inherited members (classes only) are re-computed everytime they are accessed.
+- Safer method for extensions: `markdown.del_member("thing")`, also supporting dotted-paths and string tuples.
 - Regular member deletion: `del markdown.members["thing"]`. **This is not recommended, as the [`aliases`][griffe.Object.aliases] attribute of other objects in the tree will not be automatically updated.**
 
 ### Inherited members
 
 Griffe supports class inheritance, both when visiting and inspecting modules.
 
-To access members of a class that are inherited from base classes, use the [`inherited_members`][griffe.Object.inherited_members] attribute. If this is the first time you access inherited members, the base classes of the given class will be resolved and cached, then the MRO (Method Resolution Order) will be computed for these bases classes, and a dictionary of inherited members will be built and cached. Next times you access it, you'll get the cached dictionary. Make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+To access members of a class that are inherited from base classes, use the [`inherited_members`][griffe.Object.inherited_members] attribute. Everytime you access inherited members, the base classes of the given class will be resolved, then the MRO (Method Resolution Order) will be computed for these bases classes, and a dictionary of inherited members will be built. Make sure to store the result in a variable to avoid re-computing it everytime (you are responsible for the caching part). Also make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
 Inherited members are aliases that point at the corresponding members in parent classes. These aliases will have their [`inherited`][griffe.Alias.inherited] attribute set to true.
 

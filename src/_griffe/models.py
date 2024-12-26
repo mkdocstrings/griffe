@@ -573,7 +573,7 @@ class Object(ObjectAliasMixin):
             kind = Kind(kind)
         return self.kind is kind
 
-    @cached_property
+    @property
     def inherited_members(self) -> dict[str, Alias]:
         """Members that are inherited from base classes.
 
@@ -1158,7 +1158,7 @@ class Alias(ObjectAliasMixin):
         # no need to forward to the target
         return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
 
-    @cached_property
+    @property
     def members(self) -> dict[str, Object | Alias]:
         """The target's members (modules, classes, functions, attributes).
 
@@ -1178,7 +1178,7 @@ class Alias(ObjectAliasMixin):
             for name, member in final_target.members.items()
         }
 
-    @cached_property
+    @property
     def inherited_members(self) -> dict[str, Alias]:
         """Members that are inherited from base classes.
 
@@ -1964,7 +1964,7 @@ class Class(Object):
         except KeyError:
             return Parameters()
 
-    @cached_property
+    @property
     def resolved_bases(self) -> list[Object]:
         """Resolved class bases.
 
