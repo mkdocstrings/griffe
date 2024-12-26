@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Literal
 
 from _griffe.docstrings.google import parse_google
-from _griffe.docstrings.models import DocstringSection, DocstringSectionText
+from _griffe.docstrings.models import DocstringSection, DocstringSectionText, DocstringStyle
 from _griffe.docstrings.numpy import parse_numpy
 from _griffe.docstrings.sphinx import parse_sphinx
 from _griffe.enumerations import Parser
@@ -22,9 +22,6 @@ if TYPE_CHECKING:
 # in plain markup docstrings too, even more often than Google sections.
 _default_style_order = [Parser.sphinx, Parser.google, Parser.numpy]
 
-
-DocstringStyle = Literal["google", "numpy", "sphinx", "auto"]
-"""The supported docstring styles (literal values of the Parser enumeration)."""
 DocstringDetectionMethod = Literal["heuristics", "max_sections"]
 """The supported methods to infer docstring styles."""
 
