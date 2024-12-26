@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.2](https://github.com/mkdocstrings/griffe/releases/tag/1.5.2) - 2024-12-26
+
+<small>[Compare with 1.5.1](https://github.com/mkdocstrings/griffe/compare/1.5.1...1.5.2)</small>
+
+### Bug Fixes
+
+- Always resolve aliases when checking APIs ([0b4f0da](https://github.com/mkdocstrings/griffe/commit/0b4f0da1658a3c4877a2519447288c1247694a0d) by Timothée Mazzucotelli).
+- Don't use same branch name when creating a worktree ([6d6c996](https://github.com/mkdocstrings/griffe/commit/6d6c99679976a18233ccda5e5cbfb4eb176312fd) by Timothée Mazzucotelli). [Issue-337](https://github.com/mkdocstrings/griffe/issues/337)
+- Fetch attribute annotations from inherited members too when parsing docstrings ([88fb6b6](https://github.com/mkdocstrings/griffe/commit/88fb6b6abd286b5552887023faa1a22f30cb11e7) by Timothée Mazzucotelli). [Issue-mkdocstrings/python#175](https://github.com/mkdocstrings/python/issues/175)
+
 ## [1.5.1](https://github.com/mkdocstrings/griffe/releases/tag/1.5.1) - 2024-10-18
 
 <small>[Compare with 1.5.0](https://github.com/mkdocstrings/griffe/compare/1.5.0...1.5.1)</small>
