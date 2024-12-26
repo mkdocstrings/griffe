@@ -2769,6 +2769,8 @@ class Attribute(Object):
 
         See also: [`as_json`][griffe.Attribute.as_json].
 
+        See also: [`as_json`][griffe.Attribute.as_json].
+
         Parameters:
             **kwargs: Additional serialization options.
 
