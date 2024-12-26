@@ -85,3 +85,10 @@ def test_expressions(code: str) -> None:
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
     expression = get_expression(top_node.body[0].value, parent=Module("module"))  # type: ignore[attr-defined]
     assert str(expression) == code
+
+
+def test_length_one_tuple_as_string() -> None:
+    """Length-1 tuples must have a trailing comma."""
+    code = "x = ('a',)"
+    with temporary_visited_module(code) as module:
+        assert str(module["x"].value) == "('a',)"

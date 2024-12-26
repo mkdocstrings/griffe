@@ -802,6 +802,8 @@ class ExprTuple(Expr):
         if not self.implicit:
             yield "("
         yield from _join(self.elements, ", ", flat=flat)
+        if len(self.elements) == 1:
+            yield ","
         if not self.implicit:
             yield ")"
 
