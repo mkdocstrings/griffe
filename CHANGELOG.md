@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.4](https://github.com/mkdocstrings/griffe/releases/tag/1.5.4) - 2024-12-26
+
+<small>[Compare with 1.5.3](https://github.com/mkdocstrings/griffe/compare/1.5.3...1.5.4)</small>
+
+### Bug Fixes
+
+- Append trailing comma to length-1 tuples ([4fccca7](https://github.com/mkdocstrings/griffe/commit/4fccca7dd8d8a3dd31ccc88930ca89f4f26d26b0) by Timothée Mazzucotelli). [Issue-343](https://github.com/mkdocstrings/griffe/issues/343)
+
+### Performance Improvements
+
+- Avoid dictionary creation when accessing members of non-classes with subscript syntax ([0279998](https://github.com/mkdocstrings/griffe/commit/027999881415bea9e890493d3ef20b96b8749c4a) by Timothée Mazzucotelli).
+
 ## [1.5.3](https://github.com/mkdocstrings/griffe/releases/tag/1.5.3) - 2024-12-26
 
 <small>[Compare with 1.5.2](https://github.com/mkdocstrings/griffe/compare/1.5.2...1.5.3)</small>
