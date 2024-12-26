@@ -189,18 +189,7 @@ class GriffeLoader:
         # Pre-emptively expand exports (`__all__` values),
         # as well as wildcard imports (without ever loading additional packages).
         # This is a best-effort to return the most correct API data
-        # before firing the `on_package_loaded` event,
-        # because extensions registering hooks for this event
-        # might trigger computation of inherited members,
-        # which are cached, and could be cached too early
-        # (aliases to base class still being unresolvable,
-        # preventing to fetch some inherited members).
-        #
-        # Another solution to this "too-early-computation-of-inherited-members"
-        # issue would be to stop caching resolved bases and inherited members,
-        # but we would have to measure the performance impact of this change,
-        # as each use of `obj["name"]` would compute resolved bases, MRO
-        # and inherited members again.
+        # before firing the `on_package_loaded` event.
         #
         # Packages that wildcard imports from external, non-loaded packages
         # will still have incomplete data, requiring subsequent calls to
