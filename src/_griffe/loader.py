@@ -271,6 +271,8 @@ class GriffeLoader:
     def expand_exports(self, module: Module, seen: set | None = None) -> None:
         """Expand exports: try to recursively expand all module exports (`__all__` values).
 
+        See also: [`Module.exports`][griffe.Module.exports].
+
         Parameters:
             module: The module to recurse on.
             seen: Used to avoid infinite recursion.
@@ -315,6 +317,8 @@ class GriffeLoader:
         seen: set | None = None,
     ) -> None:
         """Expand wildcards: try to recursively expand all found wildcards.
+
+        See also: [`Alias.wildcard`][griffe.Alias.wildcard].
 
         Parameters:
             obj: The object and its members to recurse on.
