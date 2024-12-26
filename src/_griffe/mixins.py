@@ -296,7 +296,9 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return {**self.inherited_members, **self.members}  # type: ignore[attr-defined]
+        if self.is_class:  # type: ignore[attr-defined]
+            return {**self.inherited_members, **self.members}  # type: ignore[attr-defined]
+        return self.members  # type: ignore[attr-defined]
 
     @property
     def modules(self) -> dict[str, Module]:
