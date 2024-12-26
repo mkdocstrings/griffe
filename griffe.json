@@ -33029,7 +33029,7 @@
               "lineno": 838,
               "value": "Tuples like `(0, 1, 2)`."
             },
-            "endlineno": 856,
+            "endlineno": 858,
             "kind": "class",
             "labels": [
               "dataclass"
@@ -33154,7 +33154,7 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 850,
+                "endlineno": 852,
                 "kind": "function",
                 "labels": [],
                 "lineno": 845,
@@ -33199,10 +33199,10 @@
               },
               "modernize": {
                 "decorators": [],
-                "endlineno": 856,
+                "endlineno": 858,
                 "kind": "function",
                 "labels": [],
-                "lineno": 852,
+                "lineno": 854,
                 "members": {},
                 "name": "modernize",
                 "parameters": [
@@ -33230,8 +33230,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 860,
-                "lineno": 860,
+                "endlineno": 862,
+                "lineno": 862,
                 "value": {
                   "arguments": [
                     {
@@ -33260,16 +33260,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 862,
-              "lineno": 862,
+              "endlineno": 864,
+              "lineno": 864,
               "value": "Unary operations like `-1`."
             },
-            "endlineno": 871,
+            "endlineno": 873,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 860,
+            "lineno": 862,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33293,8 +33293,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 865,
-                      "lineno": 865,
+                      "endlineno": 867,
+                      "lineno": 867,
                       "value": "Unary operator."
                     },
                     "kind": "positional or keyword",
@@ -33315,8 +33315,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 867,
-                      "lineno": 867,
+                      "endlineno": 869,
+                      "lineno": 869,
                       "value": "Value."
                     },
                     "kind": "positional or keyword",
@@ -33327,10 +33327,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 871,
+                "endlineno": 873,
                 "kind": "function",
                 "labels": [],
-                "lineno": 869,
+                "lineno": 871,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33376,16 +33376,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 865,
-                  "lineno": 865,
+                  "endlineno": 867,
+                  "lineno": 867,
                   "value": "Unary operator."
                 },
-                "endlineno": 864,
+                "endlineno": 866,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 864,
+                "lineno": 866,
                 "members": {},
                 "name": "operator"
               },
@@ -33403,16 +33403,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 867,
-                  "lineno": 867,
+                  "endlineno": 869,
+                  "lineno": 869,
                   "value": "Value."
                 },
-                "endlineno": 866,
+                "endlineno": 868,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 866,
+                "lineno": 868,
                 "members": {},
                 "name": "value"
               }
@@ -33726,8 +33726,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 875,
-                "lineno": 875,
+                "endlineno": 877,
+                "lineno": 877,
                 "value": {
                   "arguments": [
                     {
@@ -33756,16 +33756,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 877,
-              "lineno": 877,
+              "endlineno": 879,
+              "lineno": 879,
               "value": "Yield statements like `yield a`."
             },
-            "endlineno": 886,
+            "endlineno": 888,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 875,
+            "lineno": 877,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33802,8 +33802,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 880,
-                      "lineno": 880,
+                      "endlineno": 882,
+                      "lineno": 882,
                       "value": "Yielded value."
                     },
                     "kind": "positional or keyword",
@@ -33814,10 +33814,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 886,
+                "endlineno": 888,
                 "kind": "function",
                 "labels": [],
-                "lineno": 882,
+                "lineno": 884,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33876,17 +33876,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 880,
-                  "lineno": 880,
+                  "endlineno": 882,
+                  "lineno": 882,
                   "value": "Yielded value."
                 },
-                "endlineno": 879,
+                "endlineno": 881,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 879,
+                "lineno": 881,
                 "members": {},
                 "name": "value",
                 "value": "None"
@@ -33903,8 +33903,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 890,
-                "lineno": 890,
+                "endlineno": 892,
+                "lineno": 892,
                 "value": {
                   "arguments": [
                     {
@@ -33933,16 +33933,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 892,
-              "lineno": 892,
+              "endlineno": 894,
+              "lineno": 894,
               "value": "Yield statements like `yield from a`."
             },
-            "endlineno": 899,
+            "endlineno": 901,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 890,
+            "lineno": 892,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33974,8 +33974,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 895,
-                      "lineno": 895,
+                      "endlineno": 897,
+                      "lineno": 897,
                       "value": "Yielded-from value."
                     },
                     "kind": "positional or keyword",
@@ -33986,10 +33986,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 899,
+                "endlineno": 901,
                 "kind": "function",
                 "labels": [],
-                "lineno": 897,
+                "lineno": 899,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -34043,16 +34043,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 895,
-                  "lineno": 895,
+                  "endlineno": 897,
+                  "lineno": 897,
                   "value": "Yielded-from value."
                 },
-                "endlineno": 894,
+                "endlineno": 896,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 894,
+                "lineno": 896,
                 "members": {},
                 "name": "value"
               }
@@ -34123,12 +34123,12 @@
             "target_path": "typing.TYPE_CHECKING"
           },
           "_binary_op_map": {
-            "endlineno": 923,
+            "endlineno": 925,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 909,
+            "lineno": 911,
             "members": {},
             "name": "_binary_op_map",
             "value": {
@@ -34322,12 +34322,12 @@
             }
           },
           "_bool_op_map": {
-            "endlineno": 928,
+            "endlineno": 930,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 925,
+            "lineno": 927,
             "members": {},
             "name": "_bool_op_map",
             "value": {
@@ -34368,10 +34368,10 @@
           },
           "_build": {
             "decorators": [],
-            "endlineno": 1227,
+            "endlineno": 1229,
             "kind": "function",
             "labels": [],
-            "lineno": 1226,
+            "lineno": 1228,
             "members": {},
             "name": "_build",
             "parameters": [
@@ -34427,10 +34427,10 @@
           },
           "_build_attribute": {
             "decorators": [],
-            "endlineno": 953,
+            "endlineno": 955,
             "kind": "function",
             "labels": [],
-            "lineno": 944,
+            "lineno": 946,
             "members": {},
             "name": "_build_attribute",
             "parameters": [
@@ -34486,10 +34486,10 @@
           },
           "_build_binop": {
             "decorators": [],
-            "endlineno": 961,
+            "endlineno": 963,
             "kind": "function",
             "labels": [],
-            "lineno": 956,
+            "lineno": 958,
             "members": {},
             "name": "_build_binop",
             "parameters": [
@@ -34545,10 +34545,10 @@
           },
           "_build_boolop": {
             "decorators": [],
-            "endlineno": 968,
+            "endlineno": 970,
             "kind": "function",
             "labels": [],
-            "lineno": 964,
+            "lineno": 966,
             "members": {},
             "name": "_build_boolop",
             "parameters": [
@@ -34604,10 +34604,10 @@
           },
           "_build_call": {
             "decorators": [],
-            "endlineno": 975,
+            "endlineno": 977,
             "kind": "function",
             "labels": [],
-            "lineno": 971,
+            "lineno": 973,
             "members": {},
             "name": "_build_call",
             "parameters": [
@@ -34663,10 +34663,10 @@
           },
           "_build_compare": {
             "decorators": [],
-            "endlineno": 983,
+            "endlineno": 985,
             "kind": "function",
             "labels": [],
-            "lineno": 978,
+            "lineno": 980,
             "members": {},
             "name": "_build_compare",
             "parameters": [
@@ -34722,10 +34722,10 @@
           },
           "_build_comprehension": {
             "decorators": [],
-            "endlineno": 992,
+            "endlineno": 994,
             "kind": "function",
             "labels": [],
-            "lineno": 986,
+            "lineno": 988,
             "members": {},
             "name": "_build_comprehension",
             "parameters": [
@@ -34781,10 +34781,10 @@
           },
           "_build_constant": {
             "decorators": [],
-            "endlineno": 1031,
+            "endlineno": 1033,
             "kind": "function",
             "labels": [],
-            "lineno": 995,
+            "lineno": 997,
             "members": {},
             "name": "_build_constant",
             "parameters": [
@@ -34884,10 +34884,10 @@
           },
           "_build_dict": {
             "decorators": [],
-            "endlineno": 1038,
+            "endlineno": 1040,
             "kind": "function",
             "labels": [],
-            "lineno": 1034,
+            "lineno": 1036,
             "members": {},
             "name": "_build_dict",
             "parameters": [
@@ -34943,10 +34943,10 @@
           },
           "_build_dictcomp": {
             "decorators": [],
-            "endlineno": 1046,
+            "endlineno": 1048,
             "kind": "function",
             "labels": [],
-            "lineno": 1041,
+            "lineno": 1043,
             "members": {},
             "name": "_build_dictcomp",
             "parameters": [
@@ -35002,10 +35002,10 @@
           },
           "_build_formatted": {
             "decorators": [],
-            "endlineno": 1056,
+            "endlineno": 1058,
             "kind": "function",
             "labels": [],
-            "lineno": 1049,
+            "lineno": 1051,
             "members": {},
             "name": "_build_formatted",
             "parameters": [
@@ -35070,10 +35070,10 @@
           },
           "_build_generatorexp": {
             "decorators": [],
-            "endlineno": 1063,
+            "endlineno": 1065,
             "kind": "function",
             "labels": [],
-            "lineno": 1059,
+            "lineno": 1061,
             "members": {},
             "name": "_build_generatorexp",
             "parameters": [
@@ -35129,10 +35129,10 @@
           },
           "_build_ifexp": {
             "decorators": [],
-            "endlineno": 1071,
+            "endlineno": 1073,
             "kind": "function",
             "labels": [],
-            "lineno": 1066,
+            "lineno": 1068,
             "members": {},
             "name": "_build_ifexp",
             "parameters": [
@@ -35188,10 +35188,10 @@
           },
           "_build_joinedstr": {
             "decorators": [],
-            "endlineno": 1081,
+            "endlineno": 1083,
             "kind": "function",
             "labels": [],
-            "lineno": 1074,
+            "lineno": 1076,
             "members": {},
             "name": "_build_joinedstr",
             "parameters": [
@@ -35256,10 +35256,10 @@
           },
           "_build_keyword": {
             "decorators": [],
-            "endlineno": 1087,
+            "endlineno": 1089,
             "kind": "function",
             "labels": [],
-            "lineno": 1084,
+            "lineno": 1086,
             "members": {},
             "name": "_build_keyword",
             "parameters": [
@@ -35329,10 +35329,10 @@
           },
           "_build_lambda": {
             "decorators": [],
-            "endlineno": 1104,
+            "endlineno": 1106,
             "kind": "function",
             "labels": [],
-            "lineno": 1090,
+            "lineno": 1092,
             "members": {},
             "name": "_build_lambda",
             "parameters": [
@@ -35388,10 +35388,10 @@
           },
           "_build_list": {
             "decorators": [],
-            "endlineno": 1108,
+            "endlineno": 1110,
             "kind": "function",
             "labels": [],
-            "lineno": 1107,
+            "lineno": 1109,
             "members": {},
             "name": "_build_list",
             "parameters": [
@@ -35447,10 +35447,10 @@
           },
           "_build_listcomp": {
             "decorators": [],
-            "endlineno": 1112,
+            "endlineno": 1114,
             "kind": "function",
             "labels": [],
-            "lineno": 1111,
+            "lineno": 1113,
             "members": {},
             "name": "_build_listcomp",
             "parameters": [
@@ -35506,10 +35506,10 @@
           },
           "_build_name": {
             "decorators": [],
-            "endlineno": 1116,
+            "endlineno": 1118,
             "kind": "function",
             "labels": [],
-            "lineno": 1115,
+            "lineno": 1117,
             "members": {},
             "name": "_build_name",
             "parameters": [
@@ -35565,10 +35565,10 @@
           },
           "_build_named_expr": {
             "decorators": [],
-            "endlineno": 1120,
+            "endlineno": 1122,
             "kind": "function",
             "labels": [],
-            "lineno": 1119,
+            "lineno": 1121,
             "members": {},
             "name": "_build_named_expr",
             "parameters": [
@@ -35624,10 +35624,10 @@
           },
           "_build_set": {
             "decorators": [],
-            "endlineno": 1124,
+            "endlineno": 1126,
             "kind": "function",
             "labels": [],
-            "lineno": 1123,
+            "lineno": 1125,
             "members": {},
             "name": "_build_set",
             "parameters": [
@@ -35683,10 +35683,10 @@
           },
           "_build_setcomp": {
             "decorators": [],
-            "endlineno": 1128,
+            "endlineno": 1130,
             "kind": "function",
             "labels": [],
-            "lineno": 1127,
+            "lineno": 1129,
             "members": {},
             "name": "_build_setcomp",
             "parameters": [
@@ -35742,10 +35742,10 @@
           },
           "_build_slice": {
             "decorators": [],
-            "endlineno": 1136,
+            "endlineno": 1138,
             "kind": "function",
             "labels": [],
-            "lineno": 1131,
+            "lineno": 1133,
             "members": {},
             "name": "_build_slice",
             "parameters": [
@@ -35801,10 +35801,10 @@
           },
           "_build_starred": {
             "decorators": [],
-            "endlineno": 1140,
+            "endlineno": 1142,
             "kind": "function",
             "labels": [],
-            "lineno": 1139,
+            "lineno": 1141,
             "members": {},
             "name": "_build_starred",
             "parameters": [
@@ -35860,10 +35860,10 @@
           },
           "_build_subscript": {
             "decorators": [],
-            "endlineno": 1169,
+            "endlineno": 1171,
             "kind": "function",
             "labels": [],
-            "lineno": 1143,
+            "lineno": 1145,
             "members": {},
             "name": "_build_subscript",
             "parameters": [
@@ -35946,10 +35946,10 @@
           },
           "_build_tuple": {
             "decorators": [],
-            "endlineno": 1179,
+            "endlineno": 1181,
             "kind": "function",
             "labels": [],
-            "lineno": 1172,
+            "lineno": 1174,
             "members": {},
             "name": "_build_tuple",
             "parameters": [
@@ -36014,10 +36014,10 @@
           },
           "_build_unaryop": {
             "decorators": [],
-            "endlineno": 1183,
+            "endlineno": 1185,
             "kind": "function",
             "labels": [],
-            "lineno": 1182,
+            "lineno": 1184,
             "members": {},
             "name": "_build_unaryop",
             "parameters": [
@@ -36073,10 +36073,10 @@
           },
           "_build_yield": {
             "decorators": [],
-            "endlineno": 1187,
+            "endlineno": 1189,
             "kind": "function",
             "labels": [],
-            "lineno": 1186,
+            "lineno": 1188,
             "members": {},
             "name": "_build_yield",
             "parameters": [
@@ -36132,10 +36132,10 @@
           },
           "_build_yield_from": {
             "decorators": [],
-            "endlineno": 1191,
+            "endlineno": 1193,
             "kind": "function",
             "labels": [],
-            "lineno": 1190,
+            "lineno": 1192,
             "members": {},
             "name": "_build_yield_from",
             "parameters": [
@@ -36190,12 +36190,12 @@
             }
           },
           "_compare_op_map": {
-            "endlineno": 941,
+            "endlineno": 943,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 930,
+            "lineno": 932,
             "members": {},
             "name": "_compare_op_map",
             "value": {
@@ -36674,12 +36674,12 @@
             }
           },
           "_msg_format": {
-            "endlineno": 1296,
+            "endlineno": 1298,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1296,
+            "lineno": 1298,
             "members": {},
             "name": "_msg_format",
             "value": "'{path}:{lineno}: Failed to get %s expression from {node_class}: {error}'"
@@ -36740,12 +36740,12 @@
                 "implicit": true
               }
             },
-            "endlineno": 1223,
+            "endlineno": 1225,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1194,
+            "lineno": 1196,
             "members": {},
             "name": "_node_map",
             "value": {
@@ -37233,12 +37233,12 @@
             }
           },
           "_unary_op_map": {
-            "endlineno": 907,
+            "endlineno": 909,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 902,
+            "lineno": 904,
             "members": {},
             "name": "_unary_op_map",
             "value": {
@@ -37413,12 +37413,12 @@
             "target_path": "dataclasses.dataclass"
           },
           "get_annotation": {
-            "endlineno": 1297,
+            "endlineno": 1299,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1297,
+            "lineno": 1299,
             "members": {},
             "name": "get_annotation",
             "value": {
@@ -37445,12 +37445,12 @@
             }
           },
           "get_base_class": {
-            "endlineno": 1303,
+            "endlineno": 1305,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1303,
+            "lineno": 1305,
             "members": {},
             "name": "get_base_class",
             "value": {
@@ -37477,12 +37477,12 @@
             }
           },
           "get_condition": {
-            "endlineno": 1309,
+            "endlineno": 1311,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1309,
+            "lineno": 1311,
             "members": {},
             "name": "get_condition",
             "value": {
@@ -37511,14 +37511,14 @@
           "get_expression": {
             "decorators": [],
             "docstring": {
-              "endlineno": 1245,
-              "lineno": 1236,
+              "endlineno": 1247,
+              "lineno": 1238,
               "value": "Build an expression from an AST.\n\nParameters:\n    node: The annotation node.\n    parent: The parent used to resolve the name.\n    parse_strings: Whether to try and parse strings as type annotations.\n\nReturns:\n    A string or resovable name or expression."
             },
-            "endlineno": 1255,
+            "endlineno": 1257,
             "kind": "function",
             "labels": [],
-            "lineno": 1230,
+            "lineno": 1232,
             "members": {},
             "name": "get_expression",
             "parameters": [
@@ -37616,12 +37616,12 @@
             "target_path": "functools.partial"
           },
           "safe_get_annotation": {
-            "endlineno": 1302,
+            "endlineno": 1304,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1298,
+            "lineno": 1300,
             "members": {},
             "name": "safe_get_annotation",
             "value": {
@@ -37665,12 +37665,12 @@
             }
           },
           "safe_get_base_class": {
-            "endlineno": 1308,
+            "endlineno": 1310,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1304,
+            "lineno": 1306,
             "members": {},
             "name": "safe_get_base_class",
             "value": {
@@ -37714,12 +37714,12 @@
             }
           },
           "safe_get_condition": {
-            "endlineno": 1314,
+            "endlineno": 1316,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1310,
+            "lineno": 1312,
             "members": {},
             "name": "safe_get_condition",
             "value": {
@@ -37765,14 +37765,14 @@
           "safe_get_expression": {
             "decorators": [],
             "docstring": {
-              "endlineno": 1278,
-              "lineno": 1266,
+              "endlineno": 1280,
+              "lineno": 1268,
               "value": "Safely (no exception) build a resolvable annotation.\n\nParameters:\n    node: The annotation node.\n    parent: The parent used to resolve the name.\n    parse_strings: Whether to try and parse strings as type annotations.\n    log_level: Log level to use to log a message. None to disable logging.\n    msg_format: A format string for the log message. Available placeholders:\n        path, lineno, node, error.\n\nReturns:\n    A string or resovable name or expression."
             },
-            "endlineno": 1293,
+            "endlineno": 1295,
             "kind": "function",
             "labels": [],
-            "lineno": 1258,
+            "lineno": 1260,
             "members": {},
             "name": "safe_get_expression",
             "parameters": [
@@ -42798,7 +42798,7 @@
               "lineno": 45,
               "value": "The Griffe loader, allowing to load data from modules."
             },
-            "endlineno": 725,
+            "endlineno": 714,
             "kind": "class",
             "labels": [],
             "lineno": 44,
@@ -42971,10 +42971,10 @@
               },
               "_create_module": {
                 "decorators": [],
-                "endlineno": 642,
+                "endlineno": 631,
                 "kind": "function",
                 "labels": [],
-                "lineno": 636,
+                "lineno": 625,
                 "members": {},
                 "name": "_create_module",
                 "parameters": [
@@ -43025,10 +43025,10 @@
               },
               "_expand_wildcard": {
                 "decorators": [],
-                "endlineno": 725,
+                "endlineno": 714,
                 "kind": "function",
                 "labels": [],
-                "lineno": 719,
+                "lineno": 708,
                 "members": {},
                 "name": "_expand_wildcard",
                 "parameters": [
@@ -43101,10 +43101,10 @@
               },
               "_get_or_create_parent_module": {
                 "decorators": [],
-                "endlineno": 717,
+                "endlineno": 706,
                 "kind": "function",
                 "labels": [],
-                "lineno": 689,
+                "lineno": 678,
                 "members": {},
                 "name": "_get_or_create_parent_module",
                 "parameters": [
@@ -43163,10 +43163,10 @@
               },
               "_inspect_module": {
                 "decorators": [],
-                "endlineno": 687,
+                "endlineno": 676,
                 "kind": "function",
                 "labels": [],
-                "lineno": 664,
+                "lineno": 653,
                 "members": {},
                 "name": "_inspect_module",
                 "parameters": [
@@ -43221,10 +43221,10 @@
               },
               "_load_module": {
                 "decorators": [],
-                "endlineno": 556,
+                "endlineno": 545,
                 "kind": "function",
                 "labels": [],
-                "lineno": 539,
+                "lineno": 528,
                 "members": {},
                 "name": "_load_module",
                 "parameters": [
@@ -43298,10 +43298,10 @@
               },
               "_load_module_path": {
                 "decorators": [],
-                "endlineno": 579,
+                "endlineno": 568,
                 "kind": "function",
                 "labels": [],
-                "lineno": 558,
+                "lineno": 547,
                 "members": {},
                 "name": "_load_module_path",
                 "parameters": [
@@ -43375,10 +43375,10 @@
               },
               "_load_package": {
                 "decorators": [],
-                "endlineno": 537,
+                "endlineno": 526,
                 "kind": "function",
                 "labels": [],
-                "lineno": 523,
+                "lineno": 512,
                 "members": {},
                 "name": "_load_package",
                 "parameters": [
@@ -43422,10 +43422,10 @@
               },
               "_load_submodule": {
                 "decorators": [],
-                "endlineno": 634,
+                "endlineno": 623,
                 "kind": "function",
                 "labels": [],
-                "lineno": 585,
+                "lineno": 574,
                 "members": {},
                 "name": "_load_submodule",
                 "parameters": [
@@ -43481,10 +43481,10 @@
               },
               "_load_submodules": {
                 "decorators": [],
-                "endlineno": 583,
+                "endlineno": 572,
                 "kind": "function",
                 "labels": [],
-                "lineno": 581,
+                "lineno": 570,
                 "members": {},
                 "name": "_load_submodules",
                 "parameters": [
@@ -43508,7 +43508,7 @@
               },
               "_post_load": {
                 "decorators": [],
-                "endlineno": 218,
+                "endlineno": 207,
                 "kind": "function",
                 "labels": [],
                 "lineno": 193,
@@ -43580,10 +43580,10 @@
               },
               "_visit_module": {
                 "decorators": [],
-                "endlineno": 662,
+                "endlineno": 651,
                 "kind": "function",
                 "labels": [],
-                "lineno": 644,
+                "lineno": 633,
                 "members": {},
                 "name": "_visit_module",
                 "parameters": [
@@ -43736,14 +43736,14 @@
               "expand_exports": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 284,
-                  "lineno": 277,
+                  "endlineno": 273,
+                  "lineno": 266,
                   "value": "Expand exports: try to recursively expand all module exports (`__all__` values).\n\nSee also: [`Module.exports`][griffe.Module.exports].\n\nParameters:\n    module: The module to recurse on.\n    seen: Used to avoid infinite recursion."
                 },
-                "endlineno": 315,
+                "endlineno": 304,
                 "kind": "function",
                 "labels": [],
-                "lineno": 276,
+                "lineno": 265,
                 "members": {},
                 "name": "expand_exports",
                 "parameters": [
@@ -43782,14 +43782,14 @@
               "expand_wildcards": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 332,
-                  "lineno": 324,
+                  "endlineno": 321,
+                  "lineno": 313,
                   "value": "Expand wildcards: try to recursively expand all found wildcards.\n\nSee also: [`Alias.wildcard`][griffe.Alias.wildcard].\n\nParameters:\n    obj: The object and its members to recurse on.\n    external: When true, try to load unspecified modules to expand wildcards.\n    seen: Used to avoid infinite recursion."
                 },
-                "endlineno": 432,
+                "endlineno": 421,
                 "kind": "function",
                 "labels": [],
-                "lineno": 317,
+                "lineno": 306,
                 "members": {},
                 "name": "expand_wildcards",
                 "parameters": [
@@ -44124,14 +44124,14 @@
               "resolve_aliases": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 236,
-                  "lineno": 227,
+                  "endlineno": 225,
+                  "lineno": 216,
                   "value": "Resolve aliases.\n\nParameters:\n    implicit: When false, only try to resolve an alias if it is explicitly exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    max_iterations: Maximum number of iterations on the loader modules collection.\n\nReturns:\n    The unresolved aliases and the number of iterations done."
                 },
-                "endlineno": 274,
+                "endlineno": 263,
                 "kind": "function",
                 "labels": [],
-                "lineno": 220,
+                "lineno": 209,
                 "members": {},
                 "name": "resolve_aliases",
                 "parameters": [
@@ -44211,14 +44211,14 @@
               "resolve_module_aliases": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 454,
-                  "lineno": 443,
+                  "endlineno": 443,
+                  "lineno": 432,
                   "value": "Follow aliases: try to recursively resolve all found aliases.\n\nParameters:\n    obj: The object and its members to recurse on.\n    implicit: When false, only try to resolve an alias if it is explicitly exported.\n    external: When false, don't try to load unspecified modules to resolve aliases.\n    seen: Used to avoid infinite recursion.\n    load_failures: Set of external packages we failed to load (to prevent retries).\n\nReturns:\n    Both sets of resolved and unresolved aliases."
                 },
-                "endlineno": 510,
+                "endlineno": 499,
                 "kind": "function",
                 "labels": [],
-                "lineno": 434,
+                "lineno": 423,
                 "members": {},
                 "name": "resolve_module_aliases",
                 "parameters": [
@@ -44350,14 +44350,14 @@
               "stats": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 517,
-                  "lineno": 513,
+                  "endlineno": 506,
+                  "lineno": 502,
                   "value": "Compute some statistics.\n\nReturns:\n    Some statistics."
                 },
-                "endlineno": 521,
+                "endlineno": 510,
                 "kind": "function",
                 "labels": [],
-                "lineno": 512,
+                "lineno": 501,
                 "members": {},
                 "name": "stats",
                 "parameters": [
@@ -44592,14 +44592,14 @@
           "load": {
             "decorators": [],
             "docstring": {
-              "endlineno": 810,
-              "lineno": 748,
+              "endlineno": 799,
+              "lineno": 737,
               "value": "Load and return a Griffe object.\n\nIn Griffe's context, loading means:\n\n- searching for a package, and finding it on the file system or as a builtin module\n    (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)\n- extracting information from each of its (sub)modules, by either parsing\n    the source code (see the [`visit`][griffe.visit] function)\n    or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)\n\nThe extracted information is stored in a collection of modules, which can be queried later.\nEach collected module is a tree of objects, representing the structure of the module.\nSee the [`Module`][griffe.Module], [`Class`][griffe.Class],\n[`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes\nfor more information.\n\nThe main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].\nConvenience functions like this one and [`load_git`][griffe.load_git] are also available.\n\nExample:\n    ```python\n    import griffe\n\n    module = griffe.load(...)\n    ```\n\n    This is a shortcut for:\n\n    ```python\n    from griffe import GriffeLoader\n\n    loader = GriffeLoader(...)\n    module = loader.load(...)\n    ```\n\n    See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    try_relative_path: Whether to try finding the module as a relative path.\n    extensions: The extensions to use.\n    search_paths: The paths to search into.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    store_source: Whether to store code source in the lines collection.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nReturns:\n    A Griffe object."
             },
-            "endlineno": 830,
+            "endlineno": 819,
             "kind": "function",
             "labels": [],
-            "lineno": 728,
+            "lineno": 717,
             "members": {},
             "name": "load",
             "parameters": [
@@ -44851,14 +44851,14 @@
           "load_git": {
             "decorators": [],
             "docstring": {
-              "endlineno": 893,
-              "lineno": 853,
+              "endlineno": 882,
+              "lineno": 842,
               "value": "Load and return a module from a specific Git reference.\n\nThis function will create a temporary\n[git worktree](https://git-scm.com/docs/git-worktree) at the requested reference\nbefore loading `module` with [`griffe.load`][griffe.load].\n\nThis function requires that the `git` executable is installed.\n\nExamples:\n    ```python\n    from griffe import load_git\n\n    old_api = load_git(\"my_module\", ref=\"v0.1.0\", repo=\"path/to/repo\")\n    ```\n\nParameters:\n    objspec: The Python path of an object, or file path to a module.\n    ref: A Git reference such as a commit, tag or branch.\n    repo: Path to the repository (i.e. the directory *containing* the `.git` directory)\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nReturns:\n    A Griffe object."
             },
-            "endlineno": 915,
+            "endlineno": 904,
             "kind": "function",
             "labels": [],
-            "lineno": 833,
+            "lineno": 822,
             "members": {},
             "name": "load_git",
             "parameters": [
@@ -45111,14 +45111,14 @@
           "load_pypi": {
             "decorators": [],
             "docstring": {
-              "endlineno": 964,
-              "lineno": 937,
+              "endlineno": 953,
+              "lineno": 926,
               "value": "Load and return a module from a specific package version downloaded using pip.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0).\n\nParameters:\n    package: The package import name.\n    distribution: The distribution name.\n    version_spec: The version specifier to use when installing with pip.\n    submodules: Whether to recurse on the submodules.\n        This parameter only makes sense when loading a package (top-level module).\n    extensions: The extensions to use.\n    search_paths: The paths to search into (relative to the repository root).\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    force_inspection: Whether to force using dynamic analysis when loading data.\n    find_stubs_package: Whether to search for stubs-only package.\n        If both the package and its stubs are found, they'll be merged together.\n        If only the stubs are found, they'll be used as the package itself.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported."
             },
-            "endlineno": 1043,
+            "endlineno": 1032,
             "kind": "function",
             "labels": [],
-            "lineno": 918,
+            "lineno": 907,
             "members": {},
             "name": "load_pypi",
             "parameters": [
@@ -46588,7 +46588,7 @@
               "lineno": 274,
               "value": "Mixin class to share methods that appear both in objects and aliases, unchanged.\n\nAttributes:\n    all_members: All members (declared and inherited).\n    modules: The module members.\n    classes: The class members.\n    functions: The function members.\n    attributes: The attribute members.\n    is_private: Whether this object/alias is private (starts with `_`) but not special.\n    is_class_private: Whether this object/alias is class-private (starts with `__` and is a class member).\n    is_special: Whether this object/alias is special (\"dunder\" attribute/method, starts and end with `__`).\n    is_imported: Whether this object/alias was imported from another module.\n    is_exported: Whether this object/alias is exported (listed in `__all__`).\n    is_wildcard_exposed: Whether this object/alias is exposed to wildcard imports.\n    is_public: Whether this object is considered public.\n    is_deprecated: Whether this object is deprecated."
             },
-            "endlineno": 443,
+            "endlineno": 445,
             "kind": "class",
             "labels": [],
             "lineno": 273,
@@ -46628,7 +46628,7 @@
                   "lineno": 294,
                   "value": "All members (declared and inherited).\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 299,
+                "endlineno": 301,
                 "kind": "attribute",
                 "labels": [
                   "property"
@@ -46660,16 +46660,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 334,
-                  "lineno": 330,
+                  "endlineno": 336,
+                  "lineno": 332,
                   "value": "The attribute members.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 335,
+                "endlineno": 337,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 329,
+                "lineno": 331,
                 "members": {},
                 "name": "attributes"
               },
@@ -46696,16 +46696,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 316,
-                  "lineno": 312,
+                  "endlineno": 318,
+                  "lineno": 314,
                   "value": "The class members.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 317,
+                "endlineno": 319,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 311,
+                "lineno": 313,
                 "members": {},
                 "name": "classes"
               },
@@ -46732,16 +46732,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 325,
-                  "lineno": 321,
+                  "endlineno": 327,
+                  "lineno": 323,
                   "value": "The function members.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 326,
+                "endlineno": 328,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 320,
+                "lineno": 322,
                 "members": {},
                 "name": "functions"
               },
@@ -46751,16 +46751,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 349,
-                  "lineno": 349,
+                  "endlineno": 351,
+                  "lineno": 351,
                   "value": "Whether this object/alias is class-private (starts with `__` and is a class member)."
                 },
-                "endlineno": 350,
+                "endlineno": 352,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 348,
+                "lineno": 350,
                 "members": {},
                 "name": "is_class_private"
               },
@@ -46770,16 +46770,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 441,
-                  "lineno": 441,
+                  "endlineno": 443,
+                  "lineno": 443,
                   "value": "Whether this object is deprecated."
                 },
-                "endlineno": 443,
+                "endlineno": 445,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 440,
+                "lineno": 442,
                 "members": {},
                 "name": "is_deprecated"
               },
@@ -46789,16 +46789,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 359,
-                  "lineno": 359,
+                  "endlineno": 361,
+                  "lineno": 361,
                   "value": "Whether this object/alias is exported (listed in `__all__`)."
                 },
-                "endlineno": 360,
+                "endlineno": 362,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 358,
+                "lineno": 360,
                 "members": {},
                 "name": "is_exported"
               },
@@ -46808,16 +46808,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 354,
-                  "lineno": 354,
+                  "endlineno": 356,
+                  "lineno": 356,
                   "value": "Whether this object/alias was imported from another module."
                 },
-                "endlineno": 355,
+                "endlineno": 357,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 353,
+                "lineno": 355,
                 "members": {},
                 "name": "is_imported"
               },
@@ -46827,16 +46827,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 339,
-                  "lineno": 339,
+                  "endlineno": 341,
+                  "lineno": 341,
                   "value": "Whether this object/alias is private (starts with `_`) but not special."
                 },
-                "endlineno": 340,
+                "endlineno": 342,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 338,
+                "lineno": 340,
                 "members": {},
                 "name": "is_private"
               },
@@ -46846,16 +46846,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 409,
-                  "lineno": 396,
+                  "endlineno": 411,
+                  "lineno": 398,
                   "value": "Whether this object is considered public.\n\nIn modules, developers can mark objects as public thanks to the `__all__` variable.\nIn classes however, there is no convention or standard to do so.\n\nTherefore, to decide whether an object is public, we follow this algorithm:\n\n- If the object's `public` attribute is set (boolean), return its value.\n- If the object is listed in its parent's (a module) `__all__` attribute, it is public.\n- If the parent (module) defines `__all__` and the object is not listed in, it is private.\n- If the object has a private name, it is private.\n- If the object was imported from another module, it is private.\n- Otherwise, the object is public."
                 },
-                "endlineno": 437,
+                "endlineno": 439,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 395,
+                "lineno": 397,
                 "members": {},
                 "name": "is_public"
               },
@@ -46865,16 +46865,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 344,
-                  "lineno": 344,
+                  "endlineno": 346,
+                  "lineno": 346,
                   "value": "Whether this object/alias is special (\"dunder\" attribute/method, starts and end with `__`)."
                 },
-                "endlineno": 345,
+                "endlineno": 347,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 343,
+                "lineno": 345,
                 "members": {},
                 "name": "is_special"
               },
@@ -46884,16 +46884,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 377,
-                  "lineno": 364,
+                  "endlineno": 379,
+                  "lineno": 366,
                   "value": "Whether this object/alias is exposed to wildcard imports.\n\nTo be exposed to wildcard imports, an object/alias must:\n\n- be available at runtime\n- have a module as parent\n- be listed in `__all__` if `__all__` is defined\n- or not be private (having a name starting with an underscore)\n\nSpecial case for Griffe trees: a submodule is only exposed if its parent imports it.\n\nReturns:\n    True or False."
                 },
-                "endlineno": 392,
+                "endlineno": 394,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 363,
+                "lineno": 365,
                 "members": {},
                 "name": "is_wildcard_exposed"
               },
@@ -46920,16 +46920,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 307,
-                  "lineno": 303,
+                  "endlineno": 309,
+                  "lineno": 305,
                   "value": "The module members.\n\nThis method is part of the consumer API:\ndo not use when producing Griffe trees!"
                 },
-                "endlineno": 308,
+                "endlineno": 310,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 302,
+                "lineno": 304,
                 "members": {},
                 "name": "modules"
               }
@@ -48516,7 +48516,6 @@
                 "endlineno": 1202,
                 "kind": "attribute",
                 "labels": [
-                  "cached",
                   "property"
                 ],
                 "lineno": 1182,
@@ -48954,7 +48953,6 @@
                 "endlineno": 1179,
                 "kind": "attribute",
                 "labels": [
-                  "cached",
                   "property"
                 ],
                 "lineno": 1162,
@@ -50386,7 +50384,6 @@
                 "endlineno": 1988,
                 "kind": "attribute",
                 "labels": [
-                  "cached",
                   "property"
                 ],
                 "lineno": 1968,
@@ -52965,7 +52962,6 @@
                 "endlineno": 597,
                 "kind": "attribute",
                 "labels": [
-                  "cached",
                   "property"
                 ],
                 "lineno": 577,
