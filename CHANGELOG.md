@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.3](https://github.com/mkdocstrings/griffe/releases/tag/1.5.3) - 2024-12-26
+
+<small>[Compare with 1.5.2](https://github.com/mkdocstrings/griffe/compare/1.5.2...1.5.3)</small>
+
+### Code Refactoring
+
+- Stop caching objects' inherited members, aliases' members and inherited members, classes' resolved bases ([e8db3a2](https://github.com/mkdocstrings/griffe/commit/e8db3a2d6c5c2a19a1fa3fc924f11c57d8e86a8e) by Timothée Mazzucotelli). [Issue-346](https://github.com/mkdocstrings/griffe/issues/346)
+
 ## [1.5.2](https://github.com/mkdocstrings/griffe/releases/tag/1.5.2) - 2024-12-26
 
 <small>[Compare with 1.5.1](https://github.com/mkdocstrings/griffe/compare/1.5.1...1.5.2)</small>
