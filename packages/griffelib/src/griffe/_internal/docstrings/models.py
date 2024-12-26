@@ -18,33 +18,46 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from textwrap import indent
+from typing import TYPE_CHECKING, Any, Literal
 
 from griffe._internal.enumerations import DocstringSectionKind
 from griffe._internal.expressions import ExprTuple
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from typing import Any, Literal
 
     from griffe._internal.expressions import Expr
+
+
+DocstringStyle = Literal["google", "numpy", "sphinx", "auto"]
+"""The supported docstring styles (literal values of the Parser enumeration)."""
 
 
 # Elements -----------------------------------------------
 class DocstringElement:
     """This base class represents annotated, nameless elements."""
 
-    def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
+    def __init__(self, *, description: str, annotation: str | Expr | None = None, hardcoded: bool = True) -> None:
         """Initialize the element.
 
         Parameters:
-            annotation: The element annotation, if any.
             description: The element description.
+            annotation: The element annotation, if any.
+            hardcoded: Whether the annotation was hardcoded into the docstring.
         """
         self.description: str = description
         """The element description."""
         self.annotation: str | Expr | None = annotation
         """The element annotation."""
+        self.hardcoded: bool = hardcoded
+        """Whether the annotation was hardcoded into the docstring.
+
+        It could have been obtained via other means (e.g. type hints).
+
+        This helps to determine whether the annotation should be included
+        when re-rendering a docstring section.
+        """
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this element's data as a dictionary.
@@ -71,6 +84,7 @@ class DocstringNamedElement(DocstringElement):
         description: str,
         annotation: str | Expr | None = None,
         value: str | Expr | None = None,
+        hardcoded: bool = True,
     ) -> None:
         """Initialize the element.
 
@@ -79,8 +93,9 @@ class DocstringNamedElement(DocstringElement):
             description: The element description.
             annotation: The element annotation, if any.
             value: The element value, as a string.
+            hardcoded: Whether the annotation was hardcoded into the docstring.
         """
-        super().__init__(description=description, annotation=annotation)
+        super().__init__(description=description, annotation=annotation, hardcoded=hardcoded)
         self.name: str = name
         """The element name."""
         self.value: str | Expr | None = value
@@ -277,6 +292,12 @@ class DocstringSection:
             base["title"] = self.title
         return base
 
+    def render(self, style: DocstringStyle) -> str:
+        """Render the section as a string."""
+        raise NotImplementedError(
+            f"Rendering not implemented for sections '{self.__class__.__name__}' and style '{style}'"
+        )
+
 
 class DocstringSectionText(DocstringSection):
     """This class represents a text section."""
@@ -293,6 +314,10 @@ class DocstringSectionText(DocstringSection):
         super().__init__(title)
         self.value: str = value
 
+    def render(self, style: DocstringStyle) -> str:
+        """Render the section as a string."""
+        return self.value
+
 
 class DocstringSectionParameters(DocstringSection):
     """This class represents a parameters section."""
@@ -308,6 +333,23 @@ class DocstringSectionParameters(DocstringSection):
         """
         super().__init__(title)
         self.value: list[DocstringParameter] = value
+
+    def render(self, style: DocstringStyle) -> str:
+        """Render the section as a string."""
+        return {
+            "google": self.render_google,
+            "numpy": self.render_numpy,
+            "sphinx": self.render_sphinx,
+        }.get(style, super().render)()
+
+    def render_google(self) -> str:
+        """Render the section in Google style."""
+        lines = ["Parameters:"]
+        for param in self.value:
+            annotation = f" ({param.annotation})" if param.annotation and param.hardcoded else ""
+            lines.append(f"    {param.name}{annotation}:")
+            lines.extend(indent(param.description, " " * 8).splitlines())
+        return "\n".join(lines)
 
 
 class DocstringSectionOtherParameters(DocstringSectionParameters):
