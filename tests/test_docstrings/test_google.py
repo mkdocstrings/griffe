@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from _griffe.enumerations import TypeParameterKind
+from _griffe.models import TypeParameter, TypeParameters
 from griffe import (
     Attribute,
     Class,
@@ -195,10 +197,12 @@ def test_empty_indented_lines_in_section_with_items(parse_google: ParserType) ->
         "Attributes",
         "Other Parameters",
         "Parameters",
+        "Type Parameters",
         "Raises",
         "Receives",
         "Returns",
         "Warns",
+        "Type aliases",
         "Yields",
     ],
 )
@@ -389,6 +393,30 @@ def test_parse_classes_section(parse_google: ParserType) -> None:
     assert class_d.name == "D"
     assert class_d.signature is None
     assert class_d.description == "Hi."
+    assert not warnings
+
+
+def test_parse_type_aliases_section(parse_google: ParserType) -> None:
+    """Parse Type Aliases sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Type Aliases:
+            TC: Hello.
+            TD: Hi.
+    """
+
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 1
+    assert sections[0].kind is DocstringSectionKind.type_aliases
+    type_alias_c = sections[0].value[0]
+    assert type_alias_c.name == "TC"
+    assert type_alias_c.description == "Hello."
+    type_alias_d = sections[0].value[1]
+    assert type_alias_d.name == "TD"
+    assert type_alias_d.description == "Hi."
     assert not warnings
 
 
@@ -897,6 +925,132 @@ def test_class_uses_init_parameters(parse_google: ParserType) -> None:
 #             x: Integer.
 #     """
 #     assert not warnings
+
+
+# =============================================================================================
+# Type parameters sections
+def test_parse_type_var_tuples_and_param_specs(parse_google: ParserType) -> None:
+    """Parse type variable tuples and parameter specifications.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Type Parameters:
+            T: A type parameter.
+            C (str, (int, float)): A constrained type parameter.
+            D complex: A bounded type parameter.
+    """
+
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 1
+    expected_type_parameters = {
+        "T": ("A type parameter.", None),
+        "C": ("A constrained type parameter.", "str, (int, float)"),
+        "D": ("A bounded type parameter.", "complex"),
+    }
+    for type_parameter in sections[0].value:
+        assert type_parameter.name in expected_type_parameters
+        assert expected_type_parameters[type_parameter.name][0] == type_parameter.description
+        assert expected_type_parameters[type_parameter.name][1] == type_parameter.annotation
+    assert not warnings
+
+
+def test_prefer_docstring_bounds_over_annotations(parse_google: ParserType) -> None:
+    """Prefer the docstring bound over the annotation.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Type Parameters:
+            X (str): X type.
+            Y str, int: Y type.
+    """
+
+    sections, warnings = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            type_parameters=TypeParameters(
+                TypeParameter("X", kind=TypeParameterKind.type_var, constraints=["complex"]),
+                TypeParameter("Y", kind=TypeParameterKind.type_var, bound="int"),
+            ),
+        ),
+    )
+    assert len(sections) == 1
+    assert not warnings
+
+    assert sections[0].kind is DocstringSectionKind.type_parameters
+
+    (x, y) = sections[0].value
+
+    assert x.name == "X"
+    assert str(x.bound) == "str"
+    assert x.constraints is None
+
+    assert y.name == "Y"
+    assert y.bound is None
+    assert [str(constraint) for constraint in y.constraints] == ["str", "int"]
+
+
+def test_type_parameter_line_without_colon(parse_google: ParserType) -> None:
+    """Warn when missing colon.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Type Parameters:
+            X is an integer type.
+    """
+
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 0  # empty sections are discarded
+    assert len(warnings) == 1
+    assert "pair" in warnings[0]
+
+
+def test_warn_about_unknown_type_parameters(parse_google: ParserType) -> None:
+    """Warn about unknown type parameters in "Type Parameters" sections.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Type Parameters:
+            X (int): Integer.
+            Y (int): Integer.
+    """
+
+    _, warnings = parse_google(
+        docstring,
+        parent=Function(
+            "func",
+            type_parameters=TypeParameters(
+                TypeParameter("A", kind=TypeParameterKind.type_var),
+                TypeParameter("Y", kind=TypeParameterKind.type_var),
+            ),
+        ),
+    )
+    assert len(warnings) == 1
+    assert "'X' does not appear in the function signature" in warnings[0]
+
+
+def test_unknown_type_params_scan_doesnt_crash_without_type_parameters(parse_google: ParserType) -> None:
+    """Assert we don't crash when parsing type parameters sections and parent object does not have type parameters.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        TypeParameters:
+            This (str): This.
+            That: That.
+    """
+
+    _, warnings = parse_google(docstring, parent=Module("mod"))
+    assert not warnings
 
 
 # =============================================================================================
