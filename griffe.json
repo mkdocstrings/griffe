@@ -20497,24 +20497,24 @@
                 "target_path": "typing.Callable"
               },
               "Docstring": {
-                "endlineno": 16,
+                "endlineno": 17,
                 "kind": "alias",
-                "lineno": 16,
+                "lineno": 17,
                 "name": "Docstring",
                 "target_path": "_griffe.models.Docstring"
               },
               "DocstringDetectionMethod": {
                 "docstring": {
-                  "endlineno": 30,
-                  "lineno": 30,
+                  "endlineno": 31,
+                  "lineno": 31,
                   "value": "The supported methods to infer docstring styles."
                 },
-                "endlineno": 29,
+                "endlineno": 30,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 29,
+                "lineno": 30,
                 "members": {},
                 "name": "DocstringDetectionMethod",
                 "value": {
@@ -20534,31 +20534,31 @@
                 }
               },
               "DocstringSection": {
-                "endlineno": 10,
+                "endlineno": 11,
                 "kind": "alias",
-                "lineno": 10,
+                "lineno": 11,
                 "name": "DocstringSection",
                 "target_path": "_griffe.docstrings.models.DocstringSection"
               },
               "DocstringSectionText": {
-                "endlineno": 10,
+                "endlineno": 11,
                 "kind": "alias",
-                "lineno": 10,
+                "lineno": 11,
                 "name": "DocstringSectionText",
                 "target_path": "_griffe.docstrings.models.DocstringSectionText"
               },
               "DocstringStyle": {
                 "docstring": {
-                  "endlineno": 28,
-                  "lineno": 28,
+                  "endlineno": 29,
+                  "lineno": 29,
                   "value": "The supported docstring styles (literal values of the Parser enumeration)."
                 },
-                "endlineno": 27,
+                "endlineno": 28,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 27,
+                "lineno": 28,
                 "members": {},
                 "name": "DocstringStyle",
                 "value": {
@@ -20587,9 +20587,9 @@
                 "target_path": "typing.Literal"
               },
               "Parser": {
-                "endlineno": 13,
+                "endlineno": 14,
                 "kind": "alias",
-                "lineno": 13,
+                "lineno": 14,
                 "name": "Parser",
                 "target_path": "_griffe.enumerations.Parser"
               },
@@ -20601,12 +20601,12 @@
                 "target_path": "typing.TYPE_CHECKING"
               },
               "_default_style_order": {
-                "endlineno": 24,
+                "endlineno": 25,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 24,
+                "lineno": 25,
                 "members": {},
                 "name": "_default_style_order",
                 "value": {
@@ -20655,12 +20655,12 @@
                 }
               },
               "_patterns": {
-                "endlineno": 103,
+                "endlineno": 104,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 32,
+                "lineno": 33,
                 "members": {},
                 "name": "_patterns",
                 "value": {
@@ -20810,14 +20810,14 @@
               "infer_docstring_style": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 142,
-                  "lineno": 114,
-                  "value": "Infer the parser to use for the docstring.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).\n\nThe 'heuristics' method uses regular expressions. The 'max_sections' method\nparses the docstring with all parsers specified in `style_order` and returns\nthe one who parsed the most sections.\n\nIf heuristics fail, the `default` parser is returned. If multiple parsers\nparsed the same number of sections, `style_order` is used to decide which\none to return. The `default` parser is never used with the 'max_sections' method.\n\nFor non-Insiders versions, `default` is returned if specified, else the first\nparser in `style_order` is returned. If `style_order` is not specified,\n`None` is returned.\n\nAdditional options are parsed to the detected parser, if any.\n\nParameters:\n    docstring: The docstring to parse.\n    method: The method to use to infer the parser.\n    style_order: The order of the styles to try when inferring the parser.\n    default: The default parser to use if the inference fails.\n    **options: Additional parsing options.\n\nReturns:\n    The inferred parser, and optionally parsed sections (when method is 'max_sections')."
+                  "endlineno": 145,
+                  "lineno": 116,
+                  "value": "Infer the parser to use for the docstring.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).\n\nThe 'heuristics' method uses regular expressions. The 'max_sections' method\nparses the docstring with all parsers specified in `style_order` and returns\nthe one who parsed the most sections.\n\nIf heuristics fail, the `default` parser is returned. If multiple parsers\nparsed the same number of sections, `style_order` is used to decide which\none to return. The `default` parser is never used with the 'max_sections' method.\n\nFor non-Insiders versions, `default` is returned if specified, else the first\nparser in `style_order` is returned. If `style_order` is not specified,\n`None` is returned.\n\nAdditional options are parsed to the detected parser, if any.\n\nParameters:\n    docstring: The docstring to parse.\n    method: The method to use to infer the parser.\n    style_order: The order of the styles to try when inferring the parser.\n    default: The default parser to use if the inference fails.\n    per_style_options: Additional parsing options per style.\n    **options: Deprecated. Use `per_style_options` instead.\n\nReturns:\n    The inferred parser, and optionally parsed sections (when method is 'max_sections')."
                 },
-                "endlineno": 165,
+                "endlineno": 177,
                 "kind": "function",
                 "labels": [],
-                "lineno": 106,
+                "lineno": 107,
                 "members": {},
                 "name": "infer_docstring_style",
                 "parameters": [
@@ -20899,6 +20899,62 @@
                   },
                   {
                     "annotation": {
+                      "cls": "ExprBinOp",
+                      "left": {
+                        "cls": "ExprSubscript",
+                        "left": {
+                          "cls": "ExprName",
+                          "name": "dict"
+                        },
+                        "slice": {
+                          "cls": "ExprTuple",
+                          "elements": [
+                            {
+                              "cls": "ExprBinOp",
+                              "left": {
+                                "cls": "ExprName",
+                                "name": "Parser"
+                              },
+                              "operator": "|",
+                              "right": {
+                                "cls": "ExprName",
+                                "name": "DocstringStyle"
+                              }
+                            },
+                            {
+                              "cls": "ExprSubscript",
+                              "left": {
+                                "cls": "ExprName",
+                                "name": "dict"
+                              },
+                              "slice": {
+                                "cls": "ExprTuple",
+                                "elements": [
+                                  {
+                                    "cls": "ExprName",
+                                    "name": "str"
+                                  },
+                                  {
+                                    "cls": "ExprName",
+                                    "name": "Any"
+                                  }
+                                ],
+                                "implicit": true
+                              }
+                            }
+                          ],
+                          "implicit": true
+                        }
+                      },
+                      "operator": "|",
+                      "right": "None"
+                    },
+                    "default": "None",
+                    "kind": "keyword-only",
+                    "name": "per_style_options"
+                  },
+                  {
+                    "annotation": {
                       "cls": "ExprName",
                       "name": "Any"
                     },
@@ -20949,14 +21005,14 @@
               "parse": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 228,
-                  "lineno": 219,
+                  "endlineno": 253,
+                  "lineno": 244,
                   "value": "Parse the docstring.\n\nParameters:\n    docstring: The docstring to parse.\n    parser: The docstring parser to use. If None, return a single text section.\n    **options: The options accepted by the parser.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 233,
+                "endlineno": 258,
                 "kind": "function",
                 "labels": [],
-                "lineno": 214,
+                "lineno": 239,
                 "members": {},
                 "name": "parse",
                 "parameters": [
@@ -21016,14 +21072,14 @@
               "parse_auto": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 193,
-                  "lineno": 176,
-                  "value": "Parse a docstring by automatically detecting the style it uses.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).\n\nSee [`infer_docstring_style`][griffe.infer_docstring_style] for more information\non the available parameters.\n\nParameters:\n    docstring: The docstring to parse.\n    method: The method to use to infer the parser.\n    style_order: The order of the styles to try when inferring the parser.\n    default: The default parser to use if the inference fails.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
+                  "endlineno": 207,
+                  "lineno": 189,
+                  "value": "Parse a docstring by automatically detecting the style it uses.\n\n[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;\n[:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).\n\nSee [`infer_docstring_style`][griffe.infer_docstring_style] for more information\non the available parameters.\n\nParameters:\n    docstring: The docstring to parse.\n    method: The method to use to infer the parser.\n    style_order: The order of the styles to try when inferring the parser.\n    default: The default parser to use if the inference fails.\n    per_style_options: Additional parsing options per style.\n    **options: Deprecated. Use `per_style_options` instead.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 203,
+                "endlineno": 228,
                 "kind": "function",
                 "labels": [],
-                "lineno": 168,
+                "lineno": 180,
                 "members": {},
                 "name": "parse_auto",
                 "parameters": [
@@ -21105,6 +21161,62 @@
                   },
                   {
                     "annotation": {
+                      "cls": "ExprBinOp",
+                      "left": {
+                        "cls": "ExprSubscript",
+                        "left": {
+                          "cls": "ExprName",
+                          "name": "dict"
+                        },
+                        "slice": {
+                          "cls": "ExprTuple",
+                          "elements": [
+                            {
+                              "cls": "ExprBinOp",
+                              "left": {
+                                "cls": "ExprName",
+                                "name": "Parser"
+                              },
+                              "operator": "|",
+                              "right": {
+                                "cls": "ExprName",
+                                "name": "DocstringStyle"
+                              }
+                            },
+                            {
+                              "cls": "ExprSubscript",
+                              "left": {
+                                "cls": "ExprName",
+                                "name": "dict"
+                              },
+                              "slice": {
+                                "cls": "ExprTuple",
+                                "elements": [
+                                  {
+                                    "cls": "ExprName",
+                                    "name": "str"
+                                  },
+                                  {
+                                    "cls": "ExprName",
+                                    "name": "Any"
+                                  }
+                                ],
+                                "implicit": true
+                              }
+                            }
+                          ],
+                          "implicit": true
+                        }
+                      },
+                      "operator": "|",
+                      "right": "None"
+                    },
+                    "default": "None",
+                    "kind": "keyword-only",
+                    "name": "per_style_options"
+                  },
+                  {
+                    "annotation": {
                       "cls": "ExprName",
                       "name": "Any"
                     },
@@ -21126,23 +21238,23 @@
                 }
               },
               "parse_google": {
-                "endlineno": 9,
+                "endlineno": 10,
                 "kind": "alias",
-                "lineno": 9,
+                "lineno": 10,
                 "name": "parse_google",
                 "target_path": "_griffe.docstrings.google.parse_google"
               },
               "parse_numpy": {
-                "endlineno": 11,
+                "endlineno": 12,
                 "kind": "alias",
-                "lineno": 11,
+                "lineno": 12,
                 "name": "parse_numpy",
                 "target_path": "_griffe.docstrings.numpy.parse_numpy"
               },
               "parse_sphinx": {
-                "endlineno": 12,
+                "endlineno": 13,
                 "kind": "alias",
-                "lineno": 12,
+                "lineno": 13,
                 "name": "parse_sphinx",
                 "target_path": "_griffe.docstrings.sphinx.parse_sphinx"
               },
@@ -21197,12 +21309,12 @@
                     "implicit": true
                   }
                 },
-                "endlineno": 211,
+                "endlineno": 236,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 206,
+                "lineno": 231,
                 "members": {},
                 "name": "parsers",
                 "value": {
@@ -21287,6 +21399,13 @@
                 "lineno": 6,
                 "name": "re",
                 "target_path": "re"
+              },
+              "warn": {
+                "endlineno": 8,
+                "kind": "alias",
+                "lineno": 8,
+                "name": "warn",
+                "target_path": "warnings.warn"
               }
             },
             "name": "parsers"
