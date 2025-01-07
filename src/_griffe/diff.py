@@ -219,10 +219,10 @@ class Breakage:
         title = f"title={self._format_title()}"
         explanation = f"::warning {location},{title}::{self.kind.value}"
         old = self._format_old_value()
-        if old != "unset":
+        if old and old != "unset":
             old = f"`{old}`"
         new = self._format_new_value()
-        if new != "unset":
+        if new and new != "unset":
             new = f"`{new}`"
         if old and new:
             change = f"{old} -> {new}"
