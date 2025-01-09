@@ -195,12 +195,12 @@ class Breakage:
         return "\n".join(lines)
 
     def _explain_markdown(self) -> str:
-        explanation = f"- `{self._canonical_path}`: *{self.kind.value}*"
+        explanation = f"- `{self._relative_path}`: *{self.kind.value}*"
         old = self._format_old_value()
-        if old != "unset":
+        if old and old != "unset":
             old = f"`{old}`"
         new = self._format_new_value()
-        if new != "unset":
+        if new and new != "unset":
             new = f"`{new}`"
         if old and new:
             change = f"{old} -> {new}"
@@ -242,8 +242,12 @@ class ParameterMovedBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_MOVED
 
+    @property
+    def _relative_path(self) -> str:
+        return f"{super()._relative_path}({self.old_value.name})"
+
     def _format_title(self) -> str:
-        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -257,8 +261,12 @@ class ParameterRemovedBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_REMOVED
 
+    @property
+    def _relative_path(self) -> str:
+        return f"{super()._relative_path}({self.old_value.name})"
+
     def _format_title(self) -> str:
-        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -272,8 +280,12 @@ class ParameterChangedKindBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_KIND
 
+    @property
+    def _relative_path(self) -> str:
+        return f"{super()._relative_path}({self.old_value.name})"
+
     def _format_title(self) -> str:
-        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return str(self.old_value.kind.value)
@@ -287,8 +299,12 @@ class ParameterChangedDefaultBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_DEFAULT
 
+    @property
+    def _relative_path(self) -> str:
+        return f"{super()._relative_path}({self.old_value.name})"
+
     def _format_title(self) -> str:
-        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return str(self.old_value.default)
@@ -302,8 +318,12 @@ class ParameterChangedRequiredBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_REQUIRED
 
+    @property
+    def _relative_path(self) -> str:
+        return f"{super()._relative_path}({self.old_value.name})"
+
     def _format_title(self) -> str:
-        return f"{self._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
@@ -317,8 +337,12 @@ class ParameterAddedRequiredBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.PARAMETER_ADDED_REQUIRED
 
+    @property
+    def _relative_path(self) -> str:
+        return f"{super()._relative_path}({self.new_value.name})"
+
     def _format_title(self) -> str:
-        return f"{self._relative_path}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
+        return f"{super()._relative_path}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
 
     def _format_old_value(self) -> str:
         return ""
