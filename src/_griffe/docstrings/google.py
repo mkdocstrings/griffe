@@ -748,9 +748,11 @@ def parse_google(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     returns_multiple_items: bool = True,
-    warn_unknown_params: bool = True,
     returns_named_value: bool = True,
     returns_type_in_property_summary: bool = False,
+    receives_multiple_items: bool = True,
+    receives_named_value: bool = True,
+    warn_unknown_params: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Google-style docstring.
@@ -762,13 +764,21 @@ def parse_google(
         docstring: The docstring to parse.
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
-        returns_multiple_items: Whether the `Returns` section has multiple items.
-        warn_unknown_params: Warn about documented parameters not appearing in the signature.
-        returns_named_value: Whether to parse `thing: Description` in returns sections as a name and description,
-            rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
+        returns_multiple_items: Whether to parse multiple items in `Yields` and `Returns` sections.
+            When true, each item's continuation lines must be indented.
+            When false (single item), no further indentation is required.
+        returns_named_value: Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.
+            When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.
+            When false, parentheses are optional but the items cannot be named: `int: Description`.
+        receives_multiple_items: Whether to parse multiple items in `Receives` sections.
+            When true, each item's continuation lines must be indented.
+            When false (single item), no further indentation is required.
+        receives_named_value: Whether to parse `Receives` section items as name and description, rather than type and description.
+            When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.
             When false, parentheses are optional but the items cannot be named: `int: Description`.
         returns_type_in_property_summary: Whether to parse the return type of properties
             at the beginning of their summary: `str: Summary of the property`.
+        warn_unknown_params: Warn about documented parameters not appearing in the signature.
         **options: Additional parsing options.
 
     Returns:
@@ -784,9 +794,11 @@ def parse_google(
         "ignore_init_summary": ignore_init_summary,
         "trim_doctest_flags": trim_doctest_flags,
         "returns_multiple_items": returns_multiple_items,
-        "warn_unknown_params": warn_unknown_params,
         "returns_named_value": returns_named_value,
         "returns_type_in_property_summary": returns_type_in_property_summary,
+        "receives_multiple_items": receives_multiple_items,
+        "receives_named_value": receives_named_value,
+        "warn_unknown_params": warn_unknown_params,
         **options,
     }
 
