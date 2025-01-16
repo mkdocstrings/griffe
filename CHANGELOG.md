@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.5](https://github.com/mkdocstrings/griffe/releases/tag/1.5.5) - 2025-01-16
+
+<small>[Compare with 1.5.4](https://github.com/mkdocstrings/griffe/compare/1.5.4...1.5.5)</small>
+
+### Bug Fixes
+
+- Fix check command's Markdown output format not displaying parameter names ([5e7af22](https://github.com/mkdocstrings/griffe/commit/5e7af227792f602c8e1c40707bc7c058e272ce12) by Timothée Mazzucotelli).
+- Don't output empty change for removed objects when using GitHub output format (check command) ([6842372](https://github.com/mkdocstrings/griffe/commit/68423726c625649dd35b5c8018c752dbb72e5be2) by Timothée Mazzucotelli). [Issue-349](https://github.com/mkdocstrings/griffe/issues/349)
+
 ## [1.5.4](https://github.com/mkdocstrings/griffe/releases/tag/1.5.4) - 2024-12-26
 
 <small>[Compare with 1.5.3](https://github.com/mkdocstrings/griffe/compare/1.5.3...1.5.4)</small>
