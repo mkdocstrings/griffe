@@ -10114,27 +10114,27 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 361,
-              "lineno": 361,
+              "endlineno": 385,
+              "lineno": 385,
               "value": "Specific breakage class for attributes whose type changed."
             },
-            "endlineno": 363,
+            "endlineno": 387,
             "kind": "class",
             "labels": [],
-            "lineno": 360,
+            "lineno": 384,
             "members": {
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 363,
+                "endlineno": 387,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 363,
+                "lineno": 387,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -10163,27 +10163,27 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 367,
-              "lineno": 367,
+              "endlineno": 391,
+              "lineno": 391,
               "value": "Specific breakage class for attributes whose value changed."
             },
-            "endlineno": 369,
+            "endlineno": 393,
             "kind": "class",
             "labels": [],
-            "lineno": 366,
+            "lineno": 390,
             "members": {
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 369,
+                "endlineno": 393,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 369,
+                "lineno": 393,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -10847,9 +10847,142 @@
             ],
             "decorators": [],
             "docstring": {
+              "endlineno": 397,
+              "lineno": 397,
+              "value": "Specific breakage class for removed base classes."
+            },
+            "endlineno": 405,
+            "kind": "class",
+            "labels": [],
+            "lineno": 396,
+            "members": {
+              "_format_new_value": {
+                "decorators": [],
+                "endlineno": 405,
+                "kind": "function",
+                "labels": [],
+                "lineno": 404,
+                "members": {},
+                "name": "_format_new_value",
+                "parameters": [
+                  {
+                    "annotation": null,
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "self"
+                  }
+                ],
+                "returns": {
+                  "cls": "ExprName",
+                  "name": "str"
+                }
+              },
+              "_format_old_value": {
+                "decorators": [],
+                "endlineno": 402,
+                "kind": "function",
+                "labels": [],
+                "lineno": 401,
+                "members": {},
+                "name": "_format_old_value",
+                "parameters": [
+                  {
+                    "annotation": null,
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "self"
+                  }
+                ],
+                "returns": {
+                  "cls": "ExprName",
+                  "name": "str"
+                }
+              },
+              "kind": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "BreakageKind"
+                },
+                "endlineno": 399,
+                "kind": "attribute",
+                "labels": [
+                  "class-attribute",
+                  "instance-attribute"
+                ],
+                "lineno": 399,
+                "members": {},
+                "name": "kind",
+                "value": {
+                  "cls": "ExprAttribute",
+                  "values": [
+                    {
+                      "cls": "ExprName",
+                      "name": "BreakageKind"
+                    },
+                    {
+                      "cls": "ExprName",
+                      "name": "CLASS_REMOVED_BASE"
+                    }
+                  ]
+                }
+              }
+            },
+            "name": "ClassRemovedBaseBreakage"
+          },
+          "ExplanationStyle": {
+            "endlineno": 17,
+            "kind": "alias",
+            "lineno": 17,
+            "name": "ExplanationStyle",
+            "target_path": "_griffe.enumerations.ExplanationStyle"
+          },
+          "Fore": {
+            "endlineno": 15,
+            "kind": "alias",
+            "lineno": 15,
+            "name": "Fore",
+            "target_path": "colorama.Fore"
+          },
+          "Function": {
+            "endlineno": 25,
+            "kind": "alias",
+            "lineno": 25,
+            "name": "Function",
+            "target_path": "_griffe.models.Function"
+          },
+          "Iterable": {
+            "endlineno": 23,
+            "kind": "alias",
+            "lineno": 23,
+            "name": "Iterable",
+            "target_path": "collections.abc.Iterable"
+          },
+          "Iterator": {
+            "endlineno": 23,
+            "kind": "alias",
+            "lineno": 23,
+            "name": "Iterator",
+            "target_path": "collections.abc.Iterator"
+          },
+          "Object": {
+            "endlineno": 25,
+            "kind": "alias",
+            "lineno": 25,
+            "name": "Object",
+            "target_path": "_griffe.models.Object"
+          },
+          "ObjectChangedKindBreakage": {
+            "bases": [
+              {
+                "cls": "ExprName",
+                "name": "Breakage"
+              }
+            ],
+            "decorators": [],
+            "docstring": {
               "endlineno": 373,
               "lineno": 373,
-              "value": "Specific breakage class for removed base classes."
+              "value": "Specific breakage class for objects whose kind changed."
             },
             "endlineno": 381,
             "kind": "class",
@@ -10921,139 +11054,6 @@
                     },
                     {
                       "cls": "ExprName",
-                      "name": "CLASS_REMOVED_BASE"
-                    }
-                  ]
-                }
-              }
-            },
-            "name": "ClassRemovedBaseBreakage"
-          },
-          "ExplanationStyle": {
-            "endlineno": 17,
-            "kind": "alias",
-            "lineno": 17,
-            "name": "ExplanationStyle",
-            "target_path": "_griffe.enumerations.ExplanationStyle"
-          },
-          "Fore": {
-            "endlineno": 15,
-            "kind": "alias",
-            "lineno": 15,
-            "name": "Fore",
-            "target_path": "colorama.Fore"
-          },
-          "Function": {
-            "endlineno": 25,
-            "kind": "alias",
-            "lineno": 25,
-            "name": "Function",
-            "target_path": "_griffe.models.Function"
-          },
-          "Iterable": {
-            "endlineno": 23,
-            "kind": "alias",
-            "lineno": 23,
-            "name": "Iterable",
-            "target_path": "collections.abc.Iterable"
-          },
-          "Iterator": {
-            "endlineno": 23,
-            "kind": "alias",
-            "lineno": 23,
-            "name": "Iterator",
-            "target_path": "collections.abc.Iterator"
-          },
-          "Object": {
-            "endlineno": 25,
-            "kind": "alias",
-            "lineno": 25,
-            "name": "Object",
-            "target_path": "_griffe.models.Object"
-          },
-          "ObjectChangedKindBreakage": {
-            "bases": [
-              {
-                "cls": "ExprName",
-                "name": "Breakage"
-              }
-            ],
-            "decorators": [],
-            "docstring": {
-              "endlineno": 349,
-              "lineno": 349,
-              "value": "Specific breakage class for objects whose kind changed."
-            },
-            "endlineno": 357,
-            "kind": "class",
-            "labels": [],
-            "lineno": 348,
-            "members": {
-              "_format_new_value": {
-                "decorators": [],
-                "endlineno": 357,
-                "kind": "function",
-                "labels": [],
-                "lineno": 356,
-                "members": {},
-                "name": "_format_new_value",
-                "parameters": [
-                  {
-                    "annotation": null,
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "self"
-                  }
-                ],
-                "returns": {
-                  "cls": "ExprName",
-                  "name": "str"
-                }
-              },
-              "_format_old_value": {
-                "decorators": [],
-                "endlineno": 354,
-                "kind": "function",
-                "labels": [],
-                "lineno": 353,
-                "members": {},
-                "name": "_format_old_value",
-                "parameters": [
-                  {
-                    "annotation": null,
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "self"
-                  }
-                ],
-                "returns": {
-                  "cls": "ExprName",
-                  "name": "str"
-                }
-              },
-              "kind": {
-                "annotation": {
-                  "cls": "ExprName",
-                  "name": "BreakageKind"
-                },
-                "endlineno": 351,
-                "kind": "attribute",
-                "labels": [
-                  "class-attribute",
-                  "instance-attribute"
-                ],
-                "lineno": 351,
-                "members": {},
-                "name": "kind",
-                "value": {
-                  "cls": "ExprAttribute",
-                  "values": [
-                    {
-                      "cls": "ExprName",
-                      "name": "BreakageKind"
-                    },
-                    {
-                      "cls": "ExprName",
                       "name": "OBJECT_CHANGED_KIND"
                     }
                   ]
@@ -11071,21 +11071,21 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 337,
-              "lineno": 337,
+              "endlineno": 361,
+              "lineno": 361,
               "value": "Specific breakage class for removed objects."
             },
-            "endlineno": 345,
+            "endlineno": 369,
             "kind": "class",
             "labels": [],
-            "lineno": 336,
+            "lineno": 360,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 345,
+                "endlineno": 369,
                 "kind": "function",
                 "labels": [],
-                "lineno": 344,
+                "lineno": 368,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11103,10 +11103,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 342,
+                "endlineno": 366,
                 "kind": "function",
                 "labels": [],
-                "lineno": 341,
+                "lineno": 365,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11127,13 +11127,13 @@
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 339,
+                "endlineno": 363,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 339,
+                "lineno": 363,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -11162,21 +11162,21 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 316,
-              "lineno": 316,
+              "endlineno": 336,
+              "lineno": 336,
               "value": "Specific breakage class for new parameters added as required."
             },
-            "endlineno": 327,
+            "endlineno": 351,
             "kind": "class",
             "labels": [],
-            "lineno": 315,
+            "lineno": 335,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 327,
+                "endlineno": 351,
                 "kind": "function",
                 "labels": [],
-                "lineno": 326,
+                "lineno": 350,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11194,10 +11194,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 324,
+                "endlineno": 348,
                 "kind": "function",
                 "labels": [],
-                "lineno": 323,
+                "lineno": 347,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11215,10 +11215,10 @@
               },
               "_format_title": {
                 "decorators": [],
-                "endlineno": 321,
+                "endlineno": 345,
                 "kind": "function",
                 "labels": [],
-                "lineno": 320,
+                "lineno": 344,
                 "members": {},
                 "name": "_format_title",
                 "parameters": [
@@ -11234,18 +11234,32 @@
                   "name": "str"
                 }
               },
+              "_relative_path": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "endlineno": 342,
+                "kind": "attribute",
+                "labels": [
+                  "property"
+                ],
+                "lineno": 341,
+                "members": {},
+                "name": "_relative_path"
+              },
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 318,
+                "endlineno": 338,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 318,
+                "lineno": 338,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -11274,21 +11288,21 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 286,
-              "lineno": 286,
+              "endlineno": 298,
+              "lineno": 298,
               "value": "Specific breakage class for parameters whose default value changed."
             },
-            "endlineno": 297,
+            "endlineno": 313,
             "kind": "class",
             "labels": [],
-            "lineno": 285,
+            "lineno": 297,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 297,
+                "endlineno": 313,
                 "kind": "function",
                 "labels": [],
-                "lineno": 296,
+                "lineno": 312,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11306,10 +11320,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 294,
+                "endlineno": 310,
                 "kind": "function",
                 "labels": [],
-                "lineno": 293,
+                "lineno": 309,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11327,10 +11341,10 @@
               },
               "_format_title": {
                 "decorators": [],
-                "endlineno": 291,
+                "endlineno": 307,
                 "kind": "function",
                 "labels": [],
-                "lineno": 290,
+                "lineno": 306,
                 "members": {},
                 "name": "_format_title",
                 "parameters": [
@@ -11346,18 +11360,32 @@
                   "name": "str"
                 }
               },
+              "_relative_path": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "endlineno": 304,
+                "kind": "attribute",
+                "labels": [
+                  "property"
+                ],
+                "lineno": 303,
+                "members": {},
+                "name": "_relative_path"
+              },
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 288,
+                "endlineno": 300,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 288,
+                "lineno": 300,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -11386,21 +11414,21 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 271,
-              "lineno": 271,
+              "endlineno": 279,
+              "lineno": 279,
               "value": "Specific breakage class for parameters whose kind changed."
             },
-            "endlineno": 282,
+            "endlineno": 294,
             "kind": "class",
             "labels": [],
-            "lineno": 270,
+            "lineno": 278,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 282,
+                "endlineno": 294,
                 "kind": "function",
                 "labels": [],
-                "lineno": 281,
+                "lineno": 293,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11418,10 +11446,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 279,
+                "endlineno": 291,
                 "kind": "function",
                 "labels": [],
-                "lineno": 278,
+                "lineno": 290,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11439,10 +11467,10 @@
               },
               "_format_title": {
                 "decorators": [],
-                "endlineno": 276,
+                "endlineno": 288,
                 "kind": "function",
                 "labels": [],
-                "lineno": 275,
+                "lineno": 287,
                 "members": {},
                 "name": "_format_title",
                 "parameters": [
@@ -11458,18 +11486,32 @@
                   "name": "str"
                 }
               },
+              "_relative_path": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "endlineno": 285,
+                "kind": "attribute",
+                "labels": [
+                  "property"
+                ],
+                "lineno": 284,
+                "members": {},
+                "name": "_relative_path"
+              },
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 273,
+                "endlineno": 281,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 273,
+                "lineno": 281,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -11498,21 +11540,21 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 301,
-              "lineno": 301,
+              "endlineno": 317,
+              "lineno": 317,
               "value": "Specific breakage class for parameters which became required."
             },
-            "endlineno": 312,
+            "endlineno": 332,
             "kind": "class",
             "labels": [],
-            "lineno": 300,
+            "lineno": 316,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 312,
+                "endlineno": 332,
                 "kind": "function",
                 "labels": [],
-                "lineno": 311,
+                "lineno": 331,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11530,10 +11572,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 309,
+                "endlineno": 329,
                 "kind": "function",
                 "labels": [],
-                "lineno": 308,
+                "lineno": 328,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11551,10 +11593,10 @@
               },
               "_format_title": {
                 "decorators": [],
-                "endlineno": 306,
+                "endlineno": 326,
                 "kind": "function",
                 "labels": [],
-                "lineno": 305,
+                "lineno": 325,
                 "members": {},
                 "name": "_format_title",
                 "parameters": [
@@ -11570,18 +11612,32 @@
                   "name": "str"
                 }
               },
+              "_relative_path": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "endlineno": 323,
+                "kind": "attribute",
+                "labels": [
+                  "property"
+                ],
+                "lineno": 322,
+                "members": {},
+                "name": "_relative_path"
+              },
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 303,
+                "endlineno": 319,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 303,
+                "lineno": 319,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -11621,17 +11677,17 @@
               "lineno": 241,
               "value": "Specific breakage class for moved parameters."
             },
-            "endlineno": 252,
+            "endlineno": 256,
             "kind": "class",
             "labels": [],
             "lineno": 240,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 252,
+                "endlineno": 256,
                 "kind": "function",
                 "labels": [],
-                "lineno": 251,
+                "lineno": 255,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11649,10 +11705,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 249,
+                "endlineno": 253,
                 "kind": "function",
                 "labels": [],
-                "lineno": 248,
+                "lineno": 252,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11670,10 +11726,10 @@
               },
               "_format_title": {
                 "decorators": [],
-                "endlineno": 246,
+                "endlineno": 250,
                 "kind": "function",
                 "labels": [],
-                "lineno": 245,
+                "lineno": 249,
                 "members": {},
                 "name": "_format_title",
                 "parameters": [
@@ -11688,6 +11744,20 @@
                   "cls": "ExprName",
                   "name": "str"
                 }
+              },
+              "_relative_path": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "endlineno": 247,
+                "kind": "attribute",
+                "labels": [
+                  "property"
+                ],
+                "lineno": 246,
+                "members": {},
+                "name": "_relative_path"
               },
               "kind": {
                 "annotation": {
@@ -11729,21 +11799,21 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 256,
-              "lineno": 256,
+              "endlineno": 260,
+              "lineno": 260,
               "value": "Specific breakage class for removed parameters."
             },
-            "endlineno": 267,
+            "endlineno": 275,
             "kind": "class",
             "labels": [],
-            "lineno": 255,
+            "lineno": 259,
             "members": {
               "_format_new_value": {
                 "decorators": [],
-                "endlineno": 267,
+                "endlineno": 275,
                 "kind": "function",
                 "labels": [],
-                "lineno": 266,
+                "lineno": 274,
                 "members": {},
                 "name": "_format_new_value",
                 "parameters": [
@@ -11761,10 +11831,10 @@
               },
               "_format_old_value": {
                 "decorators": [],
-                "endlineno": 264,
+                "endlineno": 272,
                 "kind": "function",
                 "labels": [],
-                "lineno": 263,
+                "lineno": 271,
                 "members": {},
                 "name": "_format_old_value",
                 "parameters": [
@@ -11782,10 +11852,10 @@
               },
               "_format_title": {
                 "decorators": [],
-                "endlineno": 261,
+                "endlineno": 269,
                 "kind": "function",
                 "labels": [],
-                "lineno": 260,
+                "lineno": 268,
                 "members": {},
                 "name": "_format_title",
                 "parameters": [
@@ -11801,18 +11871,32 @@
                   "name": "str"
                 }
               },
+              "_relative_path": {
+                "annotation": {
+                  "cls": "ExprName",
+                  "name": "str"
+                },
+                "endlineno": 266,
+                "kind": "attribute",
+                "labels": [
+                  "property"
+                ],
+                "lineno": 265,
+                "members": {},
+                "name": "_relative_path"
+              },
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 258,
+                "endlineno": 262,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 258,
+                "lineno": 262,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -11848,27 +11932,27 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 331,
-              "lineno": 331,
+              "endlineno": 355,
+              "lineno": 355,
               "value": "Specific breakage class for return values which changed type."
             },
-            "endlineno": 333,
+            "endlineno": 357,
             "kind": "class",
             "labels": [],
-            "lineno": 330,
+            "lineno": 354,
             "members": {
               "kind": {
                 "annotation": {
                   "cls": "ExprName",
                   "name": "BreakageKind"
                 },
-                "endlineno": 333,
+                "endlineno": 357,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 333,
+                "lineno": 357,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -12115,10 +12199,10 @@
           },
           "_alias_incompatibilities": {
             "decorators": [],
-            "endlineno": 497,
+            "endlineno": 521,
             "kind": "function",
             "labels": [],
-            "lineno": 484,
+            "lineno": 508,
             "members": {},
             "name": "_alias_incompatibilities",
             "parameters": [
@@ -12187,10 +12271,10 @@
           },
           "_attribute_incompatibilities": {
             "decorators": [],
-            "endlineno": 481,
+            "endlineno": 505,
             "kind": "function",
             "labels": [],
-            "lineno": 473,
+            "lineno": 497,
             "members": {},
             "name": "_attribute_incompatibilities",
             "parameters": [
@@ -12227,10 +12311,10 @@
           },
           "_class_incompatibilities": {
             "decorators": [],
-            "endlineno": 394,
+            "endlineno": 418,
             "kind": "function",
             "labels": [],
-            "lineno": 385,
+            "lineno": 409,
             "members": {},
             "name": "_class_incompatibilities",
             "parameters": [
@@ -12283,10 +12367,10 @@
           },
           "_function_incompatibilities": {
             "decorators": [],
-            "endlineno": 470,
+            "endlineno": 494,
             "kind": "function",
             "labels": [],
-            "lineno": 398,
+            "lineno": 422,
             "members": {},
             "name": "_function_incompatibilities",
             "parameters": [
@@ -12323,10 +12407,10 @@
           },
           "_member_incompatibilities": {
             "decorators": [],
-            "endlineno": 518,
+            "endlineno": 542,
             "kind": "function",
             "labels": [],
-            "lineno": 500,
+            "lineno": 524,
             "members": {},
             "name": "_member_incompatibilities",
             "parameters": [
@@ -12400,10 +12484,10 @@
           },
           "_returns_are_compatible": {
             "decorators": [],
-            "endlineno": 576,
+            "endlineno": 600,
             "kind": "function",
             "labels": [],
-            "lineno": 558,
+            "lineno": 582,
             "members": {},
             "name": "_returns_are_compatible",
             "parameters": [
@@ -12432,12 +12516,12 @@
             }
           },
           "_sentinel": {
-            "endlineno": 579,
+            "endlineno": 603,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 579,
+            "lineno": 603,
             "members": {},
             "name": "_sentinel",
             "value": {
@@ -12451,10 +12535,10 @@
           },
           "_type_based_yield": {
             "decorators": [],
-            "endlineno": 555,
+            "endlineno": 579,
             "kind": "function",
             "labels": [],
-            "lineno": 521,
+            "lineno": 545,
             "members": {},
             "name": "_type_based_yield",
             "parameters": [
@@ -12538,14 +12622,14 @@
           "find_breaking_changes": {
             "decorators": [],
             "docstring": {
-              "endlineno": 604,
-              "lineno": 586,
+              "endlineno": 628,
+              "lineno": 610,
               "value": "Find breaking changes between two versions of the same API.\n\nThe function will iterate recursively on all objects\nand yield breaking changes with detailed information.\n\nParameters:\n    old_obj: The old version of an object.\n    new_obj: The new version of an object.\n\nYields:\n    Breaking changes.\n\nExamples:\n    >>> import sys, griffe\n    >>> new = griffe.load(\"pkg\")\n    >>> old = griffe.load_git(\"pkg\", \"1.2.3\")\n    >>> for breakage in griffe.find_breaking_changes(old, new)\n    ...     print(breakage.explain(style=style), file=sys.stderr)"
             },
-            "endlineno": 605,
+            "endlineno": 629,
             "kind": "function",
             "labels": [],
-            "lineno": 582,
+            "lineno": 606,
             "members": {},
             "name": "find_breaking_changes",
             "parameters": [
@@ -13091,10 +13175,10 @@
               },
               "_annotation_from_parent": {
                 "decorators": [],
-                "endlineno": 504,
+                "endlineno": 502,
                 "kind": "function",
                 "labels": [],
-                "lineno": 488,
+                "lineno": 486,
                 "members": {},
                 "name": "_annotation_from_parent",
                 "parameters": [
@@ -13167,10 +13251,10 @@
               },
               "_get_name_annotation_description": {
                 "decorators": [],
-                "endlineno": 485,
+                "endlineno": 483,
                 "kind": "function",
                 "labels": [],
-                "lineno": 459,
+                "lineno": 457,
                 "members": {},
                 "name": "_get_name_annotation_description",
                 "parameters": [
@@ -13251,10 +13335,10 @@
               },
               "_is_empty_line": {
                 "decorators": [],
-                "endlineno": 723,
+                "endlineno": 721,
                 "kind": "function",
                 "labels": [],
-                "lineno": 722,
+                "lineno": 720,
                 "members": {},
                 "name": "_is_empty_line",
                 "parameters": [
@@ -13275,10 +13359,10 @@
               },
               "_read_attributes_section": {
                 "decorators": [],
-                "endlineno": 295,
+                "endlineno": 293,
                 "kind": "function",
                 "labels": [],
-                "lineno": 261,
+                "lineno": 260,
                 "members": {},
                 "name": "_read_attributes_section",
                 "parameters": [
@@ -13440,10 +13524,10 @@
               },
               "_read_block_items_maybe": {
                 "decorators": [],
-                "endlineno": 456,
+                "endlineno": 454,
                 "kind": "function",
                 "labels": [],
-                "lineno": 446,
+                "lineno": 444,
                 "members": {},
                 "name": "_read_block_items_maybe",
                 "parameters": [
@@ -13491,10 +13575,10 @@
               },
               "_read_classes_section": {
                 "decorators": [],
-                "endlineno": 365,
+                "endlineno": 363,
                 "kind": "function",
                 "labels": [],
-                "lineno": 333,
+                "lineno": 331,
                 "members": {},
                 "name": "_read_classes_section",
                 "parameters": [
@@ -13555,10 +13639,10 @@
               },
               "_read_deprecated_section": {
                 "decorators": [],
-                "endlineno": 719,
+                "endlineno": 717,
                 "kind": "function",
                 "labels": [],
-                "lineno": 698,
+                "lineno": 696,
                 "members": {},
                 "name": "_read_deprecated_section",
                 "parameters": [
@@ -13619,10 +13703,10 @@
               },
               "_read_examples_section": {
                 "decorators": [],
-                "endlineno": 695,
+                "endlineno": 693,
                 "kind": "function",
                 "labels": [],
-                "lineno": 639,
+                "lineno": 637,
                 "members": {},
                 "name": "_read_examples_section",
                 "parameters": [
@@ -13692,10 +13776,10 @@
               },
               "_read_functions_section": {
                 "decorators": [],
-                "endlineno": 330,
+                "endlineno": 328,
                 "kind": "function",
                 "labels": [],
-                "lineno": 298,
+                "lineno": 296,
                 "members": {},
                 "name": "_read_functions_section",
                 "parameters": [
@@ -13756,10 +13840,10 @@
               },
               "_read_modules_section": {
                 "decorators": [],
-                "endlineno": 390,
+                "endlineno": 388,
                 "kind": "function",
                 "labels": [],
-                "lineno": 368,
+                "lineno": 366,
                 "members": {},
                 "name": "_read_modules_section",
                 "parameters": [
@@ -13820,10 +13904,10 @@
               },
               "_read_other_parameters_section": {
                 "decorators": [],
-                "endlineno": 258,
+                "endlineno": 257,
                 "kind": "function",
                 "labels": [],
-                "lineno": 250,
+                "lineno": 249,
                 "members": {},
                 "name": "_read_other_parameters_section",
                 "parameters": [
@@ -13893,7 +13977,7 @@
               },
               "_read_parameters": {
                 "decorators": [],
-                "endlineno": 237,
+                "endlineno": 236,
                 "kind": "function",
                 "labels": [],
                 "lineno": 178,
@@ -13968,10 +14052,10 @@
               },
               "_read_parameters_section": {
                 "decorators": [],
-                "endlineno": 247,
+                "endlineno": 246,
                 "kind": "function",
                 "labels": [],
-                "lineno": 240,
+                "lineno": 239,
                 "members": {},
                 "name": "_read_parameters_section",
                 "parameters": [
@@ -14032,10 +14116,10 @@
               },
               "_read_raises_section": {
                 "decorators": [],
-                "endlineno": 418,
+                "endlineno": 416,
                 "kind": "function",
                 "labels": [],
-                "lineno": 393,
+                "lineno": 391,
                 "members": {},
                 "name": "_read_raises_section",
                 "parameters": [
@@ -14096,10 +14180,10 @@
               },
               "_read_receives_section": {
                 "decorators": [],
-                "endlineno": 636,
+                "endlineno": 634,
                 "kind": "function",
                 "labels": [],
-                "lineno": 595,
+                "lineno": 593,
                 "members": {},
                 "name": "_read_receives_section",
                 "parameters": [
@@ -14178,10 +14262,10 @@
               },
               "_read_returns_section": {
                 "decorators": [],
-                "endlineno": 548,
+                "endlineno": 546,
                 "kind": "function",
                 "labels": [],
-                "lineno": 507,
+                "lineno": 505,
                 "members": {},
                 "name": "_read_returns_section",
                 "parameters": [
@@ -14260,10 +14344,10 @@
               },
               "_read_warns_section": {
                 "decorators": [],
-                "endlineno": 443,
+                "endlineno": 441,
                 "kind": "function",
                 "labels": [],
-                "lineno": 421,
+                "lineno": 419,
                 "members": {},
                 "name": "_read_warns_section",
                 "parameters": [
@@ -14324,10 +14408,10 @@
               },
               "_read_yields_section": {
                 "decorators": [],
-                "endlineno": 592,
+                "endlineno": 590,
                 "kind": "function",
                 "labels": [],
-                "lineno": 551,
+                "lineno": 549,
                 "members": {},
                 "name": "_read_yields_section",
                 "parameters": [
@@ -14744,12 +14828,12 @@
                 }
               },
               "_section_reader": {
-                "endlineno": 740,
+                "endlineno": 738,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 726,
+                "lineno": 724,
                 "members": {},
                 "name": "_section_reader",
                 "value": {
@@ -14982,12 +15066,12 @@
                 }
               },
               "_sentinel": {
-                "endlineno": 742,
+                "endlineno": 740,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 742,
+                "lineno": 740,
                 "members": {},
                 "name": "_sentinel",
                 "value": {
@@ -15023,14 +15107,14 @@
               "parse_google": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 776,
+                  "endlineno": 784,
                   "lineno": 756,
-                  "value": "Parse a Google-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    returns_multiple_items: Whether the `Returns` section has multiple items.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    returns_named_value: Whether to parse `thing: Description` in returns sections as a name and description,\n        rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    returns_type_in_property_summary: Whether to parse the return type of properties\n        at the beginning of their summary: `str: Summary of the property`.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
+                  "value": "Parse a Google-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    returns_multiple_items: Whether to parse multiple items in `Yields` and `Returns` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    returns_named_value: Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    receives_multiple_items: Whether to parse multiple items in `Receives` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    receives_named_value: Whether to parse `Receives` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    returns_type_in_property_summary: Whether to parse the return type of properties\n        at the beginning of their summary: `str: Summary of the property`.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 905,
+                "endlineno": 915,
                 "kind": "function",
                 "labels": [],
-                "lineno": 745,
+                "lineno": 743,
                 "members": {},
                 "name": "parse_google",
                 "parameters": [
@@ -15077,15 +15161,6 @@
                     },
                     "default": "True",
                     "kind": "keyword-only",
-                    "name": "warn_unknown_params"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "bool"
-                    },
-                    "default": "True",
-                    "kind": "keyword-only",
                     "name": "returns_named_value"
                   },
                   {
@@ -15096,6 +15171,33 @@
                     "default": "False",
                     "kind": "keyword-only",
                     "name": "returns_type_in_property_summary"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "receives_multiple_items"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "receives_named_value"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warn_unknown_params"
                   },
                   {
                     "annotation": {
@@ -40579,7 +40681,7 @@
               "lineno": 89,
               "value": "The Griffe finder, allowing to find modules on the file system.\n\nThe module finder is generally not used directly.\nEach [`GriffeLoader`][griffe.GriffeLoader] instance creates its own module finder instance.\nThe finder can be configured when instantiating the loader\nthanks to the [loader][griffe.GriffeLoader]'s `search_paths` parameter."
             },
-            "endlineno": 418,
+            "endlineno": 417,
             "kind": "class",
             "labels": [],
             "lineno": 88,
@@ -40689,10 +40791,10 @@
               },
               "_append_search_path": {
                 "decorators": [],
-                "endlineno": 385,
+                "endlineno": 384,
                 "kind": "function",
                 "labels": [],
-                "lineno": 383,
+                "lineno": 382,
                 "members": {},
                 "name": "_append_search_path",
                 "parameters": [
@@ -40716,10 +40818,10 @@
               },
               "_contents": {
                 "decorators": [],
-                "endlineno": 381,
+                "endlineno": 380,
                 "kind": "function",
                 "labels": [],
-                "lineno": 375,
+                "lineno": 374,
                 "members": {},
                 "name": "_contents",
                 "parameters": [
@@ -40753,10 +40855,10 @@
               },
               "_extend_from_pth_files": {
                 "decorators": [],
-                "endlineno": 394,
+                "endlineno": 393,
                 "kind": "function",
                 "labels": [],
-                "lineno": 387,
+                "lineno": 386,
                 "members": {},
                 "name": "_extend_from_pth_files",
                 "parameters": [
@@ -40771,10 +40873,10 @@
               },
               "_filter_py_modules": {
                 "decorators": [],
-                "endlineno": 402,
+                "endlineno": 401,
                 "kind": "function",
                 "labels": [],
-                "lineno": 396,
+                "lineno": 395,
                 "members": {},
                 "name": "_filter_py_modules",
                 "parameters": [
@@ -40808,10 +40910,10 @@
               },
               "_module_name_path": {
                 "decorators": [],
-                "endlineno": 373,
+                "endlineno": 372,
                 "kind": "function",
                 "labels": [],
-                "lineno": 360,
+                "lineno": 359,
                 "members": {},
                 "name": "_module_name_path",
                 "parameters": [
@@ -40898,10 +41000,10 @@
               },
               "_top_module_name": {
                 "decorators": [],
-                "endlineno": 418,
+                "endlineno": 417,
                 "kind": "function",
                 "labels": [],
-                "lineno": 404,
+                "lineno": 403,
                 "members": {},
                 "name": "_top_module_name",
                 "parameters": [
@@ -41041,7 +41143,7 @@
                   "lineno": 230,
                   "value": "Find a package or namespace package.\n\nParameters:\n    module_name: The module name.\n\nRaises:\n    ModuleNotFoundError: When the module cannot be found.\n\nReturns:\n    A package or namespace package wrapper."
                 },
-                "endlineno": 275,
+                "endlineno": 274,
                 "kind": "function",
                 "labels": [],
                 "lineno": 229,
@@ -41207,14 +41309,14 @@
               "iter_submodules": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 297,
-                  "lineno": 282,
+                  "endlineno": 296,
+                  "lineno": 281,
                   "value": "Iterate on a module's submodules, if any.\n\nParameters:\n    path: The module path.\n    seen: If not none, this set is used to skip some files.\n        The goal is to replicate the behavior of Python by\n        only using the first packages (with `__init__` modules)\n        of the same name found in different namespace packages.\n        As soon as we find an `__init__` module, we add its parent\n        path to the `seen` set, which will be reused when scanning\n        the next namespace packages.\n\nYields:\n    name_parts (tuple[str, ...]): The parts of a submodule name.\n    filepath (Path): A submodule filepath."
                 },
-                "endlineno": 341,
+                "endlineno": 340,
                 "kind": "function",
                 "labels": [],
-                "lineno": 277,
+                "lineno": 276,
                 "members": {},
                 "name": "iter_submodules",
                 "parameters": [
@@ -41308,14 +41410,14 @@
               "submodules": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 351,
-                  "lineno": 344,
+                  "endlineno": 350,
+                  "lineno": 343,
                   "value": "Return the list of a module's submodules.\n\nParameters:\n    module: The parent module.\n\nReturns:\n    A list of tuples containing the parts of the submodule name and its path."
                 },
-                "endlineno": 358,
+                "endlineno": 357,
                 "kind": "function",
                 "labels": [],
-                "lineno": 343,
+                "lineno": 342,
                 "members": {},
                 "name": "submodules",
                 "parameters": [
@@ -41739,20 +41841,20 @@
             "bases": [],
             "decorators": [
               {
-                "endlineno": 437,
-                "lineno": 437,
+                "endlineno": 436,
+                "lineno": 436,
                 "value": {
                   "cls": "ExprName",
                   "name": "dataclass"
                 }
               }
             ],
-            "endlineno": 440,
+            "endlineno": 439,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 437,
+            "lineno": 436,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -41795,13 +41897,13 @@
                   "cls": "ExprName",
                   "name": "str"
                 },
-                "endlineno": 440,
+                "endlineno": 439,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 440,
+                "lineno": 439,
                 "members": {},
                 "name": "always_scan_for",
                 "value": "''"
@@ -41811,12 +41913,12 @@
                   "cls": "ExprName",
                   "name": "Path"
                 },
-                "endlineno": 439,
+                "endlineno": 438,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 439,
+                "lineno": 438,
                 "members": {},
                 "name": "path"
               }
@@ -42038,10 +42140,10 @@
           },
           "_handle_editable_module": {
             "decorators": [],
-            "endlineno": 518,
+            "endlineno": 517,
             "kind": "function",
             "labels": [],
-            "lineno": 473,
+            "lineno": 472,
             "members": {},
             "name": "_handle_editable_module",
             "parameters": [
@@ -42069,10 +42171,10 @@
           },
           "_handle_pth_file": {
             "decorators": [],
-            "endlineno": 470,
+            "endlineno": 469,
             "kind": "function",
             "labels": [],
-            "lineno": 443,
+            "lineno": 442,
             "members": {},
             "name": "_handle_pth_file",
             "parameters": [
@@ -42100,10 +42202,10 @@
           },
           "_is_pkg_style_namespace": {
             "decorators": [],
-            "endlineno": 430,
+            "endlineno": 429,
             "kind": "function",
             "labels": [],
-            "lineno": 428,
+            "lineno": 427,
             "members": {},
             "name": "_is_pkg_style_namespace",
             "parameters": [
@@ -42164,10 +42266,10 @@
           },
           "_module_depth": {
             "decorators": [],
-            "endlineno": 434,
+            "endlineno": 433,
             "kind": "function",
             "labels": [],
-            "lineno": 433,
+            "lineno": 432,
             "members": {},
             "name": "_module_depth",
             "parameters": [
@@ -42187,12 +42289,12 @@
             }
           },
           "_re_import_line": {
-            "endlineno": 423,
+            "endlineno": 422,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 423,
+            "lineno": 422,
             "members": {},
             "name": "_re_import_line",
             "value": {
@@ -42216,12 +42318,12 @@
             }
           },
           "_re_pkgresources": {
-            "endlineno": 421,
+            "endlineno": 420,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 421,
+            "lineno": 420,
             "members": {},
             "name": "_re_pkgresources",
             "value": {
@@ -42245,12 +42347,12 @@
             }
           },
           "_re_pkgutil": {
-            "endlineno": 422,
+            "endlineno": 421,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 422,
+            "lineno": 421,
             "members": {},
             "name": "_re_pkgutil",
             "value": {
