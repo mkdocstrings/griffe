@@ -123,8 +123,8 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _
             docstring_warning(
                 docstring,
                 new_offset,
-                f"Confusing indentation for continuation line {new_offset+1} in docstring, "
-                f"should be {indent} * 2 = {indent*2} spaces, not {cont_indent}",
+                f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
+                f"should be {indent} * 2 = {indent * 2} spaces, not {cont_indent}",
             )
 
         elif line.startswith(indent * " "):
@@ -201,8 +201,7 @@ def _read_parameters(
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
-            if annotation.endswith(", optional"):
-                annotation = annotation[:-10]
+            annotation = annotation.removesuffix(", optional")
             # try to compile the annotation to transform it into an expression
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
@@ -280,8 +279,7 @@ def _read_attributes_section(
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
-            if annotation.endswith(", optional"):
-                annotation = annotation[:-10]
+            annotation = annotation.removesuffix(", optional")
             # try to compile the annotation to transform it into an expression
             annotation = parse_docstring_annotation(annotation, docstring)
         else:

@@ -130,7 +130,7 @@ def _read_block_items(
             docstring_warning(
                 docstring,
                 new_offset,
-                f"Confusing indentation for continuation line {new_offset+1} in docstring, "
+                f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
                 f"should be 4 spaces, not {cont_indent}",
             )
 
