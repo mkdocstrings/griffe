@@ -49,6 +49,7 @@ nav:
       - Parse docstrings: guide/users/how-to/parse-docstrings.md
       - Support custom decorators: guide/users/how-to/support-decorators.md
       - Selectively inspect objects: guide/users/how-to/selectively-inspect.md
+      - Set objects' docstring style: guide/users/how-to/set-docstring-styles.md
   - Contributor guide:
     - guide/contributors.md
     - Environment setup: guide/contributors/setup.md
