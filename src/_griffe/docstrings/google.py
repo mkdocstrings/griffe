@@ -69,6 +69,7 @@ _section_kind = {
     "modules": DocstringSectionKind.modules,
     "warns": DocstringSectionKind.warns,
     "warnings": DocstringSectionKind.warns,
+    "deprecated": DocstringSectionKind.deprecated,
 }
 
 _BlockItem = tuple[int, list[str]]
