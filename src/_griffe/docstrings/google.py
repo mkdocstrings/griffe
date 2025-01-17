@@ -69,6 +69,7 @@ _section_kind = {
     "modules": DocstringSectionKind.modules,
     "warns": DocstringSectionKind.warns,
     "warnings": DocstringSectionKind.warns,
+    "deprecated": DocstringSectionKind.deprecated,
 }
 
 _BlockItem = tuple[int, list[str]]
@@ -705,8 +706,7 @@ def _read_deprecated_section(
     try:
         version, text = text.split(":", 1)
     except ValueError:
-        docstring_warning(docstring, new_offset, f"Could not parse version, text at line {offset}")
-        return None, new_offset
+        version = ""
 
     version = version.lstrip()
     description = text.lstrip()

@@ -525,6 +525,28 @@ def test_parse_yields_section(parse_google: ParserType) -> None:
     assert "'x'" in warnings[0]
 
 
+def test_parse_deprecated_section(parse_google: ParserType) -> None:
+    """Parse Deprecated section.
+
+    See [`mkdocstrings/griffe#352`](https://github.com/mkdocstrings/griffe/issues/352)
+    for context.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Deprecated:
+            1.0: This function is deprecated.
+    """
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 1
+    deprecated = sections[0]
+    assert deprecated.kind is DocstringSectionKind.deprecated
+    assert deprecated.value.version == "1.0"
+    assert deprecated.value.description == "This function is deprecated."
+    assert not warnings
+
+
 def test_invalid_sections(parse_google: ParserType) -> None:
     """Warn on invalid sections.
 
@@ -1129,6 +1151,60 @@ def test_parse_returns_tuple_in_generator(parse_google: ParserType) -> None:
     assert returns[0].annotation.name == "int"
     assert returns[1].name == "b"
     assert returns[1].annotation.name == "float"
+
+
+# =============================================================================================
+# Deprecated sections
+
+
+def test_parse_deprecated_section_missing_version(parse_google: ParserType) -> None:
+    """Parse version numbers in Deprecated sections that aren't numbers.
+
+    See [`mkdocstrings/griffe#352`](https://github.com/mkdocstrings/griffe/issues/352)
+    for context.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Deprecated:
+            Since "Dapper Drake": This function is deprecated.
+    """
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 2
+    deprecated = sections[1]
+    assert deprecated.kind is DocstringSectionKind.deprecated
+    assert deprecated.value.version == 'Since "Dapper Drake"'
+    assert deprecated.value.description == "This function is deprecated."
+    assert not warnings
+
+
+def test_dont_warn_about_missing_deprecated_version(parse_google: ParserType) -> None:
+    """Don't warn about missing version info in Deprecated sections.
+
+    Also assert that we don't just swallow the section, but actually parse it.
+
+    See [`mkdocstrings/griffe#352`](https://github.com/mkdocstrings/griffe/issues/352)
+    for context.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Summary.
+
+        Deprecated:
+            This function is deprecated since v0.9alpha1.
+    """
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 2
+    deprecated = sections[1]
+    assert deprecated.kind is DocstringSectionKind.deprecated
+    assert not deprecated.value.version
+    assert deprecated.value.description == "This function is deprecated since v0.9alpha1."
+    assert not warnings
 
 
 # =============================================================================================
