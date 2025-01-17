@@ -708,8 +708,7 @@ def _read_deprecated_section(
     try:
         version, text = text.split(":", 1)
     except ValueError:
-        docstring_warning(docstring, new_offset, f"Could not parse version, text at line {offset}")
-        return DocstringSectionDeprecated(version="", text=text), new_offset
+        version = ""
 
     version = version.lstrip()
     description = text.lstrip()

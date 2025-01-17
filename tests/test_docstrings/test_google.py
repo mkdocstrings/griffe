@@ -1181,8 +1181,8 @@ def test_parse_deprecated_section_missing_version(parse_google: ParserType) -> N
     assert not warnings
 
 
-def test_warn_about_missing_deprecated_version(parse_google: ParserType) -> None:
-    """Warn about missing version info in Deprecated sections.
+def test_dont_warn_about_missing_deprecated_version(parse_google: ParserType) -> None:
+    """Don't warn about missing version info in Deprecated sections.
 
     Also assert that we don't just swallow the section, but actually parse it.
 
@@ -1204,8 +1204,7 @@ def test_warn_about_missing_deprecated_version(parse_google: ParserType) -> None
     assert deprecated.kind is DocstringSectionKind.deprecated
     assert not deprecated.value.version
     assert deprecated.value.description == "This function is deprecated since v0.9alpha1."
-    assert len(warnings) == 1
-    assert "Could not parse version, text at line" in warnings[0]
+    assert not warnings
 
 
 # =============================================================================================
