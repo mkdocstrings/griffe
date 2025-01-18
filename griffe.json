@@ -12701,233 +12701,226 @@
             "labels": [],
             "members": {
               "Any": {
-                "endlineno": 42,
+                "endlineno": 41,
                 "kind": "alias",
-                "lineno": 42,
+                "lineno": 41,
                 "name": "Any",
                 "target_path": "typing.Any"
               },
               "Docstring": {
-                "endlineno": 45,
+                "endlineno": 44,
                 "kind": "alias",
-                "lineno": 45,
+                "lineno": 44,
                 "name": "Docstring",
                 "target_path": "_griffe.models.Docstring"
               },
               "DocstringAttribute": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringAttribute",
                 "target_path": "_griffe.docstrings.models.DocstringAttribute"
               },
               "DocstringClass": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringClass",
                 "target_path": "_griffe.docstrings.models.DocstringClass"
               },
               "DocstringFunction": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringFunction",
                 "target_path": "_griffe.docstrings.models.DocstringFunction"
               },
               "DocstringModule": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringModule",
                 "target_path": "_griffe.docstrings.models.DocstringModule"
               },
               "DocstringParameter": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringParameter",
                 "target_path": "_griffe.docstrings.models.DocstringParameter"
               },
               "DocstringRaise": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringRaise",
                 "target_path": "_griffe.docstrings.models.DocstringRaise"
               },
               "DocstringReceive": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringReceive",
                 "target_path": "_griffe.docstrings.models.DocstringReceive"
               },
               "DocstringReturn": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringReturn",
                 "target_path": "_griffe.docstrings.models.DocstringReturn"
               },
               "DocstringSection": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSection",
                 "target_path": "_griffe.docstrings.models.DocstringSection"
               },
               "DocstringSectionAdmonition": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionAdmonition",
                 "target_path": "_griffe.docstrings.models.DocstringSectionAdmonition"
               },
               "DocstringSectionAttributes": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionAttributes",
                 "target_path": "_griffe.docstrings.models.DocstringSectionAttributes"
               },
               "DocstringSectionClasses": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionClasses",
                 "target_path": "_griffe.docstrings.models.DocstringSectionClasses"
               },
-              "DocstringSectionDeprecated": {
-                "endlineno": 36,
-                "kind": "alias",
-                "lineno": 9,
-                "name": "DocstringSectionDeprecated",
-                "target_path": "_griffe.docstrings.models.DocstringSectionDeprecated"
-              },
               "DocstringSectionExamples": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionExamples",
                 "target_path": "_griffe.docstrings.models.DocstringSectionExamples"
               },
               "DocstringSectionFunctions": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionFunctions",
                 "target_path": "_griffe.docstrings.models.DocstringSectionFunctions"
               },
               "DocstringSectionKind": {
-                "endlineno": 38,
+                "endlineno": 37,
                 "kind": "alias",
-                "lineno": 38,
+                "lineno": 37,
                 "name": "DocstringSectionKind",
                 "target_path": "_griffe.enumerations.DocstringSectionKind"
               },
               "DocstringSectionModules": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionModules",
                 "target_path": "_griffe.docstrings.models.DocstringSectionModules"
               },
               "DocstringSectionOtherParameters": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionOtherParameters",
                 "target_path": "_griffe.docstrings.models.DocstringSectionOtherParameters"
               },
               "DocstringSectionParameters": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionParameters",
                 "target_path": "_griffe.docstrings.models.DocstringSectionParameters"
               },
               "DocstringSectionRaises": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionRaises",
                 "target_path": "_griffe.docstrings.models.DocstringSectionRaises"
               },
               "DocstringSectionReceives": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionReceives",
                 "target_path": "_griffe.docstrings.models.DocstringSectionReceives"
               },
               "DocstringSectionReturns": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionReturns",
                 "target_path": "_griffe.docstrings.models.DocstringSectionReturns"
               },
               "DocstringSectionText": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionText",
                 "target_path": "_griffe.docstrings.models.DocstringSectionText"
               },
               "DocstringSectionWarns": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionWarns",
                 "target_path": "_griffe.docstrings.models.DocstringSectionWarns"
               },
               "DocstringSectionYields": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringSectionYields",
                 "target_path": "_griffe.docstrings.models.DocstringSectionYields"
               },
               "DocstringWarn": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringWarn",
                 "target_path": "_griffe.docstrings.models.DocstringWarn"
               },
               "DocstringYield": {
-                "endlineno": 36,
+                "endlineno": 35,
                 "kind": "alias",
                 "lineno": 9,
                 "name": "DocstringYield",
                 "target_path": "_griffe.docstrings.models.DocstringYield"
               },
               "Expr": {
-                "endlineno": 44,
+                "endlineno": 43,
                 "kind": "alias",
-                "lineno": 44,
+                "lineno": 43,
                 "name": "Expr",
                 "target_path": "_griffe.expressions.Expr"
               },
               "Literal": {
-                "endlineno": 42,
+                "endlineno": 41,
                 "kind": "alias",
-                "lineno": 42,
+                "lineno": 41,
                 "name": "Literal",
                 "target_path": "typing.Literal"
               },
               "LogLevel": {
-                "endlineno": 38,
+                "endlineno": 37,
                 "kind": "alias",
-                "lineno": 38,
+                "lineno": 37,
                 "name": "LogLevel",
                 "target_path": "_griffe.enumerations.LogLevel"
               },
               "Pattern": {
-                "endlineno": 41,
+                "endlineno": 40,
                 "kind": "alias",
-                "lineno": 41,
+                "lineno": 40,
                 "name": "Pattern",
                 "target_path": "re.Pattern"
               },
@@ -12939,12 +12932,12 @@
                 "target_path": "typing.TYPE_CHECKING"
               },
               "_BlockItem": {
-                "endlineno": 74,
+                "endlineno": 73,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 74,
+                "lineno": 73,
                 "members": {},
                 "name": "_BlockItem",
                 "value": {
@@ -12977,12 +12970,12 @@
                 }
               },
               "_BlockItems": {
-                "endlineno": 75,
+                "endlineno": 74,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 75,
+                "lineno": 74,
                 "members": {},
                 "name": "_BlockItems",
                 "value": {
@@ -12998,12 +12991,12 @@
                 }
               },
               "_ItemsBlock": {
-                "endlineno": 76,
+                "endlineno": 75,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 76,
+                "lineno": 75,
                 "members": {},
                 "name": "_ItemsBlock",
                 "value": {
@@ -13033,12 +13026,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 78,
+                "endlineno": 77,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 78,
+                "lineno": 77,
                 "members": {},
                 "name": "_RE_ADMONITION",
                 "value": {
@@ -13079,12 +13072,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 80,
+                "endlineno": 79,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 80,
+                "lineno": 79,
                 "members": {},
                 "name": "_RE_DOCTEST_BLANKLINE",
                 "value": {
@@ -13112,12 +13105,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 81,
+                "endlineno": 80,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 81,
+                "lineno": 80,
                 "members": {},
                 "name": "_RE_DOCTEST_FLAGS",
                 "value": {
@@ -13145,12 +13138,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 79,
+                "endlineno": 78,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 79,
+                "lineno": 78,
                 "members": {},
                 "name": "_RE_NAME_ANNOTATION_DESCRIPTION",
                 "value": {
@@ -13175,10 +13168,10 @@
               },
               "_annotation_from_parent": {
                 "decorators": [],
-                "endlineno": 502,
+                "endlineno": 501,
                 "kind": "function",
                 "labels": [],
-                "lineno": 486,
+                "lineno": 485,
                 "members": {},
                 "name": "_annotation_from_parent",
                 "parameters": [
@@ -13251,10 +13244,10 @@
               },
               "_get_name_annotation_description": {
                 "decorators": [],
-                "endlineno": 483,
+                "endlineno": 482,
                 "kind": "function",
                 "labels": [],
-                "lineno": 457,
+                "lineno": 456,
                 "members": {},
                 "name": "_get_name_annotation_description",
                 "parameters": [
@@ -13335,10 +13328,10 @@
               },
               "_is_empty_line": {
                 "decorators": [],
-                "endlineno": 721,
+                "endlineno": 696,
                 "kind": "function",
                 "labels": [],
-                "lineno": 720,
+                "lineno": 695,
                 "members": {},
                 "name": "_is_empty_line",
                 "parameters": [
@@ -13359,10 +13352,10 @@
               },
               "_read_attributes_section": {
                 "decorators": [],
-                "endlineno": 293,
+                "endlineno": 292,
                 "kind": "function",
                 "labels": [],
-                "lineno": 260,
+                "lineno": 259,
                 "members": {},
                 "name": "_read_attributes_section",
                 "parameters": [
@@ -13423,10 +13416,10 @@
               },
               "_read_block": {
                 "decorators": [],
-                "endlineno": 175,
+                "endlineno": 174,
                 "kind": "function",
                 "labels": [],
-                "lineno": 147,
+                "lineno": 146,
                 "members": {},
                 "name": "_read_block",
                 "parameters": [
@@ -13482,10 +13475,10 @@
               },
               "_read_block_items": {
                 "decorators": [],
-                "endlineno": 144,
+                "endlineno": 143,
                 "kind": "function",
                 "labels": [],
-                "lineno": 84,
+                "lineno": 83,
                 "members": {},
                 "name": "_read_block_items",
                 "parameters": [
@@ -13524,10 +13517,10 @@
               },
               "_read_block_items_maybe": {
                 "decorators": [],
-                "endlineno": 454,
+                "endlineno": 453,
                 "kind": "function",
                 "labels": [],
-                "lineno": 444,
+                "lineno": 443,
                 "members": {},
                 "name": "_read_block_items_maybe",
                 "parameters": [
@@ -13575,10 +13568,10 @@
               },
               "_read_classes_section": {
                 "decorators": [],
-                "endlineno": 363,
+                "endlineno": 362,
                 "kind": "function",
                 "labels": [],
-                "lineno": 331,
+                "lineno": 330,
                 "members": {},
                 "name": "_read_classes_section",
                 "parameters": [
@@ -13637,76 +13630,12 @@
                   }
                 }
               },
-              "_read_deprecated_section": {
-                "decorators": [],
-                "endlineno": 717,
-                "kind": "function",
-                "labels": [],
-                "lineno": 696,
-                "members": {},
-                "name": "_read_deprecated_section",
-                "parameters": [
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "Docstring"
-                    },
-                    "default": null,
-                    "kind": "positional or keyword",
-                    "name": "docstring"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "int"
-                    },
-                    "default": null,
-                    "kind": "keyword-only",
-                    "name": "offset"
-                  },
-                  {
-                    "annotation": {
-                      "cls": "ExprName",
-                      "name": "Any"
-                    },
-                    "default": "{}",
-                    "kind": "variadic keyword",
-                    "name": "options"
-                  }
-                ],
-                "returns": {
-                  "cls": "ExprSubscript",
-                  "left": {
-                    "cls": "ExprName",
-                    "name": "tuple"
-                  },
-                  "slice": {
-                    "cls": "ExprTuple",
-                    "elements": [
-                      {
-                        "cls": "ExprBinOp",
-                        "left": {
-                          "cls": "ExprName",
-                          "name": "DocstringSectionDeprecated"
-                        },
-                        "operator": "|",
-                        "right": "None"
-                      },
-                      {
-                        "cls": "ExprName",
-                        "name": "int"
-                      }
-                    ],
-                    "implicit": true
-                  }
-                }
-              },
               "_read_examples_section": {
                 "decorators": [],
-                "endlineno": 693,
+                "endlineno": 692,
                 "kind": "function",
                 "labels": [],
-                "lineno": 637,
+                "lineno": 636,
                 "members": {},
                 "name": "_read_examples_section",
                 "parameters": [
@@ -13776,10 +13705,10 @@
               },
               "_read_functions_section": {
                 "decorators": [],
-                "endlineno": 328,
+                "endlineno": 327,
                 "kind": "function",
                 "labels": [],
-                "lineno": 296,
+                "lineno": 295,
                 "members": {},
                 "name": "_read_functions_section",
                 "parameters": [
@@ -13840,10 +13769,10 @@
               },
               "_read_modules_section": {
                 "decorators": [],
-                "endlineno": 388,
+                "endlineno": 387,
                 "kind": "function",
                 "labels": [],
-                "lineno": 366,
+                "lineno": 365,
                 "members": {},
                 "name": "_read_modules_section",
                 "parameters": [
@@ -13904,10 +13833,10 @@
               },
               "_read_other_parameters_section": {
                 "decorators": [],
-                "endlineno": 257,
+                "endlineno": 256,
                 "kind": "function",
                 "labels": [],
-                "lineno": 249,
+                "lineno": 248,
                 "members": {},
                 "name": "_read_other_parameters_section",
                 "parameters": [
@@ -13977,10 +13906,10 @@
               },
               "_read_parameters": {
                 "decorators": [],
-                "endlineno": 236,
+                "endlineno": 235,
                 "kind": "function",
                 "labels": [],
-                "lineno": 178,
+                "lineno": 177,
                 "members": {},
                 "name": "_read_parameters",
                 "parameters": [
@@ -14052,10 +13981,10 @@
               },
               "_read_parameters_section": {
                 "decorators": [],
-                "endlineno": 246,
+                "endlineno": 245,
                 "kind": "function",
                 "labels": [],
-                "lineno": 239,
+                "lineno": 238,
                 "members": {},
                 "name": "_read_parameters_section",
                 "parameters": [
@@ -14116,10 +14045,10 @@
               },
               "_read_raises_section": {
                 "decorators": [],
-                "endlineno": 416,
+                "endlineno": 415,
                 "kind": "function",
                 "labels": [],
-                "lineno": 391,
+                "lineno": 390,
                 "members": {},
                 "name": "_read_raises_section",
                 "parameters": [
@@ -14180,10 +14109,10 @@
               },
               "_read_receives_section": {
                 "decorators": [],
-                "endlineno": 634,
+                "endlineno": 633,
                 "kind": "function",
                 "labels": [],
-                "lineno": 593,
+                "lineno": 592,
                 "members": {},
                 "name": "_read_receives_section",
                 "parameters": [
@@ -14262,10 +14191,10 @@
               },
               "_read_returns_section": {
                 "decorators": [],
-                "endlineno": 546,
+                "endlineno": 545,
                 "kind": "function",
                 "labels": [],
-                "lineno": 505,
+                "lineno": 504,
                 "members": {},
                 "name": "_read_returns_section",
                 "parameters": [
@@ -14344,10 +14273,10 @@
               },
               "_read_warns_section": {
                 "decorators": [],
-                "endlineno": 441,
+                "endlineno": 440,
                 "kind": "function",
                 "labels": [],
-                "lineno": 419,
+                "lineno": 418,
                 "members": {},
                 "name": "_read_warns_section",
                 "parameters": [
@@ -14408,10 +14337,10 @@
               },
               "_read_yields_section": {
                 "decorators": [],
-                "endlineno": 590,
+                "endlineno": 589,
                 "kind": "function",
                 "labels": [],
-                "lineno": 549,
+                "lineno": 548,
                 "members": {},
                 "name": "_read_yields_section",
                 "parameters": [
@@ -14489,12 +14418,12 @@
                 }
               },
               "_section_kind": {
-                "endlineno": 72,
+                "endlineno": 71,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 48,
+                "lineno": 47,
                 "members": {},
                 "name": "_section_kind",
                 "value": {
@@ -14828,12 +14757,12 @@
                 }
               },
               "_section_reader": {
-                "endlineno": 738,
+                "endlineno": 712,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 724,
+                "lineno": 699,
                 "members": {},
                 "name": "_section_reader",
                 "value": {
@@ -14994,19 +14923,6 @@
                           "name": "receives"
                         }
                       ]
-                    },
-                    {
-                      "cls": "ExprAttribute",
-                      "values": [
-                        {
-                          "cls": "ExprName",
-                          "name": "DocstringSectionKind"
-                        },
-                        {
-                          "cls": "ExprName",
-                          "name": "deprecated"
-                        }
-                      ]
                     }
                   ],
                   "values": [
@@ -15057,21 +14973,17 @@
                     {
                       "cls": "ExprName",
                       "name": "_read_receives_section"
-                    },
-                    {
-                      "cls": "ExprName",
-                      "name": "_read_deprecated_section"
                     }
                   ]
                 }
               },
               "_sentinel": {
-                "endlineno": 740,
+                "endlineno": 714,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 740,
+                "lineno": 714,
                 "members": {},
                 "name": "_sentinel",
                 "value": {
@@ -15091,30 +15003,30 @@
                 "target_path": "__future__.annotations"
               },
               "docstring_warning": {
-                "endlineno": 37,
+                "endlineno": 36,
                 "kind": "alias",
-                "lineno": 37,
+                "lineno": 36,
                 "name": "docstring_warning",
                 "target_path": "_griffe.docstrings.utils.docstring_warning"
               },
               "parse_docstring_annotation": {
-                "endlineno": 37,
+                "endlineno": 36,
                 "kind": "alias",
-                "lineno": 37,
+                "lineno": 36,
                 "name": "parse_docstring_annotation",
                 "target_path": "_griffe.docstrings.utils.parse_docstring_annotation"
               },
               "parse_google": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 784,
-                  "lineno": 756,
+                  "endlineno": 758,
+                  "lineno": 730,
                   "value": "Parse a Google-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    returns_multiple_items: Whether to parse multiple items in `Yields` and `Returns` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    returns_named_value: Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    receives_multiple_items: Whether to parse multiple items in `Receives` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    receives_named_value: Whether to parse `Receives` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    returns_type_in_property_summary: Whether to parse the return type of properties\n        at the beginning of their summary: `str: Summary of the property`.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 915,
+                "endlineno": 889,
                 "kind": "function",
                 "labels": [],
-                "lineno": 743,
+                "lineno": 717,
                 "members": {},
                 "name": "parse_google",
                 "parameters": [
