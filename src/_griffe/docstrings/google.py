@@ -19,7 +19,6 @@ from _griffe.docstrings.models import (
     DocstringSectionAdmonition,
     DocstringSectionAttributes,
     DocstringSectionClasses,
-    DocstringSectionDeprecated,
     DocstringSectionExamples,
     DocstringSectionFunctions,
     DocstringSectionModules,
@@ -693,30 +692,6 @@ def _read_examples_section(
     return DocstringSectionExamples(sub_sections), new_offset
 
 
-def _read_deprecated_section(
-    docstring: Docstring,
-    *,
-    offset: int,
-    **options: Any,
-) -> tuple[DocstringSectionDeprecated | None, int]:
-    text, new_offset = _read_block(docstring, offset=offset, **options)
-
-    # check the presence of a name and description, separated by a semi-colon
-    try:
-        version, text = text.split(":", 1)
-    except ValueError:
-        docstring_warning(docstring, new_offset, f"Could not parse version, text at line {offset}")
-        return None, new_offset
-
-    version = version.lstrip()
-    description = text.lstrip()
-
-    return (
-        DocstringSectionDeprecated(version=version, text=description),
-        new_offset,
-    )
-
-
 def _is_empty_line(line: str) -> bool:
     return not line.strip()
 
@@ -734,7 +709,6 @@ _section_reader = {
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,
     DocstringSectionKind.receives: _read_receives_section,
-    DocstringSectionKind.deprecated: _read_deprecated_section,
 }
 
 _sentinel = object()
