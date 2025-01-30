@@ -78,7 +78,7 @@
                   "lineno": 95,
                   "value": "This class is used to instantiate an inspector.\n\nInspectors iterate on objects members to extract data from them."
                 },
-                "endlineno": 522,
+                "endlineno": 530,
                 "kind": "class",
                 "labels": [],
                 "lineno": 94,
@@ -574,14 +574,14 @@
                   "handle_attribute": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 483,
-                      "lineno": 478,
+                      "endlineno": 491,
+                      "lineno": 486,
                       "value": "Handle an attribute.\n\nParameters:\n    node: The node to inspect.\n    annotation: A potential annotation."
                     },
-                    "endlineno": 522,
+                    "endlineno": 530,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 477,
+                    "lineno": 485,
                     "members": {},
                     "name": "handle_attribute",
                     "parameters": [
@@ -628,14 +628,14 @@
                   "handle_function": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 417,
-                      "lineno": 412,
+                      "endlineno": 425,
+                      "lineno": 420,
                       "value": "Handle a function.\n\nParameters:\n    node: The node to inspect.\n    labels: Labels to add to the data object."
                     },
-                    "endlineno": 467,
+                    "endlineno": 475,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 411,
+                    "lineno": 419,
                     "members": {},
                     "name": "handle_function",
                     "parameters": [
@@ -706,14 +706,14 @@
                   "inspect_attribute": {
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 474,
-                      "lineno": 470,
+                      "endlineno": 482,
+                      "lineno": 478,
                       "value": "Inspect an attribute.\n\nParameters:\n    node: The node to inspect."
                     },
-                    "endlineno": 475,
+                    "endlineno": 483,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 469,
+                    "lineno": 477,
                     "members": {},
                     "name": "inspect_attribute",
                     "parameters": [
@@ -940,6 +940,38 @@
                     "lineno": 387,
                     "members": {},
                     "name": "inspect_function",
+                    "parameters": [
+                      {
+                        "annotation": null,
+                        "default": null,
+                        "kind": "positional or keyword",
+                        "name": "self"
+                      },
+                      {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "ObjectNode"
+                        },
+                        "default": null,
+                        "kind": "positional or keyword",
+                        "name": "node"
+                      }
+                    ],
+                    "returns": "None"
+                  },
+                  "inspect_getset_descriptor": {
+                    "decorators": [],
+                    "docstring": {
+                      "endlineno": 416,
+                      "lineno": 412,
+                      "value": "Inspect a get/set descriptor.\n\nParameters:\n    node: The node to inspect."
+                    },
+                    "endlineno": 417,
+                    "kind": "function",
+                    "labels": [],
+                    "lineno": 411,
+                    "members": {},
+                    "name": "inspect_getset_descriptor",
                     "parameters": [
                       {
                         "annotation": null,
@@ -1347,10 +1379,10 @@
               },
               "_convert_object_to_annotation": {
                 "decorators": [],
-                "endlineno": 567,
+                "endlineno": 575,
                 "kind": "function",
                 "labels": [],
-                "lineno": 550,
+                "lineno": 558,
                 "members": {},
                 "name": "_convert_object_to_annotation",
                 "parameters": [
@@ -1401,10 +1433,10 @@
               },
               "_convert_parameter": {
                 "decorators": [],
-                "endlineno": 547,
+                "endlineno": 555,
                 "kind": "function",
                 "labels": [],
-                "lineno": 534,
+                "lineno": 542,
                 "members": {},
                 "name": "_convert_parameter",
                 "parameters": [
@@ -1464,12 +1496,12 @@
                 }
               },
               "_kind_map": {
-                "endlineno": 531,
+                "endlineno": 539,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 525,
+                "lineno": 533,
                 "members": {},
                 "name": "_kind_map",
                 "value": {
@@ -4164,23 +4196,30 @@
                 "labels": [],
                 "members": {
                   "Any": {
-                    "endlineno": 8,
+                    "endlineno": 9,
                     "kind": "alias",
-                    "lineno": 8,
+                    "lineno": 9,
                     "name": "Any",
                     "target_path": "typing.Any"
                   },
                   "ClassVar": {
-                    "endlineno": 8,
+                    "endlineno": 9,
                     "kind": "alias",
-                    "lineno": 8,
+                    "lineno": 9,
                     "name": "ClassVar",
                     "target_path": "typing.ClassVar"
                   },
-                  "ObjectKind": {
-                    "endlineno": 10,
+                  "GetSetDescriptorType": {
+                    "endlineno": 8,
                     "kind": "alias",
-                    "lineno": 10,
+                    "lineno": 8,
+                    "name": "GetSetDescriptorType",
+                    "target_path": "types.GetSetDescriptorType"
+                  },
+                  "ObjectKind": {
+                    "endlineno": 11,
+                    "kind": "alias",
+                    "lineno": 11,
                     "name": "ObjectKind",
                     "target_path": "_griffe.enumerations.ObjectKind"
                   },
@@ -4188,26 +4227,26 @@
                     "bases": [],
                     "decorators": [],
                     "docstring": {
-                      "endlineno": 35,
-                      "lineno": 29,
+                      "endlineno": 36,
+                      "lineno": 30,
                       "value": "Helper class to represent an object tree.\n\nIt's not really a tree but more a backward-linked list:\neach node has a reference to its parent, but not to its child (for simplicity purposes and to avoid bugs).\n\nEach node stores an object, its name, and a reference to its parent node."
                     },
-                    "endlineno": 277,
+                    "endlineno": 285,
                     "kind": "class",
                     "labels": [],
-                    "lineno": 28,
+                    "lineno": 29,
                     "members": {
                       "__init__": {
                         "decorators": [],
                         "docstring": {
-                          "endlineno": 47,
-                          "lineno": 41,
+                          "endlineno": 48,
+                          "lineno": 42,
                           "value": "Initialize the object.\n\nParameters:\n    obj: A Python object.\n    name: The object's name.\n    parent: The object's parent node."
                         },
-                        "endlineno": 72,
+                        "endlineno": 73,
                         "kind": "function",
                         "labels": [],
-                        "lineno": 40,
+                        "lineno": 41,
                         "members": {},
                         "name": "__init__",
                         "parameters": [
@@ -4254,10 +4293,10 @@
                       },
                       "__repr__": {
                         "decorators": [],
-                        "endlineno": 75,
+                        "endlineno": 76,
                         "kind": "function",
                         "labels": [],
-                        "lineno": 74,
+                        "lineno": 75,
                         "members": {},
                         "name": "__repr__",
                         "parameters": [
@@ -4285,22 +4324,22 @@
                             "name": "int"
                           }
                         },
-                        "endlineno": 228,
+                        "endlineno": 236,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 225,
+                        "lineno": 233,
                         "members": {},
                         "name": "_ids"
                       },
                       "_pick_member": {
                         "decorators": [],
-                        "endlineno": 237,
+                        "endlineno": 245,
                         "kind": "function",
                         "labels": [],
-                        "lineno": 230,
+                        "lineno": 238,
                         "members": {},
                         "name": "_pick_member",
                         "parameters": [
@@ -4345,17 +4384,17 @@
                           "right": "None"
                         },
                         "docstring": {
-                          "endlineno": 241,
-                          "lineno": 241,
+                          "endlineno": 249,
+                          "lineno": 249,
                           "value": "Alias target path of this node, if the node should be an alias."
                         },
-                        "endlineno": 277,
+                        "endlineno": 285,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 240,
+                        "lineno": 248,
                         "members": {},
                         "name": "alias_target_path"
                       },
@@ -4372,17 +4411,17 @@
                           }
                         },
                         "docstring": {
-                          "endlineno": 139,
-                          "lineno": 139,
+                          "endlineno": 142,
+                          "lineno": 142,
                           "value": "The children of this node."
                         },
-                        "endlineno": 144,
+                        "endlineno": 147,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 138,
+                        "lineno": 141,
                         "members": {},
                         "name": "children"
                       },
@@ -4399,16 +4438,16 @@
                           }
                         },
                         "docstring": {
-                          "endlineno": 38,
-                          "lineno": 38,
+                          "endlineno": 39,
+                          "lineno": 39,
                           "value": "Low level attributes known to cause issues when resolving aliases."
                         },
-                        "endlineno": 37,
+                        "endlineno": 38,
                         "kind": "attribute",
                         "labels": [
                           "class-attribute"
                         ],
-                        "lineno": 37,
+                        "lineno": 38,
                         "members": {},
                         "name": "exclude_specials",
                         "value": {
@@ -4426,17 +4465,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 164,
-                          "lineno": 164,
+                          "endlineno": 167,
+                          "lineno": 167,
                           "value": "Whether this node's object is a builtin function."
                         },
-                        "endlineno": 165,
+                        "endlineno": 168,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 163,
+                        "lineno": 166,
                         "members": {},
                         "name": "is_builtin_function"
                       },
@@ -4446,17 +4485,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 199,
-                          "lineno": 199,
+                          "endlineno": 207,
+                          "lineno": 207,
                           "value": "Whether this node's object is a builtin method."
                         },
-                        "endlineno": 200,
+                        "endlineno": 208,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 198,
+                        "lineno": 206,
                         "members": {},
                         "name": "is_builtin_method"
                       },
@@ -4466,16 +4505,16 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 72,
-                          "lineno": 72,
+                          "endlineno": 73,
+                          "lineno": 73,
                           "value": "Whether this node's object is a cached property."
                         },
-                        "endlineno": 71,
+                        "endlineno": 72,
                         "kind": "attribute",
                         "labels": [
                           "instance-attribute"
                         ],
-                        "lineno": 71,
+                        "lineno": 72,
                         "members": {},
                         "name": "is_cached_property",
                         "value": {
@@ -4489,17 +4528,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 153,
-                          "lineno": 153,
+                          "endlineno": 156,
+                          "lineno": 156,
                           "value": "Whether this node's object is a class."
                         },
-                        "endlineno": 154,
+                        "endlineno": 157,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 152,
+                        "lineno": 155,
                         "members": {},
                         "name": "is_class"
                       },
@@ -4509,17 +4548,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 215,
-                          "lineno": 215,
+                          "endlineno": 223,
+                          "lineno": 223,
                           "value": "Whether this node's object is a classmethod."
                         },
-                        "endlineno": 222,
+                        "endlineno": 230,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 214,
+                        "lineno": 222,
                         "members": {},
                         "name": "is_classmethod"
                       },
@@ -4529,17 +4568,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 169,
-                          "lineno": 169,
+                          "endlineno": 172,
+                          "lineno": 172,
                           "value": "Whether this node's object is a coroutine."
                         },
-                        "endlineno": 170,
+                        "endlineno": 173,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 168,
+                        "lineno": 171,
                         "members": {},
                         "name": "is_coroutine"
                       },
@@ -4549,19 +4588,39 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 158,
-                          "lineno": 158,
+                          "endlineno": 161,
+                          "lineno": 161,
                           "value": "Whether this node's object is a function."
                         },
-                        "endlineno": 160,
+                        "endlineno": 163,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 157,
+                        "lineno": 160,
                         "members": {},
                         "name": "is_function"
+                      },
+                      "is_getset_descriptor": {
+                        "annotation": {
+                          "cls": "ExprName",
+                          "name": "bool"
+                        },
+                        "docstring": {
+                          "endlineno": 177,
+                          "lineno": 177,
+                          "value": "Whether this node's object is a get/set descriptor."
+                        },
+                        "endlineno": 178,
+                        "kind": "attribute",
+                        "labels": [
+                          "cached",
+                          "property"
+                        ],
+                        "lineno": 176,
+                        "members": {},
+                        "name": "is_getset_descriptor"
                       },
                       "is_method": {
                         "annotation": {
@@ -4569,17 +4628,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 184,
-                          "lineno": 184,
+                          "endlineno": 192,
+                          "lineno": 192,
                           "value": "Whether this node's object is a method."
                         },
-                        "endlineno": 186,
+                        "endlineno": 194,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 183,
+                        "lineno": 191,
                         "members": {},
                         "name": "is_method"
                       },
@@ -4589,17 +4648,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 194,
-                          "lineno": 190,
+                          "endlineno": 202,
+                          "lineno": 198,
                           "value": "Whether this node's object is a method descriptor.\n\nBuilt-in methods (e.g. those implemented in C/Rust) are often\nmethod descriptors, rather than normal methods."
                         },
-                        "endlineno": 195,
+                        "endlineno": 203,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 189,
+                        "lineno": 197,
                         "members": {},
                         "name": "is_method_descriptor"
                       },
@@ -4609,17 +4668,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 148,
-                          "lineno": 148,
+                          "endlineno": 151,
+                          "lineno": 151,
                           "value": "Whether this node's object is a module."
                         },
-                        "endlineno": 149,
+                        "endlineno": 152,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 147,
+                        "lineno": 150,
                         "members": {},
                         "name": "is_module"
                       },
@@ -4629,17 +4688,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 174,
-                          "lineno": 174,
+                          "endlineno": 182,
+                          "lineno": 182,
                           "value": "Whether this node's object is a property."
                         },
-                        "endlineno": 175,
+                        "endlineno": 183,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 173,
+                        "lineno": 181,
                         "members": {},
                         "name": "is_property"
                       },
@@ -4649,17 +4708,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 204,
-                          "lineno": 204,
+                          "endlineno": 212,
+                          "lineno": 212,
                           "value": "Whether this node's object is a staticmethod."
                         },
-                        "endlineno": 211,
+                        "endlineno": 219,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 203,
+                        "lineno": 211,
                         "members": {},
                         "name": "is_staticmethod"
                       },
@@ -4669,16 +4728,16 @@
                           "name": "ObjectKind"
                         },
                         "docstring": {
-                          "endlineno": 110,
-                          "lineno": 110,
+                          "endlineno": 111,
+                          "lineno": 111,
                           "value": "The kind of this node."
                         },
-                        "endlineno": 135,
+                        "endlineno": 138,
                         "kind": "attribute",
                         "labels": [
                           "property"
                         ],
-                        "lineno": 109,
+                        "lineno": 110,
                         "members": {},
                         "name": "kind"
                       },
@@ -4688,16 +4747,16 @@
                           "name": "ObjectNode"
                         },
                         "docstring": {
-                          "endlineno": 86,
-                          "lineno": 86,
+                          "endlineno": 87,
+                          "lineno": 87,
                           "value": "The object's module, fetched from the node tree."
                         },
-                        "endlineno": 91,
+                        "endlineno": 92,
                         "kind": "attribute",
                         "labels": [
                           "property"
                         ],
-                        "lineno": 85,
+                        "lineno": 86,
                         "members": {},
                         "name": "module"
                       },
@@ -4712,16 +4771,16 @@
                           "right": "None"
                         },
                         "docstring": {
-                          "endlineno": 95,
-                          "lineno": 95,
+                          "endlineno": 96,
+                          "lineno": 96,
                           "value": "The object's module path."
                         },
-                        "endlineno": 106,
+                        "endlineno": 107,
                         "kind": "attribute",
                         "labels": [
                           "property"
                         ],
-                        "lineno": 94,
+                        "lineno": 95,
                         "members": {},
                         "name": "module_path"
                       },
@@ -4731,16 +4790,16 @@
                           "name": "str"
                         },
                         "docstring": {
-                          "endlineno": 68,
-                          "lineno": 68,
+                          "endlineno": 69,
+                          "lineno": 69,
                           "value": "The Python object's name."
                         },
-                        "endlineno": 67,
+                        "endlineno": 68,
                         "kind": "attribute",
                         "labels": [
                           "instance-attribute"
                         ],
-                        "lineno": 67,
+                        "lineno": 68,
                         "members": {},
                         "name": "name",
                         "value": {
@@ -4754,16 +4813,16 @@
                           "name": "Any"
                         },
                         "docstring": {
-                          "endlineno": 66,
-                          "lineno": 66,
+                          "endlineno": 67,
+                          "lineno": 67,
                           "value": "The actual Python object."
                         },
-                        "endlineno": 65,
+                        "endlineno": 66,
                         "kind": "attribute",
                         "labels": [
                           "instance-attribute"
                         ],
-                        "lineno": 65,
+                        "lineno": 66,
                         "members": {},
                         "name": "obj",
                         "value": {
@@ -4782,16 +4841,16 @@
                           "right": "None"
                         },
                         "docstring": {
-                          "endlineno": 70,
-                          "lineno": 70,
+                          "endlineno": 71,
+                          "lineno": 71,
                           "value": "The parent node."
                         },
-                        "endlineno": 69,
+                        "endlineno": 70,
                         "kind": "attribute",
                         "labels": [
                           "instance-attribute"
                         ],
-                        "lineno": 69,
+                        "lineno": 70,
                         "members": {},
                         "name": "parent",
                         "value": {
@@ -4805,17 +4864,17 @@
                           "name": "bool"
                         },
                         "docstring": {
-                          "endlineno": 179,
-                          "lineno": 179,
+                          "endlineno": 187,
+                          "lineno": 187,
                           "value": "Whether the object of this node's parent is a class."
                         },
-                        "endlineno": 180,
+                        "endlineno": 188,
                         "kind": "attribute",
                         "labels": [
                           "cached",
                           "property"
                         ],
-                        "lineno": 178,
+                        "lineno": 186,
                         "members": {},
                         "name": "parent_is_class"
                       },
@@ -4825,16 +4884,16 @@
                           "name": "str"
                         },
                         "docstring": {
-                          "endlineno": 79,
-                          "lineno": 79,
+                          "endlineno": 80,
+                          "lineno": 80,
                           "value": "The object's (Python) path."
                         },
-                        "endlineno": 82,
+                        "endlineno": 83,
                         "kind": "attribute",
                         "labels": [
                           "property"
                         ],
-                        "lineno": 78,
+                        "lineno": 79,
                         "members": {},
                         "name": "path"
                       }
@@ -4842,26 +4901,26 @@
                     "name": "ObjectNode"
                   },
                   "Sequence": {
-                    "endlineno": 14,
+                    "endlineno": 15,
                     "kind": "alias",
-                    "lineno": 14,
+                    "lineno": 15,
                     "name": "Sequence",
                     "target_path": "collections.abc.Sequence"
                   },
                   "TYPE_CHECKING": {
-                    "endlineno": 8,
+                    "endlineno": 9,
                     "kind": "alias",
-                    "lineno": 8,
+                    "lineno": 9,
                     "name": "TYPE_CHECKING",
                     "target_path": "typing.TYPE_CHECKING"
                   },
                   "_builtin_module_names": {
-                    "endlineno": 16,
+                    "endlineno": 17,
                     "kind": "attribute",
                     "labels": [
                       "module-attribute"
                     ],
-                    "lineno": 16,
+                    "lineno": 17,
                     "members": {},
                     "name": "_builtin_module_names",
                     "value": {
@@ -4912,12 +4971,12 @@
                     }
                   },
                   "_cyclic_relationships": {
-                    "endlineno": 21,
+                    "endlineno": 22,
                     "kind": "attribute",
                     "labels": [
                       "module-attribute"
                     ],
-                    "lineno": 17,
+                    "lineno": 18,
                     "members": {},
                     "name": "_cyclic_relationships",
                     "value": {
@@ -4952,10 +5011,10 @@
                   },
                   "_same_components": {
                     "decorators": [],
-                    "endlineno": 25,
+                    "endlineno": 26,
                     "kind": "function",
                     "labels": [],
-                    "lineno": 24,
+                    "lineno": 25,
                     "members": {},
                     "name": "_same_components",
                     "parameters": [
@@ -5005,9 +5064,9 @@
                     "target_path": "inspect"
                   },
                   "logger": {
-                    "endlineno": 11,
+                    "endlineno": 12,
                     "kind": "alias",
-                    "lineno": 11,
+                    "lineno": 12,
                     "name": "logger",
                     "target_path": "_griffe.logger.logger"
                   },
@@ -25812,24 +25871,24 @@
               "lineno": 152,
               "value": "Enumeration of the different runtime object kinds."
             },
-            "endlineno": 182,
+            "endlineno": 184,
             "kind": "class",
             "labels": [],
             "lineno": 151,
             "members": {
               "ATTRIBUTE": {
                 "docstring": {
-                  "endlineno": 179,
-                  "lineno": 179,
+                  "endlineno": 181,
+                  "lineno": 181,
                   "value": "Attributes."
                 },
-                "endlineno": 178,
+                "endlineno": 180,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 178,
+                "lineno": 180,
                 "members": {},
                 "name": "ATTRIBUTE",
                 "value": "'attribute'"
@@ -25953,6 +26012,23 @@
                 "name": "FUNCTION",
                 "value": "'function'"
               },
+              "GETSET_DESCRIPTOR": {
+                "docstring": {
+                  "endlineno": 177,
+                  "lineno": 177,
+                  "value": "Get/set descriptors."
+                },
+                "endlineno": 176,
+                "kind": "attribute",
+                "labels": [
+                  "class-attribute",
+                  "instance-attribute"
+                ],
+                "lineno": 176,
+                "members": {},
+                "name": "GETSET_DESCRIPTOR",
+                "value": "'getset_descriptor'"
+              },
               "METHOD": {
                 "docstring": {
                   "endlineno": 165,
@@ -26006,17 +26082,17 @@
               },
               "PROPERTY": {
                 "docstring": {
-                  "endlineno": 177,
-                  "lineno": 177,
+                  "endlineno": 179,
+                  "lineno": 179,
                   "value": "Properties."
                 },
-                "endlineno": 176,
+                "endlineno": 178,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 176,
+                "lineno": 178,
                 "members": {},
                 "name": "PROPERTY",
                 "value": "'property'"
@@ -26040,10 +26116,10 @@
               },
               "__str__": {
                 "decorators": [],
-                "endlineno": 182,
+                "endlineno": 184,
                 "kind": "function",
                 "labels": [],
-                "lineno": 181,
+                "lineno": 183,
                 "members": {},
                 "name": "__str__",
                 "parameters": [
