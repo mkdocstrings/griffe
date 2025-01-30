@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.6](https://github.com/mkdocstrings/griffe/releases/tag/1.5.6) - 2025-01-30
+
+<small>[Compare with 1.5.5](https://github.com/mkdocstrings/griffe/compare/1.5.5...1.5.6)</small>
+
+### Bug Fixes
+
+- Handle get/set descriptor objects as properties during dynamic analysis ([bc3c75a](https://github.com/mkdocstrings/griffe/commit/bc3c75acd440356fd7b91d221a8fca87231a6eab) by Timothée Mazzucotelli). [Issue-354](https://github.com/mkdocstrings/griffe/issues/354)
+
+### Code Refactoring
+
+- Remove Google parser support for Deprecated sections (previously never used) ([425aece](https://github.com/mkdocstrings/griffe/commit/425aeceb9935be446979b669c9d557db84a36873) by Timothée Mazzucotelli).
+
 ## [1.5.5](https://github.com/mkdocstrings/griffe/releases/tag/1.5.5) - 2025-01-16
 
 <small>[Compare with 1.5.4](https://github.com/mkdocstrings/griffe/compare/1.5.4...1.5.5)</small>
