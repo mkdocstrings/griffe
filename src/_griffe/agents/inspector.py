@@ -408,6 +408,14 @@ class Inspector:
         """
         self.handle_function(node, {"property"})
 
+    def inspect_getset_descriptor(self, node: ObjectNode) -> None:
+        """Inspect a get/set descriptor.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        self.handle_function(node, {"property"})
+
     def handle_function(self, node: ObjectNode, labels: set | None = None) -> None:
         """Handle a function.
 
