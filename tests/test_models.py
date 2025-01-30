@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import sys
 from copy import deepcopy
 from textwrap import dedent
 
 import pytest
 
+from _griffe.enumerations import TypeParameterKind
+from _griffe.models import TypeParameter, TypeParameters
 from griffe import (
     Attribute,
     Docstring,
@@ -497,6 +500,31 @@ def test_name_resolution() -> None:
         assert module["Class.method"].resolve("instance_attribute") == "module.Class.instance_attribute"
 
 
+# YORE: EOL 3.11: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")
+def test_annotation_resolution() -> None:
+    """Names are correctly resolved in the annotation scope of an object."""
+    with temporary_visited_module(
+        """
+        class C[T]:
+            class D[T]:
+                def func[Y](self, arg1: T, arg2: Y): pass
+
+            def func[Z](arg1: T, arg2: Y): pass
+        """,
+    ) as module:
+        assert module["C.D"].resolve_annotation("T") == "module.C.D:T"
+
+        assert module["C.D.func"].resolve_annotation("T") == "module.C.D:T"
+        assert module["C.D.func"].resolve_annotation("Y") == "module.C.D.func:Y"
+
+        assert module["C"].resolve_annotation("T") == "module.C:T"
+
+        assert module["C.func"].resolve_annotation("T") == "module.C:T"
+        with pytest.raises(NameResolutionError):
+            module["C.func"].resolve_annotation("Y")
+
+
 def test_set_parameters() -> None:
     """We can set parameters."""
     parameters = Parameters()
@@ -526,3 +554,38 @@ def test_delete_parameters() -> None:
     del parameters[0]
     assert "x" not in parameters
     assert len(parameters) == 0
+
+
+def test_set_type_parameters() -> None:
+    """We can set type parameters."""
+    type_parameters = TypeParameters()
+    # Does not exist yet.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    assert "x" in type_parameters
+    # Already exists, by name.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    assert "x" in type_parameters
+    assert len(type_parameters) == 1
+    # Already exists, by name, with different kind.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.param_spec)
+    assert "x" in type_parameters
+    assert len(type_parameters) == 1
+    # Already exists, by index.
+    type_parameters[0] = TypeParameter(name="y", kind=TypeParameterKind.type_var)
+    assert "y" in type_parameters
+    assert len(type_parameters) == 1
+
+
+def test_delete_type_parameters() -> None:
+    """We can delete type parameters."""
+    type_parameters = TypeParameters()
+    # By name.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    del type_parameters["x"]
+    assert "x" not in type_parameters
+    assert len(type_parameters) == 0
+    # By index.
+    type_parameters["x"] = TypeParameter(name="x", kind=TypeParameterKind.type_var)
+    del type_parameters[0]
+    assert "x" not in type_parameters
+    assert len(type_parameters) == 0

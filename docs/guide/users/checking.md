@@ -544,7 +544,7 @@ print(module.special_thing)
 
 > Public object points to a different kind of object
 
-Changing the kind (attribute, function, class, module) of a public object can *silently* break your users' code.
+Changing the kind (type alias, attribute, function, class, module) of a public object can *silently* break your users' code.
 
 ```python title="before"
 # your code

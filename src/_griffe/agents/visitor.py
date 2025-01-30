@@ -4,8 +4,9 @@
 from __future__ import annotations
 
 import ast
+import sys
 from contextlib import suppress
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 from _griffe.agents.nodes.assignments import get_instance_names, get_names
 from _griffe.agents.nodes.ast import (
@@ -18,7 +19,7 @@ from _griffe.agents.nodes.exports import safe_get__all__
 from _griffe.agents.nodes.imports import relative_to_absolute
 from _griffe.agents.nodes.parameters import get_parameters
 from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.enumerations import Kind
+from _griffe.enumerations import Kind, TypeParameterKind
 from _griffe.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
 from _griffe.expressions import (
     Expr,
@@ -29,7 +30,20 @@ from _griffe.expressions import (
     safe_get_expression,
 )
 from _griffe.extensions.base import Extensions, load_extensions
-from _griffe.models import Alias, Attribute, Class, Decorator, Docstring, Function, Module, Parameter, Parameters
+from _griffe.models import (
+    Alias,
+    Attribute,
+    Class,
+    Decorator,
+    Docstring,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
+    TypeAlias,
+    TypeParameter,
+    TypeParameters,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -190,6 +204,45 @@ class Visitor:
             parser_options=self.docstring_options,
         )
 
+    # YORE: EOL 3.11: Replace block with lines 2-36.
+    if sys.version_info >= (3, 12):
+        _type_parameter_kind_map: Final[dict[type[ast.type_param], TypeParameterKind]] = {
+            ast.TypeVar: TypeParameterKind.type_var,
+            ast.TypeVarTuple: TypeParameterKind.type_var_tuple,
+            ast.ParamSpec: TypeParameterKind.param_spec,
+        }
+
+        def _get_type_parameters(
+            self,
+            statement: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.TypeAlias,
+            annotation_scope: Function | Class | TypeAlias,
+        ) -> list[TypeParameter]:
+            return [
+                TypeParameter(
+                    type_param.name,  # type: ignore[attr-defined]
+                    kind=self._type_parameter_kind_map[type(type_param)],
+                    bound=safe_get_annotation(
+                        getattr(type_param, "bound", None),
+                        parent=self.current,
+                        annotation_scope=annotation_scope,
+                    ),
+                    default=safe_get_annotation(
+                        getattr(type_param, "default_value", None),
+                        parent=self.current,
+                        annotation_scope=annotation_scope,
+                    ),
+                )
+                for type_param in statement.type_params
+            ]
+    else:
+
+        def _get_type_parameters(
+            self,
+            _statement: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef,
+            _obj: Function | Class | TypeAlias,
+        ) -> list[TypeParameter]:
+            return []
+
     def get_module(self) -> Module:
         """Build and return the object representing the module attached to this visitor.
 
@@ -200,7 +253,13 @@ class Visitor:
         """
         # optimization: equivalent to ast.parse, but with optimize=1 to remove assert statements
         # TODO: with options, could use optimize=2 to remove docstrings
-        top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
+        top_node = compile(
+            self.code,
+            mode="exec",
+            filename=str(self.filepath),
+            flags=ast.PyCF_ONLY_AST,
+            optimize=1,
+        )
         self.visit(top_node)
         return self.current.module
 
@@ -267,19 +326,20 @@ class Visitor:
         else:
             lineno = node.lineno
 
-        # handle base classes
-        bases = [safe_get_base_class(base, parent=self.current) for base in node.bases]
-
         class_ = Class(
             name=node.name,
             lineno=lineno,
             endlineno=node.end_lineno,
             docstring=self._get_docstring(node),
             decorators=decorators,
-            bases=bases,  # type: ignore[arg-type]
             runtime=not self.type_guarded,
         )
+
+        # handle base classes
+        class_.bases = [safe_get_base_class(base, parent=self.current, annotation_scope=class_) for base in node.bases]  # type: ignore[misc]
+        class_.type_parameters = TypeParameters(*self._get_type_parameters(node, class_))
         class_.labels |= self.decorators_to_labels(decorators)
+
         self.current.set_member(node.name, class_)
         self.current = class_
         self.extensions.call("on_instance", node=node, obj=class_, agent=self)
@@ -368,11 +428,15 @@ class Visitor:
             attribute = Attribute(
                 name=node.name,
                 value=None,
-                annotation=safe_get_annotation(node.returns, parent=self.current),
                 lineno=node.lineno,
                 endlineno=node.end_lineno,
                 docstring=self._get_docstring(node),
                 runtime=not self.type_guarded,
+            )
+            attribute.annotation = safe_get_annotation(
+                node.returns,
+                parent=self.current,
+                annotation_scope=self.current if not self.current.is_module else None,  # type: ignore[arg-type]
             )
             attribute.labels |= labels
             self.current.set_member(node.name, attribute)
@@ -380,13 +444,23 @@ class Visitor:
             self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
             return
 
+        function = Function(
+            name=node.name,
+            lineno=lineno,
+            endlineno=node.end_lineno,
+            decorators=decorators,
+            docstring=self._get_docstring(node),
+            runtime=not self.type_guarded,
+            parent=self.current,
+        )
+
         # handle parameters
-        parameters = Parameters(
+        function.parameters = Parameters(
             *[
                 Parameter(
                     name,
                     kind=kind,
-                    annotation=safe_get_annotation(annotation, parent=self.current),
+                    annotation=safe_get_annotation(annotation, parent=self.current, annotation_scope=function),
                     default=default
                     if isinstance(default, str)
                     else safe_get_expression(default, parent=self.current, parse_strings=False),
@@ -394,18 +468,8 @@ class Visitor:
                 for name, annotation, kind, default in get_parameters(node.args)
             ],
         )
-
-        function = Function(
-            name=node.name,
-            lineno=lineno,
-            endlineno=node.end_lineno,
-            parameters=parameters,
-            returns=safe_get_annotation(node.returns, parent=self.current),
-            decorators=decorators,
-            docstring=self._get_docstring(node),
-            runtime=not self.type_guarded,
-            parent=self.current,
-        )
+        function.returns = safe_get_annotation(node.returns, parent=self.current, annotation_scope=function)
+        function.type_parameters = TypeParameters(*self._get_type_parameters(node, function))
 
         property_function = self.get_base_property(decorators, function)
 
@@ -449,6 +513,44 @@ class Visitor:
             node: The node to visit.
         """
         self.handle_function(node, labels={"async"})
+
+    # YORE: EOL 3.11: Replace block with lines 2-36.
+    if sys.version_info >= (3, 12):
+
+        def visit_typealias(self, node: ast.TypeAlias) -> None:
+            """Visit a type alias node.
+
+            Parameters:
+                node: The node to visit.
+            """
+            self.extensions.call("on_node", node=node, agent=self)
+            self.extensions.call("on_type_alias_node", node=node, agent=self)
+
+            # A type alias's name attribute is syntactically a single NAME,
+            # but represented as an expression in the AST.
+            # https://jellezijlstra.github.io/pep695#ast
+
+            name = node.name.id
+
+            try:
+                docstring = self._get_docstring(ast_next(node), strict=True)
+            except (LastNodeError, AttributeError):
+                docstring = None
+
+            type_alias = TypeAlias(
+                name=name,
+                lineno=node.lineno,
+                endlineno=node.end_lineno,
+                docstring=docstring,
+                parent=self.current,
+            )
+
+            type_alias.value = safe_get_annotation(node.value, parent=self.current, annotation_scope=type_alias)
+            type_alias.type_parameters = TypeParameters(*self._get_type_parameters(node, type_alias))
+
+            self.current.set_member(name, type_alias)
+            self.extensions.call("on_instance", node=node, obj=type_alias, agent=self)
+            self.extensions.call("on_type_alias_instance", node=node, type_alias=type_alias, agent=self)
 
     def visit_import(self, node: ast.Import) -> None:
         """Visit an import node.
@@ -622,7 +724,14 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        self.handle_attribute(node, safe_get_annotation(node.annotation, parent=self.current))
+        self.handle_attribute(
+            node,
+            safe_get_annotation(
+                node.annotation,
+                parent=self.current,
+                annotation_scope=self.current if not self.current.is_module else None,  # type: ignore[arg-type]
+            ),
+        )
 
     def visit_augassign(self, node: ast.AugAssign) -> None:
         """Visit an augmented assignment node.
