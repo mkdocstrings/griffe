@@ -150,8 +150,9 @@ class Expr:
 
     @property
     def canonical_name(self) -> str:
-        """Name of the expressed name/attribute."""
-        return self.canonical_path.rsplit(".", 1)[-1]
+        """Name of the expressed name/attribute/parameter."""
+        # We must handle things like `griffe.Visitor` and `griffe.Visitor(code)`.
+        return self.canonical_path.rsplit(".", 1)[-1].split("(", 1)[-1].removesuffix(")")
 
     @property
     def is_classvar(self) -> bool:
