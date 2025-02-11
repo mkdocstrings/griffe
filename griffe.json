@@ -26809,7 +26809,7 @@
               "lineno": 93,
               "value": "Base class for expressions."
             },
-            "endlineno": 181,
+            "endlineno": 182,
             "kind": "class",
             "labels": [
               "dataclass"
@@ -26956,9 +26956,9 @@
                 "docstring": {
                   "endlineno": 160,
                   "lineno": 160,
-                  "value": "Name of the expressed name/attribute."
+                  "value": "Name of the expressed name/attribute/parameter."
                 },
-                "endlineno": 161,
+                "endlineno": 162,
                 "kind": "attribute",
                 "labels": [
                   "property"
@@ -27011,16 +27011,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 165,
-                  "lineno": 165,
+                  "endlineno": 166,
+                  "lineno": 166,
                   "value": "Whether this attribute is annotated with `ClassVar`."
                 },
-                "endlineno": 166,
+                "endlineno": 167,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 164,
+                "lineno": 165,
                 "members": {},
                 "name": "is_classvar"
               },
@@ -27030,16 +27030,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 180,
-                  "lineno": 180,
+                  "endlineno": 181,
+                  "lineno": 181,
                   "value": "Whether this expression is a generator."
                 },
-                "endlineno": 181,
+                "endlineno": 182,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 179,
+                "lineno": 180,
                 "members": {},
                 "name": "is_generator"
               },
@@ -27049,16 +27049,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 175,
-                  "lineno": 175,
+                  "endlineno": 176,
+                  "lineno": 176,
                   "value": "Whether this expression is an iterator."
                 },
-                "endlineno": 176,
+                "endlineno": 177,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 174,
+                "lineno": 175,
                 "members": {},
                 "name": "is_iterator"
               },
@@ -27068,16 +27068,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 170,
-                  "lineno": 170,
+                  "endlineno": 171,
+                  "lineno": 171,
                   "value": "Whether this expression is a tuple."
                 },
-                "endlineno": 171,
+                "endlineno": 172,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 169,
+                "lineno": 170,
                 "members": {},
                 "name": "is_tuple"
               },
@@ -27188,8 +27188,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 185,
-                "lineno": 185,
+                "endlineno": 186,
+                "lineno": 186,
                 "value": {
                   "arguments": [
                     {
@@ -27218,16 +27218,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 187,
-              "lineno": 187,
+              "endlineno": 188,
+              "lineno": 188,
               "value": "Attributes like `a.b`."
             },
-            "endlineno": 230,
+            "endlineno": 231,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 185,
+            "lineno": 186,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -27266,8 +27266,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 190,
-                      "lineno": 190,
+                      "endlineno": 191,
+                      "lineno": 191,
                       "value": "The different parts of the dotted chain."
                     },
                     "kind": "positional or keyword",
@@ -27279,14 +27279,14 @@
               "append": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 205,
-                  "lineno": 201,
+                  "endlineno": 206,
+                  "lineno": 202,
                   "value": "Append a name to this attribute.\n\nParameters:\n    value: The expression name to append."
                 },
-                "endlineno": 208,
+                "endlineno": 209,
                 "kind": "function",
                 "labels": [],
-                "lineno": 200,
+                "lineno": 201,
                 "members": {},
                 "name": "append",
                 "parameters": [
@@ -27314,16 +27314,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 229,
-                  "lineno": 229,
+                  "endlineno": 230,
+                  "lineno": 230,
                   "value": "The canonical path of this attribute."
                 },
-                "endlineno": 230,
+                "endlineno": 231,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 228,
+                "lineno": 229,
                 "members": {},
                 "name": "canonical_path"
               },
@@ -27341,25 +27341,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 219,
-                  "lineno": 219,
+                  "endlineno": 220,
+                  "lineno": 220,
                   "value": "The first part of this attribute (on the left)."
                 },
-                "endlineno": 220,
+                "endlineno": 221,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 218,
+                "lineno": 219,
                 "members": {},
                 "name": "first"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 193,
+                "endlineno": 194,
                 "kind": "function",
                 "labels": [],
-                "lineno": 192,
+                "lineno": 193,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -27405,25 +27405,25 @@
                   "name": "ExprName"
                 },
                 "docstring": {
-                  "endlineno": 212,
-                  "lineno": 212,
+                  "endlineno": 213,
+                  "lineno": 213,
                   "value": "The last part of this attribute (on the right)."
                 },
-                "endlineno": 215,
+                "endlineno": 216,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 211,
+                "lineno": 212,
                 "members": {},
                 "name": "last"
               },
               "modernize": {
                 "decorators": [],
-                "endlineno": 198,
+                "endlineno": 199,
                 "kind": "function",
                 "labels": [],
-                "lineno": 195,
+                "lineno": 196,
                 "members": {},
                 "name": "modernize",
                 "parameters": [
@@ -27453,16 +27453,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 224,
-                  "lineno": 224,
+                  "endlineno": 225,
+                  "lineno": 225,
                   "value": "The path of this attribute."
                 },
-                "endlineno": 225,
+                "endlineno": 226,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 223,
+                "lineno": 224,
                 "members": {},
                 "name": "path"
               },
@@ -27487,16 +27487,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 190,
-                  "lineno": 190,
+                  "endlineno": 191,
+                  "lineno": 191,
                   "value": "The different parts of the dotted chain."
                 },
-                "endlineno": 189,
+                "endlineno": 190,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 189,
+                "lineno": 190,
                 "members": {},
                 "name": "values"
               }
@@ -27512,8 +27512,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 234,
-                "lineno": 234,
+                "endlineno": 235,
+                "lineno": 235,
                 "value": {
                   "arguments": [
                     {
@@ -27542,16 +27542,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 236,
-              "lineno": 236,
+              "endlineno": 237,
+              "lineno": 237,
               "value": "Binary operations like `a + b`."
             },
-            "endlineno": 248,
+            "endlineno": 249,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 234,
+            "lineno": 235,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -27583,8 +27583,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 239,
-                      "lineno": 239,
+                      "endlineno": 240,
+                      "lineno": 240,
                       "value": "Left part."
                     },
                     "kind": "positional or keyword",
@@ -27597,8 +27597,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 241,
-                      "lineno": 241,
+                      "endlineno": 242,
+                      "lineno": 242,
                       "value": "Binary operator."
                     },
                     "kind": "positional or keyword",
@@ -27619,8 +27619,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 243,
-                      "lineno": 243,
+                      "endlineno": 244,
+                      "lineno": 244,
                       "value": "Right part."
                     },
                     "kind": "positional or keyword",
@@ -27631,10 +27631,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 248,
+                "endlineno": 249,
                 "kind": "function",
                 "labels": [],
-                "lineno": 245,
+                "lineno": 246,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -27688,16 +27688,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 239,
-                  "lineno": 239,
+                  "endlineno": 240,
+                  "lineno": 240,
                   "value": "Left part."
                 },
-                "endlineno": 238,
+                "endlineno": 239,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 238,
+                "lineno": 239,
                 "members": {},
                 "name": "left"
               },
@@ -27707,16 +27707,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 241,
-                  "lineno": 241,
+                  "endlineno": 242,
+                  "lineno": 242,
                   "value": "Binary operator."
                 },
-                "endlineno": 240,
+                "endlineno": 241,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 240,
+                "lineno": 241,
                 "members": {},
                 "name": "operator"
               },
@@ -27734,16 +27734,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 243,
-                  "lineno": 243,
+                  "endlineno": 244,
+                  "lineno": 244,
                   "value": "Right part."
                 },
-                "endlineno": 242,
+                "endlineno": 243,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 242,
+                "lineno": 243,
                 "members": {},
                 "name": "right"
               }
@@ -27759,8 +27759,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 252,
-                "lineno": 252,
+                "endlineno": 253,
+                "lineno": 253,
                 "value": {
                   "arguments": [
                     {
@@ -27789,16 +27789,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 254,
-              "lineno": 254,
+              "endlineno": 255,
+              "lineno": 255,
               "value": "Boolean operations like `a or b`."
             },
-            "endlineno": 262,
+            "endlineno": 263,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 252,
+            "lineno": 253,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -27822,8 +27822,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 257,
-                      "lineno": 257,
+                      "endlineno": 258,
+                      "lineno": 258,
                       "value": "Boolean operator."
                     },
                     "kind": "positional or keyword",
@@ -27851,8 +27851,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 259,
-                      "lineno": 259,
+                      "endlineno": 260,
+                      "lineno": 260,
                       "value": "Operands."
                     },
                     "kind": "positional or keyword",
@@ -27863,10 +27863,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 262,
+                "endlineno": 263,
                 "kind": "function",
                 "labels": [],
-                "lineno": 261,
+                "lineno": 262,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -27912,16 +27912,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 257,
-                  "lineno": 257,
+                  "endlineno": 258,
+                  "lineno": 258,
                   "value": "Boolean operator."
                 },
-                "endlineno": 256,
+                "endlineno": 257,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 256,
+                "lineno": 257,
                 "members": {},
                 "name": "operator"
               },
@@ -27946,16 +27946,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 259,
-                  "lineno": 259,
+                  "endlineno": 260,
+                  "lineno": 260,
                   "value": "Operands."
                 },
-                "endlineno": 258,
+                "endlineno": 259,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 258,
+                "lineno": 259,
                 "members": {},
                 "name": "values"
               }
@@ -27971,8 +27971,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 266,
-                "lineno": 266,
+                "endlineno": 267,
+                "lineno": 267,
                 "value": {
                   "arguments": [
                     {
@@ -28001,16 +28001,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 268,
-              "lineno": 268,
+              "endlineno": 269,
+              "lineno": 269,
               "value": "Calls like `f()`."
             },
-            "endlineno": 284,
+            "endlineno": 285,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 266,
+            "lineno": 267,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -28034,8 +28034,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 271,
-                      "lineno": 271,
+                      "endlineno": 272,
+                      "lineno": 272,
                       "value": "Function called."
                     },
                     "kind": "positional or keyword",
@@ -28063,8 +28063,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 273,
-                      "lineno": 273,
+                      "endlineno": 274,
+                      "lineno": 274,
                       "value": "Passed arguments."
                     },
                     "kind": "positional or keyword",
@@ -28094,16 +28094,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 273,
-                  "lineno": 273,
+                  "endlineno": 274,
+                  "lineno": 274,
                   "value": "Passed arguments."
                 },
-                "endlineno": 272,
+                "endlineno": 273,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 272,
+                "lineno": 273,
                 "members": {},
                 "name": "arguments"
               },
@@ -28113,16 +28113,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 277,
-                  "lineno": 277,
+                  "endlineno": 278,
+                  "lineno": 278,
                   "value": "The canonical path of this subscript's left part."
                 },
-                "endlineno": 278,
+                "endlineno": 279,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 276,
+                "lineno": 277,
                 "members": {},
                 "name": "canonical_path"
               },
@@ -28132,25 +28132,25 @@
                   "name": "Expr"
                 },
                 "docstring": {
-                  "endlineno": 271,
-                  "lineno": 271,
+                  "endlineno": 272,
+                  "lineno": 272,
                   "value": "Function called."
                 },
-                "endlineno": 270,
+                "endlineno": 271,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 270,
+                "lineno": 271,
                 "members": {},
                 "name": "function"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 284,
+                "endlineno": 285,
                 "kind": "function",
                 "labels": [],
-                "lineno": 280,
+                "lineno": 281,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -28202,8 +28202,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 288,
-                "lineno": 288,
+                "endlineno": 289,
+                "lineno": 289,
                 "value": {
                   "arguments": [
                     {
@@ -28232,16 +28232,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 290,
-              "lineno": 290,
+              "endlineno": 291,
+              "lineno": 291,
               "value": "Comparisons like `a > b`."
             },
-            "endlineno": 302,
+            "endlineno": 303,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 288,
+            "lineno": 289,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -28273,8 +28273,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 293,
-                      "lineno": 293,
+                      "endlineno": 294,
+                      "lineno": 294,
                       "value": "Left part."
                     },
                     "kind": "positional or keyword",
@@ -28294,8 +28294,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 295,
-                      "lineno": 295,
+                      "endlineno": 296,
+                      "lineno": 296,
                       "value": "Comparison operators."
                     },
                     "kind": "positional or keyword",
@@ -28323,8 +28323,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 297,
-                      "lineno": 297,
+                      "endlineno": 298,
+                      "lineno": 298,
                       "value": "Things compared."
                     },
                     "kind": "positional or keyword",
@@ -28354,25 +28354,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 297,
-                  "lineno": 297,
+                  "endlineno": 298,
+                  "lineno": 298,
                   "value": "Things compared."
                 },
-                "endlineno": 296,
+                "endlineno": 297,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 296,
+                "lineno": 297,
                 "members": {},
                 "name": "comparators"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 302,
+                "endlineno": 303,
                 "kind": "function",
                 "labels": [],
-                "lineno": 299,
+                "lineno": 300,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -28426,16 +28426,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 293,
-                  "lineno": 293,
+                  "endlineno": 294,
+                  "lineno": 294,
                   "value": "Left part."
                 },
-                "endlineno": 292,
+                "endlineno": 293,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 292,
+                "lineno": 293,
                 "members": {},
                 "name": "left"
               },
@@ -28452,16 +28452,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 295,
-                  "lineno": 295,
+                  "endlineno": 296,
+                  "lineno": 296,
                   "value": "Comparison operators."
                 },
-                "endlineno": 294,
+                "endlineno": 295,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 294,
+                "lineno": 295,
                 "members": {},
                 "name": "operators"
               }
@@ -28477,8 +28477,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 306,
-                "lineno": 306,
+                "endlineno": 307,
+                "lineno": 307,
                 "value": {
                   "arguments": [
                     {
@@ -28507,16 +28507,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 308,
-              "lineno": 308,
+              "endlineno": 309,
+              "lineno": 309,
               "value": "Comprehensions like `a for b in c if d`."
             },
-            "endlineno": 328,
+            "endlineno": 329,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 306,
+            "lineno": 307,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -28548,8 +28548,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 311,
-                      "lineno": 311,
+                      "endlineno": 312,
+                      "lineno": 312,
                       "value": "Comprehension target (value added to the result)."
                     },
                     "kind": "positional or keyword",
@@ -28570,8 +28570,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 313,
-                      "lineno": 313,
+                      "endlineno": 314,
+                      "lineno": 314,
                       "value": "Value iterated on."
                     },
                     "kind": "positional or keyword",
@@ -28599,8 +28599,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 315,
-                      "lineno": 315,
+                      "endlineno": 316,
+                      "lineno": 316,
                       "value": "Conditions to include the target in the result."
                     },
                     "kind": "positional or keyword",
@@ -28613,8 +28613,8 @@
                     },
                     "default": "False",
                     "docstring": {
-                      "endlineno": 317,
-                      "lineno": 317,
+                      "endlineno": 318,
+                      "lineno": 318,
                       "value": "Async comprehension or not."
                     },
                     "kind": "positional or keyword",
@@ -28644,16 +28644,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 315,
-                  "lineno": 315,
+                  "endlineno": 316,
+                  "lineno": 316,
                   "value": "Conditions to include the target in the result."
                 },
-                "endlineno": 314,
+                "endlineno": 315,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 314,
+                "lineno": 315,
                 "members": {},
                 "name": "conditions"
               },
@@ -28663,17 +28663,17 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 317,
-                  "lineno": 317,
+                  "endlineno": 318,
+                  "lineno": 318,
                   "value": "Async comprehension or not."
                 },
-                "endlineno": 316,
+                "endlineno": 317,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 316,
+                "lineno": 317,
                 "members": {},
                 "name": "is_async",
                 "value": "False"
@@ -28692,25 +28692,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 313,
-                  "lineno": 313,
+                  "endlineno": 314,
+                  "lineno": 314,
                   "value": "Value iterated on."
                 },
-                "endlineno": 312,
+                "endlineno": 313,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 312,
+                "lineno": 313,
                 "members": {},
                 "name": "iterable"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 328,
+                "endlineno": 329,
                 "kind": "function",
                 "labels": [],
-                "lineno": 319,
+                "lineno": 320,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -28764,16 +28764,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 311,
-                  "lineno": 311,
+                  "endlineno": 312,
+                  "lineno": 312,
                   "value": "Comprehension target (value added to the result)."
                 },
-                "endlineno": 310,
+                "endlineno": 311,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 310,
+                "lineno": 311,
                 "members": {},
                 "name": "target"
               }
@@ -28789,8 +28789,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 332,
-                "lineno": 332,
+                "endlineno": 333,
+                "lineno": 333,
                 "value": {
                   "arguments": [
                     {
@@ -28819,16 +28819,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 334,
-              "lineno": 334,
+              "endlineno": 335,
+              "lineno": 335,
               "value": "Constants like `\"a\"` or `1`."
             },
-            "endlineno": 340,
+            "endlineno": 341,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 332,
+            "lineno": 333,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -28852,8 +28852,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 337,
-                      "lineno": 337,
+                      "endlineno": 338,
+                      "lineno": 338,
                       "value": "Constant value."
                     },
                     "kind": "positional or keyword",
@@ -28864,10 +28864,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 340,
+                "endlineno": 341,
                 "kind": "function",
                 "labels": [],
-                "lineno": 339,
+                "lineno": 340,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -28913,16 +28913,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 337,
-                  "lineno": 337,
+                  "endlineno": 338,
+                  "lineno": 338,
                   "value": "Constant value."
                 },
-                "endlineno": 336,
+                "endlineno": 337,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 336,
+                "lineno": 337,
                 "members": {},
                 "name": "value"
               }
@@ -28938,8 +28938,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 344,
-                "lineno": 344,
+                "endlineno": 345,
+                "lineno": 345,
                 "value": {
                   "arguments": [
                     {
@@ -28968,16 +28968,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 346,
-              "lineno": 346,
+              "endlineno": 347,
+              "lineno": 347,
               "value": "Dictionaries like `{\"a\": 0}`."
             },
-            "endlineno": 360,
+            "endlineno": 361,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 344,
+            "lineno": 345,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -29021,8 +29021,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 349,
-                      "lineno": 349,
+                      "endlineno": 350,
+                      "lineno": 350,
                       "value": "Dict keys."
                     },
                     "kind": "positional or keyword",
@@ -29050,8 +29050,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 351,
-                      "lineno": 351,
+                      "endlineno": 352,
+                      "lineno": 352,
                       "value": "Dict values."
                     },
                     "kind": "positional or keyword",
@@ -29062,10 +29062,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 360,
+                "endlineno": 361,
                 "kind": "function",
                 "labels": [],
-                "lineno": 353,
+                "lineno": 354,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -29131,16 +29131,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 349,
-                  "lineno": 349,
+                  "endlineno": 350,
+                  "lineno": 350,
                   "value": "Dict keys."
                 },
-                "endlineno": 348,
+                "endlineno": 349,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 348,
+                "lineno": 349,
                 "members": {},
                 "name": "keys"
               },
@@ -29165,16 +29165,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 351,
-                  "lineno": 351,
+                  "endlineno": 352,
+                  "lineno": 352,
                   "value": "Dict values."
                 },
-                "endlineno": 350,
+                "endlineno": 351,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 350,
+                "lineno": 351,
                 "members": {},
                 "name": "values"
               }
@@ -29190,8 +29190,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 364,
-                "lineno": 364,
+                "endlineno": 365,
+                "lineno": 365,
                 "value": {
                   "arguments": [
                     {
@@ -29220,16 +29220,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 366,
-              "lineno": 366,
+              "endlineno": 367,
+              "lineno": 367,
               "value": "Dict comprehensions like `{k: v for k, v in a}`."
             },
-            "endlineno": 381,
+            "endlineno": 382,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 364,
+            "lineno": 365,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -29261,8 +29261,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 369,
-                      "lineno": 369,
+                      "endlineno": 370,
+                      "lineno": 370,
                       "value": "Target key."
                     },
                     "kind": "positional or keyword",
@@ -29283,8 +29283,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 371,
-                      "lineno": 371,
+                      "endlineno": 372,
+                      "lineno": 372,
                       "value": "Target value."
                     },
                     "kind": "positional or keyword",
@@ -29304,8 +29304,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 373,
-                      "lineno": 373,
+                      "endlineno": 374,
+                      "lineno": 374,
                       "value": "Generators iterated on."
                     },
                     "kind": "positional or keyword",
@@ -29327,25 +29327,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 373,
-                  "lineno": 373,
+                  "endlineno": 374,
+                  "lineno": 374,
                   "value": "Generators iterated on."
                 },
-                "endlineno": 372,
+                "endlineno": 373,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 372,
+                "lineno": 373,
                 "members": {},
                 "name": "generators"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 381,
+                "endlineno": 382,
                 "kind": "function",
                 "labels": [],
-                "lineno": 375,
+                "lineno": 376,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -29399,16 +29399,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 369,
-                  "lineno": 369,
+                  "endlineno": 370,
+                  "lineno": 370,
                   "value": "Target key."
                 },
-                "endlineno": 368,
+                "endlineno": 369,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 368,
+                "lineno": 369,
                 "members": {},
                 "name": "key"
               },
@@ -29426,16 +29426,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 371,
-                  "lineno": 371,
+                  "endlineno": 372,
+                  "lineno": 372,
                   "value": "Target value."
                 },
-                "endlineno": 370,
+                "endlineno": 371,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 370,
+                "lineno": 371,
                 "members": {},
                 "name": "value"
               }
@@ -29451,8 +29451,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 385,
-                "lineno": 385,
+                "endlineno": 386,
+                "lineno": 386,
                 "value": {
                   "arguments": [
                     {
@@ -29481,16 +29481,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 387,
-              "lineno": 387,
+              "endlineno": 388,
+              "lineno": 388,
               "value": "Extended slice like `a[x:y, z]`."
             },
-            "endlineno": 393,
+            "endlineno": 394,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 385,
+            "lineno": 386,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -29529,8 +29529,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 390,
-                      "lineno": 390,
+                      "endlineno": 391,
+                      "lineno": 391,
                       "value": "Dims."
                     },
                     "kind": "positional or keyword",
@@ -29560,25 +29560,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 390,
-                  "lineno": 390,
+                  "endlineno": 391,
+                  "lineno": 391,
                   "value": "Dims."
                 },
-                "endlineno": 389,
+                "endlineno": 390,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 389,
+                "lineno": 390,
                 "members": {},
                 "name": "dims"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 393,
+                "endlineno": 394,
                 "kind": "function",
                 "labels": [],
-                "lineno": 392,
+                "lineno": 393,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -29630,8 +29630,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 397,
-                "lineno": 397,
+                "endlineno": 398,
+                "lineno": 398,
                 "value": {
                   "arguments": [
                     {
@@ -29660,16 +29660,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 399,
-              "lineno": 399,
+              "endlineno": 400,
+              "lineno": 400,
               "value": "Formatted string like `{1 + 1}`."
             },
-            "endlineno": 407,
+            "endlineno": 408,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 397,
+            "lineno": 398,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -29701,8 +29701,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 402,
-                      "lineno": 402,
+                      "endlineno": 403,
+                      "lineno": 403,
                       "value": "Formatted value."
                     },
                     "kind": "positional or keyword",
@@ -29713,10 +29713,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 407,
+                "endlineno": 408,
                 "kind": "function",
                 "labels": [],
-                "lineno": 404,
+                "lineno": 405,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -29770,16 +29770,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 402,
-                  "lineno": 402,
+                  "endlineno": 403,
+                  "lineno": 403,
                   "value": "Formatted value."
                 },
-                "endlineno": 401,
+                "endlineno": 402,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 401,
+                "lineno": 402,
                 "members": {},
                 "name": "value"
               }
@@ -29795,8 +29795,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 411,
-                "lineno": 411,
+                "endlineno": 412,
+                "lineno": 412,
                 "value": {
                   "arguments": [
                     {
@@ -29825,16 +29825,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 413,
-              "lineno": 413,
+              "endlineno": 414,
+              "lineno": 414,
               "value": "Generator expressions like `a for b in c for d in e`."
             },
-            "endlineno": 423,
+            "endlineno": 424,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 411,
+            "lineno": 412,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -29866,8 +29866,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 416,
-                      "lineno": 416,
+                      "endlineno": 417,
+                      "lineno": 417,
                       "value": "Yielded element."
                     },
                     "kind": "positional or keyword",
@@ -29887,8 +29887,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 418,
-                      "lineno": 418,
+                      "endlineno": 419,
+                      "lineno": 419,
                       "value": "Generators iterated on."
                     },
                     "kind": "positional or keyword",
@@ -29911,16 +29911,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 416,
-                  "lineno": 416,
+                  "endlineno": 417,
+                  "lineno": 417,
                   "value": "Yielded element."
                 },
-                "endlineno": 415,
+                "endlineno": 416,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 415,
+                "lineno": 416,
                 "members": {},
                 "name": "element"
               },
@@ -29937,25 +29937,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 418,
-                  "lineno": 418,
+                  "endlineno": 419,
+                  "lineno": 419,
                   "value": "Generators iterated on."
                 },
-                "endlineno": 417,
+                "endlineno": 418,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 417,
+                "lineno": 418,
                 "members": {},
                 "name": "generators"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 423,
+                "endlineno": 424,
                 "kind": "function",
                 "labels": [],
-                "lineno": 420,
+                "lineno": 421,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -30007,8 +30007,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 427,
-                "lineno": 427,
+                "endlineno": 428,
+                "lineno": 428,
                 "value": {
                   "arguments": [
                     {
@@ -30037,16 +30037,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 429,
-              "lineno": 429,
+              "endlineno": 430,
+              "lineno": 430,
               "value": "Conditions like `a if b else c`."
             },
-            "endlineno": 443,
+            "endlineno": 444,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 427,
+            "lineno": 428,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -30078,8 +30078,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 432,
-                      "lineno": 432,
+                      "endlineno": 433,
+                      "lineno": 433,
                       "value": "Value if test."
                     },
                     "kind": "positional or keyword",
@@ -30100,8 +30100,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 434,
-                      "lineno": 434,
+                      "endlineno": 435,
+                      "lineno": 435,
                       "value": "Condition."
                     },
                     "kind": "positional or keyword",
@@ -30122,8 +30122,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 436,
-                      "lineno": 436,
+                      "endlineno": 437,
+                      "lineno": 437,
                       "value": "Other expression."
                     },
                     "kind": "positional or keyword",
@@ -30146,25 +30146,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 432,
-                  "lineno": 432,
+                  "endlineno": 433,
+                  "lineno": 433,
                   "value": "Value if test."
                 },
-                "endlineno": 431,
+                "endlineno": 432,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 431,
+                "lineno": 432,
                 "members": {},
                 "name": "body"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 443,
+                "endlineno": 444,
                 "kind": "function",
                 "labels": [],
-                "lineno": 438,
+                "lineno": 439,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -30218,16 +30218,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 436,
-                  "lineno": 436,
+                  "endlineno": 437,
+                  "lineno": 437,
                   "value": "Other expression."
                 },
-                "endlineno": 435,
+                "endlineno": 436,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 435,
+                "lineno": 436,
                 "members": {},
                 "name": "orelse"
               },
@@ -30245,16 +30245,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 434,
-                  "lineno": 434,
+                  "endlineno": 435,
+                  "lineno": 435,
                   "value": "Condition."
                 },
-                "endlineno": 433,
+                "endlineno": 434,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 433,
+                "lineno": 434,
                 "members": {},
                 "name": "test"
               }
@@ -30270,8 +30270,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 447,
-                "lineno": 447,
+                "endlineno": 448,
+                "lineno": 448,
                 "value": {
                   "arguments": [
                     {
@@ -30300,16 +30300,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 449,
-              "lineno": 449,
+              "endlineno": 450,
+              "lineno": 450,
               "value": "Joined strings like `f\"a {b} c\"`."
             },
-            "endlineno": 457,
+            "endlineno": 458,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 447,
+            "lineno": 448,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -30348,8 +30348,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 452,
-                      "lineno": 452,
+                      "endlineno": 453,
+                      "lineno": 453,
                       "value": "Joined values."
                     },
                     "kind": "positional or keyword",
@@ -30360,10 +30360,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 457,
+                "endlineno": 458,
                 "kind": "function",
                 "labels": [],
-                "lineno": 454,
+                "lineno": 455,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -30424,16 +30424,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 452,
-                  "lineno": 452,
+                  "endlineno": 453,
+                  "lineno": 453,
                   "value": "Joined values."
                 },
-                "endlineno": 451,
+                "endlineno": 452,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 451,
+                "lineno": 452,
                 "members": {},
                 "name": "values"
               }
@@ -30449,8 +30449,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 461,
-                "lineno": 461,
+                "endlineno": 462,
+                "lineno": 462,
                 "value": {
                   "arguments": [
                     {
@@ -30479,16 +30479,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 463,
-              "lineno": 463,
+              "endlineno": 464,
+              "lineno": 464,
               "value": "Keyword arguments like `a=b`."
             },
-            "endlineno": 498,
+            "endlineno": 499,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 461,
+            "lineno": 462,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -30512,8 +30512,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 466,
-                      "lineno": 466,
+                      "endlineno": 467,
+                      "lineno": 467,
                       "value": "Name."
                     },
                     "kind": "positional or keyword",
@@ -30534,8 +30534,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 468,
-                      "lineno": 468,
+                      "endlineno": 469,
+                      "lineno": 469,
                       "value": "Value."
                     },
                     "kind": "positional or keyword",
@@ -30553,8 +30553,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 486,
-                      "lineno": 486,
+                      "endlineno": 487,
+                      "lineno": 487,
                       "value": "Expression referencing the function called with this parameter."
                     },
                     "kind": "positional or keyword",
@@ -30569,16 +30569,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 490,
-                  "lineno": 490,
+                  "endlineno": 491,
+                  "lineno": 491,
                   "value": "Path of the expressed keyword."
                 },
-                "endlineno": 493,
+                "endlineno": 494,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 489,
+                "lineno": 490,
                 "members": {},
                 "name": "canonical_path"
               },
@@ -30593,27 +30593,27 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 486,
-                  "lineno": 486,
+                  "endlineno": 487,
+                  "lineno": 487,
                   "value": "Expression referencing the function called with this parameter."
                 },
-                "endlineno": 485,
+                "endlineno": 486,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 485,
+                "lineno": 486,
                 "members": {},
                 "name": "function",
                 "value": "None"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 498,
+                "endlineno": 499,
                 "kind": "function",
                 "labels": [],
-                "lineno": 495,
+                "lineno": 496,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -30659,16 +30659,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 466,
-                  "lineno": 466,
+                  "endlineno": 467,
+                  "lineno": 467,
                   "value": "Name."
                 },
-                "endlineno": 465,
+                "endlineno": 466,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 465,
+                "lineno": 466,
                 "members": {},
                 "name": "name"
               },
@@ -30686,16 +30686,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 468,
-                  "lineno": 468,
+                  "endlineno": 469,
+                  "lineno": 469,
                   "value": "Value."
                 },
-                "endlineno": 467,
+                "endlineno": 468,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 467,
+                "lineno": 468,
                 "members": {},
                 "name": "value"
               }
@@ -30711,8 +30711,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 528,
-                "lineno": 528,
+                "endlineno": 529,
+                "lineno": 529,
                 "value": {
                   "arguments": [
                     {
@@ -30741,16 +30741,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 530,
-              "lineno": 530,
+              "endlineno": 531,
+              "lineno": 531,
               "value": "Lambda expressions like `lambda a: a.b`."
             },
-            "endlineno": 567,
+            "endlineno": 568,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 528,
+            "lineno": 529,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -30781,8 +30781,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 533,
-                      "lineno": 533,
+                      "endlineno": 534,
+                      "lineno": 534,
                       "value": "Lambda's parameters."
                     },
                     "kind": "positional or keyword",
@@ -30803,8 +30803,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 535,
-                      "lineno": 535,
+                      "endlineno": 536,
+                      "lineno": 536,
                       "value": "Lambda's body."
                     },
                     "kind": "positional or keyword",
@@ -30827,25 +30827,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 535,
-                  "lineno": 535,
+                  "endlineno": 536,
+                  "lineno": 536,
                   "value": "Lambda's body."
                 },
-                "endlineno": 534,
+                "endlineno": 535,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 534,
+                "lineno": 535,
                 "members": {},
                 "name": "body"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 567,
+                "endlineno": 568,
                 "kind": "function",
                 "labels": [],
-                "lineno": 537,
+                "lineno": 538,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -30898,16 +30898,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 533,
-                  "lineno": 533,
+                  "endlineno": 534,
+                  "lineno": 534,
                   "value": "Lambda's parameters."
                 },
-                "endlineno": 532,
+                "endlineno": 533,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 532,
+                "lineno": 533,
                 "members": {},
                 "name": "parameters"
               }
@@ -30923,8 +30923,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 571,
-                "lineno": 571,
+                "endlineno": 572,
+                "lineno": 572,
                 "value": {
                   "arguments": [
                     {
@@ -30953,16 +30953,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 573,
-              "lineno": 573,
+              "endlineno": 574,
+              "lineno": 574,
               "value": "Lists like `[0, 1, 2]`."
             },
-            "endlineno": 581,
+            "endlineno": 582,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 571,
+            "lineno": 572,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -30993,8 +30993,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 576,
-                      "lineno": 576,
+                      "endlineno": 577,
+                      "lineno": 577,
                       "value": "List elements."
                     },
                     "kind": "positional or keyword",
@@ -31016,25 +31016,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 576,
-                  "lineno": 576,
+                  "endlineno": 577,
+                  "lineno": 577,
                   "value": "List elements."
                 },
-                "endlineno": 575,
+                "endlineno": 576,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 575,
+                "lineno": 576,
                 "members": {},
                 "name": "elements"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 581,
+                "endlineno": 582,
                 "kind": "function",
                 "labels": [],
-                "lineno": 578,
+                "lineno": 579,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -31086,8 +31086,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 585,
-                "lineno": 585,
+                "endlineno": 586,
+                "lineno": 586,
                 "value": {
                   "arguments": [
                     {
@@ -31116,16 +31116,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 587,
-              "lineno": 587,
+              "endlineno": 588,
+              "lineno": 588,
               "value": "List comprehensions like `[a for b in c]`."
             },
-            "endlineno": 599,
+            "endlineno": 600,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 585,
+            "lineno": 586,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -31157,8 +31157,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 590,
-                      "lineno": 590,
+                      "endlineno": 591,
+                      "lineno": 591,
                       "value": "Target value."
                     },
                     "kind": "positional or keyword",
@@ -31178,8 +31178,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 592,
-                      "lineno": 592,
+                      "endlineno": 593,
+                      "lineno": 593,
                       "value": "Generators iterated on."
                     },
                     "kind": "positional or keyword",
@@ -31202,16 +31202,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 590,
-                  "lineno": 590,
+                  "endlineno": 591,
+                  "lineno": 591,
                   "value": "Target value."
                 },
-                "endlineno": 589,
+                "endlineno": 590,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 589,
+                "lineno": 590,
                 "members": {},
                 "name": "element"
               },
@@ -31228,25 +31228,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 592,
-                  "lineno": 592,
+                  "endlineno": 593,
+                  "lineno": 593,
                   "value": "Generators iterated on."
                 },
-                "endlineno": 591,
+                "endlineno": 592,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 591,
+                "lineno": 592,
                 "members": {},
                 "name": "generators"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 599,
+                "endlineno": 600,
                 "kind": "function",
                 "labels": [],
-                "lineno": 594,
+                "lineno": 595,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -31298,8 +31298,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 603,
-                "lineno": 603,
+                "endlineno": 604,
+                "lineno": 604,
                 "value": {
                   "arguments": [
                     {
@@ -31328,28 +31328,28 @@
               }
             ],
             "docstring": {
-              "endlineno": 605,
-              "lineno": 605,
+              "endlineno": 606,
+              "lineno": 606,
               "value": "This class represents a Python object identified by a name in a given scope."
             },
-            "endlineno": 686,
+            "endlineno": 687,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 603,
+            "lineno": 604,
             "members": {
               "__eq__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 613,
-                  "lineno": 613,
+                  "endlineno": 614,
+                  "lineno": 614,
                   "value": "Two name expressions are equal if they have the same `name` value (`parent` is ignored)."
                 },
-                "endlineno": 616,
+                "endlineno": 617,
                 "kind": "function",
                 "labels": [],
-                "lineno": 612,
+                "lineno": 613,
                 "members": {},
                 "name": "__eq__",
                 "parameters": [
@@ -31396,8 +31396,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 608,
-                      "lineno": 608,
+                      "endlineno": 609,
+                      "lineno": 609,
                       "value": "Actual name."
                     },
                     "kind": "positional or keyword",
@@ -31439,8 +31439,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 610,
-                      "lineno": 610,
+                      "endlineno": 611,
+                      "lineno": 611,
                       "value": "Parent (for resolution in its scope)."
                     },
                     "kind": "positional or keyword",
@@ -31455,16 +31455,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 640,
-                  "lineno": 640,
+                  "endlineno": 641,
+                  "lineno": 641,
                   "value": "The canonical name (resolved one, not alias name)."
                 },
-                "endlineno": 650,
+                "endlineno": 651,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 639,
+                "lineno": 640,
                 "members": {},
                 "name": "canonical_path"
               },
@@ -31474,16 +31474,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 662,
-                  "lineno": 662,
+                  "endlineno": 663,
+                  "lineno": 663,
                   "value": "Whether this name resolves to an enumeration class."
                 },
-                "endlineno": 670,
+                "endlineno": 671,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 661,
+                "lineno": 662,
                 "members": {},
                 "name": "is_enum_class"
               },
@@ -31493,16 +31493,16 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 674,
-                  "lineno": 674,
+                  "endlineno": 675,
+                  "lineno": 675,
                   "value": "Whether this name resolves to an enumeration instance."
                 },
-                "endlineno": 678,
+                "endlineno": 679,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 673,
+                "lineno": 674,
                 "members": {},
                 "name": "is_enum_instance"
               },
@@ -31512,25 +31512,25 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 682,
-                  "lineno": 682,
+                  "endlineno": 683,
+                  "lineno": 683,
                   "value": "Whether this name resolves to an enumeration value."
                 },
-                "endlineno": 686,
+                "endlineno": 687,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 681,
+                "lineno": 682,
                 "members": {},
                 "name": "is_enum_value"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 619,
+                "endlineno": 620,
                 "kind": "function",
                 "labels": [],
-                "lineno": 618,
+                "lineno": 619,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -31564,10 +31564,10 @@
               },
               "modernize": {
                 "decorators": [],
-                "endlineno": 624,
+                "endlineno": 625,
                 "kind": "function",
                 "labels": [],
-                "lineno": 621,
+                "lineno": 622,
                 "members": {},
                 "name": "modernize",
                 "parameters": [
@@ -31589,16 +31589,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 608,
-                  "lineno": 608,
+                  "endlineno": 609,
+                  "lineno": 609,
                   "value": "Actual name."
                 },
-                "endlineno": 607,
+                "endlineno": 608,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 607,
+                "lineno": 608,
                 "members": {},
                 "name": "name"
               },
@@ -31637,17 +31637,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 610,
-                  "lineno": 610,
+                  "endlineno": 611,
+                  "lineno": 611,
                   "value": "Parent (for resolution in its scope)."
                 },
-                "endlineno": 609,
+                "endlineno": 610,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 609,
+                "lineno": 610,
                 "members": {},
                 "name": "parent",
                 "value": "None"
@@ -31658,16 +31658,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 633,
-                  "lineno": 628,
+                  "endlineno": 634,
+                  "lineno": 629,
                   "value": "The full, resolved name.\n\nIf it was given when creating the name, return that.\nIf a callable was given, call it and return its result.\nIt the name cannot be resolved, return the source."
                 },
-                "endlineno": 636,
+                "endlineno": 637,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 627,
+                "lineno": 628,
                 "members": {},
                 "name": "path"
               },
@@ -31690,16 +31690,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 654,
-                  "lineno": 654,
+                  "endlineno": 655,
+                  "lineno": 655,
                   "value": "The resolved object this name refers to."
                 },
-                "endlineno": 658,
+                "endlineno": 659,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 653,
+                "lineno": 654,
                 "members": {},
                 "name": "resolved"
               }
@@ -31715,8 +31715,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 690,
-                "lineno": 690,
+                "endlineno": 691,
+                "lineno": 691,
                 "value": {
                   "arguments": [
                     {
@@ -31745,16 +31745,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 692,
-              "lineno": 692,
+              "endlineno": 693,
+              "lineno": 693,
               "value": "Named/assignment expressions like `a := b`."
             },
-            "endlineno": 704,
+            "endlineno": 705,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 690,
+            "lineno": 691,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -31778,8 +31778,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 695,
-                      "lineno": 695,
+                      "endlineno": 696,
+                      "lineno": 696,
                       "value": "Target name."
                     },
                     "kind": "positional or keyword",
@@ -31800,8 +31800,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 697,
-                      "lineno": 697,
+                      "endlineno": 698,
+                      "lineno": 698,
                       "value": "Value."
                     },
                     "kind": "positional or keyword",
@@ -31812,10 +31812,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 704,
+                "endlineno": 705,
                 "kind": "function",
                 "labels": [],
-                "lineno": 699,
+                "lineno": 700,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -31861,16 +31861,16 @@
                   "name": "Expr"
                 },
                 "docstring": {
-                  "endlineno": 695,
-                  "lineno": 695,
+                  "endlineno": 696,
+                  "lineno": 696,
                   "value": "Target name."
                 },
-                "endlineno": 694,
+                "endlineno": 695,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 694,
+                "lineno": 695,
                 "members": {},
                 "name": "target"
               },
@@ -31888,16 +31888,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 697,
-                  "lineno": 697,
+                  "endlineno": 698,
+                  "lineno": 698,
                   "value": "Value."
                 },
-                "endlineno": 696,
+                "endlineno": 697,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 696,
+                "lineno": 697,
                 "members": {},
                 "name": "value"
               }
@@ -31913,8 +31913,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 708,
-                "lineno": 708,
+                "endlineno": 709,
+                "lineno": 709,
                 "value": {
                   "arguments": [
                     {
@@ -31943,16 +31943,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 710,
-              "lineno": 710,
+              "endlineno": 711,
+              "lineno": 711,
               "value": "Parameters in function signatures like `a: int = 0`."
             },
-            "endlineno": 719,
+            "endlineno": 720,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 708,
+            "lineno": 709,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -31976,8 +31976,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 713,
-                      "lineno": 713,
+                      "endlineno": 714,
+                      "lineno": 714,
                       "value": "Parameter name."
                     },
                     "kind": "positional or keyword",
@@ -32002,8 +32002,8 @@
                       ]
                     },
                     "docstring": {
-                      "endlineno": 715,
-                      "lineno": 715,
+                      "endlineno": 716,
+                      "lineno": 716,
                       "value": "Parameter kind."
                     },
                     "kind": "positional or keyword",
@@ -32021,8 +32021,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 717,
-                      "lineno": 717,
+                      "endlineno": 718,
+                      "lineno": 718,
                       "value": "Parameter type."
                     },
                     "kind": "positional or keyword",
@@ -32048,8 +32048,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 719,
-                      "lineno": 719,
+                      "endlineno": 720,
+                      "lineno": 720,
                       "value": "Parameter default."
                     },
                     "kind": "positional or keyword",
@@ -32069,17 +32069,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 717,
-                  "lineno": 717,
+                  "endlineno": 718,
+                  "lineno": 718,
                   "value": "Parameter type."
                 },
-                "endlineno": 716,
+                "endlineno": 717,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 716,
+                "lineno": 717,
                 "members": {},
                 "name": "annotation",
                 "value": "None"
@@ -32103,17 +32103,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 719,
-                  "lineno": 719,
+                  "endlineno": 720,
+                  "lineno": 720,
                   "value": "Parameter default."
                 },
-                "endlineno": 718,
+                "endlineno": 719,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 718,
+                "lineno": 719,
                 "members": {},
                 "name": "default",
                 "value": "None"
@@ -32124,17 +32124,17 @@
                   "name": "ParameterKind"
                 },
                 "docstring": {
-                  "endlineno": 715,
-                  "lineno": 715,
+                  "endlineno": 716,
+                  "lineno": 716,
                   "value": "Parameter kind."
                 },
-                "endlineno": 714,
+                "endlineno": 715,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 714,
+                "lineno": 715,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -32157,16 +32157,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 713,
-                  "lineno": 713,
+                  "endlineno": 714,
+                  "lineno": 714,
                   "value": "Parameter name."
                 },
-                "endlineno": 712,
+                "endlineno": 713,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 712,
+                "lineno": 713,
                 "members": {},
                 "name": "name"
               }
@@ -32182,8 +32182,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 723,
-                "lineno": 723,
+                "endlineno": 724,
+                "lineno": 724,
                 "value": {
                   "arguments": [
                     {
@@ -32212,16 +32212,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 725,
-              "lineno": 725,
+              "endlineno": 726,
+              "lineno": 726,
               "value": "Sets like `{0, 1, 2}`."
             },
-            "endlineno": 733,
+            "endlineno": 734,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 723,
+            "lineno": 724,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -32260,8 +32260,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 728,
-                      "lineno": 728,
+                      "endlineno": 729,
+                      "lineno": 729,
                       "value": "Set elements."
                     },
                     "kind": "positional or keyword",
@@ -32291,25 +32291,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 728,
-                  "lineno": 728,
+                  "endlineno": 729,
+                  "lineno": 729,
                   "value": "Set elements."
                 },
-                "endlineno": 727,
+                "endlineno": 728,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 727,
+                "lineno": 728,
                 "members": {},
                 "name": "elements"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 733,
+                "endlineno": 734,
                 "kind": "function",
                 "labels": [],
-                "lineno": 730,
+                "lineno": 731,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -32361,8 +32361,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 737,
-                "lineno": 737,
+                "endlineno": 738,
+                "lineno": 738,
                 "value": {
                   "arguments": [
                     {
@@ -32391,16 +32391,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 739,
-              "lineno": 739,
+              "endlineno": 740,
+              "lineno": 740,
               "value": "Set comprehensions like `{a for b in c}`."
             },
-            "endlineno": 751,
+            "endlineno": 752,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 737,
+            "lineno": 738,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -32432,8 +32432,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 742,
-                      "lineno": 742,
+                      "endlineno": 743,
+                      "lineno": 743,
                       "value": "Target value."
                     },
                     "kind": "positional or keyword",
@@ -32453,8 +32453,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 744,
-                      "lineno": 744,
+                      "endlineno": 745,
+                      "lineno": 745,
                       "value": "Generators iterated on."
                     },
                     "kind": "positional or keyword",
@@ -32477,16 +32477,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 742,
-                  "lineno": 742,
+                  "endlineno": 743,
+                  "lineno": 743,
                   "value": "Target value."
                 },
-                "endlineno": 741,
+                "endlineno": 742,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 741,
+                "lineno": 742,
                 "members": {},
                 "name": "element"
               },
@@ -32503,25 +32503,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 744,
-                  "lineno": 744,
+                  "endlineno": 745,
+                  "lineno": 745,
                   "value": "Generators iterated on."
                 },
-                "endlineno": 743,
+                "endlineno": 744,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 743,
+                "lineno": 744,
                 "members": {},
                 "name": "generators"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 751,
+                "endlineno": 752,
                 "kind": "function",
                 "labels": [],
-                "lineno": 746,
+                "lineno": 747,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -32573,8 +32573,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 755,
-                "lineno": 755,
+                "endlineno": 756,
+                "lineno": 756,
                 "value": {
                   "arguments": [
                     {
@@ -32603,16 +32603,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 757,
-              "lineno": 757,
+              "endlineno": 758,
+              "lineno": 758,
               "value": "Slices like `[a:b:c]`."
             },
-            "endlineno": 774,
+            "endlineno": 775,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 755,
+            "lineno": 756,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -32649,8 +32649,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 760,
-                      "lineno": 760,
+                      "endlineno": 761,
+                      "lineno": 761,
                       "value": "Lower bound."
                     },
                     "kind": "positional or keyword",
@@ -32676,8 +32676,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 762,
-                      "lineno": 762,
+                      "endlineno": 763,
+                      "lineno": 763,
                       "value": "Upper bound."
                     },
                     "kind": "positional or keyword",
@@ -32703,8 +32703,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 764,
-                      "lineno": 764,
+                      "endlineno": 765,
+                      "lineno": 765,
                       "value": "Iteration step."
                     },
                     "kind": "positional or keyword",
@@ -32715,10 +32715,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 774,
+                "endlineno": 775,
                 "kind": "function",
                 "labels": [],
-                "lineno": 766,
+                "lineno": 767,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -32777,17 +32777,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 760,
-                  "lineno": 760,
+                  "endlineno": 761,
+                  "lineno": 761,
                   "value": "Lower bound."
                 },
-                "endlineno": 759,
+                "endlineno": 760,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 759,
+                "lineno": 760,
                 "members": {},
                 "name": "lower",
                 "value": "None"
@@ -32811,17 +32811,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 764,
-                  "lineno": 764,
+                  "endlineno": 765,
+                  "lineno": 765,
                   "value": "Iteration step."
                 },
-                "endlineno": 763,
+                "endlineno": 764,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 763,
+                "lineno": 764,
                 "members": {},
                 "name": "step",
                 "value": "None"
@@ -32845,17 +32845,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 762,
-                  "lineno": 762,
+                  "endlineno": 763,
+                  "lineno": 763,
                   "value": "Upper bound."
                 },
-                "endlineno": 761,
+                "endlineno": 762,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 761,
+                "lineno": 762,
                 "members": {},
                 "name": "upper",
                 "value": "None"
@@ -32872,8 +32872,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 778,
-                "lineno": 778,
+                "endlineno": 779,
+                "lineno": 779,
                 "value": {
                   "arguments": [
                     {
@@ -32902,16 +32902,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 780,
-              "lineno": 780,
+              "endlineno": 781,
+              "lineno": 781,
               "value": "Subscripts like `a[b]`."
             },
-            "endlineno": 832,
+            "endlineno": 833,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 778,
+            "lineno": 779,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -32943,8 +32943,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 783,
-                      "lineno": 783,
+                      "endlineno": 784,
+                      "lineno": 784,
                       "value": "Left part."
                     },
                     "kind": "positional or keyword",
@@ -32965,8 +32965,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 785,
-                      "lineno": 785,
+                      "endlineno": 786,
+                      "lineno": 786,
                       "value": "Slice part."
                     },
                     "kind": "positional or keyword",
@@ -32978,20 +32978,20 @@
               "_to_binop": {
                 "decorators": [
                   {
-                    "endlineno": 793,
-                    "lineno": 793,
+                    "endlineno": 794,
+                    "lineno": 794,
                     "value": {
                       "cls": "ExprName",
                       "name": "staticmethod"
                     }
                   }
                 ],
-                "endlineno": 807,
+                "endlineno": 808,
                 "kind": "function",
                 "labels": [
                   "staticmethod"
                 ],
-                "lineno": 793,
+                "lineno": 794,
                 "members": {},
                 "name": "_to_binop",
                 "parameters": [
@@ -33032,25 +33032,25 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 829,
-                  "lineno": 829,
+                  "endlineno": 830,
+                  "lineno": 830,
                   "value": "The canonical path of this subscript's left part."
                 },
-                "endlineno": 832,
+                "endlineno": 833,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 828,
+                "lineno": 829,
                 "members": {},
                 "name": "canonical_path"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 791,
+                "endlineno": 792,
                 "kind": "function",
                 "labels": [],
-                "lineno": 787,
+                "lineno": 788,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33104,25 +33104,25 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 783,
-                  "lineno": 783,
+                  "endlineno": 784,
+                  "lineno": 784,
                   "value": "Left part."
                 },
-                "endlineno": 782,
+                "endlineno": 783,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 782,
+                "lineno": 783,
                 "members": {},
                 "name": "left"
               },
               "modernize": {
                 "decorators": [],
-                "endlineno": 818,
+                "endlineno": 819,
                 "kind": "function",
                 "labels": [],
-                "lineno": 809,
+                "lineno": 810,
                 "members": {},
                 "name": "modernize",
                 "parameters": [
@@ -33152,16 +33152,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 822,
-                  "lineno": 822,
+                  "endlineno": 823,
+                  "lineno": 823,
                   "value": "The path of this subscript's left part."
                 },
-                "endlineno": 825,
+                "endlineno": 826,
                 "kind": "attribute",
                 "labels": [
                   "property"
                 ],
-                "lineno": 821,
+                "lineno": 822,
                 "members": {},
                 "name": "path"
               },
@@ -33179,16 +33179,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 785,
-                  "lineno": 785,
+                  "endlineno": 786,
+                  "lineno": 786,
                   "value": "Slice part."
                 },
-                "endlineno": 784,
+                "endlineno": 785,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 784,
+                "lineno": 785,
                 "members": {},
                 "name": "slice"
               }
@@ -33204,8 +33204,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 836,
-                "lineno": 836,
+                "endlineno": 837,
+                "lineno": 837,
                 "value": {
                   "arguments": [
                     {
@@ -33234,16 +33234,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 838,
-              "lineno": 838,
+              "endlineno": 839,
+              "lineno": 839,
               "value": "Tuples like `(0, 1, 2)`."
             },
-            "endlineno": 858,
+            "endlineno": 859,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 836,
+            "lineno": 837,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33282,8 +33282,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 841,
-                      "lineno": 841,
+                      "endlineno": 842,
+                      "lineno": 842,
                       "value": "Tuple elements."
                     },
                     "kind": "positional or keyword",
@@ -33296,8 +33296,8 @@
                     },
                     "default": "False",
                     "docstring": {
-                      "endlineno": 843,
-                      "lineno": 843,
+                      "endlineno": 844,
+                      "lineno": 844,
                       "value": "Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."
                     },
                     "kind": "positional or keyword",
@@ -33327,16 +33327,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 841,
-                  "lineno": 841,
+                  "endlineno": 842,
+                  "lineno": 842,
                   "value": "Tuple elements."
                 },
-                "endlineno": 840,
+                "endlineno": 841,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 840,
+                "lineno": 841,
                 "members": {},
                 "name": "elements"
               },
@@ -33346,27 +33346,27 @@
                   "name": "bool"
                 },
                 "docstring": {
-                  "endlineno": 843,
-                  "lineno": 843,
+                  "endlineno": 844,
+                  "lineno": 844,
                   "value": "Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."
                 },
-                "endlineno": 842,
+                "endlineno": 843,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 842,
+                "lineno": 843,
                 "members": {},
                 "name": "implicit",
                 "value": "False"
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 852,
+                "endlineno": 853,
                 "kind": "function",
                 "labels": [],
-                "lineno": 845,
+                "lineno": 846,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33408,10 +33408,10 @@
               },
               "modernize": {
                 "decorators": [],
-                "endlineno": 858,
+                "endlineno": 859,
                 "kind": "function",
                 "labels": [],
-                "lineno": 854,
+                "lineno": 855,
                 "members": {},
                 "name": "modernize",
                 "parameters": [
@@ -33439,8 +33439,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 862,
-                "lineno": 862,
+                "endlineno": 863,
+                "lineno": 863,
                 "value": {
                   "arguments": [
                     {
@@ -33469,16 +33469,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 864,
-              "lineno": 864,
+              "endlineno": 865,
+              "lineno": 865,
               "value": "Unary operations like `-1`."
             },
-            "endlineno": 873,
+            "endlineno": 874,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 862,
+            "lineno": 863,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33502,8 +33502,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 867,
-                      "lineno": 867,
+                      "endlineno": 868,
+                      "lineno": 868,
                       "value": "Unary operator."
                     },
                     "kind": "positional or keyword",
@@ -33524,8 +33524,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 869,
-                      "lineno": 869,
+                      "endlineno": 870,
+                      "lineno": 870,
                       "value": "Value."
                     },
                     "kind": "positional or keyword",
@@ -33536,10 +33536,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 873,
+                "endlineno": 874,
                 "kind": "function",
                 "labels": [],
-                "lineno": 871,
+                "lineno": 872,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33585,16 +33585,16 @@
                   "name": "str"
                 },
                 "docstring": {
-                  "endlineno": 867,
-                  "lineno": 867,
+                  "endlineno": 868,
+                  "lineno": 868,
                   "value": "Unary operator."
                 },
-                "endlineno": 866,
+                "endlineno": 867,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 866,
+                "lineno": 867,
                 "members": {},
                 "name": "operator"
               },
@@ -33612,16 +33612,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 869,
-                  "lineno": 869,
+                  "endlineno": 870,
+                  "lineno": 870,
                   "value": "Value."
                 },
-                "endlineno": 868,
+                "endlineno": 869,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 868,
+                "lineno": 869,
                 "members": {},
                 "name": "value"
               }
@@ -33637,8 +33637,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 515,
-                "lineno": 515,
+                "endlineno": 516,
+                "lineno": 516,
                 "value": {
                   "arguments": [
                     {
@@ -33667,16 +33667,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 517,
-              "lineno": 517,
+              "endlineno": 518,
+              "lineno": 518,
               "value": "Variadic keyword parameters like `**kwargs`."
             },
-            "endlineno": 524,
+            "endlineno": 525,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 515,
+            "lineno": 516,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33700,8 +33700,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 520,
-                      "lineno": 520,
+                      "endlineno": 521,
+                      "lineno": 521,
                       "value": "Double-starred value."
                     },
                     "kind": "positional or keyword",
@@ -33712,10 +33712,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 524,
+                "endlineno": 525,
                 "kind": "function",
                 "labels": [],
-                "lineno": 522,
+                "lineno": 523,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33761,16 +33761,16 @@
                   "name": "Expr"
                 },
                 "docstring": {
-                  "endlineno": 520,
-                  "lineno": 520,
+                  "endlineno": 521,
+                  "lineno": 521,
                   "value": "Double-starred value."
                 },
-                "endlineno": 519,
+                "endlineno": 520,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 519,
+                "lineno": 520,
                 "members": {},
                 "name": "value"
               }
@@ -33786,8 +33786,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 502,
-                "lineno": 502,
+                "endlineno": 503,
+                "lineno": 503,
                 "value": {
                   "arguments": [
                     {
@@ -33816,16 +33816,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 504,
-              "lineno": 504,
+              "endlineno": 505,
+              "lineno": 505,
               "value": "Variadic positional parameters like `*args`."
             },
-            "endlineno": 511,
+            "endlineno": 512,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 502,
+            "lineno": 503,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -33849,8 +33849,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 507,
-                      "lineno": 507,
+                      "endlineno": 508,
+                      "lineno": 508,
                       "value": "Starred value."
                     },
                     "kind": "positional or keyword",
@@ -33861,10 +33861,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 511,
+                "endlineno": 512,
                 "kind": "function",
                 "labels": [],
-                "lineno": 509,
+                "lineno": 510,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -33910,16 +33910,16 @@
                   "name": "Expr"
                 },
                 "docstring": {
-                  "endlineno": 507,
-                  "lineno": 507,
+                  "endlineno": 508,
+                  "lineno": 508,
                   "value": "Starred value."
                 },
-                "endlineno": 506,
+                "endlineno": 507,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 506,
+                "lineno": 507,
                 "members": {},
                 "name": "value"
               }
@@ -33935,8 +33935,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 877,
-                "lineno": 877,
+                "endlineno": 878,
+                "lineno": 878,
                 "value": {
                   "arguments": [
                     {
@@ -33965,16 +33965,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 879,
-              "lineno": 879,
+              "endlineno": 880,
+              "lineno": 880,
               "value": "Yield statements like `yield a`."
             },
-            "endlineno": 888,
+            "endlineno": 889,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 877,
+            "lineno": 878,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -34011,8 +34011,8 @@
                     },
                     "default": "None",
                     "docstring": {
-                      "endlineno": 882,
-                      "lineno": 882,
+                      "endlineno": 883,
+                      "lineno": 883,
                       "value": "Yielded value."
                     },
                     "kind": "positional or keyword",
@@ -34023,10 +34023,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 888,
+                "endlineno": 889,
                 "kind": "function",
                 "labels": [],
-                "lineno": 884,
+                "lineno": 885,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -34085,17 +34085,17 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 882,
-                  "lineno": 882,
+                  "endlineno": 883,
+                  "lineno": 883,
                   "value": "Yielded value."
                 },
-                "endlineno": 881,
+                "endlineno": 882,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 881,
+                "lineno": 882,
                 "members": {},
                 "name": "value",
                 "value": "None"
@@ -34112,8 +34112,8 @@
             ],
             "decorators": [
               {
-                "endlineno": 892,
-                "lineno": 892,
+                "endlineno": 893,
+                "lineno": 893,
                 "value": {
                   "arguments": [
                     {
@@ -34142,16 +34142,16 @@
               }
             ],
             "docstring": {
-              "endlineno": 894,
-              "lineno": 894,
+              "endlineno": 895,
+              "lineno": 895,
               "value": "Yield statements like `yield from a`."
             },
-            "endlineno": 901,
+            "endlineno": 902,
             "kind": "class",
             "labels": [
               "dataclass"
             ],
-            "lineno": 892,
+            "lineno": 893,
             "members": {
               "__init__": {
                 "decorators": [],
@@ -34183,8 +34183,8 @@
                     },
                     "default": null,
                     "docstring": {
-                      "endlineno": 897,
-                      "lineno": 897,
+                      "endlineno": 898,
+                      "lineno": 898,
                       "value": "Yielded-from value."
                     },
                     "kind": "positional or keyword",
@@ -34195,10 +34195,10 @@
               },
               "iterate": {
                 "decorators": [],
-                "endlineno": 901,
+                "endlineno": 902,
                 "kind": "function",
                 "labels": [],
-                "lineno": 899,
+                "lineno": 900,
                 "members": {},
                 "name": "iterate",
                 "parameters": [
@@ -34252,16 +34252,16 @@
                   }
                 },
                 "docstring": {
-                  "endlineno": 897,
-                  "lineno": 897,
+                  "endlineno": 898,
+                  "lineno": 898,
                   "value": "Yielded-from value."
                 },
-                "endlineno": 896,
+                "endlineno": 897,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 896,
+                "lineno": 897,
                 "members": {},
                 "name": "value"
               }
@@ -34332,12 +34332,12 @@
             "target_path": "typing.TYPE_CHECKING"
           },
           "_binary_op_map": {
-            "endlineno": 925,
+            "endlineno": 926,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 911,
+            "lineno": 912,
             "members": {},
             "name": "_binary_op_map",
             "value": {
@@ -34531,12 +34531,12 @@
             }
           },
           "_bool_op_map": {
-            "endlineno": 930,
+            "endlineno": 931,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 927,
+            "lineno": 928,
             "members": {},
             "name": "_bool_op_map",
             "value": {
@@ -34577,10 +34577,10 @@
           },
           "_build": {
             "decorators": [],
-            "endlineno": 1229,
+            "endlineno": 1230,
             "kind": "function",
             "labels": [],
-            "lineno": 1228,
+            "lineno": 1229,
             "members": {},
             "name": "_build",
             "parameters": [
@@ -34636,10 +34636,10 @@
           },
           "_build_attribute": {
             "decorators": [],
-            "endlineno": 955,
+            "endlineno": 956,
             "kind": "function",
             "labels": [],
-            "lineno": 946,
+            "lineno": 947,
             "members": {},
             "name": "_build_attribute",
             "parameters": [
@@ -34695,10 +34695,10 @@
           },
           "_build_binop": {
             "decorators": [],
-            "endlineno": 963,
+            "endlineno": 964,
             "kind": "function",
             "labels": [],
-            "lineno": 958,
+            "lineno": 959,
             "members": {},
             "name": "_build_binop",
             "parameters": [
@@ -34754,10 +34754,10 @@
           },
           "_build_boolop": {
             "decorators": [],
-            "endlineno": 970,
+            "endlineno": 971,
             "kind": "function",
             "labels": [],
-            "lineno": 966,
+            "lineno": 967,
             "members": {},
             "name": "_build_boolop",
             "parameters": [
@@ -34813,10 +34813,10 @@
           },
           "_build_call": {
             "decorators": [],
-            "endlineno": 977,
+            "endlineno": 978,
             "kind": "function",
             "labels": [],
-            "lineno": 973,
+            "lineno": 974,
             "members": {},
             "name": "_build_call",
             "parameters": [
@@ -34872,10 +34872,10 @@
           },
           "_build_compare": {
             "decorators": [],
-            "endlineno": 985,
+            "endlineno": 986,
             "kind": "function",
             "labels": [],
-            "lineno": 980,
+            "lineno": 981,
             "members": {},
             "name": "_build_compare",
             "parameters": [
@@ -34931,10 +34931,10 @@
           },
           "_build_comprehension": {
             "decorators": [],
-            "endlineno": 994,
+            "endlineno": 995,
             "kind": "function",
             "labels": [],
-            "lineno": 988,
+            "lineno": 989,
             "members": {},
             "name": "_build_comprehension",
             "parameters": [
@@ -34990,10 +34990,10 @@
           },
           "_build_constant": {
             "decorators": [],
-            "endlineno": 1033,
+            "endlineno": 1034,
             "kind": "function",
             "labels": [],
-            "lineno": 997,
+            "lineno": 998,
             "members": {},
             "name": "_build_constant",
             "parameters": [
@@ -35093,10 +35093,10 @@
           },
           "_build_dict": {
             "decorators": [],
-            "endlineno": 1040,
+            "endlineno": 1041,
             "kind": "function",
             "labels": [],
-            "lineno": 1036,
+            "lineno": 1037,
             "members": {},
             "name": "_build_dict",
             "parameters": [
@@ -35152,10 +35152,10 @@
           },
           "_build_dictcomp": {
             "decorators": [],
-            "endlineno": 1048,
+            "endlineno": 1049,
             "kind": "function",
             "labels": [],
-            "lineno": 1043,
+            "lineno": 1044,
             "members": {},
             "name": "_build_dictcomp",
             "parameters": [
@@ -35211,10 +35211,10 @@
           },
           "_build_formatted": {
             "decorators": [],
-            "endlineno": 1058,
+            "endlineno": 1059,
             "kind": "function",
             "labels": [],
-            "lineno": 1051,
+            "lineno": 1052,
             "members": {},
             "name": "_build_formatted",
             "parameters": [
@@ -35279,10 +35279,10 @@
           },
           "_build_generatorexp": {
             "decorators": [],
-            "endlineno": 1065,
+            "endlineno": 1066,
             "kind": "function",
             "labels": [],
-            "lineno": 1061,
+            "lineno": 1062,
             "members": {},
             "name": "_build_generatorexp",
             "parameters": [
@@ -35338,10 +35338,10 @@
           },
           "_build_ifexp": {
             "decorators": [],
-            "endlineno": 1073,
+            "endlineno": 1074,
             "kind": "function",
             "labels": [],
-            "lineno": 1068,
+            "lineno": 1069,
             "members": {},
             "name": "_build_ifexp",
             "parameters": [
@@ -35397,10 +35397,10 @@
           },
           "_build_joinedstr": {
             "decorators": [],
-            "endlineno": 1083,
+            "endlineno": 1084,
             "kind": "function",
             "labels": [],
-            "lineno": 1076,
+            "lineno": 1077,
             "members": {},
             "name": "_build_joinedstr",
             "parameters": [
@@ -35465,10 +35465,10 @@
           },
           "_build_keyword": {
             "decorators": [],
-            "endlineno": 1089,
+            "endlineno": 1090,
             "kind": "function",
             "labels": [],
-            "lineno": 1086,
+            "lineno": 1087,
             "members": {},
             "name": "_build_keyword",
             "parameters": [
@@ -35538,10 +35538,10 @@
           },
           "_build_lambda": {
             "decorators": [],
-            "endlineno": 1106,
+            "endlineno": 1107,
             "kind": "function",
             "labels": [],
-            "lineno": 1092,
+            "lineno": 1093,
             "members": {},
             "name": "_build_lambda",
             "parameters": [
@@ -35597,10 +35597,10 @@
           },
           "_build_list": {
             "decorators": [],
-            "endlineno": 1110,
+            "endlineno": 1111,
             "kind": "function",
             "labels": [],
-            "lineno": 1109,
+            "lineno": 1110,
             "members": {},
             "name": "_build_list",
             "parameters": [
@@ -35656,10 +35656,10 @@
           },
           "_build_listcomp": {
             "decorators": [],
-            "endlineno": 1114,
+            "endlineno": 1115,
             "kind": "function",
             "labels": [],
-            "lineno": 1113,
+            "lineno": 1114,
             "members": {},
             "name": "_build_listcomp",
             "parameters": [
@@ -35715,10 +35715,10 @@
           },
           "_build_name": {
             "decorators": [],
-            "endlineno": 1118,
+            "endlineno": 1119,
             "kind": "function",
             "labels": [],
-            "lineno": 1117,
+            "lineno": 1118,
             "members": {},
             "name": "_build_name",
             "parameters": [
@@ -35774,10 +35774,10 @@
           },
           "_build_named_expr": {
             "decorators": [],
-            "endlineno": 1122,
+            "endlineno": 1123,
             "kind": "function",
             "labels": [],
-            "lineno": 1121,
+            "lineno": 1122,
             "members": {},
             "name": "_build_named_expr",
             "parameters": [
@@ -35833,10 +35833,10 @@
           },
           "_build_set": {
             "decorators": [],
-            "endlineno": 1126,
+            "endlineno": 1127,
             "kind": "function",
             "labels": [],
-            "lineno": 1125,
+            "lineno": 1126,
             "members": {},
             "name": "_build_set",
             "parameters": [
@@ -35892,10 +35892,10 @@
           },
           "_build_setcomp": {
             "decorators": [],
-            "endlineno": 1130,
+            "endlineno": 1131,
             "kind": "function",
             "labels": [],
-            "lineno": 1129,
+            "lineno": 1130,
             "members": {},
             "name": "_build_setcomp",
             "parameters": [
@@ -35951,10 +35951,10 @@
           },
           "_build_slice": {
             "decorators": [],
-            "endlineno": 1138,
+            "endlineno": 1139,
             "kind": "function",
             "labels": [],
-            "lineno": 1133,
+            "lineno": 1134,
             "members": {},
             "name": "_build_slice",
             "parameters": [
@@ -36010,10 +36010,10 @@
           },
           "_build_starred": {
             "decorators": [],
-            "endlineno": 1142,
+            "endlineno": 1143,
             "kind": "function",
             "labels": [],
-            "lineno": 1141,
+            "lineno": 1142,
             "members": {},
             "name": "_build_starred",
             "parameters": [
@@ -36069,10 +36069,10 @@
           },
           "_build_subscript": {
             "decorators": [],
-            "endlineno": 1171,
+            "endlineno": 1172,
             "kind": "function",
             "labels": [],
-            "lineno": 1145,
+            "lineno": 1146,
             "members": {},
             "name": "_build_subscript",
             "parameters": [
@@ -36155,10 +36155,10 @@
           },
           "_build_tuple": {
             "decorators": [],
-            "endlineno": 1181,
+            "endlineno": 1182,
             "kind": "function",
             "labels": [],
-            "lineno": 1174,
+            "lineno": 1175,
             "members": {},
             "name": "_build_tuple",
             "parameters": [
@@ -36223,10 +36223,10 @@
           },
           "_build_unaryop": {
             "decorators": [],
-            "endlineno": 1185,
+            "endlineno": 1186,
             "kind": "function",
             "labels": [],
-            "lineno": 1184,
+            "lineno": 1185,
             "members": {},
             "name": "_build_unaryop",
             "parameters": [
@@ -36282,10 +36282,10 @@
           },
           "_build_yield": {
             "decorators": [],
-            "endlineno": 1189,
+            "endlineno": 1190,
             "kind": "function",
             "labels": [],
-            "lineno": 1188,
+            "lineno": 1189,
             "members": {},
             "name": "_build_yield",
             "parameters": [
@@ -36341,10 +36341,10 @@
           },
           "_build_yield_from": {
             "decorators": [],
-            "endlineno": 1193,
+            "endlineno": 1194,
             "kind": "function",
             "labels": [],
-            "lineno": 1192,
+            "lineno": 1193,
             "members": {},
             "name": "_build_yield_from",
             "parameters": [
@@ -36399,12 +36399,12 @@
             }
           },
           "_compare_op_map": {
-            "endlineno": 943,
+            "endlineno": 944,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 932,
+            "lineno": 933,
             "members": {},
             "name": "_compare_op_map",
             "value": {
@@ -36883,12 +36883,12 @@
             }
           },
           "_msg_format": {
-            "endlineno": 1298,
+            "endlineno": 1299,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1298,
+            "lineno": 1299,
             "members": {},
             "name": "_msg_format",
             "value": "'{path}:{lineno}: Failed to get %s expression from {node_class}: {error}'"
@@ -36949,12 +36949,12 @@
                 "implicit": true
               }
             },
-            "endlineno": 1225,
+            "endlineno": 1226,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1196,
+            "lineno": 1197,
             "members": {},
             "name": "_node_map",
             "value": {
@@ -37442,12 +37442,12 @@
             }
           },
           "_unary_op_map": {
-            "endlineno": 909,
+            "endlineno": 910,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 904,
+            "lineno": 905,
             "members": {},
             "name": "_unary_op_map",
             "value": {
@@ -37622,12 +37622,12 @@
             "target_path": "dataclasses.dataclass"
           },
           "get_annotation": {
-            "endlineno": 1299,
+            "endlineno": 1300,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1299,
+            "lineno": 1300,
             "members": {},
             "name": "get_annotation",
             "value": {
@@ -37654,12 +37654,12 @@
             }
           },
           "get_base_class": {
-            "endlineno": 1305,
+            "endlineno": 1306,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1305,
+            "lineno": 1306,
             "members": {},
             "name": "get_base_class",
             "value": {
@@ -37686,12 +37686,12 @@
             }
           },
           "get_condition": {
-            "endlineno": 1311,
+            "endlineno": 1312,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1311,
+            "lineno": 1312,
             "members": {},
             "name": "get_condition",
             "value": {
@@ -37720,14 +37720,14 @@
           "get_expression": {
             "decorators": [],
             "docstring": {
-              "endlineno": 1247,
-              "lineno": 1238,
+              "endlineno": 1248,
+              "lineno": 1239,
               "value": "Build an expression from an AST.\n\nParameters:\n    node: The annotation node.\n    parent: The parent used to resolve the name.\n    parse_strings: Whether to try and parse strings as type annotations.\n\nReturns:\n    A string or resovable name or expression."
             },
-            "endlineno": 1257,
+            "endlineno": 1258,
             "kind": "function",
             "labels": [],
-            "lineno": 1232,
+            "lineno": 1233,
             "members": {},
             "name": "get_expression",
             "parameters": [
@@ -37825,12 +37825,12 @@
             "target_path": "functools.partial"
           },
           "safe_get_annotation": {
-            "endlineno": 1304,
+            "endlineno": 1305,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1300,
+            "lineno": 1301,
             "members": {},
             "name": "safe_get_annotation",
             "value": {
@@ -37874,12 +37874,12 @@
             }
           },
           "safe_get_base_class": {
-            "endlineno": 1310,
+            "endlineno": 1311,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1306,
+            "lineno": 1307,
             "members": {},
             "name": "safe_get_base_class",
             "value": {
@@ -37923,12 +37923,12 @@
             }
           },
           "safe_get_condition": {
-            "endlineno": 1316,
+            "endlineno": 1317,
             "kind": "attribute",
             "labels": [
               "module-attribute"
             ],
-            "lineno": 1312,
+            "lineno": 1313,
             "members": {},
             "name": "safe_get_condition",
             "value": {
@@ -37974,14 +37974,14 @@
           "safe_get_expression": {
             "decorators": [],
             "docstring": {
-              "endlineno": 1280,
-              "lineno": 1268,
+              "endlineno": 1281,
+              "lineno": 1269,
               "value": "Safely (no exception) build a resolvable annotation.\n\nParameters:\n    node: The annotation node.\n    parent: The parent used to resolve the name.\n    parse_strings: Whether to try and parse strings as type annotations.\n    log_level: Log level to use to log a message. None to disable logging.\n    msg_format: A format string for the log message. Available placeholders:\n        path, lineno, node, error.\n\nReturns:\n    A string or resovable name or expression."
             },
-            "endlineno": 1295,
+            "endlineno": 1296,
             "kind": "function",
             "labels": [],
-            "lineno": 1260,
+            "lineno": 1261,
             "members": {},
             "name": "safe_get_expression",
             "parameters": [
@@ -49818,26 +49818,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 2085,
-              "lineno": 2085,
+              "endlineno": 2102,
+              "lineno": 2102,
               "value": "The class representing a Python module/class/instance attribute."
             },
-            "endlineno": 2130,
+            "endlineno": 2147,
             "kind": "class",
             "labels": [],
-            "lineno": 2084,
+            "lineno": 2101,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 2103,
-                  "lineno": 2096,
+                  "endlineno": 2120,
+                  "lineno": 2113,
                   "value": "Initialize the function.\n\nParameters:\n    *args: See [`griffe.Object`][].\n    value: The attribute value, if any.\n    annotation: The attribute annotation, if any.\n    **kwargs: See [`griffe.Object`][]."
                 },
-                "endlineno": 2112,
+                "endlineno": 2129,
                 "kind": "function",
                 "labels": [],
-                "lineno": 2089,
+                "lineno": 2106,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -49931,16 +49931,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2108,
-                  "lineno": 2108,
+                  "endlineno": 2125,
+                  "lineno": 2125,
                   "value": "The attribute type annotation."
                 },
-                "endlineno": 2107,
+                "endlineno": 2124,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2107,
+                "lineno": 2124,
                 "members": {},
                 "name": "annotation",
                 "value": {
@@ -49951,14 +49951,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 2124,
-                  "lineno": 2115,
+                  "endlineno": 2141,
+                  "lineno": 2132,
                   "value": "Return this function's data as a dictionary.\n\nSee also: [`as_json`][griffe.Attribute.as_json].\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 2130,
+                "endlineno": 2147,
                 "kind": "function",
                 "labels": [],
-                "lineno": 2114,
+                "lineno": 2131,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -50011,28 +50011,28 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2112,
-                  "lineno": 2112,
+                  "endlineno": 2129,
+                  "lineno": 2129,
                   "value": "The deleter linked to this property."
                 },
-                "endlineno": 2111,
+                "endlineno": 2128,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2111,
+                "lineno": 2128,
                 "members": {},
                 "name": "deleter",
                 "value": "None"
               },
               "kind": {
-                "endlineno": 2087,
+                "endlineno": 2104,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 2087,
+                "lineno": 2104,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -50060,16 +50060,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2110,
-                  "lineno": 2110,
+                  "endlineno": 2127,
+                  "lineno": 2127,
                   "value": "The setter linked to this property."
                 },
-                "endlineno": 2109,
+                "endlineno": 2126,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2109,
+                "lineno": 2126,
                 "members": {},
                 "name": "setter",
                 "value": "None"
@@ -50093,16 +50093,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2106,
-                  "lineno": 2106,
+                  "endlineno": 2123,
+                  "lineno": 2123,
                   "value": "The attribute value."
                 },
-                "endlineno": 2105,
+                "endlineno": 2122,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2105,
+                "lineno": 2122,
                 "members": {},
                 "name": "value",
                 "value": {
@@ -51464,7 +51464,7 @@
               "lineno": 2027,
               "value": "The class representing a Python function."
             },
-            "endlineno": 2081,
+            "endlineno": 2098,
             "kind": "class",
             "labels": [],
             "lineno": 2026,
@@ -51602,14 +51602,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 2076,
-                  "lineno": 2067,
+                  "endlineno": 2093,
+                  "lineno": 2084,
                   "value": "Return this function's data as a dictionary.\n\nSee also: [`as_json`][griffe.Function.as_json].\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 2081,
+                "endlineno": 2098,
                 "kind": "function",
                 "labels": [],
-                "lineno": 2066,
+                "lineno": 2083,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -51782,6 +51782,41 @@
                       }
                     }
                   ]
+                }
+              },
+              "resolve": {
+                "decorators": [],
+                "docstring": {
+                  "endlineno": 2077,
+                  "lineno": 2067,
+                  "value": "Resolve a name within this object's and parents' scope.\n\nParameters:\n    name: The name to resolve.\n\nRaises:\n    NameResolutionError: When the name could not be resolved.\n\nReturns:\n    The resolved name."
+                },
+                "endlineno": 2081,
+                "kind": "function",
+                "labels": [],
+                "lineno": 2066,
+                "members": {},
+                "name": "resolve",
+                "parameters": [
+                  {
+                    "annotation": null,
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "self"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "str"
+                    },
+                    "default": null,
+                    "kind": "positional or keyword",
+                    "name": "name"
+                  }
+                ],
+                "returns": {
+                  "cls": "ExprName",
+                  "name": "str"
                 }
               },
               "returns": {
