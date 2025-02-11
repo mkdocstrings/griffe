@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.5.7](https://github.com/mkdocstrings/griffe/releases/tag/1.5.7) - 2025-02-11
+
+<small>[Compare with 1.5.6](https://github.com/mkdocstrings/griffe/compare/1.5.6...1.5.7)</small>
+
+### Bug Fixes
+
+- Don't conflate passed argument with class member (instance attribute) ([4791b0b](https://github.com/mkdocstrings/griffe/commit/4791b0b5739e64ab2d225b299aea723f3cfbdf00) by Timothée Mazzucotelli). [Issue-357](https://github.com/mkdocstrings/griffe/issues/357)
+
 ## [1.5.6](https://github.com/mkdocstrings/griffe/releases/tag/1.5.6) - 2025-01-30
 
 <small>[Compare with 1.5.5](https://github.com/mkdocstrings/griffe/compare/1.5.5...1.5.6)</small>
