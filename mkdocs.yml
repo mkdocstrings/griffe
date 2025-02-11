@@ -131,6 +131,7 @@ theme:
   - content.tooltips
   - navigation.expand
   - navigation.footer
+  - navigation.instant.preview
   - navigation.path
   - navigation.sections
   - navigation.tabs
@@ -236,7 +237,7 @@ plugins:
           merge_init_into_class: true
           parameter_headings: true
           separate_signature: true
-          show_bases: false
+          show_bases: true
           show_inheritance_diagram: true
           show_root_heading: true
           show_root_full_path: false
