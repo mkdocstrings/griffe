@@ -4,7 +4,7 @@ This document describes some best practices to adopt when using Griffe, or when 
 
 ## Avoid member-submodule name shadowing
 
-Sometimes we find that an `__init__` module defines or import an object which has the same name as a submodule of the parent package.
+Sometimes we find that an `__init__` module defines or imports an object which has the same name as a submodule of the parent package.
 
 **Case 1**
 
@@ -98,7 +98,7 @@ For the reasons mentioned above, **Griffe does not support this kind of name sha
 
 ## Avoid wildcard imports
 
-Wildcard imports allow to import from a module all objects that do not start with an underscore `_`, or all objects that are listed in the module's `__all__` attribute, if it is defined.
+Wildcard imports allow importing from a module all objects that do not start with an underscore `_`, or all objects that are listed in the module's `__all__` attribute, if it is defined.
 
 ```tree
 package/
@@ -223,7 +223,7 @@ __all__ = [
 def function(): ...
 ```
 
-Most Python linting tools allow to forbid the use of wildcard imports.
+Most Python linting tools allow you to forbid the use of wildcard imports.
 
 ## Prefer canonical imports
 
@@ -318,7 +318,7 @@ Apply these recommendations at your discretion: there may be other special cases
 
 Python modules can be written in other languages (C, C++, Rust) and compiled. To extract information from such compiled modules, we have to use dynamic analysis, since sources are not available.
 
-A practice that seem common in projects including compiled modules in their distributions is to make the compiled modules private (prefix their names with an underscore), and to expose their objects from a public module higher-up in the module layout, for example by wildcard importing everything from it.
+A practice that seems common in projects including compiled modules in their distributions is to make the compiled modules private (prefix their names with an underscore), and to expose their objects from a public module higher-up in the module layout, for example by wildcard importing everything from it.
 
 ```tree
 package/

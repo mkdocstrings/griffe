@@ -4,13 +4,13 @@
 
 An API (Application Programming Interface) in the interface with which developers interact with your software. In the Python world, the API of your Python library is the set of modules, classes, functions and other attributes made available to your users. For example, users can do `from your_library import this_function`: `this_function` is part of the API of `your_library`.
 
-Often times, when you develop a library, you create functions, classes, etc. that are only useful internally: they are not supposed to be used by your users. Python does not provide easy or standard ways to actually *prevent* users from using internal objects, so, to distinguish public objects from internal objects, we usually rely on conventions, such as prefixing internal objects' names with an underscore, for example `def _internal_function(): ...`, to mark them as "internal".
+Oftentimes, when you develop a library, you create functions, classes, etc. that are only useful internally: they are not supposed to be used by your users. Python does not provide easy or standard ways to actually *prevent* users from using internal objects, so, to distinguish public objects from internal objects, we usually rely on conventions, such as prefixing internal objects' names with an underscore, for example `def _internal_function(): ...`, to mark them as "internal".
 
 Prefixing an object's name with an underscore still does not prevent users from importing and using this object, but it *informs* them that they are not supposed to import and use it, and that this object might change or even disappear in the future, *without notice*.
 
 On the other hand, public objects are supposed to stay compatible with previous versions of your library for at least a definite amount of time, to prevent downstream code from breaking. Any change that could break downstream code is supposed to be communicated *before* it is actually released. Maintainers of the library usually allow a period of time where the public object can still be used as before, but will emit deprecation warnings when doing so, hinting users that they should upgrade their use of the object (or use another object that will replace it). This period of time is usually called a deprecation period.
 
-So, how do we mark an object as public? How do we inform our users which objects can safely be used, and which one are subject to unnotified changes? Usually, we rely again on the underscore prefix convention: if an object isn't prefixed with an underscore, it means that it is public. But essentially, your public API is what you say it is. If you clearly document that a single function of your package is public, and that all others are subject to unnotified changes and whose usage by users is not supported, then your public API is composed of this single function, and nothing else. **Public APIs are a matter of communication.** Concretely, it's about deciding what parts of your code base are public, and communicating that clearly.
+So, how do we mark an object as public? How do we inform our users which objects can safely be used, and which ones are subject to unnotified changes? Usually, we rely again on the underscore prefix convention: if an object isn't prefixed with an underscore, it means that it is public. But essentially, your public API is what you say it is. If you clearly document that a single function of your package is public, and that all others are subject to unnotified changes and whose usage by users is not supported, then your public API is composed of this single function, and nothing else. **Public APIs are a matter of communication.** Concretely, it's about deciding what parts of your code base are public, and communicating that clearly.
 
 Some components are obviously considered for the public API of a Python package:
 
@@ -30,7 +30,7 @@ Other components *could* be considered for the public API, but usually require t
 - logging messages: users might rely on them to grep the logs
 - exception messages: users might rely on them for various things
 
-Besides, logging and exception messages simply cannot allow deprecation periods where both old and new messages are emitted. Maintainers could however consider adding unique, short codes to message for more robust consumption.
+Besides, logging and exception messages simply cannot allow deprecation periods where both old and new messages are emitted. Maintainers could however consider adding unique, short codes to messages for more robust consumption.
 
 > GRIFFE: **Our recommendation — Communicate your public API, verify what you can.**  
 > Take the time to learn about and use ways to declare, communicate and deprecate your public API. Your users will have an easier time using your library. On the maintenance side, you won't get bug reports for uses that are not supported, or you will be able to quickly close them by pointing at the documentation explaining what your public API is, or why something was deprecated, for how long, and how to upgrade.
@@ -86,7 +86,7 @@ class ThisOtherClass:
 
 Here, even though `this_other_function` and `ThisOtherClass` are *not* prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
 
-Declaring `__all__` has another beneficial effect: it affects wildcard imports. When your users use wildcard imports to import things from one of your module, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](python-code.md#avoid-wildcard-imports).
+Declaring `__all__` has another beneficial effect: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](python-code.md#avoid-wildcard-imports).
 
 By declaring `__all__`, your public API becomes explicit, and explicit is better than implicit. But `__all__` only works for module-level objects. Within classes, you will still have to rely on the underscore prefix convention to mark methods or attributes as internal/private.
 
@@ -101,7 +101,7 @@ class Thing:
 
 ### Redundant aliases
 
-When you expose your public API in `__init__` modules by importing most object from the underlying modules, it can be a bit tedious to import everything, and then list everything again in the `__all__` list attribute. For this reason, another convention emerged where objects imported and aliased with the same name are considered public.
+When you expose your public API in `__init__` modules by importing most objects from the underlying modules, it can be a bit tedious to import everything, and then list everything again in the `__all__` list attribute. For this reason, another convention emerged where objects imported and aliased with the same name are considered public.
 
 ```python title="my_package/__init__.py"
 from elsewhere import something as something
@@ -291,7 +291,7 @@ Whether or not you are planning to hide your module layout, as recommended in th
 
 Ensuring unique names across a code base is sometimes not feasible, or not desirable; in this case, try to use namespacing while still hiding the module layout the best you can.
 
-In accordance with our recommendation on module layouts, it is also useful to ensure that a single public object is exposed in a single location. Ensuring unique public location for each object removes any ambiguity on the user side as to where to import the object from. It also helps documentation generators that try to cross-reference objects: with several locations, they cannot know for sure which one is the best to reference (which path is best to use and display in the generated documentation). With a fully hidden layout, all objects are *only* exposed in the top-level module, so there is no ambiguity. With partially hidden layouts, or completely public layouts, make sure to declare your public API so that each object is only exposed in a single location. Example:
+In accordance with our recommendation on module layouts, it is also useful to ensure that a single public object is exposed in a single location. Ensuring a unique public location for each object removes any ambiguity on the user side as to where to import the object from. It also helps documentation generators that try to cross-reference objects: with several locations, they cannot know for sure which one is the best to reference (which path is best to use and display in the generated documentation). With a fully hidden layout, all objects are *only* exposed in the top-level module, so there is no ambiguity. With partially hidden layouts, or completely public layouts, make sure to declare your public API so that each object is only exposed in a single location. Example:
 
 ```tree
 my_package/
@@ -397,7 +397,7 @@ We invite you to check out our own test file: [`test_internals.py`](https://gith
 - no private object is added to the inventory
 
 GRIFFE: **Our recommendation — Test your API declaration early.**  
-The sooner you test your API declaration, the better your code base will evolve. This will force you to really think about how your API is exposed to yours users. This will prevent mistakes like leaving a new object as public while you don't want users to start relying on it, or forgetting to expose a public object in your top-level module or to document it in your API docs.
+The sooner you test your API declaration, the better your code base will evolve. This will force you to really think about how your API is exposed to your users. This will prevent mistakes like leaving a new object as public while you don't want users to start relying on it, or forgetting to expose a public object in your top-level module or to document it in your API docs.
 
 ## Linters
 
@@ -406,7 +406,7 @@ Depending on their configuration, many popular Python linters will warn you that
 > GRIFFE: **Our recommendation — Ignore "protected access" warnings for your own package, or make the warnings smarter.**  
 > To users of linters, we recommend adding `# noqa` comments on the relevant code lines, or globally disabling warnings related to "private object access" if per-line exclusion requires too much maintenance.
 >
-> To authors of linters, we recommend (if possible) making these warnings smarter: they shouldn't be triggered when private objects are accessed from within the *same package*. Marking objects as private is meant to prevent downstream code to use them, not to prevent the developers of the current package themselves to use them: they know what they are doing and should be allowed to use their own private objects without warnings. At the same time, they don't want to disable these warnings *globally*, so the warnings should be derived in multiple versions, or made smarter.
+> To authors of linters, we recommend (if possible) making these warnings smarter: they shouldn't be triggered when private objects are accessed from within the *same package*. Marking objects as private is meant to prevent downstream code from using them, not to prevent the developers of the current package themselves from using them: they know what they are doing and should be allowed to use their own private objects without warnings. At the same time, they don't want to disable these warnings *globally*, so the warnings should be derived in multiple versions, or made smarter.
 
 ## The CLI is API too
 
@@ -416,7 +416,7 @@ Generally, we distinguish the API (Application Programming Interface) from the C
 
 Even if a project was not designed to be used programmatically (doesn't expose a public API), it is *a certainty* that with enough popularity, it *will* be used programmatically. And the CLI will even more so be used programmatically if there is no API. Even if there is an API, sometimes it makes more sense to hook into the CLI rather than the API (cross-language integrations, wrappers, etc.).
 
-Therefore, we urge everyone to consider their CLI as API too. We urge everyone to always design their project as library-first APIs rather than CLI-first tools.
+Therefore, we urge everyone to consider their CLI as an API too. We urge everyone to always design their project as library-first APIs rather than CLI-first tools.
 
 The first user of your CLI as API is... you. When you declare your project's CLI entrypoint in pyproject.toml:
 
@@ -506,21 +506,21 @@ The third and next users of your CLI as API are your users: just as you made you
 
 With time, the code base of your project evolves. You add features, you fix bugs, and you generally reorganize code. Some of these changes might make your project's public API incompatible with previous versions. In that case, you usually have to "deprecate" previous usage in favor of the new usage. That means you have to support both, and emit deprecation warnings when old usage is detected.
 
-There are many different ways of deprecating previous usage of code, which depend on the change itself. We invite you to read our [Checking APIs](../checking.md) chapter, which describes all the API changes Griffe is able to detect, and provides hint on how to allow deprecation periods for each kind of change.
+There are many different ways of deprecating previous usage of code, which depend on the change itself. We invite you to read our [Checking APIs](../checking.md) chapter, which describes all the API changes Griffe is able to detect, and provides hints on how to allow deprecation periods for each kind of change.
 
 In addition to emitting deprecation warnings, you should also update the docstrings and documentation for the old usage to point at the new usage, add "deprecated" labels where possible, and mark objects as deprecated when possible.
 
-GRIFFE: **Our recommendation — Allow a deprecation periods, document deprecations.**  
+GRIFFE: **Our recommendation — Allow a deprecation period, document deprecations.**  
 Try allowing deprecation periods for every breaking change. Most changes can be made backward-compatible at the cost of writing legacy code. Use tools like [Yore](https://pawamoy.github.io/yore) to manage legacy code, and standard utilities like [`warnings.deprecated`][] to mark objects as deprecated. Griffe extensions such as [griffe-warnings-deprecated](https://mkdocstrings.github.io/griffe-warnings-deprecated/) can help you by dynamically augmenting docstrings for your API documentation.
 
 ## Third-party libraries
 
 A few third-party libraries directly or indirectly related to public APIs deserve to be mentioned here.
 
-[public](https://pypi.org/project/public/) lets you decorate objects with `@public.add` to dynamically add them to `__all__`, so that you don't have to build a list of strings yourself. The "public visibility" marker is closer to each object, and might help avoiding mistakes like forgetting to update `__all__` when an object is removed or renamed.
+[public](https://pypi.org/project/public/) lets you decorate objects with `@public.add` to dynamically add them to `__all__`, so that you don't have to build a list of strings yourself. The "public visibility" marker is closer to each object, and might help avoid mistakes like forgetting to update `__all__` when an object is removed or renamed.
 
 [modul](https://pypi.org/project/modul/), from Frost Ming, the author of [PDM](https://pdm-project.org/en/latest/), goes one step further and actually hides attributes that are not marked "exported" from users: they won't be able to access un-exported attributes, leaving *only* the public API visible.
 
-[Deprecated](https://pypi.org/project/Deprecated/), which was probably a source of inspiration for [PEP 702](https://peps.python.org/pep-0702/), allows decorating objects with `@deprecated` to mark them as deprecated. Such decorated callables will emit deprecation warnings when called. PEP 702's `warnings.deprecated` could be seen as its successor, bringing the feature directly into the standard library so that type checkers and other static analysis tool can converge on this way to mark objects as deprecated.
+[Deprecated](https://pypi.org/project/Deprecated/), which was probably a source of inspiration for [PEP 702](https://peps.python.org/pep-0702/), allows decorating objects with `@deprecated` to mark them as deprecated. Such decorated callables will emit deprecation warnings when called. PEP 702's `warnings.deprecated` could be seen as its successor, bringing the feature directly into the standard library so that type checkers and other static analysis tools can converge on this way to mark objects as deprecated.
 
 [slothy](https://pypi.org/project/slothy/), which is less directly related to public APIs, but useful for the case where you are hiding your modules layout and exposing all your public API from the top-level `__init__` module. Depending on the size of your public API, and the time it takes to import everything (memory initializations, etc.), it might be interesting to make all these imports *lazy*. With a lazily imported public API, users who are only interested in a few objects of your public API won't have to pay the price of importing everything.

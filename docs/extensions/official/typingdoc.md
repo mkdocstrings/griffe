@@ -7,7 +7,7 @@
 
 ---
 
-This extension reads docstrings for parameters, return values and more from type annotation using [`Annotated`][typing.Annotated] and the [`Doc`][typing_extensions.Doc] class suggested in [PEP 727](https://peps.python.org/pep-0727/). Documenting parameters and return values this way makes it possible to completely avoid relying on a particular "docstring style" (Google, Numpydoc, Sphinx, etc.) and just use plain markup in module/classes/function docstrings. Docstrings therefore do not have to be parsed at all.
+This extension reads docstrings for parameters, return values and more from type annotations using [`Annotated`][typing.Annotated] and the [`Doc`][typing_extensions.Doc] class suggested in [PEP 727](https://peps.python.org/pep-0727/). Documenting parameters and return values this way makes it possible to completely avoid relying on a particular "docstring style" (Google, Numpydoc, Sphinx, etc.) and just use plain markup in module/classes/function docstrings. Docstrings therefore do not have to be parsed at all.
 
 ```python
 from typing import Annotated as An

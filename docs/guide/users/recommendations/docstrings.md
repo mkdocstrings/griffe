@@ -128,7 +128,7 @@ def greet(
 
 ## General tips
 
-Your docstrings will typically be used to document your API, either on a deployed (static) website, or locally, on the command line or in a Python interpreter. Therefore, when writing your docstrings, you should address to the right audience: the users of your code. Try to stay succinct and give clear examples. Docstrings are not really the place to explain architectural or technical decisions made while developing the project: this information, while extremely valuable, is better written in *code comments*, where the audience is other developers working on the code base.
+Your docstrings will typically be used to document your API, either on a deployed (static) website, or locally, on the command line or in a Python interpreter. Therefore, when writing your docstrings, you should address the right audience: the users of your code. Try to stay succinct and give clear examples. Docstrings are not really the place to explain architectural or technical decisions made while developing the project: this information, while extremely valuable, is better written in *code comments*, where the audience is other developers working on the code base.
 
 Your docstrings will typically again be read online (HTML) or other types of documents such as manual pages or PDFs. Make sure to write complete sentences, with correct punctuation. That means for example, to start each parameter description with a capital letter, and to end it with a period.
 
@@ -307,7 +307,7 @@ class GhostTown:
 
 ## Exceptions, warnings
 
-Callables that raise exception or emit warnings can document each of these exceptions and warnings. Documenting them informs your users that they could or should catch the raised exceptions, or that they could filter or configure warnings differently. The description next to each exception or warning should explain how or when they are raised or emitted.
+Callables that raise exceptions or emit warnings can document each of these exceptions and warnings. Documenting them informs your users that they could or should catch the raised exceptions, or that they could filter or configure warnings differently. The description next to each exception or warning should explain how or when they are raised or emitted.
 
 ```python
 def verify_spirit_chest():

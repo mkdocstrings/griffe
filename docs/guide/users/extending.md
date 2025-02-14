@@ -128,7 +128,7 @@ For a more concrete example, let say that we visit (or inspect) an AST (or objec
 - it will instantiate a [Function][griffe.Function]
 - then it will go back up and finish walking since there are no more nodes to walk through
 
-Every time the agent enters a node, creates an object instance, or finish handling members of an object, it will trigger an event.
+Every time the agent enters a node, creates an object instance, or finishes handling members of an object, it will trigger an event.
 
 The flow of events is drawn in the following flowchart:
 
@@ -182,7 +182,7 @@ class event_mod_members event
 classDef event stroke:#3cc,stroke-width:2
 ```
 
-Hopefully this flowchart gave you a pretty good idea of what happens when Griffe collects data from a Python module. The next section will explain in more details the different events that are triggered, and how to hook onto them in your extensions.
+Hopefully this flowchart gives you a pretty good idea of what happens when Griffe collects data from a Python module. The next section will explain in more details the different events that are triggered, and how to hook onto them in your extensions.
 
 ### Events and hooks
 
@@ -201,7 +201,7 @@ There are 3 generic **analysis events**:
 
 - [`on_node`][griffe.Extension.on_node]: The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
 - [`on_instance`][griffe.Extension.on_instance]: The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], or [Attribute][griffe.Attribute], and added it as a member of its parent. The "on instance" event is **not** triggered when an [Alias][griffe.Alias] is created.
-- [`on_members`][griffe.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions and attributes do not have members, so there are no "on members" event for these two kinds.
+- [`on_members`][griffe.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions and attributes do not have members, so there are no "on members" events for these two kinds.
 
 There are also specific **analysis events** for each object kind:
 
@@ -456,7 +456,7 @@ class MyExtension(griffe.Extension):
 
 ### Full example
 
-The following example shows how one could write a "dynamic docstrings" extension that dynamically import objects that declare their docstrings dynamically, to improve support for such docstrings. The extension is configurable to run only on user-selected objects.
+The following example shows how one could write a "dynamic docstrings" extension that dynamically imports objects that declare their docstrings dynamically, to improve support for such docstrings. The extension is configurable to run only on user-selected objects.
 
 Package structure (or just write your extension in a local script):
 

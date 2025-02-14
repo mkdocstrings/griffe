@@ -187,7 +187,7 @@ The [Navigating](navigating.md) topic will tell you more about aliases and how t
 
 ### Modules collection
 
-In the first section of this page, we briefly mentioned that Griffe always loads the entire package containing the object you requested. One of the reason it always load entire packages and not just single, isolated objects, is that alias resolution requires all objects of a package to be loaded. Which means that if an alias points to an object that is part of *another* package, it can only be resolved if the *other* package is *also loaded*. For example:
+In the first section of this page, we briefly mentioned that Griffe always loads the entire package containing the object you requested. One of the reasons it always loads entire packages and not just single, isolated objects, is that alias resolution requires all objects of a package to be loaded. Which means that if an alias points to an object that is part of *another* package, it can only be resolved if the *other* package is *also loaded*. For example:
 
 ```tree title="File layout"
 ./

@@ -7,7 +7,7 @@
 
 ---
 
-This extension, when enabled, iterates on the declared members of all classes found within a package, and if they don't have a docstring, but have a parent member with a docstring, sets their docstring to this parent docstring.
+This extension, when enabled, iterates over the declared members of all classes found within a package, and if they don't have a docstring, but do have a parent member with a docstring, sets their docstring to that parent's docstring.
 
 ```python
 class Base:
@@ -25,4 +25,4 @@ class Derived(Base):
         ...
 ```
 
-Following with example, *without* the extension `Derived.attr` and `Derived.hello` have no docstrings, while *with* the extension they will have the `Base.attr` and `Base.hello` docstrings attached, respectively.
+In the example above, *without* the extension `Derived.attr` and `Derived.hello` have no docstrings, while *with* the extension they will have the `Base.attr` and `Base.hello` docstrings attached, respectively.
