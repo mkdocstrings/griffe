@@ -31,7 +31,7 @@ $ griffe check mypackage -b 8afcfd6e
 
 TIP: **Important:** Remember that the base is the most recent reference, and the one we compare it against is the oldest one.
 
-The package name you pass to `griffe check` must be found relatively to the repository root. For Griffe to find packages in subfolders, pass the parent subfolder to the `--search` or `-s` option. Example for `src`-layouts:
+The package name you pass to `griffe check` must be found relative to the repository root. For Griffe to find packages in subfolders, pass the parent subfolder to the `--search` or `-s` option. Example for `src`-layouts:
 
 ```console
 $ griffe check -s src griffe
@@ -158,7 +158,7 @@ def greet(name, prefix):
 greet("hello", "world")
 ```
 
-NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer pass it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
+NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer passes it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
 > TIP: **Hint**  
 > If you often add, move or remove parameters, consider making them keyword-only, so that their order doesn't matter.

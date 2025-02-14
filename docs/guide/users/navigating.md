@@ -26,7 +26,7 @@ When [loading an object](loading.md), Griffe will give you back an instance of o
 <class '_griffe.models.Attribute'>
 ```
 
-However deep is the object, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.
+However deep the object is, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.
 
 ## Moving up: parents
 
@@ -102,7 +102,7 @@ The same way members are accessed, they can also be set:
 
 Griffe supports class inheritance, both when visiting and inspecting modules.
 
-To access members of a class that are inherited from base classes, use the [`inherited_members`][griffe.Object.inherited_members] attribute. Everytime you access inherited members, the base classes of the given class will be resolved, then the MRO (Method Resolution Order) will be computed for these bases classes, and a dictionary of inherited members will be built. Make sure to store the result in a variable to avoid re-computing it everytime (you are responsible for the caching part). Also make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+To access members of a class that are inherited from base classes, use the [`inherited_members`][griffe.Object.inherited_members] attribute. Everytime you access inherited members, the base classes of the given class will be resolved, then the MRO (Method Resolution Order) will be computed for these base classes, and a dictionary of inherited members will be built. Make sure to store the result in a variable to avoid re-computing it everytime (you are responsible for the caching part). Also make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
 Inherited members are aliases that point at the corresponding members in parent classes. These aliases will have their [`inherited`][griffe.Alias.inherited] attribute set to true.
 
@@ -137,7 +137,7 @@ Currently, there are three limitations to our class inheritance support:
         ...
     ```
 
-2. when visiting (static analysis), subclasses using the same name as one of their parent class will prevent Griffe from computing the MRO and therefore the inherited members. To circumvent that, give a different name to your subclass:
+2. when visiting (static analysis), subclasses using the same name as one of their parent classes will prevent Griffe from computing the MRO and therefore the inherited members. To circumvent that, give a different name to your subclass:
 
     ```python
     from package import SomeClass
@@ -173,7 +173,7 @@ We will try to lift these limitations in the future.
 
 ## Aliases
 
-Aliases represent indirections, such as objects imported from elsewhere, or attribute and methods inherited from parent classes. They are pointers to the object they represent. The path of the object they represent is stored in their [`target_path`][griffe.Alias.target_path] attribute. Once they are resolved, the target object can be accessed through their [`target`][griffe.Alias.target] attribute.
+Aliases represent indirections, such as objects imported from elsewhere, attributes, or methods inherited from parent classes. They are pointers to the object they represent. The path of the object they represent is stored in their [`target_path`][griffe.Alias.target_path] attribute. Once they are resolved, the target object can be accessed through their [`target`][griffe.Alias.target] attribute.
 
 Aliases can be found in objects' members. Each object can also access its own aliases (the aliases pointing at it) through its [`aliases`][griffe.Object.aliases] attribute. This attribute is a dictionary whose keys are the aliases paths and values are the aliases themselves.
 
@@ -319,13 +319,13 @@ Each object has fields that are related to their visibility within the API.
 
 - [`is_class_private`][griffe.Object.is_class_private]: whether this object has a class-private name like `__private` and is a member of a class
 
-Since `is_private` only check the name of the object, it is not mutually exclusive with `is_public`. It means an object can return true for both `is_public` and `is_private`. We invite Griffe users to mostly rely on `is_public` and `not is_public`.
+Since `is_private` only checks the name of the object, it is not mutually exclusive with `is_public`. It means an object can return true for both `is_public` and `is_private`. We invite Griffe users to mostly rely on `is_public` and `not is_public`.
 
 It is possible to force `is_public` and `is_deprecated` to return true or false by setting the [`public`][griffe.Object.public] and [`deprecated`][griffe.Object.deprecated] fields respectively. These fields are typically set by extensions that support new ways of marking objects as public or deprecated.
 
 ## Imports/exports
 
-Modules and classes populate their [`imports`][griffe.Object.imports] field with name that were imported from other modules. Similarly, modules populate their [`exports`][griffe.Object.exports] field with names that were exported by being listed into the module's `__all__` attribute. Each object then provides then [`is_imported`][griffe.Object.is_imported] and [`is_exported`][griffe.Object.is_exported] fields, which tell if an object was imported or exported respectively. Additionally, objects also provide an [`is_wildcard_exposed`][griffe.Object.is_wildcard_exposed] field that tells if an object is exposed to wildcard imports, i.e. will be imported when another module does `from this_module import *`.
+Modules and classes populate their [`imports`][griffe.Object.imports] field with names that were imported from other modules. Similarly, modules populate their [`exports`][griffe.Object.exports] field with names that were exported by being listed into the module's `__all__` attribute. Each object then provides then [`is_imported`][griffe.Object.is_imported] and [`is_exported`][griffe.Object.is_exported] fields, which tell if an object was imported or exported respectively. Additionally, objects also provide an [`is_wildcard_exposed`][griffe.Object.is_wildcard_exposed] field that tells if an object is exposed to wildcard imports, i.e. will be imported when another module does `from this_module import *`.
 
 ## Docstrings
 
@@ -334,7 +334,7 @@ Each object has an optional [`docstring`][griffe.Object.docstring] attached to i
 - [`has_docstring`][griffe.Object.has_docstring]: whether this object has a docstring (even empty)
 - [`has_docstrings`][griffe.Object.has_docstrings]: same thing, but recursive; whether this object or any of its members has a docstring (even empty)
 
-[Docstrings][griffe.Docstring] provide their cleaned-up [`value`][griffe.Docstring.value] (de-indented string, stripped from leading and trailing new lines), as well as their starting and ending line numbers with [`lineno`][griffe.Docstring.lineno] and [`endlineno`][griffe.Docstring.endlineno].
+[Docstrings][griffe.Docstring] provide their cleaned-up [`value`][griffe.Docstring.value] (de-indented string, stripped from leading and trailing newlines), as well as their starting and ending line numbers with [`lineno`][griffe.Docstring.lineno] and [`endlineno`][griffe.Docstring.endlineno].
 
 Docstrings can be parsed against several [docstring-styles](../../reference/docstrings.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
 
@@ -427,7 +427,7 @@ with temporary_visited_module(code) as module:
 
 Ultimately, these expressions are what allow downstream tools such as [mkdocstrings' Python handler][mkdocstrings-python] to render cross-references to every object it knows of, coming from the current code base or loaded from object inventories (objects.inv files).
 
-During static analysis, these expressions also allow to analyze decorators, dataclass fields, and many more things in great details, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extending.md).
+During static analysis, these expressions also allow analyzing decorators, dataclass fields, and many more things in great detail, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](extending.md).
 
 To learn more about expressions, read their [API reference](../../reference/api/expressions.md).
 

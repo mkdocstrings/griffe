@@ -20,4 +20,4 @@ defaultdict(<class 'dict'>, {'runtime-objects': {'object': <function parse at 0x
 defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class '_griffe.models.Module'>}})
 ```
 
-It can be useful in combination with mkdocstrings-python and custom templates, to iterate on object values or their attributes who couldn't be loaded by Griffe itself (for example objects built dynamically and loaded as attributes won't have "members" to iterate on).
+It can be useful in combination with mkdocstrings-python and custom templates, to iterate over object values or their attributes that couldn't be loaded by Griffe itself (for example, objects built dynamically and loaded as attributes won't have "members" to iterate over).

@@ -20,7 +20,7 @@ $ griffe dump httpx fastapi
 }
 ```
 
-It will output a JSON-serialized version of the packages API data.
+It will output a JSON-serialized version of the package's API data.
 
 Try it out on Griffe itself:
 
@@ -55,11 +55,11 @@ See all the options for the `dump` command in the [CLI reference](../../referenc
 If you have read through the [Navigating](navigating.md) chapter, you know about our five data models for modules, classes, functions, attributes and aliases. Each one of these model provide the two following methods:
 
 - [`as_json`][griffe.Object.as_json], which allows to serialize an object into JSON,
-- [`from_json`][griffe.Object.from_json], which allows to load JSON back into a model instance.
+- [`from_json`][griffe.Object.from_json], which allows loading JSON back into a model instance.
 
 These two methods are convenient wrappers around our [JSON encoder][griffe.JSONEncoder] and [JSON decoder][griffe.json_decoder]. The JSON encoder and decoder will give you finer-grain control over what you serialize or load, as the methods above are only available on data models, and not on sub-structures like decorators or parameters.
 
-Under the hood, `as_json` just calls [`as_dict`][griffe.Object.as_dict], which converts the model instance into a dictionary, and then serialize this dictionary to JSON.
+Under the hood, `as_json` just calls [`as_dict`][griffe.Object.as_dict], which converts the model instance into a dictionary, and then serializes this dictionary to JSON.
 
 When serializing an object, by default the JSON will only contain the fields required to load it back to a Griffe model instance. If you are not planning on loading back the data into our data models, or if you want to load them in a different implementation which is not able to infer back all the other fields, you can choose to serialize every possible field. We call this a full dump, and it is enabled with the `full` option of the [encoder][griffe.JSONEncoder] or the [`as_json`][griffe.Object.as_json] method.
 
