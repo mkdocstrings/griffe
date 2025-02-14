@@ -16,7 +16,7 @@ Welcome to the Griffe guide! Here, you’ll find a series of topics on using Gri
 
     ---
 
-    A deeper look into the project and more, for Griffe contributors.
+    Explanation of the project and more, for Griffe contributors.
 
     [:octicons-arrow-right-24: Browse the contributor guide](guide/contributors.md)
 
