@@ -23,18 +23,23 @@ The 5 models:
 ## **Models base classes**
 
 ::: griffe.GetMembersMixin
+    options:
         members: false
 
 ::: griffe.SetMembersMixin
+    options:
         members: false
 
 ::: griffe.DelMembersMixin
+    options:
         members: false
 
 ::: griffe.SerializationMixin
+    options:
         members: false
 
 ::: griffe.ObjectAliasMixin
+    options:
         members: false
         inherited_members: false
 
