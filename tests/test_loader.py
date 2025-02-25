@@ -354,10 +354,10 @@ def test_load_builtin_modules() -> None:
     loader = GriffeLoader()
     loader.load("_ast")
     loader.load("_collections")
-    loader.load("_json")
+    loader.load("_operator")
     assert "_ast" in loader.modules_collection
     assert "_collections" in loader.modules_collection
-    assert "_json" in loader.modules_collection
+    assert "_operator" in loader.modules_collection
 
 
 def test_resolve_aliases_of_builtin_modules() -> None:
