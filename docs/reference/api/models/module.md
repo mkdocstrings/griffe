@@ -1,3 +1,1 @@
-# Module
-
-::: griffe.Module
+# ::: griffe.Module
