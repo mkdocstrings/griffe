@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
@@ -32,8 +31,6 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from _griffe.enumerations import Parser
-
-_builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
 class GriffeLoader:
