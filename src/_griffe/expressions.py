@@ -317,6 +317,10 @@ class ExprComprehension(Expr):
             yield from _join(self.conditions, " if ", flat=flat)
 
 
+# TODO: `ExprConstant` is never instantiated,
+# see `_build_constant` below (it always returns the value directly).
+# Maybe we could simply get rid of it, as it wouldn't bring much value
+# if used anyway.
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **_dataclass_opts)
 class ExprConstant(Expr):
