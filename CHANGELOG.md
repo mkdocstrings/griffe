@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.6.0](https://github.com/mkdocstrings/griffe/releases/tag/1.6.0) - 2025-03-01
+
+<small>[Compare with 1.5.7](https://github.com/mkdocstrings/griffe/compare/1.5.7...1.6.0)</small>
+
+### Features
+
+- Allow passing literal docstring styles everywhere in the API, not just `Parser` enumeration values ([053bf20](https://github.com/mkdocstrings/griffe/commit/053bf20e8da49f6bc0171c1755ee4fde1fb401fa) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Follow symlinks when finding modules ([087832f](https://github.com/mkdocstrings/griffe/commit/087832f07dfb8dc529cf68438e7051bd8ce2ae1d) by Timothée Mazzucotelli). [Issue-mkdocstrings-python-258](https://github.com/mkdocstrings/python/issues/258)
+
 ## [1.5.7](https://github.com/mkdocstrings/griffe/releases/tag/1.5.7) - 2025-02-11
 
 <small>[Compare with 1.5.6](https://github.com/mkdocstrings/griffe/compare/1.5.6...1.5.7)</small>
