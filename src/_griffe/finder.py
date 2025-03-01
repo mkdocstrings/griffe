@@ -393,7 +393,7 @@ class ModuleFinder:
                         self.append_search_path(directory.path)
 
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
-        for root, dirs, files in os.walk(path, topdown=True):
+        for root, dirs, files in os.walk(path, topdown=True, followlinks=True):
             # Optimization: modify dirs in-place to exclude `__pycache__` directories.
             dirs[:] = [dir for dir in dirs if dir != "__pycache__"]
             for relfile in files:
