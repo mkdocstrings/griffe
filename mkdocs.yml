@@ -226,6 +226,7 @@ plugins:
         - https://typing-extensions.readthedocs.io/en/latest/objects.inv
         paths: [src, scripts, .]
         options:
+          backlinks: tree
           docstring_options:
             ignore_init_summary: true
           docstring_style: google
