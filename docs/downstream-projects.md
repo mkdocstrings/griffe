@@ -28,7 +28,7 @@ Of course, Griffe is what powers [the Python handler of mkdocstrings](https://mk
 
 ## rafe
 
-[rafe](https://pypi.org/project/rafe/) is a tool for inspecting python environments and building packages (irrespective of language) in a reproducible manner. It wraps Griffe to provide a CLI command to check for API breaking changes.
+[rafe](https://pypi.org/project/rafe/) is a tool for inspecting Python environments and building packages (irrespective of language) in a reproducible manner. It wraps Griffe to provide a CLI command to check for API breaking changes.
 
 ## Yapper
 
