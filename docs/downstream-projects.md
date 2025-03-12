@@ -14,6 +14,10 @@ Griffe is used by various projects in the Python ecosystem.
 
 Of course, Griffe is what powers [the Python handler of mkdocstrings](https://mkdocstrings.github.io/python/). mkdocstrings is a plugin for [MkDocs](https://www.mkdocs.org/) that allows rendering API docs easily.
 
+## OpenAI Agents SDK
+
+The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is a lightweight yet powerful framework for building multi-agent workflows. It was inspired by Pydantic AI and uses Griffe the same way, to parse docstrings in order to generate function schemas.
+
 ## pydanclick
 
 [Pydanclick](https://pypi.org/project/pydanclick/) allows to use [Pydantic](https://docs.pydantic.dev/latest/) models as [Click](https://click.palletsprojects.com/en/8.1.x/) options. It uses Griffe to parse docstrings and find Attributes sections, to help itself build Click options.
