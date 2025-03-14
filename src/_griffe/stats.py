@@ -46,6 +46,7 @@ class Stats:
             Kind.CLASS: 0,
             Kind.FUNCTION: 0,
             Kind.ATTRIBUTE: 0,
+            Kind.TYPE_ALIAS: 0,
         }
         """Number of objects by kind."""
 
@@ -94,7 +95,8 @@ class Stats:
         classes = self.by_kind[Kind.CLASS]
         functions = self.by_kind[Kind.FUNCTION]
         attributes = self.by_kind[Kind.ATTRIBUTE]
-        objects = sum((modules, classes, functions, attributes))
+        type_aliases = self.by_kind[Kind.TYPE_ALIAS]
+        objects = sum((modules, classes, functions, attributes, type_aliases))
         lines.append("Statistics")
         lines.append("---------------------")
         lines.append("Number of loaded objects")
@@ -102,6 +104,7 @@ class Stats:
         lines.append(f"  Classes: {classes}")
         lines.append(f"  Functions: {functions}")
         lines.append(f"  Attributes: {attributes}")
+        lines.append(f"  Type aliases: {type_aliases}")
         lines.append(f"  Total: {objects} across {packages} packages")
         per_ext = self.modules_by_extension
         builtin = per_ext[""]

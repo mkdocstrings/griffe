@@ -70,9 +70,15 @@ def parse_docstring_annotation(
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
         if code.body:  # type: ignore[attr-defined]
+            annotation_scope = docstring.parent
+            if annotation_scope is not None and annotation_scope.is_attribute:
+                annotation_scope = annotation_scope.parent
+            if annotation_scope is not None and annotation_scope.is_module:
+                annotation_scope = None
             name_or_expr = safe_get_annotation(
                 code.body,  # type: ignore[attr-defined]
                 parent=docstring.parent,  # type: ignore[arg-type]
+                annotation_scope=annotation_scope,  # type: ignore[arg-type]
                 log_level=log_level,
             )
             return name_or_expr or annotation

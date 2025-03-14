@@ -95,6 +95,7 @@ nav:
       - Class: reference/api/models/class.md
       - Function: reference/api/models/function.md
       - Attribute: reference/api/models/attribute.md
+      - Type Alias: reference/api/models/type_alias.md
       - Alias: reference/api/models/alias.md
     - Agents: reference/api/agents.md
     - Serializers: reference/api/serializers.md

@@ -1,0 +1,3 @@
+# Type Alias
+
+::: griffe.TypeAlias

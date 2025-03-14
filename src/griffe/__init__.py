@@ -231,8 +231,12 @@ from _griffe.docstrings.models import (
     DocstringSectionReceives,
     DocstringSectionReturns,
     DocstringSectionText,
+    DocstringSectionTypeAliases,
+    DocstringSectionTypeParameters,
     DocstringSectionWarns,
     DocstringSectionYields,
+    DocstringTypeAlias,
+    DocstringTypeParameter,
     DocstringWarn,
     DocstringYield,
 )
@@ -257,6 +261,7 @@ from _griffe.enumerations import (
     ObjectKind,
     ParameterKind,
     Parser,
+    TypeParameterKind,
 )
 from _griffe.exceptions import (
     AliasResolutionError,
@@ -347,6 +352,9 @@ from _griffe.models import (
     Object,
     Parameter,
     Parameters,
+    TypeAlias,
+    TypeParameter,
+    TypeParameters,
 )
 from _griffe.stats import Stats
 from _griffe.tests import (
@@ -411,9 +419,13 @@ __all__ = [
     "DocstringSectionReceives",
     "DocstringSectionReturns",
     "DocstringSectionText",
+    "DocstringSectionTypeAliases",
+    "DocstringSectionTypeParameters",
     "DocstringSectionWarns",
     "DocstringSectionYields",
     "DocstringStyle",
+    "DocstringTypeAlias",
+    "DocstringTypeParameter",
     "DocstringWarn",
     "DocstringYield",
     "ExplanationStyle",
@@ -500,6 +512,10 @@ __all__ = [
     "SetMembersMixin",
     "Stats",
     "TmpPackage",
+    "TypeAlias",
+    "TypeParameter",
+    "TypeParameterKind",
+    "TypeParameters",
     "UnhandledEditableModuleError",
     "UnimportableModuleError",
     "Visitor",
