@@ -9,4 +9,4 @@
 
 ---
 
-This extension marks every objects that was imported with a wildcard import as public. See our documentation on the [wildcard imports convention](../../guide/users/recommendations/public-apis.md#wildcard-imports).
+This extension marks every object that was imported with a wildcard import as public. See our documentation on the [wildcard imports convention](../../guide/users/recommendations/public-apis.md#wildcard-imports).

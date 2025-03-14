@@ -9,7 +9,7 @@
 
 ---
 
-This extension reads Sphinx-comments above attribute assignments to use them as docstrings.
+This extension reads Sphinx comments placed above attribute assignments and uses them as docstrings.
 
 ```python
 #: Summary of `module_attr`. 
@@ -29,7 +29,7 @@ class Hello:
         self.instance_attr = "hello"
 ```
 
-Comments are treated exactly like regular docstrings: they are "cleaned" (dedented, stripped of leading and trailing new lines) and contain any markup you want, be it Markdown, rST, AsciiDoc, etc.
+Comments are treated exactly like regular docstrings: they are "cleaned" (dedented and stripped of leading and trailing newlines) and can contain any markup you want, be it Markdown, rST, AsciiDoc, etc.
 
 Trailing comments are not supported:
 

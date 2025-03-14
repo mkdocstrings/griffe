@@ -49,6 +49,7 @@ nav:
       - Parse docstrings: guide/users/how-to/parse-docstrings.md
       - Support custom decorators: guide/users/how-to/support-decorators.md
       - Selectively inspect objects: guide/users/how-to/selectively-inspect.md
+      - Set objects' docstring style: guide/users/how-to/set-docstring-styles.md
   - Contributor guide:
     - guide/contributors.md
     - Environment setup: guide/contributors/setup.md
@@ -131,6 +132,7 @@ theme:
   - content.tooltips
   - navigation.expand
   - navigation.footer
+  - navigation.instant.preview
   - navigation.path
   - navigation.sections
   - navigation.tabs
@@ -225,6 +227,7 @@ plugins:
         - https://typing-extensions.readthedocs.io/en/latest/objects.inv
         paths: [src, scripts, .]
         options:
+          backlinks: tree
           docstring_options:
             ignore_init_summary: true
           docstring_style: google
@@ -236,7 +239,7 @@ plugins:
           merge_init_into_class: true
           parameter_headings: true
           separate_signature: true
-          show_bases: false
+          show_bases: true
           show_inheritance_diagram: true
           show_root_heading: true
           show_root_full_path: false

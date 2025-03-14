@@ -19,7 +19,6 @@ from _griffe.docstrings.models import (
     DocstringSectionAdmonition,
     DocstringSectionAttributes,
     DocstringSectionClasses,
-    DocstringSectionDeprecated,
     DocstringSectionExamples,
     DocstringSectionFunctions,
     DocstringSectionModules,
@@ -132,8 +131,8 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _
             docstring_warning(
                 docstring,
                 new_offset,
-                f"Confusing indentation for continuation line {new_offset+1} in docstring, "
-                f"should be {indent} * 2 = {indent*2} spaces, not {cont_indent}",
+                f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
+                f"should be {indent} * 2 = {indent * 2} spaces, not {cont_indent}",
             )
 
         elif line.startswith(indent * " "):
@@ -210,8 +209,7 @@ def _read_parameters(
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
-            if annotation.endswith(", optional"):
-                annotation = annotation[:-10]
+            annotation = annotation.removesuffix(", optional")
             # try to compile the annotation to transform it into an expression
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
@@ -358,8 +356,7 @@ def _read_attributes_section(
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
-            if annotation.endswith(", optional"):
-                annotation = annotation[:-10]
+            annotation = annotation.removesuffix(", optional")
             # try to compile the annotation to transform it into an expression
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
@@ -798,30 +795,6 @@ def _read_examples_section(
     return DocstringSectionExamples(sub_sections), new_offset
 
 
-def _read_deprecated_section(
-    docstring: Docstring,
-    *,
-    offset: int,
-    **options: Any,
-) -> tuple[DocstringSectionDeprecated | None, int]:
-    text, new_offset = _read_block(docstring, offset=offset, **options)
-
-    # check the presence of a name and description, separated by a semi-colon
-    try:
-        version, text = text.split(":", 1)
-    except ValueError:
-        docstring_warning(docstring, new_offset, f"Could not parse version, text at line {offset}")
-        return None, new_offset
-
-    version = version.lstrip()
-    description = text.lstrip()
-
-    return (
-        DocstringSectionDeprecated(version=version, text=description),
-        new_offset,
-    )
-
-
 def _is_empty_line(line: str) -> bool:
     return not line.strip()
 
@@ -841,7 +814,6 @@ _section_reader = {
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,
     DocstringSectionKind.receives: _read_receives_section,
-    DocstringSectionKind.deprecated: _read_deprecated_section,
 }
 
 _sentinel = object()
@@ -853,9 +825,11 @@ def parse_google(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     returns_multiple_items: bool = True,
-    warn_unknown_params: bool = True,
     returns_named_value: bool = True,
     returns_type_in_property_summary: bool = False,
+    receives_multiple_items: bool = True,
+    receives_named_value: bool = True,
+    warn_unknown_params: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Google-style docstring.
@@ -867,13 +841,21 @@ def parse_google(
         docstring: The docstring to parse.
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
-        returns_multiple_items: Whether the `Returns` section has multiple items.
-        warn_unknown_params: Warn about documented parameters not appearing in the signature.
-        returns_named_value: Whether to parse `thing: Description` in returns sections as a name and description,
-            rather than a type and description. When true, type must be wrapped in parentheses: `(int): Description.`.
+        returns_multiple_items: Whether to parse multiple items in `Yields` and `Returns` sections.
+            When true, each item's continuation lines must be indented.
+            When false (single item), no further indentation is required.
+        returns_named_value: Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.
+            When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.
+            When false, parentheses are optional but the items cannot be named: `int: Description`.
+        receives_multiple_items: Whether to parse multiple items in `Receives` sections.
+            When true, each item's continuation lines must be indented.
+            When false (single item), no further indentation is required.
+        receives_named_value: Whether to parse `Receives` section items as name and description, rather than type and description.
+            When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.
             When false, parentheses are optional but the items cannot be named: `int: Description`.
         returns_type_in_property_summary: Whether to parse the return type of properties
             at the beginning of their summary: `str: Summary of the property`.
+        warn_unknown_params: Warn about documented parameters not appearing in the signature.
         **options: Additional parsing options.
 
     Returns:
@@ -889,9 +871,11 @@ def parse_google(
         "ignore_init_summary": ignore_init_summary,
         "trim_doctest_flags": trim_doctest_flags,
         "returns_multiple_items": returns_multiple_items,
-        "warn_unknown_params": warn_unknown_params,
         "returns_named_value": returns_named_value,
         "returns_type_in_property_summary": returns_type_in_property_summary,
+        "receives_multiple_items": receives_multiple_items,
+        "receives_named_value": receives_named_value,
+        "warn_unknown_params": warn_unknown_params,
         **options,
     }
 

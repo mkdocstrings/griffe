@@ -1,6 +1,6 @@
 # Official extensions
 
-Official extensions are developed and maintained within the mkdocstrings organization on GitHub, in separated repositories. They generally bring support for various third-party libraries or other documentation-related features that are part of Python's standard library.
+Official extensions are developed and maintained within the mkdocstrings organization on GitHub, in separate repositories. They generally bring support for various third-party libraries or other documentation-related features that are part of Python's standard library.
 
 Extension | Description | Sponsors only?
 --------- | ----------- | --------------

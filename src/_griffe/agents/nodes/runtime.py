@@ -6,6 +6,7 @@ import inspect
 import sys
 import typing
 from functools import cached_property
+from types import GetSetDescriptorType
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from _griffe.enumerations import ObjectKind
@@ -141,6 +142,8 @@ class ObjectNode:
             return ObjectKind.METHOD_DESCRIPTOR
         if self.is_function:
             return ObjectKind.FUNCTION
+        if self.is_getset_descriptor:
+            return ObjectKind.GETSET_DESCRIPTOR
         if self.is_property:
             return ObjectKind.PROPERTY
         if self.is_type_alias:
@@ -189,6 +192,11 @@ class ObjectNode:
     def is_coroutine(self) -> bool:
         """Whether this node's object is a coroutine."""
         return inspect.iscoroutinefunction(self.obj)
+
+    @cached_property
+    def is_getset_descriptor(self) -> bool:
+        """Whether this node's object is a get/set descriptor."""
+        return isinstance(self.obj, GetSetDescriptorType)
 
     @cached_property
     def is_property(self) -> bool:

@@ -150,8 +150,9 @@ class Expr:
 
     @property
     def canonical_name(self) -> str:
-        """Name of the expressed name/attribute."""
-        return self.canonical_path.rsplit(".", 1)[-1]
+        """Name of the expressed name/attribute/parameter."""
+        # We must handle things like `griffe.Visitor` and `griffe.Visitor(code)`.
+        return self.canonical_path.rsplit(".", 1)[-1].split("(", 1)[-1].removesuffix(")")
 
     @property
     def is_classvar(self) -> bool:
@@ -316,6 +317,10 @@ class ExprComprehension(Expr):
             yield from _join(self.conditions, " if ", flat=flat)
 
 
+# TODO: `ExprConstant` is never instantiated,
+# see `_build_constant` below (it always returns the value directly).
+# Maybe we could simply get rid of it, as it wouldn't bring much value
+# if used anyway.
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
 @dataclass(eq=True, **_dataclass_opts)
 class ExprConstant(Expr):

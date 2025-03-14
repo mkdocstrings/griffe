@@ -5,6 +5,47 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.6.0](https://github.com/mkdocstrings/griffe/releases/tag/1.6.0) - 2025-03-01
+
+<small>[Compare with 1.5.7](https://github.com/mkdocstrings/griffe/compare/1.5.7...1.6.0)</small>
+
+### Features
+
+- Allow passing literal docstring styles everywhere in the API, not just `Parser` enumeration values ([053bf20](https://github.com/mkdocstrings/griffe/commit/053bf20e8da49f6bc0171c1755ee4fde1fb401fa) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Follow symlinks when finding modules ([087832f](https://github.com/mkdocstrings/griffe/commit/087832f07dfb8dc529cf68438e7051bd8ce2ae1d) by Timothée Mazzucotelli). [Issue-mkdocstrings-python-258](https://github.com/mkdocstrings/python/issues/258)
+
+## [1.5.7](https://github.com/mkdocstrings/griffe/releases/tag/1.5.7) - 2025-02-11
+
+<small>[Compare with 1.5.6](https://github.com/mkdocstrings/griffe/compare/1.5.6...1.5.7)</small>
+
+### Bug Fixes
+
+- Don't conflate passed argument with class member (instance attribute) ([4791b0b](https://github.com/mkdocstrings/griffe/commit/4791b0b5739e64ab2d225b299aea723f3cfbdf00) by Timothée Mazzucotelli). [Issue-357](https://github.com/mkdocstrings/griffe/issues/357)
+
+## [1.5.6](https://github.com/mkdocstrings/griffe/releases/tag/1.5.6) - 2025-01-30
+
+<small>[Compare with 1.5.5](https://github.com/mkdocstrings/griffe/compare/1.5.5...1.5.6)</small>
+
+### Bug Fixes
+
+- Handle get/set descriptor objects as properties during dynamic analysis ([bc3c75a](https://github.com/mkdocstrings/griffe/commit/bc3c75acd440356fd7b91d221a8fca87231a6eab) by Timothée Mazzucotelli). [Issue-354](https://github.com/mkdocstrings/griffe/issues/354)
+
+### Code Refactoring
+
+- Remove Google parser support for Deprecated sections (previously never used) ([425aece](https://github.com/mkdocstrings/griffe/commit/425aeceb9935be446979b669c9d557db84a36873) by Timothée Mazzucotelli).
+
+## [1.5.5](https://github.com/mkdocstrings/griffe/releases/tag/1.5.5) - 2025-01-16
+
+<small>[Compare with 1.5.4](https://github.com/mkdocstrings/griffe/compare/1.5.4...1.5.5)</small>
+
+### Bug Fixes
+
+- Fix check command's Markdown output format not displaying parameter names ([5e7af22](https://github.com/mkdocstrings/griffe/commit/5e7af227792f602c8e1c40707bc7c058e272ce12) by Timothée Mazzucotelli).
+- Don't output empty change for removed objects when using GitHub output format (check command) ([6842372](https://github.com/mkdocstrings/griffe/commit/68423726c625649dd35b5c8018c752dbb72e5be2) by Timothée Mazzucotelli). [Issue-349](https://github.com/mkdocstrings/griffe/issues/349)
+
 ## [1.5.4](https://github.com/mkdocstrings/griffe/releases/tag/1.5.4) - 2024-12-26
 
 <small>[Compare with 1.5.3](https://github.com/mkdocstrings/griffe/compare/1.5.3...1.5.4)</small>

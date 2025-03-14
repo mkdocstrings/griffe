@@ -43,7 +43,7 @@ def docstring_warning(
         except BuiltinModuleError:
             prefix = f"<module: {docstring.parent.module.name}>"  # type: ignore[union-attr]
         log = getattr(logger, log_level.value)
-        log(f"{prefix}:{(docstring.lineno or 0)+offset}: {message}")
+        log(f"{prefix}:{(docstring.lineno or 0) + offset}: {message}")
 
     warn(docstring, offset, message, log_level)
 

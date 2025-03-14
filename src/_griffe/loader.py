@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,9 +30,8 @@ from _griffe.stats import Stats
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from _griffe.docstrings.parsers import DocstringStyle
     from _griffe.enumerations import Parser
-
-_builtin_modules: set[str] = set(sys.builtin_module_names)
 
 
 class GriffeLoader:
@@ -50,7 +48,7 @@ class GriffeLoader:
         *,
         extensions: Extensions | None = None,
         search_paths: Sequence[str | Path] | None = None,
-        docstring_parser: Parser | None = None,
+        docstring_parser: DocstringStyle | Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
@@ -72,7 +70,7 @@ class GriffeLoader:
         """
         self.extensions: Extensions = extensions or load_extensions()
         """Loaded Griffe extensions."""
-        self.docstring_parser: Parser | None = docstring_parser
+        self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """Selected docstring parser."""
         self.docstring_options: dict[str, Any] = docstring_options or {}
         """Configured parsing options."""
@@ -717,7 +715,7 @@ def load(
     try_relative_path: bool = True,
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -823,7 +821,7 @@ def load_git(
     submodules: bool = True,
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -907,7 +905,7 @@ def load_pypi(
     submodules: bool = True,  # noqa: ARG001
     extensions: Extensions | None = None,  # noqa: ARG001
     search_paths: Sequence[str | Path] | None = None,  # noqa: ARG001
-    docstring_parser: Parser | None = None,  # noqa: ARG001
+    docstring_parser: DocstringStyle | Parser | None = None,  # noqa: ARG001
     docstring_options: dict[str, Any] | None = None,  # noqa: ARG001
     lines_collection: LinesCollection | None = None,  # noqa: ARG001
     modules_collection: ModulesCollection | None = None,  # noqa: ARG001

@@ -247,8 +247,7 @@ class ModuleFinder:
         ]
 
         real_module_name = module_name
-        if real_module_name.endswith("-stubs"):
-            real_module_name = real_module_name[:-6]
+        real_module_name = real_module_name.removesuffix("-stubs")
         namespace_dirs = []
         for path in self.search_paths:
             path_contents = self._contents(path)
@@ -394,7 +393,7 @@ class ModuleFinder:
                         self.append_search_path(directory.path)
 
     def _filter_py_modules(self, path: Path) -> Iterator[Path]:
-        for root, dirs, files in os.walk(path, topdown=True):
+        for root, dirs, files in os.walk(path, topdown=True, followlinks=True):
             # Optimization: modify dirs in-place to exclude `__pycache__` directories.
             dirs[:] = [dir for dir in dirs if dir != "__pycache__"]
             for relfile in files:
@@ -462,7 +461,7 @@ def _handle_pth_file(path: Path) -> list[_SP]:
     for line in text.strip().replace(";", "\n").splitlines(keepends=False):
         line = line.strip()  # noqa: PLW2901
         if _re_import_line.match(line):
-            editable_module = path.parent / f"{line[len('import'):].lstrip()}.py"
+            editable_module = path.parent / f"{line[len('import') :].lstrip()}.py"
             with suppress(UnhandledEditableModuleError):
                 return _handle_editable_module(editable_module)
         if line and not line.startswith("#") and os.path.exists(line):  # noqa: PTH110

@@ -112,4 +112,12 @@ These how-tos will show you how to achieve specific things with Griffe.
 
     [:octicons-arrow-right-24: See how to selectively inspect objects](users/how-to/selectively-inspect.md)
 
+-   :material-select:{ .lg .middle } **Set objects' docstring style**
+
+    ---
+
+    Sometimes the wrong docstring styles are attached to objects. You can fix this with a few different methods.
+
+    [:octicons-arrow-right-24: See how to set the correct docstring styles on objects](users/how-to/set-docstring-styles.md)
+
 </div>

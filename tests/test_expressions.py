@@ -116,3 +116,21 @@ def test_length_one_tuple_as_string() -> None:
     code = "x = ('a',)"
     with temporary_visited_module(code) as module:
         assert str(module["x"].value) == "('a',)"
+
+
+def test_resolving_init_parameter() -> None:
+    """Instance attribute values should resolve to matching parameters.
+
+    They must not resolve to the member of the same name in the same class,
+    or to objects with the same name in higher scopes.
+    """
+    with temporary_visited_module(
+        """
+        x = 1
+
+        class Class:
+            def __init__(self, x: int):
+                self.x: int = x
+        """,
+    ) as module:
+        assert module["Class.x"].value.canonical_path == "module.Class(x)"

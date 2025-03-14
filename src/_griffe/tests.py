@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping, Sequence
 
     from _griffe.collections import ModulesCollection
+    from _griffe.docstrings.parsers import DocstringStyle
     from _griffe.enumerations import Parser
     from _griffe.extensions.base import Extensions
 
@@ -124,7 +125,7 @@ def temporary_visited_package(
     init: bool = True,
     inits: bool = True,
     extensions: Extensions | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -189,7 +190,7 @@ def temporary_inspected_package(
     init: bool = True,
     inits: bool = True,
     extensions: Extensions | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -259,7 +260,7 @@ def temporary_visited_module(
     module_name: str = "module",
     extensions: Extensions | None = None,
     parent: Module | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -306,7 +307,7 @@ def temporary_inspected_module(
     import_paths: list[Path] | None = None,
     extensions: Extensions | None = None,
     parent: Module | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,

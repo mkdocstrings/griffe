@@ -1,6 +1,4 @@
-# Class
-
-::: griffe.Class
+# ::: griffe.Class
 
 ## **Utilities**
 

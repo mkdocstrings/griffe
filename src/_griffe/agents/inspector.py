@@ -38,6 +38,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from pathlib import Path
 
+    from _griffe.docstrings.parsers import DocstringStyle
     from _griffe.enumerations import Parser
 
 _TYPING_MODULES: tuple[types.ModuleType, ...]
@@ -58,7 +59,7 @@ def inspect(
     import_paths: Sequence[str | Path] | None = None,
     extensions: Extensions | None = None,
     parent: Module | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -125,7 +126,7 @@ class Inspector:
         filepath: Path | None,
         extensions: Extensions,
         parent: Module | None = None,
-        docstring_parser: Parser | None = None,
+        docstring_parser: DocstringStyle | Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
@@ -159,7 +160,7 @@ class Inspector:
         self.current: Module | Class = None  # type: ignore[assignment]
         """The current object being inspected."""
 
-        self.docstring_parser: Parser | None = docstring_parser
+        self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
         self.docstring_options: dict[str, Any] = docstring_options or {}
@@ -425,6 +426,14 @@ class Inspector:
 
     def inspect_property(self, node: ObjectNode) -> None:
         """Inspect a property.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        self.handle_function(node, {"property"})
+
+    def inspect_getset_descriptor(self, node: ObjectNode) -> None:
+        """Inspect a get/set descriptor.
 
         Parameters:
             node: The node to inspect.

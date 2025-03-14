@@ -48,6 +48,7 @@ from _griffe.models import (
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from _griffe.docstrings.parsers import DocstringStyle
     from _griffe.enumerations import Parser
 
 
@@ -82,7 +83,7 @@ def visit(
     *,
     extensions: Extensions | None = None,
     parent: Module | None = None,
-    docstring_parser: Parser | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
     docstring_options: dict[str, Any] | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
@@ -139,7 +140,7 @@ class Visitor:
         code: str,
         extensions: Extensions,
         parent: Module | None = None,
-        docstring_parser: Parser | None = None,
+        docstring_parser: DocstringStyle | Parser | None = None,
         docstring_options: dict[str, Any] | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
@@ -177,7 +178,7 @@ class Visitor:
         self.current: Module | Class = None  # type: ignore[assignment]
         """The current object being visited."""
 
-        self.docstring_parser: Parser | None = docstring_parser
+        self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
         self.docstring_options: dict[str, Any] = docstring_options or {}

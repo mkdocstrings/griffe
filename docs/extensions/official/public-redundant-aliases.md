@@ -9,4 +9,4 @@
 
 ---
 
-This extension marks every objects that was imported with a redundant alias as public. See our documentation on the [redundant aliases convention](../../guide/users/recommendations/public-apis.md#redundant-aliases).
+This extension marks every object that was imported with a redundant alias as public. See our documentation on the [redundant aliases convention](../../guide/users/recommendations/public-apis.md#redundant-aliases).

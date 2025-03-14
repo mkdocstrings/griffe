@@ -190,6 +190,8 @@ class ObjectKind(str, Enum):
     """Built-in functions."""
     CACHED_PROPERTY = "cached_property"
     """Cached properties."""
+    GETSET_DESCRIPTOR = "getset_descriptor"
+    """Get/set descriptors."""
     PROPERTY = "property"
     """Properties."""
     TYPE_ALIAS = "type_alias"

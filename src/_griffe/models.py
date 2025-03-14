@@ -2348,6 +2348,23 @@ class Function(Object):
         """The type annotation of the returned value."""
         return self.returns
 
+    def resolve(self, name: str) -> str:
+        """Resolve a name within this object's and parents' scope.
+
+        Parameters:
+            name: The name to resolve.
+
+        Raises:
+            NameResolutionError: When the name could not be resolved.
+
+        Returns:
+            The resolved name.
+        """
+        # We're in an `__init__` method and name is a parameter name.
+        if self.parent and self.name == "__init__" and name in self.parameters:
+            return f"{self.parent.path}({name})"
+        return super().resolve(name)
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 

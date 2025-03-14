@@ -8,6 +8,7 @@ exclude = [
 select = ["ALL"]
 ignore = [
     "A001",  # Variable is shadowing a Python builtin
+    "A005",  # Module shadows a Python standard-library module
     "ANN101",  # Missing type annotation for self
     "ANN102",  # Missing type annotation for cls
     "ANN204",  # Missing return type annotation for special method __str__

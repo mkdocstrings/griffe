@@ -303,20 +303,6 @@ Modules:
 """
 ```
 
-#### Deprecated {#google-section-deprecated}
-
-Deprecated sections allow to document a deprecation that happened at a particular version. They can be used in every docstring.
-
-```python
-"""My module.
-
-Deprecated:
-    1.2: The `foo` attribute is deprecated.
-"""
-
-foo: int = 0
-```
-
 #### Examples {#google-section-examples}
 
 Examples sections allow to add examples of Python code without the use of markup code blocks. They are a mix of prose and interactive console snippets. They can be used in every docstring.
@@ -1042,22 +1028,6 @@ bar
 """
 ```
 
-#### Deprecated {#numpydoc-section-deprecated}
-
-Deprecated sections allow to document a deprecation that happened at a particular version. They can be used in every docstring.
-
-```python
-"""My module.
-
-Deprecated
-----------
-    1.2
-        The `foo` attribute is deprecated.
-"""
-
-foo: int = 0
-```
-
 #### Examples {#numpydoc-section-examples}
 
 Examples sections allow to add examples of Python code without the use of markup code blocks. They are a mix of prose and interactive console snippets. They can be used in every docstring.
@@ -1444,7 +1414,6 @@ For non-Insiders versions, `default` is returned if specified, else the first pa
 
     The sections are easier to deal in that order:
 
-    - Deprecated (single item, version and text)
     - Raises, Warns (multiple items, no names, single type each)
     - Attributes, Other Parameters, Parameters (multiple items, one name and one optional type each)
     - Returns (multiple items, optional name and/or type each, annotation to split when multiple names)
@@ -1463,7 +1432,6 @@ Functions        | ✅     | ✅    | ❌
 Methods          | ✅     | ✅    | ❌
 Classes          | ✅     | ✅    | ❌
 Modules          | ✅     | ✅    | ❌
-Deprecated       | ✅     | ✅[^1]| [❌][issue-section-sphinx-deprecated]
 Examples         | ✅     | ✅    | [❌][issue-section-sphinx-examples]
 Parameters       | ✅     | ✅    | ✅
 Other Parameters | ✅     | ✅    | [❌][issue-section-sphinx-other-parameters]
@@ -1472,8 +1440,6 @@ Warns            | ✅     | ✅    | [❌][issue-section-sphinx-warns]
 Yields           | ✅     | ✅    | [❌][issue-section-sphinx-yields]
 Receives         | ✅     | ✅    | [❌][issue-section-sphinx-receives]
 Returns          | ✅     | ✅    | ✅
-
-[^1]: Support for a regular section instead of the RST directive specified in the [Numpydoc styleguide](https://numpydoc.readthedocs.io/en/latest/format.html#deprecation-warning).
 
 ### Getting annotations/defaults from parent
 
@@ -1484,7 +1450,6 @@ Functions        | /      | /     | /
 Methods          | /      | /     | /
 Classes          | /      | /     | /
 Modules          | /      | /     | /
-Deprecated       | /      | /     | /
 Examples         | /      | /     | /
 Parameters       | ✅     | ✅    | ✅
 Other Parameters | ✅     | ✅    | [❌][issue-parent-sphinx-other-parameters]
@@ -1503,7 +1468,6 @@ Functions        | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-fu
 Methods          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
 Classes          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
 Modules          | /      | /     | /
-Deprecated       | /      | /     | /
 Examples         | /      | /     | /
 Parameters       | ✅     | ✅    | [❌][issue-xref-sphinx-parameters]
 Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]
@@ -1519,7 +1483,6 @@ Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
 [issue-parent-sphinx-other-parameters]: https://github.com/mkdocstrings/griffe/issues/34
 [issue-parent-sphinx-receives]: https://github.com/mkdocstrings/griffe/issues/35
 [issue-parent-sphinx-yields]: https://github.com/mkdocstrings/griffe/issues/36
-[issue-section-sphinx-deprecated]: https://github.com/mkdocstrings/griffe/issues/6
 [issue-section-sphinx-examples]: https://github.com/mkdocstrings/griffe/issues/7
 [issue-section-sphinx-other-parameters]: https://github.com/mkdocstrings/griffe/issues/27
 [issue-section-sphinx-receives]: https://github.com/mkdocstrings/griffe/issues/8

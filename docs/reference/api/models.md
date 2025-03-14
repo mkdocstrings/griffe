@@ -24,20 +24,14 @@ The 6 models:
 ## **Models base classes**
 
 ::: griffe.GetMembersMixin
-        members: false
 
 ::: griffe.SetMembersMixin
-        members: false
 
 ::: griffe.DelMembersMixin
-        members: false
 
 ::: griffe.SerializationMixin
-        members: false
 
 ::: griffe.ObjectAliasMixin
-        members: false
-        inherited_members: false
 
 ::: griffe.Object
 

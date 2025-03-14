@@ -1,6 +1,4 @@
-# Function
-
-::: griffe.Function
+# ::: griffe.Function
 
 ::: griffe.Parameters
 
