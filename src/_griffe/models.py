@@ -231,7 +231,7 @@ class Parameter:
         """The parameter default value."""
         self.docstring: Docstring | None = docstring
         """The parameter docstring."""
-        # The parent function is set in `Function.parameters`,
+        # The parent function is set in `Function.__init__`,
         # when the parameters are assigned to the function.
         self.function: Function | None = None
         """The parent function of the parameter."""
@@ -1165,40 +1165,6 @@ class Object(ObjectAliasMixin):
         # Recurse in parent.
         return self.parent.resolve(name)
 
-    def resolve_annotation(self, name: str) -> str:
-        """Resolve a name within this object's annotation scope.
-
-        Parameters:
-            name: The name to resolve.
-
-        Raises:
-            NameResolutionError: When the name could not be resolved.
-
-        Returns:
-            The resolved name, pointing to either an object or a type parameter.
-        """
-        if name in self.type_parameters:
-            type_parameter = self.type_parameters[name]
-            if type_parameter.kind == TypeParameterKind.type_var:
-                prefix = ""
-            elif type_parameter.kind == TypeParameterKind.type_var_tuple:
-                prefix = "*"
-            elif type_parameter.kind == TypeParameterKind.param_spec:
-                prefix = "**"
-            return f"{self.path}:{prefix}{name}"
-
-        if self.parent:
-            if name in self.parent.members:
-                if self.parent.members[name].is_alias:
-                    return self.parent.members[name].target_path  # type: ignore[union-attr]
-                return self.parent.members[name].path
-            if self.parent.is_class and name == self.parent.name:
-                return self.parent.canonical_path
-            if not self.parent.is_module:
-                return self.parent.resolve_annotation(name)
-
-        raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
-
     def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
@@ -1768,20 +1734,6 @@ class Alias(ObjectAliasMixin):
         """
         return self.final_target.resolve(name)
 
-    def resolve_annotation(self, name: str) -> str:
-        """Resolve a name within this object's annotation scope.
-
-        Parameters:
-            name: The name to resolve.
-
-        Raises:
-            NameResolutionError: When the name could not be resolved.
-
-        Returns:
-            The resolved name, pointing to either an object or a type parameter.
-        """
-        return self.final_target.resolve_annotation(name)
-
     # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE/TYPE ALIAS PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
     # We first try to reach the final target, triggering alias resolution errors
@@ -2323,7 +2275,8 @@ class Function(Object):
             **kwargs: See [`griffe.Object`][].
         """
         super().__init__(*args, **kwargs)
-        self.parameters = parameters or Parameters()
+        self.parameters: Parameters = parameters or Parameters()
+        """The function parameters."""
         self.returns: str | Expr | None = returns
         """The function return type annotation."""
         self.decorators: list[Decorator] = decorators or []
@@ -2331,16 +2284,7 @@ class Function(Object):
         self.overloads: list[Function] | None = None
         """The overloaded signatures of this function."""
 
-    @property
-    def parameters(self) -> Parameters:
-        """The function parameters."""
-        return self._parameters
-
-    @parameters.setter
-    def parameters(self, parameters: Parameters) -> None:
-        self._parameters = parameters
-
-        for parameter in self._parameters:
+        for parameter in self.parameters:
             parameter.function = self
 
     @property
@@ -2440,7 +2384,7 @@ class TypeAlias(Object):
     def __init__(
         self,
         *args: Any,
-        value: str | Expr | None = None,
+        value: str | Expr | None,
         **kwargs: Any,
     ) -> None:
         """Initialize the function.

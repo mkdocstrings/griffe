@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence
     from pathlib import Path
 
-    from _griffe.models import Class, Function, Module, TypeAlias
+    from _griffe.models import Class, Module
 
 
 def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True) -> Iterator[str | Expr]:
@@ -59,7 +59,7 @@ def _field_as_dict(
     **kwargs: Any,
 ) -> str | bool | None | list | dict:
     if isinstance(element, Expr):
-        return element.as_dict(**kwargs)
+        return _expr_as_dict(element, **kwargs)
     if isinstance(element, list):
         return [_field_as_dict(elem, **kwargs) for elem in element]
     return element
@@ -601,11 +601,9 @@ class ExprName(Expr):
     """Actual name."""
     parent: str | ExprName | Module | Class | None = None
     """Parent (for resolution in its scope)."""
-    annotation_scope: str | Function | TypeAlias | Class | None = None
-    """Annotation scope (for resolution of names in annotations)."""
 
     def __eq__(self, other: object) -> bool:
-        """Two name expressions are equal if they have the same `name` value (`parent` and `annotation_scope` are ignored)."""
+        """Two name expressions are equal if they have the same `name` value (`parent` is ignored)."""
         if isinstance(other, ExprName):
             return self.name == other.name
         return NotImplemented
@@ -628,24 +626,16 @@ class ExprName(Expr):
     @property
     def canonical_path(self) -> str:
         """The canonical name (resolved one, not alias name)."""
+        if self.parent is None:
+            return self.name
         if isinstance(self.parent, ExprName):
             return f"{self.parent.canonical_path}.{self.name}"
         if isinstance(self.parent, str):
             return f"{self.parent}.{self.name}"
-        if self.annotation_scope is not None:
-            try:
-                if not isinstance(self.annotation_scope, str):
-                    return self.annotation_scope.resolve_annotation(self.name)
-                if self.parent is not None:
-                    return self.parent.modules_collection[self.annotation_scope].resolve_annotation(self.name)
-            except NameResolutionError:
-                pass
-        elif self.parent is not None:
-            try:
-                return self.parent.resolve(self.name)
-            except NameResolutionError:
-                pass
-        return self.name
+        try:
+            return self.parent.resolve(self.name)
+        except NameResolutionError:
+            return self.name
 
     @property
     def resolved(self) -> Module | Class | None:
@@ -682,17 +672,6 @@ class ExprName(Expr):
             return self.name == "value" and self.parent.is_enum_instance  # type: ignore[union-attr]
         except Exception:  # noqa: BLE001
             return False
-
-    @property
-    def is_type_parameter(self) -> bool:
-        """Whether this name resolves to a type parameter."""
-        return ":" in self.canonical_path and "." not in self.canonical_path.partition(":")[2]
-
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
-        base = super(type(self), self).as_dict(**kwargs)
-        if self.annotation_scope is not None and not isinstance(self.annotation_scope, str):
-            base["annotation_scope"] = self.annotation_scope.path
-        return base
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -1090,13 +1069,8 @@ def _build_listcomp(node: ast.ListComp, parent: Module | Class, **kwargs: Any) -
     return ExprListComp(_build(node.elt, parent, **kwargs), [_build(gen, parent, **kwargs) for gen in node.generators])
 
 
-def _build_name(
-    node: ast.Name,
-    parent: Module | Class,
-    annotation_scope: Function | Class | TypeAlias | None = None,
-    **kwargs: Any,  # noqa: ARG001
-) -> Expr:
-    return ExprName(node.id, parent, annotation_scope=annotation_scope)
+def _build_name(node: ast.Name, parent: Module | Class, **kwargs: Any) -> Expr:  # noqa: ARG001
+    return ExprName(node.id, parent)
 
 
 def _build_named_expr(node: ast.NamedExpr, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1215,7 +1189,6 @@ def get_expression(
     parent: Module | Class,
     *,
     parse_strings: bool | None = None,
-    annotation_scope: Function | Class | TypeAlias | None = None,
 ) -> Expr | None:
     """Build an expression from an AST.
 
@@ -1236,7 +1209,7 @@ def get_expression(
             parse_strings = False
         else:
             parse_strings = not module.imports_future_annotations
-    return _build(node, parent, parse_strings=parse_strings, annotation_scope=annotation_scope)
+    return _build(node, parent, parse_strings=parse_strings)
 
 
 def safe_get_expression(
@@ -1244,7 +1217,6 @@ def safe_get_expression(
     parent: Module | Class,
     *,
     parse_strings: bool | None = None,
-    annotation_scope: Function | Class | TypeAlias | None = None,
     log_level: LogLevel | None = LogLevel.error,
     msg_format: str = "{path}:{lineno}: Failed to get expression from {node_class}: {error}",
 ) -> Expr | None:
@@ -1262,7 +1234,7 @@ def safe_get_expression(
         A string or resovable name or expression.
     """
     try:
-        return get_expression(node, parent, parse_strings=parse_strings, annotation_scope=annotation_scope)
+        return get_expression(node, parent, parse_strings=parse_strings)
     except Exception as error:  # noqa: BLE001
         if log_level is None:
             return None
@@ -1288,7 +1260,7 @@ safe_get_annotation = partial(
 get_base_class = partial(get_expression, parse_strings=False)
 safe_get_base_class = partial(
     safe_get_expression,
-    parse_strings=None,
+    parse_strings=False,
     msg_format=_msg_format % "base class",
 )
 get_condition = partial(get_expression, parse_strings=False)
