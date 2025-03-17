@@ -506,7 +506,6 @@ class GriffeLoader:
 
     def _load_package(self, package: Package | NamespacePackage, *, submodules: bool = True) -> Module:
         top_module = self._load_module(package.name, package.path, submodules=submodules)
-        self.modules_collection.set_member(top_module.path, top_module)
         if isinstance(package, NamespacePackage):
             return top_module
         if package.stubs:
@@ -558,6 +557,8 @@ class GriffeLoader:
             module = self._inspect_module(module_name, module_path, parent)
         else:
             raise LoadingError("Cannot load compiled module without inspection")
+        if parent is None:
+            self.modules_collection.set_member(module.path, module)
         if submodules:
             self._load_submodules(module)
         return module
