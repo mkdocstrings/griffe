@@ -78,7 +78,7 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
     parameters = []
     for member in class_.members.values():
         if member.is_attribute:
-            member = cast(Attribute, member)
+            member = cast("Attribute", member)
 
             # All dataclass parameters have annotations
             if member.annotation is None:

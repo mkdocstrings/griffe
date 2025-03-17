@@ -1751,7 +1751,7 @@ class Alias(ObjectAliasMixin):
 
     @property
     def _filepath(self) -> Path | list[Path] | None:
-        return cast(Module, self.final_target)._filepath
+        return cast("Module", self.final_target)._filepath
 
     @property
     def bases(self) -> list[Expr | str]:
@@ -1761,7 +1761,7 @@ class Alias(ObjectAliasMixin):
         [`resolved_bases`][griffe.Alias.resolved_bases],
         [`mro`][griffe.Alias.mro].
         """
-        return cast(Class, self.final_target).bases
+        return cast("Class", self.final_target).bases
 
     @property
     def decorators(self) -> list[Decorator]:
@@ -1770,12 +1770,12 @@ class Alias(ObjectAliasMixin):
         See also: [`Function`][griffe.Function],
         [`Class`][griffe.Class].
         """
-        return cast(Union[Class, Function], self.target).decorators
+        return cast("Union[Class, Function]", self.target).decorators
 
     @property
     def imports_future_annotations(self) -> bool:
         """Whether this module import future annotations."""
-        return cast(Module, self.final_target).imports_future_annotations
+        return cast("Module", self.final_target).imports_future_annotations
 
     @property
     def is_init_module(self) -> bool:
@@ -1783,7 +1783,7 @@ class Alias(ObjectAliasMixin):
 
         See also: [`is_module`][griffe.Alias.is_module].
         """
-        return cast(Module, self.final_target).is_init_module
+        return cast("Module", self.final_target).is_init_module
 
     @property
     def is_package(self) -> bool:
@@ -1791,7 +1791,7 @@ class Alias(ObjectAliasMixin):
 
         See also: [`is_subpackage`][griffe.Alias.is_subpackage].
         """
-        return cast(Module, self.final_target).is_package
+        return cast("Module", self.final_target).is_package
 
     @property
     def is_subpackage(self) -> bool:
@@ -1799,7 +1799,7 @@ class Alias(ObjectAliasMixin):
 
         See also: [`is_package`][griffe.Alias.is_package].
         """
-        return cast(Module, self.final_target).is_subpackage
+        return cast("Module", self.final_target).is_subpackage
 
     @property
     def is_namespace_package(self) -> bool:
@@ -1807,7 +1807,7 @@ class Alias(ObjectAliasMixin):
 
         See also: [`is_namespace_subpackage`][griffe.Alias.is_namespace_subpackage].
         """
-        return cast(Module, self.final_target).is_namespace_package
+        return cast("Module", self.final_target).is_namespace_package
 
     @property
     def is_namespace_subpackage(self) -> bool:
@@ -1815,16 +1815,16 @@ class Alias(ObjectAliasMixin):
 
         See also: [`is_namespace_package`][griffe.Alias.is_namespace_package].
         """
-        return cast(Module, self.final_target).is_namespace_subpackage
+        return cast("Module", self.final_target).is_namespace_subpackage
 
     @property
     def overloads(self) -> dict[str, list[Function]] | list[Function] | None:
         """The overloaded signatures declared in this class/module or for this function."""
-        return cast(Union[Module, Class, Function], self.final_target).overloads
+        return cast("Union[Module, Class, Function]", self.final_target).overloads
 
     @overloads.setter
     def overloads(self, overloads: list[Function] | None) -> None:
-        cast(Union[Module, Class, Function], self.final_target).overloads = overloads
+        cast("Union[Module, Class, Function]", self.final_target).overloads = overloads
 
     @property
     def parameters(self) -> Parameters:
@@ -1834,26 +1834,26 @@ class Alias(ObjectAliasMixin):
         and therefore is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return cast(Union[Class, Function], self.final_target).parameters
+        return cast("Union[Class, Function]", self.final_target).parameters
 
     @property
     def returns(self) -> str | Expr | None:
         """The function return type annotation."""
-        return cast(Function, self.final_target).returns
+        return cast("Function", self.final_target).returns
 
     @returns.setter
     def returns(self, returns: str | Expr | None) -> None:
-        cast(Function, self.final_target).returns = returns
+        cast("Function", self.final_target).returns = returns
 
     @property
     def setter(self) -> Function | None:
         """The setter linked to this function (property)."""
-        return cast(Attribute, self.final_target).setter
+        return cast("Attribute", self.final_target).setter
 
     @property
     def deleter(self) -> Function | None:
         """The deleter linked to this function (property)."""
-        return cast(Attribute, self.final_target).deleter
+        return cast("Attribute", self.final_target).deleter
 
     @property
     def value(self) -> str | Expr | None:
@@ -1863,11 +1863,11 @@ class Alias(ObjectAliasMixin):
     @property
     def annotation(self) -> str | Expr | None:
         """The attribute type annotation."""
-        return cast(Attribute, self.final_target).annotation
+        return cast("Attribute", self.final_target).annotation
 
     @annotation.setter
     def annotation(self, annotation: str | Expr | None) -> None:
-        cast(Attribute, self.final_target).annotation = annotation
+        cast("Attribute", self.final_target).annotation = annotation
 
     @property
     def resolved_bases(self) -> list[Object]:
@@ -1876,11 +1876,11 @@ class Alias(ObjectAliasMixin):
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return cast(Class, self.final_target).resolved_bases
+        return cast("Class", self.final_target).resolved_bases
 
     def mro(self) -> list[Class]:
         """Return a list of classes in order corresponding to Python's MRO."""
-        return cast(Class, self.final_target).mro()
+        return cast("Class", self.final_target).mro()
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
     # These methods and properties do not exist on targets,
@@ -2128,7 +2128,8 @@ class Module(Object):
                 self.parent is not None
                 and isinstance(self.filepath, list)
                 and (
-                    cast(Module, self.parent).is_namespace_package or cast(Module, self.parent).is_namespace_subpackage
+                    cast("Module", self.parent).is_namespace_package
+                    or cast("Module", self.parent).is_namespace_subpackage
                 )
             )
         except BuiltinModuleError:
@@ -2217,7 +2218,7 @@ class Class(Object):
         for base in self.bases:
             base_path = base if isinstance(base, str) else base.canonical_path
             try:
-                resolved_base = self.modules_collection[base_path]
+                resolved_base = self.modules_collection.get_member(base_path)
                 if resolved_base.is_alias:
                     resolved_base = resolved_base.final_target
             except (AliasResolutionError, CyclicAliasError, KeyError):

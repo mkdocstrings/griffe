@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from mkdocstrings.inventory import Inventory
+from mkdocstrings import Inventory
 
 import griffe
 
