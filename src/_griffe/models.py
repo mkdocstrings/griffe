@@ -1619,7 +1619,7 @@ class Alias(ObjectAliasMixin):
     @property
     def value(self) -> str | Expr | None:
         """The attribute value."""
-        return cast(Attribute, self.final_target).value
+        return cast("Attribute", self.final_target).value
 
     @property
     def annotation(self) -> str | Expr | None:
