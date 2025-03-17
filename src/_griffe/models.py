@@ -1979,7 +1979,7 @@ class Class(Object):
         for base in self.bases:
             base_path = base if isinstance(base, str) else base.canonical_path
             try:
-                resolved_base = self.modules_collection[base_path]
+                resolved_base = self.modules_collection.get_member(base_path)
                 if resolved_base.is_alias:
                     resolved_base = resolved_base.final_target
             except (AliasResolutionError, CyclicAliasError, KeyError):
