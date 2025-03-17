@@ -151,3 +151,16 @@ def test_inspecting_partials_as_functions() -> None:
         assert partial_func.parameters[0].name == "b"
         assert partial_func.parameters[0].annotation.name == "int"
         assert partial_func.returns.name == "int"
+
+
+def test_inspecting_class_instance() -> None:
+    """Assert class instances are correctly inspected."""
+    with temporary_inspected_package(
+        "pkg",
+        {
+            "__init__.py": "",
+            "foo.py": "from . import bar\nx = bar.X()",
+            "bar.py": "class X: pass",
+        },
+    ) as tmp_package:
+        assert not tmp_package["foo.x"].is_alias

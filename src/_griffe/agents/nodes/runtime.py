@@ -230,6 +230,11 @@ class ObjectNode:
         return self.parent_is_class and isinstance(self_from_parent, classmethod)
 
     @cached_property
+    def is_attribute(self) -> bool:
+        """Whether this node's object is an attribute."""
+        return self.kind is ObjectKind.ATTRIBUTE
+
+    @cached_property
     def _ids(self) -> set[int]:
         if self.parent is None:
             return {id(self.obj)}
@@ -247,15 +252,20 @@ class ObjectNode:
     @cached_property
     def alias_target_path(self) -> str | None:
         """Alias target path of this node, if the node should be an alias."""
+        # Top-level objects can't have been imported.
         if self.parent is None:
             return None
 
-        # Get the path of the module the child was declared in.
+        # We can't ever know if an attribute was imported.
+        if self.is_attribute:
+            return None
+
+        # Get the path of the module the child object was declared in.
         child_module_path = self.module_path
         if not child_module_path:
             return None
 
-        # Get the module the parent object was declared in.
+        # Get the path of the module the parent object was declared in.
         parent_module_path = self.parent.module_path
         if not parent_module_path:
             return None
@@ -279,7 +289,11 @@ class ObjectNode:
         # as users most likely import from the public module and not the private one.
         if child_module_path.lstrip("_") in _builtin_module_names:
             child_module_path = child_module_path.lstrip("_")
+
+        # Child object is a module, return its path directly.
         if self.is_module:
             return child_module_path
+
+        # Rebuild the child object path.
         child_name = getattr(self.obj, "__qualname__", self.path[len(self.module.path) + 1 :])
         return f"{child_module_path}.{child_name}"
