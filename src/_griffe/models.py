@@ -1858,7 +1858,7 @@ class Alias(ObjectAliasMixin):
     @property
     def value(self) -> str | Expr | None:
         """The attribute or type alias value."""
-        return cast(Union[Attribute, TypeAlias], self.final_target).value
+        return cast("Union[Attribute, TypeAlias]", self.final_target).value
 
     @property
     def annotation(self) -> str | Expr | None:
