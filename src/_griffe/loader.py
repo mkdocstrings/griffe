@@ -343,7 +343,7 @@ class GriffeLoader:
                         "Could not expand wildcard import %s in %s: %s not found in modules collection",
                         member.name,
                         obj.path,
-                        cast(Alias, member).target_path,
+                        cast("Alias", member).target_path,
                     )
                     continue
 
@@ -371,7 +371,9 @@ class GriffeLoader:
         for new_member, alias_lineno, alias_endlineno in expanded:
             overwrite = False
             already_present = new_member.name in obj.members
-            self_alias = new_member.is_alias and cast(Alias, new_member).target_path == f"{obj.path}.{new_member.name}"
+            self_alias = (
+                new_member.is_alias and cast("Alias", new_member).target_path == f"{obj.path}.{new_member.name}"
+            )
 
             # If a member with the same name is already present in the current object,
             # we only overwrite it if the alias is imported lower in the module
