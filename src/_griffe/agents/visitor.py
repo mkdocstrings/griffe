@@ -215,22 +215,30 @@ class Visitor:
 
         def _get_type_parameters(
             self,
-            statement: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.TypeAlias,
+            node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.TypeAlias,
+            *,
+            scope: str | None = None,
         ) -> list[TypeParameter]:
             return [
                 TypeParameter(
                     type_param.name,  # type: ignore[attr-defined]
                     kind=self._type_parameter_kind_map[type(type_param)],
-                    bound=safe_get_annotation(getattr(type_param, "bound", None), parent=self.current),
-                    default=safe_get_annotation(getattr(type_param, "default_value", None), parent=self.current),
+                    bound=safe_get_annotation(getattr(type_param, "bound", None), parent=self.current, member=scope),
+                    default=safe_get_annotation(
+                        getattr(type_param, "default_value", None),
+                        parent=self.current,
+                        member=scope,
+                    ),
                 )
-                for type_param in statement.type_params
+                for type_param in node.type_params
             ]
     else:
 
         def _get_type_parameters(
             self,
-            _statement: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef,
+            node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef,  # noqa: ARG002,
+            *,
+            scope: str | None = None,  # noqa: ARG002,
         ) -> list[TypeParameter]:
             return []
 
@@ -318,7 +326,7 @@ class Visitor:
             lineno = node.lineno
 
         # handle base classes
-        bases = [safe_get_base_class(base, parent=self.current) for base in node.bases]
+        bases = [safe_get_base_class(base, parent=self.current, member=node.name) for base in node.bases]
 
         class_ = Class(
             name=node.name,
@@ -326,11 +334,12 @@ class Visitor:
             endlineno=node.end_lineno,
             docstring=self._get_docstring(node),
             decorators=decorators,
-            type_parameters=TypeParameters(*self._get_type_parameters(node)),
+            type_parameters=TypeParameters(*self._get_type_parameters(node, scope=node.name)),
             bases=bases,  # type: ignore[arg-type]
             runtime=not self.type_guarded,
         )
         class_.labels |= self.decorators_to_labels(decorators)
+
         self.current.set_member(node.name, class_)
         self.current = class_
         self.extensions.call("on_instance", node=node, obj=class_, agent=self)
@@ -419,7 +428,7 @@ class Visitor:
             attribute = Attribute(
                 name=node.name,
                 value=None,
-                annotation=safe_get_annotation(node.returns, parent=self.current),
+                annotation=safe_get_annotation(node.returns, parent=self.current, member=node.name),
                 lineno=node.lineno,
                 endlineno=node.end_lineno,
                 docstring=self._get_docstring(node),
@@ -437,7 +446,7 @@ class Visitor:
                 Parameter(
                     name,
                     kind=kind,
-                    annotation=safe_get_annotation(annotation, parent=self.current),
+                    annotation=safe_get_annotation(annotation, parent=self.current, member=node.name),
                     default=default
                     if isinstance(default, str)
                     else safe_get_expression(default, parent=self.current, parse_strings=False),
@@ -451,9 +460,9 @@ class Visitor:
             lineno=lineno,
             endlineno=node.end_lineno,
             parameters=parameters,
-            returns=safe_get_annotation(node.returns, parent=self.current),
+            returns=safe_get_annotation(node.returns, parent=self.current, member=node.name),
             decorators=decorators,
-            type_parameters=TypeParameters(*self._get_type_parameters(node)),
+            type_parameters=TypeParameters(*self._get_type_parameters(node, scope=node.name)),
             docstring=self._get_docstring(node),
             runtime=not self.type_guarded,
             parent=self.current,
@@ -520,7 +529,7 @@ class Visitor:
 
             name = node.name.id
 
-            value = safe_get_expression(node.value, parent=self.current)
+            value = safe_get_expression(node.value, parent=self.current, member=name)
 
             try:
                 docstring = self._get_docstring(ast_next(node), strict=True)
@@ -532,7 +541,7 @@ class Visitor:
                 value=value,
                 lineno=node.lineno,
                 endlineno=node.end_lineno,
-                type_parameters=TypeParameters(*self._get_type_parameters(node)),
+                type_parameters=TypeParameters(*self._get_type_parameters(node, scope=name)),
                 docstring=docstring,
                 parent=self.current,
             )

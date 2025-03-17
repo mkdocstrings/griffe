@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import sys
 
 import pytest
 
@@ -110,3 +111,25 @@ def test_resolving_init_parameter() -> None:
         """,
     ) as module:
         assert module["Class.x"].value.canonical_path == "module.Class(x)"
+
+
+# YORE: EOL 3.11: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")
+def test_resolving_type_parameters() -> None:
+    """Assert type parameters are correctly transformed to their fully-resolved form."""
+    with temporary_visited_module(
+        """
+        class C[T]:
+            class D[T]:
+                def func[Y](self, arg1: T, arg2: Y): pass
+                attr: T
+            def func[Z](arg1: T, arg2: Y): pass
+        """,
+    ) as module:
+        assert module["C.D.func"].parameters["arg1"].annotation.canonical_path == "module.C.D[T]"
+        assert module["C.D.func"].parameters["arg2"].annotation.canonical_path == "module.C.D.func[Y]"
+
+        assert module["C.D.attr"].annotation.canonical_path == "module.C.D[T]"
+
+        assert module["C.func"].parameters["arg1"].annotation.canonical_path == "module.C[T]"
+        assert module["C.func"].parameters["arg2"].annotation.canonical_path == "Y"

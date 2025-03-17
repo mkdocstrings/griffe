@@ -339,7 +339,7 @@ class Inspector:
             name=node.name,
             docstring=self._get_docstring(node),
             bases=bases,
-            type_parameters=TypeParameters(*_convert_type_parameters(node.obj, self.current)),
+            type_parameters=TypeParameters(*_convert_type_parameters(node.obj, parent=self.current, member=node.name)),
             lineno=lineno,
             endlineno=endlineno,
         )
@@ -459,13 +459,16 @@ class Inspector:
             returns = None
         else:
             parameters = Parameters(
-                *[_convert_parameter(parameter, parent=self.current) for parameter in signature.parameters.values()],
+                *[
+                    _convert_parameter(parameter, parent=self.current, member=node.name)
+                    for parameter in signature.parameters.values()
+                ],
             )
             return_annotation = signature.return_annotation
             returns = (
                 None
                 if return_annotation is _empty
-                else _convert_object_to_annotation(return_annotation, parent=self.current)
+                else _convert_object_to_annotation(return_annotation, parent=self.current, member=node.name)
             )
 
         lineno, endlineno = self._get_linenos(node)
@@ -486,7 +489,9 @@ class Inspector:
                 name=node.name,
                 parameters=parameters,
                 returns=returns,
-                type_parameters=TypeParameters(*_convert_type_parameters(node.obj, self.current)),
+                type_parameters=TypeParameters(
+                    *_convert_type_parameters(node.obj, parent=self.current, member=node.name),
+                ),
                 docstring=self._get_docstring(node),
                 lineno=lineno,
                 endlineno=endlineno,
@@ -512,10 +517,10 @@ class Inspector:
 
         type_alias = TypeAlias(
             name=node.name,
-            value=_convert_type_to_annotation(node.obj.__value__, self.current),
+            value=_convert_type_to_annotation(node.obj.__value__, parent=self.current, member=node.name),
             lineno=lineno,
             endlineno=endlineno,
-            type_parameters=TypeParameters(*_convert_type_parameters(node.obj, self.current)),
+            type_parameters=TypeParameters(*_convert_type_parameters(node.obj, parent=self.current, member=node.name)),
             docstring=self._get_docstring(node),
             parent=self.current,
         )
@@ -588,10 +593,17 @@ _parameter_kind_map = {
 }
 
 
-def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) -> Parameter:
+def _convert_parameter(
+    parameter: SignatureParameter,
+    *,
+    parent: Module | Class,
+    member: str | None = None,
+) -> Parameter:
     name = parameter.name
     annotation = (
-        None if parameter.annotation is _empty else _convert_object_to_annotation(parameter.annotation, parent=parent)
+        None
+        if parameter.annotation is _empty
+        else _convert_object_to_annotation(parameter.annotation, parent=parent, member=member)
     )
     kind = _parameter_kind_map[parameter.kind]
     if parameter.default is _empty:
@@ -604,7 +616,7 @@ def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) ->
     return Parameter(name, annotation=annotation, kind=kind, default=default)
 
 
-def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Expr | None:
+def _convert_object_to_annotation(obj: Any, *, parent: Module | Class, member: str | None = None) -> str | Expr | None:
     # even when *we* import future annotations,
     # the object from which we get a signature
     # can come from modules which did *not* import them,
@@ -621,7 +633,7 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Exp
         annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
-    return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]
+    return safe_get_annotation(annotation_node.body, parent, member=member)  # type: ignore[attr-defined]
 
 
 _type_parameter_kind_map = {
@@ -638,7 +650,9 @@ _type_parameter_kind_map = {
 
 def _convert_type_parameters(
     obj: Any,
+    *,
     parent: Module | Class,
+    member: str | None = None,
 ) -> list[TypeParameter]:
     obj = unwrap(obj)
 
@@ -649,9 +663,9 @@ def _convert_type_parameters(
     for type_parameter in obj.__type_params__:
         bound = getattr(type_parameter, "__bound__", None)
         if bound is not None:
-            bound = _convert_type_to_annotation(bound, parent=parent)
+            bound = _convert_type_to_annotation(bound, parent=parent, member=member)
         constraints: list[str | Expr] = [
-            _convert_type_to_annotation(constraint, parent=parent)  # type: ignore[misc]
+            _convert_type_to_annotation(constraint, parent=parent, member=member)  # type: ignore[misc]
             for constraint in getattr(type_parameter, "__constraints__", ())
         ]
 
@@ -659,6 +673,7 @@ def _convert_type_parameters(
             default = _convert_type_to_annotation(
                 type_parameter.__default__,
                 parent=parent,
+                member=member,
             )
         else:
             default = None
@@ -676,14 +691,14 @@ def _convert_type_parameters(
     return type_parameters
 
 
-def _convert_type_to_annotation(obj: Any, parent: Module | Class) -> str | Expr | None:
+def _convert_type_to_annotation(obj: Any, *, parent: Module | Class, member: str | None = None) -> str | Expr | None:
     origin = typing.get_origin(obj)
 
     if origin is None:
-        return _convert_object_to_annotation(obj, parent=parent)
+        return _convert_object_to_annotation(obj, parent=parent, member=member)
 
     args: Sequence[str | Expr | None] = [
-        _convert_type_to_annotation(arg, parent=parent) for arg in typing.get_args(obj)
+        _convert_type_to_annotation(arg, parent=parent, member=member) for arg in typing.get_args(obj)
     ]
 
     # YORE: EOL 3.9: Replace block with lines 2-3.
@@ -691,7 +706,7 @@ def _convert_type_to_annotation(obj: Any, parent: Module | Class) -> str | Expr 
         if origin is types.UnionType:
             return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)  # type: ignore[arg-type]
 
-    origin = _convert_type_to_annotation(origin, parent=parent)
+    origin = _convert_type_to_annotation(origin, parent=parent, member=member)
     if origin is None:
         return None
 

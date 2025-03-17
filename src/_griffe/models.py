@@ -1147,15 +1147,25 @@ class Object(ObjectAliasMixin):
         # TODO: Better match Python's own scoping rules?
         # Also, maybe return regular paths instead of canonical ones?
 
-        # Name is a member this object.
+        # Name is a type parameter.
+        if name in self.type_parameters:
+            type_parameter = self.type_parameters[name]
+            if type_parameter.kind is TypeParameterKind.type_var_tuple:
+                prefix = "*"
+            elif type_parameter.kind is TypeParameterKind.param_spec:
+                prefix = "**"
+            else:
+                prefix = ""
+            return f"{self.path}[{prefix}{name}]"
+
+        # Name is a member of this object.
         if name in self.members:
             if self.members[name].is_alias:
                 return self.members[name].target_path  # type: ignore[union-attr]
             return self.members[name].path
 
-        # Name unknown and no more parent scope.
+        # Name unknown and no more parent scope. Could be a built-in.
         if self.parent is None:
-            # could be a built-in
             raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
 
         # Name is parent, non-module object.
@@ -2384,7 +2394,7 @@ class TypeAlias(Object):
     def __init__(
         self,
         *args: Any,
-        value: str | Expr | None,
+        value: str | Expr | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the function.

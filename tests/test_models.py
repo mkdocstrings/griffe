@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from copy import deepcopy
 from textwrap import dedent
 
@@ -563,3 +564,27 @@ def test_delete_type_parameters() -> None:
     del type_parameters[0]
     assert "x" not in type_parameters
     assert len(type_parameters) == 0
+
+
+# YORE: EOL 3.11: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")
+def test_annotation_resolution() -> None:
+    """Names are correctly resolved in the annotation scope of an object."""
+    with temporary_visited_module(
+        """
+        class C[T]:
+            class D[T]:
+                def func[Y](self, arg1: T, arg2: Y): pass
+            def func[Z](arg1: T, arg2: Y): pass
+        """,
+    ) as module:
+        assert module["C.D"].resolve("T") == "module.C.D[T]"
+
+        assert module["C.D.func"].resolve("T") == "module.C.D[T]"
+        assert module["C.D.func"].resolve("Y") == "module.C.D.func[Y]"
+
+        assert module["C"].resolve("T") == "module.C[T]"
+
+        assert module["C.func"].resolve("T") == "module.C[T]"
+        with pytest.raises(NameResolutionError):
+            module["C.func"].resolve("Y")
