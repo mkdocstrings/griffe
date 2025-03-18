@@ -282,10 +282,10 @@ class GriffeLoader:
                     continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
-                    try:
-                        expanded |= next_module.exports
-                    except TypeError:
-                        logger.warning("Unsupported item in %s.__all__: %s (use strings only)", module.path, export)
+                try:
+                    expanded |= next_module.exports
+                except TypeError:
+                    logger.warning("Unsupported item in %s.__all__: %s (use strings only)", module.path, export)
             # It's a string, simply add it to the current exports.
             else:
                 expanded.add(export)
