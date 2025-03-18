@@ -2,53 +2,29 @@
 
 from __future__ import annotations
 
-from textwrap import dedent
-
-from griffe import GriffeLoader, temporary_pypackage
+from griffe import temporary_visited_package
 
 
 def test_dont_trigger_alias_resolution_when_merging_stubs() -> None:
     """Assert that we don't trigger alias resolution when merging stubs."""
-    with temporary_pypackage("package", ["mod.py", "mod.pyi"]) as tmp_package:
-        tmp_package.path.joinpath("mod.py").write_text(
-            dedent(
-                """
-                import pathlib
-
-                def f() -> pathlib.Path:
-                    return pathlib.Path()
-                """,
-            ),
-        )
-        tmp_package.path.joinpath("mod.pyi").write_text(
-            dedent(
-                """
-                import pathlib
-
-                def f() -> pathlib.Path: ...
-                """,
-            ),
-        )
-        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        loader.load(tmp_package.name)
+    with temporary_visited_package(
+        "package",
+        {
+            "mod.py": "import pathlib\n\ndef f() -> pathlib.Path:\n    return pathlib.Path()",
+            "mod.pyi": "import pathlib\n\ndef f() -> pathlib.Path: ...",
+        },
+    ) as pkg:
+        assert not pkg["mod.pathlib"].resolved
 
 
 def test_merge_stubs_on_wildcard_imported_objects() -> None:
     """Assert that stubs can be merged on wildcard imported objects."""
-    with temporary_pypackage("package", ["mod.py", "__init__.pyi"]) as tmp_package:
-        tmp_package.path.joinpath("mod.py").write_text(
-            dedent(
-                """
-                class A:
-                    def hello(value: int | str) -> int | str:
-                        return value
-                """,
-            ),
-        )
-        tmp_package.path.joinpath("__init__.py").write_text("from .mod import *")
-        tmp_package.path.joinpath("__init__.pyi").write_text(
-            dedent(
-                """
+    with temporary_visited_package(
+        "package",
+        {
+            "mod.py": "class A:\n    def hello(value: int | str) -> int | str:\n        return value",
+            "__init__.py": "from .mod import *",
+            "__init__.pyi": """
                 from typing import overload
                 class A:
                     @overload
@@ -56,8 +32,7 @@ def test_merge_stubs_on_wildcard_imported_objects() -> None:
                     @overload
                     def hello(value: str) -> str: ...
                 """,
-            ),
-        )
-        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
-        module = loader.load(tmp_package.name)
-        assert module["A.hello"].overloads
+        },
+    ) as pkg:
+        assert pkg["A.hello"].overloads
+
