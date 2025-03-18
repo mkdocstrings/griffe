@@ -38,32 +38,38 @@ ignore = [
 logger-objects = ["_griffe.logger.logger"]
 
 [lint.per-file-ignores]
-"src/*/__main__.py" = [
+"src/griffe/__main__.py" = [
     "D100",  # Missing module docstring
 ]
-"src/*/cli.py" = [
+"src/_griffe/cli.py" = [
     "T201",  # Print statement
 ]
-"src/*/git.py" = [
+"src/_griffe/git.py" = [
     "S603",  # `subprocess` call: check for execution of untrusted input
     "S607",  # Starting a process with a partial executable path
+]
+"src/_griffe/agents/nodes/*.py" = [
+    "ARG001",  # Unused function argument
+    "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
+]
+"src/_griffe/debug.py" = [
+    "T201",  # Print statement
+]
+"src/_griffe/**.py" = [
+    "D100",  # Missing docstring in public module
+]
+"scripts/*.py" = [
+    "D100",  # Missing docstring in public module
+    "D101",  # Missing docstring in public class
+    "D103",  # Missing docstring in public function
+    "INP001",  # File is part of an implicit namespace package
+    "T201",  # Print statement
 ]
 "tests/test_git.py" = [
     "S603",  # `subprocess` call: check for execution of untrusted input
     "S607",  # Starting a process with a partial executable path
 ]
-"src/*/*/nodes/*.py" = [
-    "ARG001",  # Unused function argument
-    "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
-]
-"src/*/debug.py" = [
-    "T201",  # Print statement
-]
-"scripts/*.py" = [
-    "INP001",  # File is part of an implicit namespace package
-    "T201",  # Print statement
-]
-"tests/*.py" = [
+"tests/**.py" = [
     "ARG005",  # Unused lambda argument
     "FBT001",  # Boolean positional arg in function definition
     "PLC1901",  # a == "" can be simplified to not a

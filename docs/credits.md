@@ -1,4 +1,5 @@
 ---
+title: Credits
 hide:
 - toc
 ---

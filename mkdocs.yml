@@ -210,8 +210,6 @@ plugins:
 - gen-files:
     scripts:
     - scripts/gen_griffe_json.py
-- literate-nav:
-    nav_file: SUMMARY.md
 - section-index
 - coverage:
     page_path: guide/contributors/coverage
@@ -219,7 +217,7 @@ plugins:
     enabled: !ENV [MKDOCSTRINGS_ENABLED, true]
     handlers:
       python:
-        import:
+        inventories:
         # YORE: BOL 3.13: Replace `3.13` with `3` within line.
         - url: https://docs.python.org/3.13/objects.inv
           domains: [std, py]
@@ -248,6 +246,12 @@ plugins:
           show_symbol_type_toc: true
           signature_crossrefs: true
           summary: true
+- llmstxt:
+    files:
+    - output: llms-full.txt
+      inputs:
+      - index.md
+      - reference/**.md
 - git-revision-date-localized:
     enabled: !ENV [DEPLOY, false]
     enable_creation_date: true

@@ -1,10 +1,14 @@
+---
+title: Insiders
+---
+
 # Insiders
 
-*Griffe* follows the **sponsorware** release strategy, which means that new features are first exclusively released to sponsors as part of [Insiders][insiders]. Read on to learn [what sponsorships achieve][sponsorship], [how to become a sponsor][sponsors] to get access to Insiders, and [what's in it for you][features]!
+*Griffe* follows the **sponsorware** release strategy, which means that new features are first exclusively released to sponsors as part of [Insiders][]. Read on to learn [what sponsorships achieve][sponsorship], [how to become a sponsor][sponsors] to get access to Insiders, and [what's in it for you][features]!
 
 ## What is Insiders?
 
-*Griffe Insiders* is a private fork of *Griffe*, hosted as a private GitHub repository. Almost[^1] [all new features][features] are developed as part of this fork, which means that they are immediately available to all eligible sponsors, as they are made collaborators of this repository.
+*Griffe Insiders* is a private fork of *Griffe*, hosted as a private GitHub repository. Almost[^1] [all new features][features] are developed as part of this fork, which means that they are immediately available to all eligible sponsors, as they are granted access to this private repository.
 
 [^1]: In general, every new feature is first exclusively released to sponsors, but sometimes upstream dependencies enhance existing features that must be supported by *Griffe*.
 
@@ -67,23 +71,24 @@ else:
     )
 ```
 
-Additionally, your sponsorship will give more weight to your upvotes on issues, helping us prioritize work items in our backlog. For more information on how we prioritize work, see this page: [Backlog management](https://pawamoy.github.io/backlog/).
+Additionally, your sponsorship will give more weight to your upvotes on issues, helping us prioritize work items in our backlog. For more information on how we prioritize work, see this page: [Backlog management][backlog].
 
 ## How to become a sponsor
 
 Thanks for your interest in sponsoring! In order to become an eligible sponsor with your GitHub account, visit [pawamoy's sponsor profile][github sponsor profile], and complete a sponsorship of **$10 a month or more**. You can use your individual or organization GitHub account for sponsoring.
 
-Sponsorships lower than $10 a month are also very much appreciated, and useful. They won't grant you access to Insiders, but they will be counted towards reaching sponsorship goals. *Every* sponsorship helps us implementing new features and releasing them to the public.
+Sponsorships lower than $10 a month are also very much appreciated, and useful. They won't grant you access to Insiders, but they will be counted towards reaching sponsorship goals. Every sponsorship helps us implementing new features and releasing them to the public.
 
-**Important**: If you're sponsoring **[@pawamoy][github sponsor profile]** through a GitHub organization, please send a short email to insiders@pawamoy.fr with the name of your organization and the GitHub account of the individual that should be added as a collaborator.[^4]
+**Important:** By default, when you're sponsoring **[@pawamoy][github sponsor profile]** through a GitHub organization, all the publicly visible members of the organization will be invited to join our private repositories. If you wish to only grant access to a subset of users, please send a short email to insiders@pawamoy.fr with the name of your organization and the GitHub accounts of the users that should be granted access.
+
+**Tip:** to ensure that access is not tied to a particular individual GitHub account, you can create a bot account (i.e. a GitHub account that is not tied to a specific individual), and use this account for the sponsoring. After being granted access to our private repositories, the bot account can create private forks of our private repositories into your own organization, which all members of your organization will have access to.
 
 You can cancel your sponsorship anytime.[^5]
 
-[^4]: It's currently not possible to grant access to each member of an organization, as GitHub only allows for adding users. Thus, after sponsoring, please send an email to insiders@pawamoy.fr, stating which account should become a collaborator of the Insiders repository. We're working on a solution which will make access to organizations much simpler. To ensure that access is not tied to a particular individual GitHub account, create a bot account (i.e. a GitHub account that is not tied to a specific individual), and use this account for the sponsoring. After being added to the list of collaborators, the bot account can create a private fork of the private Insiders GitHub repository, and grant access to all members of the organizations.
-
 [^5]: If you cancel your sponsorship, GitHub schedules a cancellation request which will become effective at the end of the billing cycle. This means that even though you cancel your sponsorship, you will keep your access to Insiders as long as your cancellation isn't effective. All charges are processed by GitHub through Stripe. As we don't receive any information regarding your payment, and GitHub doesn't offer refunds, sponsorships are non-refundable.
 
-[:octicons-heart-fill-24:{ .pulse } &nbsp; Join our <span id="sponsors-count"></span> awesome sponsors](https://github.com/sponsors/pawamoy){ .md-button .md-button--primary }
+
+[:octicons-heart-fill-24:{ .pulse } &nbsp; Join our <span id="sponsors-count"></span> awesome sponsors][github sponsor profile]{ .md-button .md-button--primary }
 
 <hr>
 <div class="premium-sponsors">
@@ -96,11 +101,7 @@ You can cancel your sponsorship anytime.[^5]
 <div id="sponsors"></div>
 
 <small>
-  If you sponsor publicly, you're automatically added here with a link to
-  your profile and avatar to show your support for *Griffe*.
-  Alternatively, if you wish to keep your sponsorship private, you'll be a
-  silent +1. You can select visibility during checkout and change it
-  afterwards.
+  If you sponsor publicly, you're automatically added here with a link to your profile and avatar to show your support for *Griffe*. Alternatively, if you wish to keep your sponsorship private, you'll be a silent +1. You can select visibility during checkout and change it afterwards.
 </small>
 
 ## Funding <span class="sponsors-total"></span>
@@ -145,17 +146,16 @@ If you have any problems or further questions, please reach out to insiders@pawa
 
 > Are we allowed to use Insiders under the same terms and conditions as *Griffe*?
 
-Yes. Whether you're an individual or a company, you may use *Griffe Insiders* precisely under the same terms as *Griffe*, which are given by the [ISC License][license]. However, we kindly ask you to respect our **fair use policy**:
+Yes. Whether you're an individual or a company, you may use *Griffe Insiders* precisely under the same terms as *Griffe*, which are given by the [ISC license][license]. However, we kindly ask you to respect our **fair use policy**:
 
 - Please **don't distribute the source code** of Insiders. You may freely use it for public, private or commercial projects, privately fork or mirror it, but please don't make the source code public, as it would counteract the sponsorware strategy.
+- If you cancel your subscription, your access to the private repository is revoked, and you will miss out on all future updates of Insiders. However, you may **use the latest version** that's available to you **as long as you like**. Just remember that [GitHub deletes private forks][private forks].
 
-- If you cancel your subscription, you're automatically removed as a collaborator and will miss out on all future updates of Insiders. However, you may **use the latest version** that's available to you **as long as you like**. Just remember that [GitHub deletes private forks][private forks].
-
-<script src="../js/insiders.js"></script>
-
-<script>updateInsidersPage('pawamoy');</script>
-
+[backlog]: https://pawamoy.github.io/backlog/
 [billing cycle]: https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/changing-the-duration-of-your-billing-cycle
+[insiders]: #what-is-insiders
+[sponsorship]: #what-sponsorships-achieve
+[sponsors]: #how-to-become-a-sponsor
 [features]: #whats-in-it-for-me
 [funding]: #funding
 [github sponsor profile]: https://github.com/sponsors/pawamoy

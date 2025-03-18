@@ -6,7 +6,8 @@ build-backend = "pdm.backend"
 name = "griffe"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
-license = {text = "ISC"}
+license = "ISC"
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.9"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
@@ -82,14 +83,14 @@ data = [
 ]
 
 [dependency-groups]
-dev = [
-    # maintenance
+maintain = [
     "build>=1.2",
     "git-changelog>=2.5",
     "twine>=5.1",
-
-    # ci
-    "duty>=1.4",
+    "yore>=0.3.3",
+]
+ci = [
+    "duty>=1.6",
     "ruff>=0.4",
     "jsonschema>=4.17",
     "pysource-codegen>=0.4",
@@ -101,9 +102,8 @@ dev = [
     "mypy>=1.10",
     "types-markdown>=3.6",
     "types-pyyaml>=6.0",
-
-    # docs
-    "black>=24.4",
+]
+ docs = [
     "code2flow>=2.5",
     "griffe-inherited-docstrings>=1.0",
     "markdown-callouts>=0.4",
@@ -112,7 +112,7 @@ dev = [
     "mkdocs-coverage>=1.0",
     "mkdocs-gen-files>=0.5",
     "mkdocs-git-revision-date-localized-plugin>=1.2",
-    "mkdocs-literate-nav>=0.6",
+    "mkdocs-llmstxt>=0.1",
     "mkdocs-material>=9.5",
     "mkdocs-minify-plugin>=0.8",
     "mkdocs-section-index>=0.3",
@@ -122,3 +122,6 @@ dev = [
     # YORE: EOL 3.10: Remove line.
     "tomli>=2.0; python_version < '3.11'",
 ]
+
+[tool.uv]
+default-groups = ["maintain", "ci", "docs"]
