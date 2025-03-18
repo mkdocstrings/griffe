@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.6.1](https://github.com/mkdocstrings/griffe/releases/tag/1.6.1) - 2025-03-18
+
+<small>[Compare with 1.6.0](https://github.com/mkdocstrings/griffe/compare/1.6.0...1.6.1)</small>
+
+### Bug Fixes
+
+- Extend exports from already expanded modules ([7e708cf](https://github.com/mkdocstrings/griffe/commit/7e708cf9ffe1845d310633e8486b99d32d5fca5c) by Timothée Mazzucotelli). [Issue-746](https://github.com/mkdocstrings/mkdocstrings/discussions/746)
+- Update imports when merging stubs ([5a92379](https://github.com/mkdocstrings/griffe/commit/5a92379e42c5a8bebc9323aabbbc9df881463718) by Timothée Mazzucotelli). [Issue-746](https://github.com/mkdocstrings/mkdocstrings/discussions/746)
+- Don't alias attributes when inspecting ([8063ba9](https://github.com/mkdocstrings/griffe/commit/8063ba9fd4b3d1f782515b81ba362c63d4ccd2bd) by Timothée Mazzucotelli). [Issue-366](https://github.com/mkdocstrings/griffe/issues/366)
+- Register top-module in collection earlier ([2c389b5](https://github.com/mkdocstrings/griffe/commit/2c389b57781c3c24a21141ad3d0103458418ec51) by Timothée Mazzucotelli).
+- Prevent recursion errors by not looking into inherited members when resolving base classes ([87cbaf8](https://github.com/mkdocstrings/griffe/commit/87cbaf87f09103b5972a47fdf5437e00df6e830a) by Timothée Mazzucotelli).
+
 ## [1.6.0](https://github.com/mkdocstrings/griffe/releases/tag/1.6.0) - 2025-03-01
 
 <small>[Compare with 1.5.7](https://github.com/mkdocstrings/griffe/compare/1.5.7...1.6.0)</small>
