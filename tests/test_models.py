@@ -106,7 +106,7 @@ def test_dataclass_properties_and_class_variables() -> None:
             x: float
             y: float
 
-            # These definitions create class variables
+            # These definitions create class variables.
             r: ClassVar[float]
             s: float = 3
             t: ClassVar[float] = 3
@@ -250,7 +250,7 @@ def test_fields_with_init_false() -> None:
         @dataclass(init=False)
         class PointC:
             x: float
-            y: float = field(init=True)  # init=True has no effect
+            y: float = field(init=True)  # `init=True` has no effect.
     """
     with temporary_visited_package("package", {"__init__.py": code}) as module:
         params_a = module["PointA"].parameters
@@ -436,12 +436,12 @@ def test_attributes_that_have_no_annotations() -> None:
         class Base:
             a: int
             b: str = field(init=False)
-            c = 3  # class attribute
+            c = 3  # Class attribute.
 
         @dataclass
         class Derived(Base):
-            a = 1  # no effect on the parameter status of a
-            b = "b"  # inherited non-parameter
+            a = 1  # No effect on the parameter status of `a`.
+            b = "b"  # Inherited non-parameter.
             d: float = 4
     """
     with temporary_visited_package("package", {"__init__.py": code}) as module:

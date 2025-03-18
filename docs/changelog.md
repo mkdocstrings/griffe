@@ -1,4 +1,5 @@
 ---
+title: Changelog
 hide:
 - navigation
 ---

@@ -680,7 +680,7 @@ class Object(ObjectAliasMixin):
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
 
-        # attach the docstring to this object
+        # Attach the docstring to this object.
         if docstring:
             docstring.parent = self
 
@@ -958,7 +958,7 @@ class Object(ObjectAliasMixin):
         """
         module = self.module
         while module.parent:
-            module = module.parent  # type: ignore[assignment]  # always a module
+            module = module.parent  # type: ignore[assignment]
         return module
 
     @property
@@ -1164,7 +1164,7 @@ class Object(ObjectAliasMixin):
                 return self.members[name].target_path  # type: ignore[union-attr]
             return self.members[name].path
 
-        # Name unknown and no more parent scope. Could be a built-in.
+        # Name unknown and no more parent scope, could be a built-in.
         if self.parent is None:
             raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
 
@@ -1366,13 +1366,13 @@ class Alias(ObjectAliasMixin):
 
         See also: [`canonical_path`][griffe.Alias.canonical_path].
         """
-        return f"{self.parent.path}.{self.name}"  # type: ignore[union-attr]  # we assume there's always a parent
+        return f"{self.parent.path}.{self.name}"  # type: ignore[union-attr]
 
     @property
     def modules_collection(self) -> ModulesCollection:
         """The modules collection attached to the alias parents."""
-        # no need to forward to the target
-        return self.parent.modules_collection  # type: ignore[union-attr]  # we assume there's always a parent
+        # No need to forward to the target.
+        return self.parent.modules_collection  # type: ignore[union-attr]
 
     @property
     def members(self) -> dict[str, Object | Alias]:
@@ -1899,7 +1899,7 @@ class Alias(ObjectAliasMixin):
         """
         if not self.resolved:
             self.resolve_target()
-        return self._target  # type: ignore[return-value]  # cannot return None, exception is raised
+        return self._target  # type: ignore[return-value]
 
     @target.setter
     def target(self, value: Object | Alias) -> None:
@@ -1926,7 +1926,7 @@ class Alias(ObjectAliasMixin):
         # The cycle detection is needed because alias chains can be created
         # as already resolved, and can contain cycles.
 
-        # using a dict as an ordered set
+        # Using a dict as an ordered set.
         paths_seen: dict[str, None] = {}
         target = self
         while target.is_alias:
@@ -1983,7 +1983,7 @@ class Alias(ObjectAliasMixin):
                 raise CyclicAliasError([self.target_path, *error.chain]) from error
         self._target = resolved
         if self.parent is not None:
-            self._target.aliases[self.path] = self  # type: ignore[union-attr]  # we just set the target
+            self._target.aliases[self.path] = self  # type: ignore[union-attr]
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
@@ -2244,7 +2244,7 @@ class Class(Object):
         See also: [`bases`][griffe.Class.bases],
         [`resolved_bases`][griffe.Class.resolved_bases].
         """
-        return self._mro()[1:]  # remove self
+        return self._mro()[1:]  # Remove self.
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this class' data as a dictionary.

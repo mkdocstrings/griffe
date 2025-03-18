@@ -170,10 +170,10 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     pth_file.write_text(
         "hello=1\ninstall({'whatever': '/path/to/whatever'}, {'whatever.else': '/else'}, None, False, True)",
     )
-    # the second dict is not handled: scikit-build-core puts these files
+    # The second dict is not handled: scikit-build-core puts these files
     # in a location that Griffe won't be able to discover anyway
     # (they don't respect standard package or namespace package layouts,
-    # and rely on dynamic meta path finder stuff)
+    # and rely on dynamic meta path finder stuff).
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("/path/to/whatever")]
 
@@ -186,7 +186,7 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     """
     pth_file = tmp_path / "_whatever_editable_loader.py"
     pth_file.write_text(
-        # the path in argument 2 suffixed with src must exist, so we pass '.'
+        # The path in argument 2 suffixed with src must exist, so we pass `.`.
         "hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)",
     )
     search_paths = _handle_editable_module(pth_file)

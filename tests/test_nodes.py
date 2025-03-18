@@ -10,7 +10,7 @@ import pytest
 from griffe import Expr, ExprName, module_vtree, relative_to_absolute, temporary_visited_module
 
 syntax_examples = [
-    # operations
+    # Operations.
     "b + c",
     "b - c",
     "b * c",
@@ -24,53 +24,53 @@ syntax_examples = [
     "b % c",
     "b >> c",
     "b << c",
-    # unary operations
+    # Unary operations.
     "+b",
     "-b",
     "~b",
-    # comparisons
+    # Comparisons.
     "b == c",
     "b >= c",
     "b > c",
     "b <= c",
     "b < c",
     "b != c",
-    # boolean logic
+    # Boolean logic.
     "b and c",
     "b or c",
     "not b",
-    # identify
+    # Identify.
     "b is c",
     "b is not c",
-    # membership
+    # Membership.
     "b in c",
     "b not in c",
-    # calls
+    # Calls.
     "call()",
     "call(something)",
     "call(something=something)",
-    # strings
+    # Strings.
     "f'a {round(key, 2)} {z}'",
-    # slices
+    # Slices.
     "o[x]",
     "o[x, y]",
     "o[x:y]",
     "o[x:y, z]",
     "o[x, y(z)]",
-    # walrus operator
+    # Walrus operator.
     "a if (a := b) else c",
-    # starred
+    # Starred.
     "a(*b, **c)",
-    # structs
+    # Structs.
     "(a, b, c)",
     "{a, b, c}",
     "{a: b, c: d}",
     "[a, b, c]",
-    # yields
+    # Yields.
     "yield",
     "yield a",
     "yield from a",
-    # lambdas
+    # Lambdas.
     "lambda a: a",
     "lambda a, b: a",
     "lambda *a, **b: a",
@@ -175,7 +175,7 @@ def test_building_expressions_from_nodes(code: str) -> None:
     with temporary_visited_module(f"__z__ = {code}") as module:
         assert "__z__" in module.members
 
-        # make space after comma non-significant
+        # Make space after comma non-significant.
         value = str(module["__z__"].value).replace(", ", ",")
         assert value == code.replace(", ", ",")
 

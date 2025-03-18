@@ -219,7 +219,7 @@ class GriffeLoader:
         if max_iterations is None:
             max_iterations = float("inf")  # type: ignore[assignment]
         prev_unresolved: set[str] = set()
-        unresolved: set[str] = set("0")  # init to enter loop
+        unresolved: set[str] = set("0")  # Init to enter loop.
         iteration = 0
         collection = self.modules_collection.members
 
@@ -274,7 +274,7 @@ class GriffeLoader:
             # It's a name: we resolve it, get the module it comes from,
             # recurse into it, and add its exports to the current ones.
             if isinstance(export, ExprName):
-                module_path = export.canonical_path.rsplit(".", 1)[0]  # remove trailing .__all__
+                module_path = export.canonical_path.rsplit(".", 1)[0]  # Remove trailing `.__all__`.
                 try:
                     next_module = self.modules_collection.get_member(module_path)
                 except KeyError:
@@ -282,10 +282,10 @@ class GriffeLoader:
                     continue
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
-                    try:
-                        expanded |= next_module.exports
-                    except TypeError:
-                        logger.warning("Unsupported item in %s.__all__: %s (use strings only)", module.path, export)
+                try:
+                    expanded |= next_module.exports
+                except TypeError:
+                    logger.warning("Unsupported item in %s.__all__: %s (use strings only)", module.path, export)
             # It's a string, simply add it to the current exports.
             else:
                 expanded.add(export)
@@ -321,7 +321,7 @@ class GriffeLoader:
         # while also keeping track of the members representing wildcard import, to remove them later.
         for member in obj.members.values():
             # Handle a wildcard.
-            if member.is_alias and member.wildcard:  # type: ignore[union-attr]  # we know it's an alias
+            if member.is_alias and member.wildcard:  # type: ignore[union-attr]
                 package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
                 not_loaded = obj.package.path != package and package not in self.modules_collection
 
@@ -702,7 +702,7 @@ class GriffeLoader:
         return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
-        module = self.modules_collection.get_member(wildcard_obj.wildcard)  # type: ignore[arg-type]  # we know it's a wildcard
+        module = self.modules_collection.get_member(wildcard_obj.wildcard)  # type: ignore[arg-type]
         return [
             (imported_member, wildcard_obj.alias_lineno, wildcard_obj.alias_endlineno)
             for imported_member in module.members.values()

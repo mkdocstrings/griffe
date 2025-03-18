@@ -18,7 +18,7 @@ ParametersType = list[tuple[str, Optional[ast.AST], ParameterKind, Optional[Unio
 def get_parameters(node: ast.arguments) -> ParametersType:
     parameters: ParametersType = []
 
-    # TODO: probably some optimizations to do here
+    # TODO: Probably some optimizations to do here.
     args_kinds_defaults: Iterable = reversed(
         (
             *zip_longest(
@@ -53,7 +53,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
             ),
         )
 
-    # TODO: probably some optimizations to do here
+    # TODO: Probably some optimizations to do here.
     kwargs_defaults: Iterable = reversed(
         (
             *zip_longest(

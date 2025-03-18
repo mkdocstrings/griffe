@@ -1,3 +1,9 @@
+---
+title: API reference
+hide:
+- navigation
+---
+
 # ::: griffe
     options:
         summary:

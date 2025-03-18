@@ -157,6 +157,19 @@ def test_inspecting_partials_as_functions() -> None:
         assert partial_func.returns.name == "int"
 
 
+def test_inspecting_class_instance() -> None:
+    """Assert class instances are correctly inspected."""
+    with temporary_inspected_package(
+        "pkg",
+        {
+            "__init__.py": "",
+            "foo.py": "from . import bar\nx = bar.X()",
+            "bar.py": "class X: pass",
+        },
+    ) as tmp_package:
+        assert not tmp_package["foo.x"].is_alias
+
+
 # YORE: EOL 3.12: Remove block.
 # YORE: EOL 3.11: Remove line.
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")

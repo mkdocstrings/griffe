@@ -103,7 +103,7 @@ def test_dont_overwrite_lower_member_when_expanding_wildcard() -> None:
 def test_load_data_from_stubs() -> None:
     """Check that the loader is able to load data from stubs / `*.pyi` files."""
     with temporary_pypackage("package", ["_rust_notify.pyi"]) as tmp_package:
-        # code taken from samuelcolvin/watchfiles project
+        # Code taken from samuelcolvin/watchfiles project.
         code = '''
             from typing import List, Literal, Optional, Protocol, Set, Tuple, Union
 

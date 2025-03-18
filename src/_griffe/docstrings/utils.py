@@ -65,8 +65,8 @@ def parse_docstring_annotation(
         The string unchanged, or a new name or expression.
     """
     with suppress(
-        AttributeError,  # docstring has no parent that can be used to resolve names
-        SyntaxError,  # annotation contains syntax errors
+        AttributeError,  # Docstring has no parent that can be used to resolve names.
+        SyntaxError,  # Annotation contains syntax errors.
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
         if code.body:  # type: ignore[attr-defined]

@@ -72,23 +72,23 @@ class ExtensionTest(Extension):  # noqa: D101
 @pytest.mark.parametrize(
     "extension",
     [
-        # with module path
+        # With module path.
         "tests.test_extensions",
         {"tests.test_extensions": {"option": 0}},
-        # with extension path
+        # With extension path.
         "tests.test_extensions.ExtensionTest",
         {"tests.test_extensions.ExtensionTest": {"option": 0}},
-        # with filepath
+        # With filepath.
         "tests/test_extensions.py",
         {"tests/test_extensions.py": {"option": 0}},
-        # with filepath and extension name
+        # With filepath and extension name.
         "tests/test_extensions.py:ExtensionTest",
         {"tests/test_extensions.py:ExtensionTest": {"option": 0}},
-        # with instance
+        # With instance.
         ExtensionTest(option=0),
-        # with class
+        # With class.
         ExtensionTest,
-        # with absolute paths (esp. important to test for Windows)
+        # With absolute paths (esp. important to test for Windows).
         Path("tests/test_extensions.py").absolute().as_posix(),
         Path("tests/test_extensions.py:ExtensionTest").absolute().as_posix(),
     ],

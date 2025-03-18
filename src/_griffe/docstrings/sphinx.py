@@ -147,7 +147,7 @@ def _read_parameter(
         return parsed_directive.next_index
 
     if warn_unknown_params:
-        with suppress(AttributeError):  # for parameters sections in objects without parameters
+        with suppress(AttributeError):  # For Parameters sections in objects without parameters.
             params = docstring.parent.parameters  # type: ignore[union-attr]
             if name not in params:
                 message = f"Parameter '{name}' does not appear in the function signature"

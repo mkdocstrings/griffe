@@ -70,15 +70,15 @@ def test_loading_inherited_members(agent1: Callable, agent2: Callable) -> None:
             assert classc in classd_mro
 
             inherited_members = classd.inherited_members
-            assert "attr_from_a" not in inherited_members  # overwritten
+            assert "attr_from_a" not in inherited_members  # Overwritten.
             assert "attr_from_b" in inherited_members
             assert "attr_from_c" in inherited_members
-            assert "attr_from_d" not in inherited_members  # own-declared
+            assert "attr_from_d" not in inherited_members  # Own-declared.
 
             assert "method_from_a" in inherited_members
             assert "method_from_b" in inherited_members
             assert "method_from_c" in inherited_members
-            assert "method_from_d" not in inherited_members  # own-declared
+            assert "method_from_d" not in inherited_members  # Own-declared.
 
             assert "attr_from_b" in classd.all_members
 
@@ -172,7 +172,7 @@ def test_dynamic_base_classes() -> None:
             attra = 0
     """
     with temporary_visited_module(code) as module:
-        assert _mro_paths(module["A"]) == []  # not supported
+        assert _mro_paths(module["A"]) == []  # Not supported.
 
     with temporary_inspected_module(code) as module:
-        assert _mro_paths(module["A"]) == []  # not supported either
+        assert _mro_paths(module["A"]) == []  # Not supported either.

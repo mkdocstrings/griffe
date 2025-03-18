@@ -1293,7 +1293,7 @@ def test_trim_doctest_flags_basic_example(parse_numpy: ParserType, docstring: st
     assert len(sections[0].value) == 2
     assert not warnings
 
-    # verify that doctest flags have indeed been trimmed
+    # Verify that doctest flags have indeed been trimmed.
     example_str = sections[0].value[1][1]
     assert "# doctest: +SKIP" not in example_str
     assert "<BLANKLINE>" not in example_str
@@ -1328,7 +1328,7 @@ def test_trim_doctest_flags_multi_example(parse_numpy: ParserType) -> None:
     assert len(sections[0].value) == 4
     assert not warnings
 
-    # verify that doctest flags have indeed been trimmed
+    # Verify that doctest flags have indeed been trimmed.
     example_str = sections[0].value[1][1]
     assert "# doctest: +SKIP" not in example_str
     example_str = sections[0].value[3][1]

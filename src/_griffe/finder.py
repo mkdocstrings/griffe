@@ -264,7 +264,7 @@ class ModuleFinder:
                             return Package(real_module_name, init_module, stubs if stubs.exists() else None)
                         init_module = abs_path / "__init__.pyi"
                         if init_module.exists():
-                            # Stubs package
+                            # Stubs package.
                             return Package(real_module_name, init_module, None)
                         namespace_dirs.append(abs_path)
 
@@ -323,7 +323,7 @@ class ModuleFinder:
             py_file = rel_subpath.suffix == ".py"
             stem = rel_subpath.stem
             if not py_file:
-                # .py[cod] and .so files look like `name.cpython-38-x86_64-linux-gnu.ext`
+                # `.py[cod]` and `.so` files look like `name.cpython-38-x86_64-linux-gnu.ext`.
                 stem = stem.split(".", 1)[0]
             if stem == "__init__":
                 # Optimization: since it's a relative path, if it has only one part

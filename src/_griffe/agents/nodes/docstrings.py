@@ -19,7 +19,7 @@ def get_docstring(
     Returns:
         A tuple with the value and line numbers of the docstring.
     """
-    # TODO: possible optimization using a type map
+    # TODO: Possible optimization using a type map.
     if isinstance(node, ast.Expr):
         doc = node.value
     elif not strict and node.body and isinstance(node.body, list) and isinstance(node.body[0], ast.Expr):  # type: ignore[attr-defined]
