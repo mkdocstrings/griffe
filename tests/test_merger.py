@@ -36,3 +36,14 @@ def test_merge_stubs_on_wildcard_imported_objects() -> None:
     ) as pkg:
         assert pkg["A.hello"].overloads
 
+
+def test_merge_imports() -> None:
+    """Assert that imports are merged correctly."""
+    with temporary_visited_package(
+        "package",
+        {
+            "mod.py": "import abc",
+            "mod.pyi": "import collections",
+        },
+    ) as pkg:
+        assert set(pkg["mod"].imports) == {"abc", "collections"}
