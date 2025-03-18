@@ -111,7 +111,7 @@ def dynamic_import(import_path: str, import_paths: Sequence[str | Path] | None =
         # or later `getattr` triggers additional code that fails.
         # In these cases, and for consistency, we always re-raise an ImportError
         # instead of an any other exception (it's called "dynamic import" after all).
-        # See https://github.com/mkdocstrings/mkdocstrings/issues/380
+        # See https://github.com/mkdocstrings/mkdocstrings/issues/380.
         value = module
         for part in object_parts:
             try:

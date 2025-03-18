@@ -80,19 +80,19 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
         if member.is_attribute:
             member = cast("Attribute", member)
 
-            # All dataclass parameters have annotations
+            # All dataclass parameters have annotations.
             if member.annotation is None:
                 continue
 
             # Attributes that have labels for these characteristics are
             # not class parameters:
-            #   - @property
-            #   - @cached_property
-            #   - ClassVar annotation
+            # - @property
+            # - @cached_property
+            # - ClassVar annotation
             if "property" in member.labels or (
-                # TODO: It is better to explicitly check for ClassVar, but
-                # Visitor.handle_attribute unwraps it from the annotation.
-                # Maybe create internal_labels and store classvar in there.
+                # TODO: It is better to explicitly check for `ClassVar`, but
+                # `Visitor.handle_attribute` unwraps it from the annotation.
+                # Maybe create `internal_labels` and store "classvar" in there.
                 "class-attribute" in member.labels and "instance-attribute" not in member.labels
             ):
                 continue
@@ -193,7 +193,7 @@ def _set_dataclass_init(class_: Class) -> None:
 
 
 def _del_members_annotated_as_initvar(class_: Class) -> None:
-    # Definitions annotated as InitVar are not class members
+    # Definitions annotated as InitVar are not class members.
     attributes = [member for member in class_.members.values() if isinstance(member, Attribute)]
     for attribute in attributes:
         if isinstance(attribute.annotation, Expr) and attribute.annotation.canonical_path == "dataclasses.InitVar":

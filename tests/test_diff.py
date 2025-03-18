@@ -41,99 +41,99 @@ from griffe import Breakage, BreakageKind, find_breaking_changes, temporary_visi
             [BreakageKind.PARAMETER_CHANGED_DEFAULT],
         ),
         (
-            # positional-only to keyword-only
+            # Positional-only to keyword-only.
             "def a(x, /): ...",
             "def a(*, x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # keyword-only to positional-only
+            # Keyword-only to positional-only.
             "def a(*, x): ...",
             "def a(x, /): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # positional or keyword to positional-only
+            # Positional or keyword to positional-only.
             "def a(x): ...",
             "def a(x, /): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # positional or keyword to keyword-only
+            # Positional or keyword to keyword-only.
             "def a(x): ...",
             "def a(*, x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
-        # to variadic positional
+        # To variadic positional.
         (
-            # positional-only to variadic positional
+            # Positional-only to variadic positional.
             "def a(x, /): ...",
             "def a(*x): ...",
             [],
         ),
         (
-            # positional or keyword to variadic positional
+            # Positional or keyword to variadic positional.
             "def a(x): ...",
             "def a(*x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # keyword-only to variadic positional
+            # Keyword-only to variadic positional.
             "def a(*, x): ...",
             "def a(*x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # variadic keyword to variadic positional
+            # Variadic keyword to variadic positional.
             "def a(**x): ...",
             "def a(*x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # positional or keyword to variadic positional, with variadic keyword
+            # Positional or keyword to variadic positional, with variadic keyword.
             "def a(x): ...",
             "def a(*x, **y): ...",
             [],
         ),
         (
-            # keyword-only to variadic positional, with variadic keyword
+            # Keyword-only to variadic positional, with variadic keyword.
             "def a(*, x): ...",
             "def a(*x, **y): ...",
             [],
         ),
-        # to variadic keyword
+        # To variadic keyword.
         (
-            # positional-only to variadic keyword
+            # Positional-only to variadic keyword.
             "def a(x, /): ...",
             "def a(**x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # positional or keyword to variadic keyword
+            # Positional or keyword to variadic keyword.
             "def a(x): ...",
             "def a(**x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # keyword-only to variadic keyword
+            # Keyword-only to variadic keyword.
             "def a(*, x): ...",
             "def a(**x): ...",
             [],
         ),
         (
-            # variadic positional to variadic keyword
+            # Variadic positional to variadic keyword.
             "def a(*x): ...",
             "def a(**x): ...",
             [BreakageKind.PARAMETER_CHANGED_KIND],
         ),
         (
-            # positional-only to variadic keyword, with variadic positional
+            # Positional-only to variadic keyword, with variadic positional.
             "def a(x, /): ...",
             "def a(*y, **x): ...",
             [],
         ),
         (
-            # positional or keyword to variadic keyword, with variadic positional
+            # Positional or keyword to variadic keyword, with variadic positional.
             "def a(x): ...",
             "def a(*y, **x): ...",
             [],
@@ -161,7 +161,7 @@ from griffe import Breakage, BreakageKind, find_breaking_changes, temporary_visi
         (
             "def a() -> int: ...",
             "def a() -> str: ...",
-            [],  # not supported yet: BreakageKind.RETURN_CHANGED_TYPE
+            [],  # Not supported yet: `BreakageKind.RETURN_CHANGED_TYPE`.
         ),
     ],
 )
@@ -173,13 +173,13 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
         new_code: Parametrized code of the new module version.
         expected_breakages: A list of breakage kinds to expect.
     """
-    # check without any alias
+    # Check without any alias.
     with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
         breaking = list(find_breaking_changes(old_package, new_package))
     assert len(breaking) == len(expected_breakages)
     for breakage, expected_kind in zip(breaking, expected_breakages):
         assert breakage.kind is expected_kind
-    # check with aliases
+    # Check with aliases.
     import_a = "from ._mod_a import a\n__all__ = ['a']"
     old_modules = {"__init__.py": import_a, "_mod_a.py": old_code}
     new_modules = {"__init__.py": new_code and import_a, "_mod_a.py": new_code}

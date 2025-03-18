@@ -10,7 +10,7 @@ def test_can_warn_without_parent_module() -> None:
     function = Function(
         "func",
         parameters=Parameters(
-            Parameter("param1", annotation=None, kind=ParameterKind.positional_or_keyword),  # I only changed this line
+            Parameter("param1", annotation=None, kind=ParameterKind.positional_or_keyword),
             Parameter("param2", annotation="int", kind=ParameterKind.keyword_only),
         ),
     )

@@ -88,35 +88,35 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _
     new_offset = offset
     items: _BlockItems = []
 
-    # skip first empty lines
+    # Skip first empty lines.
     while _is_empty_line(lines[new_offset]):
         new_offset += 1
 
-    # get initial indent
+    # Get initial indent.
     indent = len(lines[new_offset]) - len(lines[new_offset].lstrip())
 
     if indent == 0:
-        # first non-empty line was not indented, abort
+        # First non-empty line was not indented, abort.
         return [], new_offset - 1
 
-    # start processing first item
+    # Start processing first item.
     current_item = (new_offset, [lines[new_offset][indent:]])
     new_offset += 1
 
-    # loop on next lines
+    # Loop on next lines.
     while new_offset < len(lines):
         line = lines[new_offset]
 
         if _is_empty_line(line):
-            # empty line: preserve it in the current item
+            # Empty line: preserve it in the current item.
             current_item[1].append("")
 
         elif line.startswith(indent * 2 * " "):
-            # continuation line
+            # Continuation line.
             current_item[1].append(line[indent * 2 :])
 
         elif line.startswith((indent + 1) * " "):
-            # indent between initial and continuation: append but warn
+            # Indent between initial and continuation: append but warn.
             cont_indent = len(line) - len(line.lstrip())
             current_item[1].append(line[cont_indent:])
             docstring_warning(
@@ -127,12 +127,12 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _
             )
 
         elif line.startswith(indent * " "):
-            # indent equal to initial one: new item
+            # Indent equal to initial one: new item.
             items.append(current_item)
             current_item = (new_offset, [line[indent:]])
 
         else:
-            # indent lower than initial one: end of section
+            # Indent lower than initial one: end of section.
             break
 
         new_offset += 1
@@ -151,22 +151,22 @@ def _read_block(docstring: Docstring, *, offset: int, **options: Any) -> tuple[s
     new_offset = offset
     block: list[str] = []
 
-    # skip first empty lines
+    # skip first empty lines.
     while _is_empty_line(lines[new_offset]):
         new_offset += 1
 
-    # get initial indent
+    # Get initial indent.
     indent = len(lines[new_offset]) - len(lines[new_offset].lstrip())
 
     if indent == 0:
-        # first non-empty line was not indented, abort
+        # First non-empty line was not indented, abort.
         return "", offset - 1
 
-    # start processing first item
+    # Start processing first item.
     block.append(lines[new_offset].lstrip())
     new_offset += 1
 
-    # loop on next lines
+    # Loop on next lines.
     while new_offset < len(lines) and (lines[new_offset].startswith(indent * " ") or _is_empty_line(lines[new_offset])):
         block.append(lines[new_offset][indent:])
         new_offset += 1
@@ -187,7 +187,7 @@ def _read_parameters(
     block, new_offset = _read_block_items(docstring, offset=offset, **options)
 
     for line_number, param_lines in block:
-        # check the presence of a name and description, separated by a colon
+        # Check the presence of a name and description, separated by a colon.
         try:
             name_with_type, description = param_lines[0].split(":", 1)
         except ValueError:
@@ -196,16 +196,16 @@ def _read_parameters(
 
         description = "\n".join([description.lstrip(), *param_lines[1:]]).rstrip("\n")
 
-        # use the type given after the parameter name, if any
+        # Use the type given after the parameter name, if any.
         if " " in name_with_type:
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
             annotation = annotation.removesuffix(", optional")
-            # try to compile the annotation to transform it into an expression
+            # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
-            # try to use the annotation from the signature
+            # Try to use the annotation from the signature.
             try:
                 annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
             except (AttributeError, KeyError):
@@ -220,7 +220,7 @@ def _read_parameters(
             docstring_warning(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
         if warn_unknown_params:
-            with suppress(AttributeError):  # for parameters sections in objects without parameters
+            with suppress(AttributeError):  # For Parameters sections in objects without parameters.
                 params = docstring.parent.parameters  # type: ignore[union-attr]
                 if name not in params:
                     message = f"Parameter '{name}' does not appear in the function signature"
@@ -279,7 +279,7 @@ def _read_attributes_section(
             name, annotation = name_with_type.split(" ", 1)
             annotation = annotation.strip("()")
             annotation = annotation.removesuffix(", optional")
-            # try to compile the annotation to transform it into an expression
+            # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
             name = name_with_type
@@ -408,7 +408,7 @@ def _read_raises_section(
             )
         else:
             description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
-            # try to compile the annotation to transform it into an expression
+            # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
             exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
@@ -530,10 +530,10 @@ def _read_returns_section(
             continue
 
         if annotation:
-            # try to compile the annotation to transform it into an expression
+            # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
-            # try to retrieve the annotation from the docstring parent
+            # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=2, multiple=len(block) > 1, index=index)
 
             if annotation is None:
@@ -574,10 +574,10 @@ def _read_yields_section(
             continue
 
         if annotation:
-            # try to compile the annotation to transform it into an expression
+            # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
-            # try to retrieve the annotation from the docstring parent
+            # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=0, multiple=len(block) > 1, index=index)
 
             if annotation is None:
@@ -618,10 +618,10 @@ def _read_receives_section(
             continue
 
         if annotation:
-            # try to compile the annotation to transform it into an expression
+            # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
-            # try to retrieve the annotation from the docstring parent
+            # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=1, multiple=len(block) > 1, index=index)
 
         if annotation is None:

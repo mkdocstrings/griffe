@@ -244,7 +244,7 @@ def test_parse_without_parent(parse_google: ParserType) -> None:
     )
 
     assert len(sections) == 4
-    assert len(warnings) == 6  # missing annotations for parameters and return
+    assert len(warnings) == 6  # Missing annotations for parameters and return.
     for warning in warnings[:-1]:
         assert "parameter" in warning
     assert "return" in warnings[-1]
@@ -776,7 +776,7 @@ def test_parameter_line_without_colon(parse_google: ParserType) -> None:
     """
 
     sections, warnings = parse_google(docstring)
-    assert len(sections) == 0  # empty sections are discarded
+    assert len(sections) == 0  # Empty sections are discarded.
     assert len(warnings) == 1
     assert "pair" in warnings[0]
 
@@ -793,7 +793,7 @@ def test_parameter_line_without_colon_keyword_only(parse_google: ParserType) -> 
     """
 
     sections, warnings = parse_google(docstring)
-    assert len(sections) == 0  # empty sections are discarded
+    assert len(sections) == 0  # Empty sections are discarded.
     assert len(warnings) == 1
     assert "pair" in warnings[0]
 
@@ -1284,7 +1284,7 @@ def test_trim_doctest_flags_basic_example(parse_google: ParserType, docstring: s
     assert len(sections[0].value) == 2
     assert not warnings
 
-    # verify that doctest flags have indeed been trimmed
+    # Verify that doctest flags have indeed been trimmed.
     example_str = sections[0].value[1][1]
     assert "# doctest: +SKIP" not in example_str
     assert "<BLANKLINE>" not in example_str
@@ -1317,7 +1317,7 @@ def test_trim_doctest_flags_multi_example(parse_google: ParserType) -> None:
     assert len(sections[0].value) == 4
     assert not warnings
 
-    # verify that doctest flags have indeed been trimmed
+    # Verify that doctest flags have indeed been trimmed.
     example_str = sections[0].value[1][1]
     assert "# doctest: +SKIP" not in example_str
     example_str = sections[0].value[3][1]

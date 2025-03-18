@@ -175,8 +175,8 @@ def _read_block(docstring: Docstring, *, offset: int, **options: Any) -> tuple[s
     return "\n".join(block).rstrip("\n"), new_offset - 1
 
 
-_RE_OB: str = r"\{"  # opening bracket
-_RE_CB: str = r"\}"  # closing bracket
+_RE_OB: str = r"\{"  # Opening bracket.
+_RE_CB: str = r"\}"  # Closing bracket.
 _RE_NAME: str = r"\*{0,2}[_a-z][_a-z0-9]*"
 _RE_TYPE: str = r".+"
 _RE_RETURNS: Pattern = re.compile(
@@ -264,7 +264,7 @@ def _read_parameters(
                     break
 
         if warn_unknown_params:
-            with suppress(AttributeError):  # for parameters sections in objects without parameters
+            with suppress(AttributeError):  # For Parameters sections in objects without parameters.
                 params = docstring.parent.parameters  # type: ignore[union-attr]
                 for name in names:
                     if name not in params:
@@ -849,7 +849,7 @@ def parse_numpy(
             # Start parsing admonition.
             else:
                 admonition_title = lines[offset]
-                offset += 1  # skip next dash line
+                offset += 1  # Skip next dash line.
 
         # Regular line.
         else:

@@ -22,9 +22,9 @@ def test_not_defined_at_runtime() -> None:
                 from package.module_b import CONST_B
                 from package.module_c import CONST_C
 
-                if typing.TYPE_CHECKING:  # always false
+                if typing.TYPE_CHECKING:  # Always false.
                     from package.module_b import TYPE_B
-                if TYPE_CHECKING:  # always false
+                if TYPE_CHECKING:  # Always false.
                     from package.module_c import TYPE_C
                 """,
             ),

@@ -199,8 +199,8 @@ class Visitor:
         Returns:
             A module instance.
         """
-        # optimization: equivalent to ast.parse, but with optimize=1 to remove assert statements
-        # TODO: with options, could use optimize=2 to remove docstrings
+        # Optimization: equivalent to `ast.parse`, but with `optimize=1` to remove assert statements.
+        # TODO: With options, could use `optimize=2` to remove docstrings.
         top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
         self.visit(top_node)
         return self.current.module
@@ -253,7 +253,7 @@ class Visitor:
         self.extensions.call("on_node", node=node, agent=self)
         self.extensions.call("on_class_node", node=node, agent=self)
 
-        # handle decorators
+        # Handle decorators.
         decorators: list[Decorator] = []
         if node.decorator_list:
             lineno = node.decorator_list[0].lineno
@@ -268,7 +268,7 @@ class Visitor:
         else:
             lineno = node.lineno
 
-        # handle base classes
+        # Handle base classes.
         bases = [safe_get_base_class(base, parent=self.current) for base in node.bases]
 
         class_ = Class(
@@ -344,7 +344,7 @@ class Visitor:
 
         labels = labels or set()
 
-        # handle decorators
+        # Handle decorators.
         decorators = []
         overload = False
         if node.decorator_list:
@@ -381,7 +381,7 @@ class Visitor:
             self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
             return
 
-        # handle parameters
+        # Handle parameters.
         parameters = Parameters(
             *[
                 Parameter(
@@ -431,7 +431,7 @@ class Visitor:
         self.extensions.call("on_instance", node=node, obj=function, agent=self)
         self.extensions.call("on_function_instance", node=node, func=function, agent=self)
         if self.current.kind is Kind.CLASS and function.name == "__init__":
-            self.current = function  # type: ignore[assignment]  # temporary assign a function
+            self.current = function  # type: ignore[assignment]
             self.generic_visit(node)
             self.current = self.current.parent  # type: ignore[assignment]
 
@@ -479,10 +479,10 @@ class Visitor:
         """
         for name in node.names:
             if not node.module and node.level == 1 and not name.asname and self.current.module.is_init_module:
-                # special case: when being in `a/__init__.py` and doing `from . import b`,
+                # Special case: when being in `a/__init__.py` and doing `from . import b`,
                 # we are effectively creating a member `b` in `a` that is pointing to `a.b`
-                # -> cyclic alias! in that case, we just skip it, as both the member and module
-                # have the same name and can be accessed the same way
+                # -> cyclic alias! In that case, we just skip it, as both the member and module
+                # have the same name and can be accessed the same way.
                 continue
 
             alias_path = relative_to_absolute(node, name, self.current.module)
@@ -525,25 +525,25 @@ class Visitor:
         if parent.kind is Kind.MODULE:
             try:
                 names = get_names(node)
-            except KeyError:  # unsupported nodes, like subscript
+            except KeyError:  # Unsupported nodes, like subscript.
                 return
             labels.add("module-attribute")
         elif parent.kind is Kind.CLASS:
             try:
                 names = get_names(node)
-            except KeyError:  # unsupported nodes, like subscript
+            except KeyError:  # Unsupported nodes, like subscript.
                 return
 
             if isinstance(annotation, Expr) and annotation.is_classvar:
-                # explicit classvar: class attribute only
+                # Explicit `ClassVar`: class attribute only.
                 annotation = annotation.slice  # type: ignore[attr-defined]
                 labels.add("class-attribute")
             elif node.value:
-                # attribute assigned at class-level: available in instances as well
+                # Attribute assigned at class-level: available in instances as well.
                 labels.add("class-attribute")
                 labels.add("instance-attribute")
             else:
-                # annotated attribute only: not available at class-level
+                # Annotated attribute only: not available at class-level.
                 labels.add("instance-attribute")
 
         elif parent.kind is Kind.FUNCTION:
@@ -551,7 +551,7 @@ class Visitor:
                 return
             try:
                 names = get_instance_names(node)
-            except KeyError:  # unsupported nodes, like subscript
+            except KeyError:  # Unsupported nodes, like subscript.
                 return
             parent = parent.parent  # type: ignore[assignment]
             labels.add("instance-attribute")
@@ -567,21 +567,21 @@ class Visitor:
             docstring = None
 
         for name in names:
-            # TODO: handle assigns like x.y = z
-            # we need to resolve x.y and add z in its member
+            # TODO: Handle assigns like `x.y = z`.
+            # We need to resolve `x.y` and add `z` in its members.
             if "." in name:
                 continue
 
             if name in parent.members:
-                # assigning multiple times
-                # TODO: might be better to inspect
+                # Assigning multiple times.
+                # TODO: Might be better to inspect.
                 if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
-                    continue  # prefer "no-exception" case
+                    continue  # Prefer "no-exception" case.
 
                 existing_member = parent.members[name]
                 with suppress(AliasResolutionError, CyclicAliasError):
                     labels |= existing_member.labels
-                    # forward previous docstring and annotation instead of erasing them
+                    # Forward previous docstring and annotation instead of erasing them.
                     if existing_member.docstring and not docstring:
                         docstring = existing_member.docstring
                     with suppress(AttributeError):

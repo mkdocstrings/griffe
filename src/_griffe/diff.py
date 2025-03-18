@@ -453,18 +453,18 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
         if old_param.kind is not new_param.kind:
             incompatible_kind = any(
                 (
-                    # positional-only to keyword-only
+                    # Positional-only to keyword-only.
                     old_param.kind is ParameterKind.positional_only and new_param.kind is ParameterKind.keyword_only,
-                    # keyword-only to positional-only
+                    # Keyword-only to positional-only.
                     old_param.kind is ParameterKind.keyword_only and new_param.kind is ParameterKind.positional_only,
-                    # positional or keyword to positional-only/keyword-only
+                    # Positional or keyword to positional-only/keyword-only.
                     old_param.kind is ParameterKind.positional_or_keyword
                     and new_param.kind in _POSITIONAL_KEYWORD_ONLY,
-                    # not keyword-only to variadic keyword, without variadic positional
+                    # Not keyword-only to variadic keyword, without variadic positional.
                     new_param.kind is ParameterKind.var_keyword
                     and old_param.kind is not ParameterKind.keyword_only
                     and not has_variadic_args,
-                    # not positional-only to variadic positional, without variadic keyword
+                    # Not positional-only to variadic positional, without variadic keyword.
                     new_param.kind is ParameterKind.var_positional
                     and old_param.kind is not ParameterKind.positional_only
                     and not has_variadic_kwargs,
@@ -495,9 +495,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
 
 
 def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attribute) -> Iterable[Breakage]:
-    # TODO: Use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
-    # if old_attribute.annotation is not None and new_attribute.annotation is not None:
-    #     if not is_subhint(new_attribute.annotation, old_attribute.annotation):
+    # TODO: Support annotation breaking changes.
     if old_attribute.value != new_attribute.value:
         if new_attribute.value is None:
             yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, "unset")
@@ -552,8 +550,8 @@ def _type_based_yield(
         return
     seen_paths.add(old_member.path)
     if old_member.is_alias or new_member.is_alias:
-        # Should be first, since there can be the case where there is an alias and another kind of object, which may
-        # not be a breaking change
+        # Should be first, since there can be the case where there is an alias and another kind of object,
+        # which may not be a breaking change.
         yield from _alias_incompatibilities(
             old_member,
             new_member,
@@ -596,7 +594,7 @@ def _returns_are_compatible(old_function: Function, new_function: Function) -> b
         if new_function.returns == old_function.returns:
             return True
 
-    # TODO: Use beartype.peps.resolve_pep563 and beartype.door.is_subhint?
+    # TODO: Support annotation breaking changes.
     return True
 
 

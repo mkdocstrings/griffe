@@ -93,7 +93,7 @@ def get__all__(node: ast.Assign | ast.AnnAssign | ast.AugAssign, parent: Module)
 def safe_get__all__(
     node: ast.Assign | ast.AnnAssign | ast.AugAssign,
     parent: Module,
-    log_level: LogLevel = LogLevel.debug,  # TODO: set to error when we handle more things
+    log_level: LogLevel = LogLevel.debug,  # TODO: Set to error when we handle more things?
 ) -> list[str | ExprName]:
     """Safely (no exception) extract values in `__all__`.
 

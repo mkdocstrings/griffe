@@ -154,7 +154,7 @@ class Inspector:
         try:
             # Access `__doc__` directly to avoid taking the `__doc__` attribute from a parent class.
             value = getattr(node.obj, "__doc__", None)
-        except Exception:  # noqa: BLE001  # getattr can trigger exceptions
+        except Exception:  # noqa: BLE001
             return None
         if value is None:
             return None
@@ -430,8 +430,8 @@ class Inspector:
         try:
             signature = getsignature(node.obj)
         except Exception:  # noqa: BLE001
-            # so many exceptions can be raised here:
-            # AttributeError, NameError, RuntimeError, ValueError, TokenError, TypeError
+            # So many exceptions can be raised here:
+            # AttributeError, NameError, RuntimeError, ValueError, TokenError, TypeError...
             parameters = None
             returns = None
         else:
@@ -549,7 +549,7 @@ def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) ->
     if parameter.default is _empty:
         default = None
     elif hasattr(parameter.default, "__name__"):
-        # avoid repr containing chevrons and memory addresses
+        # Avoid `repr` containing chevrons and memory addresses.
         default = parameter.default.__name__
     else:
         default = repr(parameter.default)
@@ -557,17 +557,17 @@ def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) ->
 
 
 def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Expr | None:
-    # even when *we* import future annotations,
+    # Even when *we* import future annotations,
     # the object from which we get a signature
     # can come from modules which did *not* import them,
-    # so inspect.signature returns actual Python objects
-    # that we must deal with
+    # so `inspect.signature` returns actual Python objects
+    # that we must deal with.
     if not isinstance(obj, str):
         if hasattr(obj, "__name__"):  # noqa: SIM108
-            # simple types like int, str, custom classes, etc.
+            # Simple types like `int`, `str`, custom classes, etc..
             obj = obj.__name__
         else:
-            # other, more complex types: hope for the best
+            # Other, more complex types: hope for the best.
             obj = repr(obj)
     try:
         annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
