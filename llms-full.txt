@@ -17233,7 +17233,7 @@ Attributes:
 - **`deprecated`** (`bool | str | None`) – Whether this object is deprecated (boolean or deprecation message).
 - **`docstring`** (`Docstring | None`) – The object docstring.
 - **`endlineno`** (`int | None`) – The ending line number of the object.
-- **`exports`** (`set[str] | list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
+- **`exports`** (`list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
 - **`extra`** (`dict[str, dict[str, Any]]`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`functions`** (`dict[str, Function]`) – The function members.
@@ -17369,7 +17369,7 @@ See also: lineno.
 ### exports
 
 ```
-exports: set[str] | list[str | ExprName] | None = None
+exports: list[str | ExprName] | None = None
 
 ```
 
@@ -22626,7 +22626,7 @@ Attributes:
 - **`deprecated`** (`str | bool | None`) – Whether this alias is deprecated (boolean or deprecation message).
 - **`docstring`** (`Docstring | None`) – The target docstring.
 - **`endlineno`** (`int | None`) – The ending line number of the target object.
-- **`exports`** (`set[str] | list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
+- **`exports`** (`list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
 - **`extra`** (`dict`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`final_target`** (`Object`) – The final, resolved target, if possible.
@@ -22832,7 +22832,7 @@ See also: lineno.
 ## exports
 
 ```
-exports: set[str] | list[str | ExprName] | None
+exports: list[str | ExprName] | None
 
 ```
 
@@ -23973,7 +23973,7 @@ Attributes:
 - **`deprecated`** (`bool | str | None`) – Whether this object is deprecated (boolean or deprecation message).
 - **`docstring`** (`Docstring | None`) – The object docstring.
 - **`endlineno`** (`int | None`) – The ending line number of the object.
-- **`exports`** (`set[str] | list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
+- **`exports`** (`list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
 - **`extra`** (`dict[str, dict[str, Any]]`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`functions`** (`dict[str, Function]`) – The function members.
@@ -24129,7 +24129,7 @@ See also: lineno.
 ## exports
 
 ```
-exports: set[str] | list[str | ExprName] | None = None
+exports: list[str | ExprName] | None = None
 
 ```
 
@@ -25181,7 +25181,7 @@ Attributes:
 - **`deprecated`** (`bool | str | None`) – Whether this object is deprecated (boolean or deprecation message).
 - **`docstring`** (`Docstring | None`) – The object docstring.
 - **`endlineno`** (`int | None`) – The ending line number of the object.
-- **`exports`** (`set[str] | list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
+- **`exports`** (`list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
 - **`extra`** (`dict[str, dict[str, Any]]`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`functions`** (`dict[str, Function]`) – The function members.
@@ -25340,7 +25340,7 @@ See also: lineno.
 ## exports
 
 ```
-exports: set[str] | list[str | ExprName] | None = None
+exports: list[str | ExprName] | None = None
 
 ```
 
@@ -26443,7 +26443,7 @@ Attributes:
 - **`deprecated`** (`bool | str | None`) – Whether this object is deprecated (boolean or deprecation message).
 - **`docstring`** (`Docstring | None`) – The object docstring.
 - **`endlineno`** (`int | None`) – The ending line number of the object.
-- **`exports`** (`set[str] | list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
+- **`exports`** (`list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
 - **`extra`** (`dict[str, dict[str, Any]]`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`functions`** (`dict[str, Function]`) – The function members.
@@ -26600,7 +26600,7 @@ See also: lineno.
 ## exports
 
 ```
-exports: set[str] | list[str | ExprName] | None = None
+exports: list[str | ExprName] | None = None
 
 ```
 
@@ -28092,7 +28092,7 @@ Attributes:
 - **`deprecated`** (`bool | str | None`) – Whether this object is deprecated (boolean or deprecation message).
 - **`docstring`** (`Docstring | None`) – The object docstring.
 - **`endlineno`** (`int | None`) – The ending line number of the object.
-- **`exports`** (`set[str] | list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
+- **`exports`** (`list[str | ExprName] | None`) – The names of the objects exported by this (module) object through the __all__ variable.
 - **`extra`** (`dict[str, dict[str, Any]]`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path of this module.
 - **`functions`** (`dict[str, Function]`) – The function members.
@@ -28230,7 +28230,7 @@ See also: lineno.
 ## exports
 
 ```
-exports: set[str] | list[str | ExprName] | None = None
+exports: list[str | ExprName] | None = None
 
 ```
 

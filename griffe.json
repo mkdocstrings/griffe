@@ -48418,36 +48418,21 @@
                 "annotation": {
                   "cls": "ExprBinOp",
                   "left": {
-                    "cls": "ExprBinOp",
+                    "cls": "ExprSubscript",
                     "left": {
-                      "cls": "ExprSubscript",
+                      "cls": "ExprName",
+                      "name": "list"
+                    },
+                    "slice": {
+                      "cls": "ExprBinOp",
                       "left": {
-                        "cls": "ExprName",
-                        "name": "set"
-                      },
-                      "slice": {
                         "cls": "ExprName",
                         "name": "str"
-                      }
-                    },
-                    "operator": "|",
-                    "right": {
-                      "cls": "ExprSubscript",
-                      "left": {
-                        "cls": "ExprName",
-                        "name": "list"
                       },
-                      "slice": {
-                        "cls": "ExprBinOp",
-                        "left": {
-                          "cls": "ExprName",
-                          "name": "str"
-                        },
-                        "operator": "|",
-                        "right": {
-                          "cls": "ExprName",
-                          "name": "ExprName"
-                        }
+                      "operator": "|",
+                      "right": {
+                        "cls": "ExprName",
+                        "name": "ExprName"
                       }
                     }
                   },
@@ -52886,36 +52871,21 @@
                 "annotation": {
                   "cls": "ExprBinOp",
                   "left": {
-                    "cls": "ExprBinOp",
+                    "cls": "ExprSubscript",
                     "left": {
-                      "cls": "ExprSubscript",
+                      "cls": "ExprName",
+                      "name": "list"
+                    },
+                    "slice": {
+                      "cls": "ExprBinOp",
                       "left": {
-                        "cls": "ExprName",
-                        "name": "set"
-                      },
-                      "slice": {
                         "cls": "ExprName",
                         "name": "str"
-                      }
-                    },
-                    "operator": "|",
-                    "right": {
-                      "cls": "ExprSubscript",
-                      "left": {
-                        "cls": "ExprName",
-                        "name": "list"
                       },
-                      "slice": {
-                        "cls": "ExprBinOp",
-                        "left": {
-                          "cls": "ExprName",
-                          "name": "str"
-                        },
-                        "operator": "|",
-                        "right": {
-                          "cls": "ExprName",
-                          "name": "ExprName"
-                        }
+                      "operator": "|",
+                      "right": {
+                        "cls": "ExprName",
+                        "name": "ExprName"
                       }
                     }
                   },
