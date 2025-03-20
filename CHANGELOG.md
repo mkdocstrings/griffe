@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.6.2](https://github.com/mkdocstrings/griffe/releases/tag/1.6.2) - 2025-03-20
+
+<small>[Compare with 1.6.1](https://github.com/mkdocstrings/griffe/compare/1.6.1...1.6.2)</small>
+
+### Code Refactoring
+
+- Maintain exports order (`__all__`) ([ded36bf](https://github.com/mkdocstrings/griffe/commit/ded36bf94ed4b8b83797e9da4a3d034d0533a5bd) by Timothée Mazzucotelli).
+
 ## [1.6.1](https://github.com/mkdocstrings/griffe/releases/tag/1.6.1) - 2025-03-18
 
 <small>[Compare with 1.6.0](https://github.com/mkdocstrings/griffe/compare/1.6.0...1.6.1)</small>
