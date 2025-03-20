@@ -172,15 +172,19 @@ def test_handle_typing_overaload(decorator: str) -> None:
 @pytest.mark.parametrize(
     "statements",
     [
-        """__all__ = moda_all + modb_all + modc_all + ["CONST_INIT"]""",
+        """__all__ = ["CONST_INIT"] + moda_all + modb_all + modc_all""",
         """__all__ = ["CONST_INIT", *moda_all, *modb_all, *modc_all]""",
         """
         __all__ = ["CONST_INIT"]
         __all__ += moda_all + modb_all + modc_all
         """,
         """
-        __all__ = moda_all + modb_all + modc_all
-        __all__ += ["CONST_INIT"]
+        __all__ = ["CONST_INIT"] + moda_all + modb_all
+        __all__ += modc_all
+        """,
+        """
+        __all__ = ["CONST_INIT"] + moda_all + modb_all
+        __all__ += [*modc_all]
         """,
         """
         __all__ = ["CONST_INIT"]
@@ -215,7 +219,7 @@ def test_parse_complex__all__assignments(statements: str) -> None:
         package = loader.load(tmp_package.name)
         loader.resolve_aliases()
 
-        assert package.exports == {"CONST_INIT", "CONST_A", "CONST_B", "CONST_C"}
+        assert package.exports == ["CONST_INIT", "CONST_A", "CONST_B", "CONST_C"]
 
 
 def test_dont_crash_on_nested_functions_in_init() -> None:

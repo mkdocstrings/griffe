@@ -269,7 +269,7 @@ class GriffeLoader:
         if module.exports is None:
             return
 
-        expanded = set()
+        expanded = []
         for export in module.exports:
             # It's a name: we resolve it, get the module it comes from,
             # recurse into it, and add its exports to the current ones.
@@ -283,12 +283,12 @@ class GriffeLoader:
                 if next_module.path not in seen:
                     self.expand_exports(next_module, seen)
                 try:
-                    expanded |= next_module.exports
+                    expanded += [export for export in next_module.exports if export not in expanded]
                 except TypeError:
                     logger.warning("Unsupported item in %s.__all__: %s (use strings only)", module.path, export)
             # It's a string, simply add it to the current exports.
             else:
-                expanded.add(export)
+                expanded.append(export)
         module.exports = expanded
 
         # Make sure to expand exports in all modules.

@@ -638,7 +638,7 @@ class Visitor:
                 and isinstance(node.op, ast.Add)
             )
             if all_augment:
-                # we assume exports is not None at this point
+                # We assume `exports` is not `None` at this point.
                 self.current.exports.extend(  # type: ignore[union-attr]
                     [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)

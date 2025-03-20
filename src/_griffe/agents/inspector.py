@@ -526,7 +526,7 @@ class Inspector:
         parent.set_member(node.name, attribute)
 
         if node.name == "__all__":
-            parent.exports = set(node.obj)
+            parent.exports = list(node.obj)
         self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
         self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 

@@ -455,7 +455,7 @@ class Object(ObjectAliasMixin):
         while the values are the actual names of the objects (`from ... import REAL_NAME as ...`).
         """
 
-        self.exports: set[str] | list[str | ExprName] | None = None
+        self.exports: list[str | ExprName] | None = None
         """The names of the objects exported by this (module) object through the `__all__` variable.
 
         Exports can contain string (object names) or resolvable names,
@@ -1276,7 +1276,7 @@ class Alias(ObjectAliasMixin):
         return self.final_target.imports
 
     @property
-    def exports(self) -> set[str] | list[str | ExprName] | None:
+    def exports(self) -> list[str | ExprName] | None:
         """The names of the objects exported by this (module) object through the `__all__` variable.
 
         Exports can contain string (object names) or resolvable names,

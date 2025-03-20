@@ -36,7 +36,7 @@ def test_submodule_exports() -> None:
     assert sub.is_wildcard_exposed
 
     assert not private.is_wildcard_exposed
-    root.exports = {"_private"}
+    root.exports = ["_private"]
     assert private.is_wildcard_exposed
 
 
