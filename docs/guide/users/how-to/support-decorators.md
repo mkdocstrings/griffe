@@ -28,7 +28,7 @@ class MyDecorator(griffe.Extension):
     """An extension to suport my decorator."""
 ```
 
-Now we can declare the [`on_instance`][griffe.Extension.on_instance] hook, which receives any kind of Griffe object ([`Module`][griffe.Module], [`Class`][griffe.Class], [`Function`][griffe.Function], [`Attribute`][griffe.Attribute]), or we could use a kind-specific hook such as [`on_module_instance`][griffe.Extension.on_module_instance], [`on_class_instance`][griffe.Extension.on_class_instance], [`on_function_instance`][griffe.Extension.on_function_instance] and [`on_attribute_instance`][griffe.Extension.on_attribute_instance]. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
+Now we can declare the [`on_instance`][griffe.Extension.on_instance] hook, which receives any kind of Griffe object ([`Module`][griffe.Module], [`Class`][griffe.Class], [`Function`][griffe.Function], [`Attribute`][griffe.Attribute], [`TypeAlias`][griffe.TypeAlias]), or we could use a kind-specific hook such as [`on_module_instance`][griffe.Extension.on_module_instance], [`on_class_instance`][griffe.Extension.on_class_instance], [`on_function_instance`][griffe.Extension.on_function_instance], [`on_attribute_instance`][griffe.Extension.on_attribute_instance] and [`on_type_alias_instance`][griffe.Extension.on_type_alias_instance]. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
 
 For the example, lets use the `on_function_instance` hook, which receives `Function` instances.
 

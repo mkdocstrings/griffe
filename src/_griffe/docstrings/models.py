@@ -5,8 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from _griffe.enumerations import DocstringSectionKind
+from _griffe.expressions import ExprTuple
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from typing import Any, Literal
 
     from _griffe.expressions import Expr
@@ -52,7 +54,7 @@ class DocstringNamedElement(DocstringElement):
         *,
         description: str,
         annotation: str | Expr | None = None,
-        value: str | None = None,
+        value: str | Expr | None = None,
     ) -> None:
         """Initialize the element.
 
@@ -65,7 +67,7 @@ class DocstringNamedElement(DocstringElement):
         super().__init__(description=description, annotation=annotation)
         self.name: str = name
         """The element name."""
-        self.value: str | None = value
+        self.value: str | Expr | None = value
         """The element value, if any"""
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -142,13 +144,51 @@ class DocstringParameter(DocstringNamedElement):
     """This class represent a documented function parameter."""
 
     @property
-    def default(self) -> str | None:
+    def default(self) -> str | Expr | None:
         """The default value of this parameter."""
         return self.value
 
     @default.setter
     def default(self, value: str) -> None:
         self.value = value
+
+
+class DocstringTypeParameter(DocstringNamedElement):
+    """This class represent a documented type parameter."""
+
+    @property
+    def default(self) -> str | Expr | None:
+        """The default value of this type parameter."""
+        return self.value
+
+    @default.setter
+    def default(self, value: str) -> None:
+        self.value = value
+
+    @property
+    def bound(self) -> str | Expr | None:
+        """The bound of this type parameter."""
+        if not isinstance(self.annotation, ExprTuple):
+            return self.annotation
+        return None
+
+    @bound.setter
+    def bound(self, bound: str | Expr | None) -> None:
+        self.annotation = bound
+
+    @property
+    def constraints(self) -> tuple[str | Expr, ...] | None:
+        """The constraints of this type parameter."""
+        if isinstance(self.annotation, ExprTuple):
+            return tuple(self.annotation.elements)
+        return None
+
+    @constraints.setter
+    def constraints(self, constraints: Sequence[str | Expr] | None) -> None:
+        if constraints is not None:
+            self.annotation = ExprTuple(constraints)
+        else:
+            self.annotation = None
 
 
 class DocstringAttribute(DocstringNamedElement):
@@ -171,6 +211,10 @@ class DocstringClass(DocstringNamedElement):
     def signature(self) -> str | Expr | None:
         """The class signature."""
         return self.annotation
+
+
+class DocstringTypeAlias(DocstringNamedElement):
+    """This class represents a documented type alias."""
 
 
 class DocstringModule(DocstringNamedElement):
@@ -254,6 +298,22 @@ class DocstringSectionOtherParameters(DocstringSectionParameters):
     """This class represents an other parameters section."""
 
     kind: DocstringSectionKind = DocstringSectionKind.other_parameters
+
+
+class DocstringSectionTypeParameters(DocstringSection):
+    """This class represents a type parameters section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.type_parameters
+
+    def __init__(self, value: list[DocstringTypeParameter], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section type parameters.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringTypeParameter] = value
 
 
 class DocstringSectionRaises(DocstringSection):
@@ -402,6 +462,22 @@ class DocstringSectionClasses(DocstringSection):
         """
         super().__init__(title)
         self.value: list[DocstringClass] = value
+
+
+class DocstringSectionTypeAliases(DocstringSection):
+    """This class represents a type aliases section."""
+
+    kind: DocstringSectionKind = DocstringSectionKind.type_aliases
+
+    def __init__(self, value: list[DocstringTypeAlias], title: str | None = None) -> None:
+        """Initialize the section.
+
+        Parameters:
+            value: The section classes.
+            title: An optional title.
+        """
+        super().__init__(title)
+        self.value: list[DocstringTypeAlias] = value
 
 
 class DocstringSectionModules(DocstringSection):

@@ -14,7 +14,7 @@ from _griffe.merger import merge_stubs
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from _griffe.models import Alias, Attribute, Class, Function, Module, Object
+    from _griffe.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
 
 _ObjType = TypeVar("_ObjType")
 
@@ -279,6 +279,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         classes: The class members.
         functions: The function members.
         attributes: The attribute members.
+        type_aliases: The type alias members.
         is_private: Whether this object/alias is private (starts with `_`) but not special.
         is_class_private: Whether this object/alias is class-private (starts with `__` and is a class member).
         is_special: Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`).
@@ -335,6 +336,15 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         do not use when producing Griffe trees!
         """
         return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # type: ignore[misc]
+
+    @property
+    def type_aliases(self) -> dict[str, TypeAlias]:
+        """The type alias members.
+
+        This method is part of the consumer API:
+        do not use when producing Griffe trees!
+        """
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.TYPE_ALIAS}  # type: ignore[misc]
 
     @property
     def is_private(self) -> bool:
@@ -443,3 +453,8 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         """Whether this object is deprecated."""
         # NOTE: We might want to add more ways to detect deprecations in the future.
         return bool(self.deprecated)  # type: ignore[attr-defined]
+
+    @property
+    def is_generic(self) -> bool:
+        """Whether this object is generic."""
+        return bool(self.type_parameters)  # type: ignore[attr-defined]

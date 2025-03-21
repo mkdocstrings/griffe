@@ -601,6 +601,8 @@ class ExprName(Expr):
     """Actual name."""
     parent: str | ExprName | Module | Class | None = None
     """Parent (for resolution in its scope)."""
+    member: str | None = None
+    """Member name (for resolution in its scope)."""
 
     def __eq__(self, other: object) -> bool:
         """Two name expressions are equal if they have the same `name` value (`parent` is ignored)."""
@@ -632,8 +634,9 @@ class ExprName(Expr):
             return f"{self.parent.canonical_path}.{self.name}"
         if isinstance(self.parent, str):
             return f"{self.parent}.{self.name}"
+        parent = self.parent.members.get(self.member, self.parent)  # type: ignore[arg-type]
         try:
-            return self.parent.resolve(self.name)
+            return parent.resolve(self.name)
         except NameResolutionError:
             return self.name
 
@@ -672,6 +675,11 @@ class ExprName(Expr):
             return self.name == "value" and self.parent.is_enum_instance  # type: ignore[union-attr]
         except Exception:  # noqa: BLE001
             return False
+
+    @property
+    def is_type_parameter(self) -> bool:
+        """Whether this name resolves to a type parameter."""
+        return "[" in self.canonical_path
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -1069,8 +1077,8 @@ def _build_listcomp(node: ast.ListComp, parent: Module | Class, **kwargs: Any) -
     return ExprListComp(_build(node.elt, parent, **kwargs), [_build(gen, parent, **kwargs) for gen in node.generators])
 
 
-def _build_name(node: ast.Name, parent: Module | Class, **kwargs: Any) -> Expr:  # noqa: ARG001
-    return ExprName(node.id, parent)
+def _build_name(node: ast.Name, parent: Module | Class, member: str | None = None, **kwargs: Any) -> Expr:  # noqa: ARG001
+    return ExprName(node.id, parent, member)
 
 
 def _build_named_expr(node: ast.NamedExpr, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1180,7 +1188,7 @@ _node_map: dict[type, Callable[[Any, Module | Class], Expr]] = {
 }
 
 
-def _build(node: ast.AST, parent: Module | Class, **kwargs: Any) -> Expr:
+def _build(node: ast.AST, parent: Module | Class, /, **kwargs: Any) -> Expr:
     return _node_map[type(node)](node, parent, **kwargs)
 
 
@@ -1188,6 +1196,7 @@ def get_expression(
     node: ast.AST | None,
     parent: Module | Class,
     *,
+    member: str | None = None,
     parse_strings: bool | None = None,
 ) -> Expr | None:
     """Build an expression from an AST.
@@ -1195,6 +1204,7 @@ def get_expression(
     Parameters:
         node: The annotation node.
         parent: The parent used to resolve the name.
+        member: The member name (for resolution in its scope).
         parse_strings: Whether to try and parse strings as type annotations.
 
     Returns:
@@ -1209,13 +1219,14 @@ def get_expression(
             parse_strings = False
         else:
             parse_strings = not module.imports_future_annotations
-    return _build(node, parent, parse_strings=parse_strings)
+    return _build(node, parent, member=member, parse_strings=parse_strings)
 
 
 def safe_get_expression(
     node: ast.AST | None,
     parent: Module | Class,
     *,
+    member: str | None = None,
     parse_strings: bool | None = None,
     log_level: LogLevel | None = LogLevel.error,
     msg_format: str = "{path}:{lineno}: Failed to get expression from {node_class}: {error}",
@@ -1225,6 +1236,7 @@ def safe_get_expression(
     Parameters:
         node: The annotation node.
         parent: The parent used to resolve the name.
+        member: The member name (for resolution in its scope).
         parse_strings: Whether to try and parse strings as type annotations.
         log_level: Log level to use to log a message. None to disable logging.
         msg_format: A format string for the log message. Available placeholders:
@@ -1234,7 +1246,7 @@ def safe_get_expression(
         A string or resovable name or expression.
     """
     try:
-        return get_expression(node, parent, parse_strings=parse_strings)
+        return get_expression(node, parent, member=member, parse_strings=parse_strings)
     except Exception as error:  # noqa: BLE001
         if log_level is None:
             return None

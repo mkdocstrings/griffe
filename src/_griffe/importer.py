@@ -43,7 +43,7 @@ def sys_path(*paths: str | Path) -> Iterator[None]:
 def dynamic_import(import_path: str, import_paths: Sequence[str | Path] | None = None) -> Any:
     """Dynamically import the specified object.
 
-    It can be a module, class, method, function, attribute,
+    It can be a module, class, method, function, attribute, type alias,
     nested arbitrarily.
 
     It works like this:
