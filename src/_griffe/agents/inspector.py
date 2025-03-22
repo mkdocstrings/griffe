@@ -562,15 +562,19 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Exp
     # can come from modules which did *not* import them,
     # so `inspect.signature` returns actual Python objects
     # that we must deal with.
-    if not isinstance(obj, str):
+    if isinstance(obj, str):
+        annotation = obj
+    else:
+        # Always give precedence to the object's representation...
+        obj_repr = repr(obj)
         if hasattr(obj, "__name__"):  # noqa: SIM108
-            # Simple types like `int`, `str`, custom classes, etc..
-            obj = obj.__name__
+            # ...unless it contains chevrons (which likely means it's a class),
+            # in which case we use the object's name.
+            annotation = obj.__name__ if "<" in obj_repr else obj_repr
         else:
-            # Other, more complex types: hope for the best.
-            obj = repr(obj)
+            annotation = obj_repr
     try:
-        annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
+        annotation_node = compile(annotation, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
     return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]

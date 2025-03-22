@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+
 import pytest
 
 from griffe import inspect, temporary_inspected_module, temporary_inspected_package, temporary_pypackage
@@ -28,6 +30,29 @@ def test_annotations_from_classes() -> None:
         returns = func.returns
         assert returns.name == "A"
         assert returns.canonical_path == f"{module.name}.A"
+
+
+# YORE: EOL 3.9: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="Type unions not supported on 3.9")
+@pytest.mark.parametrize(
+    ("annotation", "expected"),
+    [
+        ("tuple[int, str]", "tuple[int, str]"),
+        ("Union[int, str]", "typing.Union[int, str]"),
+        ("int | str", "int | str"),
+        ("int | Literal[1]", "typing.Union[int, typing.Literal[1]]"),
+    ],
+)
+def test_annotations_from_types(annotation: str, expected: str) -> None:
+    """Assert annotations are correctly converted to string."""
+    with temporary_inspected_module(
+        f"""
+        from typing import Literal, Union
+        def func(param: {annotation}): ...
+        """,
+    ) as module:
+        param = module["func"].parameters["param"]
+        assert str(param.annotation) == expected
 
 
 def test_class_level_imports() -> None:
