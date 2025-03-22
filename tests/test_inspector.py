@@ -164,3 +164,27 @@ def test_inspecting_class_instance() -> None:
         },
     ) as tmp_package:
         assert not tmp_package["foo.x"].is_alias
+
+
+def test_inheriting_self_from_parent_class() -> None:
+    """Inspect self only once when inheriting it from parent class."""
+    with temporary_inspected_module(
+        """
+        class A: ...
+        class B(A): ...
+
+        A.B = B
+        """,
+    ) as module:
+        assert "B" in module["A"].members
+        assert "B" in module["B"].all_members
+        # Continue indefinitely.
+        assert "B" in module["A.B"].all_members
+        assert "B" in module["B.B"].all_members
+        assert "B" in module["A.B.B"].all_members
+        assert "B" in module["B.B.B"].all_members
+        # All resolve to A.B.
+        assert module["A.B.B"].final_target is module["A.B"]
+        assert module["B.B.B"].final_target is module["A.B"]
+        assert module["A.B.B.B"].final_target is module["A.B"]
+        assert module["B.B.B.B"].final_target is module["A.B"]
