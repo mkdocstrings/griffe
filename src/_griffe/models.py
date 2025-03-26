@@ -2075,9 +2075,22 @@ class Function(Object):
         Returns:
             The resolved name.
         """
-        # We're in an `__init__` method and name is a parameter name.
-        if self.parent and self.name == "__init__" and name in self.parameters:
-            return f"{self.parent.path}({name})"
+        # We're in an `__init__` method...
+        if self.parent and self.name == "__init__":
+            # ...and name is a parameter name: resolve to the parameter.
+            if name in self.parameters:
+                return f"{self.parent.path}({name})"
+
+            # Kind of a special case: we avoid resolving to instance-attributes from a function scope.
+            # See issue https://github.com/mkdocstrings/griffe/issues/367.
+            resolved = super().resolve(name)
+            try:
+                obj = self.modules_collection.get_member(resolved)
+            except KeyError:
+                return resolved
+            if obj.is_attribute and "instance-attribute" in obj.labels:
+                raise NameResolutionError(name)
+            return resolved
         return super().resolve(name)
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
