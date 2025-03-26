@@ -1235,6 +1235,10 @@ class Alias(ObjectAliasMixin):
         """
         return self.final_target.lineno
 
+    @lineno.setter
+    def lineno(self, lineno: int | None) -> None:
+        self.final_target.lineno = lineno
+
     @property
     def endlineno(self) -> int | None:
         """The ending line number of the target object.
@@ -1242,6 +1246,10 @@ class Alias(ObjectAliasMixin):
         See also: [`lineno`][griffe.Alias.lineno].
         """
         return self.final_target.endlineno
+
+    @endlineno.setter
+    def endlineno(self, endlineno: int | None) -> None:
+        self.final_target.endlineno = endlineno
 
     @property
     def docstring(self) -> Docstring | None:
@@ -1619,6 +1627,10 @@ class Alias(ObjectAliasMixin):
     def value(self) -> str | Expr | None:
         """The attribute value."""
         return cast("Attribute", self.final_target).value
+
+    @value.setter
+    def value(self, value: str | Expr | None) -> None:
+        cast("Attribute", self.final_target).value = value
 
     @property
     def annotation(self) -> str | Expr | None:
