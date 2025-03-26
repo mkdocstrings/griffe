@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.6.3](https://github.com/mkdocstrings/griffe/releases/tag/1.6.3) - 2025-03-26
+
+<small>[Compare with 1.6.2](https://github.com/mkdocstrings/griffe/compare/1.6.2...1.6.3)</small>
+
+### Bug Fixes
+
+- Allow setting `lineno`, `endlineno` and `value` through aliases ([d038eaa](https://github.com/mkdocstrings/griffe/commit/d038eaa1eb96cab7e70a4ceebacd4246f6a1cfb4) by Timothée Mazzucotelli). [Issue-griffe-pydantic-29](https://github.com/mkdocstrings/griffe-pydantic/issues/29)
+- Don't resolve attribute values to attribute with same name ([25cc58f](https://github.com/mkdocstrings/griffe/commit/25cc58fae55b6b34b2938fdce6acc80ea0e78aff) by Timothée Mazzucotelli). [Issue-367](https://github.com/mkdocstrings/griffe/issues/367)
+
+### Code Refactoring
+
+- Improve objects conversion to annotation during dynamic analysis ([716d27b](https://github.com/mkdocstrings/griffe/commit/716d27b0c9bdd798d35a23d999431b62b0b647da) by Timothée Mazzucotelli). [Issue-369](https://github.com/mkdocstrings/griffe/issues/369)
+
 ## [1.6.2](https://github.com/mkdocstrings/griffe/releases/tag/1.6.2) - 2025-03-20
 
 <small>[Compare with 1.6.1](https://github.com/mkdocstrings/griffe/compare/1.6.1...1.6.2)</small>
