@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.7.0](https://github.com/mkdocstrings/griffe/releases/tag/1.7.0) - 2025-03-27
+
+<small>[Compare with 1.6.3](https://github.com/mkdocstrings/griffe/compare/1.6.3...1.7.0)</small>
+
+### Dependencies
+
+- Remove dependency to `astunparse` (Python 3.8-) ([fd052b1](https://github.com/mkdocstrings/griffe/commit/fd052b1e6079ae1883ac3db43708b5cc17ae5cf6) by Timothée Mazzucotelli).
+
+### Features
+
+- Add `warnings` parameter to docstring parsers, allowing to disable all warning logs when parsing docstrings ([7ac01ba](https://github.com/mkdocstrings/griffe/commit/7ac01ba4da62176119fcf249c338eb3110d15513) by Timothée Mazzucotelli). [Issue-293](https://github.com/mkdocstrings/griffe/issues/293)
+
 ## [1.6.3](https://github.com/mkdocstrings/griffe/releases/tag/1.6.3) - 2025-03-26
 
 <small>[Compare with 1.6.2](https://github.com/mkdocstrings/griffe/compare/1.6.2...1.6.3)</small>
