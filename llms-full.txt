@@ -22141,6 +22141,7 @@ parse_google(
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
 
@@ -22188,6 +22189,10 @@ Parameters:
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
 
+- ### **`warnings`**
+
+  (`bool`, default: `True` ) – Whether to log warnings at all.
+
 - ### **`**options`**
 
   (`Any`, default: `{}` ) – Additional parsing options.
@@ -22205,6 +22210,7 @@ parse_numpy(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
 
@@ -22232,6 +22238,10 @@ Parameters:
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
 
+- ### **`warnings`**
+
+  (`bool`, default: `True` ) – Whether to log warnings at all.
+
 - ### **`**options`**
 
   (`Any`, default: `{}` ) – Additional parsing options.
@@ -22247,6 +22257,7 @@ parse_sphinx(
     docstring: Docstring,
     *,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
 
@@ -22263,6 +22274,10 @@ Parameters:
 - ### **`warn_unknown_params`**
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
+
+- ### **`warnings`**
+
+  (`bool`, default: `True` ) – Whether to log warnings at all.
 
 - ### **`**options`**
 

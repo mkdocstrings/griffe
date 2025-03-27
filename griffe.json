@@ -13309,10 +13309,10 @@
               },
               "_annotation_from_parent": {
                 "decorators": [],
-                "endlineno": 501,
+                "endlineno": 529,
                 "kind": "function",
                 "labels": [],
-                "lineno": 485,
+                "lineno": 513,
                 "members": {},
                 "name": "_annotation_from_parent",
                 "parameters": [
@@ -13385,10 +13385,10 @@
               },
               "_get_name_annotation_description": {
                 "decorators": [],
-                "endlineno": 482,
+                "endlineno": 510,
                 "kind": "function",
                 "labels": [],
-                "lineno": 456,
+                "lineno": 482,
                 "members": {},
                 "name": "_get_name_annotation_description",
                 "parameters": [
@@ -13434,6 +13434,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "named"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   }
                 ],
                 "returns": {
@@ -13469,10 +13478,10 @@
               },
               "_is_empty_line": {
                 "decorators": [],
-                "endlineno": 696,
+                "endlineno": 727,
                 "kind": "function",
                 "labels": [],
-                "lineno": 695,
+                "lineno": 726,
                 "members": {},
                 "name": "_is_empty_line",
                 "parameters": [
@@ -13493,10 +13502,10 @@
               },
               "_read_attributes_section": {
                 "decorators": [],
-                "endlineno": 292,
+                "endlineno": 305,
                 "kind": "function",
                 "labels": [],
-                "lineno": 259,
+                "lineno": 266,
                 "members": {},
                 "name": "_read_attributes_section",
                 "parameters": [
@@ -13517,6 +13526,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -13557,10 +13575,10 @@
               },
               "_read_block": {
                 "decorators": [],
-                "endlineno": 174,
+                "endlineno": 175,
                 "kind": "function",
                 "labels": [],
-                "lineno": 146,
+                "lineno": 147,
                 "members": {},
                 "name": "_read_block",
                 "parameters": [
@@ -13616,7 +13634,7 @@
               },
               "_read_block_items": {
                 "decorators": [],
-                "endlineno": 143,
+                "endlineno": 144,
                 "kind": "function",
                 "labels": [],
                 "lineno": 83,
@@ -13644,6 +13662,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -13658,10 +13685,10 @@
               },
               "_read_block_items_maybe": {
                 "decorators": [],
-                "endlineno": 453,
+                "endlineno": 479,
                 "kind": "function",
                 "labels": [],
-                "lineno": 443,
+                "lineno": 469,
                 "members": {},
                 "name": "_read_block_items_maybe",
                 "parameters": [
@@ -13709,10 +13736,10 @@
               },
               "_read_classes_section": {
                 "decorators": [],
-                "endlineno": 362,
+                "endlineno": 379,
                 "kind": "function",
                 "labels": [],
-                "lineno": 330,
+                "lineno": 345,
                 "members": {},
                 "name": "_read_classes_section",
                 "parameters": [
@@ -13733,6 +13760,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -13773,10 +13809,10 @@
               },
               "_read_examples_section": {
                 "decorators": [],
-                "endlineno": 692,
+                "endlineno": 723,
                 "kind": "function",
                 "labels": [],
-                "lineno": 636,
+                "lineno": 667,
                 "members": {},
                 "name": "_read_examples_section",
                 "parameters": [
@@ -13846,10 +13882,10 @@
               },
               "_read_functions_section": {
                 "decorators": [],
-                "endlineno": 327,
+                "endlineno": 342,
                 "kind": "function",
                 "labels": [],
-                "lineno": 295,
+                "lineno": 308,
                 "members": {},
                 "name": "_read_functions_section",
                 "parameters": [
@@ -13870,6 +13906,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -13910,10 +13955,10 @@
               },
               "_read_modules_section": {
                 "decorators": [],
-                "endlineno": 387,
+                "endlineno": 407,
                 "kind": "function",
                 "labels": [],
-                "lineno": 365,
+                "lineno": 382,
                 "members": {},
                 "name": "_read_modules_section",
                 "parameters": [
@@ -13934,6 +13979,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -13974,10 +14028,10 @@
               },
               "_read_other_parameters_section": {
                 "decorators": [],
-                "endlineno": 256,
+                "endlineno": 263,
                 "kind": "function",
                 "labels": [],
-                "lineno": 248,
+                "lineno": 255,
                 "members": {},
                 "name": "_read_other_parameters_section",
                 "parameters": [
@@ -14047,10 +14101,10 @@
               },
               "_read_parameters": {
                 "decorators": [],
-                "endlineno": 235,
+                "endlineno": 242,
                 "kind": "function",
                 "labels": [],
-                "lineno": 177,
+                "lineno": 178,
                 "members": {},
                 "name": "_read_parameters",
                 "parameters": [
@@ -14080,6 +14134,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "warn_unknown_params"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -14122,10 +14185,10 @@
               },
               "_read_parameters_section": {
                 "decorators": [],
-                "endlineno": 245,
+                "endlineno": 252,
                 "kind": "function",
                 "labels": [],
-                "lineno": 238,
+                "lineno": 245,
                 "members": {},
                 "name": "_read_parameters_section",
                 "parameters": [
@@ -14186,10 +14249,10 @@
               },
               "_read_raises_section": {
                 "decorators": [],
-                "endlineno": 415,
+                "endlineno": 438,
                 "kind": "function",
                 "labels": [],
-                "lineno": 390,
+                "lineno": 410,
                 "members": {},
                 "name": "_read_raises_section",
                 "parameters": [
@@ -14210,6 +14273,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -14250,10 +14322,10 @@
               },
               "_read_receives_section": {
                 "decorators": [],
-                "endlineno": 633,
+                "endlineno": 664,
                 "kind": "function",
                 "labels": [],
-                "lineno": 592,
+                "lineno": 622,
                 "members": {},
                 "name": "_read_receives_section",
                 "parameters": [
@@ -14296,6 +14368,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -14332,10 +14413,10 @@
               },
               "_read_returns_section": {
                 "decorators": [],
-                "endlineno": 545,
+                "endlineno": 574,
                 "kind": "function",
                 "labels": [],
-                "lineno": 504,
+                "lineno": 532,
                 "members": {},
                 "name": "_read_returns_section",
                 "parameters": [
@@ -14378,6 +14459,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -14414,10 +14504,10 @@
               },
               "_read_warns_section": {
                 "decorators": [],
-                "endlineno": 440,
+                "endlineno": 466,
                 "kind": "function",
                 "labels": [],
-                "lineno": 418,
+                "lineno": 441,
                 "members": {},
                 "name": "_read_warns_section",
                 "parameters": [
@@ -14438,6 +14528,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -14478,10 +14577,10 @@
               },
               "_read_yields_section": {
                 "decorators": [],
-                "endlineno": 589,
+                "endlineno": 619,
                 "kind": "function",
                 "labels": [],
-                "lineno": 548,
+                "lineno": 577,
                 "members": {},
                 "name": "_read_yields_section",
                 "parameters": [
@@ -14520,6 +14619,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "returns_named_value"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -14898,12 +15006,12 @@
                 }
               },
               "_section_reader": {
-                "endlineno": 712,
+                "endlineno": 743,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 699,
+                "lineno": 730,
                 "members": {},
                 "name": "_section_reader",
                 "value": {
@@ -15119,12 +15227,12 @@
                 }
               },
               "_sentinel": {
-                "endlineno": 714,
+                "endlineno": 745,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 714,
+                "lineno": 745,
                 "members": {},
                 "name": "_sentinel",
                 "value": {
@@ -15160,14 +15268,14 @@
               "parse_google": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 758,
-                  "lineno": 730,
-                  "value": "Parse a Google-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    returns_multiple_items: Whether to parse multiple items in `Yields` and `Returns` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    returns_named_value: Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    receives_multiple_items: Whether to parse multiple items in `Receives` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    receives_named_value: Whether to parse `Receives` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    returns_type_in_property_summary: Whether to parse the return type of properties\n        at the beginning of their summary: `str: Summary of the property`.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
+                  "endlineno": 791,
+                  "lineno": 762,
+                  "value": "Parse a Google-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    returns_multiple_items: Whether to parse multiple items in `Yields` and `Returns` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    returns_named_value: Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    receives_multiple_items: Whether to parse multiple items in `Receives` sections.\n        When true, each item's continuation lines must be indented.\n        When false (single item), no further indentation is required.\n    receives_named_value: Whether to parse `Receives` section items as name and description, rather than type and description.\n        When true, type must be wrapped in parentheses: `(int): Description.`. Names are optional: `name (int): Description.`.\n        When false, parentheses are optional but the items cannot be named: `int: Description`.\n    returns_type_in_property_summary: Whether to parse the return type of properties\n        at the beginning of their summary: `str: Summary of the property`.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    warnings: Whether to log warnings at all.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 889,
+                "endlineno": 924,
                 "kind": "function",
                 "labels": [],
-                "lineno": 717,
+                "lineno": 748,
                 "members": {},
                 "name": "parse_google",
                 "parameters": [
@@ -15251,6 +15359,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "warn_unknown_params"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -18548,12 +18665,12 @@
                   "cls": "ExprName",
                   "name": "str"
                 },
-                "endlineno": 179,
+                "endlineno": 181,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 179,
+                "lineno": 181,
                 "members": {},
                 "name": "_RE_CB",
                 "value": "'\\\\}'"
@@ -18563,12 +18680,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 211,
+                "endlineno": 213,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 211,
+                "lineno": 213,
                 "members": {},
                 "name": "_RE_DOCTEST_BLANKLINE",
                 "value": {
@@ -18596,12 +18713,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 212,
+                "endlineno": 214,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 212,
+                "lineno": 214,
                 "members": {},
                 "name": "_RE_DOCTEST_FLAGS",
                 "value": {
@@ -18629,12 +18746,12 @@
                   "cls": "ExprName",
                   "name": "str"
                 },
-                "endlineno": 180,
+                "endlineno": 182,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 180,
+                "lineno": 182,
                 "members": {},
                 "name": "_RE_NAME",
                 "value": "'\\\\*{0,2}[_a-z][_a-z0-9]*'"
@@ -18644,12 +18761,12 @@
                   "cls": "ExprName",
                   "name": "str"
                 },
-                "endlineno": 178,
+                "endlineno": 180,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 178,
+                "lineno": 180,
                 "members": {},
                 "name": "_RE_OB",
                 "value": "'\\\\{'"
@@ -18659,12 +18776,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 210,
+                "endlineno": 212,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 198,
+                "lineno": 200,
                 "members": {},
                 "name": "_RE_PARAMETER",
                 "value": {
@@ -18767,12 +18884,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 197,
+                "endlineno": 199,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 197,
+                "lineno": 199,
                 "members": {},
                 "name": "_RE_RECEIVES",
                 "value": {
@@ -18785,12 +18902,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 195,
+                "endlineno": 197,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 182,
+                "lineno": 184,
                 "members": {},
                 "name": "_RE_RETURNS",
                 "value": {
@@ -18885,12 +19002,12 @@
                   "cls": "ExprName",
                   "name": "str"
                 },
-                "endlineno": 181,
+                "endlineno": 183,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 181,
+                "lineno": 183,
                 "members": {},
                 "name": "_RE_TYPE",
                 "value": "'.+'"
@@ -18900,12 +19017,12 @@
                   "cls": "ExprName",
                   "name": "Pattern"
                 },
-                "endlineno": 196,
+                "endlineno": 198,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 196,
+                "lineno": 198,
                 "members": {},
                 "name": "_RE_YIELDS",
                 "value": {
@@ -18915,10 +19032,10 @@
               },
               "_append_section": {
                 "decorators": [],
-                "endlineno": 740,
+                "endlineno": 776,
                 "kind": "function",
                 "labels": [],
-                "lineno": 724,
+                "lineno": 760,
                 "members": {},
                 "name": "_append_section",
                 "parameters": [
@@ -19009,10 +19126,10 @@
               },
               "_read_attributes_section": {
                 "decorators": [],
-                "endlineno": 568,
+                "endlineno": 596,
                 "kind": "function",
                 "labels": [],
-                "lineno": 534,
+                "lineno": 560,
                 "members": {},
                 "name": "_read_attributes_section",
                 "parameters": [
@@ -19033,6 +19150,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19073,10 +19199,10 @@
               },
               "_read_block": {
                 "decorators": [],
-                "endlineno": 175,
+                "endlineno": 177,
                 "kind": "function",
                 "labels": [],
-                "lineno": 153,
+                "lineno": 155,
                 "members": {},
                 "name": "_read_block",
                 "parameters": [
@@ -19132,7 +19258,7 @@
               },
               "_read_block_items": {
                 "decorators": [],
-                "endlineno": 150,
+                "endlineno": 152,
                 "kind": "function",
                 "labels": [],
                 "lineno": 93,
@@ -19156,6 +19282,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19205,10 +19340,10 @@
               },
               "_read_classes_section": {
                 "decorators": [],
-                "endlineno": 628,
+                "endlineno": 660,
                 "kind": "function",
                 "labels": [],
-                "lineno": 601,
+                "lineno": 631,
                 "members": {},
                 "name": "_read_classes_section",
                 "parameters": [
@@ -19229,6 +19364,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19269,10 +19413,10 @@
               },
               "_read_deprecated_section": {
                 "decorators": [],
-                "endlineno": 337,
+                "endlineno": 350,
                 "kind": "function",
                 "labels": [],
-                "lineno": 316,
+                "lineno": 327,
                 "members": {},
                 "name": "_read_deprecated_section",
                 "parameters": [
@@ -19293,6 +19437,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19333,10 +19486,10 @@
               },
               "_read_examples_section": {
                 "decorators": [],
-                "endlineno": 721,
+                "endlineno": 757,
                 "kind": "function",
                 "labels": [],
-                "lineno": 661,
+                "lineno": 695,
                 "members": {},
                 "name": "_read_examples_section",
                 "parameters": [
@@ -19366,6 +19519,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "trim_doctest_flags"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19406,10 +19568,10 @@
               },
               "_read_functions_section": {
                 "decorators": [],
-                "endlineno": 598,
+                "endlineno": 628,
                 "kind": "function",
                 "labels": [],
-                "lineno": 571,
+                "lineno": 599,
                 "members": {},
                 "name": "_read_functions_section",
                 "parameters": [
@@ -19430,6 +19592,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19470,10 +19641,10 @@
               },
               "_read_modules_section": {
                 "decorators": [],
-                "endlineno": 658,
+                "endlineno": 692,
                 "kind": "function",
                 "labels": [],
-                "lineno": 631,
+                "lineno": 663,
                 "members": {},
                 "name": "_read_modules_section",
                 "parameters": [
@@ -19494,6 +19665,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19534,10 +19714,10 @@
               },
               "_read_other_parameters_section": {
                 "decorators": [],
-                "endlineno": 313,
+                "endlineno": 324,
                 "kind": "function",
                 "labels": [],
-                "lineno": 300,
+                "lineno": 305,
                 "members": {},
                 "name": "_read_other_parameters_section",
                 "parameters": [
@@ -19567,6 +19747,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "warn_unknown_params"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19607,10 +19796,10 @@
               },
               "_read_parameters": {
                 "decorators": [],
-                "endlineno": 282,
+                "endlineno": 287,
                 "kind": "function",
                 "labels": [],
-                "lineno": 215,
+                "lineno": 217,
                 "members": {},
                 "name": "_read_parameters",
                 "parameters": [
@@ -19640,6 +19829,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "warn_unknown_params"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19682,10 +19880,10 @@
               },
               "_read_parameters_section": {
                 "decorators": [],
-                "endlineno": 297,
+                "endlineno": 302,
                 "kind": "function",
                 "labels": [],
-                "lineno": 285,
+                "lineno": 290,
                 "members": {},
                 "name": "_read_parameters_section",
                 "parameters": [
@@ -19706,6 +19904,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19746,10 +19953,10 @@
               },
               "_read_raises_section": {
                 "decorators": [],
-                "endlineno": 508,
+                "endlineno": 532,
                 "kind": "function",
                 "labels": [],
-                "lineno": 488,
+                "lineno": 510,
                 "members": {},
                 "name": "_read_raises_section",
                 "parameters": [
@@ -19770,6 +19977,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19810,10 +20026,10 @@
               },
               "_read_receives_section": {
                 "decorators": [],
-                "endlineno": 485,
+                "endlineno": 507,
                 "kind": "function",
                 "labels": [],
-                "lineno": 444,
+                "lineno": 463,
                 "members": {},
                 "name": "_read_receives_section",
                 "parameters": [
@@ -19834,6 +20050,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19874,10 +20099,10 @@
               },
               "_read_returns_section": {
                 "decorators": [],
-                "endlineno": 393,
+                "endlineno": 409,
                 "kind": "function",
                 "labels": [],
-                "lineno": 340,
+                "lineno": 353,
                 "members": {},
                 "name": "_read_returns_section",
                 "parameters": [
@@ -19898,6 +20123,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -19938,10 +20172,10 @@
               },
               "_read_warns_section": {
                 "decorators": [],
-                "endlineno": 531,
+                "endlineno": 557,
                 "kind": "function",
                 "labels": [],
-                "lineno": 511,
+                "lineno": 535,
                 "members": {},
                 "name": "_read_warns_section",
                 "parameters": [
@@ -19962,6 +20196,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -20002,10 +20245,10 @@
               },
               "_read_yields_section": {
                 "decorators": [],
-                "endlineno": 441,
+                "endlineno": 460,
                 "kind": "function",
                 "labels": [],
-                "lineno": 396,
+                "lineno": 412,
                 "members": {},
                 "name": "_read_yields_section",
                 "parameters": [
@@ -20026,6 +20269,15 @@
                     "default": null,
                     "kind": "keyword-only",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -20278,12 +20530,12 @@
                 }
               },
               "_section_reader": {
-                "endlineno": 757,
+                "endlineno": 793,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 743,
+                "lineno": 779,
                 "members": {},
                 "name": "_section_reader",
                 "value": {
@@ -20546,14 +20798,14 @@
               "parse_numpy": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 782,
-                  "lineno": 768,
-                  "value": "Parse a Numpydoc-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
+                  "endlineno": 820,
+                  "lineno": 805,
+                  "value": "Parse a Numpydoc-style docstring.\n\nThis function iterates on lines of a docstring to build sections.\nIt then returns this list of sections.\n\nParameters:\n    docstring: The docstring to parse.\n    ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.\n    trim_doctest_flags: Whether to remove doctest flags from Python example blocks.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    warnings: Whether to log warnings at all.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 863,
+                "endlineno": 902,
                 "kind": "function",
                 "labels": [],
-                "lineno": 760,
+                "lineno": 796,
                 "members": {},
                 "name": "parse_numpy",
                 "parameters": [
@@ -20592,6 +20844,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "warn_unknown_params"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
@@ -22851,10 +23112,10 @@
               },
               "_consolidate_continuation_lines": {
                 "decorators": [],
-                "endlineno": 410,
+                "endlineno": 447,
                 "kind": "function",
                 "labels": [],
-                "lineno": 400,
+                "lineno": 437,
                 "members": {},
                 "name": "_consolidate_continuation_lines",
                 "parameters": [
@@ -22908,10 +23169,10 @@
               },
               "_consolidate_descriptive_type": {
                 "decorators": [],
-                "endlineno": 414,
+                "endlineno": 451,
                 "kind": "function",
                 "labels": [],
-                "lineno": 413,
+                "lineno": 450,
                 "members": {},
                 "name": "_consolidate_descriptive_type",
                 "parameters": [
@@ -22932,10 +23193,10 @@
               },
               "_determine_param_annotation": {
                 "decorators": [],
-                "endlineno": 209,
+                "endlineno": 223,
                 "kind": "function",
                 "labels": [],
-                "lineno": 180,
+                "lineno": 191,
                 "members": {},
                 "name": "_determine_param_annotation",
                 "parameters": [
@@ -22979,6 +23240,15 @@
                     "default": null,
                     "kind": "positional or keyword",
                     "name": "parsed_values"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   }
                 ],
                 "returns": {
@@ -22988,10 +23258,10 @@
               },
               "_determine_param_default": {
                 "decorators": [],
-                "endlineno": 177,
+                "endlineno": 188,
                 "kind": "function",
                 "labels": [],
-                "lineno": 173,
+                "lineno": 184,
                 "members": {},
                 "name": "_determine_param_default",
                 "parameters": [
@@ -23025,12 +23295,12 @@
                 }
               },
               "_field_types": {
-                "endlineno": 443,
+                "endlineno": 480,
                 "kind": "attribute",
                 "labels": [
                   "module-attribute"
                 ],
-                "lineno": 435,
+                "lineno": 472,
                 "members": {},
                 "name": "_field_types",
                 "value": {
@@ -23160,10 +23430,10 @@
               },
               "_parse_directive": {
                 "decorators": [],
-                "endlineno": 397,
+                "endlineno": 434,
                 "kind": "function",
                 "labels": [],
-                "lineno": 388,
+                "lineno": 424,
                 "members": {},
                 "name": "_parse_directive",
                 "parameters": [
@@ -23184,6 +23454,15 @@
                     "default": null,
                     "kind": "positional or keyword",
                     "name": "offset"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   }
                 ],
                 "returns": {
@@ -23193,10 +23472,10 @@
               },
               "_parsed_values_to_sections": {
                 "decorators": [],
-                "endlineno": 385,
+                "endlineno": 421,
                 "kind": "function",
                 "labels": [],
-                "lineno": 372,
+                "lineno": 408,
                 "members": {},
                 "name": "_parsed_values_to_sections",
                 "parameters": [
@@ -23224,10 +23503,10 @@
               },
               "_read_attribute": {
                 "decorators": [],
-                "endlineno": 279,
+                "endlineno": 300,
                 "kind": "function",
                 "labels": [],
-                "lineno": 239,
+                "lineno": 256,
                 "members": {},
                 "name": "_read_attribute",
                 "parameters": [
@@ -23261,6 +23540,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23275,10 +23563,10 @@
               },
               "_read_attribute_type": {
                 "decorators": [],
-                "endlineno": 306,
+                "endlineno": 330,
                 "kind": "function",
                 "labels": [],
-                "lineno": 282,
+                "lineno": 303,
                 "members": {},
                 "name": "_read_attribute_type",
                 "parameters": [
@@ -23312,6 +23600,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23326,10 +23623,10 @@
               },
               "_read_exception": {
                 "decorators": [],
-                "endlineno": 325,
+                "endlineno": 351,
                 "kind": "function",
                 "labels": [],
-                "lineno": 309,
+                "lineno": 333,
                 "members": {},
                 "name": "_read_exception",
                 "parameters": [
@@ -23363,6 +23660,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23377,10 +23683,10 @@
               },
               "_read_parameter": {
                 "decorators": [],
-                "endlineno": 170,
+                "endlineno": 181,
                 "kind": "function",
                 "labels": [],
-                "lineno": 122,
+                "lineno": 130,
                 "members": {},
                 "name": "_read_parameter",
                 "parameters": [
@@ -23423,6 +23729,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23437,10 +23752,10 @@
               },
               "_read_parameter_type": {
                 "decorators": [],
-                "endlineno": 236,
+                "endlineno": 253,
                 "kind": "function",
                 "labels": [],
-                "lineno": 212,
+                "lineno": 226,
                 "members": {},
                 "name": "_read_parameter_type",
                 "parameters": [
@@ -23474,6 +23789,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23488,10 +23812,10 @@
               },
               "_read_return": {
                 "decorators": [],
-                "endlineno": 350,
+                "endlineno": 384,
                 "kind": "function",
                 "labels": [],
-                "lineno": 328,
+                "lineno": 354,
                 "members": {},
                 "name": "_read_return",
                 "parameters": [
@@ -23525,6 +23849,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23539,10 +23872,10 @@
               },
               "_read_return_type": {
                 "decorators": [],
-                "endlineno": 369,
+                "endlineno": 405,
                 "kind": "function",
                 "labels": [],
-                "lineno": 353,
+                "lineno": 387,
                 "members": {},
                 "name": "_read_return_type",
                 "parameters": [
@@ -23576,6 +23909,15 @@
                   {
                     "annotation": {
                       "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
                       "name": "Any"
                     },
                     "default": "{}",
@@ -23590,10 +23932,10 @@
               },
               "_strip_blank_lines": {
                 "decorators": [],
-                "endlineno": 432,
+                "endlineno": 469,
                 "kind": "function",
                 "labels": [],
-                "lineno": 417,
+                "lineno": 454,
                 "members": {},
                 "name": "_strip_blank_lines",
                 "parameters": [
@@ -23657,11 +23999,11 @@
               "parse_sphinx": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 96,
-                  "lineno": 87,
-                  "value": "Parse a Sphinx-style docstring.\n\nParameters:\n    docstring: The docstring to parse.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
+                  "endlineno": 103,
+                  "lineno": 93,
+                  "value": "Parse a Sphinx-style docstring.\n\nParameters:\n    docstring: The docstring to parse.\n    warn_unknown_params: Warn about documented parameters not appearing in the signature.\n    warnings: Whether to log warnings at all.\n    **options: Additional parsing options.\n\nReturns:\n    A list of docstring sections."
                 },
-                "endlineno": 119,
+                "endlineno": 127,
                 "kind": "function",
                 "labels": [],
                 "lineno": 86,
@@ -23685,6 +24027,15 @@
                     "default": "True",
                     "kind": "keyword-only",
                     "name": "warn_unknown_params"
+                  },
+                  {
+                    "annotation": {
+                      "cls": "ExprName",
+                      "name": "bool"
+                    },
+                    "default": "True",
+                    "kind": "keyword-only",
+                    "name": "warnings"
                   },
                   {
                     "annotation": {
