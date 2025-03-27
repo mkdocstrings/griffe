@@ -37,8 +37,6 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    # YORE: EOL 3.8: Remove line.
-    "astunparse>=1.6; python_version < '3.9'",
     "colorama>=0.4",
 ]
 
