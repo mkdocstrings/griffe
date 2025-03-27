@@ -80,7 +80,7 @@ _RE_DOCTEST_BLANKLINE: Pattern = re.compile(r"^\s*<BLANKLINE>\s*$")
 _RE_DOCTEST_FLAGS: Pattern = re.compile(r"(\s*#\s*doctest:.+)$")
 
 
-def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _ItemsBlock:  # noqa: ARG001
+def _read_block_items(docstring: Docstring, *, offset: int, warnings: bool = True, **options: Any) -> _ItemsBlock:  # noqa: ARG001
     lines = docstring.lines
     if offset >= len(lines):
         return [], offset
@@ -119,12 +119,13 @@ def _read_block_items(docstring: Docstring, *, offset: int, **options: Any) -> _
             # Indent between initial and continuation: append but warn.
             cont_indent = len(line) - len(line.lstrip())
             current_item[1].append(line[cont_indent:])
-            docstring_warning(
-                docstring,
-                new_offset,
-                f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
-                f"should be {indent} * 2 = {indent * 2} spaces, not {cont_indent}",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    new_offset,
+                    f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
+                    f"should be {indent} * 2 = {indent * 2} spaces, not {cont_indent}",
+                )
 
         elif line.startswith(indent * " "):
             # Indent equal to initial one: new item.
@@ -179,19 +180,25 @@ def _read_parameters(
     *,
     offset: int,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
     parameters = []
     annotation: str | Expr | None
 
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, param_lines in block:
         # Check the presence of a name and description, separated by a colon.
         try:
             name_with_type, description = param_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(docstring, line_number, f"Failed to get 'name: description' pair from '{param_lines[0]}'")
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'name: description' pair from '{param_lines[0]}'",
+                )
             continue
 
         description = "\n".join([description.lstrip(), *param_lines[1:]]).rstrip("\n")
@@ -216,10 +223,10 @@ def _read_parameters(
         except (AttributeError, KeyError):
             default = None
 
-        if annotation is None:
+        if warnings and annotation is None:
             docstring_warning(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
-        if warn_unknown_params:
+        if warnings and warn_unknown_params:
             with suppress(AttributeError):  # For Parameters sections in objects without parameters.
                 params = docstring.parent.parameters  # type: ignore[union-attr]
                 if name not in params:
@@ -260,17 +267,23 @@ def _read_attributes_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionAttributes | None, int]:
     attributes = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     annotation: str | Expr | None = None
     for line_number, attr_lines in block:
         try:
             name_with_type, description = attr_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(docstring, line_number, f"Failed to get 'name: description' pair from '{attr_lines[0]}'")
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'name: description' pair from '{attr_lines[0]}'",
+                )
             continue
 
         description = "\n".join([description.lstrip(), *attr_lines[1:]]).rstrip("\n")
@@ -296,21 +309,23 @@ def _read_functions_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionFunctions | None, int]:
     functions = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     signature: str | Expr | None = None
     for line_number, func_lines in block:
         try:
             name_with_signature, description = func_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'signature: description' pair from '{func_lines[0]}'",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'signature: description' pair from '{func_lines[0]}'",
+                )
             continue
 
         description = "\n".join([description.lstrip(), *func_lines[1:]]).rstrip("\n")
@@ -331,21 +346,23 @@ def _read_classes_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionClasses | None, int]:
     classes = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     signature: str | Expr | None = None
     for line_number, class_lines in block:
         try:
             name_with_signature, description = class_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'signature: description' pair from '{class_lines[0]}'",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'signature: description' pair from '{class_lines[0]}'",
+                )
             continue
 
         description = "\n".join([description.lstrip(), *class_lines[1:]]).rstrip("\n")
@@ -366,21 +383,24 @@ def _read_modules_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionModules | None, int]:
     modules = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, module_lines in block:
         try:
             name, description = module_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'name: description' pair from '{module_lines[0]}'",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'name: description' pair from '{module_lines[0]}'",
+                )
             continue
+
         description = "\n".join([description.lstrip(), *module_lines[1:]]).rstrip("\n")
         modules.append(DocstringModule(name=name, description=description))
 
@@ -391,26 +411,29 @@ def _read_raises_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionRaises | None, int]:
     exceptions = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     annotation: str | Expr
     for line_number, exception_lines in block:
         try:
             annotation, description = exception_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'exception: description' pair from '{exception_lines[0]}'",
-            )
-        else:
-            description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
-            # Try to compile the annotation to transform it into an expression.
-            annotation = parse_docstring_annotation(annotation, docstring)
-            exceptions.append(DocstringRaise(annotation=annotation, description=description))
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'exception: description' pair from '{exception_lines[0]}'",
+                )
+            continue
+
+        description = "\n".join([description.lstrip(), *exception_lines[1:]]).rstrip("\n")
+        # Try to compile the annotation to transform it into an expression.
+        annotation = parse_docstring_annotation(annotation, docstring)
+        exceptions.append(DocstringRaise(annotation=annotation, description=description))
 
     return DocstringSectionRaises(exceptions), new_offset
 
@@ -419,23 +442,26 @@ def _read_warns_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionWarns | None, int]:
     warns = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, warning_lines in block:
         try:
             annotation, description = warning_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'warning: description' pair from '{warning_lines[0]}'",
-            )
-        else:
-            description = "\n".join([description.lstrip(), *warning_lines[1:]]).rstrip("\n")
-            warns.append(DocstringWarn(annotation=annotation, description=description))
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'warning: description' pair from '{warning_lines[0]}'",
+                )
+            continue
+
+        description = "\n".join([description.lstrip(), *warning_lines[1:]]).rstrip("\n")
+        warns.append(DocstringWarn(annotation=annotation, description=description))
 
     return DocstringSectionWarns(warns), new_offset
 
@@ -459,15 +485,17 @@ def _get_name_annotation_description(
     lines: list[str],
     *,
     named: bool = True,
+    warnings: bool = True,
 ) -> tuple[str | None, Any, str]:
     if named:
         match = _RE_NAME_ANNOTATION_DESCRIPTION.match(lines[0])
         if not match:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get name, annotation or description from '{lines[0]}'",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get name, annotation or description from '{lines[0]}'",
+                )
             raise ValueError
         name, annotation, description = match.groups()
     else:
@@ -507,6 +535,7 @@ def _read_returns_section(
     offset: int,
     returns_multiple_items: bool = True,
     returns_named_value: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReturns | None, int]:
     returns = []
@@ -536,7 +565,7 @@ def _read_returns_section(
             # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=2, multiple=len(block) > 1, index=index)
 
-            if annotation is None:
+            if warnings and annotation is None:
                 returned_value = repr(name) if name else index + 1
                 docstring_warning(docstring, line_number, f"No type or annotation for returned value {returned_value}")
 
@@ -551,6 +580,7 @@ def _read_yields_section(
     offset: int,
     returns_multiple_items: bool = True,
     returns_named_value: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionYields | None, int]:
     yields = []
@@ -580,7 +610,7 @@ def _read_yields_section(
             # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=0, multiple=len(block) > 1, index=index)
 
-            if annotation is None:
+            if warnings and annotation is None:
                 yielded_value = repr(name) if name else index + 1
                 docstring_warning(docstring, line_number, f"No type or annotation for yielded value {yielded_value}")
 
@@ -595,6 +625,7 @@ def _read_receives_section(
     offset: int,
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReceives | None, int]:
     receives = []
@@ -624,7 +655,7 @@ def _read_receives_section(
             # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=1, multiple=len(block) > 1, index=index)
 
-        if annotation is None:
+        if warnings and annotation is None:
             received_value = repr(name) if name else index + 1
             docstring_warning(docstring, line_number, f"No type or annotation for received value {received_value}")
 
@@ -725,6 +756,7 @@ def parse_google(
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Google-style docstring.
@@ -751,6 +783,7 @@ def parse_google(
         returns_type_in_property_summary: Whether to parse the return type of properties
             at the beginning of their summary: `str: Summary of the property`.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        warnings: Whether to log warnings at all.
         **options: Additional parsing options.
 
     Returns:
@@ -771,6 +804,7 @@ def parse_google(
         "receives_multiple_items": receives_multiple_items,
         "receives_named_value": receives_named_value,
         "warn_unknown_params": warn_unknown_params,
+        "warnings": warnings,
         **options,
     }
 
@@ -824,13 +858,14 @@ def parse_google(
             if indented_lines_below and blank_line_below:
                 reasons.append(f"Extraneous blank line below {kind} title")
             if reasons:
-                reasons_string = "; ".join(reasons)
-                docstring_warning(
-                    docstring,
-                    offset,
-                    f"Possible {kind} skipped, reasons: {reasons_string}",
-                    LogLevel.debug,
-                )
+                if warnings:
+                    reasons_string = "; ".join(reasons)
+                    docstring_warning(
+                        docstring,
+                        offset,
+                        f"Possible {kind} skipped, reasons: {reasons_string}",
+                        LogLevel.debug,
+                    )
                 current_section.append(lines[offset])
                 offset += 1
                 continue

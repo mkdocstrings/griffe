@@ -1351,3 +1351,23 @@ def test_parsing_choices(parse_numpy: ParserType) -> None:
     sections, warnings = parse_numpy(docstring, trim_doctest_flags=True)
     assert sections[0].value[0].annotation == "'C', 'F', 'A'"
     assert not warnings
+
+
+# =============================================================================================
+# Warnings
+def test_disabled_warnings(parse_numpy: ParserType) -> None:
+    """Assert warnings are disabled.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    docstring = """
+        Parameters
+        ----------
+        x :
+            X value.
+    """
+    _, warnings = parse_numpy(docstring, warnings=True)
+    assert warnings
+    _, warnings = parse_numpy(docstring, warnings=False)
+    assert not warnings

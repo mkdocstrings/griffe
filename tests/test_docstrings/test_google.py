@@ -1725,3 +1725,21 @@ def test_reading_property_type_in_summary(parse_google: ParserType) -> None:
     assert retval.name == ""
     assert retval.annotation.name == "str"
     assert retval.description == ""
+
+
+# =============================================================================================
+# Warnings
+def test_disabled_warnings(parse_google: ParserType) -> None:
+    """Assert warnings are disabled.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Parameters:
+            x: X value.
+    """
+    _, warnings = parse_google(docstring, warnings=True)
+    assert warnings
+    _, warnings = parse_google(docstring, warnings=False)
+    assert not warnings

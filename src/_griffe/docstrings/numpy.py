@@ -94,6 +94,7 @@ def _read_block_items(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> tuple[list[list[str]], int]:
     lines = docstring.lines
@@ -127,12 +128,13 @@ def _read_block_items(
             # indent between initial and continuation: append but warn
             cont_indent = len(line) - len(line.lstrip())
             current_item.append(line[cont_indent:])
-            docstring_warning(
-                docstring,
-                new_offset,
-                f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
-                f"should be 4 spaces, not {cont_indent}",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    new_offset,
+                    f"Confusing indentation for continuation line {new_offset + 1} in docstring, "
+                    f"should be 4 spaces, not {cont_indent}",
+                )
 
         elif new_offset + 1 < len(lines) and _is_dash_line(lines[new_offset + 1]):
             # detect the start of a new section
@@ -217,6 +219,7 @@ def _read_parameters(
     *,
     offset: int,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
     parameters: list[DocstringParameter] = []
@@ -227,7 +230,8 @@ def _read_parameters(
     for item in items:
         match = _RE_PARAMETER.match(item[0])
         if not match:
-            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            if warnings:
+                docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         names = match.group("names").split(", ")
@@ -253,7 +257,8 @@ def _read_parameters(
                     annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
                     break
             else:
-                docstring_warning(docstring, new_offset, f"No types or annotations for parameters {names}")
+                if warnings:
+                    docstring_warning(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
             annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
 
@@ -263,7 +268,7 @@ def _read_parameters(
                     default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
                     break
 
-        if warn_unknown_params:
+        if warnings and warn_unknown_params:
             with suppress(AttributeError):  # For Parameters sections in objects without parameters.
                 params = docstring.parent.parameters  # type: ignore[union-attr]
                 for name in names:
@@ -286,14 +291,14 @@ def _read_parameters_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset=offset, **options)
-
+    parameters, new_offset = _read_parameters(docstring, offset=offset, warnings=warnings, **options)
     if parameters:
         return DocstringSectionParameters(parameters), new_offset
-
-    docstring_warning(docstring, new_offset, f"Empty parameters section at line {offset}")
+    if warnings:
+        docstring_warning(docstring, new_offset, f"Empty parameters section at line {offset}")
     return None, new_offset
 
 
@@ -302,14 +307,20 @@ def _read_other_parameters_section(
     *,
     offset: int,
     warn_unknown_params: bool = True,  # noqa: ARG001
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset=offset, warn_unknown_params=False, **options)
-
+    parameters, new_offset = _read_parameters(
+        docstring,
+        offset=offset,
+        warn_unknown_params=False,
+        warnings=warnings,
+        **options,
+    )
     if parameters:
         return DocstringSectionOtherParameters(parameters), new_offset
-
-    docstring_warning(docstring, new_offset, f"Empty other parameters section at line {offset}")
+    if warnings:
+        docstring_warning(docstring, new_offset, f"Empty other parameters section at line {offset}")
     return None, new_offset
 
 
@@ -317,18 +328,20 @@ def _read_deprecated_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionDeprecated | None, int]:
     # deprecated
     # SINCE_VERSION
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty deprecated section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty deprecated section at line {offset}")
         return None, new_offset
 
-    if len(items) > 1:
+    if warnings and len(items) > 1:
         docstring_warning(docstring, new_offset, f"Too many deprecated items at {offset}")
 
     item = items[0]
@@ -341,21 +354,24 @@ def _read_returns_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReturns | None, int]:
     # (NAME : )?TYPE
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty returns section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty returns section at line {offset}")
         return None, new_offset
 
     returns = []
     for index, item in enumerate(items):
         match = _RE_RETURNS.match(item[0])
         if not match:
-            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            if warnings:
+                docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         groups = match.groupdict()
@@ -397,22 +413,25 @@ def _read_yields_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionYields | None, int]:
     # yields
     # (NAME : )?TYPE
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty yields section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty yields section at line {offset}")
         return None, new_offset
 
     yields = []
     for index, item in enumerate(items):
         match = _RE_YIELDS.match(item[0])
         if not match:
-            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            if warnings:
+                docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         groups = match.groupdict()
@@ -445,22 +464,25 @@ def _read_receives_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReceives | None, int]:
     # receives
     # (NAME : )?TYPE
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty receives section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty receives section at line {offset}")
         return None, new_offset
 
     receives = []
     for index, item in enumerate(items):
         match = _RE_RECEIVES.match(item[0])
         if not match:
-            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            if warnings:
+                docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         groups = match.groupdict()
@@ -489,15 +511,17 @@ def _read_raises_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionRaises | None, int]:
     # raises
     # EXCEPTION
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty raises section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty raises section at line {offset}")
         return None, new_offset
 
     raises = []
@@ -512,15 +536,17 @@ def _read_warns_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionWarns | None, int]:
     # warns
     # WARNING
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty warns section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty warns section at line {offset}")
         return None, new_offset
 
     warns = []
@@ -535,15 +561,17 @@ def _read_attributes_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionAttributes | None, int]:
     # attributes (for classes)
     # NAME( : TYPE)?
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty attributes section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty attributes section at line {offset}")
         return None, new_offset
 
     annotation: str | Expr | None
@@ -572,14 +600,16 @@ def _read_functions_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionFunctions | None, int]:
     # SIGNATURE
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty functions/methods section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty functions/methods section at line {offset}")
         return None, new_offset
 
     functions = []
@@ -602,14 +632,16 @@ def _read_classes_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionClasses | None, int]:
     # SIGNATURE
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty classes section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty classes section at line {offset}")
         return None, new_offset
 
     classes = []
@@ -632,14 +664,16 @@ def _read_modules_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionModules | None, int]:
     # NAME
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty modules section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty modules section at line {offset}")
         return None, new_offset
 
     modules = []
@@ -663,9 +697,10 @@ def _read_examples_section(
     *,
     offset: int,
     trim_doctest_flags: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionExamples | None, int]:
-    text, new_offset = _read_block(docstring, offset=offset, **options)
+    text, new_offset = _read_block(docstring, offset=offset, warnings=warnings, **options)
 
     sub_sections: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = []
     in_code_example = False
@@ -717,7 +752,8 @@ def _read_examples_section(
     if sub_sections:
         return DocstringSectionExamples(sub_sections), new_offset
 
-    docstring_warning(docstring, new_offset, f"Empty examples section at line {offset}")
+    if warnings:
+        docstring_warning(docstring, new_offset, f"Empty examples section at line {offset}")
     return None, new_offset
 
 
@@ -763,6 +799,7 @@ def parse_numpy(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Numpydoc-style docstring.
@@ -775,6 +812,7 @@ def parse_numpy(
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        warnings: Whether to log warnings at all.
         **options: Additional parsing options.
 
     Returns:
@@ -791,6 +829,7 @@ def parse_numpy(
         "trim_doctest_flags": trim_doctest_flags,
         "ignore_init_summary": ignore_init_summary,
         "warn_unknown_params": warn_unknown_params,
+        "warnings": warnings,
         **options,
     }
 

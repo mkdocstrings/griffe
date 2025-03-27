@@ -1066,3 +1066,18 @@ def test_parse__properties_return_type(parse_sphinx: ParserType) -> None:
     sections, warnings = parse_sphinx(docstring, parent=prop)
     assert not warnings
     assert sections[1].value[0].annotation == "bool"
+
+
+# =============================================================================================
+# Warnings
+def test_disabled_warnings(parse_sphinx: ParserType) -> None:
+    """Assert warnings are disabled.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = ":param x: X value."
+    _, warnings = parse_sphinx(docstring, warnings=True)
+    assert warnings
+    _, warnings = parse_sphinx(docstring, warnings=False)
+    assert not warnings
