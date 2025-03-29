@@ -2100,8 +2100,11 @@ class Function(Object):
                 obj = self.modules_collection.get_member(resolved)
             except KeyError:
                 return resolved
-            if obj.is_attribute and "instance-attribute" in obj.labels:
-                raise NameResolutionError(name)
+            try:
+                if obj.is_attribute and "instance-attribute" in obj.labels:
+                    raise NameResolutionError(name)
+            except AliasResolutionError:
+                pass
             return resolved
         return super().resolve(name)
 

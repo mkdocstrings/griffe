@@ -539,3 +539,21 @@ def test_not_resolving_attribute_value_to_itself() -> None:
         """,
     ) as module:
         assert module["A.x"].value.canonical_path == "x"  # Not `module.A.x`.
+
+
+def test_resolving_never_raises_alias_errors() -> None:
+    """Resolving never raises alias errors."""
+    with temporary_visited_package(
+        "package",
+        {
+            "__init__.py": """
+                from package.mod import pd
+
+                class A:
+                    def __init__(self):
+                        pass
+            """,
+            "mod.py": "import pandas as pd",
+        },
+    ) as module:
+        assert module["A.__init__"].resolve("pd") == "package.mod.pd"
