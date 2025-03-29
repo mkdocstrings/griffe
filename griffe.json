@@ -50243,26 +50243,26 @@
             ],
             "decorators": [],
             "docstring": {
-              "endlineno": 2127,
-              "lineno": 2127,
+              "endlineno": 2130,
+              "lineno": 2130,
               "value": "The class representing a Python module/class/instance attribute."
             },
-            "endlineno": 2172,
+            "endlineno": 2175,
             "kind": "class",
             "labels": [],
-            "lineno": 2126,
+            "lineno": 2129,
             "members": {
               "__init__": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 2145,
-                  "lineno": 2138,
+                  "endlineno": 2148,
+                  "lineno": 2141,
                   "value": "Initialize the function.\n\nParameters:\n    *args: See [`griffe.Object`][].\n    value: The attribute value, if any.\n    annotation: The attribute annotation, if any.\n    **kwargs: See [`griffe.Object`][]."
                 },
-                "endlineno": 2154,
+                "endlineno": 2157,
                 "kind": "function",
                 "labels": [],
-                "lineno": 2131,
+                "lineno": 2134,
                 "members": {},
                 "name": "__init__",
                 "parameters": [
@@ -50356,16 +50356,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2150,
-                  "lineno": 2150,
+                  "endlineno": 2153,
+                  "lineno": 2153,
                   "value": "The attribute type annotation."
                 },
-                "endlineno": 2149,
+                "endlineno": 2152,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2149,
+                "lineno": 2152,
                 "members": {},
                 "name": "annotation",
                 "value": {
@@ -50376,14 +50376,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 2166,
-                  "lineno": 2157,
+                  "endlineno": 2169,
+                  "lineno": 2160,
                   "value": "Return this function's data as a dictionary.\n\nSee also: [`as_json`][griffe.Attribute.as_json].\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 2172,
+                "endlineno": 2175,
                 "kind": "function",
                 "labels": [],
-                "lineno": 2156,
+                "lineno": 2159,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -50436,28 +50436,28 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2154,
-                  "lineno": 2154,
+                  "endlineno": 2157,
+                  "lineno": 2157,
                   "value": "The deleter linked to this property."
                 },
-                "endlineno": 2153,
+                "endlineno": 2156,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2153,
+                "lineno": 2156,
                 "members": {},
                 "name": "deleter",
                 "value": "None"
               },
               "kind": {
-                "endlineno": 2129,
+                "endlineno": 2132,
                 "kind": "attribute",
                 "labels": [
                   "class-attribute",
                   "instance-attribute"
                 ],
-                "lineno": 2129,
+                "lineno": 2132,
                 "members": {},
                 "name": "kind",
                 "value": {
@@ -50485,16 +50485,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2152,
-                  "lineno": 2152,
+                  "endlineno": 2155,
+                  "lineno": 2155,
                   "value": "The setter linked to this property."
                 },
-                "endlineno": 2151,
+                "endlineno": 2154,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2151,
+                "lineno": 2154,
                 "members": {},
                 "name": "setter",
                 "value": "None"
@@ -50518,16 +50518,16 @@
                   "right": "None"
                 },
                 "docstring": {
-                  "endlineno": 2148,
-                  "lineno": 2148,
+                  "endlineno": 2151,
+                  "lineno": 2151,
                   "value": "The attribute value."
                 },
-                "endlineno": 2147,
+                "endlineno": 2150,
                 "kind": "attribute",
                 "labels": [
                   "instance-attribute"
                 ],
-                "lineno": 2147,
+                "lineno": 2150,
                 "members": {},
                 "name": "value",
                 "value": {
@@ -51889,7 +51889,7 @@
               "lineno": 2039,
               "value": "The class representing a Python function."
             },
-            "endlineno": 2123,
+            "endlineno": 2126,
             "kind": "class",
             "labels": [],
             "lineno": 2038,
@@ -52027,14 +52027,14 @@
               "as_dict": {
                 "decorators": [],
                 "docstring": {
-                  "endlineno": 2118,
-                  "lineno": 2109,
+                  "endlineno": 2121,
+                  "lineno": 2112,
                   "value": "Return this function's data as a dictionary.\n\nSee also: [`as_json`][griffe.Function.as_json].\n\nParameters:\n    **kwargs: Additional serialization options.\n\nReturns:\n    A dictionary."
                 },
-                "endlineno": 2123,
+                "endlineno": 2126,
                 "kind": "function",
                 "labels": [],
-                "lineno": 2108,
+                "lineno": 2111,
                 "members": {},
                 "name": "as_dict",
                 "parameters": [
@@ -52216,7 +52216,7 @@
                   "lineno": 2079,
                   "value": "Resolve a name within this object's and parents' scope.\n\nParameters:\n    name: The name to resolve.\n\nRaises:\n    NameResolutionError: When the name could not be resolved.\n\nReturns:\n    The resolved name."
                 },
-                "endlineno": 2106,
+                "endlineno": 2109,
                 "kind": "function",
                 "labels": [],
                 "lineno": 2078,
