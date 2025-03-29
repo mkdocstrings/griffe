@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.7.1](https://github.com/mkdocstrings/griffe/releases/tag/1.7.1) - 2025-03-29
+
+<small>[Compare with 1.7.0](https://github.com/mkdocstrings/griffe/compare/1.7.0...1.7.1)</small>
+
+### Bug Fixes
+
+- Never raise alias resolution error when resolving a name from an `__init__` method scope ([949ff7d](https://github.com/mkdocstrings/griffe/commit/949ff7dd3916a96f52068ceefebeed9c2ac16cee) by Timothée Mazzucotelli). [Issue-374](https://github.com/mkdocstrings/griffe/issues/374)
+
 ## [1.7.0](https://github.com/mkdocstrings/griffe/releases/tag/1.7.0) - 2025-03-27
 
 <small>[Compare with 1.6.3](https://github.com/mkdocstrings/griffe/compare/1.6.3...1.7.0)</small>
