@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.7.2](https://github.com/mkdocstrings/griffe/releases/tag/1.7.2) - 2025-04-01
+
+<small>[Compare with 1.7.1](https://github.com/mkdocstrings/griffe/compare/1.7.1...1.7.2)</small>
+
+### Bug Fixes
+
+- Override exports when merging module stubs ([94f23e7](https://github.com/mkdocstrings/griffe/commit/94f23e72e456310d37765ea2eecf29cf655d34d3) by Timothée Mazzucotelli). [Issue-mkdocstrings-751](https://github.com/mkdocstrings/mkdocstrings/issues/751)
+- Override attribute values when merging stubs ([b940c51](https://github.com/mkdocstrings/griffe/commit/b940c51ba729ce39465bd92a40b0f5464d7d346c) by Timothée Mazzucotelli). [Issue-mkdocstrings-751](https://github.com/mkdocstrings/mkdocstrings/issues/751)
+
 ## [1.7.1](https://github.com/mkdocstrings/griffe/releases/tag/1.7.1) - 2025-03-29
 
 <small>[Compare with 1.7.0](https://github.com/mkdocstrings/griffe/compare/1.7.0...1.7.1)</small>
