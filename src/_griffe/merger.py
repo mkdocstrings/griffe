@@ -56,6 +56,10 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
     # Merge imports to later know if objects coming from the stubs were imported.
     obj.imports.update(stubs.imports)
 
+    # Override exports to later know if objects coming from the stubs were exported.
+    if stubs.exports is not None:
+        obj.exports = stubs.exports
+
     for member_name, stub_member in stubs.members.items():
         if member_name in obj.members:
             # We don't merge imported stub objects that already exist in the concrete module.
