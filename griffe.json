@@ -46599,7 +46599,7 @@
           },
           "_merge_attribute_stubs": {
             "decorators": [],
-            "endlineno": 37,
+            "endlineno": 39,
             "kind": "function",
             "labels": [],
             "lineno": 35,
@@ -46719,10 +46719,10 @@
           },
           "_merge_stubs_docstring": {
             "decorators": [],
-            "endlineno": 42,
+            "endlineno": 44,
             "kind": "function",
             "labels": [],
-            "lineno": 40,
+            "lineno": 42,
             "members": {},
             "name": "_merge_stubs_docstring",
             "parameters": [
@@ -46749,10 +46749,10 @@
           },
           "_merge_stubs_members": {
             "decorators": [],
-            "endlineno": 87,
+            "endlineno": 93,
             "kind": "function",
             "labels": [],
-            "lineno": 53,
+            "lineno": 55,
             "members": {},
             "name": "_merge_stubs_members",
             "parameters": [
@@ -46795,10 +46795,10 @@
           },
           "_merge_stubs_overloads": {
             "decorators": [],
-            "endlineno": 50,
+            "endlineno": 52,
             "kind": "function",
             "labels": [],
-            "lineno": 45,
+            "lineno": 47,
             "members": {},
             "name": "_merge_stubs_overloads",
             "parameters": [
@@ -46856,14 +46856,14 @@
           "merge_stubs": {
             "decorators": [],
             "docstring": {
-              "endlineno": 102,
-              "lineno": 91,
+              "endlineno": 108,
+              "lineno": 97,
               "value": "Merge stubs into a module.\n\nParameters:\n    mod1: A regular module or stubs module.\n    mod2: A regular module or stubs module.\n\nRaises:\n    ValueError: When both modules are regular modules (no stubs is passed).\n\nReturns:\n    The regular module."
             },
-            "endlineno": 113,
+            "endlineno": 119,
             "kind": "function",
             "labels": [],
-            "lineno": 90,
+            "lineno": 96,
             "members": {},
             "name": "merge_stubs",
             "parameters": [
