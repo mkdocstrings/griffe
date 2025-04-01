@@ -35,6 +35,8 @@ def _merge_function_stubs(function: Function, stubs: Function) -> None:
 def _merge_attribute_stubs(attribute: Attribute, stubs: Attribute) -> None:
     _merge_stubs_docstring(attribute, stubs)
     attribute.annotation = stubs.annotation
+    if stubs.value not in (None, "..."):
+        attribute.value = stubs.value
 
 
 def _merge_stubs_docstring(obj: Object, stubs: Object) -> None:
