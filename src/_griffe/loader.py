@@ -667,6 +667,8 @@ class GriffeLoader:
             )
         except SystemExit as error:
             raise ImportError(f"Importing '{module_name}' raised a system exit") from error
+        except Exception as error:
+            raise ImportError(f"Importing '{module_name}' raised an exception") from error
         elapsed = datetime.now(tz=timezone.utc) - start
         self._time_stats["time_spent_inspecting"] += elapsed.microseconds
         return module
