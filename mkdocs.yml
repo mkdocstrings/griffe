@@ -246,11 +246,12 @@ plugins:
           signature_crossrefs: true
           summary: true
 - llmstxt:
-    files:
-    - output: llms-full.txt
-      inputs:
+    full_output: llms-full.txt
+    sections:
+      Usage:
       - index.md
-      - reference/**.md
+      API:
+      - reference/api.md
 - git-revision-date-localized:
     enabled: !ENV [DEPLOY, false]
     enable_creation_date: true
