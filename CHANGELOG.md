@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.7.3](https://github.com/mkdocstrings/griffe/releases/tag/1.7.3) - 2025-04-23
+
+<small>[Compare with 1.7.2](https://github.com/mkdocstrings/griffe/compare/1.7.2...1.7.3)</small>
+
+### Bug Fixes
+
+- Don't output color codes with GitHub format ([2666399](https://github.com/mkdocstrings/griffe/commit/2666399a2ca34644cabc265f803754ca8aef6aa7) by Timothée Mazzucotelli). [Issue-378](https://github.com/mkdocstrings/griffe/issues/378)
+
+### Code Refactoring
+
+- Log a debug message when inspecting a module raises an error ([4e73b3e](https://github.com/mkdocstrings/griffe/commit/4e73b3e4d85018f5523aa907246dad760723eb3c) by Timothée Mazzucotelli). [Issue-mkdocstrings-753](https://github.com/mkdocstrings/mkdocstrings/issues/753)
+
 ## [1.7.2](https://github.com/mkdocstrings/griffe/releases/tag/1.7.2) - 2025-04-01
 
 <small>[Compare with 1.7.1](https://github.com/mkdocstrings/griffe/compare/1.7.1...1.7.2)</small>
