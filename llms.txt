@@ -1,0 +1,12 @@
+# Griffe
+
+> Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API.
+
+## Usage
+
+- [Home](https://mkdocstrings.github.io/griffe/index.md)
+
+## API
+
+- [Python API](https://mkdocstrings.github.io/griffe/reference/api/index.md)
+
