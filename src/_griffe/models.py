@@ -8,7 +8,7 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 from _griffe.c3linear import c3linear_merge
 from _griffe.docstrings.parsers import DocstringStyle, parse
@@ -72,14 +72,14 @@ class Docstring:
     """This class represents docstrings."""
 
     def __init__(
-        self,
-        value: str,
-        *,
-        lineno: int | None = None,
-        endlineno: int | None = None,
-        parent: Object | None = None,
-        parser: DocstringStyle | Parser | None = None,
-        parser_options: dict[str, Any] | None = None,
+            self,
+            value: str,
+            *,
+            lineno: int | None = None,
+            endlineno: int | None = None,
+            parent: Object | None = None,
+            parser: DocstringStyle | Parser | None = None,
+            parser_options: dict[str, Any] | None = None,
     ) -> None:
         """Initialize the docstring.
 
@@ -144,7 +144,7 @@ class Docstring:
             raise ValueError("Cannot get original docstring for namespace package")  # noqa: TRY004
         if self.lineno is None or self.endlineno is None:
             raise ValueError("Cannot get original docstring without line numbers")
-        return "\n".join(self.parent.lines_collection[self.parent.filepath][self.lineno - 1 : self.endlineno])
+        return "\n".join(self.parent.lines_collection[self.parent.filepath][self.lineno - 1: self.endlineno])
 
     @cached_property
     def parsed(self) -> list[DocstringSection]:
@@ -152,9 +152,9 @@ class Docstring:
         return self.parse()
 
     def parse(
-        self,
-        parser: DocstringStyle | Parser | None = None,
-        **options: Any,
+            self,
+            parser: DocstringStyle | Parser | None = None,
+            **options: Any,
     ) -> list[DocstringSection]:
         """Parse the docstring into structured data.
 
@@ -172,10 +172,10 @@ class Docstring:
         return parse(self, parser or self.parser, **(options or self.parser_options))
 
     def as_dict(
-        self,
-        *,
-        full: bool = False,
-        **kwargs: Any,  # noqa: ARG002
+            self,
+            *,
+            full: bool = False,
+            **kwargs: Any,  # noqa: ARG002
     ) -> dict[str, Any]:
         """Return this docstring's data as a dictionary.
 
@@ -203,13 +203,13 @@ class Parameter:
     """
 
     def __init__(
-        self,
-        name: str,
-        *,
-        annotation: str | Expr | None = None,
-        kind: ParameterKind | None = None,
-        default: str | Expr | None = None,
-        docstring: Docstring | None = None,
+            self,
+            name: str,
+            *,
+            annotation: str | Expr | None = None,
+            kind: ParameterKind | None = None,
+            default: str | Expr | None = None,
+            docstring: Docstring | None = None,
     ) -> None:
         """Initialize the parameter.
 
@@ -249,10 +249,10 @@ class Parameter:
         if not isinstance(value, Parameter):
             return NotImplemented
         return (
-            self.name == value.name
-            and self.annotation == value.annotation
-            and self.kind == value.kind
-            and self.default == value.default
+                self.name == value.name
+                and self.annotation == value.annotation
+                and self.kind == value.kind
+                and self.default == value.default
         )
 
     @property
@@ -386,16 +386,16 @@ class Object(ObjectAliasMixin):
     """
 
     def __init__(
-        self,
-        name: str,
-        *,
-        lineno: int | None = None,
-        endlineno: int | None = None,
-        runtime: bool = True,
-        docstring: Docstring | None = None,
-        parent: Module | Class | None = None,
-        lines_collection: LinesCollection | None = None,
-        modules_collection: ModulesCollection | None = None,
+            self,
+            name: str,
+            *,
+            lineno: int | None = None,
+            endlineno: int | None = None,
+            runtime: bool = True,
+            docstring: Docstring | None = None,
+            parent: Module | Class | None = None,
+            lines_collection: LinesCollection | None = None,
+            modules_collection: ModulesCollection | None = None,
     ) -> None:
         """Initialize the object.
 
@@ -917,7 +917,7 @@ class Object(ObjectAliasMixin):
             return lines
         if self.lineno is None or self.endlineno is None:
             return []
-        return lines[self.lineno - 1 : self.endlineno]
+        return lines[self.lineno - 1: self.endlineno]
 
     @property
     def source(self) -> str:
@@ -1024,15 +1024,15 @@ class Alias(ObjectAliasMixin):
     """
 
     def __init__(
-        self,
-        name: str,
-        target: str | Object | Alias,
-        *,
-        lineno: int | None = None,
-        endlineno: int | None = None,
-        runtime: bool = True,
-        parent: Module | Class | Alias | None = None,
-        inherited: bool = False,
+            self,
+            name: str,
+            target: str | Object | Alias,
+            *,
+            lineno: int | None = None,
+            endlineno: int | None = None,
+            runtime: bool = True,
+            parent: Module | Class | Alias | None = None,
+            inherited: bool = False,
     ) -> None:
         """Initialize the alias.
 
@@ -1844,9 +1844,9 @@ class Module(Object):
     def imports_future_annotations(self) -> bool:
         """Whether this module import future annotations."""
         return (
-            "annotations" in self.members
-            and self.members["annotations"].is_alias
-            and self.members["annotations"].target_path == "__future__.annotations"  # type: ignore[union-attr]
+                "annotations" in self.members
+                and self.members["annotations"].is_alias
+                and self.members["annotations"].target_path == "__future__.annotations"  # type: ignore[union-attr]
         )
 
     @property
@@ -1897,12 +1897,12 @@ class Module(Object):
         """
         try:
             return (
-                self.parent is not None
-                and isinstance(self.filepath, list)
-                and (
-                    cast("Module", self.parent).is_namespace_package
-                    or cast("Module", self.parent).is_namespace_subpackage
-                )
+                    self.parent is not None
+                    and isinstance(self.filepath, list)
+                    and (
+                            cast("Module", self.parent).is_namespace_package
+                            or cast("Module", self.parent).is_namespace_subpackage
+                    )
             )
         except BuiltinModuleError:
             return False
@@ -1934,11 +1934,11 @@ class Class(Object):
     kind = Kind.CLASS
 
     def __init__(
-        self,
-        *args: Any,
-        bases: Sequence[Expr | str] | None = None,
-        decorators: list[Decorator] | None = None,
-        **kwargs: Any,
+            self,
+            *args: Any,
+            bases: Sequence[Expr | str] | None = None,
+            decorators: list[Decorator] | None = None,
+            **kwargs: Any,
     ) -> None:
         """Initialize the class.
 
@@ -2041,12 +2041,12 @@ class Function(Object):
     kind = Kind.FUNCTION
 
     def __init__(
-        self,
-        *args: Any,
-        parameters: Parameters | None = None,
-        returns: str | Expr | None = None,
-        decorators: list[Decorator] | None = None,
-        **kwargs: Any,
+            self,
+            *args: Any,
+            parameters: Parameters | None = None,
+            returns: str | Expr | None = None,
+            decorators: list[Decorator] | None = None,
+            **kwargs: Any,
     ) -> None:
         """Initialize the function.
 
@@ -2125,6 +2125,86 @@ class Function(Object):
         base["returns"] = self.returns
         return base
 
+    def construct_signature(self) -> str:
+        """Construct the function signature.
+
+        Returns:
+            A string representation of the function signature.
+        """
+        # Start the signature with the function name and opening parenthesis
+        signature = f"{self.name}("
+
+        has_pos_only = any(p.kind == ParameterKind.positional_only for p in self.parameters)
+        render_pos_only_separator = True
+        render_kw_only_separator = True
+
+        param_strs = []
+
+        for i, param in enumerate(self.parameters):
+            # Skip 'self' or 'cls' for class methods if it's the first parameter
+            if i == 0 and param.name in ("self", "cls") and hasattr(self, "parent") and getattr(self, "parent",
+                                                                                                None) and getattr(
+                self.parent, "is_class", False):
+                continue
+
+            param_str = ""
+
+            # Handle parameter kind and separators
+            if param.kind == ParameterKind.positional_only:
+                # Just add the parameter name, we'll handle '/' separator separately
+                pass
+            else:
+                # Add '/' separator after positional-only parameters
+                if has_pos_only and render_pos_only_separator:
+                    render_pos_only_separator = False
+                    param_strs.append("/")
+
+                if param.kind == ParameterKind.keyword_only and render_kw_only_separator:
+                    render_kw_only_separator = False
+                    param_strs.append("*")
+
+            # Handle variadic parameters
+            if param.kind == ParameterKind.var_positional:
+                param_str = "*"
+                render_kw_only_separator = False
+            elif param.kind == ParameterKind.var_keyword:
+                param_str = "**"
+
+            # Add parameter name
+            param_str += param.name
+
+            # Handle type annotation
+            if param.annotation is not None:
+                param_str += f": {param.annotation}"
+                equal = " = "  # Space around equal when annotation is present
+            else:
+                equal = "="  # No space when no annotation
+
+            # Handle default value
+            if (param.default is not None and
+                    param.kind != ParameterKind.var_positional and
+                    param.kind != ParameterKind.var_keyword):
+                param_str += f"{equal}{param.default}"
+
+            param_strs.append(param_str)
+
+        # If we have positional-only parameters but no '/' was added yet
+        if has_pos_only and render_pos_only_separator:
+            param_strs.append("/")
+
+        signature += ", ".join(param_strs)
+        signature += ")"
+
+        # Add return type if present
+        # Skip return type for __init__ methods when merge_init_into_class is True
+        is_init = getattr(self, "name", "") == "__init__"
+        merge_init = getattr(self, "config", {}).get("merge_init_into_class", False)
+
+        if hasattr(self, "annotation") and self.annotation and not (merge_init and is_init):
+            signature += f" -> {self.annotation}"
+
+        return signature
+
 
 class Attribute(Object):
     """The class representing a Python module/class/instance attribute."""
@@ -2132,11 +2212,11 @@ class Attribute(Object):
     kind = Kind.ATTRIBUTE
 
     def __init__(
-        self,
-        *args: Any,
-        value: str | Expr | None = None,
-        annotation: str | Expr | None = None,
-        **kwargs: Any,
+            self,
+            *args: Any,
+            value: str | Expr | None = None,
+            annotation: str | Expr | None = None,
+            **kwargs: Any,
     ) -> None:
         """Initialize the function.
 
