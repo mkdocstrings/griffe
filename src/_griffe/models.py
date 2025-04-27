@@ -2181,9 +2181,10 @@ class Function(Object):
                 equal = "="  # No space when no annotation
 
             # Handle default value
-            if (param.default is not None and
-                    param.kind != ParameterKind.var_positional and
-                    param.kind != ParameterKind.var_keyword):
+            if (
+                    param.default is not None and
+                    param.kind not in {ParameterKind.var_positional, ParameterKind.var_keyword}
+            ):
                 param_str += f"{equal}{param.default}"
 
             param_strs.append(param_str)
