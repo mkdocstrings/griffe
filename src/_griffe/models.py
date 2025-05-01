@@ -8,7 +8,7 @@ from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, cast
+from typing import TYPE_CHECKING, Any, Callable, Union, cast
 
 from _griffe.c3linear import c3linear_merge
 from _griffe.docstrings.parsers import DocstringStyle, parse

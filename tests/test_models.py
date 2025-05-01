@@ -535,11 +535,11 @@ def test_not_resolving_attribute_value_to_itself() -> None:
     """Attribute values with same name don't resolve to themselves."""
     with temporary_visited_module(
         """
-            class A:
-                def __init__(self):
-                    x = "something"
-                    self.x = x
-            """,
+        class A:
+            def __init__(self):
+                x = "something"
+                self.x = x
+        """,
     ) as module:
         assert module["A.x"].value.canonical_path == "x"  # Not `module.A.x`.
 
