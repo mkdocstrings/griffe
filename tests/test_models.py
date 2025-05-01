@@ -534,7 +534,7 @@ def test_delete_parameters() -> None:
 def test_not_resolving_attribute_value_to_itself() -> None:
     """Attribute values with same name don't resolve to themselves."""
     with temporary_visited_module(
-            """
+        """
             class A:
                 def __init__(self):
                     x = "something"
@@ -547,17 +547,17 @@ def test_not_resolving_attribute_value_to_itself() -> None:
 def test_resolving_never_raises_alias_errors() -> None:
     """Resolving never raises alias errors."""
     with temporary_visited_package(
-            "package",
-            {
-                "__init__.py": """
+        "package",
+        {
+            "__init__.py": """
                 from package.mod import pd
 
                 class A:
                     def __init__(self):
                         pass
             """,
-                "mod.py": "import pandas as pd",
-            },
+            "mod.py": "import pandas as pd",
+        },
     ) as module:
         assert module["A.__init__"].resolve("pd") == "package.mod.pd"
 
