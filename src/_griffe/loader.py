@@ -627,7 +627,7 @@ class GriffeLoader:
         )
 
     def _visit_module(self, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
-        code = module_path.read_text(encoding="utf8")
+        code = module_path.read_text(encoding="utf-8-sig")
         if self.store_source:
             self.lines_collection[module_path] = code.splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
@@ -651,7 +651,7 @@ class GriffeLoader:
             if module_name.startswith(prefix):
                 raise ImportError(f"Ignored module '{module_name}'")
         if self.store_source and filepath and filepath.suffix in {".py", ".pyi"}:
-            self.lines_collection[filepath] = filepath.read_text(encoding="utf8").splitlines(keepends=False)
+            self.lines_collection[filepath] = filepath.read_text(encoding="utf-8-sig").splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
         try:
             module = inspect(
