@@ -1755,7 +1755,7 @@ class Alias(ObjectAliasMixin):
                 raise CyclicAliasError([self.target_path, *error.chain]) from error
         self._target = resolved
         if self.parent is not None:
-            self._target.aliases[self.path] = self  # type: ignore[union-attr]
+            self._target.aliases[self.path] = self
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):

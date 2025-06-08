@@ -699,8 +699,8 @@ class GriffeLoader:
                     raise UnimportableModuleError(f"Skip {subpath}, it is not importable") from error
             else:
                 parent_namespace = parent_module.is_namespace_package or parent_module.is_namespace_subpackage
-                if parent_namespace and module_filepath not in parent_module.filepath:  # type: ignore[operator]
-                    parent_module.filepath.append(module_filepath)  # type: ignore[union-attr]
+                if parent_namespace and module_filepath not in parent_module.filepath:
+                    parent_module.filepath.append(module_filepath)
         return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:

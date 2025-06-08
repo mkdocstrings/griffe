@@ -495,8 +495,8 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 target = node.target
             else:
                 continue
-            if isinstance(target, ast.Name) and target.id == "MAPPING" and isinstance(node.value, ast.Dict):  # type: ignore[attr-defined]
-                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]  # type: ignore[attr-defined]
+            if isinstance(target, ast.Name) and target.id == "MAPPING" and isinstance(node.value, ast.Dict):
+                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]
     if _match_pattern(path.name, _editable_meson_python_patterns):
         # Support for how 'meson-python' writes these files:
         # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.

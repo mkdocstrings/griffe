@@ -118,7 +118,7 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
 
             # Determine parameter default.
             if "default_factory" in field_args:
-                default = ExprCall(function=field_args["default_factory"], arguments=[])
+                default: str | Expr | None = ExprCall(function=field_args["default_factory"], arguments=[])
             else:
                 default = field_args.get("default", None if field_args else member.value)
 
