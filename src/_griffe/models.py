@@ -2125,6 +2125,91 @@ class Function(Object):
         base["returns"] = self.returns
         return base
 
+    def construct_signature(self) -> str:
+        """Construct the function signature.
+
+        Returns:
+            A string representation of the function signature.
+        """
+        # Start the signature with the function name and opening parenthesis
+        signature = f"{self.name}("
+
+        has_pos_only = any(p.kind == ParameterKind.positional_only for p in self.parameters)
+        render_pos_only_separator = True
+        render_kw_only_separator = True
+
+        param_strs = []
+
+        for i, param in enumerate(self.parameters):
+            # Skip 'self' or 'cls' for class methods if it's the first parameter
+            if (
+                i == 0
+                and param.name in ("self", "cls")
+                and hasattr(self, "parent")
+                and getattr(self, "parent", None)
+                and getattr(self.parent, "is_class", False)
+            ):
+                continue
+
+            param_str = ""
+
+            # Handle parameter kind and separators
+            if param.kind == ParameterKind.positional_only:
+                # Just add the parameter name, we'll handle '/' separator separately
+                pass
+            else:
+                # Add '/' separator after positional-only parameters
+                if has_pos_only and render_pos_only_separator:
+                    render_pos_only_separator = False
+                    param_strs.append("/")
+
+                if param.kind == ParameterKind.keyword_only and render_kw_only_separator:
+                    render_kw_only_separator = False
+                    param_strs.append("*")
+
+            # Handle variadic parameters
+            if param.kind == ParameterKind.var_positional:
+                param_str = "*"
+                render_kw_only_separator = False
+            elif param.kind == ParameterKind.var_keyword:
+                param_str = "**"
+
+            # Add parameter name
+            param_str += param.name
+
+            # Handle type annotation
+            if param.annotation is not None:
+                param_str += f": {param.annotation}"
+                equal = " = "  # Space around equal when annotation is present
+            else:
+                equal = "="  # No space when no annotation
+
+            # Handle default value
+            if param.default is not None and param.kind not in {
+                ParameterKind.var_positional,
+                ParameterKind.var_keyword,
+            }:
+                param_str += f"{equal}{param.default}"
+
+            param_strs.append(param_str)
+
+        # If we have positional-only parameters but no '/' was added yet
+        if has_pos_only and render_pos_only_separator:
+            param_strs.append("/")
+
+        signature += ", ".join(param_strs)
+        signature += ")"
+
+        # Add return type if present
+        # Skip return type for __init__ methods when merge_init_into_class is True
+        is_init = getattr(self, "name", "") == "__init__"
+        merge_init = getattr(self, "config", {}).get("merge_init_into_class", False)
+
+        if hasattr(self, "annotation") and self.annotation and not (merge_init and is_init):
+            signature += f" -> {self.annotation}"
+
+        return signature
+
 
 class Attribute(Object):
     """The class representing a Python module/class/instance attribute."""
