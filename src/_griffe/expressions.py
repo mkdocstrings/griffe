@@ -73,18 +73,18 @@ def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True, i
     if isinstance(element, Expr):
         element_precedence = _get_precedence(element)
         needs_parens = False
-        # lower inner precedence, e.g. (a + b) * c, +(10) < *(11)
+        # Lower inner precedence, e.g. `(a + b) * c`, `+(10) < *(11)`.
         if element_precedence < outer_precedence:
             needs_parens = True
         elif element_precedence == outer_precedence:
-            # right-assoc, e.g. parenthesise lhs in (a ** b) ** c
+            # Right-association, e.g. parenthesize left-hand side in `(a ** b) ** c`.
             is_right_assoc = isinstance(element, ExprIfExp) or (
                 isinstance(element, ExprBinOp) and element.operator == "**"
             )
             if is_right_assoc:
                 if is_left:
                     needs_parens = True
-            # left-assoc, e.g. parenthesise rhs in a - (b - c)
+            # Left-association, e.g. parenthesize right-hand side in `a - (b - c)`.
             elif isinstance(element, (ExprBinOp, ExprBoolOp)) and not is_left:
                 needs_parens = True
 
@@ -114,7 +114,7 @@ def _join(
 ) -> Iterator[str | Expr]:
     it = iter(elements)
     try:
-        # dont parenthesise items within a sequence
+        # Don't parenthesize items within a sequence.
         yield from _yield(next(it), flat=flat, outer_precedence=0)
     except StopIteration:
         return
@@ -308,7 +308,7 @@ class ExprBinOp(Expr):
         precedence = _get_precedence(self)
         right_precedence = precedence
         if self.operator == "**" and isinstance(self.right, ExprUnaryOp):
-            # footnote 5: unary operators on the right have higher precedence, e.g. a ** -b
+            # Unary operators on the right have higher precedence, e.g. `a ** -b`.
             right_precedence -= 1
         yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
         yield f" {self.operator} "
@@ -1199,7 +1199,7 @@ def _build_subscript(
             "typing_extensions.Literal",
         }:
             literal_strings = True
-        slice_val = _build(
+        slice_expr = _build(
             node.slice,
             parent,
             parse_strings=True,
@@ -1208,8 +1208,8 @@ def _build_subscript(
             **kwargs,
         )
     else:
-        slice_val = _build(node.slice, parent, in_subscript=True, **kwargs)
-    return ExprSubscript(left, slice_val)
+        slice_expr = _build(node.slice, parent, in_subscript=True, **kwargs)
+    return ExprSubscript(left, slice_expr)
 
 
 def _build_tuple(
