@@ -34,7 +34,7 @@ class _OperatorPrecedence(IntEnum):
     NONE = auto()
     """A virtual precedence level for contexts that provide their own grouping, like list brackets
     or function call parentheses. This ensures parentheses will never be added for the direct
-    children of these nodes."""  # HACK: `ruff_python_formatter::expression::parentheses`'s state machine would be more robust but would introduce significant complexity
+    children of these nodes."""  # NOTE: `ruff_python_formatter::expression::parentheses`'s state machine would be more robust but would introduce significant complexity
     YIELD = auto()  # `yield`, `yield from`
     ASSIGN = auto()  # `target := expr`
     STARRED = auto()  # `*expr`, NOTE: Omitted by Python docs, see ruff impl
@@ -62,12 +62,17 @@ def _get_precedence(expr: Expr) -> _OperatorPrecedence:
     if isinstance(
         expr,
         (
+            # Literals and names
             ExprName,
             ExprConstant,
+            ExprJoinedStr,
+            ExprFormatted,
+            # Container displays
             ExprList,
             ExprTuple,
             ExprSet,
             ExprDict,
+            # Comprehensions are self-contained units that produce a container
             ExprListComp,
             ExprSetComp,
             ExprDictComp,
@@ -114,14 +119,25 @@ def _get_precedence(expr: Expr) -> _OperatorPrecedence:
         ),
     ):
         return _OperatorPrecedence.LAMBDA
-    if isinstance(expr, ExprVarPositional):
+    if isinstance(expr, (ExprVarPositional, ExprVarKeyword)):
         return _OperatorPrecedence.STARRED
     if isinstance(expr, ExprNamedExpr):
         return _OperatorPrecedence.ASSIGN
     if isinstance(expr, (ExprYield, ExprYieldFrom)):
         return _OperatorPrecedence.YIELD
+    if isinstance(
+        expr,
+        (
+            ExprComprehension,  # NOTE: `for ... in ... if` part, not the whole `[...]`.
+            ExprExtSlice,
+            ExprKeyword,
+            ExprParameter,
+            ExprSlice,
+        ),
+    ):  # These are not standalone, they appear in specific contexts where precendence is not a concern
+        return _OperatorPrecedence.NONE
 
-    logger.warning(f"Could not determine precedence for expression type {type(expr).__name__}. ")
+    logger.warning("Could not determine precedence", extra={"expr": expr})
     return _OperatorPrecedence.NONE
 
 
@@ -174,8 +190,10 @@ def _join(
     *,
     flat: bool = True,
 ) -> Iterator[str | Expr]:
-    """Apply a separator between elements. The caller is assumed to provide their own grouping (
-    e.g. lists, tuples, slice) and will prevent parentheses from being added.
+    """Apply a separator between elements.
+
+    The caller is assumed to provide their own grouping
+    (e.g. lists, tuples, slice) and will prevent parentheses from being added.
     """
     it = iter(elements)
     try:
