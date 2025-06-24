@@ -110,3 +110,31 @@ def test_resolving_init_parameter() -> None:
         """,
     ) as module:
         assert module["Class.x"].value.canonical_path == "module.Class(x)"
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        # core
+        "a * (b + c)", # lower precedence as a subexpression of one that has higher precedence
+        "(a and b) == c"
+        "((a | b) + c).d"
+        "a - (b - c)", # left-assoc
+        "(a ** b) ** c", # right-assoc
+        # unary operator and edge cases (python docs 6.17 footnote 5)
+        "a ** -b",
+        "-a ** b",
+        "(-a) ** b",
+        # misc: conditional, lambda, comprehensions and generator
+        "(lambda: 0).a",
+        "(lambda x: a + x if b else c)(d).e",
+        "a if (b if c else d) else e", # right-assoc
+        "(a if b else c) if d else e", # forced left-assoc
+        "(a for a in b).gi_code",
+    ],
+)
+def test_parentheses_preserved(code: str) -> None:
+    """Parentheses used to enforce an order of operations should not be removed."""
+    with temporary_visited_module(f"val = {code}") as module:
+        value_expr = module["val"].value
+        assert str(value_expr) == code

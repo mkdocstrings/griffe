@@ -11,7 +11,6 @@ import sys
 from dataclasses import dataclass
 from dataclasses import fields as getfields
 from functools import partial
-from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Callable
 
 from _griffe.agents.nodes.parameters import get_parameters
@@ -25,15 +24,84 @@ if TYPE_CHECKING:
 
     from _griffe.models import Class, Module
 
+# https://docs.python.org/3/reference/expressions.html#operator-precedence
+_PRECEDENCE = {
+    "ExprName": 18,
+    "ExprConstant": 18,
+    "ExprList": 18,
+    "ExprTuple": 18,
+    "ExprSet": 18,
+    "ExprDict": 18,
+    "ExprAttribute": 17,
+    "ExprSubscript": 17,
+    "ExprCall": 17,
+    "ExprUnaryOp": {"~": 12, "+": 12, "-": 12, "not": 6},
+    "ExprBinOp": {
+        "**": 13,
+        "*": 11,
+        "@": 11,
+        "/": 11,
+        "//": 11,
+        "%": 11,
+        "+": 10,
+        "-": 10,
+        "<<": 9,
+        ">>": 9,
+        "&": 8,
+        "^": 7,
+        "|": 6,
+    },
+    "ExprCompare": 7,
+    "ExprBoolOp": {"and": 5, "or": 4},
+    "ExprIfExp": 3,
+    "ExprLambda": 2,
+    "ExprGeneratorExp": 2,
+    "ExprNamedExpr": 1,
+}
 
-def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True) -> Iterator[str | Expr]:
-    if isinstance(element, str):
-        yield element
+def _get_precedence(expr: Expr) -> int:
+    if isinstance(expr, ExprUnaryOp):
+        return _PRECEDENCE["ExprUnaryOp"][expr.operator]
+    if isinstance(expr, ExprBinOp):
+        return _PRECEDENCE["ExprBinOp"][expr.operator]
+    if isinstance(expr, ExprBoolOp):
+        return _PRECEDENCE["ExprBoolOp"][expr.operator]
+    return _PRECEDENCE.get(expr.classname, 18)
+
+
+def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True, is_left: bool = False, outer_precedence: int = 18) -> Iterator[str | Expr]:
+    if isinstance(element, Expr):
+        element_precedence = _get_precedence(element)
+        needs_parens = False
+        # lower inner precedence, e.g. (a + b) * c, +(10) < *(11)
+        if element_precedence < outer_precedence:
+            needs_parens = True
+        elif element_precedence == outer_precedence:
+            # right-assoc, e.g. parenthesise lhs in (a ** b) ** c
+            is_right_assoc = isinstance(element, ExprIfExp) or (
+                isinstance(element, ExprBinOp) and element.operator == "**"
+            )
+            if is_right_assoc:
+                if is_left:
+                    needs_parens = True
+            # left-assoc, e.g. parenthesise rhs in a - (b - c)
+            elif isinstance(element, (ExprBinOp, ExprBoolOp)) and not is_left:
+                needs_parens = True
+
+        if needs_parens:
+            yield "("
+            if flat:
+                yield from element.iterate(flat=True)
+            else:
+                yield element
+            yield ")"
+        elif flat:
+            yield from element.iterate(flat=True)
+        else:
+            yield element
     elif isinstance(element, tuple):
         for elem in element:
-            yield from _yield(elem, flat=flat)
-    elif flat:
-        yield from element.iterate(flat=True)
+            yield from _yield(elem, flat=flat, outer_precedence=outer_precedence, is_left=is_left)
     else:
         yield element
 
@@ -46,12 +114,13 @@ def _join(
 ) -> Iterator[str | Expr]:
     it = iter(elements)
     try:
-        yield from _yield(next(it), flat=flat)
+        # dont parenthesise items within a sequence
+        yield from _yield(next(it), flat=flat, outer_precedence=0)
     except StopIteration:
         return
     for element in it:
-        yield from _yield(joint, flat=flat)
-        yield from _yield(element, flat=flat)
+        yield from _yield(joint, flat=flat, outer_precedence=0)
+        yield from _yield(element, flat=flat, outer_precedence=0)
 
 
 def _field_as_dict(
@@ -184,7 +253,11 @@ class ExprAttribute(Expr):
     """The different parts of the dotted chain."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _join(self.values, ".", flat=flat)
+        precedence = _get_precedence(self)
+        yield from _yield(self.values[0], flat=flat, outer_precedence=precedence, is_left=True)
+        for value in self.values[1:]:
+            yield "."
+            yield from _yield(value, flat=flat, outer_precedence=precedence)
 
     def append(self, value: ExprName) -> None:
         """Append a name to this attribute.
@@ -232,9 +305,14 @@ class ExprBinOp(Expr):
     """Right part."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _yield(self.left, flat=flat)
+        precedence = _get_precedence(self)
+        right_precedence = precedence
+        if self.operator == "**" and isinstance(self.right, ExprUnaryOp):
+            # footnote 5: unary operators on the right have higher precedence, e.g. a ** -b
+            right_precedence -= 1
+        yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
         yield f" {self.operator} "
-        yield from _yield(self.right, flat=flat)
+        yield from _yield(self.right, flat=flat, outer_precedence=right_precedence, is_left=False)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -248,7 +326,12 @@ class ExprBoolOp(Expr):
     """Operands."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _join(self.values, f" {self.operator} ", flat=flat)
+        precedence = _get_precedence(self)
+        it = iter(self.values)
+        yield from _yield(next(it), flat=flat, outer_precedence=precedence, is_left=True)
+        for value in it:
+            yield f" {self.operator} "
+            yield from _yield(value, flat=flat, outer_precedence=precedence, is_left=False)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -267,7 +350,7 @@ class ExprCall(Expr):
         return self.function.canonical_path
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _yield(self.function, flat=flat)
+        yield from _yield(self.function, flat=flat, outer_precedence=_get_precedence(self))
         yield "("
         yield from _join(self.arguments, ", ", flat=flat)
         yield ")"
@@ -286,9 +369,11 @@ class ExprCompare(Expr):
     """Things compared."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _yield(self.left, flat=flat)
-        yield " "
-        yield from _join(zip_longest(self.operators, [], self.comparators, fillvalue=" "), " ", flat=flat)
+        precedence = _get_precedence(self)
+        yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
+        for op, comp in zip(self.operators, self.comparators):
+            yield f" {op} "
+            yield from _yield(comp, flat=flat, outer_precedence=precedence)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -396,7 +481,7 @@ class ExprFormatted(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
-        yield from _yield(self.value, flat=flat)
+        yield from _yield(self.value, flat=flat, outer_precedence=0)
         yield "}"
 
 
@@ -429,11 +514,12 @@ class ExprIfExp(Expr):
     """Other expression."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _yield(self.body, flat=flat)
+        precedence = _get_precedence(self)
+        yield from _yield(self.body, flat=flat, outer_precedence=precedence, is_left=True)
         yield " if "
-        yield from _yield(self.test, flat=flat)
+        yield from _yield(self.test, flat=flat, outer_precedence=precedence + 1)
         yield " else "
-        yield from _yield(self.orelse, flat=flat)
+        yield from _yield(self.orelse, flat=flat, outer_precedence=precedence, is_left=False)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -557,7 +643,7 @@ class ExprLambda(Expr):
             if index < length:
                 yield ", "
         yield ": "
-        yield from _yield(self.body, flat=flat)
+        yield from _yield(self.body, flat=flat, outer_precedence=0)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -685,11 +771,9 @@ class ExprNamedExpr(Expr):
     """Value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield "("
         yield from _yield(self.target, flat=flat)
         yield " := "
         yield from _yield(self.value, flat=flat)
-        yield ")"
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -773,9 +857,9 @@ class ExprSubscript(Expr):
     """Slice part."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield from _yield(self.left, flat=flat)
+        yield from _yield(self.left, flat=flat, outer_precedence=_get_precedence(self))
         yield "["
-        yield from _yield(self.slice, flat=flat)
+        yield from _yield(self.slice, flat=flat, outer_precedence=0)
         yield "]"
 
     @property
@@ -825,7 +909,9 @@ class ExprUnaryOp(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.operator
-        yield from _yield(self.value, flat=flat)
+        if self.operator == "not":
+            yield " "
+        yield from _yield(self.value, flat=flat, outer_precedence=_get_precedence(self))
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -858,7 +944,7 @@ class ExprYieldFrom(Expr):
 
 _unary_op_map = {
     ast.Invert: "~",
-    ast.Not: "not ",
+    ast.Not: "not",
     ast.UAdd: "+",
     ast.USub: "-",
 }
@@ -1113,7 +1199,7 @@ def _build_subscript(
             "typing_extensions.Literal",
         }:
             literal_strings = True
-        slice = _build(
+        slice_val = _build(
             node.slice,
             parent,
             parse_strings=True,
@@ -1122,8 +1208,8 @@ def _build_subscript(
             **kwargs,
         )
     else:
-        slice = _build(node.slice, parent, in_subscript=True, **kwargs)
-    return ExprSubscript(left, slice)
+        slice_val = _build(node.slice, parent, in_subscript=True, **kwargs)
+    return ExprSubscript(left, slice_val)
 
 
 def _build_tuple(
