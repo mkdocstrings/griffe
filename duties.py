@@ -5,13 +5,20 @@ from __future__ import annotations
 import os
 import re
 import sys
+import warnings
 from contextlib import contextmanager
 from functools import partial, wraps
 from importlib.metadata import version as pkgversion
 from pathlib import Path
+from random import sample
+from tempfile import gettempdir
 from typing import TYPE_CHECKING, Any, Callable
 
 from duty import duty, tools
+from pysource_codegen import generate
+from pysource_minimize import minimize
+
+from griffe import visit
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -471,7 +478,7 @@ def coverage(ctx: Context) -> None:
 
 
 @duty
-def test(ctx: Context, *cli_args: str, match: str = "") -> None:
+def test(ctx: Context, *cli_args: str, match: str = "") -> None:  # noqa: PT028
     """Run the test suite.
 
     ```bash
@@ -523,15 +530,6 @@ def fuzz(
         min_seed: Minimum value for the seeds range.
         max_seed: Maximum value for the seeds range.
     """
-    import warnings
-    from random import sample
-    from tempfile import gettempdir
-
-    from pysource_codegen import generate
-    from pysource_minimize import minimize
-
-    from griffe import visit
-
     warnings.simplefilter("ignore", SyntaxWarning)
 
     def fails(code: str, filepath: Path) -> bool:

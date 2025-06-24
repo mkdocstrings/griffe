@@ -55,7 +55,7 @@ def _join(
 
 
 def _field_as_dict(
-    element: str | bool | Expr | list[str | Expr] | None,
+    element: str | bool | Expr | list[str | Expr] | None,  # noqa: FBT001
     **kwargs: Any,
 ) -> str | bool | None | list | dict:
     if isinstance(element, Expr):
@@ -594,7 +594,7 @@ class ExprListComp(Expr):
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
 @dataclass(eq=False, **_dataclass_opts)
-class ExprName(Expr):
+class ExprName(Expr):  # noqa: PLW1641
     """This class represents a Python object identified by a name in a given scope."""
 
     name: str
