@@ -498,14 +498,14 @@ class Inspector:
         labels: set[str] = set()
 
         if parent.kind is Kind.MODULE:
-            labels.add("module")
+            labels.add("module-attribute")
         elif parent.kind is Kind.CLASS:
-            labels.add("class")
+            labels.add("class-attribute")
         elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
             parent = parent.parent  # type: ignore[assignment]
-            labels.add("instance")
+            labels.add("instance-attribute")
 
         try:
             value = repr(node.obj)

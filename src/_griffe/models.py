@@ -196,7 +196,7 @@ class Docstring:
         return base
 
 
-class Parameter:
+class Parameter:  # noqa: PLW1641
     """This class represent a function parameter.
 
     See also: [`Parameters`][griffe.Parameters].
