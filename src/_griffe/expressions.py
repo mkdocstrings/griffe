@@ -10,6 +10,7 @@ import ast
 import sys
 from dataclasses import dataclass
 from dataclasses import fields as getfields
+from enum import IntEnum, auto
 from functools import partial
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -24,52 +25,113 @@ if TYPE_CHECKING:
 
     from _griffe.models import Class, Module
 
-# https://docs.python.org/3/reference/expressions.html#operator-precedence
-_PRECEDENCE = {
-    "ExprName": 18,
-    "ExprConstant": 18,
-    "ExprList": 18,
-    "ExprTuple": 18,
-    "ExprSet": 18,
-    "ExprDict": 18,
-    "ExprAttribute": 17,
-    "ExprSubscript": 17,
-    "ExprCall": 17,
-    "ExprUnaryOp": {"~": 12, "+": 12, "-": 12, "not": 6},
-    "ExprBinOp": {
-        "**": 13,
-        "*": 11,
-        "@": 11,
-        "/": 11,
-        "//": 11,
-        "%": 11,
-        "+": 10,
-        "-": 10,
-        "<<": 9,
-        ">>": 9,
-        "&": 8,
-        "^": 7,
-        "|": 6,
-    },
-    "ExprCompare": 7,
-    "ExprBoolOp": {"and": 5, "or": 4},
-    "ExprIfExp": 3,
-    "ExprLambda": 2,
-    "ExprGeneratorExp": 2,
-    "ExprNamedExpr": 1,
-}
 
-def _get_precedence(expr: Expr) -> int:
+class _OperatorPrecedence(IntEnum):
+    # Adapted from:
+    # - https://docs.python.org/3/reference/expressions.html#operator-precedence
+    # - https://github.com/python/cpython/blob/main/Lib/_ast_unparse.py
+    # - https://github.com/astral-sh/ruff/blob/6abafcb56575454f2caeaa174efcb9fd0a8362b1/crates/ruff_python_ast/src/operator_precedence.rs
+    NONE = auto()
+    """A virtual precedence level for contexts that provide their own grouping, like list brackets
+    or function call parentheses. This ensures parentheses will never be added for the direct
+    children of these nodes."""  # HACK: `ruff_python_formatter::expression::parentheses`'s state machine would be more robust but would introduce significant complexity
+    YIELD = auto()  # `yield`, `yield from`
+    ASSIGN = auto()  # `target := expr`
+    STARRED = auto()  # `*expr`, NOTE: Omitted by Python docs, see ruff impl
+    LAMBDA = auto()
+    IF_ELSE = auto()  # `expr if cond else expr`
+    OR = auto()
+    AND = auto()
+    NOT = auto()
+    COMPARISON_MEMBERSHIP_IDENTITY = auto()  # `<`, `<=`, `>`, `>=`, `!=`, `==`, `in`, `not in`, `is`, `is not`
+    BIT_OR = auto()  # `|`
+    BIT_XOR = auto()  # `^`
+    BIT_AND = auto()  # `&`
+    LEFT_RIGHT_SHIFT = auto()  # `<<`, `>>`
+    ADD_SUB = auto()  # `+`, `-`
+    MUL_DIV_REMAIN = auto()  # `*`, `@`, `/`, `//`, `%`
+    POS_NEG_BIT_NOT = auto()  # +x, -x, ~x
+    EXPONENT = auto()  # **
+    AWAIT = auto()
+    CALL_ATTRIBUTE = auto()  # x[index], x[index:index], x(arguments...), x.attribute
+    ATOMIC = auto()  # (expressions...), [expressions...], {key: value...}, {expressions...}
+
+
+def _get_precedence(expr: Expr) -> _OperatorPrecedence:
+    """Get the precedence of an expression."""
+    if isinstance(
+        expr,
+        (
+            ExprName,
+            ExprConstant,
+            ExprList,
+            ExprTuple,
+            ExprSet,
+            ExprDict,
+            ExprListComp,
+            ExprSetComp,
+            ExprDictComp,
+        ),
+    ):
+        return _OperatorPrecedence.ATOMIC
+    if isinstance(expr, (ExprAttribute, ExprSubscript, ExprCall)):
+        return _OperatorPrecedence.CALL_ATTRIBUTE
+    # TODO: implement ast.Await
     if isinstance(expr, ExprUnaryOp):
-        return _PRECEDENCE["ExprUnaryOp"][expr.operator]
+        if expr.operator == "not":
+            return _OperatorPrecedence.NOT
+        return _OperatorPrecedence.POS_NEG_BIT_NOT
     if isinstance(expr, ExprBinOp):
-        return _PRECEDENCE["ExprBinOp"][expr.operator]
+        op = expr.operator
+        if op == "**":
+            return _OperatorPrecedence.EXPONENT
+        if op in {"*", "@", "/", "//", "%"}:
+            return _OperatorPrecedence.MUL_DIV_REMAIN
+        if op in {"+", "-"}:
+            return _OperatorPrecedence.ADD_SUB
+        if op in {"<<", ">>"}:
+            return _OperatorPrecedence.LEFT_RIGHT_SHIFT
+        if op == "&":
+            return _OperatorPrecedence.BIT_AND
+        if op == "^":
+            return _OperatorPrecedence.BIT_XOR
+        if op == "|":
+            return _OperatorPrecedence.BIT_OR
+    if isinstance(expr, ExprCompare):
+        return _OperatorPrecedence.COMPARISON_MEMBERSHIP_IDENTITY
     if isinstance(expr, ExprBoolOp):
-        return _PRECEDENCE["ExprBoolOp"][expr.operator]
-    return _PRECEDENCE.get(expr.classname, 18)
+        if expr.operator == "and":
+            return _OperatorPrecedence.AND
+        if expr.operator == "or":
+            return _OperatorPrecedence.OR
+    if isinstance(expr, ExprIfExp):
+        return _OperatorPrecedence.IF_ELSE
+    if isinstance(
+        expr,
+        (
+            ExprLambda,
+            ExprGeneratorExp,  # NOTE: Ruff categorizes as atomic, but (a for a in b).gi_code implies its less than CALL_ATTRIBUTE
+        ),
+    ):
+        return _OperatorPrecedence.LAMBDA
+    if isinstance(expr, ExprVarPositional):
+        return _OperatorPrecedence.STARRED
+    if isinstance(expr, ExprNamedExpr):
+        return _OperatorPrecedence.ASSIGN
+    if isinstance(expr, (ExprYield, ExprYieldFrom)):
+        return _OperatorPrecedence.YIELD
+
+    logger.warning(f"Could not determine precedence for expression type {type(expr).__name__}. ")
+    return _OperatorPrecedence.NONE
 
 
-def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True, is_left: bool = False, outer_precedence: int = 18) -> Iterator[str | Expr]:
+def _yield(
+    element: str | Expr | tuple[str | Expr, ...],
+    *,
+    flat: bool = True,
+    is_left: bool = False,
+    outer_precedence: _OperatorPrecedence = _OperatorPrecedence.ATOMIC,
+) -> Iterator[str | Expr]:
     if isinstance(element, Expr):
         element_precedence = _get_precedence(element)
         needs_parens = False
@@ -77,7 +139,7 @@ def _yield(element: str | Expr | tuple[str | Expr, ...], *, flat: bool = True, i
         if element_precedence < outer_precedence:
             needs_parens = True
         elif element_precedence == outer_precedence:
-            # Right-association, e.g. parenthesize left-hand side in `(a ** b) ** c`.
+            # Right-association, e.g. parenthesize left-hand side in `(a ** b) ** c`, (a if b else c) if d else e
             is_right_assoc = isinstance(element, ExprIfExp) or (
                 isinstance(element, ExprBinOp) and element.operator == "**"
             )
@@ -112,15 +174,19 @@ def _join(
     *,
     flat: bool = True,
 ) -> Iterator[str | Expr]:
+    """Apply a separator between elements. The caller is assumed to provide their own grouping (
+    e.g. lists, tuples, slice) and will prevent parentheses from being added.
+    """
     it = iter(elements)
     try:
-        # Don't parenthesize items within a sequence.
-        yield from _yield(next(it), flat=flat, outer_precedence=0)
+        # Since we are in a sequence, don't parenthesize items.
+        # Avoids [a + b, c + d] being serialized as [(a + b), (c + d)]
+        yield from _yield(next(it), flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     except StopIteration:
         return
     for element in it:
-        yield from _yield(joint, flat=flat, outer_precedence=0)
-        yield from _yield(element, flat=flat, outer_precedence=0)
+        yield from _yield(joint, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+        yield from _yield(element, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
 
 
 def _field_as_dict(
@@ -309,7 +375,7 @@ class ExprBinOp(Expr):
         right_precedence = precedence
         if self.operator == "**" and isinstance(self.right, ExprUnaryOp):
             # Unary operators on the right have higher precedence, e.g. `a ** -b`.
-            right_precedence -= 1
+            right_precedence = _OperatorPrecedence(precedence - 1)
         yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
         yield f" {self.operator} "
         yield from _yield(self.right, flat=flat, outer_precedence=right_precedence, is_left=False)
@@ -481,7 +547,8 @@ class ExprFormatted(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
-        yield from _yield(self.value, flat=flat, outer_precedence=0)
+        # Prevent parentheses from being added, avoiding `{(1 + 1)}`
+        yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
         yield "}"
 
 
@@ -517,9 +584,18 @@ class ExprIfExp(Expr):
         precedence = _get_precedence(self)
         yield from _yield(self.body, flat=flat, outer_precedence=precedence, is_left=True)
         yield " if "
-        yield from _yield(self.test, flat=flat, outer_precedence=precedence + 1)
+        # If the test itself is another if/else, its precedence is the same, which will not give
+        # a parenthesis: force it.
+        test_outer_precedence = _OperatorPrecedence(precedence + 1)
+        yield from _yield(self.test, flat=flat, outer_precedence=test_outer_precedence)
         yield " else "
-        yield from _yield(self.orelse, flat=flat, outer_precedence=precedence, is_left=False)
+        # If/else is right associative. For example, a nested if/else
+        # `a if b else c if d else e` is effectively `a if b else (c if d else e)`, so produce a
+        # flattened version without parentheses.
+        if isinstance(self.orelse, ExprIfExp):
+            yield from self.orelse.iterate(flat=flat)
+        else:
+            yield from _yield(self.orelse, flat=flat, outer_precedence=precedence, is_left=False)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -643,7 +719,8 @@ class ExprLambda(Expr):
             if index < length:
                 yield ", "
         yield ": "
-        yield from _yield(self.body, flat=flat, outer_precedence=0)
+        # Body of lambda should not have parentheses, avoiding `lambda: a.b`
+        yield from _yield(self.body, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
@@ -859,7 +936,8 @@ class ExprSubscript(Expr):
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.left, flat=flat, outer_precedence=_get_precedence(self))
         yield "["
-        yield from _yield(self.slice, flat=flat, outer_precedence=0)
+        # Prevent parentheses from being added, avoiding `a[(b)]`
+        yield from _yield(self.slice, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
         yield "]"
 
     @property
