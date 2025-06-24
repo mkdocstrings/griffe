@@ -115,22 +115,24 @@ def test_resolving_init_parameter() -> None:
 @pytest.mark.parametrize(
     "code",
     [
-        # core
-        "a * (b + c)", # lower precedence as a subexpression of one that has higher precedence
-        "(a and b) == c"
-        "((a | b) + c).d"
-        "a - (b - c)", # left-assoc
-        "(a ** b) ** c", # right-assoc
-        # unary operator and edge cases (python docs 6.17 footnote 5)
+        # Core.
+        "a * (b + c)",  # Lower precedence as a sub-expression of one that has higher precedence.
+        "(a and b) == c",
+        "((a | b) + c).d",
+        "a - (b - c)",  # Left-association.
+        "(a ** b) ** c",  # Right-association.
+        # Unary operator and edge cases:
+        # > The power operator `**` binds less tightly than an arithmetic
+        # > or bitwise unary operator on its right, that is, `2**-1` is `0.5`.
         "a ** -b",
         "-a ** b",
         "(-a) ** b",
-        # misc: conditional, lambda, comprehensions and generator
+        # Misc: conditionals, lambdas, comprehensions and generators.
         "(lambda: 0).a",
         "(lambda x: a + x if b else c)(d).e",
-        "a if (b if c else d) else e", # right-assoc
-        "(a if b else c) if d else e", # forced left-assoc
-        "(a for a in b).gi_code",
+        "a if (b if c else d) else e",  # Right-association.
+        "(a if b else c) if d else e",  # Forced left-association.
+        "(a for a in b).c",
     ],
 )
 def test_parentheses_preserved(code: str) -> None:
