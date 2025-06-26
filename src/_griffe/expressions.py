@@ -28,117 +28,39 @@ if TYPE_CHECKING:
 
 class _OperatorPrecedence(IntEnum):
     # Adapted from:
+    #
     # - https://docs.python.org/3/reference/expressions.html#operator-precedence
     # - https://github.com/python/cpython/blob/main/Lib/_ast_unparse.py
     # - https://github.com/astral-sh/ruff/blob/6abafcb56575454f2caeaa174efcb9fd0a8362b1/crates/ruff_python_ast/src/operator_precedence.rs
+
+    # The enum members are declared in ascending order of precedence.
+    
+    # A virtual precedence level for contexts that provide their own grouping, like list brackets or
+    # function call parentheses. This ensures parentheses will never be added for the direct children of these nodes.
+    # NOTE: `ruff_python_formatter::expression::parentheses`'s state machine would be more robust
+    # but would introduce significant complexity.
     NONE = auto()
-    """A virtual precedence level for contexts that provide their own grouping, like list brackets
-    or function call parentheses. This ensures parentheses will never be added for the direct
-    children of these nodes."""  # NOTE: `ruff_python_formatter::expression::parentheses`'s state machine would be more robust but would introduce significant complexity
+
     YIELD = auto()  # `yield`, `yield from`
     ASSIGN = auto()  # `target := expr`
-    STARRED = auto()  # `*expr`, NOTE: Omitted by Python docs, see ruff impl
+    STARRED = auto()  # `*expr` (omitted by Python docs, see ruff impl)
     LAMBDA = auto()
     IF_ELSE = auto()  # `expr if cond else expr`
     OR = auto()
     AND = auto()
     NOT = auto()
-    COMPARISON_MEMBERSHIP_IDENTITY = auto()  # `<`, `<=`, `>`, `>=`, `!=`, `==`, `in`, `not in`, `is`, `is not`
+    COMP_MEMB_ID = auto()  # `<`, `<=`, `>`, `>=`, `!=`, `==`, `in`, `not in`, `is`, `is not`
     BIT_OR = auto()  # `|`
     BIT_XOR = auto()  # `^`
     BIT_AND = auto()  # `&`
     LEFT_RIGHT_SHIFT = auto()  # `<<`, `>>`
     ADD_SUB = auto()  # `+`, `-`
     MUL_DIV_REMAIN = auto()  # `*`, `@`, `/`, `//`, `%`
-    POS_NEG_BIT_NOT = auto()  # +x, -x, ~x
-    EXPONENT = auto()  # **
+    POS_NEG_BIT_NOT = auto()  # `+x`, `-x`, `~x`
+    EXPONENT = auto()  # `**`
     AWAIT = auto()
-    CALL_ATTRIBUTE = auto()  # x[index], x[index:index], x(arguments...), x.attribute
-    ATOMIC = auto()  # (expressions...), [expressions...], {key: value...}, {expressions...}
-
-
-def _get_precedence(expr: Expr) -> _OperatorPrecedence:
-    """Get the precedence of an expression."""
-    if isinstance(
-        expr,
-        (
-            # Literals and names
-            ExprName,
-            ExprConstant,
-            ExprJoinedStr,
-            ExprFormatted,
-            # Container displays
-            ExprList,
-            ExprTuple,
-            ExprSet,
-            ExprDict,
-            # Comprehensions are self-contained units that produce a container
-            ExprListComp,
-            ExprSetComp,
-            ExprDictComp,
-        ),
-    ):
-        return _OperatorPrecedence.ATOMIC
-    if isinstance(expr, (ExprAttribute, ExprSubscript, ExprCall)):
-        return _OperatorPrecedence.CALL_ATTRIBUTE
-    # TODO: implement ast.Await
-    if isinstance(expr, ExprUnaryOp):
-        if expr.operator == "not":
-            return _OperatorPrecedence.NOT
-        return _OperatorPrecedence.POS_NEG_BIT_NOT
-    if isinstance(expr, ExprBinOp):
-        op = expr.operator
-        if op == "**":
-            return _OperatorPrecedence.EXPONENT
-        if op in {"*", "@", "/", "//", "%"}:
-            return _OperatorPrecedence.MUL_DIV_REMAIN
-        if op in {"+", "-"}:
-            return _OperatorPrecedence.ADD_SUB
-        if op in {"<<", ">>"}:
-            return _OperatorPrecedence.LEFT_RIGHT_SHIFT
-        if op == "&":
-            return _OperatorPrecedence.BIT_AND
-        if op == "^":
-            return _OperatorPrecedence.BIT_XOR
-        if op == "|":
-            return _OperatorPrecedence.BIT_OR
-    if isinstance(expr, ExprCompare):
-        return _OperatorPrecedence.COMPARISON_MEMBERSHIP_IDENTITY
-    if isinstance(expr, ExprBoolOp):
-        if expr.operator == "and":
-            return _OperatorPrecedence.AND
-        if expr.operator == "or":
-            return _OperatorPrecedence.OR
-    if isinstance(expr, ExprIfExp):
-        return _OperatorPrecedence.IF_ELSE
-    if isinstance(
-        expr,
-        (
-            ExprLambda,
-            ExprGeneratorExp,  # NOTE: Ruff categorizes as atomic, but (a for a in b).gi_code implies its less than CALL_ATTRIBUTE
-        ),
-    ):
-        return _OperatorPrecedence.LAMBDA
-    if isinstance(expr, (ExprVarPositional, ExprVarKeyword)):
-        return _OperatorPrecedence.STARRED
-    if isinstance(expr, ExprNamedExpr):
-        return _OperatorPrecedence.ASSIGN
-    if isinstance(expr, (ExprYield, ExprYieldFrom)):
-        return _OperatorPrecedence.YIELD
-    if isinstance(
-        expr,
-        (
-            ExprComprehension,  # NOTE: `for ... in ... if` part, not the whole `[...]`.
-            ExprExtSlice,
-            ExprKeyword,
-            ExprParameter,
-            ExprSlice,
-        ),
-    ):  # These are not standalone, they appear in specific contexts where precendence is not a concern
-        return _OperatorPrecedence.NONE
-
-    logger.warning("Could not determine precedence", extra={"expr": expr})
-    return _OperatorPrecedence.NONE
+    CALL_ATTRIBUTE = auto()  # `x[index]`, `x[index:index]`, `x(arguments...)`, `x.attribute`
+    ATOMIC = auto()  # `(expressions...)`, `[expressions...]`, `{key: value...}`, `{expressions...}`
 
 
 def _yield(
@@ -1078,6 +1000,74 @@ _compare_op_map = {
     ast.In: "in",
     ast.NotIn: "not in",
 }
+
+# TODO: Support `ast.Await`.
+_precedence_map = {
+    # Literals and names.
+    ExprName: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprConstant: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprJoinedStr: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprFormatted: lambda _: _OperatorPrecedence.ATOMIC,
+
+    # Container displays.
+    ExprList: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprTuple: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprSet: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprDict: lambda _: _OperatorPrecedence.ATOMIC,
+
+    # Comprehensions are self-contained units that produce a container.
+    ExprListComp: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprSetComp: lambda _: _OperatorPrecedence.ATOMIC,
+    ExprDictComp: lambda _: _OperatorPrecedence.ATOMIC,
+
+    ExprAttribute: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
+    ExprSubscript: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
+    ExprCall: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
+
+    ExprUnaryOp: lambda e: {"not": _OperatorPrecedence.NOT}.get(e.operator, _OperatorPrecedence.POS_NEG_BIT_NOT),
+    ExprBinOp: lambda e: {
+        "**": _OperatorPrecedence.EXPONENT,
+        "*": _OperatorPrecedence.MUL_DIV_REMAIN,
+        "@": _OperatorPrecedence.MUL_DIV_REMAIN,
+        "/": _OperatorPrecedence.MUL_DIV_REMAIN,
+        "//": _OperatorPrecedence.MUL_DIV_REMAIN,
+        "%": _OperatorPrecedence.MUL_DIV_REMAIN,
+        "+": _OperatorPrecedence.ADD_SUB,
+        "-": _OperatorPrecedence.ADD_SUB,
+        "<<": _OperatorPrecedence.LEFT_RIGHT_SHIFT,
+        ">>": _OperatorPrecedence.LEFT_RIGHT_SHIFT,
+        "&": _OperatorPrecedence.BIT_AND,
+        "^": _OperatorPrecedence.BIT_XOR,
+        "|": _OperatorPrecedence.BIT_OR,
+    }.get(e.operator),
+    ExprBoolOp: lambda e: {"and": _OperatorPrecedence.AND, "or": _OperatorPrecedence.OR}.get(e.operator),
+
+    ExprCompare: lambda _: _OperatorPrecedence.COMP_MEMB_ID,
+    ExprIfExp: lambda _: _OperatorPrecedence.IF_ELSE,
+    ExprNamedExpr: lambda _: _OperatorPrecedence.ASSIGN,
+
+    ExprLambda: lambda _: _OperatorPrecedence.LAMBDA,
+    # NOTE: Ruff categorizes as atomic, but `(a for a in b).c` implies its less than `CALL_ATTRIBUTE`.
+    ExprGeneratorExp: lambda _: _OperatorPrecedence.LAMBDA,
+
+    ExprVarPositional: lambda _: _OperatorPrecedence.STARRED,
+    ExprVarKeyword: lambda _: _OperatorPrecedence.STARRED,
+
+    ExprYield: lambda _: _OperatorPrecedence.YIELD,
+    ExprYieldFrom: lambda _: _OperatorPrecedence.YIELD,
+
+    # These are not standalone, they appear in specific contexts where precendence is not a concern.
+    # NOTE: `for ... in ... if` part, not the whole `[...]`.
+    ExprComprehension: lambda _: _OperatorPrecedence.NONE,
+    ExprExtSlice: lambda _: _OperatorPrecedence.NONE,
+    ExprKeyword: lambda _: _OperatorPrecedence.NONE,
+    ExprParameter: lambda _: _OperatorPrecedence.NONE,
+    ExprSlice: lambda _: _OperatorPrecedence.NONE,
+}
+
+
+def _get_precedence(expr: Expr) -> _OperatorPrecedence:
+    return _precedence_map.get(type(expr), lambda _: _OperatorPrecedence.NONE)(expr)
 
 
 def _build_attribute(node: ast.Attribute, parent: Module | Class, **kwargs: Any) -> Expr:
