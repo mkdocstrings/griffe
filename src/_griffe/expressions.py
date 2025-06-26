@@ -34,7 +34,7 @@ class _OperatorPrecedence(IntEnum):
     # - https://github.com/astral-sh/ruff/blob/6abafcb56575454f2caeaa174efcb9fd0a8362b1/crates/ruff_python_ast/src/operator_precedence.rs
 
     # The enum members are declared in ascending order of precedence.
-    
+
     # A virtual precedence level for contexts that provide their own grouping, like list brackets or
     # function call parentheses. This ensures parentheses will never be added for the direct children of these nodes.
     # NOTE: `ruff_python_formatter::expression::parentheses`'s state machine would be more robust
@@ -1008,22 +1008,18 @@ _precedence_map = {
     ExprConstant: lambda _: _OperatorPrecedence.ATOMIC,
     ExprJoinedStr: lambda _: _OperatorPrecedence.ATOMIC,
     ExprFormatted: lambda _: _OperatorPrecedence.ATOMIC,
-
     # Container displays.
     ExprList: lambda _: _OperatorPrecedence.ATOMIC,
     ExprTuple: lambda _: _OperatorPrecedence.ATOMIC,
     ExprSet: lambda _: _OperatorPrecedence.ATOMIC,
     ExprDict: lambda _: _OperatorPrecedence.ATOMIC,
-
     # Comprehensions are self-contained units that produce a container.
     ExprListComp: lambda _: _OperatorPrecedence.ATOMIC,
     ExprSetComp: lambda _: _OperatorPrecedence.ATOMIC,
     ExprDictComp: lambda _: _OperatorPrecedence.ATOMIC,
-
     ExprAttribute: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
     ExprSubscript: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
     ExprCall: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
-
     ExprUnaryOp: lambda e: {"not": _OperatorPrecedence.NOT}.get(e.operator, _OperatorPrecedence.POS_NEG_BIT_NOT),
     ExprBinOp: lambda e: {
         "**": _OperatorPrecedence.EXPONENT,
@@ -1041,21 +1037,16 @@ _precedence_map = {
         "|": _OperatorPrecedence.BIT_OR,
     }.get(e.operator),
     ExprBoolOp: lambda e: {"and": _OperatorPrecedence.AND, "or": _OperatorPrecedence.OR}.get(e.operator),
-
     ExprCompare: lambda _: _OperatorPrecedence.COMP_MEMB_ID,
     ExprIfExp: lambda _: _OperatorPrecedence.IF_ELSE,
     ExprNamedExpr: lambda _: _OperatorPrecedence.ASSIGN,
-
     ExprLambda: lambda _: _OperatorPrecedence.LAMBDA,
     # NOTE: Ruff categorizes as atomic, but `(a for a in b).c` implies its less than `CALL_ATTRIBUTE`.
     ExprGeneratorExp: lambda _: _OperatorPrecedence.LAMBDA,
-
     ExprVarPositional: lambda _: _OperatorPrecedence.STARRED,
     ExprVarKeyword: lambda _: _OperatorPrecedence.STARRED,
-
     ExprYield: lambda _: _OperatorPrecedence.YIELD,
     ExprYieldFrom: lambda _: _OperatorPrecedence.YIELD,
-
     # These are not standalone, they appear in specific contexts where precendence is not a concern.
     # NOTE: `for ... in ... if` part, not the whole `[...]`.
     ExprComprehension: lambda _: _OperatorPrecedence.NONE,
