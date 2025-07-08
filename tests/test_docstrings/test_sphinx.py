@@ -245,8 +245,8 @@ def test_parse__param_field_type_field__param_section_with_type(parse_sphinx: Pa
     docstring = f"""
         Docstring with line continuation.
 
-        :param foo: {SOME_TEXT}
-        :type foo: {type_}
+        :param {SOME_NAME}: {SOME_TEXT}
+        :type {SOME_NAME}: {type_}
     """
 
     sections, _ = parse_sphinx(docstring)
@@ -272,8 +272,8 @@ def test_parse__param_field_type_field__param_section_with_type_with_parent(
     docstring = f"""
         Docstring with line continuation.
 
-        :param foo: {SOME_TEXT}
-        :type foo: {type_}
+        :param {SOME_NAME}: {SOME_TEXT}
+        :type {SOME_NAME}: {type_}
     """
     parent_fn = Function("func", parameters=Parameters(Parameter("foo")))
     sections, _ = parse_sphinx(docstring, parent=parent_fn)
@@ -321,8 +321,8 @@ def test_parse__param_field_type_field_first__param_section_with_type_with_paren
     docstring = f"""
         Docstring with line continuation.
 
-        :type foo: str
-        :param foo: {SOME_TEXT}
+        :type {SOME_NAME}: str
+        :param {SOME_NAME}: {SOME_TEXT}
     """
     parent_fn = Function("func", parameters=Parameters(Parameter("foo")))
     sections, _ = parse_sphinx(docstring, parent=parent_fn)
@@ -390,8 +390,8 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional_with
     docstring = f"""
         Docstring with line continuation.
 
-        :param foo: {SOME_TEXT}
-        :type foo: {union}
+        :param {SOME_NAME}: {SOME_TEXT}
+        :type {SOME_NAME}: {union}
     """
 
     parent_fn = Function("func", parameters=Parameters(Parameter("foo")))
