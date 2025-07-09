@@ -275,7 +275,7 @@ def test_parse__param_field_type_field__param_section_with_type_with_parent(
         :param {SOME_NAME}: {SOME_TEXT}
         :type {SOME_NAME}: {type_}
     """
-    parent_fn = Function("func", parameters=Parameters(Parameter("foo")))
+    parent_fn = Function("func", parameters=Parameters(Parameter(SOME_NAME)))
     sections, _ = parse_sphinx(docstring, parent=parent_fn)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
@@ -324,7 +324,7 @@ def test_parse__param_field_type_field_first__param_section_with_type_with_paren
         :type {SOME_NAME}: str
         :param {SOME_NAME}: {SOME_TEXT}
     """
-    parent_fn = Function("func", parameters=Parameters(Parameter("foo")))
+    parent_fn = Function("func", parameters=Parameters(Parameter(SOME_NAME)))
     sections, _ = parse_sphinx(docstring, parent=parent_fn)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
@@ -394,7 +394,7 @@ def test_parse__param_field_type_field_or_none__param_section_with_optional_with
         :type {SOME_NAME}: {union}
     """
 
-    parent_fn = Function("func", parameters=Parameters(Parameter("foo")))
+    parent_fn = Function("func", parameters=Parameters(Parameter(SOME_NAME)))
     sections, _ = parse_sphinx(docstring, parent=parent_fn)
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
