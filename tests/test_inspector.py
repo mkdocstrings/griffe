@@ -32,8 +32,10 @@ def test_annotations_from_classes() -> None:
         assert returns.canonical_path == f"{module.name}.A"
 
 
+# YORE: EOL 3.13: Remove block.
 # YORE: EOL 3.9: Remove line.
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Type unions not supported on 3.9")
+@pytest.mark.skipif(sys.version_info >= (3, 14), reason="3.14 changes type annotations, see test below")
 @pytest.mark.parametrize(
     ("annotation", "expected"),
     [
@@ -41,6 +43,29 @@ def test_annotations_from_classes() -> None:
         ("Union[int, str]", "typing.Union[int, str]"),
         ("int | str", "int | str"),
         ("int | Literal[1]", "typing.Union[int, typing.Literal[1]]"),
+    ],
+)
+def test_annotations_from_types_before_314(annotation: str, expected: str) -> None:
+    """Assert annotations are correctly converted to string."""
+    with temporary_inspected_module(
+        f"""
+        from typing import Literal, Union
+        def func(param: {annotation}): ...
+        """,
+    ) as module:
+        param = module["func"].parameters["param"]
+        assert str(param.annotation) == expected
+
+
+# YORE: EOL 3.13: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 14), reason="3.14 modernizes type unions")
+@pytest.mark.parametrize(
+    ("annotation", "expected"),
+    [
+        ("tuple[int, str]", "tuple[int, str]"),
+        ("Union[int, str]", "int | str"),
+        ("int | str", "int | str"),
+        ("int | Literal[1]", "int | typing.Literal[1]"),
     ],
 )
 def test_annotations_from_types(annotation: str, expected: str) -> None:
