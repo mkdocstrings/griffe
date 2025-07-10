@@ -397,19 +397,16 @@ class GriffeLoader:
                     endlineno=alias_endlineno,
                     parent=obj,  # type: ignore[arg-type]
                 )
-                # Special case: we avoid overwriting a submodule with an alias pointing to it.
-                # Griffe suffers from this design flaw where an object cannot store both
+                # Special case: we avoid overwriting a submodule with an alias.
+                # Griffe suffers from this limitation where an object cannot store both
                 # a submodule and a member of the same name, while this poses (almost) no issue in Python.
-                # We at least prevent this case where a submodule is overwritten by an imported version of itself.
+                # We always give precedence to the submodule.
+                # See the "avoid member-submodule name shadowing" section in the "Python code" docs page.
                 if already_present:
                     prev_member = obj.get_member(new_member.name)
                     with suppress(AliasResolutionError, CyclicAliasError):
                         if prev_member.is_module:
-                            if prev_member.is_alias:
-                                prev_member = prev_member.final_target
-                            if alias.final_target is prev_member:
-                                # Alias named after the module it targets: skip to avoid cyclic aliases.
-                                continue
+                            continue
 
                 # Everything went right (supposedly), we add the alias as a member of the current object.
                 obj.set_member(new_member.name, alias)
