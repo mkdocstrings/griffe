@@ -150,6 +150,12 @@ def _read_parameter(
             docstring,
         )
         name = parsed_directive.directive_parts[2]
+    elif len(parsed_directive.directive_parts) > 3:  # noqa: PLR2004
+        # Ignoring type info, only a type with a single word is valid
+        # https://www.sphinx-doc.org/en/master/usage/domains/python.html#info-field-lists
+        name = parsed_directive.directive_parts[-1]
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
     else:
         if warnings:
             docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
