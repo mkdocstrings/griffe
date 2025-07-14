@@ -16,8 +16,11 @@ from griffe import (
     DocstringReturn,
     DocstringSectionKind,
     Expr,
+    ExprAttribute,
     ExprBinOp,
     ExprName,
+    ExprSubscript,
+    ExprTuple,
     Function,
     Module,
     Parameter,
@@ -524,6 +527,80 @@ def test_parse__invalid_param_field_wrong_part_count__error_message(parse_sphinx
 
     _, warnings = parse_sphinx(docstring)
     assert "Failed to parse field directive" in warnings[0]
+
+
+def test_parse__invalid_param_field_wrong_part_count_spaces_4__error_message(parse_sphinx: ParserType) -> None:
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = f"""
+        Docstring with line continuation.
+
+        :param typing.Union[str, int] {SOME_NAME}: {SOME_TEXT}
+    """
+
+    sections, warnings = parse_sphinx(docstring)
+
+    # Assert that the warning is shown
+    assert "Failed to parse field directive" in warnings[0]
+
+    # Assert that the parameter is still collected, but ignores the invalid type
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.parameters
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation=None, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
+
+
+def test_parse__valid_param_field_part_count_3(parse_sphinx: ParserType) -> None:
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = f"""
+        Docstring with line continuation.
+
+        :param typing.Union[str,int] {SOME_NAME}: {SOME_TEXT}
+    """
+
+    sections, _ = parse_sphinx(docstring)
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.parameters
+    actual = sections[1].value[0]
+    expected = DocstringParameter(SOME_NAME, annotation="typing.Union[str,int]", description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
+
+
+def test_parse__valid_param_field_part_count_3_with_parent(parse_sphinx: ParserType) -> None:
+    """Parse a simple docstring.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = f"""
+        Docstring with line continuation.
+
+        :param typing.Union[str,int] {SOME_NAME}: {SOME_TEXT}
+    """
+
+    parent_fn = Function("func3", parameters=Parameters(Parameter(name=SOME_NAME)))
+    sections, _ = parse_sphinx(docstring, parent=parent_fn)
+    assert len(sections) == 2
+    assert sections[1].kind is DocstringSectionKind.parameters
+    actual = sections[1].value[0]
+    typing_expr = ExprName("typing", parent=parent_fn)
+    expected_annotation = ExprSubscript(
+        left=ExprAttribute(values=[typing_expr, ExprName("Union", parent=typing_expr)]),
+        slice=ExprTuple([ExprName("str", parent=parent_fn), ExprName("int", parent=parent_fn)], implicit=True),
+    )
+    expected = DocstringParameter(SOME_NAME, annotation=expected_annotation, description=SOME_TEXT)
+    assert isinstance(actual, type(expected))
+    assert actual.as_dict() == expected.as_dict()
 
 
 def test_parse__param_twice__error_message(parse_sphinx: ParserType) -> None:
