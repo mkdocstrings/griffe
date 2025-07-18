@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence
     from pathlib import Path
 
-    from _griffe.models import Class, Module
+    from _griffe.models import Class, Function, Module
 
 
 class _OperatorPrecedence(IntEnum):
@@ -702,7 +702,7 @@ class ExprName(Expr):  # noqa: PLW1641
 
     name: str
     """Actual name."""
-    parent: str | ExprName | Module | Class | None = None
+    parent: str | ExprName | Module | Class | Function | None = None
     """Parent (for resolution in its scope)."""
 
     def __eq__(self, other: object) -> bool:
