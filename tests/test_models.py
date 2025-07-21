@@ -562,9 +562,9 @@ def test_resolving_never_raises_alias_errors() -> None:
         assert module["A.__init__"].resolve("pd") == "package.mod.pd"
 
 
-def test_construct_signature() -> None:
+def test_signature() -> None:
     """Test the construction of a function signature."""
-    # Start the test with a simple function
+    # Start the test with a simple function.
     simple_params = Parameters(
         Parameter("x", annotation="int"),
         Parameter("y", annotation="int", default="0"),
@@ -576,12 +576,9 @@ def test_construct_signature() -> None:
         returns="int",
     )
 
-    simple_signature = simple_func.construct_signature()
+    assert simple_func.signature() == "simple_function(x: int, y: int = 0) -> int"
 
-    simple_expected = "simple_function(x: int, y: int = 0) -> int"
-    assert simple_signature == simple_expected, f"Expected: {simple_expected}\nGot: {simple_signature}"
-
-    # Create a more complex function with various parameter types
+    # Create a more complex function with various parameter types.
     params = Parameters(
         Parameter("a", kind=ParameterKind.positional_only),
         Parameter("b", kind=ParameterKind.positional_only, annotation="int", default="0"),
@@ -599,12 +596,4 @@ def test_construct_signature() -> None:
         returns="None",
     )
 
-    # Get the signature
-    signature = func.construct_signature()
-
-    expected = "test_function(a, b: int = 0, /, c, d: str = '', *args, e, f: bool = False, **kwargs) -> None"
-    assert signature == expected, f"Expected: {expected}\nGot: {signature}"
-
-    function_cls = load("_griffe.models.Function")
-    mod_signature = function_cls["construct_signature"].construct_signature()
-    assert mod_signature == "construct_signature() -> str"
+    assert func.signature() == "test_function(a, b: int = 0, /, c, d: str = '', *args, e, f: bool = False, **kwargs) -> None"

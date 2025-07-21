@@ -1653,6 +1653,18 @@ class Alias(ObjectAliasMixin):
     def mro(self) -> list[Class]:
         """Return a list of classes in order corresponding to Python's MRO."""
         return cast("Class", self.final_target).mro()
+    
+    def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
+        """Construct the class/function signature.
+
+        Parameters:
+            return_type: Whether to include the return type in the signature.
+            name: The name of the class/function to use in the signature.
+
+        Returns:
+            A string representation of the class/function signature.
+        """
+        return cast("Union[Class, Function]", self.final_target).signature(return_type=return_type, name=name)
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
     # These methods and properties do not exist on targets,
@@ -1976,6 +1988,23 @@ class Class(Object):
         except KeyError:
             return Parameters()
 
+    def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
+        """Construct the class signature.
+
+        Parameters:
+            return_type: Whether to include the return type in the signature.
+            name: The name of the class to use in the signature.
+
+        Returns:
+            A string representation of the class signature.
+        """
+        all_members = self.all_members
+        if "__init__" in all_members:
+            init = all_members["__init__"]
+            if isinstance(init, Function):
+                return init.signature(return_type=return_type, name=name or self.name)
+        return ""
+
     @property
     def resolved_bases(self) -> list[Object]:
         """Resolved class bases.
@@ -2125,14 +2154,17 @@ class Function(Object):
         base["returns"] = self.returns
         return base
 
-    def construct_signature(self) -> str:
+    def signature(self, *, return_type: bool = True, name: str | None = None) -> str:
         """Construct the function signature.
+
+        Parameters:
+            return_type: Whether to include the return type in the signature.
+            name: The name of the function to use in the signature.
 
         Returns:
             A string representation of the function signature.
         """
-        # Start the signature with the function name and opening parenthesis
-        signature = f"{self.name}("
+        signature = f"{name or self.name}("
 
         has_pos_only = any(p.kind == ParameterKind.positional_only for p in self.parameters)
         render_pos_only_separator = True
@@ -2140,25 +2172,15 @@ class Function(Object):
 
         param_strs = []
 
-        for i, param in enumerate(self.parameters):
-            # Skip 'self' or 'cls' for class methods if it's the first parameter
-            if (
-                i == 0
-                and param.name in ("self", "cls")
-                and hasattr(self, "parent")
-                and getattr(self, "parent", None)
-                and getattr(self.parent, "is_class", False)
-            ):
+        for index, param in enumerate(self.parameters):
+            # Skip 'self' or 'cls' for class methods if it's the first parameter.
+            if index == 0 and param.name in ("self", "cls") and self.parent and self.parent.is_class:
                 continue
 
             param_str = ""
 
-            # Handle parameter kind and separators
-            if param.kind == ParameterKind.positional_only:
-                # Just add the parameter name, we'll handle '/' separator separately
-                pass
-            else:
-                # Add '/' separator after positional-only parameters
+            # Handle parameter kind and separators.
+            if param.kind != ParameterKind.positional_only:
                 if has_pos_only and render_pos_only_separator:
                     render_pos_only_separator = False
                     param_strs.append("/")
@@ -2167,24 +2189,24 @@ class Function(Object):
                     render_kw_only_separator = False
                     param_strs.append("*")
 
-            # Handle variadic parameters
+            # Handle variadic parameters.
             if param.kind == ParameterKind.var_positional:
                 param_str = "*"
                 render_kw_only_separator = False
             elif param.kind == ParameterKind.var_keyword:
                 param_str = "**"
 
-            # Add parameter name
+            # Add parameter name.
             param_str += param.name
 
             # Handle type annotation
             if param.annotation is not None:
                 param_str += f": {param.annotation}"
-                equal = " = "  # Space around equal when annotation is present
+                equal = " = "  # Space around equal when annotation is present.
             else:
-                equal = "="  # No space when no annotation
+                equal = "="  # No space when no annotation.
 
-            # Handle default value
+            # Handle default value.
             if param.default is not None and param.kind not in {
                 ParameterKind.var_positional,
                 ParameterKind.var_keyword,
@@ -2200,12 +2222,8 @@ class Function(Object):
         signature += ", ".join(param_strs)
         signature += ")"
 
-        # Add return type if present
-        # Skip return type for __init__ methods when merge_init_into_class is True
-        is_init = getattr(self, "name", "") == "__init__"
-        merge_init = getattr(self, "config", {}).get("merge_init_into_class", False)
-
-        if hasattr(self, "annotation") and self.annotation and not (merge_init and is_init):
+        # Add return type if present.
+        if return_type and self.annotation:
             signature += f" -> {self.annotation}"
 
         return signature
