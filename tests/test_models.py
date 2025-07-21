@@ -7,16 +7,15 @@ from textwrap import dedent
 
 import pytest
 
-from _griffe.enumerations import ParameterKind
-from _griffe.loader import load
-from _griffe.models import Function
 from griffe import (
     Attribute,
     Docstring,
+    Function,
     GriffeLoader,
     Module,
     NameResolutionError,
     Parameter,
+    ParameterKind,
     Parameters,
     module_vtree,
     temporary_inspected_module,
@@ -564,18 +563,12 @@ def test_resolving_never_raises_alias_errors() -> None:
 
 def test_signature() -> None:
     """Test the construction of a function signature."""
-    # Start the test with a simple function.
+    # Test simple function signatures.
     simple_params = Parameters(
         Parameter("x", annotation="int"),
         Parameter("y", annotation="int", default="0"),
     )
-
-    simple_func = Function(
-        "simple_function",
-        parameters=simple_params,
-        returns="int",
-    )
-
+    simple_func = Function("simple_function", parameters=simple_params, returns="int")
     assert simple_func.signature() == "simple_function(x: int, y: int = 0) -> int"
 
     # Create a more complex function with various parameter types.
@@ -590,10 +583,6 @@ def test_signature() -> None:
         Parameter("kwargs", kind=ParameterKind.var_keyword),
     )
 
-    func = Function(
-        "test_function",
-        parameters=params,
-        returns="None",
-    )
-
-    assert func.signature() == "test_function(a, b: int = 0, /, c, d: str = '', *args, e, f: bool = False, **kwargs) -> None"
+    func = Function("test_function", parameters=params, returns="None")
+    expected = "test_function(a, b: int = 0, /, c, d: str = '', *args, e, f: bool = False, **kwargs) -> None"
+    assert func.signature() == expected

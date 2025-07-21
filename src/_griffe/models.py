@@ -1653,7 +1653,7 @@ class Alias(ObjectAliasMixin):
     def mro(self) -> list[Class]:
         """Return a list of classes in order corresponding to Python's MRO."""
         return cast("Class", self.final_target).mro()
-    
+
     def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
         """Construct the class/function signature.
 
