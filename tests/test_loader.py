@@ -508,3 +508,14 @@ def test_not_overriding_module_with_alias_from_wildcard_import() -> None:
         assert pkg["a.m.m"].is_function
         assert pkg["b.m"].is_module
         assert pkg["b.m.m"].is_alias
+
+
+def test_loading_utf8_with_bom_files(tmp_path: Path) -> None:
+    """Check that the loader can handle UTF-8 files with BOM."""
+    pkg = tmp_path / "pkg"
+    pkg.mkdir()
+    init_file = pkg / "__init__.py"
+    init_file.write_text("\ufeff# This is a UTF-8 file with BOM\n\ndef func() -> int: ...", encoding="utf-8")
+    loader = GriffeLoader(search_paths=[tmp_path])
+    package = loader.load("pkg")
+    assert "func" in package.members  # Just checking all went well, no SyntaxError exceptions raised.
