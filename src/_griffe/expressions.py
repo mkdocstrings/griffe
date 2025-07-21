@@ -1148,7 +1148,7 @@ def _build_constant(
                 )
             else:
                 return _build(parsed.body, parent, **kwargs)  # type: ignore[attr-defined]
-    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
+    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)  # type: ignore[arg-type]
 
 
 def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expr:
