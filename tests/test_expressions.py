@@ -110,3 +110,33 @@ def test_resolving_init_parameter() -> None:
         """,
     ) as module:
         assert module["Class.x"].value.canonical_path == "module.Class(x)"
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        # Core.
+        "a * (b + c)",  # Lower precedence as a sub-expression of one that has higher precedence.
+        "(a and b) == c",
+        "((a | b) + c).d",
+        "a - (b - c)",  # Left-association.
+        "(a ** b) ** c",  # Right-association.
+        # Unary operator and edge cases:
+        # > The power operator `**` binds less tightly than an arithmetic
+        # > or bitwise unary operator on its right, that is, `2**-1` is `0.5`.
+        "a ** -b",
+        "-a ** b",
+        "(-a) ** b",
+        # Misc: conditionals, lambdas, comprehensions and generators.
+        "(lambda: 0).a",
+        "(lambda x: a + x if b else c)(d).e",
+        "a if (b if c else d) else e",  # Right-association.
+        "(a if b else c) if d else e",  # Forced left-association.
+        "(a for a in b).c",
+    ],
+)
+def test_parentheses_preserved(code: str) -> None:
+    """Parentheses used to enforce an order of operations should not be removed."""
+    with temporary_visited_module(f"val = {code}") as module:
+        value_expr = module["val"].value
+        assert str(value_expr) == code
