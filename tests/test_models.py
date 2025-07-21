@@ -9,11 +9,14 @@ import pytest
 
 from griffe import (
     Attribute,
+    Class,
     Docstring,
+    Function,
     GriffeLoader,
     Module,
     NameResolutionError,
     Parameter,
+    ParameterKind,
     Parameters,
     module_vtree,
     temporary_inspected_module,
@@ -557,3 +560,36 @@ def test_resolving_never_raises_alias_errors() -> None:
         },
     ) as module:
         assert module["A.__init__"].resolve("pd") == "package.mod.pd"
+
+
+def test_building_function_and_class_signatures() -> None:
+    """Test the construction of a class/function signature."""
+    # Test simple function signatures.
+    simple_params = Parameters(
+        Parameter("x", annotation="int"),
+        Parameter("y", annotation="int", default="0"),
+    )
+    simple_func = Function("simple_function", parameters=simple_params, returns="int")
+    assert simple_func.signature() == "simple_function(x: int, y: int = 0) -> int"
+
+    # Test class signatures.
+    init = Function("__init__", parameters=simple_params, returns="None")
+    cls = Class("TestClass")
+    cls.set_member("__init__", init)
+    assert cls.signature() == "TestClass(x: int, y: int = 0)"
+
+    # Create a more complex function with various parameter types.
+    params = Parameters(
+        Parameter("a", kind=ParameterKind.positional_only),
+        Parameter("b", kind=ParameterKind.positional_only, annotation="int", default="0"),
+        Parameter("c", kind=ParameterKind.positional_or_keyword),
+        Parameter("d", kind=ParameterKind.positional_or_keyword, annotation="str", default="''"),
+        Parameter("args", kind=ParameterKind.var_positional),
+        Parameter("e", kind=ParameterKind.keyword_only),
+        Parameter("f", kind=ParameterKind.keyword_only, annotation="bool", default="False"),
+        Parameter("kwargs", kind=ParameterKind.var_keyword),
+    )
+
+    func = Function("test_function", parameters=params, returns="None")
+    expected = "test_function(a, b: int = 0, /, c, d: str = '', *args, e, f: bool = False, **kwargs) -> None"
+    assert func.signature() == expected
