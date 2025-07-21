@@ -496,7 +496,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
             else:
                 continue
             if isinstance(target, ast.Name) and target.id == "MAPPING" and isinstance(node.value, ast.Dict):
-                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]
+                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]  # type: ignore[arg-type]
     if _match_pattern(path.name, _editable_meson_python_patterns):
         # Support for how 'meson-python' writes these files:
         # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.
@@ -510,7 +510,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 and node.value.func.id == "install"
                 and isinstance(node.value.args[1], ast.Constant)
             ):
-                build_path = Path(node.value.args[1].value, "src")
+                build_path = Path(node.value.args[1].value, "src")  # type: ignore[arg-type]
                 # NOTE: What if there are multiple packages?
                 pkg_name = next(build_path.iterdir()).name
                 return [_SP(build_path, always_scan_for=pkg_name)]
