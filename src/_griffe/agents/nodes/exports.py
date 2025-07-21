@@ -41,7 +41,7 @@ def _extract_binop(node: ast.BinOp, parent: Module) -> list[str | ExprName]:
 
 
 def _extract_constant(node: ast.Constant, parent: Module) -> list[str | ExprName]:
-    return [node.value]
+    return [node.value]  # type: ignore[list-item]
 
 
 def _extract_name(node: ast.Name, parent: Module) -> list[str | ExprName]:
