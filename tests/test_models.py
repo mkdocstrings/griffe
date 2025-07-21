@@ -9,6 +9,7 @@ import pytest
 
 from griffe import (
     Attribute,
+    Class,
     Docstring,
     Function,
     GriffeLoader,
@@ -561,8 +562,8 @@ def test_resolving_never_raises_alias_errors() -> None:
         assert module["A.__init__"].resolve("pd") == "package.mod.pd"
 
 
-def test_signature() -> None:
-    """Test the construction of a function signature."""
+def test_building_function_and_class_signatures() -> None:
+    """Test the construction of a class/function signature."""
     # Test simple function signatures.
     simple_params = Parameters(
         Parameter("x", annotation="int"),
@@ -570,6 +571,12 @@ def test_signature() -> None:
     )
     simple_func = Function("simple_function", parameters=simple_params, returns="int")
     assert simple_func.signature() == "simple_function(x: int, y: int = 0) -> int"
+
+    # Test class signatures.
+    init = Function("__init__", parameters=simple_params, returns="None")
+    cls = Class("TestClass")
+    cls.set_member("__init__", init)
+    assert cls.signature() == "TestClass(x: int, y: int = 0)"
 
     # Create a more complex function with various parameter types.
     params = Parameters(
