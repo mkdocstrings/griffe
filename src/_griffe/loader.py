@@ -397,19 +397,16 @@ class GriffeLoader:
                     endlineno=alias_endlineno,
                     parent=obj,  # type: ignore[arg-type]
                 )
-                # Special case: we avoid overwriting a submodule with an alias pointing to it.
-                # Griffe suffers from this design flaw where an object cannot store both
+                # Special case: we avoid overwriting a submodule with an alias.
+                # Griffe suffers from this limitation where an object cannot store both
                 # a submodule and a member of the same name, while this poses (almost) no issue in Python.
-                # We at least prevent this case where a submodule is overwritten by an imported version of itself.
+                # We always give precedence to the submodule.
+                # See the "avoid member-submodule name shadowing" section in the "Python code" docs page.
                 if already_present:
                     prev_member = obj.get_member(new_member.name)
                     with suppress(AliasResolutionError, CyclicAliasError):
                         if prev_member.is_module:
-                            if prev_member.is_alias:
-                                prev_member = prev_member.final_target
-                            if alias.final_target is prev_member:
-                                # Alias named after the module it targets: skip to avoid cyclic aliases.
-                                continue
+                            continue
 
                 # Everything went right (supposedly), we add the alias as a member of the current object.
                 obj.set_member(new_member.name, alias)
@@ -627,7 +624,7 @@ class GriffeLoader:
         )
 
     def _visit_module(self, module_name: str, module_path: Path, parent: Module | None = None) -> Module:
-        code = module_path.read_text(encoding="utf8")
+        code = module_path.read_text(encoding="utf-8-sig")
         if self.store_source:
             self.lines_collection[module_path] = code.splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
@@ -651,7 +648,7 @@ class GriffeLoader:
             if module_name.startswith(prefix):
                 raise ImportError(f"Ignored module '{module_name}'")
         if self.store_source and filepath and filepath.suffix in {".py", ".pyi"}:
-            self.lines_collection[filepath] = filepath.read_text(encoding="utf8").splitlines(keepends=False)
+            self.lines_collection[filepath] = filepath.read_text(encoding="utf-8-sig").splitlines(keepends=False)
         start = datetime.now(tz=timezone.utc)
         try:
             module = inspect(
@@ -699,8 +696,8 @@ class GriffeLoader:
                     raise UnimportableModuleError(f"Skip {subpath}, it is not importable") from error
             else:
                 parent_namespace = parent_module.is_namespace_package or parent_module.is_namespace_subpackage
-                if parent_namespace and module_filepath not in parent_module.filepath:  # type: ignore[operator]
-                    parent_module.filepath.append(module_filepath)  # type: ignore[union-attr]
+                if parent_namespace and module_filepath not in parent_module.filepath:
+                    parent_module.filepath.append(module_filepath)
         return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:

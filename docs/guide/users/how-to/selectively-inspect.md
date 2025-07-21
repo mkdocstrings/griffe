@@ -1,6 +1,6 @@
 # Inspecting specific objects
 
-Griffe by default parses and visits your code (static analysis) instead of importing it and inspecting objects in memory (dynamic analysis). There are various reasons why static analysis is generally a better approach, but sometimes it is insufficient to handle particularly dynamic objects. When this happpens and Griffe cannot handle specific objects, you have a few solutions:
+Griffe by default parses and visits your code (static analysis) instead of importing it and inspecting objects in memory (dynamic analysis). There are various reasons why static analysis is generally a better approach, but sometimes it is insufficient to handle particularly dynamic objects. When this happens and Griffe cannot handle specific objects, you have a few solutions:
 
 1. enable dynamic analysis for the whole package
 2. write a Griffe extension that dynamically handles just the problematic objects
