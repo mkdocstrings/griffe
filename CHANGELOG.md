@@ -5,6 +5,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.8.0](https://github.com/mkdocstrings/griffe/releases/tag/1.8.0) - 2025-07-23
+
+<small>[Compare with 1.7.3](https://github.com/mkdocstrings/griffe/compare/1.7.3...1.8.0)</small>
+
+### Features
+
+- Add method to functions and classes to build and return a stringified signature ([8ef1486](https://github.com/mkdocstrings/griffe/commit/8ef1486e9b1f0872cca3b1cd2419144b702a0c1e) by ISOREX). [Discussion-376](https://github.com/mkdocstrings/griffe/discussions/376), [PR-381](https://github.com/mkdocstrings/griffe/pull/381), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Enhance Sphinx-style parameter parsing to handle invalid type info ([cbce5a2](https://github.com/mkdocstrings/griffe/commit/cbce5a2c2429dc92e15ac3a8fe53db55825ebd6c) by Edouard Choinière). [PR-396](https://github.com/mkdocstrings/griffe/pull/396)
+- Parse Sphinx parameter types as expressions ([70dda21](https://github.com/mkdocstrings/griffe/commit/70dda21d15dfdf5807dde370fb636d69eea6272b) by Edouard Choinière). [PR-392](https://github.com/mkdocstrings/griffe/pull/392)
+
+### Bug Fixes
+
+- Avoid SyntaxError when loading modules encoded in UTF8 with BOM ([b346190](https://github.com/mkdocstrings/griffe/commit/b3461901ae08204ea6184025a006f5d34152d30d) by John Hennig). [Issue-386](https://github.com/mkdocstrings/griffe/issues/386), [PR-387](https://github.com/mkdocstrings/griffe/pull/387), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Correctly parenthesize expressions ([a8c5585](https://github.com/mkdocstrings/griffe/commit/a8c5585c8a45a4d6b67bd5dc36d7054478d3873d) by Abraham Cheung). [PR-389](https://github.com/mkdocstrings/griffe/pull/389), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+
+### Code Refactoring
+
+- Be more consistent regarding not overriding submodules with aliases ([be1963c](https://github.com/mkdocstrings/griffe/commit/be1963cca6d7d49bcc41fdf05570b1bfba934330) by Timothée Mazzucotelli).
+- Allow `ExprName.parent` to be of type `griffe.Function` ([acafbd8](https://github.com/mkdocstrings/griffe/commit/acafbd8b6d97fe8370f3eb730e2154e19b2c1a54) by Edouard Choinière). [Issue-391](https://github.com/mkdocstrings/griffe/discussions/391), [PR-395](https://github.com/mkdocstrings/griffe/pull/395)
+- Normalize labels for attributes ([1b376cd](https://github.com/mkdocstrings/griffe/commit/1b376cd39ce99730910d8344abbfd5c53ce28300) by Timothée Mazzucotelli).
+
 ## [1.7.3](https://github.com/mkdocstrings/griffe/releases/tag/1.7.3) - 2025-04-23
 
 <small>[Compare with 1.7.2](https://github.com/mkdocstrings/griffe/compare/1.7.2...1.7.3)</small>
