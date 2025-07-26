@@ -3,10 +3,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, OrderedDict
+
+import cdd.docstring.parse
+import cdd.shared.types
 
 from _griffe.docstrings.models import (
-    DocstringSection
+    DocstringSection, DocstringSectionText, DocstringSectionReturns, DocstringNamedElement, DocstringReturn,
+    DocstringSectionParameters, DocstringParameter
 )
 from _griffe.enumerations import DocstringSectionKind
 
@@ -32,6 +36,20 @@ _section_kind = {
     "classes": DocstringSectionKind.classes,
     "modules": DocstringSectionKind.modules,
 }
+
+def ir_param_to_griffe_param(ir_param: OrderedDict[str, cdd.shared.types.ParamVal]) -> list[DocstringNamedElement]:
+    return [DocstringNamedElement(name=name, description=param["doc"],
+                                  annotation=param["typ"], value=param["default"])
+            for name, param in ir_param.items()]
+
+def ir_to_griffe(ir: cdd.shared.types.IntermediateRepr) -> list[DocstringSection]:
+    sections: list[DocstringSection] = [
+        DocstringSectionText(ir["doc"]),
+        DocstringSectionParameters(list(map(DocstringParameter, ir_param_to_griffe_param(ir["params"]))))
+    ]
+    if ir["returns"]:
+        sections.append(DocstringSectionReturns([next(map(DocstringReturn, ir_param_to_griffe_param(ir["returns"])))]))
+    return sections
 
 
 def parse_rest(
@@ -59,4 +77,5 @@ def parse_rest(
     Returns:
         A list of docstring sections.
     """
-    raise NotImplementedError()
+    ir: cdd.shared.types.IntermediateRepr = cdd.docstring.parse.docstring(docstring.value)
+    return ir_to_griffe(ir)
