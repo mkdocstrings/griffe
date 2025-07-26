@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 _default_style_order = [Parser.sphinx, Parser.google, Parser.numpy]
 
 
-DocstringStyle = Literal["google", "numpy", "sphinx", "auto"]
+DocstringStyle = Literal["google", "numpy", "sphinx", "rest", "auto"]
 """The supported docstring styles (literal values of the Parser enumeration)."""
 DocstringDetectionMethod = Literal["heuristics", "max_sections"]
 """The supported methods to infer docstring styles."""

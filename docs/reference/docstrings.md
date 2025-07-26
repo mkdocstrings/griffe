@@ -7,6 +7,7 @@ The available parsers are:
 - `google`, to parse Google-style docstrings, see [Napoleon's documentation][napoleon]
 - `numpy`, to parse Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
 - `sphinx`, to parse Sphinx-style docstrings, see [Sphinx's documentation][sphinx]
+- `rest`, to parse ReST-style docstrings, see
 - `auto` (sponsors only), to automatically detect the docstring style, see [Auto-style](#auto-style)
 
 Most of the time, the syntax specified in the aforementioned docs is supported. In some cases, the original syntax is not supported, or is supported but with subtle differences. We will try to document these differences in the following sections.
@@ -1425,57 +1426,57 @@ For non-Insiders versions, `default` is returned if specified, else the first pa
 
 ### Sections
 
-Section          | Google | Numpy | Sphinx
----------------- | ------ | ----- | ------
-Attributes       | ✅     | ✅    | ✅
-Functions        | ✅     | ✅    | ❌
-Methods          | ✅     | ✅    | ❌
-Classes          | ✅     | ✅    | ❌
-Modules          | ✅     | ✅    | ❌
-Examples         | ✅     | ✅    | [❌][issue-section-sphinx-examples]
-Parameters       | ✅     | ✅    | ✅
-Other Parameters | ✅     | ✅    | [❌][issue-section-sphinx-other-parameters]
-Raises           | ✅     | ✅    | ✅
-Warns            | ✅     | ✅    | [❌][issue-section-sphinx-warns]
-Yields           | ✅     | ✅    | [❌][issue-section-sphinx-yields]
-Receives         | ✅     | ✅    | [❌][issue-section-sphinx-receives]
-Returns          | ✅     | ✅    | ✅
+Section          | Google | Numpy | Sphinx | ReST
+---------------- | ------ | ----- | ------ | ----
+Attributes       | ✅     | ✅    | ✅    |
+Functions        | ✅     | ✅    | ❌    |
+Methods          | ✅     | ✅    | ❌    |
+Classes          | ✅     | ✅    | ❌    |
+Modules          | ✅     | ✅    | ❌    |
+Examples         | ✅     | ✅    | [❌][issue-section-sphinx-examples]    |
+Parameters       | ✅     | ✅    | ✅    |
+Other Parameters | ✅     | ✅    | [❌][issue-section-sphinx-other-parameters]    |
+Raises           | ✅     | ✅    | ✅    |
+Warns            | ✅     | ✅    | [❌][issue-section-sphinx-warns]    |
+Yields           | ✅     | ✅    | [❌][issue-section-sphinx-yields]    |
+Receives         | ✅     | ✅    | [❌][issue-section-sphinx-receives]    |
+Returns          | ✅     | ✅    | ✅    |
 
 ### Getting annotations/defaults from parent
 
-Section          | Google | Numpy | Sphinx
----------------- | ------ | ----- | ------
-Attributes       | ✅     | ✅    | [❌][issue-parent-sphinx-attributes]
-Functions        | /      | /     | /
-Methods          | /      | /     | /
-Classes          | /      | /     | /
-Modules          | /      | /     | /
-Examples         | /      | /     | /
-Parameters       | ✅     | ✅    | ✅
-Other Parameters | ✅     | ✅    | [❌][issue-parent-sphinx-other-parameters]
-Raises           | /      | /     | /
-Warns            | /      | /     | /
-Yields           | ✅     | ✅    | [❌][issue-parent-sphinx-yields]
-Receives         | ✅     | ✅    | [❌][issue-parent-sphinx-receives]
-Returns          | ✅     | ✅    | ✅
+Section          | Google | Numpy | Sphinx | ReST
+---------------- | ------ | ----- | ------ | ----
+Attributes       | ✅     | ✅    | [❌][issue-parent-sphinx-attributes]    |
+Functions        | /      | /     | /    |
+Methods          | /      | /     | /    |
+Classes          | /      | /     | /    |
+Modules          | /      | /     | /    |
+Examples         | /      | /     | /    |
+Parameters       | ✅     | ✅    | ✅   |
+Other Parameters | ✅     | ✅    | [❌][issue-parent-sphinx-other-parameters]    |
+Raises           | /      | /     | /    |
+Warns            | /      | /     | /    |
+Yields           | ✅     | ✅    | [❌][issue-parent-sphinx-yields]    |
+Receives         | ✅     | ✅    | [❌][issue-parent-sphinx-receives]    |
+Returns          | ✅     | ✅    | ✅    |
 
 ### Cross-references for annotations in docstrings
 
-Section          | Google | Numpy | Sphinx
----------------- | ------ | ----- | ------
-Attributes       | ✅     | ✅    | [❌][issue-xref-sphinx-attributes]
-Functions        | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
-Methods          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
-Classes          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
-Modules          | /      | /     | /
-Examples         | /      | /     | /
-Parameters       | ✅     | ✅    | [❌][issue-xref-sphinx-parameters]
-Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]
-Raises           | ✅     | ✅    | [❌][issue-xref-sphinx-raises]
-Warns            | ✅     | ✅    | [❌][issue-xref-sphinx-warns]
-Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]
-Receives         | ✅     | ✅    | [❌][issue-xref-sphinx-receives]
-Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
+Section          | Google | Numpy | Sphinx | ReST
+---------------- | ------ | ----- | ------ |
+Attributes       | ✅     | ✅    | [❌][issue-xref-sphinx-attributes]    |
+Functions        | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /    |
+Methods          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /    |
+Classes          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /    |
+Modules          | /      | /     | /    |
+Examples         | /      | /     | /    |
+Parameters       | ✅     | ✅    | [❌][issue-xref-sphinx-parameters]    |
+Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]    |
+Raises           | ✅     | ✅    | [❌][issue-xref-sphinx-raises]    |
+Warns            | ✅     | ✅    | [❌][issue-xref-sphinx-warns]    |
+Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]    |
+Receives         | ✅     | ✅    | [❌][issue-xref-sphinx-receives]    |
+Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]    |
 
 [doctest]: https://docs.python.org/3/library/doctest.html#module-doctest
 [doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags
