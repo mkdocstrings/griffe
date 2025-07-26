@@ -54,7 +54,7 @@ def ir_param_to_griffe_param(
             name=name,
             description=param["doc"],
             annotation=param["typ"],
-            value=param["default"],
+            value=param["default"] if param.get("default") else None,
         )
         for name, param in ir_param.items()
     ]
