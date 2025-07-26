@@ -10,6 +10,8 @@
 
 ::: griffe.parse_numpy
 
+::: griffe.parse_rest
+
 ::: griffe.parse_sphinx
 
 ::: griffe.DocstringStyle

@@ -9,8 +9,13 @@ import cdd.docstring.parse
 import cdd.shared.types
 
 from _griffe.docstrings.models import (
-    DocstringSection, DocstringSectionText, DocstringSectionReturns, DocstringNamedElement, DocstringReturn,
-    DocstringSectionParameters, DocstringParameter
+    DocstringSection,
+    DocstringSectionText,
+    DocstringSectionReturns,
+    DocstringNamedElement,
+    DocstringReturn,
+    DocstringSectionParameters,
+    DocstringParameter,
 )
 from _griffe.enumerations import DocstringSectionKind
 
@@ -37,18 +42,40 @@ _section_kind = {
     "modules": DocstringSectionKind.modules,
 }
 
-def ir_param_to_griffe_param(ir_param: OrderedDict[str, cdd.shared.types.ParamVal]) -> list[DocstringNamedElement]:
-    return [DocstringNamedElement(name=name, description=param["doc"],
-                                  annotation=param["typ"], value=param["default"])
-            for name, param in ir_param.items()]
+
+def ir_param_to_griffe_param(
+    ir_param: OrderedDict[str, cdd.shared.types.ParamVal],
+) -> list[DocstringNamedElement]:
+    """
+    Convert an `OrderedDict` of cdd-python's `ParamVal` to a `list` of griffe's `DocstringNamedElement`
+    """
+    return [
+        DocstringNamedElement(
+            name=name,
+            description=param["doc"],
+            annotation=param["typ"],
+            value=param["default"],
+        )
+        for name, param in ir_param.items()
+    ]
+
 
 def ir_to_griffe(ir: cdd.shared.types.IntermediateRepr) -> list[DocstringSection]:
+    """
+    Convert cdd-python's IR to a list of griffe's `DocstringSection`s
+    """
     sections: list[DocstringSection] = [
         DocstringSectionText(ir["doc"]),
-        DocstringSectionParameters(list(map(DocstringParameter, ir_param_to_griffe_param(ir["params"]))))
+        DocstringSectionParameters(
+            list(map(DocstringParameter, ir_param_to_griffe_param(ir["params"])))
+        ),
     ]
     if ir["returns"]:
-        sections.append(DocstringSectionReturns([next(map(DocstringReturn, ir_param_to_griffe_param(ir["returns"])))]))
+        sections.append(
+            DocstringSectionReturns(
+                [next(map(DocstringReturn, ir_param_to_griffe_param(ir["returns"])))]
+            )
+        )
     return sections
 
 
@@ -77,5 +104,10 @@ def parse_rest(
     Returns:
         A list of docstring sections.
     """
-    ir: cdd.shared.types.IntermediateRepr = cdd.docstring.parse.docstring(docstring.value)
+    ir: cdd.shared.types.IntermediateRepr = cdd.docstring.parse.docstring(
+        docstring.value
+    )
     return ir_to_griffe(ir)
+
+
+__all__ = ["parse_rest"]

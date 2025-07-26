@@ -142,6 +142,8 @@ class Parser(str, Enum):
     """
     google = "google"
     """Google-style docstrings parser."""
+    rest = "rest"
+    """ReST-style docstrings parser."""
     sphinx = "sphinx"
     """Sphinx-style docstrings parser."""
     numpy = "numpy"

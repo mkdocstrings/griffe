@@ -45,7 +45,7 @@ import griffe
 
 
 class ApplyDocstringStyle(griffe.Extension):
-    def __init__(self, regex: str = "<!-- style: (google|numpy|sphinx) -->") -> None:
+    def __init__(self, regex: str = "<!-- style: (google|numpy|rest|sphinx) -->") -> None:
          self.regex = re.compile(regex)
 
     def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
@@ -74,7 +74,7 @@ import griffe
 
 
 class ApplyDocstringStyle(griffe.Extension):
-    def __init__(self, regex: str = ".*# style: (google|numpy|sphinx)$") -> None:
+    def __init__(self, regex: str = ".*# style: (google|numpy|rest|sphinx)$") -> None:
          self.regex = re.compile(regex)
 
     def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
@@ -127,6 +127,7 @@ plugins:
                 path.to.obj2: numpy
                 path.to.obj3.*: sphinx
                 path.to.obj4*: google
+                path.to.obj5: rest
 ```
 
 The benefit of this last solution is that it works for code you don't have control over. An alternative solution is to use the [griffe-autodocstringstyle extension](https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/) (sponsors only), which automatically assigns the `auto` style to all objects coming from sources found in a virtual environment.

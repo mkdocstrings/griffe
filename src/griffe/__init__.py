@@ -99,6 +99,7 @@ Docstring parsers:
 - [`griffe.parse_auto`][]: Parse a docstring by automatically detecting the style it uses.
 - [`griffe.parse_google`][]: Parse a Google-style docstring.
 - [`griffe.parse_numpy`][]: Parse a Numpydoc-style docstring.
+- [`griffe.parse_rest`][]: Parse a ReST-style docstring.
 - [`griffe.parse_sphinx`][]: Parse a Sphinx-style docstring.
 
 ## Exceptions
