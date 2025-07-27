@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, OrderedDict
+from typing import TYPE_CHECKING, OrderedDict, TypeVar
 
 import cdd.docstring.parse
 import cdd.shared.types
@@ -43,40 +43,42 @@ _section_kind = {
 }
 
 
+T = TypeVar('T', DocstringParameter, DocstringReturn)
+
 def ir_param_to_griffe_param(
-    ir_param: OrderedDict[str, cdd.shared.types.ParamVal],
-) -> list[DocstringNamedElement]:
+    ir_param: OrderedDict[str, cdd.shared.types.ParamVal], cls: type[T]
+) -> list[type[T]]:
     """
     Convert an `OrderedDict` of cdd-python's `ParamVal` to a `list` of griffe's `DocstringNamedElement`
     """
     return [
-        DocstringNamedElement(
+        cls(
             name=name,
-            description=param["doc"],
-            annotation=param["typ"],
+            description=param["doc"] if param.get("doc") else "",
+            annotation=param["typ"] if param.get("typ") else None,
             value=param["default"] if param.get("default") else None,
         )
         for name, param in ir_param.items()
     ]
 
 
-def ir_to_griffe(ir: cdd.shared.types.IntermediateRepr) -> list[DocstringSection]:
+def ir_to_griffe(ir: cdd.shared.types.IntermediateRepr) -> None | list[type[DocstringSection]]:
     """
     Convert cdd-python's IR to a list of griffe's `DocstringSection`s
     """
-    sections: list[DocstringSection] = [
+    sections: list[type[DocstringSection]] = [
         DocstringSectionText(ir["doc"]),
         DocstringSectionParameters(
-            list(map(DocstringParameter, ir_param_to_griffe_param(ir["params"])))
+            ir_param_to_griffe_param(ir["params"], DocstringParameter)
         ),
     ]
     if ir["returns"]:
         sections.append(
             DocstringSectionReturns(
-                [next(map(DocstringReturn, ir_param_to_griffe_param(ir["returns"])))]
+                ir_param_to_griffe_param(ir["returns"], DocstringReturn)
             )
         )
-    return sections
+    return sections or None
 
 
 def parse_rest(
@@ -87,7 +89,7 @@ def parse_rest(
     warn_unknown_params: bool = True,
     warnings: bool = True,
     **options: Any,
-) -> list[DocstringSection]:
+) -> None | list[DocstringSection]:
     """Parse a ReST-style docstring.
 
     This function iterates on lines of a docstring to build sections.
