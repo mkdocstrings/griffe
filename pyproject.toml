@@ -5,7 +5,7 @@ build-backend = "pdm.backend"
 [project]
 name = "griffe"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
-authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
+authors = [{ name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr" }]
 license = "ISC"
 license-files = ["LICENSE"]
 readme = "README.md"
@@ -37,7 +37,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "colorama>=0.4", "python-cdd>=0.0.99rc46"
+    "colorama>=0.4", "cdd-python@git+https://github.com/offscale/cdd-python"
 ]
 
 [project.urls]
@@ -77,7 +77,7 @@ source-includes = [
 # Depending on the installation tool, they will be accessible to users.
 # pipx supports it, uv does not yet, see https://github.com/astral-sh/uv/issues/4731.
 data = [
-    {path = "share/**/*", relative-to = "."},
+    { path = "share/**/*", relative-to = "." },
 ]
 
 [dependency-groups]
@@ -101,7 +101,7 @@ ci = [
     "types-markdown>=3.6",
     "types-pyyaml>=6.0",
 ]
- docs = [
+docs = [
     "code2flow>=2.5",
     "griffe-inherited-docstrings>=1.0",
     "markdown-callouts>=0.4",
