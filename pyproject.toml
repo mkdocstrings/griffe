@@ -37,7 +37,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "colorama>=0.4", "cdd-python@git+https://github.com/offscale/cdd-python"
+    "colorama>=0.4", "cdd@git+https://github.com/offscale/cdd-python"
 ]
 
 [project.urls]
