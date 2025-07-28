@@ -46,23 +46,23 @@ $ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
     "labels": [],
     "members": {
       "Alias": {
-        "endlineno": 350,
+        "endlineno": 358,
         "kind": "alias",
-        "lineno": 339,
+        "lineno": 344,
         "name": "Alias",
         "target_path": "_griffe.models.Alias"
       },
       "AliasResolutionError": {
-        "endlineno": 275,
+        "endlineno": 280,
         "kind": "alias",
-        "lineno": 261,
+        "lineno": 266,
         "name": "AliasResolutionError",
         "target_path": "_griffe.exceptions.AliasResolutionError"
       },
       "Attribute": {
-        "endlineno": 350,
+        "endlineno": 358,
         "kind": "alias",
-        "lineno": 339,
+        "lineno": 344,
 
 ```
 
