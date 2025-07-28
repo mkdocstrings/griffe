@@ -598,7 +598,6 @@ def test_building_function_and_class_signatures() -> None:
     assert func.signature() == expected
 
 
-
 def test_set_type_parameters() -> None:
     """We can set type parameters."""
     type_parameters = TypeParameters()
