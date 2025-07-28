@@ -9,7 +9,7 @@ from _griffe.exceptions import AliasResolutionError, CyclicAliasError
 from _griffe.logger import logger
 
 if TYPE_CHECKING:
-    from _griffe.models import Attribute, Class, Function, Module, Object
+    from _griffe.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 
 def _merge_module_stubs(module: Module, stubs: Module) -> None:
@@ -21,6 +21,7 @@ def _merge_module_stubs(module: Module, stubs: Module) -> None:
 def _merge_class_stubs(class_: Class, stubs: Class) -> None:
     _merge_stubs_docstring(class_, stubs)
     _merge_stubs_overloads(class_, stubs)
+    _merge_stubs_type_parameters(class_, stubs)
     _merge_stubs_members(class_, stubs)
 
 
@@ -30,6 +31,7 @@ def _merge_function_stubs(function: Function, stubs: Function) -> None:
         with suppress(KeyError):
             function.parameters[parameter.name].annotation = parameter.annotation
     function.returns = stubs.returns
+    _merge_stubs_type_parameters(function, stubs)
 
 
 def _merge_attribute_stubs(attribute: Attribute, stubs: Attribute) -> None:
@@ -39,9 +41,19 @@ def _merge_attribute_stubs(attribute: Attribute, stubs: Attribute) -> None:
         attribute.value = stubs.value
 
 
+def _merge_type_alias_stubs(type_alias: TypeAlias, stubs: TypeAlias) -> None:
+    _merge_stubs_docstring(type_alias, stubs)
+    _merge_stubs_type_parameters(type_alias, stubs)
+
+
 def _merge_stubs_docstring(obj: Object, stubs: Object) -> None:
     if not obj.docstring and stubs.docstring:
         obj.docstring = stubs.docstring
+
+
+def _merge_stubs_type_parameters(obj: Class | Function | TypeAlias, stubs: Class | Function | TypeAlias) -> None:
+    if not obj.type_parameters and stubs.type_parameters:
+        obj.type_parameters = stubs.type_parameters
 
 
 def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
@@ -88,6 +100,8 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                     _merge_function_stubs(obj_member, stub_member)  # type: ignore[arg-type]
                 elif obj_member.is_attribute:
                     _merge_attribute_stubs(obj_member, stub_member)  # type: ignore[arg-type]
+                elif obj_member.is_type_alias:
+                    _merge_type_alias_stubs(obj_member, stub_member)  # type: ignore[arg-type]
         else:
             stub_member.runtime = False
             obj.set_member(member_name, stub_member)

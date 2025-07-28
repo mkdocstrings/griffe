@@ -8,7 +8,7 @@ from pathlib import Path, PosixPath, WindowsPath
 from typing import Any, Callable
 
 from _griffe import expressions
-from _griffe.enumerations import Kind, ParameterKind
+from _griffe.enumerations import Kind, ParameterKind, TypeParameterKind
 from _griffe.models import (
     Alias,
     Attribute,
@@ -20,6 +20,9 @@ from _griffe.models import (
     Object,
     Parameter,
     Parameters,
+    TypeAlias,
+    TypeParameter,
+    TypeParameters,
 )
 
 _json_encoder_map: dict[type, Callable[[Any], Any]] = {
@@ -122,6 +125,15 @@ def _load_parameter(obj_dict: dict[str, Any]) -> Parameter:
     )
 
 
+def _load_type_parameter(obj_dict: dict[str, Any]) -> TypeParameter:
+    return TypeParameter(
+        obj_dict["name"],
+        kind=TypeParameterKind(obj_dict["kind"]),
+        bound=obj_dict["annotation"],
+        default=obj_dict["default"],
+    )
+
+
 def _attach_parent_to_expr(expr: expressions.Expr | str | None, parent: Module | Class) -> None:
     if not isinstance(expr, expressions.Expr):
         return
@@ -132,7 +144,7 @@ def _attach_parent_to_expr(expr: expressions.Expr | str | None, parent: Module |
             elem.first.parent = parent
 
 
-def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | Class) -> None:
+def _attach_parent_to_exprs(obj: Class | Function | Attribute | TypeAlias, parent: Module | Class) -> None:
     # Every name and attribute expression must be reattached
     # to its parent Griffe object (using its `parent` attribute),
     # to allow resolving names.
@@ -141,11 +153,17 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | 
             _attach_parent_to_expr(obj.docstring.value, parent)
         for decorator in obj.decorators:
             _attach_parent_to_expr(decorator.value, parent)
+        for type_parameter in obj.type_parameters:
+            _attach_parent_to_expr(type_parameter.annotation, parent)
+            _attach_parent_to_expr(type_parameter.default, parent)
     elif isinstance(obj, Function):
         if obj.docstring:
             _attach_parent_to_expr(obj.docstring.value, parent)
         for decorator in obj.decorators:
             _attach_parent_to_expr(decorator.value, parent)
+        for type_parameter in obj.type_parameters:
+            _attach_parent_to_expr(type_parameter.annotation, parent)
+            _attach_parent_to_expr(type_parameter.default, parent)
         for param in obj.parameters:
             _attach_parent_to_expr(param.annotation, parent)
             _attach_parent_to_expr(param.default, parent)
@@ -153,6 +171,13 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute, parent: Module | 
     elif isinstance(obj, Attribute):
         if obj.docstring:
             _attach_parent_to_expr(obj.docstring.value, parent)
+        _attach_parent_to_expr(obj.value, parent)
+    elif isinstance(obj, TypeAlias):
+        if obj.docstring:
+            _attach_parent_to_expr(obj.docstring.value, parent)
+        for type_parameter in obj.type_parameters:
+            _attach_parent_to_expr(type_parameter.annotation, parent)
+            _attach_parent_to_expr(type_parameter.default, parent)
         _attach_parent_to_expr(obj.value, parent)
 
 
@@ -178,6 +203,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
         decorators=_load_decorators(obj_dict),
+        type_parameters=TypeParameters(*obj_dict["type_parameters"]),
         bases=obj_dict["bases"],
     )
     # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
@@ -200,6 +226,7 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         parameters=Parameters(*obj_dict["parameters"]),
         returns=obj_dict["returns"],
         decorators=_load_decorators(obj_dict),
+        type_parameters=TypeParameters(*obj_dict["type_parameters"]),
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
@@ -230,16 +257,30 @@ def _load_alias(obj_dict: dict[str, Any]) -> Alias:
     )
 
 
-_loader_map: dict[Kind, Callable[[dict[str, Any]], Module | Class | Function | Attribute | Alias]] = {
+def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:
+    return TypeAlias(
+        name=obj_dict["name"],
+        value=obj_dict["value"],
+        type_parameters=TypeParameters(*obj_dict["type_parameters"]),
+        lineno=obj_dict["lineno"],
+        endlineno=obj_dict.get("endlineno"),
+        docstring=_load_docstring(obj_dict),
+    )
+
+
+_loader_map: dict[Kind, Callable[[dict[str, Any]], Object | Alias]] = {
     Kind.MODULE: _load_module,
     Kind.CLASS: _load_class,
     Kind.FUNCTION: _load_function,
     Kind.ATTRIBUTE: _load_attribute,
     Kind.ALIAS: _load_alias,
+    Kind.TYPE_ALIAS: _load_type_alias,
 }
 
 
-def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | Parameter | str | expressions.Expr:
+def json_decoder(
+    obj_dict: dict[str, Any],
+) -> dict[str, Any] | Object | Alias | Parameter | TypeParameter | str | expressions.Expr:
     """Decode dictionaries as data classes.
 
     The [`json.loads`][] method walks the tree from bottom to top.
@@ -261,11 +302,15 @@ def json_decoder(obj_dict: dict[str, Any]) -> dict[str, Any] | Object | Alias | 
 
     # Load objects and parameters.
     if "kind" in obj_dict:
-        try:
-            kind = Kind(obj_dict["kind"])
-        except ValueError:
+        kind = obj_dict["kind"]
+        if kind in _loader_map:
+            return _loader_map[kind](obj_dict)
+        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
+        if kind in ParameterKind.__members__.values():
             return _load_parameter(obj_dict)
-        return _loader_map[kind](obj_dict)
+        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
+        if kind in TypeParameterKind.__members__.values():
+            return _load_type_parameter(obj_dict)
 
     # Return dict as is.
     return obj_dict

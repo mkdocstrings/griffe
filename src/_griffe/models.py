@@ -12,9 +12,9 @@ from typing import TYPE_CHECKING, Any, Callable, Union, cast
 
 from _griffe.c3linear import c3linear_merge
 from _griffe.docstrings.parsers import DocstringStyle, parse
-from _griffe.enumerations import Kind, ParameterKind, Parser
+from _griffe.enumerations import Kind, ParameterKind, Parser, TypeParameterKind
 from _griffe.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
-from _griffe.expressions import ExprCall, ExprName
+from _griffe.expressions import ExprCall, ExprName, ExprTuple
 from _griffe.logger import logger
 from _griffe.mixins import ObjectAliasMixin
 
@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from _griffe.collections import LinesCollection, ModulesCollection
     from _griffe.docstrings.models import DocstringSection
     from _griffe.expressions import Expr
+
 
 from functools import cached_property
 
@@ -370,6 +371,186 @@ class Parameters:
         self._params.append(parameter)
 
 
+class TypeParameter:
+    """This class represents a type parameter."""
+
+    def __init__(
+        self,
+        name: str,
+        *,
+        kind: TypeParameterKind,
+        bound: str | Expr | None = None,
+        constraints: Sequence[str | Expr] | None = None,
+        default: str | Expr | None = None,
+    ) -> None:
+        """Initialize the type parameter.
+
+        Parameters:
+            name: The type parameter name, without leading stars (`*` or `**`).
+            kind: The type parameter kind.
+            bound: The type parameter bound, if any.
+                Mutually exclusive with `constraints`.
+            constraints: The type parameter constraints, if any.
+                Mutually exclusive with `bound`.
+            default: The type parameter default, if any.
+
+        Raises:
+            ValueError: When more than one of `bound` and `constraints` is set.
+        """
+        if bound is not None and constraints:
+            raise ValueError("bound and constraints are mutually exclusive")
+
+        self.name: str = name
+        """The type parameter name."""
+
+        self.kind: TypeParameterKind = kind
+        """The type parameter kind."""
+
+        self.annotation: str | Expr | None
+        """The type parameter bound or constraints."""
+
+        if constraints:
+            self.constraints = constraints
+        else:
+            self.bound = bound
+
+        self.default: str | Expr | None = default
+        """The type parameter default value."""
+
+    def __repr__(self) -> str:
+        return f"TypeParameter(name={self.name!r}, kind={self.kind!r}, bound={self.annotation!r}, default={self.default!r})"
+
+    @property
+    def bound(self) -> str | Expr | None:
+        """The type parameter bound."""
+        if not isinstance(self.annotation, ExprTuple):
+            return self.annotation
+        return None
+
+    @bound.setter
+    def bound(self, bound: str | Expr | None) -> None:
+        self.annotation = bound
+
+    @property
+    def constraints(self) -> tuple[str | Expr, ...] | None:
+        """The type parameter constraints."""
+        if isinstance(self.annotation, ExprTuple):
+            return tuple(self.annotation.elements)
+        return None
+
+    @constraints.setter
+    def constraints(self, constraints: Sequence[str | Expr] | None) -> None:
+        if constraints is not None:
+            self.annotation = ExprTuple(constraints)
+        else:
+            self.annotation = None
+
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+        """Return this type parameter's data as a dictionary.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        base: dict[str, Any] = {
+            "name": self.name,
+            "kind": self.kind,
+            "annotation": self.annotation,
+            "default": self.default,
+        }
+        return base
+
+
+class TypeParameters:
+    """This class is a container for type parameters.
+
+    It allows to get type parameters using their position (index) or their name:
+
+    ```pycon
+    >>> type_parameters = TypeParameters(TypeParameter("hello"), kind=TypeParameterKind.type_var)
+    >>> type_parameters[0] is type_parameters["hello"]
+    True
+    ```
+    """
+
+    def __init__(self, *type_parameters: TypeParameter) -> None:
+        """Initialize the type parameters container.
+
+        Parameters:
+            *type_parameters: The initial type parameters to add to the container.
+        """
+        self._type_params: list[TypeParameter] = list(type_parameters)
+
+    def __repr__(self) -> str:
+        return f"TypeParameters({', '.join(repr(type_param) for type_param in self._type_params)})"
+
+    def __getitem__(self, name_or_index: int | str) -> TypeParameter:
+        """Get a type parameter by index or name."""
+        if isinstance(name_or_index, int):
+            return self._type_params[name_or_index]
+        name = name_or_index.lstrip("*")
+        try:
+            return next(param for param in self._type_params if param.name == name)
+        except StopIteration as error:
+            raise KeyError(f"type parameter {name_or_index} not found") from error
+
+    def __setitem__(self, name_or_index: int | str, type_parameter: TypeParameter) -> None:
+        """Set a type parameter by index or name."""
+        if isinstance(name_or_index, int):
+            self._type_params[name_or_index] = type_parameter
+        else:
+            name = name_or_index.lstrip("*")
+            try:
+                index = next(idx for idx, param in enumerate(self._type_params) if param.name == name)
+            except StopIteration:
+                self._type_params.append(type_parameter)
+            else:
+                self._type_params[index] = type_parameter
+
+    def __delitem__(self, name_or_index: int | str) -> None:
+        """Delete a type parameter by index or name."""
+        if isinstance(name_or_index, int):
+            del self._type_params[name_or_index]
+        else:
+            name = name_or_index.lstrip("*")
+            try:
+                index = next(idx for idx, param in enumerate(self._type_params) if param.name == name)
+            except StopIteration as error:
+                raise KeyError(f"type parameter {name_or_index} not found") from error
+            del self._type_params[index]
+
+    def __len__(self):
+        """The number of type parameters."""
+        return len(self._type_params)
+
+    def __iter__(self):
+        """Iterate over the type parameters, in order."""
+        return iter(self._type_params)
+
+    def __contains__(self, type_param_name: str):
+        """Whether a type parameter with the given name is present."""
+        try:
+            next(param for param in self._type_params if param.name == type_param_name.lstrip("*"))
+        except StopIteration:
+            return False
+        return True
+
+    def add(self, type_parameter: TypeParameter) -> None:
+        """Add a type parameter to the container.
+
+        Parameters:
+            type_parameter: The function parameter to add.
+
+        Raises:
+            ValueError: When a type parameter with the same name is already present.
+        """
+        if type_parameter.name in self:
+            raise ValueError(f"type parameter {type_parameter.name} already present")
+        self._type_params.append(type_parameter)
+
+
 class Object(ObjectAliasMixin):
     """An abstract class representing a Python object."""
 
@@ -393,6 +574,7 @@ class Object(ObjectAliasMixin):
         endlineno: int | None = None,
         runtime: bool = True,
         docstring: Docstring | None = None,
+        type_parameters: TypeParameters | None = None,
         parent: Module | Class | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
@@ -405,6 +587,7 @@ class Object(ObjectAliasMixin):
             endlineno: The object ending line (inclusive), or None for modules.
             runtime: Whether this object is present at runtime or not.
             docstring: The object docstring.
+            type_parameters: The object type parameters, if any.
             parent: The object parent.
             lines_collection: A collection of source code lines.
             modules_collection: A collection of modules.
@@ -431,11 +614,14 @@ class Object(ObjectAliasMixin):
         [`has_docstrings`][griffe.Object.has_docstrings].
         """
 
+        self.type_parameters: TypeParameters = type_parameters or TypeParameters()
+        """The object type parameters."""
+
         self.parent: Module | Class | None = parent
         """The parent of the object (none if top module)."""
 
         self.members: dict[str, Object | Alias] = {}
-        """The object members (modules, classes, functions, attributes).
+        """The object members (modules, classes, functions, attributes, type aliases).
 
         See also: [`inherited_members`][griffe.Object.inherited_members],
         [`get_member`][griffe.Object.get_member],
@@ -554,6 +740,7 @@ class Object(ObjectAliasMixin):
         [`is_class`][griffe.Object.is_class],
         [`is_function`][griffe.Object.is_function],
         [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
         [`is_alias`][griffe.Object.is_alias].
 
         Parameters:
@@ -604,6 +791,7 @@ class Object(ObjectAliasMixin):
         [`is_class`][griffe.Object.is_class],
         [`is_function`][griffe.Object.is_function],
         [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
         [`is_alias`][griffe.Object.is_alias],
         [`is_kind`][griffe.Object.is_kind].
         """
@@ -616,6 +804,7 @@ class Object(ObjectAliasMixin):
         See also:  [`is_module`][griffe.Object.is_module].
         [`is_function`][griffe.Object.is_function],
         [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
         [`is_alias`][griffe.Object.is_alias],
         [`is_kind`][griffe.Object.is_kind].
         """
@@ -628,6 +817,7 @@ class Object(ObjectAliasMixin):
         See also:  [`is_module`][griffe.Object.is_module].
         [`is_class`][griffe.Object.is_class],
         [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
         [`is_alias`][griffe.Object.is_alias],
         [`is_kind`][griffe.Object.is_kind].
         """
@@ -640,10 +830,24 @@ class Object(ObjectAliasMixin):
         See also:  [`is_module`][griffe.Object.is_module].
         [`is_class`][griffe.Object.is_class],
         [`is_function`][griffe.Object.is_function],
+        [`is_type_alias`][griffe.Object.is_type_alias],
         [`is_alias`][griffe.Object.is_alias],
         [`is_kind`][griffe.Object.is_kind].
         """
         return self.kind is Kind.ATTRIBUTE
+
+    @property
+    def is_type_alias(self) -> bool:
+        """Whether this object is a type alias.
+
+        See also:  [`is_module`][griffe.Object.is_module].
+        [`is_class`][griffe.Object.is_class],
+        [`is_function`][griffe.Object.is_function],
+        [`is_attribute`][griffe.Object.is_attribute],
+        [`is_alias`][griffe.Object.is_alias],
+        [`is_kind`][griffe.Object.is_kind].
+        """
+        return self.kind is Kind.TYPE_ALIAS
 
     @property
     def is_init_module(self) -> bool:
@@ -943,7 +1147,18 @@ class Object(ObjectAliasMixin):
         # TODO: Better match Python's own scoping rules?
         # Also, maybe return regular paths instead of canonical ones?
 
-        # Name is a member this object.
+        # Name is a type parameter.
+        if name in self.type_parameters:
+            type_parameter = self.type_parameters[name]
+            if type_parameter.kind is TypeParameterKind.type_var_tuple:
+                prefix = "*"
+            elif type_parameter.kind is TypeParameterKind.param_spec:
+                prefix = "**"
+            else:
+                prefix = ""
+            return f"{self.path}[{prefix}{name}]"
+
+        # Name is a member of this object.
         if name in self.members:
             if self.members[name].is_alias:
                 return self.members[name].target_path  # type: ignore[union-attr]
@@ -993,6 +1208,8 @@ class Object(ObjectAliasMixin):
             base["endlineno"] = self.endlineno
         if self.docstring:
             base["docstring"] = self.docstring
+        if self.type_parameters:
+            base["type_parameters"] = [type_param.as_dict(**kwargs) for type_param in self.type_parameters]
 
         base["labels"] = self.labels
         base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
@@ -1159,7 +1376,7 @@ class Alias(ObjectAliasMixin):
 
     @property
     def members(self) -> dict[str, Object | Alias]:
-        """The target's members (modules, classes, functions, attributes).
+        """The target's members (modules, classes, functions, attributes, type aliases).
 
         See also: [`inherited_members`][griffe.Alias.inherited_members],
         [`get_member`][griffe.Alias.get_member],
@@ -1265,6 +1482,11 @@ class Alias(ObjectAliasMixin):
         self.final_target.docstring = docstring
 
     @property
+    def type_parameters(self) -> TypeParameters:
+        """The target type parameters."""
+        return self.final_target.type_parameters
+
+    @property
     def labels(self) -> set[str]:
         """The target labels (`property`, `dataclass`, etc.).
 
@@ -1314,6 +1536,7 @@ class Alias(ObjectAliasMixin):
         [`is_class`][griffe.Alias.is_class],
         [`is_function`][griffe.Alias.is_function],
         [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
         [`is_alias`][griffe.Alias.is_alias].
 
         Parameters:
@@ -1335,6 +1558,7 @@ class Alias(ObjectAliasMixin):
         [`is_class`][griffe.Alias.is_class],
         [`is_function`][griffe.Alias.is_function],
         [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
         [`is_alias`][griffe.Alias.is_alias],
         [`is_kind`][griffe.Alias.is_kind].
         """
@@ -1347,6 +1571,7 @@ class Alias(ObjectAliasMixin):
         See also: [`is_module`][griffe.Alias.is_module],
         [`is_function`][griffe.Alias.is_function],
         [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
         [`is_alias`][griffe.Alias.is_alias],
         [`is_kind`][griffe.Alias.is_kind].
         """
@@ -1359,6 +1584,7 @@ class Alias(ObjectAliasMixin):
         See also: [`is_module`][griffe.Alias.is_module],
         [`is_class`][griffe.Alias.is_class],
         [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
         [`is_alias`][griffe.Alias.is_alias],
         [`is_kind`][griffe.Alias.is_kind].
         """
@@ -1371,10 +1597,24 @@ class Alias(ObjectAliasMixin):
         See also: [`is_module`][griffe.Alias.is_module],
         [`is_class`][griffe.Alias.is_class],
         [`is_function`][griffe.Alias.is_function],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
         [`is_alias`][griffe.Alias.is_alias],
         [`is_kind`][griffe.Alias.is_kind].
         """
         return self.final_target.is_attribute
+
+    @property
+    def is_type_alias(self) -> bool:
+        """Whether this object is a type alias.
+
+        See also: [`is_module`][griffe.Alias.is_module],
+        [`is_class`][griffe.Alias.is_class],
+        [`is_function`][griffe.Alias.is_function],
+        [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_alias`][griffe.Alias.is_alias],
+        [`is_kind`][griffe.Alias.is_kind].
+        """
+        return self.final_target.is_type_alias
 
     def has_labels(self, *labels: str) -> bool:
         """Tell if this object has all the given labels.
@@ -1512,7 +1752,7 @@ class Alias(ObjectAliasMixin):
         """
         return self.final_target.resolve(name)
 
-    # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE PROXIES ---------------
+    # SPECIFIC MODULE/CLASS/FUNCTION/ATTRIBUTE/TYPE ALIAS PROXIES ---------------
     # These methods and properties exist on targets of specific kind.
     # We first try to reach the final target, triggering alias resolution errors
     # and cyclic aliases errors early. We avoid recursing in the alias chain.
@@ -1625,8 +1865,8 @@ class Alias(ObjectAliasMixin):
 
     @property
     def value(self) -> str | Expr | None:
-        """The attribute value."""
-        return cast("Attribute", self.final_target).value
+        """The attribute or type alias value."""
+        return cast("Union[Attribute, TypeAlias]", self.final_target).value
 
     @value.setter
     def value(self, value: str | Expr | None) -> None:
@@ -2260,7 +2500,7 @@ class Attribute(Object):
         """The deleter linked to this property."""
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
-        """Return this function's data as a dictionary.
+        """Return this attribute's data as a dictionary.
 
         See also: [`as_json`][griffe.Attribute.as_json].
 
@@ -2275,4 +2515,40 @@ class Attribute(Object):
             base["value"] = self.value
         if self.annotation is not None:
             base["annotation"] = self.annotation
+        return base
+
+
+class TypeAlias(Object):
+    """The class representing a Python type alias."""
+
+    kind = Kind.TYPE_ALIAS
+
+    def __init__(
+        self,
+        *args: Any,
+        value: str | Expr | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the function.
+
+        Parameters:
+            *args: See [`griffe.Object`][].
+            value: The type alias value.
+            **kwargs: See [`griffe.Object`][].
+        """
+        super().__init__(*args, **kwargs, runtime=False)
+        self.value: str | Expr | None = value
+        """The type alias value."""
+
+    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+        """Return this type alias's data as a dictionary.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        base = super().as_dict(**kwargs)
+        base["value"] = self.value
         return base

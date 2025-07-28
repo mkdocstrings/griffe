@@ -14,6 +14,8 @@
 
 ::: griffe.DocstringSectionOtherParameters
 
+::: griffe.DocstringSectionTypeParameters
+
 ::: griffe.DocstringSectionRaises
 
 ::: griffe.DocstringSectionWarns
@@ -31,6 +33,8 @@
 ::: griffe.DocstringSectionFunctions
 
 ::: griffe.DocstringSectionClasses
+
+::: griffe.DocstringSectionTypeAliases
 
 ::: griffe.DocstringSectionModules
 
@@ -56,11 +60,15 @@
 
 ::: griffe.DocstringParameter
 
+::: griffe.DocstringTypeParameter
+
 ::: griffe.DocstringAttribute
 
 ::: griffe.DocstringFunction
 
 ::: griffe.DocstringClass
+
+::: griffe.DocstringTypeAlias
 
 ::: griffe.DocstringModule
 

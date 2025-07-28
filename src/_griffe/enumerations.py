@@ -33,6 +33,8 @@ class DocstringSectionKind(str, Enum):
     """Parameters section."""
     other_parameters = "other parameters"
     """Other parameters (keyword arguments) section."""
+    type_parameters = "type parameters"
+    """Type parameters section."""
     raises = "raises"
     """Raises (exceptions) section."""
     warns = "warns"
@@ -51,6 +53,8 @@ class DocstringSectionKind(str, Enum):
     """Functions section."""
     classes = "classes"
     """Classes section."""
+    type_aliases = "type aliases"
+    """Type aliases section."""
     modules = "modules"
     """Modules section."""
     deprecated = "deprecated"
@@ -74,6 +78,17 @@ class ParameterKind(str, Enum):
     """Variadic keyword parameter."""
 
 
+class TypeParameterKind(str, Enum):
+    """Enumeration of the different type parameter kinds."""
+
+    type_var = "type-var"
+    """Type variable."""
+    type_var_tuple = "type-var-tuple"
+    """Type variable tuple."""
+    param_spec = "param-spec"
+    """Parameter specification variable."""
+
+
 class Kind(str, Enum):
     """Enumeration of the different object kinds."""
 
@@ -87,6 +102,8 @@ class Kind(str, Enum):
     """Attributes and properties."""
     ALIAS = "alias"
     """Aliases (imported objects)."""
+    TYPE_ALIAS = "type alias"
+    """Type aliases."""
 
 
 class ExplanationStyle(str, Enum):
@@ -177,6 +194,8 @@ class ObjectKind(str, Enum):
     """Get/set descriptors."""
     PROPERTY = "property"
     """Properties."""
+    TYPE_ALIAS = "type_alias"
+    """Type aliases."""
     ATTRIBUTE = "attribute"
     """Attributes."""
 

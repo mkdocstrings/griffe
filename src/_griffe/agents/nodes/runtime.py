@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 import sys
+import typing
 from functools import cached_property
 from types import GetSetDescriptorType
 from typing import TYPE_CHECKING, Any, ClassVar
@@ -12,7 +13,17 @@ from _griffe.enumerations import ObjectKind
 from _griffe.logger import logger
 
 if TYPE_CHECKING:
+    import types
     from collections.abc import Sequence
+
+_TYPING_MODULES: tuple[types.ModuleType, ...]
+try:
+    import typing_extensions
+except ImportError:
+    _TYPING_MODULES = (typing,)
+else:
+    _TYPING_MODULES = (typing, typing_extensions)
+
 
 _builtin_module_names = {_.lstrip("_") for _ in sys.builtin_module_names}
 _cyclic_relationships = {
@@ -135,6 +146,8 @@ class ObjectNode:
             return ObjectKind.GETSET_DESCRIPTOR
         if self.is_property:
             return ObjectKind.PROPERTY
+        if self.is_type_alias:
+            return ObjectKind.TYPE_ALIAS
         return ObjectKind.ATTRIBUTE
 
     @cached_property
@@ -161,6 +174,14 @@ class ObjectNode:
         """Whether this node's object is a function."""
         # `inspect.isfunction` returns `False` for partials.
         return inspect.isfunction(self.obj) or (callable(self.obj) and not self.is_class)
+
+    @cached_property
+    def is_type_alias(self) -> bool:
+        """Whether this node's object is a type alias."""
+        return isinstance(
+            self.obj,
+            tuple(module.TypeAliasType for module in _TYPING_MODULES if hasattr(module, "TypeAliasType")),
+        )
 
     @cached_property
     def is_builtin_function(self) -> bool:

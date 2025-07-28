@@ -742,8 +742,8 @@ def load(
     The extracted information is stored in a collection of modules, which can be queried later.
     Each collected module is a tree of objects, representing the structure of the module.
     See the [`Module`][griffe.Module], [`Class`][griffe.Class],
-    [`Function`][griffe.Function], and [`Attribute`][griffe.Attribute] classes
-    for more information.
+    [`Function`][griffe.Function], [`Attribute`][griffe.Attribute], and
+    [`TypeAlias`][griffe.TypeAlias] classes for more information.
 
     The main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].
     Convenience functions like this one and [`load_git`][griffe.load_git] are also available.

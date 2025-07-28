@@ -47,8 +47,12 @@ from _griffe.docstrings.models import (
     DocstringSectionReceives,
     DocstringSectionReturns,
     DocstringSectionText,
+    DocstringSectionTypeAliases,
+    DocstringSectionTypeParameters,
     DocstringSectionWarns,
     DocstringSectionYields,
+    DocstringTypeAlias,
+    DocstringTypeParameter,
     DocstringWarn,
     DocstringYield,
 )
@@ -68,6 +72,7 @@ _section_kind = {
     "deprecated": DocstringSectionKind.deprecated,
     "parameters": DocstringSectionKind.parameters,
     "other parameters": DocstringSectionKind.other_parameters,
+    "type parameters": DocstringSectionKind.type_parameters,
     "returns": DocstringSectionKind.returns,
     "yields": DocstringSectionKind.yields,
     "receives": DocstringSectionKind.receives,
@@ -78,6 +83,7 @@ _section_kind = {
     "functions": DocstringSectionKind.functions,
     "methods": DocstringSectionKind.functions,
     "classes": DocstringSectionKind.classes,
+    "type aliases": DocstringSectionKind.type_aliases,
     "modules": DocstringSectionKind.modules,
 }
 
@@ -321,6 +327,76 @@ def _read_other_parameters_section(
         return DocstringSectionOtherParameters(parameters), new_offset
     if warnings:
         docstring_warning(docstring, new_offset, f"Empty other parameters section at line {offset}")
+    return None, new_offset
+
+
+def _read_type_parameters_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    warn_unknown_params: bool = True,
+    **options: Any,
+) -> tuple[DocstringSectionTypeParameters | None, int]:
+    type_parameters: list[DocstringTypeParameter] = []
+    bound: str | Expr | None
+
+    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    for item in items:
+        match = _RE_PARAMETER.match(item[0])
+        if not match:
+            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            continue
+
+        names = match.group("names").split(", ")
+        bound = match.group("type") or None
+        choices = match.group("choices")
+        default = None
+        if choices:
+            bound = choices
+            default = choices.split(", ", 1)[0]
+        elif bound:
+            match = re.match(r"^(?P<annotation>.+),\s+default(?: |: |=)(?P<default>.+)$", bound)
+            if match:
+                default = match.group("default")
+                bound = match.group("annotation")
+        description = "\n".join(item[1:]).rstrip() if len(item) > 1 else ""
+
+        if bound is None:
+            # try to use the bound from the signature
+            for name in names:
+                with suppress(AttributeError, KeyError):
+                    bound = docstring.parent.type_parameters[name].annotation  # type: ignore[union-attr]
+                    break
+        else:
+            bound = parse_docstring_annotation(bound, docstring, log_level=LogLevel.debug)
+
+        if default is None:
+            for name in names:
+                with suppress(AttributeError, KeyError):
+                    default = docstring.parent.type_parameters[name].default  # type: ignore[union-attr]
+                    break
+
+        if warn_unknown_params:
+            with suppress(AttributeError):  # for parameters sections in objects without parameters
+                type_params = docstring.parent.type_parameters  # type: ignore[union-attr]
+                for name in names:
+                    if name not in type_params:
+                        message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind} signature"  # type: ignore[union-attr]
+                        for starred_name in (f"*{name}", f"**{name}"):
+                            if starred_name in type_params:
+                                message += f". Did you mean '{starred_name}'?"
+                                break
+                        docstring_warning(docstring, new_offset, message)
+
+        type_parameters.extend(
+            DocstringTypeParameter(name, value=default, annotation=bound, description=description) for name in names
+        )
+
+    if type_parameters:
+        return DocstringSectionTypeParameters(type_parameters), new_offset
+
+    docstring_warning(docstring, new_offset, f"Empty type parameters section at line {offset}")
     return None, new_offset
 
 
@@ -660,6 +736,26 @@ def _read_classes_section(
     return DocstringSectionClasses(classes), new_offset
 
 
+def _read_type_aliases_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionTypeAliases | None, int]:
+    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    if not items:
+        docstring_warning(docstring, new_offset, f"Empty type aliases section at line {offset}")
+        return None, new_offset
+
+    type_aliases = []
+    for item in items:
+        name = item[0]
+        text = dedent("\n".join(item[1:])).strip()
+        type_aliases.append(DocstringTypeAlias(name=name, description=text))
+    return DocstringSectionTypeAliases(type_aliases), new_offset
+
+
 def _read_modules_section(
     docstring: Docstring,
     *,
@@ -779,6 +875,7 @@ def _append_section(sections: list, current: list[str], admonition_title: str) -
 _section_reader = {
     DocstringSectionKind.parameters: _read_parameters_section,
     DocstringSectionKind.other_parameters: _read_other_parameters_section,
+    DocstringSectionKind.type_parameters: _read_type_parameters_section,
     DocstringSectionKind.deprecated: _read_deprecated_section,
     DocstringSectionKind.raises: _read_raises_section,
     DocstringSectionKind.warns: _read_warns_section,
@@ -786,6 +883,7 @@ _section_reader = {
     DocstringSectionKind.attributes: _read_attributes_section,
     DocstringSectionKind.functions: _read_functions_section,
     DocstringSectionKind.classes: _read_classes_section,
+    DocstringSectionKind.type_aliases: _read_type_aliases_section,
     DocstringSectionKind.modules: _read_modules_section,
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,

@@ -63,7 +63,8 @@
             "module",
             "class",
             "function",
-            "attribute"
+            "attribute",
+            "type alias"
           ]
         },
         "path": {
@@ -183,7 +184,8 @@
         "parameters": true,
         "returns": true,
         "value": true,
-        "annotation": true
+        "annotation": true,
+        "type_parameters": true
       },
       "additionalProperties": false,
       "required": [
@@ -248,6 +250,14 @@
                     "endlineno"
                   ]
                 }
+              },
+              "type_parameters": {
+                "title": "For classes, their type parameters.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffe.Class.type_parameters",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/type_parameter"
+                }
               }
             },
             "required": [
@@ -304,6 +314,14 @@
                 "title": "For functions, their return annotation.",
                 "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Function.returns",
                 "$ref": "#/$defs/annotation"
+              },
+              "type_parameters": {
+                "title": "For functions, their type parameters.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Function.type_parameters",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/type_parameter"
+                }
               }
             },
             "required": [
@@ -334,6 +352,35 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "type alias"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "title": "For type aliases, their value.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/type_alias/#griffe.TypeAlias.value",
+                "$ref": "#/$defs/annotation"
+              },
+              "type_parameters": {
+                "title": "For type aliases, their type parameters.",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/type_alias/#griffe.TypeAlias.type_parameters",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/type_parameter"
+                }
+              }
+            },
+            "required": [
+              "value"
+            ]
+          }
         }
       ]
     }
@@ -354,6 +401,44 @@
         {
           "$ref": "#/$defs/expression"
         }
+      ]
+    },
+    "type_parameter": {
+      "title": "Type Parameter.",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "The type parameter name.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.name",
+          "type": "string"
+        },
+        "kind": {
+          "title": "The type parameter kind.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.kind",
+          "enum": [
+            "type-var",
+            "type-var-tuple",
+            "param-spec"
+          ]
+        },
+        "annotation": {
+          "title": "The type parameter bound or constraints.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.annotation",
+          "$ref": "#/$defs/annotation"
+        },
+        "default": {
+          "title": "The type parameter default.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.default",
+          "$ref": "#/$defs/annotation"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "annotation",
+        "default"
       ]
     }
   }

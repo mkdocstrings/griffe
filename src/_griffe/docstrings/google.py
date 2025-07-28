@@ -28,8 +28,12 @@ from _griffe.docstrings.models import (
     DocstringSectionReceives,
     DocstringSectionReturns,
     DocstringSectionText,
+    DocstringSectionTypeAliases,
+    DocstringSectionTypeParameters,
     DocstringSectionWarns,
     DocstringSectionYields,
+    DocstringTypeAlias,
+    DocstringTypeParameter,
     DocstringWarn,
     DocstringYield,
 )
@@ -55,6 +59,10 @@ _section_kind = {
     "other arguments": DocstringSectionKind.other_parameters,
     "other params": DocstringSectionKind.other_parameters,
     "other parameters": DocstringSectionKind.other_parameters,
+    "type args": DocstringSectionKind.type_parameters,
+    "type arguments": DocstringSectionKind.type_parameters,
+    "type params": DocstringSectionKind.type_parameters,
+    "type parameters": DocstringSectionKind.type_parameters,
     "raises": DocstringSectionKind.raises,
     "exceptions": DocstringSectionKind.raises,
     "returns": DocstringSectionKind.returns,
@@ -65,6 +73,7 @@ _section_kind = {
     "functions": DocstringSectionKind.functions,
     "methods": DocstringSectionKind.functions,
     "classes": DocstringSectionKind.classes,
+    "type aliases": DocstringSectionKind.type_aliases,
     "modules": DocstringSectionKind.modules,
     "warns": DocstringSectionKind.warns,
     "warnings": DocstringSectionKind.warns,
@@ -263,6 +272,75 @@ def _read_other_parameters_section(
     return DocstringSectionOtherParameters(parameters), new_offset
 
 
+def _read_type_parameters_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    warn_unknown_params: bool = True,
+    **options: Any,
+) -> tuple[DocstringSectionTypeParameters | None, int]:
+    type_parameters = []
+    bound: str | Expr | None
+
+    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    for line_number, type_param_lines in block:
+        # check the presence of a name and description, separated by a colon
+        try:
+            name_with_bound, description = type_param_lines[0].split(":", 1)
+        except ValueError:
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'name: description' pair from '{type_param_lines[0]}'",
+            )
+            continue
+
+        description = "\n".join([description.lstrip(), *type_param_lines[1:]]).rstrip("\n")
+
+        # use the type given after the type parameter name, if any
+        if " " in name_with_bound:
+            name, bound = name_with_bound.split(" ", 1)
+            if bound.startswith("(") and bound.endswith(")"):
+                bound = bound[1:-1]
+            # try to compile the annotation to transform it into an expression
+            bound = parse_docstring_annotation(bound, docstring)
+        else:
+            name = name_with_bound
+            # try to use the annotation from the signature
+            try:
+                bound = docstring.parent.type_parameters[name].annotation  # type: ignore[union-attr]
+            except (AttributeError, KeyError):
+                bound = None
+
+        try:
+            default = docstring.parent.type_parameters[name].default  # type: ignore[union-attr]
+        except (AttributeError, KeyError):
+            default = None
+
+        if warn_unknown_params:
+            with suppress(AttributeError):  # for type parameters sections in objects without type parameters
+                type_params = docstring.parent.type_parameters  # type: ignore[union-attr]
+                if name not in type_params:
+                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # type: ignore[union-attr]
+                    for starred_name in (f"*{name}", f"**{name}"):
+                        if starred_name in type_params:
+                            message += f". Did you mean '{starred_name}'?"
+                            break
+                    docstring_warning(docstring, line_number, message)
+
+        type_parameters.append(
+            DocstringTypeParameter(
+                name=name,
+                value=default,
+                annotation=bound,
+                description=description,
+            ),
+        )
+
+    return DocstringSectionTypeParameters(type_parameters), new_offset
+
+
 def _read_attributes_section(
     docstring: Docstring,
     *,
@@ -377,6 +455,31 @@ def _read_classes_section(
         classes.append(DocstringClass(name=name, annotation=signature, description=description))
 
     return DocstringSectionClasses(classes), new_offset
+
+
+def _read_type_aliases_section(
+    docstring: Docstring,
+    *,
+    offset: int,
+    **options: Any,
+) -> tuple[DocstringSectionTypeAliases | None, int]:
+    type_aliases = []
+    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+
+    for line_number, type_alias_lines in block:
+        try:
+            name, description = type_alias_lines[0].split(":", 1)
+        except ValueError:
+            docstring_warning(
+                docstring,
+                line_number,
+                f"Failed to get 'name: description' pair from '{type_alias_lines[0]}'",
+            )
+            continue
+        description = "\n".join([description.lstrip(), *type_alias_lines[1:]]).rstrip("\n")
+        type_aliases.append(DocstringTypeAlias(name=name, description=description))
+
+    return DocstringSectionTypeAliases(type_aliases), new_offset
 
 
 def _read_modules_section(
@@ -730,12 +833,14 @@ def _is_empty_line(line: str) -> bool:
 _section_reader = {
     DocstringSectionKind.parameters: _read_parameters_section,
     DocstringSectionKind.other_parameters: _read_other_parameters_section,
+    DocstringSectionKind.type_parameters: _read_type_parameters_section,
     DocstringSectionKind.raises: _read_raises_section,
     DocstringSectionKind.warns: _read_warns_section,
     DocstringSectionKind.examples: _read_examples_section,
     DocstringSectionKind.attributes: _read_attributes_section,
     DocstringSectionKind.functions: _read_functions_section,
     DocstringSectionKind.classes: _read_classes_section,
+    DocstringSectionKind.type_aliases: _read_type_aliases_section,
     DocstringSectionKind.modules: _read_modules_section,
     DocstringSectionKind.returns: _read_returns_section,
     DocstringSectionKind.yields: _read_yields_section,

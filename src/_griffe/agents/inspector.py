@@ -4,19 +4,35 @@
 from __future__ import annotations
 
 import ast
+import functools
+import sys
+import types
+import typing
 from inspect import Parameter as SignatureParameter
-from inspect import Signature, cleandoc, getsourcelines
+from inspect import Signature, cleandoc, getsourcelines, unwrap
 from inspect import signature as getsignature
 from typing import TYPE_CHECKING, Any
 
 from _griffe.agents.nodes.runtime import ObjectNode
 from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.enumerations import Kind, ParameterKind
-from _griffe.expressions import safe_get_annotation
+from _griffe.enumerations import Kind, ParameterKind, TypeParameterKind
+from _griffe.expressions import Expr, ExprBinOp, ExprSubscript, ExprTuple, safe_get_annotation
 from _griffe.extensions.base import Extensions, load_extensions
 from _griffe.importer import dynamic_import
 from _griffe.logger import logger
-from _griffe.models import Alias, Attribute, Class, Docstring, Function, Module, Parameter, Parameters
+from _griffe.models import (
+    Alias,
+    Attribute,
+    Class,
+    Docstring,
+    Function,
+    Module,
+    Parameter,
+    Parameters,
+    TypeAlias,
+    TypeParameter,
+    TypeParameters,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -24,8 +40,14 @@ if TYPE_CHECKING:
 
     from _griffe.docstrings.parsers import DocstringStyle
     from _griffe.enumerations import Parser
-    from _griffe.expressions import Expr
 
+_TYPING_MODULES: tuple[types.ModuleType, ...]
+try:
+    import typing_extensions
+except ImportError:
+    _TYPING_MODULES = (typing,)
+else:
+    _TYPING_MODULES = (typing, typing_extensions)
 
 _empty = Signature.empty
 
@@ -317,6 +339,7 @@ class Inspector:
             name=node.name,
             docstring=self._get_docstring(node),
             bases=bases,
+            type_parameters=TypeParameters(*_convert_type_parameters(node.obj, parent=self.current, member=node.name)),
             lineno=lineno,
             endlineno=endlineno,
         )
@@ -436,13 +459,16 @@ class Inspector:
             returns = None
         else:
             parameters = Parameters(
-                *[_convert_parameter(parameter, parent=self.current) for parameter in signature.parameters.values()],
+                *[
+                    _convert_parameter(parameter, parent=self.current, member=node.name)
+                    for parameter in signature.parameters.values()
+                ],
             )
             return_annotation = signature.return_annotation
             returns = (
                 None
                 if return_annotation is _empty
-                else _convert_object_to_annotation(return_annotation, parent=self.current)
+                else _convert_object_to_annotation(return_annotation, parent=self.current, member=node.name)
             )
 
         lineno, endlineno = self._get_linenos(node)
@@ -463,6 +489,9 @@ class Inspector:
                 name=node.name,
                 parameters=parameters,
                 returns=returns,
+                type_parameters=TypeParameters(
+                    *_convert_type_parameters(node.obj, parent=self.current, member=node.name),
+                ),
                 docstring=self._get_docstring(node),
                 lineno=lineno,
                 endlineno=endlineno,
@@ -474,6 +503,30 @@ class Inspector:
             self.extensions.call("on_attribute_instance", node=node, attr=obj, agent=self)
         else:
             self.extensions.call("on_function_instance", node=node, func=obj, agent=self)
+
+    def inspect_type_alias(self, node: ObjectNode) -> None:
+        """Inspect a type alias.
+
+        Parameters:
+            node: The node to inspect.
+        """
+        self.extensions.call("on_node", node=node, agent=self)
+        self.extensions.call("on_type_alias_node", node=node, agent=self)
+
+        lineno, endlineno = self._get_linenos(node)
+
+        type_alias = TypeAlias(
+            name=node.name,
+            value=_convert_type_to_annotation(node.obj.__value__, parent=self.current, member=node.name),
+            lineno=lineno,
+            endlineno=endlineno,
+            type_parameters=TypeParameters(*_convert_type_parameters(node.obj, parent=self.current, member=node.name)),
+            docstring=self._get_docstring(node),
+            parent=self.current,
+        )
+        self.current.set_member(node.name, type_alias)
+        self.extensions.call("on_instance", node=node, obj=type_alias, agent=self)
+        self.extensions.call("on_type_alias_instance", node=node, type_alias=type_alias, agent=self)
 
     def inspect_attribute(self, node: ObjectNode) -> None:
         """Inspect an attribute.
@@ -531,7 +584,7 @@ class Inspector:
         self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 
 
-_kind_map = {
+_parameter_kind_map = {
     SignatureParameter.POSITIONAL_ONLY: ParameterKind.positional_only,
     SignatureParameter.POSITIONAL_OR_KEYWORD: ParameterKind.positional_or_keyword,
     SignatureParameter.VAR_POSITIONAL: ParameterKind.var_positional,
@@ -540,12 +593,19 @@ _kind_map = {
 }
 
 
-def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) -> Parameter:
+def _convert_parameter(
+    parameter: SignatureParameter,
+    *,
+    parent: Module | Class,
+    member: str | None = None,
+) -> Parameter:
     name = parameter.name
     annotation = (
-        None if parameter.annotation is _empty else _convert_object_to_annotation(parameter.annotation, parent=parent)
+        None
+        if parameter.annotation is _empty
+        else _convert_object_to_annotation(parameter.annotation, parent=parent, member=member)
     )
-    kind = _kind_map[parameter.kind]
+    kind = _parameter_kind_map[parameter.kind]
     if parameter.default is _empty:
         default = None
     elif hasattr(parameter.default, "__name__"):
@@ -556,7 +616,7 @@ def _convert_parameter(parameter: SignatureParameter, parent: Module | Class) ->
     return Parameter(name, annotation=annotation, kind=kind, default=default)
 
 
-def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Expr | None:
+def _convert_object_to_annotation(obj: Any, *, parent: Module | Class, member: str | None = None) -> str | Expr | None:
     # Even when *we* import future annotations,
     # the object from which we get a signature
     # can come from modules which did *not* import them,
@@ -577,4 +637,81 @@ def _convert_object_to_annotation(obj: Any, parent: Module | Class) -> str | Exp
         annotation_node = compile(annotation, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
-    return safe_get_annotation(annotation_node.body, parent=parent)  # type: ignore[attr-defined]
+    return safe_get_annotation(annotation_node.body, parent, member=member)  # type: ignore[attr-defined]
+
+
+_type_parameter_kind_map = {
+    getattr(module, attr): value
+    for attr, value in {
+        "TypeVar": TypeParameterKind.type_var,
+        "TypeVarTuple": TypeParameterKind.type_var_tuple,
+        "ParamSpec": TypeParameterKind.param_spec,
+    }.items()
+    for module in _TYPING_MODULES
+    if hasattr(module, attr)
+}
+
+
+def _convert_type_parameters(
+    obj: Any,
+    *,
+    parent: Module | Class,
+    member: str | None = None,
+) -> list[TypeParameter]:
+    obj = unwrap(obj)
+
+    if not hasattr(obj, "__type_params__"):
+        return []
+
+    type_parameters = []
+    for type_parameter in obj.__type_params__:
+        bound = getattr(type_parameter, "__bound__", None)
+        if bound is not None:
+            bound = _convert_type_to_annotation(bound, parent=parent, member=member)
+        constraints: list[str | Expr] = [
+            _convert_type_to_annotation(constraint, parent=parent, member=member)  # type: ignore[misc]
+            for constraint in getattr(type_parameter, "__constraints__", ())
+        ]
+
+        if getattr(type_parameter, "has_default", lambda: False)():
+            default = _convert_type_to_annotation(
+                type_parameter.__default__,
+                parent=parent,
+                member=member,
+            )
+        else:
+            default = None
+
+        type_parameters.append(
+            TypeParameter(
+                type_parameter.__name__,
+                kind=_type_parameter_kind_map[type(type_parameter)],
+                bound=bound,
+                constraints=constraints or None,
+                default=default,
+            ),
+        )
+
+    return type_parameters
+
+
+def _convert_type_to_annotation(obj: Any, *, parent: Module | Class, member: str | None = None) -> str | Expr | None:
+    origin = typing.get_origin(obj)
+
+    if origin is None:
+        return _convert_object_to_annotation(obj, parent=parent, member=member)
+
+    args: Sequence[str | Expr | None] = [
+        _convert_type_to_annotation(arg, parent=parent, member=member) for arg in typing.get_args(obj)
+    ]
+
+    # YORE: EOL 3.9: Replace block with lines 2-3.
+    if sys.version_info >= (3, 10):
+        if origin is types.UnionType:
+            return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)  # type: ignore[arg-type]
+
+    origin = _convert_type_to_annotation(origin, parent=parent, member=member)
+    if origin is None:
+        return None
+
+    return ExprSubscript(origin, ExprTuple(args, implicit=True))  # type: ignore[arg-type]

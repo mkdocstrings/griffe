@@ -6,6 +6,8 @@ import sys
 
 import pytest
 
+from _griffe.enumerations import TypeParameterKind
+from _griffe.expressions import Expr
 from griffe import inspect, temporary_inspected_module, temporary_inspected_package, temporary_pypackage
 from tests.helpers import clear_sys_modules
 
@@ -238,3 +240,102 @@ def test_inheriting_self_from_parent_class() -> None:
         assert module["B.B.B"].final_target is module["A.B"]
         assert module["A.B.B.B"].final_target is module["A.B"]
         assert module["B.B.B.B"].final_target is module["A.B"]
+
+
+# YORE: EOL 3.12: Remove block.
+# YORE: EOL 3.11: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")
+def test_inspecting_pep695_generics_without_defaults() -> None:
+    """Assert PEP 695 generics are correctly inspected."""
+    with temporary_inspected_module(
+        """
+        class Class[X: Exception]: pass
+        def func[**P, T, *R](arg: T, *args: P.args, **kwargs: P.kwargs) -> tuple[*R]: pass
+        type TA[T: (int, str)] = dict[str, T]
+        """,
+    ) as module:
+        class_ = module["Class"]
+        assert class_.is_class
+        assert class_.type_parameters[0].name == "X"
+        assert class_.type_parameters[0].kind == TypeParameterKind.type_var
+        assert class_.type_parameters[0].bound.name == "Exception"
+        assert not class_.type_parameters[0].constraints
+        assert class_.type_parameters[0].default is None
+
+        func = module["func"]
+        assert func.is_function
+        assert func.type_parameters[0].name == "P"
+        assert func.type_parameters[0].kind == TypeParameterKind.param_spec
+        assert func.type_parameters[0].bound is None
+        assert not func.type_parameters[0].constraints
+        assert func.type_parameters[0].default is None
+        assert func.type_parameters[1].name == "T"
+        assert func.type_parameters[1].kind == TypeParameterKind.type_var
+        assert func.type_parameters[1].bound is None
+        assert not func.type_parameters[1].constraints
+        assert func.type_parameters[1].default is None
+        assert func.type_parameters[2].name == "R"
+        assert func.type_parameters[2].kind == TypeParameterKind.type_var_tuple
+        assert func.type_parameters[2].bound is None
+        assert not func.type_parameters[2].constraints
+        assert func.type_parameters[2].default is None
+
+        type_alias = module["TA"]
+        assert type_alias.is_type_alias
+        assert type_alias.type_parameters[0].name == "T"
+        assert type_alias.type_parameters[0].kind == TypeParameterKind.type_var
+        assert type_alias.type_parameters[0].bound is None
+        assert type_alias.type_parameters[0].constraints[0].name == "int"
+        assert type_alias.type_parameters[0].constraints[1].name == "str"
+        assert type_alias.type_parameters[0].default is None
+        assert isinstance(type_alias.value, Expr)
+        assert str(type_alias.value) == "dict[str, T]"
+
+
+# YORE: EOL 3.12: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 13), reason="Python less than 3.13 does not have defaults in PEP 695 generics")  # fmt: skip
+def test_inspecting_pep695_generics() -> None:
+    """Assert PEP 695 generics are correctly inspected."""
+    with temporary_inspected_module(
+        """
+        class Class[X: Exception = OSError]: pass
+        def func[**P, T, *R](arg: T, *args: P.args, **kwargs: P.kwargs) -> tuple[*R]: pass
+        type TA[T: (int, str) = str] = dict[str, T]
+        """,
+    ) as module:
+        class_ = module["Class"]
+        assert class_.is_class
+        assert class_.type_parameters[0].name == "X"
+        assert class_.type_parameters[0].kind == TypeParameterKind.type_var
+        assert class_.type_parameters[0].bound.name == "Exception"
+        assert not class_.type_parameters[0].constraints
+        assert class_.type_parameters[0].default.name == "OSError"
+
+        func = module["func"]
+        assert func.is_function
+        assert func.type_parameters[0].name == "P"
+        assert func.type_parameters[0].kind == TypeParameterKind.param_spec
+        assert func.type_parameters[0].bound is None
+        assert not func.type_parameters[0].constraints
+        assert func.type_parameters[0].default is None
+        assert func.type_parameters[1].name == "T"
+        assert func.type_parameters[1].kind == TypeParameterKind.type_var
+        assert func.type_parameters[1].bound is None
+        assert not func.type_parameters[1].constraints
+        assert func.type_parameters[1].default is None
+        assert func.type_parameters[2].name == "R"
+        assert func.type_parameters[2].kind == TypeParameterKind.type_var_tuple
+        assert func.type_parameters[2].bound is None
+        assert not func.type_parameters[2].constraints
+        assert func.type_parameters[2].default is None
+
+        type_alias = module["TA"]
+        assert type_alias.is_type_alias
+        assert type_alias.type_parameters[0].name == "T"
+        assert type_alias.type_parameters[0].kind == TypeParameterKind.type_var
+        assert type_alias.type_parameters[0].bound is None
+        assert type_alias.type_parameters[0].constraints[0].name == "int"
+        assert type_alias.type_parameters[0].constraints[1].name == "str"
+        assert type_alias.type_parameters[0].default.name == "str"
+        assert isinstance(type_alias.value, Expr)
+        assert str(type_alias.value) == "dict[str, T]"
