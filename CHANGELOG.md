@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.9.0](https://github.com/mkdocstrings/griffe/releases/tag/1.9.0) - 2025-07-28
+
+<small>[Compare with 1.8.0](https://github.com/mkdocstrings/griffe/compare/1.8.0...1.9.0)</small>
+
+### Features
+
+- Support PEP 695 generics ([be28e9c](https://github.com/mkdocstrings/griffe/commit/be28e9c9835a709fca0a78990c56e8d652a71a8c) by Victor Westerhuis). [Issue-342](https://github.com/mkdocstrings/griffe/issues/342), [PR-348](https://github.com/mkdocstrings/griffe/pull/348), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+
 ## [1.8.0](https://github.com/mkdocstrings/griffe/releases/tag/1.8.0) - 2025-07-23
 
 <small>[Compare with 1.7.3](https://github.com/mkdocstrings/griffe/compare/1.7.3...1.8.0)</small>
