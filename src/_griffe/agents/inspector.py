@@ -551,14 +551,14 @@ class Inspector:
         labels: set[str] = set()
 
         if parent.kind is Kind.MODULE:
-            labels.add("module")
+            labels.add("module-attribute")
         elif parent.kind is Kind.CLASS:
-            labels.add("class")
+            labels.add("class-attribute")
         elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
             parent = parent.parent  # type: ignore[assignment]
-            labels.add("instance")
+            labels.add("instance-attribute")
 
         try:
             value = repr(node.obj)
@@ -579,7 +579,7 @@ class Inspector:
         parent.set_member(node.name, attribute)
 
         if node.name == "__all__":
-            parent.exports = set(node.obj)
+            parent.exports = list(node.obj)
         self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
         self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 
@@ -622,15 +622,19 @@ def _convert_object_to_annotation(obj: Any, *, parent: Module | Class, member: s
     # can come from modules which did *not* import them,
     # so `inspect.signature` returns actual Python objects
     # that we must deal with.
-    if not isinstance(obj, str):
+    if isinstance(obj, str):
+        annotation = obj
+    else:
+        # Always give precedence to the object's representation...
+        obj_repr = repr(obj)
         if hasattr(obj, "__name__"):  # noqa: SIM108
-            # Simple types like `int`, `str`, custom classes, etc..
-            obj = obj.__name__
+            # ...unless it contains chevrons (which likely means it's a class),
+            # in which case we use the object's name.
+            annotation = obj.__name__ if "<" in obj_repr else obj_repr
         else:
-            # Other, more complex types: hope for the best.
-            obj = repr(obj)
+            annotation = obj_repr
     try:
-        annotation_node = compile(obj, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
+        annotation_node = compile(annotation, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
     return safe_get_annotation(annotation_node.body, parent, member=member)  # type: ignore[attr-defined]

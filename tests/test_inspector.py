@@ -34,6 +34,54 @@ def test_annotations_from_classes() -> None:
         assert returns.canonical_path == f"{module.name}.A"
 
 
+# YORE: EOL 3.13: Remove block.
+# YORE: EOL 3.9: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="Type unions not supported on 3.9")
+@pytest.mark.skipif(sys.version_info >= (3, 14), reason="3.14 changes type annotations, see test below")
+@pytest.mark.parametrize(
+    ("annotation", "expected"),
+    [
+        ("tuple[int, str]", "tuple[int, str]"),
+        ("Union[int, str]", "typing.Union[int, str]"),
+        ("int | str", "int | str"),
+        ("int | Literal[1]", "typing.Union[int, typing.Literal[1]]"),
+    ],
+)
+def test_annotations_from_types_before_314(annotation: str, expected: str) -> None:
+    """Assert annotations are correctly converted to string."""
+    with temporary_inspected_module(
+        f"""
+        from typing import Literal, Union
+        def func(param: {annotation}): ...
+        """,
+    ) as module:
+        param = module["func"].parameters["param"]
+        assert str(param.annotation) == expected
+
+
+# YORE: EOL 3.13: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 14), reason="3.14 modernizes type unions")
+@pytest.mark.parametrize(
+    ("annotation", "expected"),
+    [
+        ("tuple[int, str]", "tuple[int, str]"),
+        ("Union[int, str]", "int | str"),
+        ("int | str", "int | str"),
+        ("int | Literal[1]", "int | typing.Literal[1]"),
+    ],
+)
+def test_annotations_from_types(annotation: str, expected: str) -> None:
+    """Assert annotations are correctly converted to string."""
+    with temporary_inspected_module(
+        f"""
+        from typing import Literal, Union
+        def func(param: {annotation}): ...
+        """,
+    ) as module:
+        param = module["func"].parameters["param"]
+        assert str(param.annotation) == expected
+
+
 def test_class_level_imports() -> None:
     """Assert annotations using class-level imports are resolved."""
     with temporary_inspected_module(
@@ -168,6 +216,30 @@ def test_inspecting_class_instance() -> None:
         },
     ) as tmp_package:
         assert not tmp_package["foo.x"].is_alias
+
+
+def test_inheriting_self_from_parent_class() -> None:
+    """Inspect self only once when inheriting it from parent class."""
+    with temporary_inspected_module(
+        """
+        class A: ...
+        class B(A): ...
+
+        A.B = B
+        """,
+    ) as module:
+        assert "B" in module["A"].members
+        assert "B" in module["B"].all_members
+        # Continue indefinitely.
+        assert "B" in module["A.B"].all_members
+        assert "B" in module["B.B"].all_members
+        assert "B" in module["A.B.B"].all_members
+        assert "B" in module["B.B.B"].all_members
+        # All resolve to A.B.
+        assert module["A.B.B"].final_target is module["A.B"]
+        assert module["B.B.B"].final_target is module["A.B"]
+        assert module["A.B.B.B"].final_target is module["A.B"]
+        assert module["B.B.B.B"].final_target is module["A.B"]
 
 
 # YORE: EOL 3.12: Remove block.

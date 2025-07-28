@@ -197,7 +197,7 @@ class Docstring:
         return base
 
 
-class Parameter:
+class Parameter:  # noqa: PLW1641
     """This class represent a function parameter.
 
     See also: [`Parameters`][griffe.Parameters].
@@ -641,7 +641,7 @@ class Object(ObjectAliasMixin):
         while the values are the actual names of the objects (`from ... import REAL_NAME as ...`).
         """
 
-        self.exports: set[str] | list[str | ExprName] | None = None
+        self.exports: list[str | ExprName] | None = None
         """The names of the objects exported by this (module) object through the `__all__` variable.
 
         Exports can contain string (object names) or resolvable names,
@@ -1452,6 +1452,10 @@ class Alias(ObjectAliasMixin):
         """
         return self.final_target.lineno
 
+    @lineno.setter
+    def lineno(self, lineno: int | None) -> None:
+        self.final_target.lineno = lineno
+
     @property
     def endlineno(self) -> int | None:
         """The ending line number of the target object.
@@ -1459,6 +1463,10 @@ class Alias(ObjectAliasMixin):
         See also: [`lineno`][griffe.Alias.lineno].
         """
         return self.final_target.endlineno
+
+    @endlineno.setter
+    def endlineno(self, endlineno: int | None) -> None:
+        self.final_target.endlineno = endlineno
 
     @property
     def docstring(self) -> Docstring | None:
@@ -1498,7 +1506,7 @@ class Alias(ObjectAliasMixin):
         return self.final_target.imports
 
     @property
-    def exports(self) -> set[str] | list[str | ExprName] | None:
+    def exports(self) -> list[str | ExprName] | None:
         """The names of the objects exported by this (module) object through the `__all__` variable.
 
         Exports can contain string (object names) or resolvable names,
@@ -1860,6 +1868,10 @@ class Alias(ObjectAliasMixin):
         """The attribute or type alias value."""
         return cast("Union[Attribute, TypeAlias]", self.final_target).value
 
+    @value.setter
+    def value(self, value: str | Expr | None) -> None:
+        cast("Attribute", self.final_target).value = value
+
     @property
     def annotation(self) -> str | Expr | None:
         """The attribute type annotation."""
@@ -1881,6 +1893,18 @@ class Alias(ObjectAliasMixin):
     def mro(self) -> list[Class]:
         """Return a list of classes in order corresponding to Python's MRO."""
         return cast("Class", self.final_target).mro()
+
+    def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
+        """Construct the class/function signature.
+
+        Parameters:
+            return_type: Whether to include the return type in the signature.
+            name: The name of the class/function to use in the signature.
+
+        Returns:
+            A string representation of the class/function signature.
+        """
+        return cast("Union[Class, Function]", self.final_target).signature(return_type=return_type, name=name)
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
     # These methods and properties do not exist on targets,
@@ -1983,7 +2007,7 @@ class Alias(ObjectAliasMixin):
                 raise CyclicAliasError([self.target_path, *error.chain]) from error
         self._target = resolved
         if self.parent is not None:
-            self._target.aliases[self.path] = self  # type: ignore[union-attr]
+            self._target.aliases[self.path] = self
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
@@ -2204,6 +2228,23 @@ class Class(Object):
         except KeyError:
             return Parameters()
 
+    def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
+        """Construct the class signature.
+
+        Parameters:
+            return_type: Whether to include the return type in the signature.
+            name: The name of the class to use in the signature.
+
+        Returns:
+            A string representation of the class signature.
+        """
+        all_members = self.all_members
+        if "__init__" in all_members:
+            init = all_members["__init__"]
+            if isinstance(init, Function):
+                return init.signature(return_type=return_type, name=name or self.name)
+        return ""
+
     @property
     def resolved_bases(self) -> list[Object]:
         """Resolved class bases.
@@ -2315,9 +2356,25 @@ class Function(Object):
         Returns:
             The resolved name.
         """
-        # We're in an `__init__` method and name is a parameter name.
-        if self.parent and self.name == "__init__" and name in self.parameters:
-            return f"{self.parent.path}({name})"
+        # We're in an `__init__` method...
+        if self.parent and self.name == "__init__":
+            # ...and name is a parameter name: resolve to the parameter.
+            if name in self.parameters:
+                return f"{self.parent.path}({name})"
+
+            # Kind of a special case: we avoid resolving to instance-attributes from a function scope.
+            # See issue https://github.com/mkdocstrings/griffe/issues/367.
+            resolved = super().resolve(name)
+            try:
+                obj = self.modules_collection.get_member(resolved)
+            except KeyError:
+                return resolved
+            try:
+                if obj.is_attribute and "instance-attribute" in obj.labels:
+                    raise NameResolutionError(name)
+            except AliasResolutionError:
+                pass
+            return resolved
         return super().resolve(name)
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2336,6 +2393,80 @@ class Function(Object):
         base["parameters"] = [param.as_dict(**kwargs) for param in self.parameters]
         base["returns"] = self.returns
         return base
+
+    def signature(self, *, return_type: bool = True, name: str | None = None) -> str:
+        """Construct the function signature.
+
+        Parameters:
+            return_type: Whether to include the return type in the signature.
+            name: The name of the function to use in the signature.
+
+        Returns:
+            A string representation of the function signature.
+        """
+        signature = f"{name or self.name}("
+
+        has_pos_only = any(p.kind == ParameterKind.positional_only for p in self.parameters)
+        render_pos_only_separator = True
+        render_kw_only_separator = True
+
+        param_strs = []
+
+        for index, param in enumerate(self.parameters):
+            # Skip 'self' or 'cls' for class methods if it's the first parameter.
+            if index == 0 and param.name in ("self", "cls") and self.parent and self.parent.is_class:
+                continue
+
+            param_str = ""
+
+            # Handle parameter kind and separators.
+            if param.kind != ParameterKind.positional_only:
+                if has_pos_only and render_pos_only_separator:
+                    render_pos_only_separator = False
+                    param_strs.append("/")
+
+                if param.kind == ParameterKind.keyword_only and render_kw_only_separator:
+                    render_kw_only_separator = False
+                    param_strs.append("*")
+
+            # Handle variadic parameters.
+            if param.kind == ParameterKind.var_positional:
+                param_str = "*"
+                render_kw_only_separator = False
+            elif param.kind == ParameterKind.var_keyword:
+                param_str = "**"
+
+            # Add parameter name.
+            param_str += param.name
+
+            # Handle type annotation
+            if param.annotation is not None:
+                param_str += f": {param.annotation}"
+                equal = " = "  # Space around equal when annotation is present.
+            else:
+                equal = "="  # No space when no annotation.
+
+            # Handle default value.
+            if param.default is not None and param.kind not in {
+                ParameterKind.var_positional,
+                ParameterKind.var_keyword,
+            }:
+                param_str += f"{equal}{param.default}"
+
+            param_strs.append(param_str)
+
+        # If we have positional-only parameters but no '/' was added yet
+        if has_pos_only and render_pos_only_separator:
+            param_strs.append("/")
+
+        signature += ", ".join(param_strs)
+        signature += ")"
+
+        # Add return type if present.
+        if return_type and self.annotation:
+            signature += f" -> {self.annotation}"
+
+        return signature
 
 
 class Attribute(Object):

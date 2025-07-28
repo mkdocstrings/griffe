@@ -58,4 +58,4 @@ class MyDecorator(griffe.Extension):
                 ...  # Update the function attributes.
 ```
 
-Now all that is left to do is to actually write the code that updates the function according to what the decorator is doing. We could update the function's docstring, or its return type, or its parameters: it all depends on your decorator and what it does to the objects it decorates.
+Now all that is left to do is to actually write the code that updates the function according to what the decorator is doing. We could update the function's docstring, or its return type, or its parameters: it all depends on your decorator and what it does to the objects it decorates. Check out the [API reference for function objects][griffe.Function] to see what data this object stores.

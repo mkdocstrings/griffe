@@ -5,7 +5,7 @@
 [![pypi version](https://img.shields.io/pypi/v/griffe.svg)](https://pypi.org/project/griffe/)
 [![gitter](https://badges.gitter.im/join%20chat.svg)](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im)
 
-<img src="logo.svg" alt="Griffe logo, created by François Rozet &lt;francois.rozet@outlook.com&gt;" style="float: right; max-width: 200px; margin: 0 15px;">
+<img src="https://raw.githubusercontent.com/mkdocstrings/griffe/main/logo.svg" alt="Griffe logo, created by François Rozet" width="200" align="right">
 
 Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API.
 
@@ -73,7 +73,7 @@ Parameter kind was changed:
 ```
 
 It's also possible to directly **check packages from PyPI.org**
-(or other indexes configured through `PIP_INDEX_URL`). 
+(or other indexes configured through `PIP_INDEX_URL`).
 This feature is [available to sponsors only](https://mkdocstrings.github.io/griffe/insiders/)
 and requires that you install Griffe with the `pypi` extra:
 

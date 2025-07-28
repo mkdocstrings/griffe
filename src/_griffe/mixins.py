@@ -242,7 +242,7 @@ class SerializationMixin:
         Returns:
             A JSON string.
         """
-        from _griffe.encoders import JSONEncoder  # Avoid circular import.
+        from _griffe.encoders import JSONEncoder  # Avoid circular import.  # noqa: PLC0415
 
         return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
 
@@ -261,7 +261,7 @@ class SerializationMixin:
             TypeError: When the json_string does not represent and object
                 of the class from which this classmethod has been called.
         """
-        from _griffe.encoders import json_decoder  # Avoid circular import.
+        from _griffe.encoders import json_decoder  # Avoid circular import.  # noqa: PLC0415
 
         kwargs.setdefault("object_hook", json_decoder)
         obj = json.loads(json_string, **kwargs)

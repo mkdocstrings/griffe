@@ -489,3 +489,33 @@ def test_not_calling_package_loaded_hook_on_something_else_than_package() -> Non
         alias: Alias = loader.load("pkg.L")  # type: ignore[assignment]
         assert alias.is_alias
         assert not alias.resolved
+
+
+def test_not_overriding_module_with_alias_from_wildcard_import() -> None:
+    """Do not override a submodule with an imported object with the same name."""
+    with temporary_visited_package(
+        "pkg",
+        {
+            "__init__.py": "",
+            "a/__init__.py": "from .m import *",
+            "a/m.py": "def m(): pass",
+            "b/__init__.py": "from .m import *",
+            "b/m.py": "from pkg.a.m import m",
+        },
+        resolve_aliases=True,
+    ) as pkg:
+        assert pkg["a.m"].is_module
+        assert pkg["a.m.m"].is_function
+        assert pkg["b.m"].is_module
+        assert pkg["b.m.m"].is_alias
+
+
+def test_loading_utf8_with_bom_files(tmp_path: Path) -> None:
+    """Check that the loader can handle UTF-8 files with BOM."""
+    pkg = tmp_path / "pkg"
+    pkg.mkdir()
+    init_file = pkg / "__init__.py"
+    init_file.write_text("\ufeff# This is a UTF-8 file with BOM\n\ndef func() -> int: ...", encoding="utf-8")
+    loader = GriffeLoader(search_paths=[tmp_path])
+    package = loader.load("pkg")
+    assert "func" in package.members  # Just checking all went well, no SyntaxError exceptions raised.

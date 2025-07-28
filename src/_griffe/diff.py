@@ -145,19 +145,23 @@ class Breakage:
             return self.obj.alias_lineno or 0  # type: ignore[attr-defined]
         return self.obj.lineno or 0
 
-    def _format_location(self) -> str:
-        return f"{Style.BRIGHT}{self._location}{Style.RESET_ALL}:{self._lineno}"
+    def _format_location(self, *, colors: bool = True) -> str:
+        bright = Style.BRIGHT if colors else ""
+        reset = Style.RESET_ALL if colors else ""
+        return f"{bright}{self._location}{reset}:{self._lineno}"
 
-    def _format_title(self) -> str:
+    def _format_title(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return self._relative_path
 
-    def _format_kind(self) -> str:
-        return f"{Fore.YELLOW}{self.kind.value}{Fore.RESET}"
+    def _format_kind(self, *, colors: bool = True) -> str:
+        yellow = Fore.YELLOW if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{yellow}{self.kind.value}{reset}"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return str(self.old_value)
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return str(self.new_value)
 
     def _explain_oneline(self) -> str:
@@ -196,10 +200,10 @@ class Breakage:
 
     def _explain_markdown(self) -> str:
         explanation = f"- `{self._relative_path}`: *{self.kind.value}*"
-        old = self._format_old_value()
+        old = self._format_old_value(colors=False)
         if old and old != "unset":
             old = f"`{old}`"
-        new = self._format_new_value()
+        new = self._format_new_value(colors=False)
         if new and new != "unset":
             new = f"`{new}`"
         if old and new:
@@ -216,12 +220,12 @@ class Breakage:
 
     def _explain_github(self) -> str:
         location = f"file={self._location},line={self._lineno}"
-        title = f"title={self._format_title()}"
+        title = f"title={self._format_title(colors=False)}"
         explanation = f"::warning {location},{title}::{self.kind.value}"
-        old = self._format_old_value()
+        old = self._format_old_value(colors=False)
         if old and old != "unset":
             old = f"`{old}`"
-        new = self._format_new_value()
+        new = self._format_new_value(colors=False)
         if new and new != "unset":
             new = f"`{new}`"
         if old and new:
@@ -246,13 +250,15 @@ class ParameterMovedBreakage(Breakage):
     def _relative_path(self) -> str:
         return f"{super()._relative_path}({self.old_value.name})"
 
-    def _format_title(self) -> str:
-        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+    def _format_title(self, *, colors: bool = True) -> str:
+        blue = Fore.BLUE if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
 
@@ -265,13 +271,15 @@ class ParameterRemovedBreakage(Breakage):
     def _relative_path(self) -> str:
         return f"{super()._relative_path}({self.old_value.name})"
 
-    def _format_title(self) -> str:
-        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+    def _format_title(self, *, colors: bool = True) -> str:
+        blue = Fore.BLUE if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
 
@@ -284,13 +292,15 @@ class ParameterChangedKindBreakage(Breakage):
     def _relative_path(self) -> str:
         return f"{super()._relative_path}({self.old_value.name})"
 
-    def _format_title(self) -> str:
-        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+    def _format_title(self, *, colors: bool = True) -> str:
+        blue = Fore.BLUE if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return str(self.old_value.kind.value)
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return str(self.new_value.kind.value)
 
 
@@ -303,13 +313,15 @@ class ParameterChangedDefaultBreakage(Breakage):
     def _relative_path(self) -> str:
         return f"{super()._relative_path}({self.old_value.name})"
 
-    def _format_title(self) -> str:
-        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+    def _format_title(self, *, colors: bool = True) -> str:
+        blue = Fore.BLUE if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return str(self.old_value.default)
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return str(self.new_value.default)
 
 
@@ -322,13 +334,15 @@ class ParameterChangedRequiredBreakage(Breakage):
     def _relative_path(self) -> str:
         return f"{super()._relative_path}({self.old_value.name})"
 
-    def _format_title(self) -> str:
-        return f"{super()._relative_path}({Fore.BLUE}{self.old_value.name}{Fore.RESET})"
+    def _format_title(self, *, colors: bool = True) -> str:
+        blue = Fore.BLUE if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
 
@@ -341,13 +355,15 @@ class ParameterAddedRequiredBreakage(Breakage):
     def _relative_path(self) -> str:
         return f"{super()._relative_path}({self.new_value.name})"
 
-    def _format_title(self) -> str:
-        return f"{super()._relative_path}({Fore.BLUE}{self.new_value.name}{Fore.RESET})"
+    def _format_title(self, *, colors: bool = True) -> str:
+        blue = Fore.BLUE if colors else ""
+        reset = Fore.RESET if colors else ""
+        return f"{super()._relative_path}({blue}{self.new_value.name}{reset})"
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
 
@@ -362,10 +378,10 @@ class ObjectRemovedBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.OBJECT_REMOVED
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return ""
 
 
@@ -374,10 +390,10 @@ class ObjectChangedKindBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.OBJECT_CHANGED_KIND
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return self.old_value.value
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return self.new_value.value
 
 
@@ -398,10 +414,10 @@ class ClassRemovedBaseBreakage(Breakage):
 
     kind: BreakageKind = BreakageKind.CLASS_REMOVED_BASE
 
-    def _format_old_value(self) -> str:
+    def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return "[" + ", ".join(base.canonical_path for base in self.old_value) + "]"
 
-    def _format_new_value(self) -> str:
+    def _format_new_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return "[" + ", ".join(base.canonical_path for base in self.new_value) + "]"
 
 

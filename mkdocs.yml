@@ -219,8 +219,7 @@ plugins:
     handlers:
       python:
         inventories:
-        # YORE: BOL 3.13: Replace `3.13` with `3` within line.
-        - url: https://docs.python.org/3.13/objects.inv
+        - url: https://docs.python.org/3/objects.inv
           domains: [std, py]
         - https://typing-extensions.readthedocs.io/en/latest/objects.inv
         paths: [src, scripts, .]
@@ -248,11 +247,12 @@ plugins:
           signature_crossrefs: true
           summary: true
 - llmstxt:
-    files:
-    - output: llms-full.txt
-      inputs:
+    full_output: llms-full.txt
+    sections:
+      Usage:
       - index.md
-      - reference/**.md
+      API:
+      - reference/api.md
 - git-revision-date-localized:
     enabled: !ENV [DEPLOY, false]
     enable_creation_date: true

@@ -37,6 +37,8 @@ def _merge_function_stubs(function: Function, stubs: Function) -> None:
 def _merge_attribute_stubs(attribute: Attribute, stubs: Attribute) -> None:
     _merge_stubs_docstring(attribute, stubs)
     attribute.annotation = stubs.annotation
+    if stubs.value not in (None, "..."):
+        attribute.value = stubs.value
 
 
 def _merge_type_alias_stubs(type_alias: TypeAlias, stubs: TypeAlias) -> None:
@@ -65,6 +67,10 @@ def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
 def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
     # Merge imports to later know if objects coming from the stubs were imported.
     obj.imports.update(stubs.imports)
+
+    # Override exports to later know if objects coming from the stubs were exported.
+    if stubs.exports is not None:
+        obj.exports = stubs.exports
 
     for member_name, stub_member in stubs.members.items():
         if member_name in obj.members:

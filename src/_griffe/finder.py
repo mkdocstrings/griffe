@@ -425,7 +425,7 @@ _re_import_line = re.compile(r"^import[ \t]+\w+$")
 # TODO: For more robustness, we should load and minify the AST
 # to search for particular call statements.
 def _is_pkg_style_namespace(init_module: Path) -> bool:
-    code = init_module.read_text(encoding="utf8")
+    code = init_module.read_text(encoding="utf-8-sig")
     return bool(_re_pkgresources.search(code) or _re_pkgutil.search(code))
 
 
@@ -455,7 +455,7 @@ def _handle_pth_file(path: Path) -> list[_SP]:
         # It turns out PyTorch recommends its users to use `.pth` as the extension
         # when saving models on the disk. These model files are not encoded in UTF8.
         # If UTF8 decoding fails, we skip the .pth file.
-        text = path.read_text(encoding="utf8")
+        text = path.read_text(encoding="utf-8-sig")
     except UnicodeDecodeError:
         return directories
     for line in text.strip().replace(";", "\n").splitlines(keepends=False):
@@ -476,7 +476,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
         # And how 'scikit-build-core' writes these files:
         # example line: `install({'griffe': '/media/data/dev/griffe/src/griffe/__init__.py'}, {'cmake_example': ...}, None, False, True)`.
         try:
-            editable_lines = path.read_text(encoding="utf8").strip().splitlines(keepends=False)
+            editable_lines = path.read_text(encoding="utf-8-sig").strip().splitlines(keepends=False)
         except FileNotFoundError as error:
             raise UnhandledEditableModuleError(path) from error
         new_path = Path(editable_lines[-1].split("'")[3])
@@ -495,8 +495,8 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 target = node.target
             else:
                 continue
-            if isinstance(target, ast.Name) and target.id == "MAPPING" and isinstance(node.value, ast.Dict):  # type: ignore[attr-defined]
-                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]  # type: ignore[attr-defined]
+            if isinstance(target, ast.Name) and target.id == "MAPPING" and isinstance(node.value, ast.Dict):
+                return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]  # type: ignore[arg-type]
     if _match_pattern(path.name, _editable_meson_python_patterns):
         # Support for how 'meson-python' writes these files:
         # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.
@@ -510,7 +510,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 and node.value.func.id == "install"
                 and isinstance(node.value.args[1], ast.Constant)
             ):
-                build_path = Path(node.value.args[1].value, "src")
+                build_path = Path(node.value.args[1].value, "src")  # type: ignore[arg-type]
                 # NOTE: What if there are multiple packages?
                 pkg_name = next(build_path.iterdir()).name
                 return [_SP(build_path, always_scan_for=pkg_name)]

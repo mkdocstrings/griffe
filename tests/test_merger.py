@@ -47,3 +47,29 @@ def test_merge_imports() -> None:
         },
     ) as pkg:
         assert set(pkg["mod"].imports) == {"abc", "collections"}
+
+
+def test_override_exports() -> None:
+    """Assert that exports are overridden too (like imports are merged)."""
+    with temporary_visited_package(
+        "package",
+        {
+            "__init__.py": "import dynamic_all\n__all__ = dynamic_all()",
+            "__init__.pyi": "from ._hello import hello\n__all__ = ['hello']",
+            "_hello.py": "def hello() -> None:\n    '''Say hello.'''",
+        },
+    ) as pkg:
+        assert pkg.exports == ["hello"]
+
+
+def test_merge_attribute_values() -> None:
+    """Assert that attribute values are merged correctly."""
+    with temporary_visited_package(
+        "package",
+        {
+            "__init__.py": "import dynamic_all\n__all__ = dynamic_all()",
+            "__init__.pyi": "from ._hello import hello\n__all__ = ['hello']",
+            "_hello.py": "def hello() -> None:\n    '''Say hello.'''",
+        },
+    ) as pkg:
+        assert str(pkg["__all__"].value) == "['hello']"

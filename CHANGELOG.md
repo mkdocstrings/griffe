@@ -5,6 +5,89 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.8.0](https://github.com/mkdocstrings/griffe/releases/tag/1.8.0) - 2025-07-23
+
+<small>[Compare with 1.7.3](https://github.com/mkdocstrings/griffe/compare/1.7.3...1.8.0)</small>
+
+### Features
+
+- Add method to functions and classes to build and return a stringified signature ([8ef1486](https://github.com/mkdocstrings/griffe/commit/8ef1486e9b1f0872cca3b1cd2419144b702a0c1e) by ISOREX). [Discussion-376](https://github.com/mkdocstrings/griffe/discussions/376), [PR-381](https://github.com/mkdocstrings/griffe/pull/381), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Enhance Sphinx-style parameter parsing to handle invalid type info ([cbce5a2](https://github.com/mkdocstrings/griffe/commit/cbce5a2c2429dc92e15ac3a8fe53db55825ebd6c) by Edouard Choinière). [PR-396](https://github.com/mkdocstrings/griffe/pull/396)
+- Parse Sphinx parameter types as expressions ([70dda21](https://github.com/mkdocstrings/griffe/commit/70dda21d15dfdf5807dde370fb636d69eea6272b) by Edouard Choinière). [PR-392](https://github.com/mkdocstrings/griffe/pull/392)
+
+### Bug Fixes
+
+- Avoid SyntaxError when loading modules encoded in UTF8 with BOM ([b346190](https://github.com/mkdocstrings/griffe/commit/b3461901ae08204ea6184025a006f5d34152d30d) by John Hennig). [Issue-386](https://github.com/mkdocstrings/griffe/issues/386), [PR-387](https://github.com/mkdocstrings/griffe/pull/387), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Correctly parenthesize expressions ([a8c5585](https://github.com/mkdocstrings/griffe/commit/a8c5585c8a45a4d6b67bd5dc36d7054478d3873d) by Abraham Cheung). [PR-389](https://github.com/mkdocstrings/griffe/pull/389), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+
+### Code Refactoring
+
+- Be more consistent regarding not overriding submodules with aliases ([be1963c](https://github.com/mkdocstrings/griffe/commit/be1963cca6d7d49bcc41fdf05570b1bfba934330) by Timothée Mazzucotelli).
+- Allow `ExprName.parent` to be of type `griffe.Function` ([acafbd8](https://github.com/mkdocstrings/griffe/commit/acafbd8b6d97fe8370f3eb730e2154e19b2c1a54) by Edouard Choinière). [Issue-391](https://github.com/mkdocstrings/griffe/discussions/391), [PR-395](https://github.com/mkdocstrings/griffe/pull/395)
+- Normalize labels for attributes ([1b376cd](https://github.com/mkdocstrings/griffe/commit/1b376cd39ce99730910d8344abbfd5c53ce28300) by Timothée Mazzucotelli).
+
+## [1.7.3](https://github.com/mkdocstrings/griffe/releases/tag/1.7.3) - 2025-04-23
+
+<small>[Compare with 1.7.2](https://github.com/mkdocstrings/griffe/compare/1.7.2...1.7.3)</small>
+
+### Bug Fixes
+
+- Don't output color codes with GitHub format ([2666399](https://github.com/mkdocstrings/griffe/commit/2666399a2ca34644cabc265f803754ca8aef6aa7) by Timothée Mazzucotelli). [Issue-378](https://github.com/mkdocstrings/griffe/issues/378)
+
+### Code Refactoring
+
+- Log a debug message when inspecting a module raises an error ([4e73b3e](https://github.com/mkdocstrings/griffe/commit/4e73b3e4d85018f5523aa907246dad760723eb3c) by Timothée Mazzucotelli). [Issue-mkdocstrings-753](https://github.com/mkdocstrings/mkdocstrings/issues/753)
+
+## [1.7.2](https://github.com/mkdocstrings/griffe/releases/tag/1.7.2) - 2025-04-01
+
+<small>[Compare with 1.7.1](https://github.com/mkdocstrings/griffe/compare/1.7.1...1.7.2)</small>
+
+### Bug Fixes
+
+- Override exports when merging module stubs ([94f23e7](https://github.com/mkdocstrings/griffe/commit/94f23e72e456310d37765ea2eecf29cf655d34d3) by Timothée Mazzucotelli). [Issue-mkdocstrings-751](https://github.com/mkdocstrings/mkdocstrings/issues/751)
+- Override attribute values when merging stubs ([b940c51](https://github.com/mkdocstrings/griffe/commit/b940c51ba729ce39465bd92a40b0f5464d7d346c) by Timothée Mazzucotelli). [Issue-mkdocstrings-751](https://github.com/mkdocstrings/mkdocstrings/issues/751)
+
+## [1.7.1](https://github.com/mkdocstrings/griffe/releases/tag/1.7.1) - 2025-03-29
+
+<small>[Compare with 1.7.0](https://github.com/mkdocstrings/griffe/compare/1.7.0...1.7.1)</small>
+
+### Bug Fixes
+
+- Never raise alias resolution error when resolving a name from an `__init__` method scope ([949ff7d](https://github.com/mkdocstrings/griffe/commit/949ff7dd3916a96f52068ceefebeed9c2ac16cee) by Timothée Mazzucotelli). [Issue-374](https://github.com/mkdocstrings/griffe/issues/374)
+
+## [1.7.0](https://github.com/mkdocstrings/griffe/releases/tag/1.7.0) - 2025-03-27
+
+<small>[Compare with 1.6.3](https://github.com/mkdocstrings/griffe/compare/1.6.3...1.7.0)</small>
+
+### Dependencies
+
+- Remove dependency to `astunparse` (Python 3.8-) ([fd052b1](https://github.com/mkdocstrings/griffe/commit/fd052b1e6079ae1883ac3db43708b5cc17ae5cf6) by Timothée Mazzucotelli).
+
+### Features
+
+- Add `warnings` parameter to docstring parsers, allowing to disable all warning logs when parsing docstrings ([7ac01ba](https://github.com/mkdocstrings/griffe/commit/7ac01ba4da62176119fcf249c338eb3110d15513) by Timothée Mazzucotelli). [Issue-293](https://github.com/mkdocstrings/griffe/issues/293)
+
+## [1.6.3](https://github.com/mkdocstrings/griffe/releases/tag/1.6.3) - 2025-03-26
+
+<small>[Compare with 1.6.2](https://github.com/mkdocstrings/griffe/compare/1.6.2...1.6.3)</small>
+
+### Bug Fixes
+
+- Allow setting `lineno`, `endlineno` and `value` through aliases ([d038eaa](https://github.com/mkdocstrings/griffe/commit/d038eaa1eb96cab7e70a4ceebacd4246f6a1cfb4) by Timothée Mazzucotelli). [Issue-griffe-pydantic-29](https://github.com/mkdocstrings/griffe-pydantic/issues/29)
+- Don't resolve attribute values to attribute with same name ([25cc58f](https://github.com/mkdocstrings/griffe/commit/25cc58fae55b6b34b2938fdce6acc80ea0e78aff) by Timothée Mazzucotelli). [Issue-367](https://github.com/mkdocstrings/griffe/issues/367)
+
+### Code Refactoring
+
+- Improve objects conversion to annotation during dynamic analysis ([716d27b](https://github.com/mkdocstrings/griffe/commit/716d27b0c9bdd798d35a23d999431b62b0b647da) by Timothée Mazzucotelli). [Issue-369](https://github.com/mkdocstrings/griffe/issues/369)
+
+## [1.6.2](https://github.com/mkdocstrings/griffe/releases/tag/1.6.2) - 2025-03-20
+
+<small>[Compare with 1.6.1](https://github.com/mkdocstrings/griffe/compare/1.6.1...1.6.2)</small>
+
+### Code Refactoring
+
+- Maintain exports order (`__all__`) ([ded36bf](https://github.com/mkdocstrings/griffe/commit/ded36bf94ed4b8b83797e9da4a3d034d0533a5bd) by Timothée Mazzucotelli).
+
 ## [1.6.1](https://github.com/mkdocstrings/griffe/releases/tag/1.6.1) - 2025-03-18
 
 <small>[Compare with 1.6.0](https://github.com/mkdocstrings/griffe/compare/1.6.0...1.6.1)</small>

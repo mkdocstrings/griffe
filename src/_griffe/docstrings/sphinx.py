@@ -22,7 +22,7 @@ from _griffe.docstrings.models import (
     DocstringSectionReturns,
     DocstringSectionText,
 )
-from _griffe.docstrings.utils import docstring_warning
+from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
 
 if TYPE_CHECKING:
     from _griffe.expressions import Expr
@@ -75,7 +75,7 @@ class _ParsedValues:
 
     description: list[str] = field(default_factory=list)
     parameters: dict[str, DocstringParameter] = field(default_factory=dict)
-    param_types: dict[str, str] = field(default_factory=dict)
+    param_types: dict[str, str | Expr] = field(default_factory=dict)
     attributes: dict[str, DocstringAttribute] = field(default_factory=dict)
     attribute_types: dict[str, str] = field(default_factory=dict)
     exceptions: list[DocstringRaise] = field(default_factory=list)
@@ -83,12 +83,19 @@ class _ParsedValues:
     return_type: str | None = None
 
 
-def parse_sphinx(docstring: Docstring, *, warn_unknown_params: bool = True, **options: Any) -> list[DocstringSection]:
+def parse_sphinx(
+    docstring: Docstring,
+    *,
+    warn_unknown_params: bool = True,
+    warnings: bool = True,
+    **options: Any,
+) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
 
     Parameters:
         docstring: The docstring to parse.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        warnings: Whether to log warnings at all.
         **options: Additional parsing options.
 
     Returns:
@@ -98,6 +105,7 @@ def parse_sphinx(docstring: Docstring, *, warn_unknown_params: bool = True, **op
 
     options = {
         "warn_unknown_params": warn_unknown_params,
+        "warnings": warnings,
         **options,
     }
 
@@ -125,9 +133,10 @@ def _read_parameter(
     parsed_values: _ParsedValues,
     *,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset)
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -136,17 +145,28 @@ def _read_parameter(
         # no type info
         name = parsed_directive.directive_parts[1]
     elif len(parsed_directive.directive_parts) == 3:  # noqa: PLR2004
-        directive_type = parsed_directive.directive_parts[1]
+        directive_type = parse_docstring_annotation(
+            parsed_directive.directive_parts[1],
+            docstring,
+        )
         name = parsed_directive.directive_parts[2]
+    elif len(parsed_directive.directive_parts) > 3:  # noqa: PLR2004
+        # Ignoring type info, only a type with a single word is valid
+        # https://www.sphinx-doc.org/en/master/usage/domains/python.html#info-field-lists
+        name = parsed_directive.directive_parts[-1]
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
     else:
-        docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
         return parsed_directive.next_index
 
     if name in parsed_values.parameters:
-        docstring_warning(docstring, 0, f"Duplicate parameter entry for '{name}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Duplicate parameter entry for '{name}'")
         return parsed_directive.next_index
 
-    if warn_unknown_params:
+    if warnings and warn_unknown_params:
         with suppress(AttributeError):  # For Parameters sections in objects without parameters.
             params = docstring.parent.parameters  # type: ignore[union-attr]
             if name not in params:
@@ -157,7 +177,7 @@ def _read_parameter(
                         break
                 docstring_warning(docstring, 0, message)
 
-    annotation = _determine_param_annotation(docstring, name, directive_type, parsed_values)
+    annotation = _determine_param_annotation(docstring, name, directive_type, parsed_values, warnings=warnings)
     default = _determine_param_default(docstring, name)
 
     parsed_values.parameters[name] = DocstringParameter(
@@ -180,8 +200,10 @@ def _determine_param_default(docstring: Docstring, name: str) -> str | None:
 def _determine_param_annotation(
     docstring: Docstring,
     name: str,
-    directive_type: str | None,
+    directive_type: str | Expr | None,
     parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
 ) -> Any:
     # Annotation precedence:
     # - in-line directive type
@@ -197,14 +219,15 @@ def _determine_param_annotation(
     if directive_type is not None:
         annotation = directive_type
 
-    if directive_type is not None and parsed_param_type is not None:
+    if warnings and directive_type is not None and parsed_param_type is not None:
         docstring_warning(docstring, 0, f"Duplicate parameter information for '{name}'")
 
     if annotation is None:
         try:
             annotation = docstring.parent.parameters[name.lstrip()].annotation  # type: ignore[union-attr]
         except (AttributeError, KeyError):
-            docstring_warning(docstring, 0, f"No matching parameter for '{name}'")
+            if warnings:
+                docstring_warning(docstring, 0, f"No matching parameter for '{name}'")
 
     return annotation
 
@@ -213,17 +236,21 @@ def _read_parameter_type(
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset)
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
-    param_type = _consolidate_descriptive_type(parsed_directive.value.strip())
+    param_type_str = _consolidate_descriptive_type(parsed_directive.value.strip())
+    param_type = parse_docstring_annotation(param_type_str, docstring)
 
     if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         param_name = parsed_directive.directive_parts[1]
     else:
-        docstring_warning(docstring, 0, f"Failed to get parameter name from '{parsed_directive.line}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to get parameter name from '{parsed_directive.line}'")
         return parsed_directive.next_index
 
     parsed_values.param_types[param_name] = param_type
@@ -240,16 +267,19 @@ def _read_attribute(
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset)
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
     if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         name = parsed_directive.directive_parts[1]
     else:
-        docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to parse field directive from '{parsed_directive.line}'")
         return parsed_directive.next_index
 
     annotation: str | Expr | None = None
@@ -268,7 +298,8 @@ def _read_attribute(
             # Use subscript syntax to fetch annotation from inherited members too.
             annotation = docstring.parent[name].annotation  # type: ignore[index]
     if name in parsed_values.attributes:
-        docstring_warning(docstring, 0, f"Duplicate attribute entry for '{name}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Duplicate attribute entry for '{name}'")
     else:
         parsed_values.attributes[name] = DocstringAttribute(
             name=name,
@@ -283,9 +314,11 @@ def _read_attribute_type(
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset)
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
     attribute_type = _consolidate_descriptive_type(parsed_directive.value.strip())
@@ -293,7 +326,8 @@ def _read_attribute_type(
     if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         attribute_name = parsed_directive.directive_parts[1]
     else:
-        docstring_warning(docstring, 0, f"Failed to get attribute name from '{parsed_directive.line}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to get attribute name from '{parsed_directive.line}'")
         return parsed_directive.next_index
 
     parsed_values.attribute_types[attribute_name] = attribute_type
@@ -301,7 +335,7 @@ def _read_attribute_type(
     if attribute is not None:
         if attribute.annotation is None:
             attribute.annotation = attribute_type
-        else:
+        elif warnings:
             docstring_warning(docstring, 0, f"Duplicate attribute information for '{attribute_name}'")
     return parsed_directive.next_index
 
@@ -310,23 +344,32 @@ def _read_exception(
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset)
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
     if len(parsed_directive.directive_parts) == 2:  # noqa: PLR2004
         ex_type = parsed_directive.directive_parts[1]
         parsed_values.exceptions.append(DocstringRaise(annotation=ex_type, description=parsed_directive.value))
-    else:
+    elif warnings:
         docstring_warning(docstring, 0, f"Failed to parse exception directive from '{parsed_directive.line}'")
 
     return parsed_directive.next_index
 
 
-def _read_return(docstring: Docstring, offset: int, parsed_values: _ParsedValues, **options: Any) -> int:  # noqa: ARG001
-    parsed_directive = _parse_directive(docstring, offset)
+def _read_return(
+    docstring: Docstring,
+    offset: int,
+    parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
+    **options: Any,  # noqa: ARG001
+) -> int:
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -341,7 +384,8 @@ def _read_return(docstring: Docstring, offset: int, parsed_values: _ParsedValues
         try:
             annotation = docstring.parent.annotation  # type: ignore[union-attr]
         except AttributeError:
-            docstring_warning(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
+            if warnings:
+                docstring_warning(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
             annotation = None
 
     # TODO: maybe support names
@@ -354,9 +398,11 @@ def _read_return_type(
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
+    *,
+    warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset)
+    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -385,12 +431,13 @@ def _parsed_values_to_sections(parsed_values: _ParsedValues) -> list[DocstringSe
     return result
 
 
-def _parse_directive(docstring: Docstring, offset: int) -> _ParsedDirective:
+def _parse_directive(docstring: Docstring, offset: int, *, warnings: bool = True) -> _ParsedDirective:
     line, next_index = _consolidate_continuation_lines(docstring.lines, offset)
     try:
         _, directive, value = line.split(":", 2)
     except ValueError:
-        docstring_warning(docstring, 0, f"Failed to get ':directive: value' pair from '{line}'")
+        if warnings:
+            docstring_warning(docstring, 0, f"Failed to get ':directive: value' pair from '{line}'")
         return _ParsedDirective(line, next_index, [], "", invalid=True)
 
     value = value.strip()
