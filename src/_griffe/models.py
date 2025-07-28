@@ -410,7 +410,7 @@ class TypeParameter:
         """The type parameter bound or constraints."""
 
         if constraints:
-            self.constraints = constraints  # type: ignore[assignment]
+            self.constraints = constraints
         else:
             self.bound = bound
 
