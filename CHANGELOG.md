@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.10.0](https://github.com/mkdocstrings/griffe/releases/tag/1.10.0) - 2025-08-06
+
+<small>[Compare with 1.9.0](https://github.com/mkdocstrings/griffe/compare/1.9.0...1.10.0)</small>
+
+### Features
+
+- Allow adding `sys.path` to search paths when temporary visiting/inspecting package ([42983bc](https://github.com/mkdocstrings/griffe/commit/42983bc843fd9a63883e9c50ad5043b0f737b450) by Timothée Mazzucotelli).
+
 ## [1.9.0](https://github.com/mkdocstrings/griffe/releases/tag/1.9.0) - 2025-07-28
 
 <small>[Compare with 1.8.0](https://github.com/mkdocstrings/griffe/compare/1.8.0...1.9.0)</small>
