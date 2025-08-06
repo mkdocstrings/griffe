@@ -66274,14 +66274,14 @@
           "htree": {
             "decorators": [],
             "docstring": {
-              "endlineno": 388,
-              "lineno": 378,
+              "endlineno": 394,
+              "lineno": 384,
               "value": "Link objects together, horizontally.\n\nParameters:\n    *objects: A sequence of objects. All objects starting at the second become members of the first.\n\nRaises:\n    ValueError: When no objects are provided.\n\nReturns:\n    The first given object, with all the other objects as members of it."
             },
-            "endlineno": 394,
+            "endlineno": 400,
             "kind": "function",
             "labels": [],
-            "lineno": 377,
+            "lineno": 383,
             "members": {},
             "name": "htree",
             "parameters": [
@@ -66326,14 +66326,14 @@
           "module_vtree": {
             "decorators": [],
             "docstring": {
-              "endlineno": 410,
-              "lineno": 398,
+              "endlineno": 416,
+              "lineno": 404,
               "value": "Link objects together, vertically.\n\nParameters:\n    path: The complete module path, like `\"a.b.c.d\"`.\n    leaf_package: Whether the deepest module should also be a package.\n    return_leaf: Whether to return the leaf instead of the root.\n\nRaises:\n    ValueError: When no objects are provided.\n\nReturns:\n    The top or leaf module."
             },
-            "endlineno": 416,
+            "endlineno": 422,
             "kind": "function",
             "labels": [],
-            "lineno": 397,
+            "lineno": 403,
             "members": {},
             "name": "module_vtree",
             "parameters": [
@@ -66391,8 +66391,8 @@
           "temporary_inspected_module": {
             "decorators": [
               {
-                "endlineno": 302,
-                "lineno": 302,
+                "endlineno": 308,
+                "lineno": 308,
                 "value": {
                   "cls": "ExprName",
                   "member": null,
@@ -66401,14 +66401,14 @@
               }
             ],
             "docstring": {
-              "endlineno": 330,
-              "lineno": 315,
+              "endlineno": 336,
+              "lineno": 321,
               "value": "Create and inspect a temporary module with the given code.\n\nParameters:\n    code: The code of the module.\n    module_name: The name of the temporary module.\n    import_paths: Paths to import the module from.\n    extensions: The extensions to use when visiting the AST.\n    parent: The optional parent of this module.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n\nYields:\n    The inspected module."
             },
-            "endlineno": 351,
+            "endlineno": 357,
             "kind": "function",
             "labels": [],
-            "lineno": 302,
+            "lineno": 308,
             "members": {},
             "name": "temporary_inspected_module",
             "parameters": [
@@ -66591,8 +66591,8 @@
           "temporary_inspected_package": {
             "decorators": [
               {
-                "endlineno": 185,
-                "lineno": 185,
+                "endlineno": 188,
+                "lineno": 188,
                 "value": {
                   "cls": "ExprName",
                   "member": null,
@@ -66601,14 +66601,14 @@
               }
             ],
             "docstring": {
-              "endlineno": 231,
-              "lineno": 203,
-              "value": "Create and inspect a temporary package.\n\nParameters:\n    package: The package name. Example: `\"a\"` gives\n        a package named `a`, while `\"a/b\"` gives a namespace package\n        named `a` with a package inside named `b`.\n        If `init` is false, then `b` is also a namespace package.\n    modules: Additional modules to create in the package.\n        If a list, simply touch the files: `[\"b.py\", \"c/d.py\", \"e/f\"]`.\n        If a dict, keys are the file names and values their contents:\n        `{\"b.py\": \"b = 1\", \"c/d.py\": \"print('hey from c')\"}`.\n    init: Whether to create an `__init__` module in the top package.\n    inits: Whether to create `__init__` modules in subpackages.\n    extensions: The extensions to use.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules.\n    store_source: Whether to store code source in the lines collection.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nYields:\n    A module."
+              "endlineno": 236,
+              "lineno": 207,
+              "value": "Create and inspect a temporary package.\n\nParameters:\n    package: The package name. Example: `\"a\"` gives\n        a package named `a`, while `\"a/b\"` gives a namespace package\n        named `a` with a package inside named `b`.\n        If `init` is false, then `b` is also a namespace package.\n    modules: Additional modules to create in the package.\n        If a list, simply touch the files: `[\"b.py\", \"c/d.py\", \"e/f\"]`.\n        If a dict, keys are the file names and values their contents:\n        `{\"b.py\": \"b = 1\", \"c/d.py\": \"print('hey from c')\"}`.\n    init: Whether to create an `__init__` module in the top package.\n    inits: Whether to create `__init__` modules in subpackages.\n    extensions: The extensions to use.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules.\n    store_source: Whether to store code source in the lines collection.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n    search_sys_path: Whether to search the system paths for the package.\n\nYields:\n    A module."
             },
-            "endlineno": 253,
+            "endlineno": 259,
             "kind": "function",
             "labels": [],
-            "lineno": 185,
+            "lineno": 188,
             "members": {},
             "name": "temporary_inspected_package",
             "parameters": [
@@ -66850,6 +66850,16 @@
                 "default": "False",
                 "kind": "keyword-only",
                 "name": "resolve_implicit"
+              },
+              {
+                "annotation": {
+                  "cls": "ExprName",
+                  "member": "temporary_inspected_package",
+                  "name": "bool"
+                },
+                "default": "False",
+                "kind": "keyword-only",
+                "name": "search_sys_path"
               }
             ],
             "returns": {
@@ -67067,8 +67077,8 @@
           "temporary_visited_module": {
             "decorators": [
               {
-                "endlineno": 256,
-                "lineno": 256,
+                "endlineno": 262,
+                "lineno": 262,
                 "value": {
                   "cls": "ExprName",
                   "member": null,
@@ -67077,14 +67087,14 @@
               }
             ],
             "docstring": {
-              "endlineno": 282,
-              "lineno": 268,
+              "endlineno": 288,
+              "lineno": 274,
               "value": "Create and visit a temporary module with the given code.\n\nParameters:\n    code: The code of the module.\n    module_name: The name of the temporary module.\n    extensions: The extensions to use when visiting the AST.\n    parent: The optional parent of this module.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n\nYields:\n    The visited module."
             },
-            "endlineno": 299,
+            "endlineno": 305,
             "kind": "function",
             "labels": [],
-            "lineno": 256,
+            "lineno": 262,
             "members": {},
             "name": "temporary_visited_module",
             "parameters": [
@@ -67254,11 +67264,11 @@
               }
             ],
             "docstring": {
-              "endlineno": 166,
-              "lineno": 138,
-              "value": "Create and visit a temporary package.\n\nParameters:\n    package: The package name. Example: `\"a\"` gives\n        a package named `a`, while `\"a/b\"` gives a namespace package\n        named `a` with a package inside named `b`.\n        If `init` is false, then `b` is also a namespace package.\n    modules: Additional modules to create in the package.\n        If a list, simply touch the files: `[\"b.py\", \"c/d.py\", \"e/f\"]`.\n        If a dict, keys are the file names and values their contents:\n        `{\"b.py\": \"b = 1\", \"c/d.py\": \"print('hey from c')\"}`.\n    init: Whether to create an `__init__` module in the top package.\n    inits: Whether to create `__init__` modules in subpackages.\n    extensions: The extensions to use.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    store_source: Whether to store code source in the lines collection.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n\nYields:\n    A module."
+              "endlineno": 168,
+              "lineno": 139,
+              "value": "Create and visit a temporary package.\n\nParameters:\n    package: The package name. Example: `\"a\"` gives\n        a package named `a`, while `\"a/b\"` gives a namespace package\n        named `a` with a package inside named `b`.\n        If `init` is false, then `b` is also a namespace package.\n    modules: Additional modules to create in the package.\n        If a list, simply touch the files: `[\"b.py\", \"c/d.py\", \"e/f\"]`.\n        If a dict, keys are the file names and values their contents:\n        `{\"b.py\": \"b = 1\", \"c/d.py\": \"print('hey from c')\"}`.\n    init: Whether to create an `__init__` module in the top package.\n    inits: Whether to create `__init__` modules in subpackages.\n    extensions: The extensions to use.\n    docstring_parser: The docstring parser to use. By default, no parsing is done.\n    docstring_options: Additional docstring parsing options.\n    lines_collection: A collection of source code lines.\n    modules_collection: A collection of modules.\n    allow_inspection: Whether to allow inspecting modules when visiting them is not possible.\n    store_source: Whether to store code source in the lines collection.\n    resolve_aliases: Whether to resolve aliases.\n    resolve_external: Whether to try to load unspecified modules to resolve aliases.\n        Default value (`None`) means to load external modules only if they are the private sibling\n        or the origin module (for example when `ast` imports from `_ast`).\n    resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.\n    search_sys_path: Whether to search the system paths for the package.\n\nYields:\n    A module."
             },
-            "endlineno": 182,
+            "endlineno": 185,
             "kind": "function",
             "labels": [],
             "lineno": 120,
@@ -67503,6 +67513,16 @@
                 "default": "False",
                 "kind": "keyword-only",
                 "name": "resolve_implicit"
+              },
+              {
+                "annotation": {
+                  "cls": "ExprName",
+                  "member": "temporary_visited_package",
+                  "name": "bool"
+                },
+                "default": "False",
+                "kind": "keyword-only",
+                "name": "search_sys_path"
               }
             ],
             "returns": {
@@ -67529,14 +67549,14 @@
           "vtree": {
             "decorators": [],
             "docstring": {
-              "endlineno": 366,
-              "lineno": 355,
+              "endlineno": 372,
+              "lineno": 361,
               "value": "Link objects together, vertically.\n\nParameters:\n    *objects: A sequence of objects. The first one is at the top of the tree.\n    return_leaf: Whether to return the leaf instead of the root.\n\nRaises:\n    ValueError: When no objects are provided.\n\nReturns:\n    The top or leaf object."
             },
-            "endlineno": 374,
+            "endlineno": 380,
             "kind": "function",
             "labels": [],
-            "lineno": 354,
+            "lineno": 360,
             "members": {},
             "name": "vtree",
             "parameters": [

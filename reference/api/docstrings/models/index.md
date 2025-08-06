@@ -1,0 +1,4095 @@
+# Docstring models
+
+## **Main API**
+
+## Docstring
+
+```
+Docstring(
+    value: str,
+    *,
+    lineno: int | None = None,
+    endlineno: int | None = None,
+    parent: Object | None = None,
+    parser: DocstringStyle | Parser | None = None,
+    parser_options: dict[str, Any] | None = None,
+)
+
+```
+
+This class represents docstrings.
+
+Parameters:
+
+- ### **`value`**
+
+  (`str`) – The docstring value.
+
+- ### **`lineno`**
+
+  (`int | None`, default: `None` ) – The starting line number.
+
+- ### **`endlineno`**
+
+  (`int | None`, default: `None` ) – The ending line number.
+
+- ### **`parent`**
+
+  (`Object | None`, default: `None` ) – The parent object on which this docstring is attached.
+
+- ### **`parser`**
+
+  (`DocstringStyle | Parser | None`, default: `None` ) – The docstring parser to use. By default, no parsing is done.
+
+- ### **`parser_options`**
+
+  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+
+Methods:
+
+- **`as_dict`** – Return this docstring's data as a dictionary.
+- **`parse`** – Parse the docstring into structured data.
+
+Attributes:
+
+- **`endlineno`** (`int | None`) – The ending line number of the docstring.
+- **`lineno`** (`int | None`) – The starting line number of the docstring.
+- **`lines`** (`list[str]`) – The lines of the docstring.
+- **`parent`** (`Object | None`) – The object this docstring is attached to.
+- **`parsed`** (`list[DocstringSection]`) – The docstring sections, parsed into structured data.
+- **`parser`** (`DocstringStyle | Parser | None`) – The selected docstring parser.
+- **`parser_options`** (`dict[str, Any]`) – The configured parsing options.
+- **`source`** (`str`) – The original, uncleaned value of the docstring as written in the source.
+- **`value`** (`str`) – The original value of the docstring, cleaned by inspect.cleandoc.
+
+### endlineno
+
+```
+endlineno: int | None = endlineno
+
+```
+
+The ending line number of the docstring.
+
+See also: lineno.
+
+### lineno
+
+```
+lineno: int | None = lineno
+
+```
+
+The starting line number of the docstring.
+
+See also: endlineno.
+
+### lines
+
+```
+lines: list[str]
+
+```
+
+The lines of the docstring.
+
+See also: source.
+
+### parent
+
+```
+parent: Object | None = parent
+
+```
+
+The object this docstring is attached to.
+
+### parsed
+
+```
+parsed: list[DocstringSection]
+
+```
+
+The docstring sections, parsed into structured data.
+
+### parser
+
+```
+parser: DocstringStyle | Parser | None = parser
+
+```
+
+The selected docstring parser.
+
+See also: parser_options, parse.
+
+### parser_options
+
+```
+parser_options: dict[str, Any] = parser_options or {}
+
+```
+
+The configured parsing options.
+
+See also: parser, parse.
+
+### source
+
+```
+source: str
+
+```
+
+The original, uncleaned value of the docstring as written in the source.
+
+See also: value.
+
+### value
+
+```
+value: str = cleandoc(rstrip())
+
+```
+
+The original value of the docstring, cleaned by `inspect.cleandoc`.
+
+See also: source.
+
+### as_dict
+
+```
+as_dict(
+    *, full: bool = False, **kwargs: Any
+) -> dict[str, Any]
+
+```
+
+Return this docstring's data as a dictionary.
+
+Parameters:
+
+- #### **`full`**
+
+  (`bool`, default: `False` ) – Whether to return full info, or just base info.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+### parse
+
+```
+parse(
+    parser: DocstringStyle | Parser | None = None,
+    **options: Any,
+) -> list[DocstringSection]
+
+```
+
+Parse the docstring into structured data.
+
+See also: parser, parser_options.
+
+Parameters:
+
+- #### **`parser`**
+
+  (`DocstringStyle | Parser | None`, default: `None` ) – The docstring parser to use. In order: use the given parser, or the self parser, or no parser (return a single text section).
+
+- #### **`**options`**
+
+  (`Any`, default: `{}` ) – Additional docstring parsing options.
+
+Returns:
+
+- `list[DocstringSection]` – The parsed docstring as a list of sections.
+
+## **Advanced API: Sections**
+
+## DocstringSectionKind
+
+Bases: `str`, `Enum`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionKind[DocstringSectionKind]
+
+              
+
+              click griffe.DocstringSectionKind href "" "griffe.DocstringSectionKind"
+            
+```
+
+Enumeration of the possible docstring section kinds.
+
+Attributes:
+
+- **`admonition`** – Admonition block.
+- **`attributes`** – Attributes section.
+- **`classes`** – Classes section.
+- **`deprecated`** – Deprecation section.
+- **`examples`** – Examples section.
+- **`functions`** – Functions section.
+- **`modules`** – Modules section.
+- **`other_parameters`** – Other parameters (keyword arguments) section.
+- **`parameters`** – Parameters section.
+- **`raises`** – Raises (exceptions) section.
+- **`receives`** – Received value(s) (generators) section.
+- **`returns`** – Returned value(s) section.
+- **`text`** – Text section.
+- **`type_aliases`** – Type aliases section.
+- **`type_parameters`** – Type parameters section.
+- **`warns`** – Warnings section.
+- **`yields`** – Yielded value(s) (generators) section.
+
+### admonition
+
+```
+admonition = 'admonition'
+
+```
+
+Admonition block.
+
+### attributes
+
+```
+attributes = 'attributes'
+
+```
+
+Attributes section.
+
+### classes
+
+```
+classes = 'classes'
+
+```
+
+Classes section.
+
+### deprecated
+
+```
+deprecated = 'deprecated'
+
+```
+
+Deprecation section.
+
+### examples
+
+```
+examples = 'examples'
+
+```
+
+Examples section.
+
+### functions
+
+```
+functions = 'functions'
+
+```
+
+Functions section.
+
+### modules
+
+```
+modules = 'modules'
+
+```
+
+Modules section.
+
+### other_parameters
+
+```
+other_parameters = 'other parameters'
+
+```
+
+Other parameters (keyword arguments) section.
+
+### parameters
+
+```
+parameters = 'parameters'
+
+```
+
+Parameters section.
+
+### raises
+
+```
+raises = 'raises'
+
+```
+
+Raises (exceptions) section.
+
+### receives
+
+```
+receives = 'receives'
+
+```
+
+Received value(s) (generators) section.
+
+### returns
+
+```
+returns = 'returns'
+
+```
+
+Returned value(s) section.
+
+### text
+
+```
+text = 'text'
+
+```
+
+Text section.
+
+### type_aliases
+
+```
+type_aliases = 'type aliases'
+
+```
+
+Type aliases section.
+
+### type_parameters
+
+```
+type_parameters = 'type parameters'
+
+```
+
+Type parameters section.
+
+### warns
+
+```
+warns = 'warns'
+
+```
+
+Warnings section.
+
+### yields
+
+```
+yields = 'yields'
+
+```
+
+Yielded value(s) (generators) section.
+
+## DocstringSectionText
+
+```
+DocstringSectionText(value: str, title: str | None = None)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionText[DocstringSectionText]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionText
+                
+
+
+              click griffe.DocstringSectionText href "" "griffe.DocstringSectionText"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a text section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`str`) – The section text.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`str`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = text
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: str = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionParameters
+
+```
+DocstringSectionParameters(
+    value: list[DocstringParameter],
+    title: str | None = None,
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionParameters[DocstringSectionParameters]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionParameters
+                
+
+
+              click griffe.DocstringSectionParameters href "" "griffe.DocstringSectionParameters"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a parameters section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringParameter]`) – The section parameters.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringParameter]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = parameters
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringParameter] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionOtherParameters
+
+```
+DocstringSectionOtherParameters(
+    value: list[DocstringParameter],
+    title: str | None = None,
+)
+
+```
+
+Bases: `DocstringSectionParameters`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionOtherParameters[DocstringSectionOtherParameters]
+              _griffe.docstrings.models.DocstringSectionParameters[DocstringSectionParameters]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSectionParameters --> griffe.DocstringSectionOtherParameters
+                                _griffe.docstrings.models.DocstringSection --> _griffe.docstrings.models.DocstringSectionParameters
+                
+
+
+
+              click griffe.DocstringSectionOtherParameters href "" "griffe.DocstringSectionOtherParameters"
+              click _griffe.docstrings.models.DocstringSectionParameters href "" "_griffe.docstrings.models.DocstringSectionParameters"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents an other parameters section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringParameter]`) – The section parameters.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringParameter]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = other_parameters
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringParameter] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionTypeParameters
+
+```
+DocstringSectionTypeParameters(
+    value: list[DocstringTypeParameter],
+    title: str | None = None,
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionTypeParameters[DocstringSectionTypeParameters]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeParameters
+                
+
+
+              click griffe.DocstringSectionTypeParameters href "" "griffe.DocstringSectionTypeParameters"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a type parameters section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringTypeParameter]`) – The section type parameters.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringTypeParameter]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = type_parameters
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringTypeParameter] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionRaises
+
+```
+DocstringSectionRaises(
+    value: list[DocstringRaise], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionRaises[DocstringSectionRaises]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionRaises
+                
+
+
+              click griffe.DocstringSectionRaises href "" "griffe.DocstringSectionRaises"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a raises section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringRaise]`) – The section exceptions.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringRaise]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = raises
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringRaise] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionWarns
+
+```
+DocstringSectionWarns(
+    value: list[DocstringWarn], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionWarns[DocstringSectionWarns]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionWarns
+                
+
+
+              click griffe.DocstringSectionWarns href "" "griffe.DocstringSectionWarns"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a warns section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringWarn]`) – The section warnings.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringWarn]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = warns
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringWarn] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionReturns
+
+```
+DocstringSectionReturns(
+    value: list[DocstringReturn], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionReturns[DocstringSectionReturns]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionReturns
+                
+
+
+              click griffe.DocstringSectionReturns href "" "griffe.DocstringSectionReturns"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a returns section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringReturn]`) – The section returned items.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringReturn]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = returns
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringReturn] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionYields
+
+```
+DocstringSectionYields(
+    value: list[DocstringYield], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionYields[DocstringSectionYields]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionYields
+                
+
+
+              click griffe.DocstringSectionYields href "" "griffe.DocstringSectionYields"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a yields section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringYield]`) – The section yielded items.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringYield]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = yields
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringYield] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionReceives
+
+```
+DocstringSectionReceives(
+    value: list[DocstringReceive], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionReceives[DocstringSectionReceives]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionReceives
+                
+
+
+              click griffe.DocstringSectionReceives href "" "griffe.DocstringSectionReceives"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a receives section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringReceive]`) – The section received items.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringReceive]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = receives
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringReceive] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionExamples
+
+```
+DocstringSectionExamples(
+    value: list[tuple[Literal[text, examples], str]],
+    title: str | None = None,
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionExamples[DocstringSectionExamples]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionExamples
+                
+
+
+              click griffe.DocstringSectionExamples href "" "griffe.DocstringSectionExamples"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents an examples section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[tuple[Literal[text, examples], str]]`) – The section examples.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[tuple[Literal[text, examples], str]]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = examples
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[tuple[Literal[text, examples], str]] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionAttributes
+
+```
+DocstringSectionAttributes(
+    value: list[DocstringAttribute],
+    title: str | None = None,
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionAttributes[DocstringSectionAttributes]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionAttributes
+                
+
+
+              click griffe.DocstringSectionAttributes href "" "griffe.DocstringSectionAttributes"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents an attributes section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringAttribute]`) – The section attributes.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringAttribute]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = attributes
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringAttribute] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionFunctions
+
+```
+DocstringSectionFunctions(
+    value: list[DocstringFunction], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionFunctions[DocstringSectionFunctions]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionFunctions
+                
+
+
+              click griffe.DocstringSectionFunctions href "" "griffe.DocstringSectionFunctions"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a functions/methods section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringFunction]`) – The section functions.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringFunction]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = functions
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringFunction] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionClasses
+
+```
+DocstringSectionClasses(
+    value: list[DocstringClass], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionClasses[DocstringSectionClasses]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionClasses
+                
+
+
+              click griffe.DocstringSectionClasses href "" "griffe.DocstringSectionClasses"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a classes section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringClass]`) – The section classes.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringClass]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = classes
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringClass] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionTypeAliases
+
+```
+DocstringSectionTypeAliases(
+    value: list[DocstringTypeAlias],
+    title: str | None = None,
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionTypeAliases[DocstringSectionTypeAliases]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeAliases
+                
+
+
+              click griffe.DocstringSectionTypeAliases href "" "griffe.DocstringSectionTypeAliases"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a type aliases section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringTypeAlias]`) – The section classes.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringTypeAlias]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = type_aliases
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringTypeAlias] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionModules
+
+```
+DocstringSectionModules(
+    value: list[DocstringModule], title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionModules[DocstringSectionModules]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionModules
+                
+
+
+              click griffe.DocstringSectionModules href "" "griffe.DocstringSectionModules"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a modules section.
+
+Parameters:
+
+- ### **`value`**
+
+  (`list[DocstringModule]`) – The section modules.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`list[DocstringModule]`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = modules
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: list[DocstringModule] = value
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionDeprecated
+
+```
+DocstringSectionDeprecated(
+    version: str, text: str, title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionDeprecated[DocstringSectionDeprecated]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionDeprecated
+                
+
+
+              click griffe.DocstringSectionDeprecated href "" "griffe.DocstringSectionDeprecated"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents a deprecated section.
+
+Parameters:
+
+- ### **`version`**
+
+  (`str`) – The deprecation version.
+
+- ### **`text`**
+
+  (`str`) – The deprecation text.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`DocstringDeprecated`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = deprecated
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: DocstringDeprecated = DocstringDeprecated(
+    annotation=version, description=text
+)
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSectionAdmonition
+
+```
+DocstringSectionAdmonition(
+    kind: str, text: str, title: str | None = None
+)
+
+```
+
+Bases: `DocstringSection`
+
+```
+
+              flowchart TD
+              griffe.DocstringSectionAdmonition[DocstringSectionAdmonition]
+              _griffe.docstrings.models.DocstringSection[DocstringSection]
+
+                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionAdmonition
+                
+
+
+              click griffe.DocstringSectionAdmonition href "" "griffe.DocstringSectionAdmonition"
+              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+            
+```
+
+This class represents an admonition section.
+
+Parameters:
+
+- ### **`kind`**
+
+  (`str`) – The admonition kind.
+
+- ### **`text`**
+
+  (`str`) – The admonition text.
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`DocstringAdmonition`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind = admonition
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: DocstringAdmonition = DocstringAdmonition(
+    annotation=kind, description=text
+)
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## **Advanced API: Section items**
+
+## DocstringAdmonition
+
+```
+DocstringAdmonition(
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringAdmonition[DocstringAdmonition]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringAdmonition
+                
+
+
+              click griffe.DocstringAdmonition href "" "griffe.DocstringAdmonition"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents an admonition.
+
+Parameters:
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`contents`** (`str`) – The contents of this admonition.
+- **`description`** (`str`) – The element description.
+- **`kind`** (`str | Expr | None`) – The kind of this admonition.
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### contents
+
+```
+contents: str
+
+```
+
+The contents of this admonition.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### kind
+
+```
+kind: str | Expr | None
+
+```
+
+The kind of this admonition.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringDeprecated
+
+```
+DocstringDeprecated(
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringDeprecated[DocstringDeprecated]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringDeprecated
+                
+
+
+              click griffe.DocstringDeprecated href "" "griffe.DocstringDeprecated"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented deprecated item.
+
+Parameters:
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`version`** (`str`) – The version of this deprecation.
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### version
+
+```
+version: str
+
+```
+
+The version of this deprecation.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringRaise
+
+```
+DocstringRaise(
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringRaise[DocstringRaise]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringRaise
+                
+
+
+              click griffe.DocstringRaise href "" "griffe.DocstringRaise"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented raise value.
+
+Parameters:
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringWarn
+
+```
+DocstringWarn(
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringWarn[DocstringWarn]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringWarn
+                
+
+
+              click griffe.DocstringWarn href "" "griffe.DocstringWarn"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented warn value.
+
+Parameters:
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringReturn
+
+```
+DocstringReturn(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringReturn[DocstringReturn]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringReturn
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringReturn href "" "griffe.DocstringReturn"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented return value.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringYield
+
+```
+DocstringYield(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringYield[DocstringYield]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringYield
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringYield href "" "griffe.DocstringYield"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented yield value.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringReceive
+
+```
+DocstringReceive(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringReceive[DocstringReceive]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringReceive
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringReceive href "" "griffe.DocstringReceive"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented receive value.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringParameter
+
+```
+DocstringParameter(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringParameter[DocstringParameter]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringParameter
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringParameter href "" "griffe.DocstringParameter"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represent a documented function parameter.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`default`** (`str | Expr | None`) – The default value of this parameter.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### default
+
+```
+default: str | Expr | None
+
+```
+
+The default value of this parameter.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringTypeParameter
+
+```
+DocstringTypeParameter(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringTypeParameter[DocstringTypeParameter]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeParameter
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringTypeParameter href "" "griffe.DocstringTypeParameter"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represent a documented type parameter.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`bound`** (`str | Expr | None`) – The bound of this type parameter.
+- **`constraints`** (`tuple[str | Expr, ...] | None`) – The constraints of this type parameter.
+- **`default`** (`str | Expr | None`) – The default value of this type parameter.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### bound
+
+```
+bound: str | Expr | None
+
+```
+
+The bound of this type parameter.
+
+### constraints
+
+```
+constraints: tuple[str | Expr, ...] | None
+
+```
+
+The constraints of this type parameter.
+
+### default
+
+```
+default: str | Expr | None
+
+```
+
+The default value of this type parameter.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringAttribute
+
+```
+DocstringAttribute(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringAttribute[DocstringAttribute]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringAttribute
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringAttribute href "" "griffe.DocstringAttribute"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented module/class attribute.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringFunction
+
+```
+DocstringFunction(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringFunction[DocstringFunction]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringFunction
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringFunction href "" "griffe.DocstringFunction"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented function.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`signature`** (`str | Expr | None`) – The function signature.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### signature
+
+```
+signature: str | Expr | None
+
+```
+
+The function signature.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringClass
+
+```
+DocstringClass(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringClass[DocstringClass]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringClass
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringClass href "" "griffe.DocstringClass"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented class.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`signature`** (`str | Expr | None`) – The class signature.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### signature
+
+```
+signature: str | Expr | None
+
+```
+
+The class signature.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringTypeAlias
+
+```
+DocstringTypeAlias(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringTypeAlias[DocstringTypeAlias]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeAlias
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringTypeAlias href "" "griffe.DocstringTypeAlias"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented type alias.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringModule
+
+```
+DocstringModule(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringNamedElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringModule[DocstringModule]
+              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringModule
+                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                
+
+
+
+              click griffe.DocstringModule href "" "griffe.DocstringModule"
+              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This class represents a documented module.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## **Models base classes**
+
+## DocstringElement
+
+```
+DocstringElement(
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+)
+
+```
+
+This base class represents annotated, nameless elements.
+
+Parameters:
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringNamedElement
+
+```
+DocstringNamedElement(
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+)
+
+```
+
+Bases: `DocstringElement`
+
+```
+
+              flowchart TD
+              griffe.DocstringNamedElement[DocstringNamedElement]
+              _griffe.docstrings.models.DocstringElement[DocstringElement]
+
+                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringNamedElement
+                
+
+
+              click griffe.DocstringNamedElement href "" "griffe.DocstringNamedElement"
+              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+            
+```
+
+This base class represents annotated, named elements.
+
+Parameters:
+
+- ### **`name`**
+
+  (`str`) – The element name.
+
+- ### **`description`**
+
+  (`str`) – The element description.
+
+- ### **`annotation`**
+
+  (`str | Expr | None`, default: `None` ) – The element annotation, if any.
+
+- ### **`value`**
+
+  (`str | Expr | None`, default: `None` ) – The element value, as a string.
+
+Methods:
+
+- **`as_dict`** – Return this element's data as a dictionary.
+
+Attributes:
+
+- **`annotation`** (`str | Expr | None`) – The element annotation.
+- **`description`** (`str`) – The element description.
+- **`name`** (`str`) – The element name.
+- **`value`** (`str | Expr | None`) – The element value, if any
+
+### annotation
+
+```
+annotation: str | Expr | None = annotation
+
+```
+
+The element annotation.
+
+### description
+
+```
+description: str = description
+
+```
+
+The element description.
+
+### name
+
+```
+name: str = name
+
+```
+
+The element name.
+
+### value
+
+```
+value: str | Expr | None = value
+
+```
+
+The element value, if any
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this element's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+## DocstringSection
+
+```
+DocstringSection(title: str | None = None)
+
+```
+
+This class represents a docstring section.
+
+Parameters:
+
+- ### **`title`**
+
+  (`str | None`, default: `None` ) – An optional title.
+
+Methods:
+
+- **`__bool__`** – Whether this section has a true-ish value.
+- **`as_dict`** – Return this section's data as a dictionary.
+
+Attributes:
+
+- **`kind`** (`DocstringSectionKind`) – The section kind.
+- **`title`** (`str | None`) – The section title.
+- **`value`** (`Any`) – The section value.
+
+### kind
+
+```
+kind: DocstringSectionKind
+
+```
+
+The section kind.
+
+### title
+
+```
+title: str | None = title
+
+```
+
+The section title.
+
+### value
+
+```
+value: Any = None
+
+```
+
+The section value.
+
+### __bool__
+
+```
+__bool__() -> bool
+
+```
+
+Whether this section has a true-ish value.
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+
+```
+
+Return this section's data as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Additional serialization options.
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
