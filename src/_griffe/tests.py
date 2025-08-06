@@ -166,11 +166,11 @@ def temporary_visited_package(
     Yields:
         A module.
     """
-    search_paths = search_sys_path and sys.path or []
+    search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         yield load(  # type: ignore[misc]
             tmp_package.name,
-            search_paths=[tmp_package.tmpdir] + search_paths,
+            search_paths=[tmp_package.tmpdir, *search_paths],
             extensions=extensions,
             docstring_parser=docstring_parser,
             docstring_options=docstring_options,
@@ -234,12 +234,12 @@ def temporary_inspected_package(
     Yields:
         A module.
     """
-    search_paths = search_sys_path and sys.path or []
+    search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         try:
             yield load(  # type: ignore[misc]
                 tmp_package.name,
-                search_paths=[tmp_package.tmpdir] + search_paths,
+                search_paths=[tmp_package.tmpdir, *search_paths],
                 extensions=extensions,
                 docstring_parser=docstring_parser,
                 docstring_options=docstring_options,
