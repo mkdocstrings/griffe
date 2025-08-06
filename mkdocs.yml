@@ -251,8 +251,43 @@ plugins:
     sections:
       Usage:
       - index.md
-      API:
+      - getting-started.md
+      - installation.md
+      - introduction.md
+      - guide/users.md
+      - guide/users/loading.md
+      - guide/users/navigating.md
+      - guide/users/serializing.md
+      - guide/users/checking.md
+      - guide/users/extending.md
+      Recommendations:
+      - guide/users/recommendations/*
+      How-to:
+      - guide/users/how-to/*
+      Reference:
+      - reference/cli.md
+      - reference/docstrings.md
       - reference/api.md
+      - reference/api/*
+      Extensions:
+      - extensions/built-in.md
+      - extensions/built-in/*
+      - extensions/official.md
+      - extensions/official/*
+      - extensions/third-party.md
+      - extensions/third-party/*
+      Contributing:
+      - guide/contributors.md
+      - guide/contributors/*
+      Other:
+      - license.md
+      - community.md
+      - getting-help.md
+      - code-of-conduct.md
+      - alternatives.md
+      - downstream-projects.md
+      - credits.md
+      - changelog.md
 - git-revision-date-localized:
     enabled: !ENV [DEPLOY, false]
     enable_creation_date: true
