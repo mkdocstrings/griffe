@@ -134,6 +134,7 @@ def temporary_visited_package(
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
+    search_sys_path: bool = False,
 ) -> Iterator[Module]:
     """Create and visit a temporary package.
 
@@ -160,14 +161,16 @@ def temporary_visited_package(
             Default value (`None`) means to load external modules only if they are the private sibling
             or the origin module (for example when `ast` imports from `_ast`).
         resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
+        search_sys_path: Whether to search the system paths for the package.
 
     Yields:
         A module.
     """
+    search_paths = search_sys_path and sys.path or []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         yield load(  # type: ignore[misc]
             tmp_package.name,
-            search_paths=[tmp_package.tmpdir],
+            search_paths=[tmp_package.tmpdir] + search_paths,
             extensions=extensions,
             docstring_parser=docstring_parser,
             docstring_options=docstring_options,
@@ -199,6 +202,7 @@ def temporary_inspected_package(
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
+    search_sys_path: bool = False,
 ) -> Iterator[Module]:
     """Create and inspect a temporary package.
 
@@ -225,15 +229,17 @@ def temporary_inspected_package(
             Default value (`None`) means to load external modules only if they are the private sibling
             or the origin module (for example when `ast` imports from `_ast`).
         resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
+        search_sys_path: Whether to search the system paths for the package.
 
     Yields:
         A module.
     """
+    search_paths = search_sys_path and sys.path or []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         try:
             yield load(  # type: ignore[misc]
                 tmp_package.name,
-                search_paths=[tmp_package.tmpdir],
+                search_paths=[tmp_package.tmpdir] + search_paths,
                 extensions=extensions,
                 docstring_parser=docstring_parser,
                 docstring_options=docstring_options,
