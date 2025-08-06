@@ -9,11 +9,11 @@
 - [Installation](https://mkdocstrings.github.io/griffe/installation/index.md)
 - [Introduction](https://mkdocstrings.github.io/griffe/introduction/index.md)
 - [User guide](https://mkdocstrings.github.io/griffe/guide/users/index.md)
-- [Checking](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md)
-- [Extending](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md)
 - [Loading](https://mkdocstrings.github.io/griffe/guide/users/loading/index.md)
 - [Navigating](https://mkdocstrings.github.io/griffe/guide/users/navigating/index.md)
 - [Serializing](https://mkdocstrings.github.io/griffe/guide/users/serializing/index.md)
+- [Checking](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md)
+- [Extending](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md)
 
 ## Recommendations
 
@@ -30,9 +30,9 @@
 
 ## Reference
 
-- [Python API](https://mkdocstrings.github.io/griffe/reference/api/index.md)
 - [Command-line interface](https://mkdocstrings.github.io/griffe/reference/cli/index.md)
 - [Docstring parsers](https://mkdocstrings.github.io/griffe/reference/docstrings/index.md)
+- [Python API](https://mkdocstrings.github.io/griffe/reference/api/index.md)
 - [Agents](https://mkdocstrings.github.io/griffe/reference/api/agents/index.md)
 - [API checks](https://mkdocstrings.github.io/griffe/reference/api/checks/index.md)
 - [CLI entrypoints](https://mkdocstrings.github.io/griffe/reference/api/cli/index.md)
@@ -59,9 +59,8 @@
 ## Extensions
 
 - [Built-in](https://mkdocstrings.github.io/griffe/extensions/built-in/index.md)
-- [Official](https://mkdocstrings.github.io/griffe/extensions/official/index.md)
-- [Third-party](https://mkdocstrings.github.io/griffe/extensions/third-party/index.md)
 - [dataclasses](https://mkdocstrings.github.io/griffe/extensions/built-in/dataclasses/index.md)
+- [Official](https://mkdocstrings.github.io/griffe/extensions/official/index.md)
 - [autodocstringstyle](https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/index.md)
 - [inherited-docstrings](https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/index.md)
 - [public-redundant-aliases](https://mkdocstrings.github.io/griffe/extensions/official/public-redundant-aliases/index.md)
@@ -71,6 +70,7 @@
 - [sphinx](https://mkdocstrings.github.io/griffe/extensions/official/sphinx/index.md)
 - [typingdoc](https://mkdocstrings.github.io/griffe/extensions/official/typingdoc/index.md)
 - [warnings-deprecated](https://mkdocstrings.github.io/griffe/extensions/official/warnings-deprecated/index.md)
+- [Third-party](https://mkdocstrings.github.io/griffe/extensions/third-party/index.md)
 - [docstring-inheritance](https://mkdocstrings.github.io/griffe/extensions/third-party/docstring-inheritance/index.md)
 - [fieldz](https://mkdocstrings.github.io/griffe/extensions/third-party/fieldz/index.md)
 - [generics](https://mkdocstrings.github.io/griffe/extensions/third-party/generics/index.md)
@@ -88,12 +88,12 @@
 
 ## Other
 
-- [Alternatives](https://mkdocstrings.github.io/griffe/alternatives/index.md)
-- [Changelog](https://mkdocstrings.github.io/griffe/changelog/index.md)
-- [Code of conduct](https://mkdocstrings.github.io/griffe/code-of-conduct/index.md)
-- [Community](https://mkdocstrings.github.io/griffe/community/index.md)
-- [Credits](https://mkdocstrings.github.io/griffe/credits/index.md)
-- [Downstream projects](https://mkdocstrings.github.io/griffe/downstream-projects/index.md)
-- [Getting help](https://mkdocstrings.github.io/griffe/getting-help/index.md)
 - [License](https://mkdocstrings.github.io/griffe/license/index.md)
+- [Community](https://mkdocstrings.github.io/griffe/community/index.md)
+- [Getting help](https://mkdocstrings.github.io/griffe/getting-help/index.md)
+- [Code of conduct](https://mkdocstrings.github.io/griffe/code-of-conduct/index.md)
+- [Alternatives](https://mkdocstrings.github.io/griffe/alternatives/index.md)
+- [Downstream projects](https://mkdocstrings.github.io/griffe/downstream-projects/index.md)
+- [Credits](https://mkdocstrings.github.io/griffe/credits/index.md)
+- [Changelog](https://mkdocstrings.github.io/griffe/changelog/index.md)
 
