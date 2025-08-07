@@ -87,6 +87,44 @@
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.relative_package_filepath",
           "type": "string"
         },
+        "public": {
+          "title": "Whether the object was explicitly marked as public.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.public",
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "exports": {
+          "title": "The exports of the object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.exports",
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "imports": {
+          "title": "The imports of the object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.imports",
+          "type": "object"
+        },
+        "runtime": {
+          "title": "Whether this object exists at runtime.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.runtime",
+          "type": "boolean"
+        },
+        "deprecated": {
+          "title": "Whether the object was explicitly marked as deprecated.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.deprecated",
+          "type": [
+            "null",
+            "string",
+            "boolean"
+          ]
+        },
         "labels": {
           "title": "The labels of the object.",
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.labels",
@@ -179,6 +217,51 @@
             "null"
           ]
         },
+        "is_public": {
+          "title": "Whether the object is public.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_public",
+          "type": "boolean"
+        },
+        "is_deprecated": {
+          "title": "Whether the object is deprecated.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_deprecated",
+          "type": "boolean"
+        },
+        "is_private": {
+          "title": "Whether the object is private.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_private",
+          "type": "boolean"
+        },
+        "is_class_private": {
+          "title": "Whether the object is class-private.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_class_private",
+          "type": "boolean"
+        },
+        "is_special": {
+          "title": "Whether the object is special.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_special",
+          "type": "boolean"
+        },
+        "is_imported": {
+          "title": "Whether the object is imported.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_imported",
+          "type": "boolean"
+        },
+        "is_exported": {
+          "title": "Whether the object is exported.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_exported",
+          "type": "boolean"
+        },
+        "is_wildcard_exposed": {
+          "title": "Whether the object is wildcard-exposed.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_wildcard_exposed",
+          "type": "boolean"
+        },
+        "is_inherited": {
+          "title": "Whether the object is inherited.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_inherited",
+          "type": "boolean"
+        },
         "bases": true,
         "decorators": true,
         "parameters": true,
@@ -195,6 +278,9 @@
         "filepath",
         "relative_filepath",
         "relative_package_filepath",
+        "public",
+        "runtime",
+        "deprecated",
         "labels",
         "members"
       ],

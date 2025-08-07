@@ -359,17 +359,23 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
     @property
     def is_class_private(self) -> bool:
         """Whether this object/alias is class-private (starts with `__` and is a class member)."""
-        return self.parent and self.parent.is_class and self.name.startswith("__") and not self.name.endswith("__")  # type: ignore[attr-defined]
+        return (
+            bool(self.parent) and self.parent.is_class and self.name.startswith("__") and not self.name.endswith("__")  # type: ignore[attr-defined]
+        )
 
     @property
     def is_imported(self) -> bool:
         """Whether this object/alias was imported from another module."""
-        return self.parent and self.name in self.parent.imports  # type: ignore[attr-defined]
+        return bool(self.parent) and self.name in self.parent.imports  # type: ignore[attr-defined]
 
     @property
     def is_exported(self) -> bool:
         """Whether this object/alias is exported (listed in `__all__`)."""
-        return self.parent.is_module and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
+        return (
+            bool(self.parent)  # type: ignore[attr-defined]
+            and self.parent.is_module  # type: ignore[attr-defined]
+            and bool(self.parent.exports and self.name in self.parent.exports)  # type: ignore[attr-defined]
+        )
 
     @property
     def is_wildcard_exposed(self) -> bool:
@@ -388,7 +394,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
             True or False.
         """
         # If the object is not available at runtime or is not defined at the module level, it is not exposed.
-        if not self.runtime or not self.parent.is_module:  # type: ignore[attr-defined]
+        if not self.runtime or not (bool(self.parent) and self.parent.is_module):  # type: ignore[attr-defined]
             return False
 
         # If the parent module defines `__all__`, the object is exposed if it is listed in it.

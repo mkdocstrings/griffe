@@ -182,7 +182,12 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute | TypeAlias, paren
 
 
 def _load_module(obj_dict: dict[str, Any]) -> Module:
-    module = Module(name=obj_dict["name"], filepath=Path(obj_dict["filepath"]), docstring=_load_docstring(obj_dict))
+    module = Module(
+        name=obj_dict["name"],
+        filepath=Path(obj_dict["filepath"]),
+        docstring=_load_docstring(obj_dict),
+        runtime=obj_dict.get("runtime", True),
+    )
     # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
     members = obj_dict.get("members", [])
     # YORE: Bump 2: Remove block.
@@ -193,6 +198,10 @@ def _load_module(obj_dict: dict[str, Any]) -> Module:
         module.set_member(module_member.name, module_member)
         _attach_parent_to_exprs(module_member, module)
     module.labels |= set(obj_dict.get("labels", ()))
+    module.exports = obj_dict.get("exports")
+    module.imports = obj_dict.get("imports", {})
+    module.deprecated = obj_dict.get("deprecated")
+    module.public = obj_dict.get("public")
     return module
 
 
@@ -205,6 +214,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         decorators=_load_decorators(obj_dict),
         type_parameters=TypeParameters(*obj_dict["type_parameters"]),
         bases=obj_dict["bases"],
+        runtime=obj_dict.get("runtime", True),
     )
     # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
     members = obj_dict.get("members", [])
@@ -216,6 +226,9 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         class_.set_member(class_member.name, class_member)
         _attach_parent_to_exprs(class_member, class_)
     class_.labels |= set(obj_dict.get("labels", ()))
+    class_.imports = obj_dict.get("imports", {})
+    class_.deprecated = obj_dict.get("deprecated")
+    class_.public = obj_dict.get("public")
     _attach_parent_to_exprs(class_, class_)
     return class_
 
@@ -230,8 +243,11 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
+        runtime=obj_dict.get("runtime", True),
     )
     function.labels |= set(obj_dict.get("labels", ()))
+    function.deprecated = obj_dict.get("deprecated")
+    function.public = obj_dict.get("public")
     return function
 
 
@@ -245,6 +261,9 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
         annotation=obj_dict.get("annotation"),
     )
     attribute.labels |= set(obj_dict.get("labels", ()))
+    attribute.runtime = obj_dict.get("runtime", True)
+    attribute.deprecated = obj_dict.get("deprecated")
+    attribute.public = obj_dict.get("public")
     return attribute
 
 

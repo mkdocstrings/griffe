@@ -1190,6 +1190,12 @@ class Object(ObjectAliasMixin):
         base: dict[str, Any] = {
             "kind": self.kind,
             "name": self.name,
+            "public": self.public,
+            "exports": self.exports and [str(export) for export in self.exports],
+            "imports": self.imports,
+            "runtime": self.runtime,
+            "deprecated": self.deprecated,
+            # TODO: Include `self.extra`?
         }
 
         if full:
@@ -1199,6 +1205,30 @@ class Object(ObjectAliasMixin):
                     "filepath": self.filepath,
                     "relative_filepath": self.relative_filepath,
                     "relative_package_filepath": self.relative_package_filepath,
+                    "is_public": self.is_public,
+                    "is_deprecated": self.is_deprecated,
+                    "is_private": self.is_private,
+                    "is_class_private": self.is_class_private,
+                    "is_special": self.is_special,
+                    "is_imported": self.is_imported,
+                    "is_exported": self.is_exported,
+                    "is_wildcard_exposed": self.is_wildcard_exposed,
+                    "is_inherited": self.inherited,
+                    # TODO: Add these properties?
+                    # "is_alias": self.is_alias,
+                    # "is_collection": self.is_collection,
+                    # "is_module": self.is_module,
+                    # "is_class": self.is_class,
+                    # "is_function": self.is_function,
+                    # "is_attribute": self.is_attribute,
+                    # "is_type_alias": self.is_type_alias,
+                    # "is_init_module": self.is_init_module,
+                    # "is_package": self.is_package,
+                    # "is_subpackage": self.is_subpackage,
+                    # "is_namespace_package": self.is_namespace_package,
+                    # "is_namespace_subpackage": self.is_namespace_subpackage,
+                    # "has_docstring": self.has_docstring,
+                    # "has_docstrings": self.has_docstrings,
                 },
             )
 
