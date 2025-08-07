@@ -12,21 +12,22 @@ This document describes how the project is architectured, both regarding boilerp
 📁 docs/ # (6)!
 📁 htmlcov/ # (7)!
 📁 scripts/ # (8)!
-📁 src/ # (9)!
-📁 tests/ # (10)!
- .copier-answers.yml # (11)!
- .envrc # (12)!
+📁 site/ # (9)!
+📁 src/ # (10)!
+📁 tests/ # (11)!
+ .copier-answers.yml # (12)!
+ .envrc # (13)!
  .gitignore
  CHANGELOG.md
  CODE_OF_CONDUCT.md
  CONTRIBUTING.md
  LICENSE
- Makefile # (13)!
+ Makefile # (14)!
  README.md
- duties.py # (14)!
+ duties.py # (15)!
  logo.svg
- mkdocs.yml # (15)!
- pyproject.toml # (16)!
+ mkdocs.yml # (16)!
+ pyproject.toml # (17)!
  uv.lock
 
 ```
@@ -296,6 +297,8 @@ This document describes how the project is architectured, both regarding boilerp
     make.py
 
    ```
+
+1. Documentation site, built with `make run mkdocs build` (git-ignored).
 
 1. The source of our Python package(s). See [Sources](#sources) and [Program structure](#program-structure).
 

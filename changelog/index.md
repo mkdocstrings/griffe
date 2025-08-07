@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.11.0](https://github.com/mkdocstrings/griffe/releases/tag/1.11.0) - 2025-08-07
+
+[Compare with 1.10.0](https://github.com/mkdocstrings/griffe/compare/1.10.0...1.11.0)
+
+### Features
+
+- Add data to dict/json output ([9731afc](https://github.com/mkdocstrings/griffe/commit/9731afcbeab377e7f3f69a0d18d19677e790072e) by Timothée Mazzucotelli).
+
 ## [1.10.0](https://github.com/mkdocstrings/griffe/releases/tag/1.10.0) - 2025-08-06
 
 [Compare with 1.9.0](https://github.com/mkdocstrings/griffe/compare/1.9.0...1.10.0)
