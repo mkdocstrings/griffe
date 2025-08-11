@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from _griffe.enumerations import TypeParameterKind
-from _griffe.models import TypeParameter, TypeParameters
 from griffe import (
     Attribute,
     Class,
@@ -22,6 +20,9 @@ from griffe import (
     Module,
     Parameter,
     Parameters,
+    TypeParameter,
+    TypeParameterKind,
+    TypeParameters,
     parse_docstring_annotation,
 )
 

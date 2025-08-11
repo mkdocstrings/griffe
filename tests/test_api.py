@@ -26,7 +26,7 @@ def _fixture_loader() -> griffe.GriffeLoader:
 
 @pytest.fixture(name="internal_api", scope="module")
 def _fixture_internal_api(loader: griffe.GriffeLoader) -> griffe.Module:
-    return loader.modules_collection["_griffe"]
+    return loader.modules_collection["griffe._internal"]
 
 
 @pytest.fixture(name="public_api", scope="module")
@@ -47,15 +47,16 @@ def _yield_public_objects(
             if member.is_module:
                 if member.is_alias:
                     continue
-                if modules:
-                    yield member
-                yield from _yield_public_objects(
-                    member,  # type: ignore[arg-type]
-                    modules=modules,
-                    modulelevel=modulelevel,
-                    inherited=inherited,
-                    special=special,
-                )
+                if member.is_public:
+                    if modules:
+                        yield member
+                    yield from _yield_public_objects(
+                        member,  # type: ignore[arg-type]
+                        modules=modules,
+                        modulelevel=modulelevel,
+                        inherited=inherited,
+                        special=special,
+                    )
             elif member.is_public and (special or not member.is_special):
                 yield member
             if member.is_class and not modulelevel:

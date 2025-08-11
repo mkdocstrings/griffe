@@ -6,9 +6,14 @@ import sys
 
 import pytest
 
-from _griffe.enumerations import TypeParameterKind
-from _griffe.expressions import Expr
-from griffe import inspect, temporary_inspected_module, temporary_inspected_package, temporary_pypackage
+from griffe import (
+    Expr,
+    TypeParameterKind,
+    inspect,
+    temporary_inspected_module,
+    temporary_inspected_package,
+    temporary_pypackage,
+)
 from tests.helpers import clear_sys_modules
 
 

@@ -162,9 +162,9 @@ To test your Griffe extensions, or to load API data from code in memory, Griffe 
 
 from __future__ import annotations
 
-from _griffe.agents.inspector import Inspector, inspect
-from _griffe.agents.nodes.assignments import get_instance_names, get_name, get_names
-from _griffe.agents.nodes.ast import (
+from griffe._internal.agents.inspector import Inspector, inspect
+from griffe._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
+from griffe._internal.agents.nodes.ast import (
     ast_children,
     ast_first_child,
     ast_kind,
@@ -175,19 +175,19 @@ from _griffe.agents.nodes.ast import (
     ast_previous_siblings,
     ast_siblings,
 )
-from _griffe.agents.nodes.docstrings import get_docstring
+from griffe._internal.agents.nodes.docstrings import get_docstring
 
 # YORE: Bump 2: Replace `ExportedName, ` with `` within line.
-from _griffe.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
-from _griffe.agents.nodes.imports import relative_to_absolute
-from _griffe.agents.nodes.parameters import ParametersType, get_parameters
-from _griffe.agents.nodes.runtime import ObjectNode
-from _griffe.agents.nodes.values import get_value, safe_get_value
-from _griffe.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
-from _griffe.c3linear import c3linear_merge
-from _griffe.cli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
-from _griffe.collections import LinesCollection, ModulesCollection
-from _griffe.diff import (
+from griffe._internal.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
+from griffe._internal.agents.nodes.imports import relative_to_absolute
+from griffe._internal.agents.nodes.parameters import ParametersType, get_parameters
+from griffe._internal.agents.nodes.runtime import ObjectNode
+from griffe._internal.agents.nodes.values import get_value, safe_get_value
+from griffe._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
+from griffe._internal.c3linear import c3linear_merge
+from griffe._internal.cli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
+from griffe._internal.collections import LinesCollection, ModulesCollection
+from griffe._internal.diff import (
     AttributeChangedTypeBreakage,
     AttributeChangedValueBreakage,
     Breakage,
@@ -203,8 +203,8 @@ from _griffe.diff import (
     ReturnChangedTypeBreakage,
     find_breaking_changes,
 )
-from _griffe.docstrings.google import parse_google
-from _griffe.docstrings.models import (
+from griffe._internal.docstrings.google import parse_google
+from griffe._internal.docstrings.models import (
     DocstringAdmonition,
     DocstringAttribute,
     DocstringClass,
@@ -240,8 +240,8 @@ from _griffe.docstrings.models import (
     DocstringWarn,
     DocstringYield,
 )
-from _griffe.docstrings.numpy import parse_numpy
-from _griffe.docstrings.parsers import (
+from griffe._internal.docstrings.numpy import parse_numpy
+from griffe._internal.docstrings.parsers import (
     DocstringDetectionMethod,
     DocstringStyle,
     infer_docstring_style,
@@ -249,10 +249,10 @@ from _griffe.docstrings.parsers import (
     parse_auto,
     parsers,
 )
-from _griffe.docstrings.sphinx import parse_sphinx
-from _griffe.docstrings.utils import docstring_warning, parse_docstring_annotation
-from _griffe.encoders import JSONEncoder, json_decoder
-from _griffe.enumerations import (
+from griffe._internal.docstrings.sphinx import parse_sphinx
+from griffe._internal.docstrings.utils import docstring_warning, parse_docstring_annotation
+from griffe._internal.encoders import JSONEncoder, json_decoder
+from griffe._internal.enumerations import (
     BreakageKind,
     DocstringSectionKind,
     ExplanationStyle,
@@ -263,7 +263,7 @@ from _griffe.enumerations import (
     Parser,
     TypeParameterKind,
 )
-from _griffe.exceptions import (
+from griffe._internal.exceptions import (
     AliasResolutionError,
     BuiltinModuleError,
     CyclicAliasError,
@@ -278,7 +278,7 @@ from _griffe.exceptions import (
     UnhandledEditableModuleError,
     UnimportableModuleError,
 )
-from _griffe.expressions import (
+from griffe._internal.expressions import (
     Expr,
     ExprAttribute,
     ExprBinOp,
@@ -320,28 +320,28 @@ from _griffe.expressions import (
     safe_get_condition,
     safe_get_expression,
 )
-from _griffe.extensions.base import (
+from griffe._internal.extensions.base import (
     Extension,
     Extensions,
     LoadableExtensionType,
     builtin_extensions,
     load_extensions,
 )
-from _griffe.extensions.dataclasses import DataclassesExtension
-from _griffe.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
-from _griffe.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
-from _griffe.importer import dynamic_import, sys_path
-from _griffe.loader import GriffeLoader, load, load_git, load_pypi
-from _griffe.logger import Logger, get_logger, logger, patch_loggers
-from _griffe.merger import merge_stubs
-from _griffe.mixins import (
+from griffe._internal.extensions.dataclasses import DataclassesExtension
+from griffe._internal.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
+from griffe._internal.git import assert_git_repo, get_latest_tag, get_repo_root, tmp_worktree
+from griffe._internal.importer import dynamic_import, sys_path
+from griffe._internal.loader import GriffeLoader, load, load_git, load_pypi
+from griffe._internal.logger import Logger, get_logger, logger, patch_loggers
+from griffe._internal.merger import merge_stubs
+from griffe._internal.mixins import (
     DelMembersMixin,
     GetMembersMixin,
     ObjectAliasMixin,
     SerializationMixin,
     SetMembersMixin,
 )
-from _griffe.models import (
+from griffe._internal.models import (
     Alias,
     Attribute,
     Class,
@@ -356,8 +356,8 @@ from _griffe.models import (
     TypeParameter,
     TypeParameters,
 )
-from _griffe.stats import Stats
-from _griffe.tests import (
+from griffe._internal.stats import Stats
+from griffe._internal.tests import (
     TmpPackage,
     htree,
     module_vtree,

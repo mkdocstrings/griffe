@@ -8,8 +8,6 @@ from textwrap import dedent
 
 import pytest
 
-from _griffe.enumerations import TypeParameterKind
-from _griffe.models import TypeParameter, TypeParameters
 from griffe import (
     Attribute,
     Class,
@@ -21,6 +19,9 @@ from griffe import (
     Parameter,
     ParameterKind,
     Parameters,
+    TypeParameter,
+    TypeParameterKind,
+    TypeParameters,
     module_vtree,
     temporary_inspected_module,
     temporary_pypackage,

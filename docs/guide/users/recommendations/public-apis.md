@@ -277,7 +277,7 @@ If you don't want to bother prefixing every module with an underscore, you could
             light.py
     ```
 
-Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python, so we are happy with the result.
+Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python. We later moved the private package under an internal folder.
 
 WARNING: **Top-level-only exposition doesn't play well with large packages.**  
 The *fully* hidden layout plays well with small to medium projects. If you maintain a large project, it can become very impractical for both you and your users to expose every single object in the top-level `__init__` module. For large projects, it therefore makes sense to keep at least one or two additional public layers in your module layout. Sometimes packages also implement many variations of the same abstract class, using the same name in many different modules: in these cases, the modules are effective namespaces that could be kept in the public API.

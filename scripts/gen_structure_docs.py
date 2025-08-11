@@ -69,7 +69,7 @@ def render_internal_api(heading_level: int = 4) -> None:
     """
     root = Path(os.environ["MKDOCS_CONFIG_DIR"])
     src = root / "src"
-    internal_api = src / "_griffe"
+    internal_api = src / "griffe" / "_internal"
     print(_comment_block(internal_api / "__init__.py"))
     _render_api(internal_api, internal_api, heading_level)
 

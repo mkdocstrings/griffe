@@ -35,27 +35,27 @@ ignore = [
     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
-logger-objects = ["_griffe.logger.logger"]
+logger-objects = ["griffe.logger"]
 
 [lint.per-file-ignores]
 "src/griffe/__main__.py" = [
     "D100",  # Missing module docstring
 ]
-"src/_griffe/cli.py" = [
+"src/griffe/_internal/cli.py" = [
     "T201",  # Print statement
 ]
-"src/_griffe/git.py" = [
+"src/griffe/_internal/git.py" = [
     "S603",  # `subprocess` call: check for execution of untrusted input
     "S607",  # Starting a process with a partial executable path
 ]
-"src/_griffe/agents/nodes/*.py" = [
+"src/griffe/_internal/agents/nodes/*.py" = [
     "ARG001",  # Unused function argument
     "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
 ]
-"src/_griffe/debug.py" = [
+"src/griffe/_internal/debug.py" = [
     "T201",  # Print statement
 ]
-"src/_griffe/**.py" = [
+"src/griffe/_internal/**.py" = [
     "D100",  # Missing docstring in public module
 ]
 "scripts/*.py" = [

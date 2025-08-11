@@ -1,13 +1,9 @@
-"""Generate the credits page."""
+"""Generate the JSON API data file."""
 
 import mkdocs_gen_files
 
-import griffe
+python_handler = mkdocs_gen_files.config.plugins["mkdocstrings"].get_handler("python")
+data = python_handler.collect("griffe", options=python_handler.get_options({}))
 
 with mkdocs_gen_files.open("griffe.json", "w") as fd:
-    griffe.dump(
-        ["griffe", "_griffe"],
-        docstring_parser=griffe.Parser.google,
-        docstring_options={"ignore_init_summary": True},
-        output=fd,
-    )
+    print(data.as_json(full=True), file=fd)
