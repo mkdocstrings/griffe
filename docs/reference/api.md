@@ -1,7 +1,5 @@
 ---
 title: API reference
-hide:
-- navigation
 ---
 
 # ::: griffe
