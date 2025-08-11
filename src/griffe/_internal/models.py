@@ -614,6 +614,9 @@ class Object(ObjectAliasMixin):
         [`has_docstrings`][griffe.Object.has_docstrings].
         """
 
+        # TODO: Maybe move these into `Class` and `Function`.
+        # Then always return them in `Class` and `Function`'s `as_dict` methods,
+        # and remove the conditional in the `_load_class` and `_load_function` decoders.
         self.type_parameters: TypeParameters = type_parameters or TypeParameters()
         """The object type parameters."""
 

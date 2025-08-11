@@ -212,7 +212,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
         decorators=_load_decorators(obj_dict),
-        type_parameters=TypeParameters(*obj_dict["type_parameters"]),
+        type_parameters=TypeParameters(*obj_dict["type_parameters"]) if "type_parameters" in obj_dict else None,
         bases=obj_dict["bases"],
         runtime=obj_dict.get("runtime", True),
     )
@@ -239,7 +239,7 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         parameters=Parameters(*obj_dict["parameters"]),
         returns=obj_dict["returns"],
         decorators=_load_decorators(obj_dict),
-        type_parameters=TypeParameters(*obj_dict["type_parameters"]),
+        type_parameters=TypeParameters(*obj_dict["type_parameters"]) if "type_parameters" in obj_dict else None,
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
