@@ -188,7 +188,7 @@ class Ghost:
 
     def wander(self) -> None:
         """Wander the earth.
-        
+
         That's it, really.
 
         Examples:
@@ -252,7 +252,7 @@ def yield_athletes(quantity: int) -> Iterator[Ghost]:
 
     Parameters:
         quantity: How many ghost athletes you want.
-    
+
     Yields:
         Ghost athletes. They're just regular ghosts.
     """

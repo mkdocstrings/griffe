@@ -363,7 +363,7 @@ struct MyClass {
 
 Some modules of the standard library are guilty of this too, and do so inconsistently (`ast` and `_ast`, `io` and `_io`, depending on the Python version...). For this reason, when checking if an object was declared in the currently inspected module, Griffe ultimately considers that any qualified name is equal to itself with each component stripped from leading underscores:
 
-```
+```python
 a.b.c == _a.b.c
 a.b.c == _a._b._c
 a.__b._c == __a.b.c

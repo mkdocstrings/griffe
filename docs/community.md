@@ -4,7 +4,7 @@ Griffe is part of is the [mkdocstrings](https://mkdocstrings.github.io/) ecosyst
 
 You can start new discussions on GitHub, in the following repositories, depending on the specificity of the discussion: [griffe](https://github.com/mkdocstrings/griffe), [mkdocstrings-python](https://github.com/mkdocstrings/python), [mkdocstrings](https://github.com/mkdocstrings/mkdocstrings), and [MkDocs](https://github.com/mkdocs/mkdocs).
 
-You can also join our dedicated Gitter channels: [Griffe channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ target="_blank" }, [mkdocstrings-python channel](https://app.gitter.im/#/room/#mkdocstrings_python:gitter.im){ target="_blank" }, [mkdocstrings channel](https://app.gitter.im/#/room/#mkdocstrings_community:gitter.im){ target="_blank" }, and [MkDocs channel](https://app.gitter.im/#/room/#mkdocs_community:gitter.im){ target="_blank" }. 
+You can also join our dedicated Gitter channels: [Griffe channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ target="_blank" }, [mkdocstrings-python channel](https://app.gitter.im/#/room/#mkdocstrings_python:gitter.im){ target="_blank" }, [mkdocstrings channel](https://app.gitter.im/#/room/#mkdocstrings_community:gitter.im){ target="_blank" }, and [MkDocs channel](https://app.gitter.im/#/room/#mkdocs_community:gitter.im){ target="_blank" }.
 
 The best place to share about Griffe is of course our Gitter channel.
 

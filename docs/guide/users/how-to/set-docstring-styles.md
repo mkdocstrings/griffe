@@ -37,7 +37,7 @@ Depending on the markup you use in docstrings, you can add a comment that tells 
         """
     ```
 
-Your Griffe extension can then use regular expressions to search for such comments. For example with Markdown (HTML) comments: 
+Your Griffe extension can then use regular expressions to search for such comments. For example with Markdown (HTML) comments:
 
 ```python
 import re

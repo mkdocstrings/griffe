@@ -21,7 +21,7 @@ Google-style docstrings, see [Napoleon's documentation][napoleon].
 
 Sections are written like this:
 
-```
+```text
 section identifier: optional section title
     section contents
 ```
@@ -733,7 +733,7 @@ Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
 
 Sections are written like this:
 
-```
+```text
 section identifier
 ------------------
 section contents

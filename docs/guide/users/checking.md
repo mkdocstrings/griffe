@@ -108,10 +108,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
+
     # Griffe requires that Git tags are available.
     - run: git fetch --depth=1 --tags
-    
+
     - uses: actions/setup-python@v5
       with:
         python-version: "3.11"
@@ -644,6 +644,7 @@ NOTE: Unless inherited members are lost in the process, removing a class base is
 Griffe supports writing detected breakages in multiple formats, or styles.
 
 [](){#format-oneline}
+
 ### One-line
 
 - **CLI**: `-f oneline` / no flags
@@ -657,6 +658,7 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
 
 [](){#format-verbose}
+
 ### Verbose
 
 - **CLI**: `-f verbose` / `-v`
@@ -670,6 +672,7 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
 
 [](){#format-markdown}
+
 ### Markdown
 
 [:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
@@ -703,6 +706,7 @@ The Markdown format is adapted for changelogs. It doesn't show the file and line
 ```
 
 [](){#format-github}
+
 ### GitHub
 
 [:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)

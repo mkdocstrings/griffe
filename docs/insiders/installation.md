@@ -41,13 +41,13 @@ pip install git+https://${GH_TOKEN}@github.com/pawamoy-insiders/griffe.git
 
 Of course, you can use *Griffe Insiders* directly using Git:
 
-```
+```sh
 git clone git@github.com:pawamoy-insiders/griffe
 ```
 
 When cloning with Git, the package must be installed:
 
-```
+```sh
 pip install -e griffe
 ```
 

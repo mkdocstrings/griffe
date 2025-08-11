@@ -674,7 +674,6 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 [^5]: Now `ExceptHandler`, in the `handlers` attribute of `Try` nodes.
 [^6]: Now a list of expressions in the `finalbody` attribute of `Try` nodes.
 
-
 ## Next steps
 
 Extensions are a powerful mechanism to customize or enhance the data loaded by Griffe. But sometimes, all you need to do to improve the data is to make Griffe happy by following a few conventions. We therefore invite you to read our recommendations on [public APIs](recommendations/public-apis.md), [Python code best practices](recommendations/python-code.md) and [docstrings](recommendations/docstrings.md).

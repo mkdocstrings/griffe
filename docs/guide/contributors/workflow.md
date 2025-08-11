@@ -79,7 +79,7 @@ If you are unsure about how to deprecate something or mark legacy code, let us d
 
 Commit messages must follow our convention based on the [Angular style](https://gist.github.com/stephenparish/9941e89d80e2bc58a153#format-of-the-commit-message) or the [Karma convention](https://karma-runner.github.io/4.0/dev/git-commit-msg.html):
 
-```
+```text
 type(scope): Subject
 
 Body.
@@ -87,7 +87,7 @@ Body.
 
 **Subject and body must be valid Markdown.** Subject must have proper casing (uppercase for first letter if it makes sense), but no dot at the end, and no punctuation in general. Example:
 
-```
+```text
 feat: Add CLI option to run in verbose mode
 ```
 
@@ -107,7 +107,7 @@ Scope and body are optional. Type can be:
 
 If you write a body, please add trailers at the end (for example issues and PR references, or co-authors), without relying on GitHub's flavored Markdown:
 
-```
+```text
 This is the body of the commit message.
 
 Issue-10: https://github.com/namespace/project/issues/10

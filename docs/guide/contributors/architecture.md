@@ -110,7 +110,7 @@ The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test mod
 
 The internal API is contained within the `src/griffe/_internal` folder. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `griffe._internal`.
 
-Users then import `griffe` directly, or import objects from it. 
+Users then import `griffe` directly, or import objects from it.
 
 We'll be honest: our code organization is not the most elegant, but it works :shrug: Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 

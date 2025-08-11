@@ -87,7 +87,6 @@ You can cancel your sponsorship anytime.[^5]
 
 [^5]: If you cancel your sponsorship, GitHub schedules a cancellation request which will become effective at the end of the billing cycle. This means that even though you cancel your sponsorship, you will keep your access to Insiders as long as your cancellation isn't effective. All charges are processed by GitHub through Stripe. As we don't receive any information regarding your payment, and GitHub doesn't offer refunds, sponsorships are non-refundable.
 
-
 [:octicons-heart-fill-24:{ .pulse } &nbsp; Join our <span id="sponsors-count"></span> awesome sponsors][github sponsor profile]{ .md-button .md-button--primary }
 
 <hr>
