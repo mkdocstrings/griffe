@@ -366,6 +366,7 @@ def _read_return(
     offset: int,
     parsed_values: _ParsedValues,
     *,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
@@ -384,7 +385,7 @@ def _read_return(
         try:
             annotation = docstring.parent.annotation  # type: ignore[union-attr]
         except AttributeError:
-            if warnings:
+            if warnings and warn_missing_types:
                 docstring_warning(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")
             annotation = None
 
