@@ -787,12 +787,29 @@ This is the default format. Griffe will print each detected breakage on a single
 
 ```
 $ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0
-src/griffe/mixins.py:303: ObjectAliasMixin.is_exported: Public object points to a different kind of object: function -> attribute
-src/griffe/mixins.py:353: ObjectAliasMixin.is_public: Public object points to a different kind of object: function -> attribute
-src/griffe/dataclasses.py:520: Object.has_labels(labels): Parameter kind was changed: positional or keyword -> variadic positional
-src/griffe/diff.py:571: find_breaking_changes(ignore_private): Parameter default was changed: True -> _sentinel
-src/griffe/extensions/base.py:463: load_extensions(exts): Parameter kind was changed: positional or keyword -> variadic positional
-src/griffe/dataclasses.py:1073: Alias.has_labels(labels): Parameter kind was changed: positional or keyword -> variadic positional
+Traceback (most recent call last):
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 609, in main
+    return commands[subcommand](**opts_dict)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 530, in check
+    new_package = load_git(
+        package,
+    ...<8 lines>...
+        resolve_external=None,
+    )
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 884, in load_git
+    with tmp_worktree(repo, ref) as worktree:
+         ~~~~~~~~~~~~^^^^^^^^^^^
+  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 128, in tmp_worktree
+    raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
+RuntimeError: Could not create git worktree: Preparing worktree (new branch 'griffe-0-46-0-1-2-0')
+fatal: a branch named 'griffe-0-46-0-1-2-0' already exists
+
 
 ```
 
@@ -805,35 +822,29 @@ Depending on the detected breakages, the lines might be hard to read (being too 
 
 ```
 $ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
-src/griffe/mixins.py:303: ObjectAliasMixin.is_exported:
-Public object points to a different kind of object:
-  Old: function
-  New: attribute
+Traceback (most recent call last):
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 609, in main
+    return commands[subcommand](**opts_dict)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 530, in check
+    new_package = load_git(
+        package,
+    ...<8 lines>...
+        resolve_external=None,
+    )
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 884, in load_git
+    with tmp_worktree(repo, ref) as worktree:
+         ~~~~~~~~~~~~^^^^^^^^^^^
+  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 128, in tmp_worktree
+    raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
+RuntimeError: Could not create git worktree: Preparing worktree (new branch 'griffe-0-46-0-1-2-0')
+fatal: a branch named 'griffe-0-46-0-1-2-0' already exists
 
-src/griffe/mixins.py:353: ObjectAliasMixin.is_public:
-Public object points to a different kind of object:
-  Old: function
-  New: attribute
-
-src/griffe/dataclasses.py:520: Object.has_labels(labels):
-Parameter kind was changed:
-  Old: positional or keyword
-  New: variadic positional
-
-src/griffe/diff.py:571: find_breaking_changes(ignore_private):
-Parameter default was changed:
-  Old: True
-  New: _sentinel
-
-src/griffe/extensions/base.py:463: load_extensions(exts):
-Parameter kind was changed:
-  Old: positional or keyword
-  New: variadic positional
-
-src/griffe/dataclasses.py:1073: Alias.has_labels(labels):
-Parameter kind was changed:
-  Old: positional or keyword
-  New: variadic positional
 
 ```
 

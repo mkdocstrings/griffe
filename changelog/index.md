@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.12.1](https://github.com/mkdocstrings/griffe/releases/tag/1.12.1) - 2025-08-14
+
+[Compare with 1.12.0](https://github.com/mkdocstrings/griffe/compare/1.12.0...1.12.1)
+
+### Code Refactoring
+
+- Reduce size of JSON dumps by removing keys with null values ([58227eb](https://github.com/mkdocstrings/griffe/commit/58227eb377fee66ef66237d7cbed35156ff1fed1) by Timothée Mazzucotelli). [Issue-403](https://github.com/mkdocstrings/griffe/issues/403)
+- Add fields to aliases when serializing ([5c9fee2](https://github.com/mkdocstrings/griffe/commit/5c9fee2b0c6e4f4e63c7648fa41b2e540f2ecc7f) by Timothée Mazzucotelli).
+- Also add the option to ignore missing type to the Sphinx parser ([8c9f803](https://github.com/mkdocstrings/griffe/commit/8c9f803e748a659905b06445a349a6cfea948c1c) by Timothée Mazzucotelli).
+
 ## [1.12.0](https://github.com/mkdocstrings/griffe/releases/tag/1.12.0) - 2025-08-14
 
 [Compare with 1.11.1](https://github.com/mkdocstrings/griffe/compare/1.11.1...1.12.0)
