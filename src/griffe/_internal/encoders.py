@@ -184,7 +184,7 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute | TypeAlias, paren
 def _load_module(obj_dict: dict[str, Any]) -> Module:
     module = Module(
         name=obj_dict["name"],
-        filepath=Path(obj_dict["filepath"]),
+        filepath=Path(obj_dict["filepath"]) if "filepath" in obj_dict else None,
         docstring=_load_docstring(obj_dict),
         runtime=obj_dict.get("runtime", True),
     )
@@ -268,12 +268,17 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
 
 
 def _load_alias(obj_dict: dict[str, Any]) -> Alias:
-    return Alias(
+    alias = Alias(
         name=obj_dict["name"],
         target=obj_dict["target_path"],
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno"),
+        runtime=obj_dict.get("runtime", True),
+        inherited=obj_dict.get("inherited", False),
     )
+    alias.public = obj_dict.get("public")
+    alias.deprecated = obj_dict.get("deprecated")
+    return alias
 
 
 def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:

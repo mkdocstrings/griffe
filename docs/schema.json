@@ -37,15 +37,81 @@
             "integer",
             "null"
           ]
+        },
+        "inherited": {
+          "title": "Whether the alias is the member of another alias.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.inherited",
+          "type": "boolean"
+        },
+        "runtime": {
+          "title": "Whether the alias exists at runtime.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.runtime",
+          "type": "boolean"
+        },
+        "public": {
+          "title": "Whether the alias is public.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.public",
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "deprecated": {
+          "title": "Whether the alias is explicitly marked as deprecated.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.deprecated",
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "is_public": {
+          "title": "Whether the alias is public.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_public",
+          "type": "boolean"
+        },
+        "is_deprecated": {
+          "title": "Whether the alias is deprecated.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_deprecated",
+          "type": "boolean"
+        },
+        "is_private": {
+          "title": "Whether the alias is private.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_private",
+          "type": "boolean"
+        },
+        "is_class_private": {
+          "title": "Whether the alias is class-private.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_class_private",
+          "type": "boolean"
+        },
+        "is_special": {
+          "title": "Whether the alias is special.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_special",
+          "type": "boolean"
+        },
+        "is_imported": {
+          "title": "Whether the alias is imported.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_imported",
+          "type": "boolean"
+        },
+        "is_exported": {
+          "title": "Whether the alias is exported.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_exported",
+          "type": "boolean"
+        },
+        "is_wildcard_exposed": {
+          "title": "Whether the alias is wildcard-exposed.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_wildcard_exposed",
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
       "required": [
         "name",
         "kind",
-        "path",
         "target_path",
-        "lineno"
+        "runtime",
+        "inherited"
       ]
     },
     {
@@ -257,11 +323,6 @@
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_wildcard_exposed",
           "type": "boolean"
         },
-        "is_inherited": {
-          "title": "Whether the object is inherited.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_inherited",
-          "type": "boolean"
-        },
         "bases": true,
         "decorators": true,
         "parameters": true,
@@ -274,15 +335,7 @@
       "required": [
         "name",
         "kind",
-        "path",
-        "filepath",
-        "relative_filepath",
-        "relative_package_filepath",
-        "public",
-        "runtime",
-        "deprecated",
-        "labels",
-        "members"
+        "runtime"
       ],
       "allOf": [
         {
