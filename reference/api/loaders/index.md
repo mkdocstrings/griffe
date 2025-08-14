@@ -587,7 +587,7 @@ Examples:
 
 ```
 >>> loader.load("griffe.Module")
-Alias("Module", "_griffe.models.Module")
+Alias("Module", "griffe._internal.models.Module")
 
 ```
 
@@ -718,22 +718,22 @@ Bases: `GetMembersMixin`, `SetMembersMixin`, `DelMembersMixin`
 
               flowchart TD
               griffe.ModulesCollection[ModulesCollection]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
 
-                              _griffe.mixins.GetMembersMixin --> griffe.ModulesCollection
+                              griffe._internal.mixins.GetMembersMixin --> griffe.ModulesCollection
                 
-                _griffe.mixins.SetMembersMixin --> griffe.ModulesCollection
+                griffe._internal.mixins.SetMembersMixin --> griffe.ModulesCollection
                 
-                _griffe.mixins.DelMembersMixin --> griffe.ModulesCollection
+                griffe._internal.mixins.DelMembersMixin --> griffe.ModulesCollection
                 
 
 
               click griffe.ModulesCollection href "" "griffe.ModulesCollection"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
             
 ```
 

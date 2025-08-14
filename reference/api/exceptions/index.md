@@ -25,14 +25,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.LoadingError[LoadingError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.LoadingError
+                              griffe._internal.exceptions.GriffeError --> griffe.LoadingError
                 
 
 
               click griffe.LoadingError href "" "griffe.LoadingError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -46,14 +46,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.NameResolutionError[NameResolutionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.NameResolutionError
+                              griffe._internal.exceptions.GriffeError --> griffe.NameResolutionError
                 
 
 
               click griffe.NameResolutionError href "" "griffe.NameResolutionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -67,14 +67,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.UnhandledEditableModuleError[UnhandledEditableModuleError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.UnhandledEditableModuleError
+                              griffe._internal.exceptions.GriffeError --> griffe.UnhandledEditableModuleError
                 
 
 
               click griffe.UnhandledEditableModuleError href "" "griffe.UnhandledEditableModuleError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -88,14 +88,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.UnimportableModuleError[UnimportableModuleError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.UnimportableModuleError
+                              griffe._internal.exceptions.GriffeError --> griffe.UnimportableModuleError
                 
 
 
               click griffe.UnimportableModuleError href "" "griffe.UnimportableModuleError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -114,14 +114,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.AliasResolutionError[AliasResolutionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.AliasResolutionError
+                              griffe._internal.exceptions.GriffeError --> griffe.AliasResolutionError
                 
 
 
               click griffe.AliasResolutionError href "" "griffe.AliasResolutionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -159,14 +159,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.CyclicAliasError[CyclicAliasError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.CyclicAliasError
+                              griffe._internal.exceptions.GriffeError --> griffe.CyclicAliasError
                 
 
 
               click griffe.CyclicAliasError href "" "griffe.CyclicAliasError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -199,14 +199,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.LastNodeError[LastNodeError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.LastNodeError
+                              griffe._internal.exceptions.GriffeError --> griffe.LastNodeError
                 
 
 
               click griffe.LastNodeError href "" "griffe.LastNodeError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -220,14 +220,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.RootNodeError[RootNodeError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.RootNodeError
+                              griffe._internal.exceptions.GriffeError --> griffe.RootNodeError
                 
 
 
               click griffe.RootNodeError href "" "griffe.RootNodeError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -241,14 +241,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.BuiltinModuleError[BuiltinModuleError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.BuiltinModuleError
+                              griffe._internal.exceptions.GriffeError --> griffe.BuiltinModuleError
                 
 
 
               click griffe.BuiltinModuleError href "" "griffe.BuiltinModuleError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -262,14 +262,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.ExtensionError[ExtensionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.ExtensionError
+                              griffe._internal.exceptions.GriffeError --> griffe.ExtensionError
                 
 
 
               click griffe.ExtensionError href "" "griffe.ExtensionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -283,18 +283,18 @@ Bases: `ExtensionError`
 
               flowchart TD
               griffe.ExtensionNotLoadedError[ExtensionNotLoadedError]
-              _griffe.exceptions.ExtensionError[ExtensionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.ExtensionError[ExtensionError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.ExtensionError --> griffe.ExtensionNotLoadedError
-                                _griffe.exceptions.GriffeError --> _griffe.exceptions.ExtensionError
+                              griffe._internal.exceptions.ExtensionError --> griffe.ExtensionNotLoadedError
+                                griffe._internal.exceptions.GriffeError --> griffe._internal.exceptions.ExtensionError
                 
 
 
 
               click griffe.ExtensionNotLoadedError href "" "griffe.ExtensionNotLoadedError"
-              click _griffe.exceptions.ExtensionError href "" "_griffe.exceptions.ExtensionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.ExtensionError href "" "griffe._internal.exceptions.ExtensionError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -308,14 +308,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.GitError[GitError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.GitError
+                              griffe._internal.exceptions.GriffeError --> griffe.GitError
                 
 
 
               click griffe.GitError href "" "griffe.GitError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 

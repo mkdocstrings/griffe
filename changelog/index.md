@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.12.0](https://github.com/mkdocstrings/griffe/releases/tag/1.12.0) - 2025-08-14
+
+[Compare with 1.11.1](https://github.com/mkdocstrings/griffe/compare/1.11.1...1.12.0)
+
+### Features
+
+- Allow disabling "missing type/annotation" warnings ([07564b4](https://github.com/mkdocstrings/griffe/commit/07564b43524220342c3078ece406459c08b80a86) by Timothée Mazzucotelli). [Issue-mkdocstrings-437](https://github.com/mkdocstrings/mkdocstrings/issues/437)
+
+## [1.11.1](https://github.com/mkdocstrings/griffe/releases/tag/1.11.1) - 2025-08-11
+
+[Compare with 1.11.0](https://github.com/mkdocstrings/griffe/compare/1.11.0...1.11.1)
+
+### Bug Fixes
+
+- Fix type parameters loading ([ce41279](https://github.com/mkdocstrings/griffe/commit/ce41279cc8b7abc45c7b94316b24e87d4a1edc40) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Move private `_griffe` package under `griffe._internal` ([8f37158](https://github.com/mkdocstrings/griffe/commit/8f37158eb5617d2cf686f9a0a044f29c638598b2) by Timothée Mazzucotelli).
+
 ## [1.11.0](https://github.com/mkdocstrings/griffe/releases/tag/1.11.0) - 2025-08-07
 
 [Compare with 1.10.0](https://github.com/mkdocstrings/griffe/compare/1.10.0...1.11.0)

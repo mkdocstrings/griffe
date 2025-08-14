@@ -67,7 +67,7 @@
             <a id="nextFileLink" class="nav" href="z_a44f0ac069e85531_test_functions_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.2">coverage.py v7.10.2</a>,
-            created at 2025-08-06 17:03 +0200
+            created at 2025-08-11 13:44 +0200
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -92,8 +92,8 @@
     <p class="pln"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t"><span class="key">import</span> <span class="nam">pytest</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t"><span class="key">from</span> <span class="nam">_griffe</span><span class="op">.</span><span class="nam">finder</span> <span class="key">import</span> <span class="nam">_handle_editable_module</span><span class="op">,</span> <span class="nam">_handle_pth_file</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="key">from</span> <span class="nam">griffe</span> <span class="key">import</span> <span class="nam">Module</span><span class="op">,</span> <span class="nam">ModuleFinder</span><span class="op">,</span> <span class="nam">NamespacePackage</span><span class="op">,</span> <span class="nam">Package</span><span class="op">,</span> <span class="nam">temporary_pypackage</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t"><span class="key">from</span> <span class="nam">griffe</span> <span class="key">import</span> <span class="nam">Module</span><span class="op">,</span> <span class="nam">ModuleFinder</span><span class="op">,</span> <span class="nam">NamespacePackage</span><span class="op">,</span> <span class="nam">Package</span><span class="op">,</span> <span class="nam">temporary_pypackage</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="key">from</span> <span class="nam">griffe</span><span class="op">.</span><span class="nam">_internal</span><span class="op">.</span><span class="nam">finder</span> <span class="key">import</span> <span class="nam">_handle_editable_module</span><span class="op">,</span> <span class="nam">_handle_pth_file</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="op">@</span><span class="nam">pytest</span><span class="op">.</span><span class="nam">mark</span><span class="op">.</span><span class="nam">parametrize</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -274,7 +274,7 @@
     <p class="run run2"><span class="n"><a id="t190" href="#t190">190</a></span><span class="t">        <span class="str">"hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t191" href="#t191">191</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t192" href="#t192">192</a></span><span class="t">    <span class="nam">search_paths</span> <span class="op">=</span> <span class="nam">_handle_editable_module</span><span class="op">(</span><span class="nam">pth_file</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t193" href="#t193">193</a></span><span class="t">    <span class="key">assert</span> <span class="nam">all</span><span class="op">(</span><span class="nam">sp</span><span class="op">.</span><span class="nam">always_scan_for</span> <span class="key">in</span> <span class="op">{</span><span class="str">"griffe"</span><span class="op">,</span> <span class="str">"_griffe"</span><span class="op">}</span> <span class="key">for</span> <span class="nam">sp</span> <span class="key">in</span> <span class="nam">search_paths</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t193" href="#t193">193</a></span><span class="t">    <span class="key">assert</span> <span class="nam">all</span><span class="op">(</span><span class="nam">sp</span><span class="op">.</span><span class="nam">always_scan_for</span> <span class="op">==</span> <span class="str">"griffe"</span> <span class="key">for</span> <span class="nam">sp</span> <span class="key">in</span> <span class="nam">search_paths</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t194" href="#t194">194</a></span><span class="t">    <span class="nam">paths</span> <span class="op">=</span> <span class="op">[</span><span class="nam">sp</span><span class="op">.</span><span class="nam">path</span> <span class="key">for</span> <span class="nam">sp</span> <span class="key">in</span> <span class="nam">search_paths</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t195" href="#t195">195</a></span><span class="t">    <span class="key">assert</span> <span class="nam">paths</span> <span class="op">==</span> <span class="op">[</span><span class="nam">Path</span><span class="op">(</span><span class="str">"src"</span><span class="op">)</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t196" href="#t196">196</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -412,7 +412,7 @@
             <a class="nav" href="z_a44f0ac069e85531_test_functions_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.2">coverage.py v7.10.2</a>,
-            created at 2025-08-06 17:03 +0200
+            created at 2025-08-11 13:44 +0200
         </p>
     </div>
 </footer>

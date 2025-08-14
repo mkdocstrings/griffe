@@ -135,6 +135,8 @@ The parser accepts a few options:
 - `returns_type_in_property_summary`: Whether to parse the return type of properties at the beginning of their summary: `str: Summary of the property`. Default: false.
 - `trim_doctest_flags`: Remove the [doctest flags](https://docs.python.org/3/library/doctest.html#option-flags) written as comments in `pycon` snippets within a docstring. These flags are used to alter the behavior of [doctest](https://docs.python.org/3/library/doctest.html#module-doctest) when testing docstrings, and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
+- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
 ### Sections
 
@@ -879,6 +881,8 @@ The parser accepts a few options:
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings. Useful when merging `__init__` docstring into class' docstrings with mkdocstrings-python's [`merge_init_into_class`](https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class) option. Default: false.
 - `trim_doctest_flags`: Remove the [doctest flags](https://docs.python.org/3/library/doctest.html#option-flags) written as comments in `pycon` snippets within a docstring. These flags are used to alter the behavior of [doctest](https://docs.python.org/3/library/doctest.html#module-doctest) when testing docstrings, and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
+- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
 ### Sections
 

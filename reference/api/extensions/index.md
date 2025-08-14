@@ -738,14 +738,14 @@ Bases: `Extension`
 
               flowchart TD
               griffe.DataclassesExtension[DataclassesExtension]
-              _griffe.extensions.base.Extension[Extension]
+              griffe._internal.extensions.base.Extension[Extension]
 
-                              _griffe.extensions.base.Extension --> griffe.DataclassesExtension
+                              griffe._internal.extensions.base.Extension --> griffe.DataclassesExtension
                 
 
 
               click griffe.DataclassesExtension href "" "griffe.DataclassesExtension"
-              click _griffe.extensions.base.Extension href "" "_griffe.extensions.base.Extension"
+              click griffe._internal.extensions.base.Extension href "" "griffe._internal.extensions.base.Extension"
             
 ```
 

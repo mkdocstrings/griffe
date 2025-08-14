@@ -243,10 +243,10 @@ from package1 import X
 False
 >>> package2["X"].target
 Traceback (most recent call last):
-  File "_griffe/dataclasses.py", line 1375, in _resolve_target
+  File "griffe/_internal/models.py", line 1375, in _resolve_target
     resolved = self.modules_collection.get_member(self.target_path)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "_griffe/mixins.py", line 84, in get_member
+  File "griffe/_internal/mixins.py", line 84, in get_member
     return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
            ~~~~~~~~~~~~^^^^^^^^^^
 KeyError: 'package1'
@@ -255,13 +255,13 @@ The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "_griffe/dataclasses.py", line 1310, in target
+  File "griffe/_internal/dataclasses.py", line 1310, in target
     self.resolve_target()
-  File "_griffe/dataclasses.py", line 1369, in resolve_target
+  File "griffe/_internal/dataclasses.py", line 1369, in resolve_target
     self._resolve_target()
-  File "_griffe/dataclasses.py", line 1377, in _resolve_target
+  File "griffe/_internal/dataclasses.py", line 1377, in _resolve_target
     raise AliasResolutionError(self) from error
-_griffe.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
+griffe._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
 
 ```
 
@@ -280,7 +280,7 @@ False  # Hmm?
 >>> package2["X"].target
 Traceback (most recent call last):
 ...
-_griffe.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
+griffe._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
 
 ```
 

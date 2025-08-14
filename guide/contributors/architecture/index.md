@@ -12,22 +12,21 @@ This document describes how the project is architectured, both regarding boilerp
 📁 docs/ # (6)!
 📁 htmlcov/ # (7)!
 📁 scripts/ # (8)!
-📁 site/ # (9)!
-📁 src/ # (10)!
-📁 tests/ # (11)!
- .copier-answers.yml # (12)!
- .envrc # (13)!
+📁 src/ # (9)!
+📁 tests/ # (10)!
+ .copier-answers.yml # (11)!
+ .envrc # (12)!
  .gitignore
  CHANGELOG.md
  CODE_OF_CONDUCT.md
  CONTRIBUTING.md
  LICENSE
- Makefile # (14)!
+ Makefile # (13)!
  README.md
- duties.py # (15)!
+ duties.py # (14)!
  logo.svg
- mkdocs.yml # (16)!
- pyproject.toml # (17)!
+ mkdocs.yml # (15)!
+ pyproject.toml # (16)!
  uv.lock
 
 ```
@@ -298,90 +297,88 @@ This document describes how the project is architectured, both regarding boilerp
 
    ```
 
-1. Documentation site, built with `make run mkdocs build` (git-ignored).
-
 1. The source of our Python package(s). See [Sources](#sources) and [Program structure](#program-structure).
 
    ```
-   📁 _griffe/ # (1)!
-   📁 griffe/ # (2)!
+   📁 griffe/ # (1)!
 
    ```
-
-   1. Our internal API, hidden from users. See [Program structure](#program-structure).
-
-      ```
-      📁 agents/ # (1)!
-      📁 docstrings/ # (2)!
-      📁 extensions/ # (3)!
-       __init__.py
-       c3linear.py
-       cli.py
-       collections.py
-       debug.py
-       diff.py
-       encoders.py
-       enumerations.py
-       exceptions.py
-       expressions.py
-       finder.py
-       git.py
-       importer.py
-       loader.py
-       logger.py
-       merger.py
-       mixins.py
-       models.py
-       py.typed
-       stats.py
-       tests.py
-
-      ```
-
-      1. ```
-         📁 nodes/ # (1)!
-          __init__.py
-          inspector.py
-          visitor.py
-
-         ```
-         1. ```
-             __init__.py
-             assignments.py
-             ast.py
-             docstrings.py
-             exports.py
-             imports.py
-             parameters.py
-             runtime.py
-             values.py
-
-            ```
-      1. ```
-          __init__.py
-          google.py
-          models.py
-          numpy.py
-          parsers.py
-          sphinx.py
-          utils.py
-
-         ```
-      1. ```
-          __init__.py
-          base.py
-          dataclasses.py
-
-         ```
 
    1. Our public API, exposed to users. See [Program structure](#program-structure).
 
       ```
+      📁 _internal/ # (1)!
        __init__.py
        __main__.py
        py.typed
 
       ```
+
+      1. Our internal API, hidden from users. See [Program structure](#program-structure).
+
+         ```
+         📁 agents/ # (1)!
+         📁 docstrings/ # (2)!
+         📁 extensions/ # (3)!
+          __init__.py
+          c3linear.py
+          cli.py
+          collections.py
+          debug.py
+          diff.py
+          encoders.py
+          enumerations.py
+          exceptions.py
+          expressions.py
+          finder.py
+          git.py
+          importer.py
+          loader.py
+          logger.py
+          merger.py
+          mixins.py
+          models.py
+          py.typed
+          stats.py
+          tests.py
+
+         ```
+
+         1. ```
+            📁 nodes/ # (1)!
+             __init__.py
+             inspector.py
+             visitor.py
+
+            ```
+            1. ```
+                __init__.py
+                assignments.py
+                ast.py
+                docstrings.py
+                exports.py
+                imports.py
+                parameters.py
+                runtime.py
+                values.py
+
+               ```
+         1. ```
+             __init__.py
+             google.py
+             models.py
+             numpy.py
+             parsers.py
+             sphinx.py
+             utils.py
+
+            ```
+         1. ```
+             __init__.py
+             base.py
+             dataclasses.py
+
+            ```
 
 1. Our test suite. See [Tests](#tests).
 
@@ -463,16 +460,13 @@ Sources are located in the `src` folder, following the [src-layout](https://pack
 
 Our test suite is located in the `tests` folder. It is located outside of the sources as to not pollute distributions (it would be very wrong to publish a `tests` package as part of our distributions, since this name is extremely common), or worse, the public API. The `tests` folder is however included in our source distributions (`.tar.gz`), alongside most of our metadata and configuration files. Check out `pyproject.toml` to get the full list of files included in our source distributions.
 
-The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test modules reflect our internal API structure, and except for a few test modules that test specific aspects of our API, each test module tests the logic from the corresponding module in the internal API. For example, `test_finder.py` tests code of the `_griffe.finder` internal module, while `test_functions` tests our ability to extract correct information from function signatures, statically. The general rule of thumb when writing new tests is to mirror the internal API. If a test touches to many aspects of the loading process, it can be added to the `test_loader` test module.
+The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test modules reflect our internal API structure, and except for a few test modules that test specific aspects of our API, each test module tests the logic from the corresponding module in the internal API. For example, `test_finder.py` tests code of the `griffe._internal.finder` internal module, while `test_functions` tests our ability to extract correct information from function signatures, statically. The general rule of thumb when writing new tests is to mirror the internal API. If a test touches to many aspects of the loading process, it can be added to the `test_loader` test module.
 
 ## Program structure
 
-Griffe is composed of two packages:
+The internal API is contained within the `src/griffe/_internal` folder. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `griffe._internal`.
 
-- `_griffe`, which is our internal API, hidden from users
-- `griffe`, which is our public API, exposed to users
-
-When installing the `griffe` distribution from PyPI.org (or any other index where it is published), both the `_griffe` and `griffe` packages are installed. Users then import `griffe` directly, or import objects from it. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `_griffe`.
+Users then import `griffe` directly, or import objects from it.
 
 We'll be honest: our code organization is not the most elegant, but it works Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 

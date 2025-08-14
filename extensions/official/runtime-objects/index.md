@@ -17,7 +17,7 @@ This extension stores runtime objects corresponding to each loaded Griffe object
 >>> griffe_data["parse"].extra
 defaultdict(<class 'dict'>, {'runtime-objects': {'object': <function parse at 0x78685c951260>}})
 >>> griffe_data["Module"].extra
-defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class '_griffe.models.Module'>}})
+defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class 'griffe._internal.models.Module'>}})
 
 ```
 

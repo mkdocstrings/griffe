@@ -312,7 +312,7 @@ If you don't want to bother prefixing every module with an underscore, you could
 
   ```
 
-Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python, so we are happy with the result.
+Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python. We later moved the private package under an internal folder.
 
 Top-level-only exposition doesn't play well with large packages.
 

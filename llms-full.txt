@@ -610,10 +610,10 @@ from package1 import X
 False
 >>> package2["X"].target
 Traceback (most recent call last):
-  File "_griffe/dataclasses.py", line 1375, in _resolve_target
+  File "griffe/_internal/models.py", line 1375, in _resolve_target
     resolved = self.modules_collection.get_member(self.target_path)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "_griffe/mixins.py", line 84, in get_member
+  File "griffe/_internal/mixins.py", line 84, in get_member
     return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
            ~~~~~~~~~~~~^^^^^^^^^^
 KeyError: 'package1'
@@ -622,13 +622,13 @@ The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "_griffe/dataclasses.py", line 1310, in target
+  File "griffe/_internal/dataclasses.py", line 1310, in target
     self.resolve_target()
-  File "_griffe/dataclasses.py", line 1369, in resolve_target
+  File "griffe/_internal/dataclasses.py", line 1369, in resolve_target
     self._resolve_target()
-  File "_griffe/dataclasses.py", line 1377, in _resolve_target
+  File "griffe/_internal/dataclasses.py", line 1377, in _resolve_target
     raise AliasResolutionError(self) from error
-_griffe.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
+griffe._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
 
 ```
 
@@ -647,7 +647,7 @@ False  # Hmm?
 >>> package2["X"].target
 Traceback (most recent call last):
 ...
-_griffe.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
+griffe._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
 
 ```
 
@@ -744,17 +744,17 @@ When [loading an object](../loading/), Griffe will give you back an instance of 
 ```
 >>> import griffe
 >>> type(griffe.load("markdown"))
-<class '_griffe.models.Module'>
+<class 'griffe._internal.models.Module'>
 >>> type(griffe.load("markdown.core.Markdown"))
-<class '_griffe.models.Class'>
+<class 'griffe._internal.models.Class'>
 >>> type(griffe.load("markdown.Markdown"))
-<class '_griffe.models.Alias'>
+<class 'griffe._internal.models.Alias'>
 >>> type(griffe.load("markdown.core.markdown"))
-<class '_griffe.models.Function'>
+<class 'griffe._internal.models.Function'>
 >>> type(griffe.load("markdown.markdown"))
-<class '_griffe.models.Alias'>
+<class 'griffe._internal.models.Alias'>
 >>> type(griffe.load("markdown.Markdown.references"))
-<class '_griffe.models.Attribute'>
+<class 'griffe._internal.models.Attribute'>
 
 ```
 
@@ -3631,7 +3631,7 @@ If you don't want to bother prefixing every module with an underscore, you could
 
   ```
 
-Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python, so we are happy with the result.
+Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python. We later moved the private package under an internal folder.
 
 Top-level-only exposition doesn't play well with large packages.
 
@@ -5102,6 +5102,8 @@ The parser accepts a few options:
 - `returns_type_in_property_summary`: Whether to parse the return type of properties at the beginning of their summary: `str: Summary of the property`. Default: false.
 - `trim_doctest_flags`: Remove the [doctest flags](https://docs.python.org/3/library/doctest.html#option-flags) written as comments in `pycon` snippets within a docstring. These flags are used to alter the behavior of [doctest](https://docs.python.org/3/library/doctest.html#module-doctest) when testing docstrings, and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
+- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
 ### Sections
 
@@ -5846,6 +5848,8 @@ The parser accepts a few options:
 - `ignore_init_summary`: Ignore the first line in `__init__` methods' docstrings. Useful when merging `__init__` docstring into class' docstrings with mkdocstrings-python's [`merge_init_into_class`](https://mkdocstrings.github.io/python/usage/configuration/docstrings/#merge_init_into_class) option. Default: false.
 - `trim_doctest_flags`: Remove the [doctest flags](https://docs.python.org/3/library/doctest.html#option-flags) written as comments in `pycon` snippets within a docstring. These flags are used to alter the behavior of [doctest](https://docs.python.org/3/library/doctest.html#module-doctest) when testing docstrings, and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
+- `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
+- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
 ### Sections
 
@@ -9255,14 +9259,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.AttributeChangedTypeBreakage[AttributeChangedTypeBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.AttributeChangedTypeBreakage
+                              griffe._internal.diff.Breakage --> griffe.AttributeChangedTypeBreakage
                 
 
 
               click griffe.AttributeChangedTypeBreakage href "" "griffe.AttributeChangedTypeBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -9406,14 +9410,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.AttributeChangedValueBreakage[AttributeChangedValueBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.AttributeChangedValueBreakage
+                              griffe._internal.diff.Breakage --> griffe.AttributeChangedValueBreakage
                 
 
 
               click griffe.AttributeChangedValueBreakage href "" "griffe.AttributeChangedValueBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -9557,14 +9561,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ClassRemovedBaseBreakage[ClassRemovedBaseBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ClassRemovedBaseBreakage
+                              griffe._internal.diff.Breakage --> griffe.ClassRemovedBaseBreakage
                 
 
 
               click griffe.ClassRemovedBaseBreakage href "" "griffe.ClassRemovedBaseBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -9708,14 +9712,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ObjectChangedKindBreakage[ObjectChangedKindBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ObjectChangedKindBreakage
+                              griffe._internal.diff.Breakage --> griffe.ObjectChangedKindBreakage
                 
 
 
               click griffe.ObjectChangedKindBreakage href "" "griffe.ObjectChangedKindBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -9859,14 +9863,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ObjectRemovedBreakage[ObjectRemovedBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ObjectRemovedBreakage
+                              griffe._internal.diff.Breakage --> griffe.ObjectRemovedBreakage
                 
 
 
               click griffe.ObjectRemovedBreakage href "" "griffe.ObjectRemovedBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10010,14 +10014,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterAddedRequiredBreakage[ParameterAddedRequiredBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterAddedRequiredBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterAddedRequiredBreakage
                 
 
 
               click griffe.ParameterAddedRequiredBreakage href "" "griffe.ParameterAddedRequiredBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10161,14 +10165,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterChangedDefaultBreakage[ParameterChangedDefaultBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterChangedDefaultBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterChangedDefaultBreakage
                 
 
 
               click griffe.ParameterChangedDefaultBreakage href "" "griffe.ParameterChangedDefaultBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10312,14 +10316,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterChangedKindBreakage[ParameterChangedKindBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterChangedKindBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterChangedKindBreakage
                 
 
 
               click griffe.ParameterChangedKindBreakage href "" "griffe.ParameterChangedKindBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10463,14 +10467,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterChangedRequiredBreakage[ParameterChangedRequiredBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterChangedRequiredBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterChangedRequiredBreakage
                 
 
 
               click griffe.ParameterChangedRequiredBreakage href "" "griffe.ParameterChangedRequiredBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10614,14 +10618,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterMovedBreakage[ParameterMovedBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterMovedBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterMovedBreakage
                 
 
 
               click griffe.ParameterMovedBreakage href "" "griffe.ParameterMovedBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10765,14 +10769,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterRemovedBreakage[ParameterRemovedBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterRemovedBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterRemovedBreakage
                 
 
 
               click griffe.ParameterRemovedBreakage href "" "griffe.ParameterRemovedBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -10916,14 +10920,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ReturnChangedTypeBreakage[ReturnChangedTypeBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ReturnChangedTypeBreakage
+                              griffe._internal.diff.Breakage --> griffe.ReturnChangedTypeBreakage
                 
 
 
               click griffe.ReturnChangedTypeBreakage href "" "griffe.ReturnChangedTypeBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -11288,14 +11292,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.LoadingError[LoadingError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.LoadingError
+                              griffe._internal.exceptions.GriffeError --> griffe.LoadingError
                 
 
 
               click griffe.LoadingError href "" "griffe.LoadingError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11309,14 +11313,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.NameResolutionError[NameResolutionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.NameResolutionError
+                              griffe._internal.exceptions.GriffeError --> griffe.NameResolutionError
                 
 
 
               click griffe.NameResolutionError href "" "griffe.NameResolutionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11330,14 +11334,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.UnhandledEditableModuleError[UnhandledEditableModuleError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.UnhandledEditableModuleError
+                              griffe._internal.exceptions.GriffeError --> griffe.UnhandledEditableModuleError
                 
 
 
               click griffe.UnhandledEditableModuleError href "" "griffe.UnhandledEditableModuleError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11351,14 +11355,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.UnimportableModuleError[UnimportableModuleError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.UnimportableModuleError
+                              griffe._internal.exceptions.GriffeError --> griffe.UnimportableModuleError
                 
 
 
               click griffe.UnimportableModuleError href "" "griffe.UnimportableModuleError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11377,14 +11381,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.AliasResolutionError[AliasResolutionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.AliasResolutionError
+                              griffe._internal.exceptions.GriffeError --> griffe.AliasResolutionError
                 
 
 
               click griffe.AliasResolutionError href "" "griffe.AliasResolutionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11422,14 +11426,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.CyclicAliasError[CyclicAliasError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.CyclicAliasError
+                              griffe._internal.exceptions.GriffeError --> griffe.CyclicAliasError
                 
 
 
               click griffe.CyclicAliasError href "" "griffe.CyclicAliasError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11462,14 +11466,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.LastNodeError[LastNodeError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.LastNodeError
+                              griffe._internal.exceptions.GriffeError --> griffe.LastNodeError
                 
 
 
               click griffe.LastNodeError href "" "griffe.LastNodeError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11483,14 +11487,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.RootNodeError[RootNodeError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.RootNodeError
+                              griffe._internal.exceptions.GriffeError --> griffe.RootNodeError
                 
 
 
               click griffe.RootNodeError href "" "griffe.RootNodeError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11504,14 +11508,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.BuiltinModuleError[BuiltinModuleError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.BuiltinModuleError
+                              griffe._internal.exceptions.GriffeError --> griffe.BuiltinModuleError
                 
 
 
               click griffe.BuiltinModuleError href "" "griffe.BuiltinModuleError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11525,14 +11529,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.ExtensionError[ExtensionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.ExtensionError
+                              griffe._internal.exceptions.GriffeError --> griffe.ExtensionError
                 
 
 
               click griffe.ExtensionError href "" "griffe.ExtensionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11546,18 +11550,18 @@ Bases: `ExtensionError`
 
               flowchart TD
               griffe.ExtensionNotLoadedError[ExtensionNotLoadedError]
-              _griffe.exceptions.ExtensionError[ExtensionError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.ExtensionError[ExtensionError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.ExtensionError --> griffe.ExtensionNotLoadedError
-                                _griffe.exceptions.GriffeError --> _griffe.exceptions.ExtensionError
+                              griffe._internal.exceptions.ExtensionError --> griffe.ExtensionNotLoadedError
+                                griffe._internal.exceptions.GriffeError --> griffe._internal.exceptions.ExtensionError
                 
 
 
 
               click griffe.ExtensionNotLoadedError href "" "griffe.ExtensionNotLoadedError"
-              click _griffe.exceptions.ExtensionError href "" "_griffe.exceptions.ExtensionError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.ExtensionError href "" "griffe._internal.exceptions.ExtensionError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11571,14 +11575,14 @@ Bases: `GriffeError`
 
               flowchart TD
               griffe.GitError[GitError]
-              _griffe.exceptions.GriffeError[GriffeError]
+              griffe._internal.exceptions.GriffeError[GriffeError]
 
-                              _griffe.exceptions.GriffeError --> griffe.GitError
+                              griffe._internal.exceptions.GriffeError --> griffe.GitError
                 
 
 
               click griffe.GitError href "" "griffe.GitError"
-              click _griffe.exceptions.GriffeError href "" "_griffe.exceptions.GriffeError"
+              click griffe._internal.exceptions.GriffeError href "" "griffe._internal.exceptions.GriffeError"
             
 ```
 
@@ -11904,14 +11908,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprAttribute[ExprAttribute]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprAttribute
+                              griffe._internal.expressions.Expr --> griffe.ExprAttribute
                 
 
 
               click griffe.ExprAttribute href "" "griffe.ExprAttribute"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -12130,14 +12134,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprBinOp[ExprBinOp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprBinOp
+                              griffe._internal.expressions.Expr --> griffe.ExprBinOp
                 
 
 
               click griffe.ExprBinOp href "" "griffe.ExprBinOp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -12338,14 +12342,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprBoolOp[ExprBoolOp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprBoolOp
+                              griffe._internal.expressions.Expr --> griffe.ExprBoolOp
                 
 
 
               click griffe.ExprBoolOp href "" "griffe.ExprBoolOp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -12536,14 +12540,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprCall[ExprCall]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprCall
+                              griffe._internal.expressions.Expr --> griffe.ExprCall
                 
 
 
               click griffe.ExprCall href "" "griffe.ExprCall"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -12738,14 +12742,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprCompare[ExprCompare]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprCompare
+                              griffe._internal.expressions.Expr --> griffe.ExprCompare
                 
 
 
               click griffe.ExprCompare href "" "griffe.ExprCompare"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -12951,14 +12955,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprComprehension[ExprComprehension]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprComprehension
+                              griffe._internal.expressions.Expr --> griffe.ExprComprehension
                 
 
 
               click griffe.ExprComprehension href "" "griffe.ExprComprehension"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -13169,14 +13173,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprConstant[ExprConstant]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprConstant
+                              griffe._internal.expressions.Expr --> griffe.ExprConstant
                 
 
 
               click griffe.ExprConstant href "" "griffe.ExprConstant"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -13360,14 +13364,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprDict[ExprDict]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprDict
+                              griffe._internal.expressions.Expr --> griffe.ExprDict
                 
 
 
               click griffe.ExprDict href "" "griffe.ExprDict"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -13562,14 +13566,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprDictComp[ExprDictComp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprDictComp
+                              griffe._internal.expressions.Expr --> griffe.ExprDictComp
                 
 
 
               click griffe.ExprDictComp href "" "griffe.ExprDictComp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -13770,14 +13774,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprExtSlice[ExprExtSlice]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprExtSlice
+                              griffe._internal.expressions.Expr --> griffe.ExprExtSlice
                 
 
 
               click griffe.ExprExtSlice href "" "griffe.ExprExtSlice"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -13958,14 +13962,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprFormatted[ExprFormatted]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprFormatted
+                              griffe._internal.expressions.Expr --> griffe.ExprFormatted
                 
 
 
               click griffe.ExprFormatted href "" "griffe.ExprFormatted"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -14148,14 +14152,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprGeneratorExp[ExprGeneratorExp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprGeneratorExp
+                              griffe._internal.expressions.Expr --> griffe.ExprGeneratorExp
                 
 
 
               click griffe.ExprGeneratorExp href "" "griffe.ExprGeneratorExp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -14348,14 +14352,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprIfExp[ExprIfExp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprIfExp
+                              griffe._internal.expressions.Expr --> griffe.ExprIfExp
                 
 
 
               click griffe.ExprIfExp href "" "griffe.ExprIfExp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -14556,14 +14560,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprJoinedStr[ExprJoinedStr]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprJoinedStr
+                              griffe._internal.expressions.Expr --> griffe.ExprJoinedStr
                 
 
 
               click griffe.ExprJoinedStr href "" "griffe.ExprJoinedStr"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -14748,14 +14752,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprKeyword[ExprKeyword]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprKeyword
+                              griffe._internal.expressions.Expr --> griffe.ExprKeyword
                 
 
 
               click griffe.ExprKeyword href "" "griffe.ExprKeyword"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -14956,14 +14960,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprVarPositional[ExprVarPositional]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprVarPositional
+                              griffe._internal.expressions.Expr --> griffe.ExprVarPositional
                 
 
 
               click griffe.ExprVarPositional href "" "griffe.ExprVarPositional"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -15144,14 +15148,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprVarKeyword[ExprVarKeyword]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprVarKeyword
+                              griffe._internal.expressions.Expr --> griffe.ExprVarKeyword
                 
 
 
               click griffe.ExprVarKeyword href "" "griffe.ExprVarKeyword"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -15334,14 +15338,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprLambda[ExprLambda]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprLambda
+                              griffe._internal.expressions.Expr --> griffe.ExprLambda
                 
 
 
               click griffe.ExprLambda href "" "griffe.ExprLambda"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -15532,14 +15536,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprList[ExprList]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprList
+                              griffe._internal.expressions.Expr --> griffe.ExprList
                 
 
 
               click griffe.ExprList href "" "griffe.ExprList"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -15722,14 +15726,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprListComp[ExprListComp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprListComp
+                              griffe._internal.expressions.Expr --> griffe.ExprListComp
                 
 
 
               click griffe.ExprListComp href "" "griffe.ExprListComp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -15929,14 +15933,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprName[ExprName]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprName
+                              griffe._internal.expressions.Expr --> griffe.ExprName
                 
 
 
               click griffe.ExprName href "" "griffe.ExprName"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -16201,14 +16205,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprNamedExpr[ExprNamedExpr]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprNamedExpr
+                              griffe._internal.expressions.Expr --> griffe.ExprNamedExpr
                 
 
 
               click griffe.ExprNamedExpr href "" "griffe.ExprNamedExpr"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -16404,14 +16408,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprParameter[ExprParameter]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprParameter
+                              griffe._internal.expressions.Expr --> griffe.ExprParameter
                 
 
 
               click griffe.ExprParameter href "" "griffe.ExprParameter"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -16622,14 +16626,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSet[ExprSet]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSet
+                              griffe._internal.expressions.Expr --> griffe.ExprSet
                 
 
 
               click griffe.ExprSet href "" "griffe.ExprSet"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -16812,14 +16816,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSetComp[ExprSetComp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSetComp
+                              griffe._internal.expressions.Expr --> griffe.ExprSetComp
                 
 
 
               click griffe.ExprSetComp href "" "griffe.ExprSetComp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -17014,14 +17018,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSlice[ExprSlice]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSlice
+                              griffe._internal.expressions.Expr --> griffe.ExprSlice
                 
 
 
               click griffe.ExprSlice href "" "griffe.ExprSlice"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -17222,14 +17226,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSubscript[ExprSubscript]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSubscript
+                              griffe._internal.expressions.Expr --> griffe.ExprSubscript
                 
 
 
               click griffe.ExprSubscript href "" "griffe.ExprSubscript"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -17422,14 +17426,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprTuple[ExprTuple]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprTuple
+                              griffe._internal.expressions.Expr --> griffe.ExprTuple
                 
 
 
               click griffe.ExprTuple href "" "griffe.ExprTuple"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -17620,14 +17624,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprUnaryOp[ExprUnaryOp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprUnaryOp
+                              griffe._internal.expressions.Expr --> griffe.ExprUnaryOp
                 
 
 
               click griffe.ExprUnaryOp href "" "griffe.ExprUnaryOp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -17818,14 +17822,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprYield[ExprYield]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprYield
+                              griffe._internal.expressions.Expr --> griffe.ExprYield
                 
 
 
               click griffe.ExprYield href "" "griffe.ExprYield"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -18006,14 +18010,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprYieldFrom[ExprYieldFrom]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprYieldFrom
+                              griffe._internal.expressions.Expr --> griffe.ExprYieldFrom
                 
 
 
               click griffe.ExprYieldFrom href "" "griffe.ExprYieldFrom"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -18921,14 +18925,14 @@ Bases: `Extension`
 
               flowchart TD
               griffe.DataclassesExtension[DataclassesExtension]
-              _griffe.extensions.base.Extension[Extension]
+              griffe._internal.extensions.base.Extension[Extension]
 
-                              _griffe.extensions.base.Extension --> griffe.DataclassesExtension
+                              griffe._internal.extensions.base.Extension --> griffe.DataclassesExtension
                 
 
 
               click griffe.DataclassesExtension href "" "griffe.DataclassesExtension"
-              click _griffe.extensions.base.Extension href "" "_griffe.extensions.base.Extension"
+              click griffe._internal.extensions.base.Extension href "" "griffe._internal.extensions.base.Extension"
             
 ```
 
@@ -20478,7 +20482,7 @@ Examples:
 
 ```
 >>> loader.load("griffe.Module")
-Alias("Module", "_griffe.models.Module")
+Alias("Module", "griffe._internal.models.Module")
 
 ```
 
@@ -20609,22 +20613,22 @@ Bases: `GetMembersMixin`, `SetMembersMixin`, `DelMembersMixin`
 
               flowchart TD
               griffe.ModulesCollection[ModulesCollection]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
 
-                              _griffe.mixins.GetMembersMixin --> griffe.ModulesCollection
+                              griffe._internal.mixins.GetMembersMixin --> griffe.ModulesCollection
                 
-                _griffe.mixins.SetMembersMixin --> griffe.ModulesCollection
+                griffe._internal.mixins.SetMembersMixin --> griffe.ModulesCollection
                 
-                _griffe.mixins.DelMembersMixin --> griffe.ModulesCollection
+                griffe._internal.mixins.DelMembersMixin --> griffe.ModulesCollection
                 
 
 
               click griffe.ModulesCollection href "" "griffe.ModulesCollection"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
             
 ```
 
@@ -21694,26 +21698,26 @@ Bases: `GetMembersMixin`, `SetMembersMixin`, `DelMembersMixin`, `SerializationMi
 
               flowchart TD
               griffe.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.mixins.GetMembersMixin --> griffe.ObjectAliasMixin
+                              griffe._internal.mixins.GetMembersMixin --> griffe.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> griffe.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> griffe.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> griffe.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe.ObjectAliasMixin
                 
 
 
               click griffe.ObjectAliasMixin href "" "griffe.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -22168,30 +22172,30 @@ Bases: `ObjectAliasMixin`
 
               flowchart TD
               griffe.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.mixins.ObjectAliasMixin --> griffe.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.mixins.ObjectAliasMixin --> griffe.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
               click griffe.Object href "" "griffe.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -24228,14 +24232,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionText[DocstringSectionText]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionText
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionText
                 
 
 
               click griffe.DocstringSectionText href "" "griffe.DocstringSectionText"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24333,14 +24337,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionParameters[DocstringSectionParameters]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionParameters
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionParameters
                 
 
 
               click griffe.DocstringSectionParameters href "" "griffe.DocstringSectionParameters"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24438,18 +24442,18 @@ Bases: `DocstringSectionParameters`
 
               flowchart TD
               griffe.DocstringSectionOtherParameters[DocstringSectionOtherParameters]
-              _griffe.docstrings.models.DocstringSectionParameters[DocstringSectionParameters]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSectionParameters[DocstringSectionParameters]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSectionParameters --> griffe.DocstringSectionOtherParameters
-                                _griffe.docstrings.models.DocstringSection --> _griffe.docstrings.models.DocstringSectionParameters
+                              griffe._internal.docstrings.models.DocstringSectionParameters --> griffe.DocstringSectionOtherParameters
+                                griffe._internal.docstrings.models.DocstringSection --> griffe._internal.docstrings.models.DocstringSectionParameters
                 
 
 
 
               click griffe.DocstringSectionOtherParameters href "" "griffe.DocstringSectionOtherParameters"
-              click _griffe.docstrings.models.DocstringSectionParameters href "" "_griffe.docstrings.models.DocstringSectionParameters"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSectionParameters href "" "griffe._internal.docstrings.models.DocstringSectionParameters"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24547,14 +24551,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionTypeParameters[DocstringSectionTypeParameters]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeParameters
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeParameters
                 
 
 
               click griffe.DocstringSectionTypeParameters href "" "griffe.DocstringSectionTypeParameters"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24651,14 +24655,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionRaises[DocstringSectionRaises]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionRaises
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionRaises
                 
 
 
               click griffe.DocstringSectionRaises href "" "griffe.DocstringSectionRaises"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24755,14 +24759,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionWarns[DocstringSectionWarns]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionWarns
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionWarns
                 
 
 
               click griffe.DocstringSectionWarns href "" "griffe.DocstringSectionWarns"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24859,14 +24863,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionReturns[DocstringSectionReturns]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionReturns
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionReturns
                 
 
 
               click griffe.DocstringSectionReturns href "" "griffe.DocstringSectionReturns"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -24963,14 +24967,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionYields[DocstringSectionYields]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionYields
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionYields
                 
 
 
               click griffe.DocstringSectionYields href "" "griffe.DocstringSectionYields"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25067,14 +25071,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionReceives[DocstringSectionReceives]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionReceives
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionReceives
                 
 
 
               click griffe.DocstringSectionReceives href "" "griffe.DocstringSectionReceives"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25172,14 +25176,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionExamples[DocstringSectionExamples]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionExamples
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionExamples
                 
 
 
               click griffe.DocstringSectionExamples href "" "griffe.DocstringSectionExamples"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25277,14 +25281,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionAttributes[DocstringSectionAttributes]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionAttributes
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionAttributes
                 
 
 
               click griffe.DocstringSectionAttributes href "" "griffe.DocstringSectionAttributes"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25381,14 +25385,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionFunctions[DocstringSectionFunctions]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionFunctions
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionFunctions
                 
 
 
               click griffe.DocstringSectionFunctions href "" "griffe.DocstringSectionFunctions"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25485,14 +25489,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionClasses[DocstringSectionClasses]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionClasses
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionClasses
                 
 
 
               click griffe.DocstringSectionClasses href "" "griffe.DocstringSectionClasses"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25590,14 +25594,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionTypeAliases[DocstringSectionTypeAliases]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeAliases
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeAliases
                 
 
 
               click griffe.DocstringSectionTypeAliases href "" "griffe.DocstringSectionTypeAliases"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25694,14 +25698,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionModules[DocstringSectionModules]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionModules
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionModules
                 
 
 
               click griffe.DocstringSectionModules href "" "griffe.DocstringSectionModules"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25798,14 +25802,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionDeprecated[DocstringSectionDeprecated]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionDeprecated
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionDeprecated
                 
 
 
               click griffe.DocstringSectionDeprecated href "" "griffe.DocstringSectionDeprecated"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -25908,14 +25912,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionAdmonition[DocstringSectionAdmonition]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionAdmonition
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionAdmonition
                 
 
 
               click griffe.DocstringSectionAdmonition href "" "griffe.DocstringSectionAdmonition"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -26022,14 +26026,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringAdmonition[DocstringAdmonition]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringAdmonition
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringAdmonition
                 
 
 
               click griffe.DocstringAdmonition href "" "griffe.DocstringAdmonition"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26128,14 +26132,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringDeprecated[DocstringDeprecated]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringDeprecated
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringDeprecated
                 
 
 
               click griffe.DocstringDeprecated href "" "griffe.DocstringDeprecated"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26224,14 +26228,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringRaise[DocstringRaise]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringRaise
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringRaise
                 
 
 
               click griffe.DocstringRaise href "" "griffe.DocstringRaise"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26310,14 +26314,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringWarn[DocstringWarn]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringWarn
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringWarn
                 
 
 
               click griffe.DocstringWarn href "" "griffe.DocstringWarn"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26398,18 +26402,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringReturn[DocstringReturn]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringReturn
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringReturn
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringReturn href "" "griffe.DocstringReturn"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26518,18 +26522,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringYield[DocstringYield]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringYield
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringYield
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringYield href "" "griffe.DocstringYield"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26638,18 +26642,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringReceive[DocstringReceive]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringReceive
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringReceive
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringReceive href "" "griffe.DocstringReceive"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26758,18 +26762,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringParameter[DocstringParameter]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringParameter
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringParameter
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringParameter href "" "griffe.DocstringParameter"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -26888,18 +26892,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringTypeParameter[DocstringTypeParameter]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeParameter
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeParameter
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringTypeParameter href "" "griffe.DocstringTypeParameter"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -27038,18 +27042,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringAttribute[DocstringAttribute]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringAttribute
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringAttribute
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringAttribute href "" "griffe.DocstringAttribute"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -27158,18 +27162,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringFunction[DocstringFunction]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringFunction
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringFunction
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringFunction href "" "griffe.DocstringFunction"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -27288,18 +27292,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringClass[DocstringClass]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringClass
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringClass
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringClass href "" "griffe.DocstringClass"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -27418,18 +27422,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringTypeAlias[DocstringTypeAlias]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeAlias
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeAlias
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringTypeAlias href "" "griffe.DocstringTypeAlias"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -27538,18 +27542,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringModule[DocstringModule]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringModule
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringModule
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringModule href "" "griffe.DocstringModule"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -27729,14 +27733,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringNamedElement
                 
 
 
               click griffe.DocstringNamedElement href "" "griffe.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -28012,6 +28016,7 @@ parse_google(
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
@@ -28060,6 +28065,10 @@ Parameters:
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
 
+- ### **`warn_missing_types`**
+
+  (`bool`, default: `True` ) – Warn about missing types/annotations for parameters, return values, etc.
+
 - ### **`warnings`**
 
   (`bool`, default: `True` ) – Whether to log warnings at all.
@@ -28081,6 +28090,7 @@ parse_numpy(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
@@ -28108,6 +28118,10 @@ Parameters:
 - ### **`warn_unknown_params`**
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
+
+- ### **`warn_missing_types`**
+
+  (`bool`, default: `True` ) – Warn about missing types/annotations for parameters, return values, etc.
 
 - ### **`warnings`**
 
@@ -28407,30 +28421,30 @@ Bases: `ObjectAliasMixin`
 
               flowchart TD
               griffe.Alias[Alias]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.mixins.ObjectAliasMixin --> griffe.Alias
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.mixins.ObjectAliasMixin --> griffe.Alias
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
               click griffe.Alias href "" "griffe.Alias"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -29848,34 +29862,34 @@ Bases: `Object`
 
               flowchart TD
               griffe.Attribute[Attribute]
-              _griffe.models.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.models.Object[Object]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.models.Object --> griffe.Attribute
-                                _griffe.mixins.ObjectAliasMixin --> _griffe.models.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.models.Object --> griffe.Attribute
+                                griffe._internal.mixins.ObjectAliasMixin --> griffe._internal.models.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
 
               click griffe.Attribute href "" "griffe.Attribute"
-              click _griffe.models.Object href "" "_griffe.models.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.models.Object href "" "griffe._internal.models.Object"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -31101,34 +31115,34 @@ Bases: `Object`
 
               flowchart TD
               griffe.Class[Class]
-              _griffe.models.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.models.Object[Object]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.models.Object --> griffe.Class
-                                _griffe.mixins.ObjectAliasMixin --> _griffe.models.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.models.Object --> griffe.Class
+                                griffe._internal.mixins.ObjectAliasMixin --> griffe._internal.models.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
 
               click griffe.Class href "" "griffe.Class"
-              click _griffe.models.Object href "" "_griffe.models.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.models.Object href "" "griffe._internal.models.Object"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -32432,34 +32446,34 @@ Bases: `Object`
 
               flowchart TD
               griffe.Function[Function]
-              _griffe.models.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.models.Object[Object]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.models.Object --> griffe.Function
-                                _griffe.mixins.ObjectAliasMixin --> _griffe.models.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.models.Object --> griffe.Function
+                                griffe._internal.mixins.ObjectAliasMixin --> griffe._internal.models.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
 
               click griffe.Function href "" "griffe.Function"
-              click _griffe.models.Object href "" "_griffe.models.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.models.Object href "" "griffe._internal.models.Object"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -34163,34 +34177,34 @@ Bases: `Object`
 
               flowchart TD
               griffe.Module[Module]
-              _griffe.models.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.models.Object[Object]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.models.Object --> griffe.Module
-                                _griffe.mixins.ObjectAliasMixin --> _griffe.models.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.models.Object --> griffe.Module
+                                griffe._internal.mixins.ObjectAliasMixin --> griffe._internal.models.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
 
               click griffe.Module href "" "griffe.Module"
-              click _griffe.models.Object href "" "_griffe.models.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.models.Object href "" "griffe._internal.models.Object"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -35385,34 +35399,34 @@ Bases: `Object`
 
               flowchart TD
               griffe.TypeAlias[TypeAlias]
-              _griffe.models.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.models.Object[Object]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.models.Object --> griffe.TypeAlias
-                                _griffe.mixins.ObjectAliasMixin --> _griffe.models.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.models.Object --> griffe.TypeAlias
+                                griffe._internal.mixins.ObjectAliasMixin --> griffe._internal.models.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
 
               click griffe.TypeAlias href "" "griffe.TypeAlias"
-              click _griffe.models.Object href "" "_griffe.models.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.models.Object href "" "griffe._internal.models.Object"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
@@ -36714,7 +36728,7 @@ This extension stores runtime objects corresponding to each loaded Griffe object
 >>> griffe_data["parse"].extra
 defaultdict(<class 'dict'>, {'runtime-objects': {'object': <function parse at 0x78685c951260>}})
 >>> griffe_data["Module"].extra
-defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class '_griffe.models.Module'>}})
+defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class 'griffe._internal.models.Module'>}})
 
 ```
 
@@ -36958,22 +36972,21 @@ This document describes how the project is architectured, both regarding boilerp
 📁 docs/ # (6)!
 📁 htmlcov/ # (7)!
 📁 scripts/ # (8)!
-📁 site/ # (9)!
-📁 src/ # (10)!
-📁 tests/ # (11)!
- .copier-answers.yml # (12)!
- .envrc # (13)!
+📁 src/ # (9)!
+📁 tests/ # (10)!
+ .copier-answers.yml # (11)!
+ .envrc # (12)!
  .gitignore
  CHANGELOG.md
  CODE_OF_CONDUCT.md
  CONTRIBUTING.md
  LICENSE
- Makefile # (14)!
+ Makefile # (13)!
  README.md
- duties.py # (15)!
+ duties.py # (14)!
  logo.svg
- mkdocs.yml # (16)!
- pyproject.toml # (17)!
+ mkdocs.yml # (15)!
+ pyproject.toml # (16)!
  uv.lock
 
 ```
@@ -37244,90 +37257,88 @@ This document describes how the project is architectured, both regarding boilerp
 
    ```
 
-1. Documentation site, built with `make run mkdocs build` (git-ignored).
-
 1. The source of our Python package(s). See [Sources](#sources) and [Program structure](#program-structure).
 
    ```
-   📁 _griffe/ # (1)!
-   📁 griffe/ # (2)!
+   📁 griffe/ # (1)!
 
    ```
-
-   1. Our internal API, hidden from users. See [Program structure](#program-structure).
-
-      ```
-      📁 agents/ # (1)!
-      📁 docstrings/ # (2)!
-      📁 extensions/ # (3)!
-       __init__.py
-       c3linear.py
-       cli.py
-       collections.py
-       debug.py
-       diff.py
-       encoders.py
-       enumerations.py
-       exceptions.py
-       expressions.py
-       finder.py
-       git.py
-       importer.py
-       loader.py
-       logger.py
-       merger.py
-       mixins.py
-       models.py
-       py.typed
-       stats.py
-       tests.py
-
-      ```
-
-      1. ```
-         📁 nodes/ # (1)!
-          __init__.py
-          inspector.py
-          visitor.py
-
-         ```
-         1. ```
-             __init__.py
-             assignments.py
-             ast.py
-             docstrings.py
-             exports.py
-             imports.py
-             parameters.py
-             runtime.py
-             values.py
-
-            ```
-      1. ```
-          __init__.py
-          google.py
-          models.py
-          numpy.py
-          parsers.py
-          sphinx.py
-          utils.py
-
-         ```
-      1. ```
-          __init__.py
-          base.py
-          dataclasses.py
-
-         ```
 
    1. Our public API, exposed to users. See [Program structure](#program-structure).
 
       ```
+      📁 _internal/ # (1)!
        __init__.py
        __main__.py
        py.typed
 
       ```
+
+      1. Our internal API, hidden from users. See [Program structure](#program-structure).
+
+         ```
+         📁 agents/ # (1)!
+         📁 docstrings/ # (2)!
+         📁 extensions/ # (3)!
+          __init__.py
+          c3linear.py
+          cli.py
+          collections.py
+          debug.py
+          diff.py
+          encoders.py
+          enumerations.py
+          exceptions.py
+          expressions.py
+          finder.py
+          git.py
+          importer.py
+          loader.py
+          logger.py
+          merger.py
+          mixins.py
+          models.py
+          py.typed
+          stats.py
+          tests.py
+
+         ```
+
+         1. ```
+            📁 nodes/ # (1)!
+             __init__.py
+             inspector.py
+             visitor.py
+
+            ```
+            1. ```
+                __init__.py
+                assignments.py
+                ast.py
+                docstrings.py
+                exports.py
+                imports.py
+                parameters.py
+                runtime.py
+                values.py
+
+               ```
+         1. ```
+             __init__.py
+             google.py
+             models.py
+             numpy.py
+             parsers.py
+             sphinx.py
+             utils.py
+
+            ```
+         1. ```
+             __init__.py
+             base.py
+             dataclasses.py
+
+            ```
 
 1. Our test suite. See [Tests](#tests).
 
@@ -37409,16 +37420,13 @@ Sources are located in the `src` folder, following the [src-layout](https://pack
 
 Our test suite is located in the `tests` folder. It is located outside of the sources as to not pollute distributions (it would be very wrong to publish a `tests` package as part of our distributions, since this name is extremely common), or worse, the public API. The `tests` folder is however included in our source distributions (`.tar.gz`), alongside most of our metadata and configuration files. Check out `pyproject.toml` to get the full list of files included in our source distributions.
 
-The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test modules reflect our internal API structure, and except for a few test modules that test specific aspects of our API, each test module tests the logic from the corresponding module in the internal API. For example, `test_finder.py` tests code of the `_griffe.finder` internal module, while `test_functions` tests our ability to extract correct information from function signatures, statically. The general rule of thumb when writing new tests is to mirror the internal API. If a test touches to many aspects of the loading process, it can be added to the `test_loader` test module.
+The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test modules reflect our internal API structure, and except for a few test modules that test specific aspects of our API, each test module tests the logic from the corresponding module in the internal API. For example, `test_finder.py` tests code of the `griffe._internal.finder` internal module, while `test_functions` tests our ability to extract correct information from function signatures, statically. The general rule of thumb when writing new tests is to mirror the internal API. If a test touches to many aspects of the loading process, it can be added to the `test_loader` test module.
 
 ## Program structure
 
-Griffe is composed of two packages:
+The internal API is contained within the `src/griffe/_internal` folder. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `griffe._internal`.
 
-- `_griffe`, which is our internal API, hidden from users
-- `griffe`, which is our public API, exposed to users
-
-When installing the `griffe` distribution from PyPI.org (or any other index where it is published), both the `_griffe` and `griffe` packages are installed. Users then import `griffe` directly, or import objects from it. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `_griffe`.
+Users then import `griffe` directly, or import objects from it.
 
 We'll be honest: our code organization is not the most elegant, but it works Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
@@ -38897,6 +38905,26 @@ These projects were used to build *griffe*. **Thank you!**
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [1.12.0](https://github.com/mkdocstrings/griffe/releases/tag/1.12.0) - 2025-08-14
+
+[Compare with 1.11.1](https://github.com/mkdocstrings/griffe/compare/1.11.1...1.12.0)
+
+### Features
+
+- Allow disabling "missing type/annotation" warnings ([07564b4](https://github.com/mkdocstrings/griffe/commit/07564b43524220342c3078ece406459c08b80a86) by Timothée Mazzucotelli). [Issue-mkdocstrings-437](https://github.com/mkdocstrings/mkdocstrings/issues/437)
+
+## [1.11.1](https://github.com/mkdocstrings/griffe/releases/tag/1.11.1) - 2025-08-11
+
+[Compare with 1.11.0](https://github.com/mkdocstrings/griffe/compare/1.11.0...1.11.1)
+
+### Bug Fixes
+
+- Fix type parameters loading ([ce41279](https://github.com/mkdocstrings/griffe/commit/ce41279cc8b7abc45c7b94316b24e87d4a1edc40) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Move private `_griffe` package under `griffe._internal` ([8f37158](https://github.com/mkdocstrings/griffe/commit/8f37158eb5617d2cf686f9a0a044f29c638598b2) by Timothée Mazzucotelli).
 
 ## [1.11.0](https://github.com/mkdocstrings/griffe/releases/tag/1.11.0) - 2025-08-07
 

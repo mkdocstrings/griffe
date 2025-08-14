@@ -103,6 +103,7 @@ parse_google(
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
@@ -151,6 +152,10 @@ Parameters:
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
 
+- ### **`warn_missing_types`**
+
+  (`bool`, default: `True` ) – Warn about missing types/annotations for parameters, return values, etc.
+
 - ### **`warnings`**
 
   (`bool`, default: `True` ) – Whether to log warnings at all.
@@ -172,6 +177,7 @@ parse_numpy(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
@@ -199,6 +205,10 @@ Parameters:
 - ### **`warn_unknown_params`**
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
+
+- ### **`warn_missing_types`**
+
+  (`bool`, default: `True` ) – Warn about missing types/annotations for parameters, return values, etc.
 
 - ### **`warnings`**
 

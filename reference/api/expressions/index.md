@@ -318,14 +318,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprAttribute[ExprAttribute]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprAttribute
+                              griffe._internal.expressions.Expr --> griffe.ExprAttribute
                 
 
 
               click griffe.ExprAttribute href "" "griffe.ExprAttribute"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -544,14 +544,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprBinOp[ExprBinOp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprBinOp
+                              griffe._internal.expressions.Expr --> griffe.ExprBinOp
                 
 
 
               click griffe.ExprBinOp href "" "griffe.ExprBinOp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -752,14 +752,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprBoolOp[ExprBoolOp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprBoolOp
+                              griffe._internal.expressions.Expr --> griffe.ExprBoolOp
                 
 
 
               click griffe.ExprBoolOp href "" "griffe.ExprBoolOp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -950,14 +950,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprCall[ExprCall]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprCall
+                              griffe._internal.expressions.Expr --> griffe.ExprCall
                 
 
 
               click griffe.ExprCall href "" "griffe.ExprCall"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -1152,14 +1152,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprCompare[ExprCompare]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprCompare
+                              griffe._internal.expressions.Expr --> griffe.ExprCompare
                 
 
 
               click griffe.ExprCompare href "" "griffe.ExprCompare"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -1365,14 +1365,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprComprehension[ExprComprehension]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprComprehension
+                              griffe._internal.expressions.Expr --> griffe.ExprComprehension
                 
 
 
               click griffe.ExprComprehension href "" "griffe.ExprComprehension"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -1583,14 +1583,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprConstant[ExprConstant]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprConstant
+                              griffe._internal.expressions.Expr --> griffe.ExprConstant
                 
 
 
               click griffe.ExprConstant href "" "griffe.ExprConstant"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -1774,14 +1774,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprDict[ExprDict]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprDict
+                              griffe._internal.expressions.Expr --> griffe.ExprDict
                 
 
 
               click griffe.ExprDict href "" "griffe.ExprDict"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -1976,14 +1976,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprDictComp[ExprDictComp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprDictComp
+                              griffe._internal.expressions.Expr --> griffe.ExprDictComp
                 
 
 
               click griffe.ExprDictComp href "" "griffe.ExprDictComp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -2184,14 +2184,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprExtSlice[ExprExtSlice]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprExtSlice
+                              griffe._internal.expressions.Expr --> griffe.ExprExtSlice
                 
 
 
               click griffe.ExprExtSlice href "" "griffe.ExprExtSlice"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -2372,14 +2372,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprFormatted[ExprFormatted]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprFormatted
+                              griffe._internal.expressions.Expr --> griffe.ExprFormatted
                 
 
 
               click griffe.ExprFormatted href "" "griffe.ExprFormatted"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -2562,14 +2562,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprGeneratorExp[ExprGeneratorExp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprGeneratorExp
+                              griffe._internal.expressions.Expr --> griffe.ExprGeneratorExp
                 
 
 
               click griffe.ExprGeneratorExp href "" "griffe.ExprGeneratorExp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -2762,14 +2762,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprIfExp[ExprIfExp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprIfExp
+                              griffe._internal.expressions.Expr --> griffe.ExprIfExp
                 
 
 
               click griffe.ExprIfExp href "" "griffe.ExprIfExp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -2970,14 +2970,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprJoinedStr[ExprJoinedStr]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprJoinedStr
+                              griffe._internal.expressions.Expr --> griffe.ExprJoinedStr
                 
 
 
               click griffe.ExprJoinedStr href "" "griffe.ExprJoinedStr"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -3162,14 +3162,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprKeyword[ExprKeyword]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprKeyword
+                              griffe._internal.expressions.Expr --> griffe.ExprKeyword
                 
 
 
               click griffe.ExprKeyword href "" "griffe.ExprKeyword"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -3370,14 +3370,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprVarPositional[ExprVarPositional]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprVarPositional
+                              griffe._internal.expressions.Expr --> griffe.ExprVarPositional
                 
 
 
               click griffe.ExprVarPositional href "" "griffe.ExprVarPositional"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -3558,14 +3558,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprVarKeyword[ExprVarKeyword]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprVarKeyword
+                              griffe._internal.expressions.Expr --> griffe.ExprVarKeyword
                 
 
 
               click griffe.ExprVarKeyword href "" "griffe.ExprVarKeyword"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -3748,14 +3748,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprLambda[ExprLambda]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprLambda
+                              griffe._internal.expressions.Expr --> griffe.ExprLambda
                 
 
 
               click griffe.ExprLambda href "" "griffe.ExprLambda"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -3946,14 +3946,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprList[ExprList]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprList
+                              griffe._internal.expressions.Expr --> griffe.ExprList
                 
 
 
               click griffe.ExprList href "" "griffe.ExprList"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -4136,14 +4136,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprListComp[ExprListComp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprListComp
+                              griffe._internal.expressions.Expr --> griffe.ExprListComp
                 
 
 
               click griffe.ExprListComp href "" "griffe.ExprListComp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -4343,14 +4343,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprName[ExprName]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprName
+                              griffe._internal.expressions.Expr --> griffe.ExprName
                 
 
 
               click griffe.ExprName href "" "griffe.ExprName"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -4615,14 +4615,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprNamedExpr[ExprNamedExpr]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprNamedExpr
+                              griffe._internal.expressions.Expr --> griffe.ExprNamedExpr
                 
 
 
               click griffe.ExprNamedExpr href "" "griffe.ExprNamedExpr"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -4818,14 +4818,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprParameter[ExprParameter]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprParameter
+                              griffe._internal.expressions.Expr --> griffe.ExprParameter
                 
 
 
               click griffe.ExprParameter href "" "griffe.ExprParameter"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -5036,14 +5036,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSet[ExprSet]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSet
+                              griffe._internal.expressions.Expr --> griffe.ExprSet
                 
 
 
               click griffe.ExprSet href "" "griffe.ExprSet"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -5226,14 +5226,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSetComp[ExprSetComp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSetComp
+                              griffe._internal.expressions.Expr --> griffe.ExprSetComp
                 
 
 
               click griffe.ExprSetComp href "" "griffe.ExprSetComp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -5428,14 +5428,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSlice[ExprSlice]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSlice
+                              griffe._internal.expressions.Expr --> griffe.ExprSlice
                 
 
 
               click griffe.ExprSlice href "" "griffe.ExprSlice"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -5636,14 +5636,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprSubscript[ExprSubscript]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprSubscript
+                              griffe._internal.expressions.Expr --> griffe.ExprSubscript
                 
 
 
               click griffe.ExprSubscript href "" "griffe.ExprSubscript"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -5836,14 +5836,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprTuple[ExprTuple]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprTuple
+                              griffe._internal.expressions.Expr --> griffe.ExprTuple
                 
 
 
               click griffe.ExprTuple href "" "griffe.ExprTuple"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -6034,14 +6034,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprUnaryOp[ExprUnaryOp]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprUnaryOp
+                              griffe._internal.expressions.Expr --> griffe.ExprUnaryOp
                 
 
 
               click griffe.ExprUnaryOp href "" "griffe.ExprUnaryOp"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -6232,14 +6232,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprYield[ExprYield]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprYield
+                              griffe._internal.expressions.Expr --> griffe.ExprYield
                 
 
 
               click griffe.ExprYield href "" "griffe.ExprYield"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 
@@ -6420,14 +6420,14 @@ Bases: `Expr`
 
               flowchart TD
               griffe.ExprYieldFrom[ExprYieldFrom]
-              _griffe.expressions.Expr[Expr]
+              griffe._internal.expressions.Expr[Expr]
 
-                              _griffe.expressions.Expr --> griffe.ExprYieldFrom
+                              griffe._internal.expressions.Expr --> griffe.ExprYieldFrom
                 
 
 
               click griffe.ExprYieldFrom href "" "griffe.ExprYieldFrom"
-              click _griffe.expressions.Expr href "" "_griffe.expressions.Expr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
             
 ```
 

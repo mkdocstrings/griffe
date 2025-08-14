@@ -415,14 +415,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionText[DocstringSectionText]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionText
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionText
                 
 
 
               click griffe.DocstringSectionText href "" "griffe.DocstringSectionText"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -520,14 +520,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionParameters[DocstringSectionParameters]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionParameters
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionParameters
                 
 
 
               click griffe.DocstringSectionParameters href "" "griffe.DocstringSectionParameters"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -625,18 +625,18 @@ Bases: `DocstringSectionParameters`
 
               flowchart TD
               griffe.DocstringSectionOtherParameters[DocstringSectionOtherParameters]
-              _griffe.docstrings.models.DocstringSectionParameters[DocstringSectionParameters]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSectionParameters[DocstringSectionParameters]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSectionParameters --> griffe.DocstringSectionOtherParameters
-                                _griffe.docstrings.models.DocstringSection --> _griffe.docstrings.models.DocstringSectionParameters
+                              griffe._internal.docstrings.models.DocstringSectionParameters --> griffe.DocstringSectionOtherParameters
+                                griffe._internal.docstrings.models.DocstringSection --> griffe._internal.docstrings.models.DocstringSectionParameters
                 
 
 
 
               click griffe.DocstringSectionOtherParameters href "" "griffe.DocstringSectionOtherParameters"
-              click _griffe.docstrings.models.DocstringSectionParameters href "" "_griffe.docstrings.models.DocstringSectionParameters"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSectionParameters href "" "griffe._internal.docstrings.models.DocstringSectionParameters"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -734,14 +734,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionTypeParameters[DocstringSectionTypeParameters]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeParameters
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeParameters
                 
 
 
               click griffe.DocstringSectionTypeParameters href "" "griffe.DocstringSectionTypeParameters"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -838,14 +838,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionRaises[DocstringSectionRaises]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionRaises
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionRaises
                 
 
 
               click griffe.DocstringSectionRaises href "" "griffe.DocstringSectionRaises"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -942,14 +942,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionWarns[DocstringSectionWarns]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionWarns
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionWarns
                 
 
 
               click griffe.DocstringSectionWarns href "" "griffe.DocstringSectionWarns"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1046,14 +1046,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionReturns[DocstringSectionReturns]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionReturns
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionReturns
                 
 
 
               click griffe.DocstringSectionReturns href "" "griffe.DocstringSectionReturns"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1150,14 +1150,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionYields[DocstringSectionYields]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionYields
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionYields
                 
 
 
               click griffe.DocstringSectionYields href "" "griffe.DocstringSectionYields"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1254,14 +1254,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionReceives[DocstringSectionReceives]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionReceives
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionReceives
                 
 
 
               click griffe.DocstringSectionReceives href "" "griffe.DocstringSectionReceives"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1359,14 +1359,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionExamples[DocstringSectionExamples]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionExamples
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionExamples
                 
 
 
               click griffe.DocstringSectionExamples href "" "griffe.DocstringSectionExamples"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1464,14 +1464,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionAttributes[DocstringSectionAttributes]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionAttributes
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionAttributes
                 
 
 
               click griffe.DocstringSectionAttributes href "" "griffe.DocstringSectionAttributes"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1568,14 +1568,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionFunctions[DocstringSectionFunctions]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionFunctions
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionFunctions
                 
 
 
               click griffe.DocstringSectionFunctions href "" "griffe.DocstringSectionFunctions"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1672,14 +1672,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionClasses[DocstringSectionClasses]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionClasses
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionClasses
                 
 
 
               click griffe.DocstringSectionClasses href "" "griffe.DocstringSectionClasses"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1777,14 +1777,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionTypeAliases[DocstringSectionTypeAliases]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeAliases
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionTypeAliases
                 
 
 
               click griffe.DocstringSectionTypeAliases href "" "griffe.DocstringSectionTypeAliases"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1881,14 +1881,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionModules[DocstringSectionModules]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionModules
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionModules
                 
 
 
               click griffe.DocstringSectionModules href "" "griffe.DocstringSectionModules"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -1985,14 +1985,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionDeprecated[DocstringSectionDeprecated]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionDeprecated
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionDeprecated
                 
 
 
               click griffe.DocstringSectionDeprecated href "" "griffe.DocstringSectionDeprecated"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -2095,14 +2095,14 @@ Bases: `DocstringSection`
 
               flowchart TD
               griffe.DocstringSectionAdmonition[DocstringSectionAdmonition]
-              _griffe.docstrings.models.DocstringSection[DocstringSection]
+              griffe._internal.docstrings.models.DocstringSection[DocstringSection]
 
-                              _griffe.docstrings.models.DocstringSection --> griffe.DocstringSectionAdmonition
+                              griffe._internal.docstrings.models.DocstringSection --> griffe.DocstringSectionAdmonition
                 
 
 
               click griffe.DocstringSectionAdmonition href "" "griffe.DocstringSectionAdmonition"
-              click _griffe.docstrings.models.DocstringSection href "" "_griffe.docstrings.models.DocstringSection"
+              click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
             
 ```
 
@@ -2209,14 +2209,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringAdmonition[DocstringAdmonition]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringAdmonition
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringAdmonition
                 
 
 
               click griffe.DocstringAdmonition href "" "griffe.DocstringAdmonition"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2315,14 +2315,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringDeprecated[DocstringDeprecated]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringDeprecated
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringDeprecated
                 
 
 
               click griffe.DocstringDeprecated href "" "griffe.DocstringDeprecated"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2411,14 +2411,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringRaise[DocstringRaise]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringRaise
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringRaise
                 
 
 
               click griffe.DocstringRaise href "" "griffe.DocstringRaise"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2497,14 +2497,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringWarn[DocstringWarn]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringWarn
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringWarn
                 
 
 
               click griffe.DocstringWarn href "" "griffe.DocstringWarn"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2585,18 +2585,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringReturn[DocstringReturn]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringReturn
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringReturn
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringReturn href "" "griffe.DocstringReturn"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2705,18 +2705,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringYield[DocstringYield]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringYield
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringYield
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringYield href "" "griffe.DocstringYield"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2825,18 +2825,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringReceive[DocstringReceive]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringReceive
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringReceive
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringReceive href "" "griffe.DocstringReceive"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -2945,18 +2945,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringParameter[DocstringParameter]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringParameter
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringParameter
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringParameter href "" "griffe.DocstringParameter"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3075,18 +3075,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringTypeParameter[DocstringTypeParameter]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeParameter
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeParameter
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringTypeParameter href "" "griffe.DocstringTypeParameter"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3225,18 +3225,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringAttribute[DocstringAttribute]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringAttribute
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringAttribute
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringAttribute href "" "griffe.DocstringAttribute"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3345,18 +3345,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringFunction[DocstringFunction]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringFunction
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringFunction
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringFunction href "" "griffe.DocstringFunction"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3475,18 +3475,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringClass[DocstringClass]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringClass
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringClass
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringClass href "" "griffe.DocstringClass"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3605,18 +3605,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringTypeAlias[DocstringTypeAlias]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeAlias
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringTypeAlias
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringTypeAlias href "" "griffe.DocstringTypeAlias"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3725,18 +3725,18 @@ Bases: `DocstringNamedElement`
 
               flowchart TD
               griffe.DocstringModule[DocstringModule]
-              _griffe.docstrings.models.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringNamedElement --> griffe.DocstringModule
-                                _griffe.docstrings.models.DocstringElement --> _griffe.docstrings.models.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringNamedElement --> griffe.DocstringModule
+                                griffe._internal.docstrings.models.DocstringElement --> griffe._internal.docstrings.models.DocstringNamedElement
                 
 
 
 
               click griffe.DocstringModule href "" "griffe.DocstringModule"
-              click _griffe.docstrings.models.DocstringNamedElement href "" "_griffe.docstrings.models.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 
@@ -3916,14 +3916,14 @@ Bases: `DocstringElement`
 
               flowchart TD
               griffe.DocstringNamedElement[DocstringNamedElement]
-              _griffe.docstrings.models.DocstringElement[DocstringElement]
+              griffe._internal.docstrings.models.DocstringElement[DocstringElement]
 
-                              _griffe.docstrings.models.DocstringElement --> griffe.DocstringNamedElement
+                              griffe._internal.docstrings.models.DocstringElement --> griffe.DocstringNamedElement
                 
 
 
               click griffe.DocstringNamedElement href "" "griffe.DocstringNamedElement"
-              click _griffe.docstrings.models.DocstringElement href "" "_griffe.docstrings.models.DocstringElement"
+              click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
             
 ```
 

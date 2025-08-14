@@ -392,14 +392,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.AttributeChangedTypeBreakage[AttributeChangedTypeBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.AttributeChangedTypeBreakage
+                              griffe._internal.diff.Breakage --> griffe.AttributeChangedTypeBreakage
                 
 
 
               click griffe.AttributeChangedTypeBreakage href "" "griffe.AttributeChangedTypeBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -543,14 +543,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.AttributeChangedValueBreakage[AttributeChangedValueBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.AttributeChangedValueBreakage
+                              griffe._internal.diff.Breakage --> griffe.AttributeChangedValueBreakage
                 
 
 
               click griffe.AttributeChangedValueBreakage href "" "griffe.AttributeChangedValueBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -694,14 +694,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ClassRemovedBaseBreakage[ClassRemovedBaseBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ClassRemovedBaseBreakage
+                              griffe._internal.diff.Breakage --> griffe.ClassRemovedBaseBreakage
                 
 
 
               click griffe.ClassRemovedBaseBreakage href "" "griffe.ClassRemovedBaseBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -845,14 +845,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ObjectChangedKindBreakage[ObjectChangedKindBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ObjectChangedKindBreakage
+                              griffe._internal.diff.Breakage --> griffe.ObjectChangedKindBreakage
                 
 
 
               click griffe.ObjectChangedKindBreakage href "" "griffe.ObjectChangedKindBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -996,14 +996,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ObjectRemovedBreakage[ObjectRemovedBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ObjectRemovedBreakage
+                              griffe._internal.diff.Breakage --> griffe.ObjectRemovedBreakage
                 
 
 
               click griffe.ObjectRemovedBreakage href "" "griffe.ObjectRemovedBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -1147,14 +1147,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterAddedRequiredBreakage[ParameterAddedRequiredBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterAddedRequiredBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterAddedRequiredBreakage
                 
 
 
               click griffe.ParameterAddedRequiredBreakage href "" "griffe.ParameterAddedRequiredBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -1298,14 +1298,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterChangedDefaultBreakage[ParameterChangedDefaultBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterChangedDefaultBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterChangedDefaultBreakage
                 
 
 
               click griffe.ParameterChangedDefaultBreakage href "" "griffe.ParameterChangedDefaultBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -1449,14 +1449,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterChangedKindBreakage[ParameterChangedKindBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterChangedKindBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterChangedKindBreakage
                 
 
 
               click griffe.ParameterChangedKindBreakage href "" "griffe.ParameterChangedKindBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -1600,14 +1600,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterChangedRequiredBreakage[ParameterChangedRequiredBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterChangedRequiredBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterChangedRequiredBreakage
                 
 
 
               click griffe.ParameterChangedRequiredBreakage href "" "griffe.ParameterChangedRequiredBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -1751,14 +1751,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterMovedBreakage[ParameterMovedBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterMovedBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterMovedBreakage
                 
 
 
               click griffe.ParameterMovedBreakage href "" "griffe.ParameterMovedBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -1902,14 +1902,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ParameterRemovedBreakage[ParameterRemovedBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ParameterRemovedBreakage
+                              griffe._internal.diff.Breakage --> griffe.ParameterRemovedBreakage
                 
 
 
               click griffe.ParameterRemovedBreakage href "" "griffe.ParameterRemovedBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 
@@ -2053,14 +2053,14 @@ Bases: `Breakage`
 
               flowchart TD
               griffe.ReturnChangedTypeBreakage[ReturnChangedTypeBreakage]
-              _griffe.diff.Breakage[Breakage]
+              griffe._internal.diff.Breakage[Breakage]
 
-                              _griffe.diff.Breakage --> griffe.ReturnChangedTypeBreakage
+                              griffe._internal.diff.Breakage --> griffe.ReturnChangedTypeBreakage
                 
 
 
               click griffe.ReturnChangedTypeBreakage href "" "griffe.ReturnChangedTypeBreakage"
-              click _griffe.diff.Breakage href "" "_griffe.diff.Breakage"
+              click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
             
 ```
 

@@ -17,34 +17,34 @@ Bases: `Object`
 
               flowchart TD
               griffe.TypeAlias[TypeAlias]
-              _griffe.models.Object[Object]
-              _griffe.mixins.ObjectAliasMixin[ObjectAliasMixin]
-              _griffe.mixins.GetMembersMixin[GetMembersMixin]
-              _griffe.mixins.SetMembersMixin[SetMembersMixin]
-              _griffe.mixins.DelMembersMixin[DelMembersMixin]
-              _griffe.mixins.SerializationMixin[SerializationMixin]
+              griffe._internal.models.Object[Object]
+              griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
+              griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
+              griffe._internal.mixins.SetMembersMixin[SetMembersMixin]
+              griffe._internal.mixins.DelMembersMixin[DelMembersMixin]
+              griffe._internal.mixins.SerializationMixin[SerializationMixin]
 
-                              _griffe.models.Object --> griffe.TypeAlias
-                                _griffe.mixins.ObjectAliasMixin --> _griffe.models.Object
-                                _griffe.mixins.GetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                              griffe._internal.models.Object --> griffe.TypeAlias
+                                griffe._internal.mixins.ObjectAliasMixin --> griffe._internal.models.Object
+                                griffe._internal.mixins.GetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SetMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SetMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.DelMembersMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.DelMembersMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
-                _griffe.mixins.SerializationMixin --> _griffe.mixins.ObjectAliasMixin
+                griffe._internal.mixins.SerializationMixin --> griffe._internal.mixins.ObjectAliasMixin
                 
 
 
 
 
               click griffe.TypeAlias href "" "griffe.TypeAlias"
-              click _griffe.models.Object href "" "_griffe.models.Object"
-              click _griffe.mixins.ObjectAliasMixin href "" "_griffe.mixins.ObjectAliasMixin"
-              click _griffe.mixins.GetMembersMixin href "" "_griffe.mixins.GetMembersMixin"
-              click _griffe.mixins.SetMembersMixin href "" "_griffe.mixins.SetMembersMixin"
-              click _griffe.mixins.DelMembersMixin href "" "_griffe.mixins.DelMembersMixin"
-              click _griffe.mixins.SerializationMixin href "" "_griffe.mixins.SerializationMixin"
+              click griffe._internal.models.Object href "" "griffe._internal.models.Object"
+              click griffe._internal.mixins.ObjectAliasMixin href "" "griffe._internal.mixins.ObjectAliasMixin"
+              click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
+              click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
+              click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
+              click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
             
 ```
 
