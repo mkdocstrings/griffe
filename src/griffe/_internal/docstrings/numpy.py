@@ -225,6 +225,7 @@ def _read_parameters(
     *,
     offset: int,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
@@ -263,7 +264,7 @@ def _read_parameters(
                     annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
                     break
             else:
-                if warnings:
+                if warnings and warn_missing_types:
                     docstring_warning(docstring, new_offset, f"No types or annotations for parameters {names}")
         else:
             annotation = parse_docstring_annotation(annotation, docstring, log_level=LogLevel.debug)
@@ -897,6 +898,7 @@ def parse_numpy(
     ignore_init_summary: bool = False,
     trim_doctest_flags: bool = True,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
@@ -910,6 +912,7 @@ def parse_numpy(
         ignore_init_summary: Whether to ignore the summary in `__init__` methods' docstrings.
         trim_doctest_flags: Whether to remove doctest flags from Python example blocks.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        warn_missing_types: Warn about missing types/annotations for parameters, return values, etc.
         warnings: Whether to log warnings at all.
         **options: Additional parsing options.
 
@@ -927,6 +930,7 @@ def parse_numpy(
         "trim_doctest_flags": trim_doctest_flags,
         "ignore_init_summary": ignore_init_summary,
         "warn_unknown_params": warn_unknown_params,
+        "warn_missing_types": warn_missing_types,
         "warnings": warnings,
         **options,
     }

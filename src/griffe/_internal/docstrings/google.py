@@ -189,6 +189,7 @@ def _read_parameters(
     *,
     offset: int,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> tuple[list[DocstringParameter], int]:
@@ -232,7 +233,7 @@ def _read_parameters(
         except (AttributeError, KeyError):
             default = None
 
-        if warnings and annotation is None:
+        if warnings and warn_missing_types and annotation is None:
             docstring_warning(docstring, line_number, f"No type or annotation for parameter '{name}'")
 
         if warnings and warn_unknown_params:
@@ -638,6 +639,7 @@ def _read_returns_section(
     offset: int,
     returns_multiple_items: bool = True,
     returns_named_value: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReturns | None, int]:
@@ -668,7 +670,7 @@ def _read_returns_section(
             # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=2, multiple=len(block) > 1, index=index)
 
-            if warnings and annotation is None:
+            if warnings and warn_missing_types and annotation is None:
                 returned_value = repr(name) if name else index + 1
                 docstring_warning(docstring, line_number, f"No type or annotation for returned value {returned_value}")
 
@@ -683,6 +685,7 @@ def _read_yields_section(
     offset: int,
     returns_multiple_items: bool = True,
     returns_named_value: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionYields | None, int]:
@@ -713,7 +716,7 @@ def _read_yields_section(
             # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=0, multiple=len(block) > 1, index=index)
 
-            if warnings and annotation is None:
+            if warnings and warn_missing_types and annotation is None:
                 yielded_value = repr(name) if name else index + 1
                 docstring_warning(docstring, line_number, f"No type or annotation for yielded value {yielded_value}")
 
@@ -728,6 +731,7 @@ def _read_receives_section(
     offset: int,
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionReceives | None, int]:
@@ -758,7 +762,7 @@ def _read_receives_section(
             # Try to retrieve the annotation from the docstring parent.
             annotation = _annotation_from_parent(docstring, gen_index=1, multiple=len(block) > 1, index=index)
 
-        if warnings and annotation is None:
+        if warnings and warn_missing_types and annotation is None:
             received_value = repr(name) if name else index + 1
             docstring_warning(docstring, line_number, f"No type or annotation for received value {received_value}")
 
@@ -861,6 +865,7 @@ def parse_google(
     receives_multiple_items: bool = True,
     receives_named_value: bool = True,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]:
@@ -888,6 +893,7 @@ def parse_google(
         returns_type_in_property_summary: Whether to parse the return type of properties
             at the beginning of their summary: `str: Summary of the property`.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        warn_missing_types: Warn about missing types/annotations for parameters, return values, etc.
         warnings: Whether to log warnings at all.
         **options: Additional parsing options.
 
@@ -909,6 +915,7 @@ def parse_google(
         "receives_multiple_items": receives_multiple_items,
         "receives_named_value": receives_named_value,
         "warn_unknown_params": warn_unknown_params,
+        "warn_missing_types": warn_missing_types,
         "warnings": warnings,
         **options,
     }
