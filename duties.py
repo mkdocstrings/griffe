@@ -33,6 +33,8 @@ CI = os.environ.get("CI", "0") in {"1", "true", "yes", ""}
 WINDOWS = os.name == "nt"
 PTY = not WINDOWS and not CI
 MULTIRUN = os.environ.get("MULTIRUN", "0") == "1"
+PY_VERSION = f"{sys.version_info.major}{sys.version_info.minor}"
+PY_DEV = "314"
 
 
 def _pyprefix(title: str) -> str:
@@ -135,7 +137,7 @@ def check(ctx: Context) -> None:
     """
 
 
-@duty
+@duty(nofail=PY_VERSION == PY_DEV)
 def check_quality(ctx: Context) -> None:
     """Check the code quality.
 
@@ -203,7 +205,7 @@ def check_quality(ctx: Context) -> None:
     )
 
 
-@duty
+@duty(nofail=PY_VERSION == PY_DEV)
 def check_docs(ctx: Context) -> None:
     """Check if the documentation builds correctly.
 
@@ -229,7 +231,7 @@ def check_docs(ctx: Context) -> None:
         )
 
 
-@duty
+@duty(nofail=PY_VERSION == PY_DEV)
 def check_types(ctx: Context) -> None:
     """Check that the code is correctly typed.
 
@@ -280,7 +282,7 @@ def check_types(ctx: Context) -> None:
     )
 
 
-@duty
+@duty(nofail=PY_VERSION == PY_DEV)
 def check_api(ctx: Context, *cli_args: str) -> None:
     """Check for API breaking changes.
 
@@ -477,7 +479,7 @@ def coverage(ctx: Context) -> None:
     ctx.run(tools.coverage.html(rcfile="config/coverage.ini"))
 
 
-@duty
+@duty(nofail=PY_VERSION == PY_DEV)
 def test(ctx: Context, *cli_args: str, match: str = "") -> None:  # noqa: PT028
     """Run the test suite.
 
@@ -493,8 +495,7 @@ def test(ctx: Context, *cli_args: str, match: str = "") -> None:  # noqa: PT028
         *cli_args: Additional Pytest CLI arguments.
         match: A pytest expression to filter selected tests.
     """
-    py_version = f"{sys.version_info.major}{sys.version_info.minor}"
-    os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
+    os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
     ctx.run(
         tools.pytest(
             "tests",
