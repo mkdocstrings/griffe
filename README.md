@@ -3,7 +3,7 @@
 [![ci](https://github.com/mkdocstrings/griffe/workflows/ci/badge.svg)](https://github.com/mkdocstrings/griffe/actions?query=workflow%3Aci)
 [![documentation](https://img.shields.io/badge/docs-mkdocs-708FCC.svg?style=flat)](https://mkdocstrings.github.io/griffe/)
 [![pypi version](https://img.shields.io/pypi/v/griffe.svg)](https://pypi.org/project/griffe/)
-[![gitter](https://badges.gitter.im/join%20chat.svg)](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im)
+[![gitter](https://img.shields.io/badge/matrix-chat-4db798.svg?style=flat)](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im)
 
 <img src="https://raw.githubusercontent.com/mkdocstrings/griffe/main/logo.svg" alt="Griffe logo, created by François Rozet" width="200" align="right">
 

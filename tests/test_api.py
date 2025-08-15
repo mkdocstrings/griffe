@@ -90,7 +90,7 @@ def _fixture_public_objects(public_api: griffe.Module) -> list[griffe.Object | g
 def _fixture_inventory() -> Inventory:
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
-        raise pytest.skip("The objects inventory is not available.")
+        pytest.skip("The objects inventory is not available.")  # ty: ignore[call-non-callable]
     with inventory_file.open("rb") as file:
         return Inventory.parse_sphinx(file)
 
