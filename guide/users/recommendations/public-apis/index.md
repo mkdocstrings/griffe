@@ -445,7 +445,7 @@ Our documentation framework of choice is of course [MkDocs](https://www.mkdocs.o
 
 If you already follow some of these recommendations, or if you decide to start following them, it might be a good idea to make sure that these recommendations keep being followed as your code base evolves. The intent of these recommendations, or "rules", can be captured in tests relatively easily thanks to Griffe.
 
-We invite you to check out our own test file: [`test_internals.py`](https://github.com/mkdocstrings/griffe/blob/main/tests/test_internals.py). This test module asserts several things:
+We invite you to check out our own test file: [`test_api.py`](https://github.com/mkdocstrings/griffe/blob/main/tests/test_api.py). This test module asserts several things:
 
 - all public objects are exposed in the top-level `griffe` module
 - all public objects have unique names

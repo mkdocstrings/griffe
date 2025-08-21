@@ -52,6 +52,7 @@ Available commands
   vscode                Configure VSCode to work on this project.
 
 Available tasks
+warning: Using incompatible environment (`.venv`) due to `--no-sync` (The interpreter in the project environment has a different version (3.13.7) than it was created with (3.13.5))
   build                 Build source and wheel distributions.
   changelog             Update the changelog in-place with latest commits.
   check                 Check it all!
