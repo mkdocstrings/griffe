@@ -296,7 +296,7 @@ def main(args: list[str]) -> int:
             if not args:
                 print("make: run: missing command", file=sys.stderr)
                 return 1
-            run("default", *args)  # ty: ignore[missing-argument]
+            run(*args)  # ty: ignore[missing-argument]
             return 0
 
         if cmd == "multirun":
