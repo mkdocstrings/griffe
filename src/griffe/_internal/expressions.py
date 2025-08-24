@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from dataclasses import fields as getfields
 from enum import IntEnum, auto
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Protocol
 
 from griffe._internal.agents.nodes.parameters import get_parameters
 from griffe._internal.enumerations import LogLevel, ParameterKind
@@ -1319,7 +1319,12 @@ def _build_yield_from(node: ast.YieldFrom, parent: Module | Class, **kwargs: Any
     return ExprYieldFrom(_build(node.value, parent, **kwargs))
 
 
-_node_map: dict[type, Callable[[Any, Module | Class], Expr]] = {
+class _BuildCallable(Protocol):
+    def __call__(self, node: Any, parent: Module | Class, **kwargs: Any) -> Expr:
+        ...
+
+
+_node_map: dict[type, _BuildCallable] = {
     ast.Attribute: _build_attribute,
     ast.BinOp: _build_binop,
     ast.BoolOp: _build_boolop,
