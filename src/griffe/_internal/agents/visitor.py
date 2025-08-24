@@ -613,6 +613,7 @@ class Visitor:
         self.extensions.call("on_attribute_node", node=node, agent=self)
         parent = self.current
         labels = set()
+        names = None
 
         if parent.kind is Kind.MODULE:
             try:
@@ -645,7 +646,9 @@ class Visitor:
                 names = get_instance_names(node)
             except KeyError:  # Unsupported nodes, like subscript.
                 return
-            parent = parent.parent  # type: ignore[assignment]
+            parent = parent.parent
+            if parent is None:
+                return
             labels.add("instance-attribute")
 
         if not names:
