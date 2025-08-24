@@ -563,6 +563,9 @@ def main(args: list[str] | None = None) -> int:
     else:
         logging.basicConfig(format="%(levelname)-10s %(message)s", level=level)
 
+    # Increase maximum recursion limit to 2000.
+    sys.setrecursionlimit(max(2000, sys.getrecursionlimit()))
+
     # Run subcommand.
     commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
     return commands[subcommand](**opts_dict)
