@@ -575,8 +575,6 @@ is_init_method: bool
 
 Whether this method is an `__init__` method.
 
-See also: is_method.
-
 ## is_init_module
 
 ```
