@@ -1829,10 +1829,7 @@ class Alias(ObjectAliasMixin):
 
     @property
     def is_init_method(self) -> bool:
-        """Whether this method is an `__init__` method.
-
-        See also: [`is_method`][griffe.Alias.is_method].
-        """
+        """Whether this method is an `__init__` method."""
         return cast("Function", self.final_target).is_init_method
 
     @property
