@@ -147,6 +147,7 @@ Attributes:
 - **`is_function`** (`bool`) – Whether this object is a function.
 - **`is_generic`** (`bool`) – Whether this object is generic.
 - **`is_imported`** (`bool`) – Whether this object/alias was imported from another module.
+- **`is_init_method`** (`bool`) – Whether this method is an __init__ method.
 - **`is_init_module`** (`bool`) – Whether this module is an __init__.py module.
 - **`is_module`** (`bool`) – Whether this object is a module.
 - **`is_namespace_package`** (`bool`) – Whether this module is a namespace package (top folder, no __init__.py).
@@ -564,6 +565,17 @@ is_imported: bool
 ```
 
 Whether this object/alias was imported from another module.
+
+## is_init_method
+
+```
+is_init_method: bool
+
+```
+
+Whether this method is an `__init__` method.
+
+See also: is_method.
 
 ## is_init_module
 

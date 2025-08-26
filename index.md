@@ -68,7 +68,7 @@ Traceback (most recent call last):
   File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 609, in main
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 612, in main
     return commands[subcommand](**opts_dict)
            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
   File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 530, in check
