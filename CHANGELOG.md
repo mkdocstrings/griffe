@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.13.0](https://github.com/mkdocstrings/griffe/releases/tag/1.13.0) - 2025-08-26
+
+<small>[Compare with 1.12.1](https://github.com/mkdocstrings/griffe/compare/1.12.1...1.13.0)</small>
+
+### Features
+
+- Add `is_init_method` property ([5417b70](https://github.com/mkdocstrings/griffe/commit/5417b7040f8061696c380d9cd4ed2852bf96adf3) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Increase maximum recursion limit when calling as a CLI ([5f0d9e6](https://github.com/mkdocstrings/griffe/commit/5f0d9e61fbac89247bcae06a7010e28e381a5656) by Timothée Mazzucotelli). [Issue-402](https://github.com/mkdocstrings/griffe/issues/402)
+
 ## [1.12.1](https://github.com/mkdocstrings/griffe/releases/tag/1.12.1) - 2025-08-14
 
 <small>[Compare with 1.12.0](https://github.com/mkdocstrings/griffe/compare/1.12.0...1.12.1)</small>
