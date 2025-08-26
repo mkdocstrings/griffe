@@ -853,6 +853,11 @@ class Object(ObjectAliasMixin):
         return self.kind is Kind.TYPE_ALIAS
 
     @property
+    def is_init_method(self) -> bool:
+        """Whether this function is an `__init__` method."""
+        return False
+
+    @property
     def is_init_module(self) -> bool:
         """Whether this object is an `__init__.py` module.
 
@@ -1823,6 +1828,14 @@ class Alias(ObjectAliasMixin):
         return cast("Module", self.final_target).imports_future_annotations
 
     @property
+    def is_init_method(self) -> bool:
+        """Whether this method is an `__init__` method.
+
+        See also: [`is_method`][griffe.Alias.is_method].
+        """
+        return cast("Function", self.final_target).is_init_method
+
+    @property
     def is_init_module(self) -> bool:
         """Whether this module is an `__init__.py` module.
 
@@ -2431,6 +2444,11 @@ class Function(Object):
                 pass
             return resolved
         return super().resolve(name)
+
+    @property
+    def is_init_method(self) -> bool:
+        """Whether this function is an `__init__` method."""
+        return bool(self.parent and self.parent.is_class and self.name == "__init__")
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
