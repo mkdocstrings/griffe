@@ -317,7 +317,7 @@ def main(args: list[str]) -> int:
             if not args:
                 print("make: run: missing command", file=sys.stderr)
                 return 1
-            run(cmd, *args)  # ty: ignore[missing-argument]
+            run3x(cmd, *args)  # ty: ignore[missing-argument]
             return 0
 
         opts = []
