@@ -646,7 +646,7 @@ class Visitor:
                 names = get_instance_names(node)
             except KeyError:  # Unsupported nodes, like subscript.
                 return
-            parent = parent.parent
+            parent = parent.parent  # type: ignore[assignment]
             if parent is None:
                 return
             labels.add("instance-attribute")
