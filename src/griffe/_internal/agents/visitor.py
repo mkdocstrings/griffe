@@ -561,7 +561,7 @@ class Visitor:
                 runtime=not self.type_guarded,
             )
             self.current.set_member(alias_name, alias)
-            self.extensions.call("on_alias", alias=alias, node=node, agent=self)
+            self.extensions.call("on_alias_instance", alias=alias, node=node, agent=self)
 
     def visit_importfrom(self, node: ast.ImportFrom) -> None:
         """Visit an "import from" node.
@@ -596,7 +596,7 @@ class Visitor:
                     runtime=not self.type_guarded,
                 )
                 self.current.set_member(alias_name, alias)
-                self.extensions.call("on_alias", alias=alias, node=node, agent=self)
+                self.extensions.call("on_alias_instance", alias=alias, node=node, agent=self)
 
     def handle_attribute(
         self,

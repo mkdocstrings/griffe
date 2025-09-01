@@ -482,8 +482,8 @@ def test_relying_on_modules_path_attribute(monkeypatch: pytest.MonkeyPatch) -> N
     assert loader.load("griffe")
 
 
-def test_not_calling_package_loaded_hook_on_something_else_than_package() -> None:
-    """Always call the `on_package_loaded` hook on a package, not any other object."""
+def test_not_calling_package_hook_on_something_else_than_package() -> None:
+    """Always call the `on_package` hook on a package, not any other object."""
     with temporary_pypackage("pkg", {"__init__.py": "from typing import List as L"}) as pkg:
         loader = GriffeLoader(search_paths=[pkg.tmpdir])
         alias: Alias = loader.load("pkg.L")  # type: ignore[assignment]

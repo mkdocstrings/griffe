@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import sys
+import warnings
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from pathlib import Path
@@ -80,6 +81,11 @@ class Extension:
     ) -> None:
         """Run when an Object has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             obj: The object instance.
@@ -87,8 +93,26 @@ class Extension:
             **kwargs: For forward-compatibility.
         """
 
+    def on_object(self, *, obj: Object, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on objects (every kind) once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            obj: The object instance.
+            loader: The loader currently in use.
+            **kwargs: For forward-compatibility.
+        """
+
     def on_members(self, *, node: ast.AST | ObjectNode, obj: Object, agent: Visitor | Inspector, **kwargs: Any) -> None:
         """Run when members of an Object have been loaded.
+
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
 
         Parameters:
             node: The currently visited node.
@@ -116,10 +140,28 @@ class Extension:
     ) -> None:
         """Run when a Module has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             mod: The module instance.
             agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_module(self, *, mod: Module, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on modules once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            mod: The module instance.
+            loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
 
@@ -132,6 +174,11 @@ class Extension:
         **kwargs: Any,
     ) -> None:
         """Run when members of a Module have been loaded.
+
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
 
         Parameters:
             node: The currently visited node.
@@ -159,10 +206,28 @@ class Extension:
     ) -> None:
         """Run when a Class has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             cls: The class instance.
             agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_class(self, *, cls: Class, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on classes once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            cls: The class instance.
+            loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
 
@@ -175,6 +240,11 @@ class Extension:
         **kwargs: Any,
     ) -> None:
         """Run when members of a Class have been loaded.
+
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
 
         Parameters:
             node: The currently visited node.
@@ -202,10 +272,28 @@ class Extension:
     ) -> None:
         """Run when a Function has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             func: The function instance.
             agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_function(self, *, func: Function, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on functions once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            func: The function instance.
+            loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
 
@@ -228,10 +316,28 @@ class Extension:
     ) -> None:
         """Run when an Attribute has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             attr: The attribute instance.
             agent: The analysis agent currently running.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_attribute(self, *, attr: Attribute, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on attributes once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            attr: The attribute instance.
+            loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
 
@@ -254,6 +360,11 @@ class Extension:
     ) -> None:
         """Run when a TypeAlias has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             type_alias: The type alias instance.
@@ -261,7 +372,20 @@ class Extension:
             **kwargs: For forward-compatibility.
         """
 
-    def on_alias(
+    def on_type_alias(self, *, type_alias: TypeAlias, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on type aliases once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            type_alias: The type alias instance.
+            loader: The loader currently in use.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_alias_instance(
         self,
         *,
         node: ast.AST | ObjectNode,
@@ -271,6 +395,11 @@ class Extension:
     ) -> None:
         """Run when an Alias has been created.
 
+        Warning:
+            This method runs while the object tree is still being constructed:
+            data might be incomplete (class inheritance, alias resolution, etc.).
+            Only hook onto this event if you know what you're doing.
+
         Parameters:
             node: The currently visited node.
             alias: The alias instance.
@@ -278,14 +407,39 @@ class Extension:
             **kwargs: For forward-compatibility.
         """
 
-    def on_package_loaded(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> None:
+    def on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:
+        """Run on aliases once the object tree has been fully constructed.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
+
+        Parameters:
+            alias: The alias instance.
+            loader: The loader currently in use.
+            **kwargs: For forward-compatibility.
+        """
+
+    def on_package(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> None:
         """Run when a package has been completely loaded.
+
+        Note:
+            This method runs once the object tree has been fully constructed:
+            data is therefore complete and you can safely hook onto this event.
 
         Parameters:
             pkg: The package (Module) instance.
             loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
+        # YORE: Bump 2: Remove block.
+        if hasattr(self, "on_package_loaded"):
+            warnings.warn(
+                "The `on_package_loaded` event is deprecated and renamed to `on_package`.",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+            self.on_package_loaded(pkg=pkg, loader=loader, **kwargs)
 
     def on_wildcard_expansion(
         self,

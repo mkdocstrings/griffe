@@ -183,20 +183,41 @@ class GriffeLoader:
 
         return self._post_load(top_module, obj_path)
 
+    def _fire_load_events(self, obj: Object) -> None:
+        for member in obj.members.values():
+            if member.is_alias:
+                self.extensions.call("on_alias", alias=member, loader=self)
+                continue
+            self.extensions.call("on_object", obj=member, loader=self)
+            if member.is_module:
+                self.extensions.call("on_module", mod=member, loader=self)
+            elif member.is_class:
+                self.extensions.call("on_class", cls=member, loader=self)
+            elif member.is_function:
+                self.extensions.call("on_function", func=member, loader=self)
+            elif member.is_attribute:
+                self.extensions.call("on_attribute", attr=member, loader=self)
+            elif member.is_type_alias:
+                self.extensions.call("on_type_alias", type_alias=member, loader=self)
+            self._fire_load_events(member)  # type: ignore[arg-type]
+
     def _post_load(self, module: Module, obj_path: str) -> Object | Alias:
         # Pre-emptively expand exports (`__all__` values),
         # as well as wildcard imports (without ever loading additional packages).
         # This is a best-effort to return the most correct API data
-        # before firing the `on_package_loaded` event.
+        # before firing the load events.
         #
         # Packages that wildcard imports from external, non-loaded packages
         # will still have incomplete data, requiring subsequent calls to
         # `load()` and/or `resolve_aliases()`.
         self.expand_exports(module)
         self.expand_wildcards(module, external=False)
-        # Package is loaded, we now retrieve the initially requested object and return it.
+        # Package is loaded, we now retrieve the initially requested object,
+        # fire load events, and return it.
         obj = self.modules_collection.get_member(obj_path)
-        self.extensions.call("on_package_loaded", pkg=module, loader=self)
+        self.extensions.call("on_package", pkg=module, loader=self)
+        self.extensions.call("on_module", mod=module, loader=self)
+        self._fire_load_events(module)
         return obj
 
     def resolve_aliases(

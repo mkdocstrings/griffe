@@ -293,7 +293,7 @@ class Inspector:
                 else:
                     alias = Alias(child.name, target_path)
                     self.current.set_member(child.name, alias)
-                    self.extensions.call("on_alias", alias=alias, node=node, agent=self)
+                    self.extensions.call("on_alias_instance", alias=alias, node=node, agent=self)
             else:
                 self.inspect(child)
 

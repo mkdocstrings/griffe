@@ -102,7 +102,9 @@ If the source code is not available (the modules are built-in or compiled), Grif
 
 Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pattern) to walk the tree and extract information. For ASTs, Griffe uses its [Visitor agent][griffe.Visitor] and for object trees, it uses its [Inspector agent][griffe.Inspector].
 
-Sometimes during the walk through the tree (depth-first order), both the visitor and inspector agents will trigger events. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], an [Attribute][griffe.Attribute], or a [Type Alias][griffe.TypeAlias]. Extensions will therefore be able to modify these instances.
+Sometimes during the walk through the source or runtime objects, both the visitor and inspector agents will trigger events, called **analysis events**. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], an [Attribute][griffe.Attribute], or a [Type Alias][griffe.TypeAlias]. Extensions will therefore be able to modify these instances.
+
+Once the Griffe tree for a given package has been fully constructed, Griffe will trigger a second set of events, called **load events**, by walking the tree again. **It is safer to use load events as they are triggered only once data is complete for a given package**, contrary to the analysis events which are triggered *while the Griffe tree is still being built*.
 
 The following flow chart shows an example of an AST visit. The tree is simplified: actual trees have a lot more nodes like `if/elif/else` nodes, `try/except/else/finally` nodes, [and many more][ast.AST].
 
@@ -186,16 +188,33 @@ Hopefully this flowchart gives you a pretty good idea of what happens when Griff
 
 ### Events and hooks
 
-There are two kinds of events in Griffe: **load events** and **analysis events**. Load events are scoped to the Griffe loader. Analysis events are scoped to the visitor and inspector agents (triggered during static and dynamic analysis).
+There are two kinds of events in Griffe: **load events** and **analysis events**. Load events are scoped to the Griffe loader (triggered once a package is fully loaded). Analysis events are scoped to the visitor and inspector agents (triggered during static and dynamic analysis).
 
 #### Load events
 
-There are two **load events**:
+**Load events** are triggered once the tree for a given package has been fully constructed.
 
-- [`on_package_loaded`][griffe.Extension.on_package_loaded]: The "on package loaded" event is triggered when the loader has finished loading a package entirely, i.e. when all its submodules were scanned and loaded. This event can be hooked by extensions which require the whole package to be loaded, to be able to navigate the object tree without raising lookup errors or alias resolution errors.
+There is 1 generic **load event**:
+
+- [`on_object`][griffe.Extension.on_object]: The "on object" event is triggered on any kind of object (except for aliases and packages, so modules, classes, functions, attributes and type aliases), once the tree for the object's package has been fully constructed.
+
+There are also specific **load events** for each object kind:
+
+- [`on_module`][griffe.Extension.on_module]: The "on module" event is triggered on modules.
+- [`on_class`][griffe.Extension.on_class]: The "on class" event is triggered on classes.
+- [`on_function`][griffe.Extension.on_function]: The "on function" event is triggered on functions.
+- [`on_attribute`][griffe.Extension.on_attribute]: The "on attribute" event is triggered on attributes.
+- [`on_type_alias`][griffe.Extension.on_type_alias]: The "on type alias" event is triggered on type aliases.
+- [`on_alias`][griffe.Extension.on_alias]: The "on alias" event is triggered on aliases (imported/inherited objects).
+- [`on_package`][griffe.Extension.on_package]: The "on package" event is triggered on top-level modules (packages) only.
+
+And a special **load event** for wildcard expansion:
+
 - [`on_wildcard_expansion`][griffe.Extension.on_wildcard_expansion]: The "on wildcard expansion" event is triggered for each alias that is created by expanding wildcard imports (`from ... import *`).
 
 #### Analysis events
+
+**Analysis events** are triggered while modules are being scanned (with static or dynamic analysis). Data is incomplete when these events are triggered, so we recommend only hooking onto these events if you know what you are doing. In doubt, prefer using **load events** above.
 
 There are 3 generic **analysis events**:
 
@@ -217,10 +236,7 @@ There are also specific **analysis events** for each object kind:
 - [`on_attribute_instance`][griffe.Extension.on_attribute_instance]
 - [`on_type_alias_node`][griffe.Extension.on_type_alias_node]
 - [`on_type_alias_instance`][griffe.Extension.on_type_alias_instance]
-
-And a special event for aliases:
-
-- [`on_alias`][griffe.Extension.on_alias]: The "on alias" event is triggered when an [Alias][griffe.Alias] was just created and added as a member of its parent object.
+- [`on_alias_instance`][griffe.Extension.on_alias_instance]
 
 ---
 
