@@ -2,6 +2,10 @@
 
 Griffe is used by various projects in the Python ecosystem.
 
+## api2mdx
+
+[api2mdx](https://github.com/Mirascope/api2mdx) is a Python tool that generates `mdx` documentation for Python APIs. Under the hood, it uses Griffe.
+
 ## griffe2md
 
 [griffe2md](https://mkdocstrings.github.io/griffe2md/) outputs API docs in Markdown. It uses Griffe to load the data, and then use Jinja templates to render documentation in Markdown, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but in Markdown instead of HTML.
@@ -9,6 +13,14 @@ Griffe is used by various projects in the Python ecosystem.
 ## Griffe TUI
 
 [Griffe TUI](https://mkdocstrings.github.io/griffe-tui/) is a textual user interface for Griffe. It offers 100% offline, beautiful Python API docs, in your terminal, thanks to Griffe and [Textual](https://textual.textualize.io/).
+
+## Griffonner
+
+[Griffonner](https://will-langdale.github.io/griffonner/) is a template-first Python documentation generator that gets out of your way. Griffonner uses Griffe to parse your Python code and Jinja2 templates to generate docs in any format you want.
+
+## Hippogriffe
+
+[Hippogriffe](https://github.com/patrick-kidger/hippogriffe) is a set of tweaks on top of the MkDocs + mkdocstrings-python + Griffe documentation stack. It adds source links to GitHub to each top-level class or function, pretty-formats type annotations, improves unions/generics display, and more. Hippogriffe is used as a MkDocs plugin.
 
 ## mkdocstrings-python
 

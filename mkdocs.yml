@@ -76,6 +76,7 @@ nav:
   - Third-party:
     - extensions/third-party.md
     - docstring-inheritance: extensions/third-party/docstring-inheritance.md
+    - fastapi: extensions/third-party/fastapi.md
     - fieldz: extensions/third-party/fieldz.md
     - generics: extensions/third-party/generics.md
     - inherited-method-crossrefs: extensions/third-party/inherited-method-crossrefs.md
