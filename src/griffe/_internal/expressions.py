@@ -1320,8 +1320,7 @@ def _build_yield_from(node: ast.YieldFrom, parent: Module | Class, **kwargs: Any
 
 
 class _BuildCallable(Protocol):
-    def __call__(self, node: Any, parent: Module | Class, **kwargs: Any) -> Expr:
-        ...
+    def __call__(self, node: Any, parent: Module | Class, **kwargs: Any) -> Expr: ...
 
 
 _node_map: dict[type, _BuildCallable] = {
