@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from contextlib import suppress
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, TypedDict
+from warnings import warn
 
 from griffe._internal.docstrings.models import (
     DocstringAttribute,
@@ -83,11 +84,21 @@ class _ParsedValues:
     return_type: str | None = None
 
 
+class SphinxOptions(TypedDict, total=False):
+    """Options for parsing Sphinx-style docstrings."""
+
+    warn_unknown_params: bool
+    """Whether to warn about unknown parameters."""
+    warnings: bool
+    """Whether to issue warnings for parsing issues."""
+
+
 def parse_sphinx(
     docstring: Docstring,
     *,
     warn_unknown_params: bool = True,
     warnings: bool = True,
+    # YORE: Bump 2: Remove line.
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
@@ -96,17 +107,20 @@ def parse_sphinx(
         docstring: The docstring to parse.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warnings: Whether to log warnings at all.
-        **options: Additional parsing options.
+        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.
     """
     parsed_values = _ParsedValues()
 
+    # YORE: Bump 2: Remove block.
+    if options:
+        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
+
     options = {
         "warn_unknown_params": warn_unknown_params,
         "warnings": warnings,
-        **options,
     }
 
     lines = docstring.lines

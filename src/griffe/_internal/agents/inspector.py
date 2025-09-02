@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from pathlib import Path
 
-    from griffe._internal.docstrings.parsers import DocstringStyle
+    from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.enumerations import Parser
 
 _TYPING_MODULES: tuple[types.ModuleType, ...]
@@ -60,7 +60,7 @@ def inspect(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Module:
@@ -95,7 +95,7 @@ def inspect(
         extensions: The extensions to use when inspecting the module.
         parent: The optional parent of this module.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
 
@@ -127,7 +127,7 @@ class Inspector:
         extensions: Extensions,
         parent: Module | None = None,
         docstring_parser: DocstringStyle | Parser | None = None,
-        docstring_options: dict[str, Any] | None = None,
+        docstring_options: DocstringOptions | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
     ) -> None:
@@ -139,7 +139,7 @@ class Inspector:
             extensions: Extensions to use when inspecting.
             parent: The module parent.
             docstring_parser: The docstring parser to use.
-            docstring_options: The docstring parsing options.
+            docstring_options: Docstring parsing options.
             lines_collection: A collection of source code lines.
             modules_collection: A collection of modules.
         """
@@ -163,7 +163,7 @@ class Inspector:
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
-        self.docstring_options: dict[str, Any] = docstring_options or {}
+        self.docstring_options: DocstringOptions = docstring_options or {}
         """The docstring parsing options."""
 
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()

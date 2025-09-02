@@ -6,7 +6,7 @@ from __future__ import annotations
 import ast
 import sys
 from contextlib import suppress
-from typing import TYPE_CHECKING, Any, Final
+from typing import TYPE_CHECKING, Final
 
 from griffe._internal.agents.nodes.assignments import get_instance_names, get_names
 from griffe._internal.agents.nodes.ast import (
@@ -48,7 +48,7 @@ from griffe._internal.models import (
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe._internal.docstrings.parsers import DocstringStyle
+    from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.enumerations import Parser
 
 
@@ -84,7 +84,7 @@ def visit(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Module:
@@ -107,7 +107,7 @@ def visit(
         extensions: The extensions to use when visiting the AST.
         parent: The optional parent of this module.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
 
@@ -141,7 +141,7 @@ class Visitor:
         extensions: Extensions,
         parent: Module | None = None,
         docstring_parser: DocstringStyle | Parser | None = None,
-        docstring_options: dict[str, Any] | None = None,
+        docstring_options: DocstringOptions | None = None,
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
     ) -> None:
@@ -154,7 +154,7 @@ class Visitor:
             extensions: The extensions to use when visiting.
             parent: An optional parent for the final module object.
             docstring_parser: The docstring parser to use.
-            docstring_options: The docstring parsing options.
+            docstring_options: Docstring parsing options.
             lines_collection: A collection of source code lines.
             modules_collection: A collection of modules.
         """
@@ -181,7 +181,7 @@ class Visitor:
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
-        self.docstring_options: dict[str, Any] = docstring_options or {}
+        self.docstring_options: DocstringOptions = docstring_options or {}
         """The docstring parsing options."""
 
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()

@@ -203,7 +203,7 @@ from griffe._internal.diff import (
     ReturnChangedTypeBreakage,
     find_breaking_changes,
 )
-from griffe._internal.docstrings.google import parse_google
+from griffe._internal.docstrings.google import GoogleOptions, parse_google
 from griffe._internal.docstrings.models import (
     DocstringAdmonition,
     DocstringAttribute,
@@ -240,16 +240,17 @@ from griffe._internal.docstrings.models import (
     DocstringWarn,
     DocstringYield,
 )
-from griffe._internal.docstrings.numpy import parse_numpy
+from griffe._internal.docstrings.numpy import NumpyOptions, parse_numpy
 from griffe._internal.docstrings.parsers import (
     DocstringDetectionMethod,
+    DocstringOptions,
     DocstringStyle,
     infer_docstring_style,
     parse,
     parse_auto,
     parsers,
 )
-from griffe._internal.docstrings.sphinx import parse_sphinx
+from griffe._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
 from griffe._internal.docstrings.utils import docstring_warning, parse_docstring_annotation
 from griffe._internal.encoders import JSONEncoder, json_decoder
 from griffe._internal.enumerations import (
@@ -400,6 +401,7 @@ __all__ = [
     "DocstringFunction",
     "DocstringModule",
     "DocstringNamedElement",
+    "DocstringOptions",
     "DocstringParameter",
     "DocstringRaise",
     "DocstringReceive",
@@ -470,6 +472,7 @@ __all__ = [
     "Function",
     "GetMembersMixin",
     "GitError",
+    "GoogleOptions",
     "GriffeError",
     "GriffeLoader",
     "Inspector",
@@ -488,6 +491,7 @@ __all__ = [
     "NamePartsType",
     "NameResolutionError",
     "NamespacePackage",
+    "NumpyOptions",
     "Object",
     "ObjectAliasMixin",
     "ObjectChangedKindBreakage",
@@ -510,6 +514,7 @@ __all__ = [
     "RootNodeError",
     "SerializationMixin",
     "SetMembersMixin",
+    "SphinxOptions",
     "Stats",
     "TmpPackage",
     "TypeAlias",

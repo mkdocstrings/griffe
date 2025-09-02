@@ -36,6 +36,7 @@ from griffe._internal.logger import logger
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.extensions.base import Extension, Extensions
 
 
@@ -70,8 +71,8 @@ def _load_packages(
     *,
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
-    docstring_parser: Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
+    docstring_options: DocstringOptions | None = None,
     resolve_aliases: bool = True,
     resolve_implicit: bool = False,
     resolve_external: bool | None = None,
@@ -332,8 +333,8 @@ def dump(
     *,
     output: str | IO | None = None,
     full: bool = False,
-    docstring_parser: Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
+    docstring_options: DocstringOptions | None = None,
     extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
     resolve_aliases: bool = False,
     resolve_implicit: bool = False,
@@ -352,7 +353,7 @@ def dump(
         output: Where to output the JSON-serialized data.
         full: Whether to output full or minimal data.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         resolve_aliases: Whether to resolve aliases (indirect objects references).
         resolve_implicit: Whether to resolve every alias or only the explicitly exported ones.
         resolve_external: Whether to load additional, unspecified modules to resolve aliases.

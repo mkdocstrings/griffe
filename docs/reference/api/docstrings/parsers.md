@@ -14,6 +14,16 @@
 
 ::: griffe.DocstringStyle
 
+## **Parser options**
+
+::: griffe.DocstringOptions
+
+::: griffe.GoogleOptions
+
+::: griffe.NumpyOptions
+
+::: griffe.SphinxOptions
+
 ## **Advanced API**
 
 ::: griffe.Parser

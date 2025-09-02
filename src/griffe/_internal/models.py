@@ -11,7 +11,7 @@ from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 
 from griffe._internal.c3linear import c3linear_merge
-from griffe._internal.docstrings.parsers import DocstringStyle, parse
+from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle, parse
 from griffe._internal.enumerations import Kind, ParameterKind, Parser, TypeParameterKind
 from griffe._internal.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
 from griffe._internal.expressions import ExprCall, ExprName, ExprTuple
@@ -80,7 +80,7 @@ class Docstring:
         endlineno: int | None = None,
         parent: Object | None = None,
         parser: DocstringStyle | Parser | None = None,
-        parser_options: dict[str, Any] | None = None,
+        parser_options: DocstringOptions | None = None,
     ) -> None:
         """Initialize the docstring.
 
@@ -118,7 +118,7 @@ class Docstring:
         [`parse`][griffe.Docstring.parse].
         """
 
-        self.parser_options: dict[str, Any] = parser_options or {}
+        self.parser_options: DocstringOptions = parser_options or {}
         """The configured parsing options.
 
         See also: [`parser`][griffe.Docstring.parser],

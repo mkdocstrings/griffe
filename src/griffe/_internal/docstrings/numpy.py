@@ -22,7 +22,8 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from textwrap import dedent
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
+from warnings import warn
 
 from griffe._internal.docstrings.models import (
     DocstringAttribute,
@@ -892,6 +893,21 @@ _section_reader = {
 }
 
 
+class NumpyOptions(TypedDict, total=False):
+    """Options for parsing Numpydoc-style docstrings."""
+
+    ignore_init_summary: bool
+    """Whether to ignore the summary in `__init__` methods' docstrings."""
+    trim_doctest_flags: bool
+    """Whether to remove doctest flags from Python example blocks."""
+    warn_unknown_params: bool
+    """Whether to warn about unknown parameters."""
+    warn_missing_types: bool
+    """Whether to warn about missing types/annotations for parameters, return values, etc."""
+    warnings: bool
+    """Whether to issue warnings for parsing issues."""
+
+
 def parse_numpy(
     docstring: Docstring,
     *,
@@ -900,6 +916,7 @@ def parse_numpy(
     warn_unknown_params: bool = True,
     warn_missing_types: bool = True,
     warnings: bool = True,
+    # YORE: Bump 2: Remove line.
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Numpydoc-style docstring.
@@ -914,7 +931,7 @@ def parse_numpy(
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warn_missing_types: Warn about missing types/annotations for parameters, return values, etc.
         warnings: Whether to log warnings at all.
-        **options: Additional parsing options.
+        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.
@@ -926,13 +943,16 @@ def parse_numpy(
     in_code_block = False
     lines = docstring.lines
 
+    # YORE: Bump 2: Remove block.
+    if options:
+        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
+
     options = {
         "trim_doctest_flags": trim_doctest_flags,
         "ignore_init_summary": ignore_init_summary,
         "warn_unknown_params": warn_unknown_params,
         "warn_missing_types": warn_missing_types,
         "warnings": warnings,
-        **options,
     }
 
     ignore_summary = (

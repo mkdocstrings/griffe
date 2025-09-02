@@ -3,12 +3,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Literal
+from typing import TYPE_CHECKING, Any, Callable, Literal, Union
 
-from griffe._internal.docstrings.google import parse_google
+from griffe._internal.docstrings.google import GoogleOptions, parse_google
 from griffe._internal.docstrings.models import DocstringSection, DocstringSectionText
-from griffe._internal.docstrings.numpy import parse_numpy
-from griffe._internal.docstrings.sphinx import parse_sphinx
+from griffe._internal.docstrings.numpy import NumpyOptions, parse_numpy
+from griffe._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
 from griffe._internal.enumerations import Parser
 
 if TYPE_CHECKING:
@@ -27,6 +27,8 @@ DocstringStyle = Literal["google", "numpy", "sphinx", "auto"]
 """The supported docstring styles (literal values of the Parser enumeration)."""
 DocstringDetectionMethod = Literal["heuristics", "max_sections"]
 """The supported methods to infer docstring styles."""
+DocstringOptions = Union[GoogleOptions, NumpyOptions, SphinxOptions]
+"""The options for each docstring style."""
 
 
 def infer_docstring_style(

@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from importlib import invalidate_caches
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from griffe._internal.agents.inspector import inspect
 from griffe._internal.agents.visitor import visit
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping, Sequence
 
     from griffe._internal.collections import ModulesCollection
-    from griffe._internal.docstrings.parsers import DocstringStyle
+    from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.enumerations import Parser
     from griffe._internal.extensions.base import Extensions
 
@@ -126,7 +126,7 @@ def temporary_visited_package(
     inits: bool = True,
     extensions: Extensions | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = False,
@@ -151,7 +151,7 @@ def temporary_visited_package(
         inits: Whether to create `__init__` modules in subpackages.
         extensions: The extensions to use.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
@@ -194,7 +194,7 @@ def temporary_inspected_package(
     inits: bool = True,
     extensions: Extensions | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
@@ -219,7 +219,7 @@ def temporary_inspected_package(
         inits: Whether to create `__init__` modules in subpackages.
         extensions: The extensions to use.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules.
@@ -267,7 +267,7 @@ def temporary_visited_module(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Iterator[Module]:
@@ -279,7 +279,7 @@ def temporary_visited_module(
         extensions: The extensions to use when visiting the AST.
         parent: The optional parent of this module.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
 
@@ -314,7 +314,7 @@ def temporary_inspected_module(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Iterator[Module]:
@@ -327,7 +327,7 @@ def temporary_inspected_module(
         extensions: The extensions to use when visiting the AST.
         parent: The optional parent of this module.
         docstring_parser: The docstring parser to use. By default, no parsing is done.
-        docstring_options: Additional docstring parsing options.
+        docstring_options: Docstring parsing options.
         lines_collection: A collection of source code lines.
         modules_collection: A collection of modules.
 
