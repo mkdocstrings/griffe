@@ -914,6 +914,26 @@ def test_class_uses_init_parameters(parse_google: ParserType) -> None:
     assert argx.description == "X value."
 
 
+def test_parse_parameters_and_type_without_space(parse_google: ParserType) -> None:
+    """Parse parameter name and type without space.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+        Parameters:
+            x(int): X value.
+    """
+
+    sections, warnings = parse_google(docstring)
+    assert len(sections) == 1
+    assert not warnings
+    argx = sections[0].value[0]
+    assert argx.name == "x"
+    assert argx.annotation == "int"
+    assert argx.description == "X value."
+
+
 # TODO: possible feature
 # def test_missing_parameter(parse_google: ParserType) -> None:
 #     """Warn on missing parameter in docstring.

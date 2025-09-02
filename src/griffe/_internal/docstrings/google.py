@@ -214,10 +214,10 @@ def _read_parameters(
         description = "\n".join([description.lstrip(), *param_lines[1:]]).rstrip("\n")
 
         # Use the type given after the parameter name, if any.
-        if " " in name_with_type:
-            name, annotation = name_with_type.split(" ", 1)
-            annotation = annotation.strip("()")
-            annotation = annotation.removesuffix(", optional")
+        if "(" in name_with_type and name_with_type.endswith(")"):
+            name, annotation = name_with_type.split("(", 1)
+            name = name.strip()
+            annotation = annotation.removesuffix(")").removesuffix(", optional").strip()
             # Try to compile the annotation to transform it into an expression.
             annotation = parse_docstring_annotation(annotation, docstring)
         else:
