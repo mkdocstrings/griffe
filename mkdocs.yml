@@ -248,6 +248,7 @@ plugins:
           signature_crossrefs: true
           summary: true
 - llmstxt:
+    enabled: !ENV [DEPLOY, false]
     full_output: llms-full.txt
     sections:
       Usage:
