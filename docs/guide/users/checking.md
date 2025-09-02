@@ -25,8 +25,8 @@ If you want to also specify the *base* reference to use (instead of the current 
 ```console
 $ griffe check mypackage -b HEAD -a 2.0.0
 $ griffe check mypackage -b 2.0.0 -a 1.0.0
-$ griffe check mypackage -b fix-issue-90 -a 1.2.3 
-$ griffe check mypackage -b 8afcfd6e 
+$ griffe check mypackage -b fix-issue-90 -a 1.2.3
+$ griffe check mypackage -b 8afcfd6e
 ```
 
 TIP: **Important:** Remember that the base is the most recent reference, and the one we compare it against is the oldest one.
@@ -160,7 +160,7 @@ greet("hello", "world")
 
 NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer passes it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > If you often add, move or remove parameters, consider making them keyword-only, so that their order doesn't matter.
 >
 > ```python title="before"
@@ -205,7 +205,7 @@ greet("hello", "world")
 greet(prefix="hello", name="world")
 ```
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > Allow a deprecation period for the removed parameter by swallowing it in a variadic positional parameter, a variadic keyword parameter, or both.
 >
 > === "positional-only"
@@ -326,7 +326,7 @@ greet(name="tim")
 greet2("tim")
 ```
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > Although it actually is a breaking change, changing your positional or keyword parameters' kind to keyword-only makes your public function more robust to future changes (forward-compatibility).
 >
 > For functions with lots of optional parameters, and a few (one or two) required parameters, it can be a good idea to accept the required parameters as positional or keyword, while accepting the optional parameters as keyword-only parameters:
@@ -391,7 +391,7 @@ if isinstance(compute_something(7), float):
 
 NOTE: Changing default value of parameters is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. Not using the parameter still provides the argument with a default value: the contract is fulfilled. But default values very often have specific meaning, and changing them will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > Allow a deprecation period for the old default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
 > ```python title="in the coming release"
@@ -445,7 +445,7 @@ def greet(name, prefix):
 greet("tiff")
 ```
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > Allow a deprecation period for the default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
 > ```python title="in the coming release"
@@ -489,7 +489,7 @@ def greet(name, prefix):
 greet("tiff")
 ```
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > You can delay (or avoid) and inform your users about the upcoming breakage by temporarily (or permanently) providing a default value for the new parameter:
 >
 > ```python title="in the coming release"
@@ -530,7 +530,7 @@ from your import module
 print(module.special_thing)
 ```
 
-> TIP: **Hint**  
+> TIP: **Hint**
 > Allow a deprecation period by declaring a module-level `__getattr__` function that returns the given object while warning about its deprecation:
 >
 > ```python
@@ -606,7 +606,7 @@ if PY_VERSION is None:
 
 NOTE: Changing the value of an attribute is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The attribute is still here and accessed: the contract is fulfilled. But developers heavily rely on the value of public attributes, so changing it will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
-TIP: **Hint**  
+TIP: **Hint**
 Make sure to document the change of value of the attribute in your changelog, particularly the previous and new range of values it can take.
 
 ### Class removed base
