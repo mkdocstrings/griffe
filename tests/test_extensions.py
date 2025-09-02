@@ -19,6 +19,7 @@ from griffe import (
     temporary_visited_module,
     temporary_visited_package,
 )
+from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 if TYPE_CHECKING:
     import ast
@@ -272,3 +273,100 @@ def test_deprecated_on_wildcard_expansion_event() -> None:
         extensions=load_extensions(extension),
     ):
         assert extension.records == ["called as on_wildcard_expansion"]
+
+
+class LoadEventsTest(Extension):  # noqa: D101
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: D107
+        super().__init__()
+        self.records: list[str] = []
+        self.args = args
+        self.kwargs = kwargs
+
+    def on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_alias")
+
+    def on_attribute(self, *, attr: Attribute, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_attribute")
+
+    def on_class(self, *, cls: Class, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_class")
+
+    def on_function(self, *, func: Function, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_function")
+
+    def on_module(self, *, mod: Module, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_module")
+
+    def on_object(self, *, obj: Object, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_object")
+
+    def on_package(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_package")
+
+    def on_type_alias(self, *, type_alias: TypeAlias, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
+        self.records.append("on_type_alias")
+
+
+# YORE: EOL 3.11: Remove block.
+def test_load_events_without_type_aliases() -> None:
+    """Test load events triggering."""
+    extension = LoadEventsTest()
+    with temporary_visited_package(
+        "pkg",
+        {
+            "__init__.py": """
+                import x
+                attr = 0
+                def func(): ...
+                class Class:
+                    cattr = 1
+                    def method(self): ...
+            """,
+        },
+        extensions=load_extensions(extension),
+    ):
+        pass
+    events = [
+        "on_alias",
+        "on_attribute",
+        "on_class",
+        "on_function",
+        "on_module",
+        "on_object",
+        "on_package",
+    ]
+    assert set(events) == set(extension.records)
+
+
+# YORE: EOL 3.11: Remove line.
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 type aliases")
+def test_load_events() -> None:
+    """Test load events triggering."""
+    extension = LoadEventsTest()
+    with temporary_visited_package(
+        "pkg",
+        {
+            "__init__.py": """
+                import x
+                attr = 0
+                def func(): ...
+                class Class:
+                    cattr = 1
+                    def method(self): ...
+                type TypeAlias = list[int]
+            """,
+        },
+        extensions=load_extensions(extension),
+    ):
+        pass
+    events = [
+        "on_alias",
+        "on_attribute",
+        "on_class",
+        "on_function",
+        "on_module",
+        "on_object",
+        "on_package",
+        "on_type_alias",
+    ]
+    assert set(events) == set(extension.records)
