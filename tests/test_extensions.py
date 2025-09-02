@@ -252,3 +252,23 @@ def test_deprecated_on_package_loaded_event() -> None:
     with temporary_visited_package("pkg", {}, extensions=load_extensions(extension)):
         assert extension.records == ["called as on_package"]
 
+
+# YORE: Bump 2: Remove block.
+def test_deprecated_on_wildcard_expansion_event() -> None:
+    """Hook still runs, a deprecation warning is emitted when the class is declared."""
+    with pytest.warns(DeprecationWarning, match="`on_wildcard_expansion` event is deprecated"):
+
+        class Ext(Extension):
+            def __init__(self) -> None:
+                self.records: list[str] = []
+
+            def on_wildcard_expansion(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002
+                self.records.append("called as on_wildcard_expansion")
+
+    extension = Ext()
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": "from pkg.module import *", "module.py": "def func(): ..."},
+        extensions=load_extensions(extension),
+    ):
+        assert extension.records == ["called as on_wildcard_expansion"]

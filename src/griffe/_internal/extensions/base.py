@@ -50,6 +50,14 @@ class _ExtensionMetaclass(type):
                     DeprecationWarning,
                     stacklevel=1,
                 )
+        if "on_wildcard_expansion" in attrs:
+            warnings.warn(
+                "The `on_wildcard_expansion` event is deprecated. "
+                "Instead, hook onto the `on_alias` event "
+                "and check for aliases' `wildcard_imported` boolean attribute.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         return super().__new__(cls, name, bases, attrs)
 
 
@@ -465,21 +473,6 @@ class Extension(metaclass=_ExtensionMetaclass):
         if hasattr(self, "on_package_loaded"):
             self.on_package_loaded(pkg=pkg, loader=loader, **kwargs)
 
-    def on_wildcard_expansion(
-        self,
-        *,
-        alias: Alias,
-        loader: GriffeLoader,
-        **kwargs: Any,
-    ) -> None:
-        """Run when wildcard imports are expanded into aliases.
-
-        Parameters:
-            alias: The alias instance.
-            loader: The loader currently in use.
-            **kwargs: For forward-compatibility.
-        """
-
 
 LoadableExtensionType = Union[str, dict[str, Any], Extension, type[Extension]]
 """All the types that can be passed to `load_extensions`."""
@@ -506,6 +499,9 @@ class Extensions:
         for extension in extensions:
             self._extensions.append(extension)
 
+    def _noop(self, **kwargs: Any) -> None:
+        """No-op method for extension hooks."""
+
     def call(self, event: str, **kwargs: Any) -> None:
         """Call the extension hook for the given event.
 
@@ -519,7 +515,7 @@ class Extensions:
                 with suppress(TypeError):
                     getattr(extension, event)(**kwargs)
             else:
-                getattr(extension, event)(**kwargs)
+                getattr(extension, event, self._noop)(**kwargs)
 
 
 builtin_extensions: set[str] = {

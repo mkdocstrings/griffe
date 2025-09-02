@@ -417,6 +417,7 @@ class GriffeLoader:
                     lineno=alias_lineno,
                     endlineno=alias_endlineno,
                     parent=obj,  # type: ignore[arg-type]
+                    wildcard_imported=True,
                 )
                 # Special case: we avoid overwriting a submodule with an alias.
                 # Griffe suffers from this limitation where an object cannot store both
@@ -431,6 +432,7 @@ class GriffeLoader:
 
                 # Everything went right (supposedly), we add the alias as a member of the current object.
                 obj.set_member(new_member.name, alias)
+                # YORE: Bump 2: Remove line.
                 self.extensions.call("on_wildcard_expansion", alias=alias, loader=self)
 
     def resolve_module_aliases(

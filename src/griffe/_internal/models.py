@@ -1292,6 +1292,7 @@ class Alias(ObjectAliasMixin):
         runtime: bool = True,
         parent: Module | Class | Alias | None = None,
         inherited: bool = False,
+        wildcard_imported: bool = False,
     ) -> None:
         """Initialize the alias.
 
@@ -1304,6 +1305,7 @@ class Alias(ObjectAliasMixin):
             runtime: Whether this alias is present at runtime or not.
             parent: The alias parent.
             inherited: Whether this alias wraps an inherited member.
+            wildcard_imported: Whether this alias was created using a wildcard import.
         """
         self.name: str = name
         """The alias name."""
@@ -1319,6 +1321,9 @@ class Alias(ObjectAliasMixin):
 
         self.inherited: bool = inherited
         """Whether this alias represents an inherited member."""
+
+        self.wildcard_imported: bool = wildcard_imported
+        """Whether this alias was created using a wildcard import."""
 
         self.public: bool | None = None
         """Whether this alias is public."""

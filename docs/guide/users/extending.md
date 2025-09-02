@@ -208,10 +208,6 @@ There are also specific **load events** for each object kind:
 - [`on_alias`][griffe.Extension.on_alias]: The "on alias" event is triggered on aliases (imported/inherited objects).
 - [`on_package`][griffe.Extension.on_package]: The "on package" event is triggered on top-level modules (packages) only.
 
-And a special **load event** for wildcard expansion:
-
-- [`on_wildcard_expansion`][griffe.Extension.on_wildcard_expansion]: The "on wildcard expansion" event is triggered for each alias that is created by expanding wildcard imports (`from ... import *`).
-
 #### Analysis events
 
 **Analysis events** are triggered while modules are being scanned (with static or dynamic analysis). Data is incomplete when these events are triggered, so we recommend only hooking onto these events if you know what you are doing. In doubt, prefer using **load events** above.
