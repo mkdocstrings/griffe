@@ -1,6 +1,6 @@
 # CLI reference
 
-```python exec="true" idprefix="cli-"
+```python exec="true" idprefix="cli-" id="cli-reference"
 import argparse
 import sys
 

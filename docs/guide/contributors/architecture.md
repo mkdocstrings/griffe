@@ -74,7 +74,7 @@ def exptree(path):
             print("    ```\n")
 ```
 
-```python exec="1" session="filetree" idprefix=""
+```python exec="1" session="filetree" idprefix="" id="filetree"
 exptree(".")
 ```
 
@@ -114,7 +114,7 @@ Users then import `griffe` directly, or import objects from it.
 
 We'll be honest: our code organization is not the most elegant, but it works :shrug: Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
-```python exec="true" html="true"
+```python exec="true" html="true" id="pydeps-module-graph"
 from pydeps import cli, colors, dot, py2depgraph
 from pydeps.pydeps import depgraph_to_dotsrc
 from pydeps.target import Target
@@ -142,19 +142,19 @@ The following sections are generated automatically by iterating on the modules o
 
 ### CLI entrypoint
 
-```python exec="1" idprefix="entrypoint-" session="comment_blocks"
+```python exec="1" idprefix="entrypoint-" session="comment_blocks" id="entrypoint"
 render_entrypoint(heading_level=4)
 ```
 
 ### Public API
 
-```python exec="1" idprefix="public-" session="comment_blocks"
+```python exec="1" idprefix="public-" session="comment_blocks" id="public-api"
 render_public_api(heading_level=4)
 ```
 
 ### Internal API
 
-```python exec="1" idprefix="internal-" session="comment_blocks"
+```python exec="1" idprefix="internal-" session="comment_blocks" id="internal-api"
 render_internal_api(heading_level=4)
 ```
 

@@ -4,7 +4,7 @@ The entry-point to run commands to manage the project is our Python `make` scrip
 
 Try typing `make` or `make help` to show the available commands.
 
-```console exec="1" source="console"
+```console exec="1" source="console" id="make-help1"
 $ alias make="$PWD/scripts/make"; cd  # markdown-exec: hide
 $ make
 ```

@@ -652,7 +652,7 @@ Griffe supports writing detected breakages in multiple formats, or styles.
 
 This is the default format. Griffe will print each detected breakage on a single line:
 
-```console exec="1" source="console" result="ansi" returncode="1"
+```console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-oneline"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
@@ -666,7 +666,7 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 
 Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
 
-```console exec="1" source="console" result="ansi" returncode="1"
+```console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-verbose"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
