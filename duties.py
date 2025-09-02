@@ -224,6 +224,8 @@ def check_docs(ctx: Context) -> None:
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
+    if CI:
+        os.environ["DEPLOY"] = "true"
     with _material_insiders():
         ctx.run(
             tools.mkdocs.build(strict=True, verbose=True),
