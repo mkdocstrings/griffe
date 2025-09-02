@@ -3,9 +3,11 @@
 
 from __future__ import annotations
 
+import inspect
 import os
 import sys
 import warnings
+from contextlib import suppress
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from pathlib import Path
@@ -26,7 +28,32 @@ if TYPE_CHECKING:
     from griffe._internal.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
 
 
-class Extension:
+# YORE: Bump 2: Remove block.
+class _ExtensionMetaclass(type):
+    """Metaclass for Griffe extensions."""
+
+    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any]) -> _ExtensionMetaclass:
+        if "on_package_loaded" in attrs:
+            warnings.warn(
+                "The `on_package_loaded` event is deprecated and renamed to `on_package`.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        if "on_alias" in attrs:
+            parameters = inspect.signature(attrs["on_alias"]).parameters
+            if "node" in parameters or "agent" in parameters:
+                attrs["__old_on_alias"] = True
+                warnings.warn(
+                    "The `on_alias` event is now a load event and receives the `alias` and `loader` parameters. "
+                    "It doesn't receive the `node` or `agent` parameters anymore. "
+                    "Please use the new `on_alias` signature, or rename your hook to `on_alias_instance`.",
+                    DeprecationWarning,
+                    stacklevel=1,
+                )
+        return super().__new__(cls, name, bases, attrs)
+
+
+class Extension(metaclass=_ExtensionMetaclass):
     """Base class for Griffe extensions."""
 
     def visit(self, node: ast.AST) -> None:
@@ -406,6 +433,8 @@ class Extension:
             agent: The analysis agent currently running.
             **kwargs: For forward-compatibility.
         """
+        if getattr(self, "__old_on_alias", False):
+            self.on_alias(node=node, alias=alias, agent=agent, **kwargs)
 
     def on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:
         """Run on aliases once the object tree has been fully constructed.
@@ -434,11 +463,6 @@ class Extension:
         """
         # YORE: Bump 2: Remove block.
         if hasattr(self, "on_package_loaded"):
-            warnings.warn(
-                "The `on_package_loaded` event is deprecated and renamed to `on_package`.",
-                DeprecationWarning,
-                stacklevel=1,
-            )
             self.on_package_loaded(pkg=pkg, loader=loader, **kwargs)
 
     def on_wildcard_expansion(
@@ -490,7 +514,12 @@ class Extensions:
             **kwargs: Arguments passed to the hook.
         """
         for extension in self._extensions:
-            getattr(extension, event)(**kwargs)
+            # YORE: Bump 2: Replace block with line 5.
+            if event == "on_alias" and getattr(extension, "__old_on_alias", False):
+                with suppress(TypeError):
+                    getattr(extension, event)(**kwargs)
+            else:
+                getattr(extension, event)(**kwargs)
 
 
 builtin_extensions: set[str] = {
