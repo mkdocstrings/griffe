@@ -199,6 +199,7 @@ def _read_parameters(
 
     block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
 
+    # TODO: Use `get_name_annotation_description` here too?
     for line_number, param_lines in block:
         # Check the presence of a name and description, separated by a colon.
         try:
