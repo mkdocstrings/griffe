@@ -137,6 +137,14 @@ class Docstring:
     def source(self) -> str:
         """The original, uncleaned value of the docstring as written in the source.
 
+        It is a simple concatenation of the source lines. These source lines will include
+        quotes (single/double/triple) and might include leading whitespace and indentation,
+        as well as trailing comments.
+
+        Raises:
+            ValueError: If the original docstring cannot be retrieved
+                (no parent, no line numbers, or attached to namespace package).
+
         See also: [`value`][griffe.Docstring.value].
         """
         if self.parent is None:
