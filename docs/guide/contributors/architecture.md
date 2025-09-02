@@ -115,21 +115,23 @@ Users then import `griffe` directly, or import objects from it.
 We'll be honest: our code organization is not the most elegant, but it works :shrug: Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
 ```python exec="true" html="true" id="pydeps-module-graph"
-from pydeps import cli, colors, dot, py2depgraph
-from pydeps.pydeps import depgraph_to_dotsrc
-from pydeps.target import Target
+import os
+if os.getenv("DEPLOY") == "true":
+    from pydeps import cli, colors, dot, py2depgraph
+    from pydeps.pydeps import depgraph_to_dotsrc
+    from pydeps.target import Target
 
-cli.verbose = cli._not_verbose
-options = cli.parse_args(["src/griffe", "--noshow", "--reverse"])
-colors.START_COLOR = 128
-target = Target(options["fname"])
-with target.chdir_work():
-    dep_graph = py2depgraph.py2dep(target, **options)
-dot_src = depgraph_to_dotsrc(target, dep_graph, **options)
-svg = dot.call_graphviz_dot(dot_src, "svg").decode()
-svg = "".join(svg.splitlines()[6:])
-svg = svg.replace('fill="white"', 'fill="transparent"')
-print(f'<div class="interactiveSVG pydeps">{svg}</div>')
+    cli.verbose = cli._not_verbose
+    options = cli.parse_args(["src/griffe", "--noshow", "--reverse"])
+    colors.START_COLOR = 128
+    target = Target(options["fname"])
+    with target.chdir_work():
+        dep_graph = py2depgraph.py2dep(target, **options)
+    dot_src = depgraph_to_dotsrc(target, dep_graph, **options)
+    svg = dot.call_graphviz_dot(dot_src, "svg").decode()
+    svg = "".join(svg.splitlines()[6:])
+    svg = svg.replace('fill="white"', 'fill="transparent"')
+    print(f'<div class="interactiveSVG pydeps">{svg}</div>')
 ```
 
 <small><i>You can zoom and pan all diagrams on this page with mouse inputs.</i></small>
@@ -155,7 +157,9 @@ render_public_api(heading_level=4)
 ### Internal API
 
 ```python exec="1" idprefix="internal-" session="comment_blocks" id="internal-api"
-render_internal_api(heading_level=4)
+import os
+if os.getenv("DEPLOY") == "true":
+    render_internal_api(heading_level=4)
 ```
 
 <style>
