@@ -133,7 +133,7 @@ griffe.load("itertools", allow_inspection=False)
 
 ## Alias resolution
 
->? QUESTION: **What's that?**  
+>? QUESTION: **What's that?**
 > In Griffe, indirections to objects are called *aliases*. These indirections, or aliases, represent two kinds of objects: imported objects and inherited objects. Indeed, an imported object is "aliased" in the module that imports it, while its true location is in the module it was imported from. Similarly, a method inherited from a parent class is "aliased" in the subclass, while its true location is in the parent class.
 >
 > The name "alias" comes from the fact that imported objects can be aliased under a different name: `from X import A as B`. In the case of inherited members, this doesn't really apply, but we reuse the concept for conciseness.
@@ -324,6 +324,37 @@ Here Griffe automatically loaded `package1` while resolving aliases, even though
 While automatically resolving aliases pointing at external packages can be convenient, we advise cautiousness: this can trigger the loading of *a lot* of external packages, *recursively*.
 
 One special case that we must mention is that Griffe will by default automatically load *private sibling packages*. For example, when resolving aliases for the `ast` module, Griffe will automatically try and load `_ast` too (if dynamic analysis is allowed, since this is a builtin module), even without `resolve_external=True`. If you want to prevent this behavior, you can pass `resolve_external=False` (it is `None` by default).
+
+## Source information
+
+By default, Griffe runs some Git commands to find the following information about a package:
+
+- the repository local path
+- the Git remote URL
+- what service it corresponds to (GitHub, etc.)
+- the current commit hash
+
+It then assigns this information to each package it loads, in the [`git_info`][griffe.Object.git_info] attribute. This attribute can be reassigned on any object, if necessary. Each object who has it set to `None` will look into its parents.
+
+In the following cases, the information will not be set:
+
+- Griffe couldn't find the source for an object, or line numbers in the source
+- the source of a package is not tracked within the identified repository
+- Griffe cannot identify a known, supported service from the remote URL
+- any Git command failed
+
+Griffe supports the services listed in the [`KnownGitService`][griffe.KnownGitService] symbol. Please open a feature request if you would like to add other support for other services.
+
+Thanks to this source information, Griffe can then compute source links for each objects, by combining the information with the object's filepath and line numbers.
+
+You can globally change how Griffe obtains the source information with the following environment variables:
+
+- `GRIFFE_GIT_REMOTE_URL`: It is the repository remote URL, as an HTTPS link that readers of your documentation can access to see the repository online, on the service it is hosted on. Example: `GRIFFE_GIT_REMOTE_URL=https://app.radicle.at/nodes/seed.radicle.at/rad:z4M5XTPDD4Wh1sm8iPCenF85J3z8Z`.
+- `GRIFFE_GIT_REMOTE`: You can also let Griffe obtain the remote URL by getting it from the Git local configuration. The Git remote defaults to `origin`. This environment variable lets you change it to something else. Example: `GRIFFE_GIT_REMOTE=upstream`.
+- `GRIFFE_GIT_SERVICE`: Griffe infers the service by looking at the remote URL. If the remote URL contains a [known service name][griffe.KnownGitService], Griffe will use it as service. You can otherwise explicitly set the service using this environment variable. Example: `GRIFFE_GIT_SERVICE=codeberg`.
+- `GRIFFE_GIT_COMMIT_HASH`: Griffe gets the commit hash by running a Git command. If you prefer using another commit hash, you can set it using this environment variable. Example: `GRIFFE_GIT_COMMIT_HASH=77f928aeab857cb45564462a4f849c2df2cca99a`.
+
+For more complex cases, see [How to programmatically set the correct Git information or source link on objects](how-to/set-git-info.md).
 
 ## Next steps
 

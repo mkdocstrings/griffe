@@ -50,6 +50,7 @@ nav:
       - Support custom decorators: guide/users/how-to/support-decorators.md
       - Selectively inspect objects: guide/users/how-to/selectively-inspect.md
       - Set objects' docstring style: guide/users/how-to/set-docstring-styles.md
+      - Set Git info on objects: guide/users/how-to/set-git-info.md
   - Contributor guide:
     - guide/contributors.md
     - Environment setup: guide/contributors/setup.md
@@ -108,6 +109,7 @@ nav:
       - Parsers: reference/api/docstrings/parsers.md
     - Exceptions: reference/api/exceptions.md
     - Expressions: reference/api/expressions.md
+    # YORE: Bump 2: Remove line.
     - Git utilities: reference/api/git.md
     - Loggers: reference/api/loggers.md
     - Helpers: reference/api/helpers.md
@@ -232,6 +234,8 @@ plugins:
           docstring_section_style: list
           extensions:
           - griffe_inherited_docstrings
+          # YORE: Bump 2: Remove line.
+          - scripts/griffe_exts.py
           heading_level: 2
           inherited_members: true
           merge_init_into_class: true

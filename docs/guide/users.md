@@ -112,12 +112,20 @@ These how-tos will show you how to achieve specific things with Griffe.
 
     [:octicons-arrow-right-24: See how to selectively inspect objects](users/how-to/selectively-inspect.md)
 
--   :material-select:{ .lg .middle } **Set objects' docstring style**
+-   :material-bow-tie:{ .lg .middle } **Set objects' docstring style**
 
     ---
 
     Sometimes the wrong docstring styles are attached to objects. You can fix this with a few different methods.
 
     [:octicons-arrow-right-24: See how to set the correct docstring styles on objects](users/how-to/set-docstring-styles.md)
+
+-   :simple-git:{ .lg .middle } **Set Git source info on objects**
+
+    ---
+
+    Griffe tries to find the right Git remote URL to provide source links to loaded objects. In some cases you might want to override the Git information or the source link directly.
+
+    [:octicons-arrow-right-24: See how to set the correct Git information or source link on objects](users/how-to/set-git-info.md)
 
 </div>

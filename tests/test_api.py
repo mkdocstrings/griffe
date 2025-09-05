@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 
 @pytest.fixture(name="loader", scope="module")
 def _fixture_loader() -> griffe.GriffeLoader:
-    loader = griffe.GriffeLoader()
+    # YORE: Bump 2: Regex-replace `extensions=.*` with `)` within line.
+    loader = griffe.GriffeLoader(extensions=griffe.load_extensions("scripts/griffe_exts.py"))
     loader.load("griffe")
     loader.resolve_aliases()
     return loader

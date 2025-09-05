@@ -20,7 +20,7 @@ from griffe._internal.exceptions import (
 from griffe._internal.expressions import ExprName
 from griffe._internal.extensions.base import Extensions, load_extensions
 from griffe._internal.finder import ModuleFinder, NamespacePackage, Package
-from griffe._internal.git import tmp_worktree
+from griffe._internal.git import GitInfo, _tmp_worktree
 from griffe._internal.importer import dynamic_import
 from griffe._internal.logger import logger
 from griffe._internal.merger import merge_stubs
@@ -212,6 +212,8 @@ class GriffeLoader:
         # `load()` and/or `resolve_aliases()`.
         self.expand_exports(module)
         self.expand_wildcards(module, external=False)
+        # Populate Git information if possible.
+        module.git_info = GitInfo.from_package(module)
         # Package is loaded, we now retrieve the initially requested object,
         # fire load events, and return it.
         obj = self.modules_collection.get_member(obj_path)
@@ -898,7 +900,7 @@ def load_git(
     Returns:
         A Griffe object.
     """
-    with tmp_worktree(repo, ref) as worktree:
+    with _tmp_worktree(repo, ref) as worktree:
         search_paths = [worktree / path for path in search_paths or ["."]]
         if isinstance(objspec, Path):
             objspec = worktree / objspec

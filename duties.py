@@ -302,7 +302,13 @@ def check_api(ctx: Context, *cli_args: str) -> None:
         *cli_args: Additional Griffe CLI arguments.
     """
     ctx.run(
-        tools.griffe.check("griffe", search=["src"], color=True).add_args(*cli_args),
+        tools.griffe.check(
+            "griffe",
+            search=["src"],
+            color=True,
+            # YORE: Bump 2: Remove line.
+            extensions=["scripts/griffe_exts.py"],
+        ).add_args(*cli_args),
         title="Checking for API breaking changes",
         nofail=True,
     )

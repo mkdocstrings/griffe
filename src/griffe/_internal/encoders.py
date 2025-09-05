@@ -9,6 +9,7 @@ from typing import Any, Callable
 
 from griffe._internal import expressions
 from griffe._internal.enumerations import Kind, ParameterKind, TypeParameterKind
+from griffe._internal.git import GitInfo
 from griffe._internal.models import (
     Alias,
     Attribute,
@@ -134,6 +135,15 @@ def _load_type_parameter(obj_dict: dict[str, Any]) -> TypeParameter:
     )
 
 
+def _load_git_info(obj_dict: dict[str, Any]) -> GitInfo:
+    return GitInfo(
+        repository=Path(obj_dict["repository"]),
+        service=obj_dict["service"],
+        remote_url=obj_dict["remote_url"],
+        commit_hash=obj_dict["commit_hash"],
+    )
+
+
 def _attach_parent_to_expr(expr: expressions.Expr | str | None, parent: Module | Class) -> None:
     if not isinstance(expr, expressions.Expr):
         return
@@ -202,6 +212,9 @@ def _load_module(obj_dict: dict[str, Any]) -> Module:
     module.imports = obj_dict.get("imports", {})
     module.deprecated = obj_dict.get("deprecated")
     module.public = obj_dict.get("public")
+    module.source_link = obj_dict.get("source_link")
+    if git_info := obj_dict.get("git_info"):
+        module.git_info = _load_git_info(git_info)
     return module
 
 
@@ -229,7 +242,10 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
     class_.imports = obj_dict.get("imports", {})
     class_.deprecated = obj_dict.get("deprecated")
     class_.public = obj_dict.get("public")
+    class_.source_link = obj_dict.get("source_link")
     _attach_parent_to_exprs(class_, class_)
+    if git_info := obj_dict.get("git_info"):
+        class_.git_info = _load_git_info(git_info)
     return class_
 
 
@@ -248,6 +264,9 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
     function.labels |= set(obj_dict.get("labels", ()))
     function.deprecated = obj_dict.get("deprecated")
     function.public = obj_dict.get("public")
+    function.source_link = obj_dict.get("source_link")
+    if git_info := obj_dict.get("git_info"):
+        function.git_info = _load_git_info(git_info)
     return function
 
 
@@ -264,6 +283,9 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
     attribute.runtime = obj_dict.get("runtime", True)
     attribute.deprecated = obj_dict.get("deprecated")
     attribute.public = obj_dict.get("public")
+    attribute.source_link = obj_dict.get("source_link")
+    if git_info := obj_dict.get("git_info"):
+        attribute.git_info = _load_git_info(git_info)
     return attribute
 
 
@@ -282,7 +304,7 @@ def _load_alias(obj_dict: dict[str, Any]) -> Alias:
 
 
 def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:
-    return TypeAlias(
+    type_alias = TypeAlias(
         name=obj_dict["name"],
         value=obj_dict["value"],
         type_parameters=TypeParameters(*obj_dict["type_parameters"]),
@@ -290,6 +312,14 @@ def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
     )
+    type_alias.labels |= set(obj_dict.get("labels", ()))
+    type_alias.runtime = obj_dict.get("runtime", True)
+    type_alias.deprecated = obj_dict.get("deprecated")
+    type_alias.public = obj_dict.get("public")
+    type_alias.source_link = obj_dict.get("source_link")
+    if git_info := obj_dict.get("git_info"):
+        type_alias.git_info = _load_git_info(git_info)
+    return type_alias
 
 
 _loader_map: dict[Kind, Callable[[dict[str, Any]], Object | Alias]] = {

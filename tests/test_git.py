@@ -92,7 +92,7 @@ def test_load_git_errors(git_repo: Path) -> None:
     with pytest.raises(OSError, match="Not a git repository"):
         load_git(MODULE_NAME, ref="v0.2.0", repo="not-a-repo")
 
-    with pytest.raises(RuntimeError, match="Could not create git worktre"):
+    with pytest.raises(RuntimeError, match="Could not create git worktree"):
         load_git(MODULE_NAME, ref="invalid-tag", repo=git_repo)
 
     with pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'not_a_real_module'"):

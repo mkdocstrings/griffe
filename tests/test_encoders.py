@@ -8,7 +8,7 @@ import sys
 import pytest
 from jsonschema import ValidationError, validate
 
-from griffe import Function, GriffeLoader, Module, Object, temporary_visited_module
+from griffe import Attribute, Class, Function, GriffeLoader, Kind, Module, Object, temporary_visited_module
 
 
 def test_minimal_data_is_enough() -> None:
@@ -20,11 +20,12 @@ def test_minimal_data_is_enough() -> None:
     """
     loader = GriffeLoader()
     module = loader.load("griffe")
-    minimal = module.as_json(full=False)
-    full = module.as_json(full=True)
+    dump_options = {"indent": 2, "sort_keys": True}
+    minimal = module.as_json(full=False, **dump_options)
+    full = module.as_json(full=True, **dump_options)
     reloaded = Module.from_json(minimal)
-    assert reloaded.as_json(full=False) == minimal
-    assert reloaded.as_json(full=True) == full
+    assert reloaded.as_json(full=False, **dump_options) == minimal
+    assert reloaded.as_json(full=True, **dump_options) == full
 
     # Also works (but will result in a different type hint).
     assert Object.from_json(minimal)
@@ -32,6 +33,38 @@ def test_minimal_data_is_enough() -> None:
     # Won't work if the JSON doesn't represent the type requested.
     with pytest.raises(TypeError, match="provided JSON object is not of type"):
         Function.from_json(minimal)
+
+
+@pytest.mark.parametrize(
+    "symbol",
+    [
+        # Attribute.
+        "_internal.loader.GriffeLoader.finder",
+        # Function/method.
+        "_internal.loader.GriffeLoader.load",
+        # Class.
+        "_internal.mixins.GetMembersMixin",
+        # Module.
+        "_internal.debug",
+    ],
+)
+def test_minimal_light_data_is_enough(symbol: str) -> None:
+    """Test serialization and de-serialization."""
+    loader = GriffeLoader()
+    package = loader.load("griffe")
+    obj = package[symbol]
+    dump_options = {"indent": 2, "sort_keys": True}
+    minimal = obj.as_json(full=False, **dump_options)
+    full = obj.as_json(full=True, **dump_options)
+    reloaded = {
+        Kind.MODULE: Module,
+        Kind.CLASS: Class,
+        Kind.FUNCTION: Function,
+        Kind.ATTRIBUTE: Attribute,
+    }[obj.kind].from_json(minimal)  # type: ignore[attr-defined]
+    reloaded.parent = obj.parent
+    assert reloaded.as_json(full=False, **dump_options) == minimal
+    assert reloaded.as_json(full=True, **dump_options) == full
 
 
 # YORE: EOL 3.12: Remove block.

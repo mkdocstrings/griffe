@@ -21,7 +21,7 @@ The 6 models:
 
 ::: griffe.Kind
 
-## **Models base classes**
+## **Model base classes**
 
 ::: griffe.GetMembersMixin
 
@@ -35,10 +35,16 @@ The 6 models:
 
 ::: griffe.Object
 
-## **Models type parameter**
+## **Type parameters**
 
 ::: griffe.TypeParameters
 
 ::: griffe.TypeParameter
 
 ::: griffe.TypeParameterKind
+
+## **Git information**
+
+::: griffe.KnownGitService
+
+::: griffe.GitInfo

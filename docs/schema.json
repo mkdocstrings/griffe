@@ -153,6 +153,19 @@
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.relative_package_filepath",
           "type": "string"
         },
+        "git_info": {
+          "title": "The Git information associated to this object's package.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Object.git_info",
+          "$ref": "#/$defs/GitInfo"
+        },
+        "source_link": {
+          "title": "The source link of the object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.source_link",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "public": {
           "title": "Whether the object was explicitly marked as public.",
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.public",
@@ -578,6 +591,58 @@
         "kind",
         "annotation",
         "default"
+      ]
+    },
+    "GitInfo": {
+      "title": "Git information.",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo",
+      "type": "object",
+      "properties": {
+        "repository": {
+          "title": "The repository local path.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.repository",
+          "type": [
+            "string"
+          ]
+        },
+        "service": {
+          "title": "The Git service (e.g., 'github', 'gitlab', 'bitbucket').",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.service",
+          "type": [
+            "string"
+          ],
+          "enum": [
+            "github",
+            "gitlab",
+            "sourcehut",
+            "gitea",
+            "gogs",
+            "forgejo",
+            "codeberg",
+            "radicle"
+          ]
+        },
+        "remote_url": {
+          "title": "The remote URL.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.remote_url",
+          "type": [
+            "string"
+          ]
+        },
+        "commit_hash": {
+          "title": "The commit hash.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.commit_hash",
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "service",
+        "remote_url",
+        "commit_hash"
       ]
     }
   }
