@@ -5,6 +5,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.14.0](https://github.com/mkdocstrings/griffe/releases/tag/1.14.0) - 2025-09-05
+
+<small>[Compare with 1.13.0](https://github.com/mkdocstrings/griffe/compare/1.13.0...1.14.0)</small>
+
+### Deprecations
+
+- The `on_alias` event's signature changed from `on_alias(self, *, node: AST | ObjectNode, alias: Alias, agent: Visitor | Inspector, **kwargs)` (an [analysis event][analysis-events]) to `on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs)` ([a load event][load-events]). Use the new signature, or rename your method to `on_alias_instance` to keep the old signature (`on_alias_instance` is a new analysis event that replaces the old `on_alias` one). Backward compatibility is maintained until next major version.
+- The `on_wildcard_expansion` event is deprecated. Instead, use the `on_alias` event, and check the [`wildcard_imported`][griffe.Alias.wildcard_imported] boolean attribute of aliases.
+- The `on_package_loaded` event is renamed to `on_package`. Backward compatibility is maintained until next major version.
+- The use of previously exposed Git-related utilities (`assert_git_repo`, `get_repo_root`, `get_latest_tag` and `tmp_worktree`) is deprecated, as they are not a core part of the library's functionality. These utilities are now part of our internal API.
+
+### Features
+
+- Add `analysis` attribute on objects and aliases, telling whether they were loaded through static or dynamic analysis, or created manually ([d792a56](https://github.com/mkdocstrings/griffe/commit/d792a56fcecdf2003791356b857262cba8235f04) by Timothée Mazzucotelli).
+- Expose Git info in objects, allowing to compute a new `source_link` property (see [Source information][source-information] in our docs) ([2a8d824](https://github.com/mkdocstrings/griffe/commit/2a8d824840b277d9941981583372abf36d3b17fe) by Timothée Mazzucotelli). [Issue-361](https://github.com/mkdocstrings/griffe/issues/361), [Issue-mkdocstrings-python-253](https://github.com/mkdocstrings/python/issues/253)
+- Add `wildcard_imported` boolean attribute to aliases, deprecate `on_wildcard_expansion` event ([821300d](https://github.com/mkdocstrings/griffe/commit/821300db5d43af0ad7a4d82ff2df15a7fa5f63d6) by Timothée Mazzucotelli).
+- Add load events that run once a tree is fully constructed, matching analysis events but safer to hook onto (see [Load events][load-events] in our docs) ([77f928a](https://github.com/mkdocstrings/griffe/commit/77f928aeab857cb45564462a4f849c2df2cca99a) by Timothée Mazzucotelli). [Issue-346](https://github.com/mkdocstrings/griffe/issues/346)
+
+### Code Refactoring
+
+- Provide typed dicts for docstring options ([945880a](https://github.com/mkdocstrings/griffe/commit/945880a04dcbe6eae31afa5021766533c73edc91) by Timothée Mazzucotelli). [Issue-370](https://github.com/mkdocstrings/griffe/issues/370)
+- Allow parenthesized type to be glued (no space) to parameter name in Google-style docstrings ([4b6f939](https://github.com/mkdocstrings/griffe/commit/4b6f939e12540ce4fb6941f0c95253e3111e7f6f) by Timothée Mazzucotelli). [Issue-375](https://github.com/mkdocstrings/griffe/issues/375)
+- Improve deprecation warnings for `on_alias` and `on_package_loaded` ([d3e50db](https://github.com/mkdocstrings/griffe/commit/d3e50db055715d1a2b794d7e1cf47e6fdc1c305b) by Timothée Mazzucotelli).
+
 ## [1.13.0](https://github.com/mkdocstrings/griffe/releases/tag/1.13.0) - 2025-08-26
 
 <small>[Compare with 1.12.1](https://github.com/mkdocstrings/griffe/compare/1.12.1...1.13.0)</small>
