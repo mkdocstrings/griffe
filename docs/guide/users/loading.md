@@ -343,9 +343,9 @@ In the following cases, the information will not be set:
 - Griffe cannot identify a known, supported service from the remote URL
 - any Git command failed
 
-Griffe supports the services listed in the [`KnownGitService`][griffe.KnownGitService] symbol. Please open a feature request if you would like to add other support for other services.
+Griffe supports the services listed in the [`KnownGitService`][griffe.KnownGitService] symbol. Please open a feature request if you would like to add support for other services.
 
-Thanks to this source information, Griffe can then compute source links for each objects, by combining the information with the object's filepath and line numbers.
+Thanks to this source information, Griffe can then compute [source links][griffe.Object.source_link] for each objects, by combining the information with the object's filepath and line numbers.
 
 You can globally change how Griffe obtains the source information with the following environment variables:
 
