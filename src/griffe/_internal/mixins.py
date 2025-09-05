@@ -32,12 +32,7 @@ def _get_parts(key: str | Sequence[str]) -> Sequence[str]:
 
 
 class GetMembersMixin:
-    """Mixin class to share methods for accessing members.
-
-    Methods:
-        get_member: Get a member with its name or path.
-        __getitem__: Same as `get_member`, with the item syntax `[]`.
-    """
+    """Mixin class to share methods for accessing members."""
 
     def __getitem__(self, key: str | Sequence[str]) -> Any:
         """Get a member with its name or path.
@@ -87,12 +82,7 @@ class GetMembersMixin:
 # FIXME: Are `aliases` in other objects correctly updated when we delete a member?
 # Would weak references be useful there?
 class DelMembersMixin:
-    """Mixin class to share methods for deleting members.
-
-    Methods:
-        del_member: Delete a member with its name or path.
-        __delitem__: Same as `del_member`, with the item syntax `[]`.
-    """
+    """Mixin class to share methods for deleting members."""
 
     def __delitem__(self, key: str | Sequence[str]) -> None:
         """Delete a member with its name or path.
@@ -147,12 +137,7 @@ class DelMembersMixin:
 
 
 class SetMembersMixin:
-    """Mixin class to share methods for setting members.
-
-    Methods:
-        set_member: Set a member with its name or path.
-        __setitem__: Same as `set_member`, with the item syntax `[]`.
-    """
+    """Mixin class to share methods for setting members."""
 
     def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
         """Set a member with its name or path.
@@ -225,12 +210,7 @@ class SetMembersMixin:
 
 
 class SerializationMixin:
-    """Mixin class to share methods for de/serializing objects.
-
-    Methods:
-        as_json: Return this object's data as a JSON string.
-        from_json: Create an instance of this class from a JSON string.
-    """
+    """Mixin class to share methods for de/serializing objects."""
 
     def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
         """Return this object's data as a JSON string.
@@ -271,24 +251,7 @@ class SerializationMixin:
 
 
 class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, SerializationMixin):
-    """Mixin class to share methods that appear both in objects and aliases, unchanged.
-
-    Attributes:
-        all_members: All members (declared and inherited).
-        modules: The module members.
-        classes: The class members.
-        functions: The function members.
-        attributes: The attribute members.
-        type_aliases: The type alias members.
-        is_private: Whether this object/alias is private (starts with `_`) but not special.
-        is_class_private: Whether this object/alias is class-private (starts with `__` and is a class member).
-        is_special: Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`).
-        is_imported: Whether this object/alias was imported from another module.
-        is_exported: Whether this object/alias is exported (listed in `__all__`).
-        is_wildcard_exposed: Whether this object/alias is exposed to wildcard imports.
-        is_public: Whether this object is considered public.
-        is_deprecated: Whether this object is deprecated.
-    """
+    """Mixin class to share methods that appear both in objects and aliases, unchanged."""
 
     @property
     def all_members(self) -> dict[str, Object | Alias]:
