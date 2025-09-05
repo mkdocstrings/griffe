@@ -23,7 +23,6 @@ class Derived(Base):
 
     def hello(self):
         ...
-
 ```
 
 In the example above, *without* the extension `Derived.attr` and `Derived.hello` have no docstrings, while *with* the extension they will have the `Base.attr` and `Base.hello` docstrings attached, respectively.

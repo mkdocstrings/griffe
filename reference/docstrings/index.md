@@ -24,7 +24,6 @@ Sections are written like this:
 ```
 section identifier: optional section title
     section contents
-
 ```
 
 All sections identifiers are case-insensitive. All sections support multiple lines in descriptions, as well as blank lines. The first line must not be blank. Each section must be separated from contents above by a blank line.
@@ -37,7 +36,6 @@ Note: # (1)!
     Some information.
 
     Blank lines allowed.
-
 ```
 
 1. Missing blank line above.
@@ -52,7 +50,6 @@ Note: # (1)!
     Some information.
 
     Blank lines allowed.
-
 ```
 
 1. Extraneous blank line below.
@@ -66,14 +63,12 @@ Note:
     Some information.
 
     Blank lines allowed.
-
 ```
 
 Find out possibly invalid section syntax by grepping for "reasons" in Griffe debug logs:
 
 ```
 griffe dump -Ldebug -o/dev/null -fdgoogle your_package 2>&1 | grep reasons
-
 ```
 
 Some sections support documenting multiple items (attributes, parameters, etc.). When multiple items are supported, each item description can use multiple lines, and continuation lines must be indented once more so that the parser is able to differentiate items.
@@ -89,7 +84,6 @@ def foo(a, b):
             Continuation line 2.
         b: Here's b.
     """
-
 ```
 
 It's possible to start a description with a newline if you find it less confusing:
@@ -106,7 +100,6 @@ def foo(a, b):
             Continuation line 2.
         b: Here's b.
     """
-
 ```
 
 ### Admonitions
@@ -172,7 +165,6 @@ class MyClass:
 
     def __init__(self):
         self.barbar: bool = True
-
 ```
 
 Type annotations are fetched from the related attributes definitions. You can override those by adding types between parentheses before the colon:
@@ -184,7 +176,6 @@ Attributes:
     foo (Integer): Description for `foo`.
     bar (Boolean): Description for `bar`.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -228,7 +219,6 @@ class MyClass:
     @staticmethod
     def barbar():
         return "barbar"
-
 ```
 
 It's possible to write the function/method signature as well as its name:
@@ -239,7 +229,6 @@ Functions:
     foo(): Description for `foo`.
     bar(baz=1): Description for `bar`.
 """
-
 ```
 
 The signatures do not have to match the real ones: you can shorten them to only show the important parameters.
@@ -281,7 +270,6 @@ class MyClass:
 
     class BarBar:
         ...
-
 ```
 
 It's possible to write the class signature as well as its name:
@@ -292,7 +280,6 @@ Functions:
     Foo(): Description for `Foo`.
     Bar(baz=1): Description for `Bar`.
 """
-
 ```
 
 The signatures do not have to match the real ones: you can shorten them to only show the important initialization parameters.
@@ -308,7 +295,6 @@ Modules sections allow to document submodules of a module. They should be used i
 ├──  __init__.py
 ├──  foo.py
 └──  bar.py
-
 ```
 
 my_pkg/__init__.py
@@ -320,7 +306,6 @@ Modules:
     foo: Description for `foo`.
     bar: Description for `bar`.
 """
-
 ```
 
 #### Examples
@@ -343,7 +328,6 @@ Examples:
     >>> a
     1
 """
-
 ```
 
 Not the same as *Example* sections.
@@ -365,7 +349,6 @@ def foo(a: int, b: str):
         a: Here's a.
         b: Here's b.
     """
-
 ```
 
 ```
@@ -383,7 +366,6 @@ class Foo:
 
     foo: int
     bar: str
-
 ```
 
 Type annotations are fetched from the related parameters definitions. You can override those by adding types between parentheses before the colon:
@@ -395,7 +377,6 @@ Parameters:
     foo (Integer): Description for `foo`.
     bar (String): Description for `bar`.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -421,7 +402,6 @@ def foo(a, b, **kwargs):
         c (int): Here's c.
         d (bool): Here's d.
     """
-
 ```
 
 ```
@@ -441,7 +421,6 @@ def foo(a, b):
         ...
 
     return inner
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -467,7 +446,6 @@ def foo(a: int):
     """
     if a < 0:
         raise ValueError("message")
-
 ```
 
 Exceptions names are resolved using the function's scope.
@@ -492,7 +470,6 @@ def foo():
         UserWarning: To annoy users.
     """
     warnings.warn("Just messing with you.", UserWarning)
-
 ```
 
 Warnings names are resolved using the function's scope.
@@ -517,7 +494,6 @@ def foo() -> Iterator[int]:
     """
     for i in range(10):
         yield i
-
 ```
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator` or `typing.Iterator`. If your generator yields tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
@@ -537,7 +513,6 @@ def foo() -> Iterator[tuple[float, float, datetime]]:
     ...
     """
     ...
-
 ```
 
 You have to indent each continuation line when documenting yielded values, even if there's only one value yielded:
@@ -550,7 +525,6 @@ Yields:
         A longer description of details and other information
         for this partial result.
 """
-
 ```
 
 If you don't want to indent continuation lines for the only yielded value, use the [`returns_multiple_items=False`](#google-options) parser option.
@@ -565,7 +539,6 @@ Yields:
     y (int): Ordinate.
     t (int): Timestamp.
 """
-
 ```
 
 If you want to specify the type without a name, you still have to wrap the type in parentheses:
@@ -578,7 +551,6 @@ Yields:
     (int): Ordinate.
     (int): Timestamp.
 """
-
 ```
 
 If you don't want to wrap the type in parentheses, use the [`returns_named_value=False`](#google-options) parser option. Setting it to false will disallow specifying a name.
@@ -631,7 +603,6 @@ def foo() -> Generator[int, str, None]:
             for j in range(i, -1, -1):
                 yield j
             break
-
 ```
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator`. If your generator is able to receive tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
@@ -647,7 +618,6 @@ def foo() -> Generator[int, tuple[str, bool], None]:
     ...
     """
     ...
-
 ```
 
 You have to indent each continuation line when documenting received values, even if there's only one value received:
@@ -660,7 +630,6 @@ Receives:
         A longer description of what this data actually is,
         and what it isn't.
 """
-
 ```
 
 If you don't want to indent continuation lines for the only received value, use the [`receives_multiple_items=False`](#google-options) parser option.
@@ -674,7 +643,6 @@ Receives:
     mode (ModeEnum): Some mode.
     flag (int): Some flag.
 """
-
 ```
 
 If you want to specify the type without a name, you still have to wrap the type in parentheses:
@@ -686,7 +654,6 @@ Receives:
     (ModeEnum): Some mode.
     (int): Some flag.
 """
-
 ```
 
 If you don't want to wrap the type in parentheses, use the [`receives_named_value=False`](#google-options) parser option. Setting it to false will disallow specifying a name.
@@ -712,7 +679,6 @@ def foo() -> int:
         A random integer.
     """
     return random.randint(0, 100)
-
 ```
 
 Type annotations are fetched from the function return annotation. If your function returns tuples of values, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
@@ -728,7 +694,6 @@ def foo() -> tuple[bool, float]:
     ...
     """
     ...
-
 ```
 
 You have to indent each continuation line when documenting returned values, even if there's only one value returned:
@@ -741,7 +706,6 @@ Returns:
         A longer description of what is considered success,
         and what is considered failure.
 """
-
 ```
 
 If you don't want to indent continuation lines for the only returned value, use the [`returns_multiple_items=False`](#google-options) parser option.
@@ -755,7 +719,6 @@ Returns:
     success (int): Whether it succeeded.
     precision (Decimal): Final precision.
 """
-
 ```
 
 If you want to specify the type without a name, you still have to wrap the type in parentheses:
@@ -767,7 +730,6 @@ Returns:
     (int): Whether it succeeded.
     (Decimal): Final precision.
 """
-
 ```
 
 If you don't want to wrap the type in parentheses, use the [`returns_named_value=False`](#google-options) parser option. Setting it to false will disallow specifying a name.
@@ -788,7 +750,6 @@ Sections are written like this:
 section identifier
 ------------------
 section contents
-
 ```
 
 All sections identifiers are case-insensitive. All sections support multiple lines in descriptions.
@@ -809,7 +770,6 @@ def foo(a, b):
     b
         Here's b.
     """
-
 ```
 
 For items that have an optional name and type, several syntaxes are supported:
@@ -821,7 +781,6 @@ For items that have an optional name and type, several syntaxes are supported:
   name : type
       description
   """
-
   ```
 
 - specifying just the name:
@@ -831,7 +790,6 @@ For items that have an optional name and type, several syntaxes are supported:
   name
       description
   """
-
   ```
 
   or
@@ -841,7 +799,6 @@ For items that have an optional name and type, several syntaxes are supported:
   name :
       description
   """
-
   ```
 
 - specifying just the type:
@@ -851,7 +808,6 @@ For items that have an optional name and type, several syntaxes are supported:
   : type
       description
   """
-
   ```
 
 - specifying neither the name nor type:
@@ -861,7 +817,6 @@ For items that have an optional name and type, several syntaxes are supported:
   :
       description
   """
-
   ```
 
 ### Admonitions
@@ -924,7 +879,6 @@ class MyClass:
 
     def __init__(self):
         self.barbar: bool = True
-
 ```
 
 Type annotations are fetched from the related attributes definitions. You can override those by adding types between parentheses before the colon:
@@ -939,7 +893,6 @@ foo : Integer
 bar : Boolean
     Description for `bar`.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -989,7 +942,6 @@ class MyClass:
     @staticmethod
     def barbar():
         return "barbar"
-
 ```
 
 It's possible to write the function/method signature as well as its name:
@@ -1003,7 +955,6 @@ foo()
 bar(baz=1)
     Description for `bar`.
 """
-
 ```
 
 The signatures do not have to match the real ones: you can shorten them to only show the important parameters.
@@ -1051,7 +1002,6 @@ class MyClass:
 
     class BarBar:
         ...
-
 ```
 
 It's possible to write the class signature as well as its name:
@@ -1065,7 +1015,6 @@ Foo()
 Bar(baz=1)
     Description for `Bar`.
 """
-
 ```
 
 The signatures do not have to match the real ones: you can shorten them to only show the important initialization parameters.
@@ -1081,7 +1030,6 @@ Modules sections allow to document submodules of a module. They should be used i
 ├──  __init__.py
 ├──  foo.py
 └──  bar.py
-
 ```
 
 my_pkg/__init__.py
@@ -1096,7 +1044,6 @@ foo
 bar
     Description for `bar`.
 """
-
 ```
 
 #### Examples
@@ -1120,7 +1067,6 @@ Blank lines delimit prose vs. console blocks.
 >>> a
 1
 """
-
 ```
 
 #### Parameters
@@ -1141,7 +1087,6 @@ def foo(a: int, b: str):
     b
         Here's b.
     """
-
 ```
 
 ```
@@ -1162,7 +1107,6 @@ class Foo:
 
     foo: int
     bar: str
-
 ```
 
 Type annotations are fetched from the related parameters definitions. You can override those by adding types between parentheses before the colon:
@@ -1177,7 +1121,6 @@ foo : Integer
 bar : String
     Description for `bar`.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -1209,7 +1152,6 @@ def foo(a, b, **kwargs):
     d : bool
         Here's d.
     """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -1239,7 +1181,6 @@ def foo(a: int):
     """
     if a < 0:
         raise ValueError("message")
-
 ```
 
 Exceptions names are resolved using the function's scope.
@@ -1265,7 +1206,6 @@ def foo():
         To annoy users.
     """
     warnings.warn("Just messing with you.", UserWarning)
-
 ```
 
 Warnings names are resolved using the function's scope.
@@ -1292,7 +1232,6 @@ def foo() -> Iterator[int]:
     """
     for i in range(10):
         yield i
-
 ```
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator` or `typing.Iterator`. If your generator yields tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
@@ -1314,7 +1253,6 @@ def foo() -> Iterator[tuple[float, float, datetime]]:
         Time.
     """
     ...
-
 ```
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
@@ -1331,7 +1269,6 @@ y : int
 t : int
     Timestamp.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -1387,7 +1324,6 @@ def foo() -> Generator[int, str, None]:
             for j in range(i, -1, -1):
                 yield j
             break
-
 ```
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator`. If your generator is able to receive tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
@@ -1404,7 +1340,6 @@ def foo() -> Generator[int, tuple[str, bool], None]:
         Some flag.
     """
     ...
-
 ```
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
@@ -1419,7 +1354,6 @@ mode : ModeEnum
 flag : int
     Some flag.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' parent scope.
@@ -1445,7 +1379,6 @@ def foo() -> int:
         A random integer.
     """
     return random.randint(0, 100)
-
 ```
 
 Type annotations are fetched from the function return annotation. If your function returns tuples of values, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
@@ -1462,7 +1395,6 @@ def foo() -> tuple[bool, float]:
         Final precision.
     """
     ...
-
 ```
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
@@ -1477,7 +1409,6 @@ success : int
 precision : Decimal
     Final precision.
 """
-
 ```
 
 Types in docstrings are resolved using the docstrings' function scope.

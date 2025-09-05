@@ -1,13 +1,18 @@
 # Git utilities
 
+Deprecated utilities.
+
+We have decided to stop exposing Git-related utilities as it's not a core part of the library's functionality. The functions documented on this page will become unavailable in the next major version.
+
 ## assert_git_repo
 
 ```
 assert_git_repo(path: str | Path) -> None
-
 ```
 
-Assert that a directory is a Git repository.
+Deprecated. Assert that a directory is a Git repository.
+
+This function is deprecated and will become unavailable in the next major version.
 
 Parameters:
 
@@ -23,10 +28,11 @@ Raises:
 
 ```
 get_latest_tag(repo: str | Path) -> str
-
 ```
 
-Get latest tag of a Git repository.
+Deprecated. Get latest tag of a Git repository.
+
+This function is deprecated and will become unavailable in the next major version.
 
 Parameters:
 
@@ -41,11 +47,12 @@ Returns:
 ## get_repo_root
 
 ```
-get_repo_root(repo: str | Path) -> str
-
+get_repo_root(repo: str | Path) -> Path
 ```
 
-Get the root of a Git repository.
+Deprecated. Get the root of a Git repository.
+
+This function is deprecated and will become unavailable in the next major version.
 
 Parameters:
 
@@ -55,7 +62,7 @@ Parameters:
 
 Returns:
 
-- `str` – The root of the repository.
+- `Path` – The root of the repository.
 
 ## tmp_worktree
 
@@ -63,10 +70,11 @@ Returns:
 tmp_worktree(
     repo: str | Path = ".", ref: str = "HEAD"
 ) -> Iterator[Path]
-
 ```
 
-Context manager that checks out the given reference in the given repository to a temporary worktree.
+Deprecated. Context manager that checks out the given reference in the given repository to a temporary worktree.
+
+This function is deprecated and will become unavailable in the next major version.
 
 Parameters:
 

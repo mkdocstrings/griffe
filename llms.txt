@@ -26,6 +26,7 @@
 - [Parse docstrings](https://mkdocstrings.github.io/griffe/guide/users/how-to/parse-docstrings/index.md)
 - [Selectively inspect objects](https://mkdocstrings.github.io/griffe/guide/users/how-to/selectively-inspect/index.md)
 - [Set objects' docstring style](https://mkdocstrings.github.io/griffe/guide/users/how-to/set-docstring-styles/index.md)
+- [Set Git info on objects](https://mkdocstrings.github.io/griffe/guide/users/how-to/set-git-info/index.md)
 - [Support custom decorators](https://mkdocstrings.github.io/griffe/guide/users/how-to/support-decorators/index.md)
 
 ## Reference
@@ -72,6 +73,7 @@
 - [warnings-deprecated](https://mkdocstrings.github.io/griffe/extensions/official/warnings-deprecated/index.md)
 - [Third-party](https://mkdocstrings.github.io/griffe/extensions/third-party/index.md)
 - [docstring-inheritance](https://mkdocstrings.github.io/griffe/extensions/third-party/docstring-inheritance/index.md)
+- [fastapi](https://mkdocstrings.github.io/griffe/extensions/third-party/fastapi/index.md)
 - [fieldz](https://mkdocstrings.github.io/griffe/extensions/third-party/fieldz/index.md)
 - [generics](https://mkdocstrings.github.io/griffe/extensions/third-party/generics/index.md)
 - [inherited-method-crossrefs](https://mkdocstrings.github.io/griffe/extensions/third-party/inherited-method-crossrefs/index.md)

@@ -8,7 +8,6 @@ from griffe import Docstring
 text = "Hello I'm a docstring!"
 docstring = Docstring(text, lineno=1)
 parsed = docstring.parse("google")
-
 ```
 
 If you want to take advantage of the parsers ability to fetch annotations from the object from which the docstring originates, you can manually create the parent objects and link them to the docstring:
@@ -32,7 +31,6 @@ Parameters:
 """
 docstring = Docstring(text, lineno=1, parent=function)
 parsed = docstring.parse("google")
-
 ```
 
 With this the parser will fetch the `str` and `int` annotations from the parent function's parameters.

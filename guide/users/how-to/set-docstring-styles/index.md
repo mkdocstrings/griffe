@@ -21,7 +21,6 @@ def function():
 
     <!-- style: google -->
     """
-
 ```
 
 ```
@@ -32,7 +31,6 @@ def function():
 
     .. style: google
     """
-
 ```
 
 Your Griffe extension can then use regular expressions to search for such comments. For example with Markdown (HTML) comments:
@@ -50,7 +48,6 @@ class ApplyDocstringStyle(griffe.Extension):
         if obj.docstring:
             if match := self.regex.search(obj.docstring.value):
                 obj.docstring.parser = match.group(1)
-
 ```
 
 ## Python comment
@@ -63,7 +60,6 @@ def function():
 
     Body.
     """  # style: google
-
 ```
 
 Your extension can then pick up this comment to assign the right style:
@@ -81,7 +77,6 @@ class ApplyDocstringStyle(griffe.Extension):
         if obj.docstring:
             if match := self.regex.search(obj.docstring.source):
                 obj.docstring.parser = match.group(1)
-
 ```
 
 ## Explicit configuration
@@ -111,7 +106,6 @@ class ApplyDocstringStyle(griffe.Extension):
                  if fnmatch(obj.path, pattern):
                      if obj.docstring:
                          obj.docstring.parser = style
-
 ```
 
 Example configuration in MkDocs:
@@ -129,7 +123,6 @@ plugins:
                 path.to.obj2: numpy
                 path.to.obj3.*: sphinx
                 path.to.obj4*: google
-
 ```
 
 The benefit of this last solution is that it works for code you don't have control over. An alternative solution is to use the [griffe-autodocstringstyle extension](https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/) (sponsors only), which automatically assigns the `auto` style to all objects coming from sources found in a virtual environment.

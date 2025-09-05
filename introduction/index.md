@@ -10,14 +10,12 @@ Griffe is both a command line tool and a Python library. The command line tool o
 # Load API of `my_package`, serialize it to JSON,
 # print it to standard output.
 griffe dump my_package
-
 ```
 
 ```
 # Check for API breaking changes
 # between current version and version 1.0 (Git reference).
 griffe check my_package --against 1.0
-
 ```
 
 Both commands accept a `-h`, `--help` argument to show all the available options. For a complete reference of the command line interface, see [Reference / Command line interface](../reference/cli/).
@@ -34,7 +32,6 @@ griffe.find_breaking_changes(...)
 griffe.main(...)
 griffe.visit(...)
 griffe.inspect(...)
-
 ```
 
 To start exploring your API within Griffe data models, use the load function to load your package and access its various objects:
@@ -47,7 +44,6 @@ my_package = griffe.load("my_package")
 some_method = my_package["some_module.SomeClass.some_method"]
 print(some_method.docstring.value)
 print(f"Is `some_method` public? {'yes' if some_method.is_public else 'no'}")
-
 ```
 
 Use the load_git function to load your API at a particular moment in time, specified with a Git reference (commit hash, branch name, tag name):
@@ -56,7 +52,6 @@ Use the load_git function to load your API at a particular moment in time, speci
 import griffe
 
 my_package_v2_1 = griffe.load_git("my_package", ref="2.1")
-
 ```
 
 For more advanced usage, see our guide on [loading and navigating data](../guide/users/loading/).

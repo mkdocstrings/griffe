@@ -17,5 +17,4 @@ plugins:
           extensions:
           - griffe_inherited_docstrings
           - docstring_inheritance.griffe
-
 ```

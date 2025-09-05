@@ -29,7 +29,6 @@ This document describes how the project is architectured, both regarding boilerp
  mkdocs.yml # (16)!
  pyproject.toml # (17)!
  uv.lock
-
 ```
 
 1. GitHub workflows, issue templates and other configuration.
@@ -38,7 +37,6 @@ This document describes how the project is architectured, both regarding boilerp
    📁 ISSUE_TEMPLATE/ # (1)!
    📁 workflows/ # (2)!
     FUNDING.yml
-
    ```
 
    1. ```
@@ -47,12 +45,10 @@ This document describes how the project is architectured, both regarding boilerp
        3-docs.md
        4-change.md
        config.yml
-
       ```
    1. ```
        ci.yml
        release.yml
-
       ```
 
 1. The default virtual environment (git-ignored). See make setup command.
@@ -65,7 +61,6 @@ This document describes how the project is architectured, both regarding boilerp
     launch.json
     settings.json
     tasks.json
-
    ```
 
 1. Contains our tooling configuration. See [Scripts, configuration](#scripts-configuration).
@@ -77,14 +72,12 @@ This document describes how the project is architectured, both regarding boilerp
     mypy.ini
     pytest.ini
     ruff.toml
-
    ```
 
    1. ```
        launch.json
        settings.json
        tasks.json
-
       ```
 
 1. Documentation sources (Markdown pages). See make docs task.
@@ -118,7 +111,6 @@ This document describes how the project is architectured, both regarding boilerp
     reference.md
     schema-docstrings-options.json
     schema.json
-
    ```
 
    1. Customization of [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/)' templates.
@@ -126,13 +118,11 @@ This document describes how the project is architectured, both regarding boilerp
       ```
       📁 partials/ # (1)!
        main.html
-
       ```
 
       1. ```
           comments.html
           path-item.html
-
          ```
 
    1. ```
@@ -140,7 +130,6 @@ This document describes how the project is architectured, both regarding boilerp
        insiders.css
        material.css
        mkdocstrings.css
-
       ```
 
    1. ```
@@ -150,12 +139,10 @@ This document describes how the project is architectured, both regarding boilerp
        built-in.md
        official.md
        third-party.md
-
       ```
 
       1. ```
           dataclasses.md
-
          ```
       1. ```
           autodocstringstyle.md
@@ -167,15 +154,14 @@ This document describes how the project is architectured, both regarding boilerp
           sphinx.md
           typingdoc.md
           warnings-deprecated.md
-
          ```
       1. ```
           docstring-inheritance.md
+          fastapi.md
           fieldz.md
           generics.md
           inherited-method-crossrefs.md
           modernized-annotations.md
-
          ```
 
    1. ```
@@ -183,7 +169,6 @@ This document describes how the project is architectured, both regarding boilerp
       📁 users/ # (2)!
        contributors.md
        users.md
-
       ```
 
       1. ```
@@ -191,7 +176,6 @@ This document describes how the project is architectured, both regarding boilerp
           commands.md
           setup.md
           workflow.md
-
          ```
       1. ```
          📁 how-to/ # (1)!
@@ -201,27 +185,24 @@ This document describes how the project is architectured, both regarding boilerp
           loading.md
           navigating.md
           serializing.md
-
          ```
          1. ```
              parse-docstrings.md
              selectively-inspect.md
              set-docstring-styles.md
+             set-git-info.md
              support-decorators.md
-
             ```
          1. ```
              docstrings.md
              public-apis.md
              python-code.md
-
             ```
 
    1. ```
        favicon.ico
        gha_annotations_1.png
        gha_annotations_2.png
-
       ```
 
    1. ```
@@ -229,13 +210,11 @@ This document describes how the project is architectured, both regarding boilerp
        goals.yml
        index.md
        installation.md
-
       ```
 
    1. ```
        feedback.js
        insiders.js
-
       ```
 
    1. ```
@@ -243,7 +222,6 @@ This document describes how the project is architectured, both regarding boilerp
        api.md
        cli.md
        docstrings.md
-
       ```
 
       1. Python API reference, injected with [mkdocstrings](https://mkdocstrings.github.io/).
@@ -265,13 +243,11 @@ This document describes how the project is architectured, both regarding boilerp
           loggers.md
           models.md
           serializers.md
-
          ```
 
          1. ```
              models.md
              parsers.md
-
             ```
          1. ```
              alias.md
@@ -280,7 +256,6 @@ This document describes how the project is architectured, both regarding boilerp
              function.md
              module.md
              type_alias.md
-
             ```
 
 1. HTML report for Python code coverage (git-ignored), integrated in the [Coverage report](../coverage/) page. See make coverage task.
@@ -292,10 +267,10 @@ This document describes how the project is architectured, both regarding boilerp
     gen_griffe_json.py
     gen_structure_docs.py
     get_version.py
+    griffe_exts.py
     insiders.py
     make
     make.py
-
    ```
 
 1. Documentation site, built with `make run mkdocs build` (git-ignored).
@@ -304,7 +279,6 @@ This document describes how the project is architectured, both regarding boilerp
 
    ```
    📁 griffe/ # (1)!
-
    ```
 
    1. Our public API, exposed to users. See [Program structure](#program-structure).
@@ -314,7 +288,6 @@ This document describes how the project is architectured, both regarding boilerp
        __init__.py
        __main__.py
        py.typed
-
       ```
 
       1. Our internal API, hidden from users. See [Program structure](#program-structure).
@@ -344,7 +317,6 @@ This document describes how the project is architectured, both regarding boilerp
           py.typed
           stats.py
           tests.py
-
          ```
 
          1. ```
@@ -352,7 +324,6 @@ This document describes how the project is architectured, both regarding boilerp
              __init__.py
              inspector.py
              visitor.py
-
             ```
             1. ```
                 __init__.py
@@ -364,23 +335,21 @@ This document describes how the project is architectured, both regarding boilerp
                 parameters.py
                 runtime.py
                 values.py
-
                ```
          1. ```
              __init__.py
+             auto.py
              google.py
              models.py
              numpy.py
              parsers.py
              sphinx.py
              utils.py
-
             ```
          1. ```
              __init__.py
              base.py
              dataclasses.py
-
             ```
 
 1. Our test suite. See [Tests](#tests).
@@ -410,7 +379,6 @@ This document describes how the project is architectured, both regarding boilerp
     test_public_api.py
     test_stdlib.py
     test_visitor.py
-
    ```
 
    1. ```
@@ -421,7 +389,6 @@ This document describes how the project is architectured, both regarding boilerp
        test_numpy.py
        test_sphinx.py
        test_warnings.py
-
       ```
 
 1. The answers file generated by [Copier](https://copier.readthedocs.io/en/stable/). See [Boilerplate](#boilerplate).
@@ -444,7 +411,6 @@ To update the project (in order to apply latest changes from the template), we u
 
 ```
 copier update --trust --skip-answered
-
 ```
 
 ## Scripts, configuration
@@ -605,6 +571,12 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 
 These submodules define models and parsers for docstrings.
 
+##### `auto.py`
+
+This module defines functions to parse docstrings by guessing their style.
+
+xml version="1.0" encoding="UTF-8" standalone="no"?
+
 ##### `google.py`
 
 This module defines functions to parse Google-style docstrings into structured data.
@@ -638,8 +610,6 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 ##### `parsers.py`
 
 This module imports all the defined parsers and provides a generic function to parse docstrings.
-
-xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `sphinx.py`
 
@@ -704,7 +674,6 @@ ModuleSpec(
     origin='/media/data/dev/griffe/src/griffe/agents/__init__.py',
     submodule_search_locations=['/media/data/dev/griffe/src/griffe/agents'],
 )
-
 ```
 
 xml version="1.0" encoding="UTF-8" standalone="no"?

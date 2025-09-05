@@ -15,7 +15,6 @@ Available commands
   3.x                   Run a command in the virtual environment for Python 3.x.
   clean                 Delete build artifacts and cache files.
   vscode                Configure VSCode to work on this project.
-
 ```
 
 ## Commands
@@ -28,7 +27,6 @@ Setup all virtual environments (install dependencies).
 
 ```
 make setup
-
 ```
 
 The `setup` command installs all the Python dependencies required to work on the project. Virtual environments and dependencies are managed by [uv](https://github.com/astral-sh/uv). Development dependencies are listed in the `devdeps.txt` file.
@@ -52,7 +50,6 @@ Available commands
   vscode                Configure VSCode to work on this project.
 
 Available tasks
-warning: Using incompatible environment (`.venv`) due to `--no-sync` (The interpreter in the project environment has a different version (3.13.7) than it was created with (3.13.5))
   build                 Build source and wheel distributions.
   changelog             Update the changelog in-place with latest commits.
   check                 Check it all!
@@ -68,7 +65,6 @@ warning: Using incompatible environment (`.venv`) due to `--no-sync` (The interp
   publish               Publish source and wheel distributions to PyPI.
   release               Release a new version of the project.
   test                  Run the test suite.
-
 ```
 
 These tasks are written using [duty](https://github.com/pawamoy/duty) (a task runner), and located in the `duties.py` module in the repository root.
@@ -81,7 +77,6 @@ Print this help. Add task name to print help.
 
 ```
 make help [TASK]
-
 ```
 
 When the Python dependencies are not installed, this command just print the available commands. When the Python dependencies are installed, [duty](https://github.com/pawamoy/duty) is available so the command can also print the available tasks.
@@ -94,7 +89,6 @@ Run a command in the default virtual environment.
 
 ```
 make run <CMD> [ARG...]
-
 ```
 
 This command runs an arbitrary command inside the default virtual environment (`.venv`). It is especially useful to start a Python interpreter without having to first activate the virtual environment: `make run python`.
@@ -105,7 +99,6 @@ Run a command for all configured Python versions.
 
 ```
 make multirun <CMD> [ARG...]
-
 ```
 
 This command runs an arbitrary command inside the environments for all supported Python versions. It is especially useful for running tests.
@@ -116,7 +109,6 @@ Run a command in all virtual environments.
 
 ```
 make multirun <CMD> [ARG...]
-
 ```
 
 This command runs an arbitrary command inside the default environment, as well as the environments for all supported Python versions.
@@ -125,7 +117,6 @@ This command is especially useful to install, remove or update dependencies in a
 
 ```
 make allrun uv pip install -e ../other-project
-
 ```
 
 ### `3.x`
@@ -134,7 +125,6 @@ Run a command in the virtual environment for Python 3.x.
 
 ```
 make 3.x <CMD> [ARG...]
-
 ```
 
 This command runs an arbitrary command inside the environment of the selected Python version. It can be useful if you want to run a task that usually runs in the default environment with a different Python version.
@@ -145,7 +135,6 @@ Delete build artifacts and cache files.
 
 ```
 make clean
-
 ```
 
 This command simply deletes build artifacts and cache files and folders such as `build/`, `.cache/`, etc.. The virtual environments (`.venv` and `.venvs/*`) are not removed by this command.
@@ -156,7 +145,6 @@ Configure VSCode to work on this project.
 
 ```
 make vscode
-
 ```
 
 This command configures the [VSCode editor](https://code.visualstudio.com/) by copying the following files into the `.vscode` directory:
@@ -183,7 +171,6 @@ Build source and wheel distributions.
 
 ```
 make build
-
 ```
 
 Build distributions of your project for the current version. The build task uses the [`build` tool](https://build.pypa.io/en/stable/) to build `.tar.gz` (Gzipped sources archive) and `.whl` (wheel) distributions of your project in the `dist` directory.
@@ -194,7 +181,6 @@ Update the changelog in-place with latest commits.
 
 ```
 make changelog [bump=VERSION]
-
 ```
 
 Update the changelog in-place. The changelog task uses [git-changelog](https://pawamoy.github.io/git-changelog/) to read Git commits and parse their messages to infer the new version based on our commit message convention.
@@ -219,7 +205,6 @@ Check it all!
 
 ```
 make check
-
 ```
 
 Composite command to run all the check commands:
@@ -235,7 +220,6 @@ Check for API breaking changes.
 
 ```
 make check-api
-
 ```
 
 Compare the current code to the latest version (Git tag) using [Griffe](https://mkdocstrings.github.io/griffe/), to search for API breaking changes since latest version. It is set to allow failures, and is more about providing information than preventing CI to pass.
@@ -250,7 +234,6 @@ Check if the documentation builds correctly.
 
 ```
 make check-docs
-
 ```
 
 Build the docs with [MkDocs](https://www.mkdocs.org/) in strict mode.
@@ -265,7 +248,6 @@ Check the code quality.
 
 ```
 make check-quality
-
 ```
 
 Check the code quality using [Ruff](https://astral.sh/ruff).
@@ -278,7 +260,6 @@ src/your_package/module.py
 
 ```
 print("a code line that triggers a Ruff warning")  # noqa: ID
-
 ```
 
 ...where ID is the identifier of the rule you want to ignore for this line.
@@ -289,7 +270,6 @@ src/your_package/module.py
 
 ```
 import subprocess
-
 ```
 
 ````

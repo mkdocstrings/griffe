@@ -6,7 +6,6 @@
 
 ```
 main(args: list[str] | None = None) -> int
-
 ```
 
 Run the main program.
@@ -45,7 +44,6 @@ check(
     color: bool | None = None,
     style: str | ExplanationStyle | None = None,
 ) -> int
-
 ```
 
 Check for API breaking changes in two versions of the same package.
@@ -104,8 +102,8 @@ dump(
     *,
     output: str | IO | None = None,
     full: bool = False,
-    docstring_parser: Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
+    docstring_options: DocstringOptions | None = None,
     extensions: Sequence[
         str | dict[str, Any] | Extension | type[Extension]
     ]
@@ -120,7 +118,6 @@ dump(
     force_inspection: bool = False,
     stats: bool = False,
 ) -> int
-
 ```
 
 Load packages data and dump it as JSON.
@@ -141,11 +138,11 @@ Parameters:
 
 - ### **`docstring_parser`**
 
-  (`Parser | None`, default: `None` ) – The docstring parser to use. By default, no parsing is done.
+  (`DocstringStyle | Parser | None`, default: `None` ) – The docstring parser to use. By default, no parsing is done.
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`resolve_aliases`**
 
@@ -197,7 +194,6 @@ Returns:
 
 ```
 get_parser() -> ArgumentParser
-
 ```
 
 Return the CLI argument parser.

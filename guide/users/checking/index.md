@@ -10,14 +10,12 @@ By default, Griffe will compare the current code to the latest tag:
 
 ```
 $ griffe check mypackage
-
 ```
 
 To specify another Git reference to check against, use the `--against` or `-a` option:
 
 ```
 $ griffe check mypackage -a 0.2.0
-
 ```
 
 You can specify a Git tag, commit (hash), or even a branch: Griffe will create a worktree at this reference in a temporary directory, and clean it up after finishing.
@@ -27,9 +25,8 @@ If you want to also specify the *base* reference to use (instead of the current 
 ```
 $ griffe check mypackage -b HEAD -a 2.0.0
 $ griffe check mypackage -b 2.0.0 -a 1.0.0
-$ griffe check mypackage -b fix-issue-90 -a 1.2.3 
-$ griffe check mypackage -b 8afcfd6e 
-
+$ griffe check mypackage -b fix-issue-90 -a 1.2.3
+$ griffe check mypackage -b 8afcfd6e
 ```
 
 Important:
@@ -40,14 +37,12 @@ The package name you pass to `griffe check` must be found relative to the reposi
 
 ```
 $ griffe check -s src griffe
-
 ```
 
 Example in a monorepo, within a deeper file tree:
 
 ```
 $ griffe check -s back/services/identity-provider/src identity_provider
-
 ```
 
 ### Using PyPI
@@ -58,28 +53,24 @@ It's also possible to directly **check packages from PyPI.org** (or other indexe
 
 ```
 $ pip install griffe[pypi]
-
 ```
 
 The command syntax is:
 
 ```
 $ griffe check package_name -b project-name==2.0 -a project-name==1.0
-
 ```
 
 You can let Griffe guess the package name by passing an empty string:
 
 ```
 $ griffe check "" -b project-name==2.0 -a project-name==1.0
-
 ```
 
 [PEP 508 version specifiers](https://peps.python.org/pep-0508/) are supported (`<`, `<=`, `!=`, `==`, `>=`, `>`, `~=`). For example, to compare v2 against the version just before it:
 
 ```
 $ griffe check "" -b project-name==2.0 -a project-name<2.0
-
 ```
 
 Without a version specifier on the base reference, or without a base reference at all, Griffe will use the latest available version. The two following commands compare the latest version against v1:
@@ -87,7 +78,6 @@ Without a version specifier on the base reference, or without a base reference a
 ```
 $ griffe check "" -b project-name -a project-name==1.0
 $ griffe check "" -a project-name==1.0
-
 ```
 
 Griffe will actually install packages in a cache directory. It means a few things: source distributions are supported, and only packages that are compatible with your current environment can be checked.
@@ -104,7 +94,6 @@ my_pkg_v2 = griffe.load_git("my_pkg", ref="v2")
 
 for breaking_change in find_breaking_changes(my_pkg_v1, my_pkg_v2):
     print(breaking_change.explain())
-
 ```
 
 ## In CI
@@ -133,7 +122,6 @@ jobs:
     - run: pip install griffe
 
     - run: griffe check -ssrc your_package
-
 ```
 
 The last step will fail the workflow if any breaking change is found. If you are part of [Insiders](../../../insiders/), you can format the output for GitHub, to enjoy GitHub annotations in PRs. See [GitHub format](#github) below.
@@ -163,7 +151,6 @@ def greet(prefix, name):
 
 # user's code
 greet("hello", "world")
-
 ```
 
 after
@@ -175,7 +162,6 @@ def greet(name, prefix):
 
 # user's code: no immediate error, broken behavior
 greet("hello", "world")
-
 ```
 
 Note
@@ -193,7 +179,6 @@ def greet(*, prefix, name):
     print(prefix + " " + name)
 
 greet(prefix="hello", name="world")
-
 ```
 
 after
@@ -204,7 +189,6 @@ def greet(*, name, prefix):
 
 # still working as expected
 greet(prefix="hello", name="world")
-
 ```
 
 ### Parameter removed
@@ -222,7 +206,6 @@ def greet(prefix, name):
 
 # user's code
 greet("hello", "world")
-
 ```
 
 after
@@ -237,7 +220,6 @@ greet("hello", "world")
 
 # even with keyword parameters: immediate error
 greet(prefix="hello", name="world")
-
 ```
 
 Hint
@@ -252,7 +234,6 @@ def greet(prefix, name, /):
     print(prefix + " " + name)
 
 greet("hello", "world")
-
 ```
 
 after
@@ -273,7 +254,6 @@ def greet(*args):
 
 # still working as expected
 greet("hello", "world")
-
 ```
 
 before
@@ -284,7 +264,6 @@ def greet(*, prefix, name):
     print(prefix + " " + name)
 
 greet(prefix="hello", name="world")
-
 ```
 
 after
@@ -299,7 +278,6 @@ def greet(name, **kwargs):
 
 # still working as expected
 greet(prefix="hello", name="world")
-
 ```
 
 before
@@ -310,7 +288,6 @@ def greet(prefix, name):
     print(prefix + " " + name)
 
 greet("hello", name="world")
-
 ```
 
 after
@@ -336,7 +313,6 @@ def greet(*args, **kwargs):
 greet("hello", "world")
 greet("hello", name="world")
 greet(prefix="hello", name="world")
-
 ```
 
 ### Parameter changed kind
@@ -360,7 +336,6 @@ greet("tim")
 greet(name="tim")
 greet2("tim")
 greet2(name="tim")
-
 ```
 
 after
@@ -380,7 +355,6 @@ greet2(name="tim")
 # immediate error
 greet(name="tim")
 greet2("tim")
-
 ```
 
 Hint
@@ -400,7 +374,6 @@ greet("tiff")
 # complex cases are never ambiguous
 greet("tim", italic=True, bold=True)
 greet(name="tiff", bold=True, punctuation=True)
-
 ```
 
 Positional-only parameters are useful in some specific cases, such as when a function takes two or more numeric values, and their order does not matter, and naming the parameters would not make sense:
@@ -414,7 +387,6 @@ multiply3(4, 2, 3)
 multiply3(4, 3, 2)
 multiply3(2, 3, 4)
 # etc.
-
 ```
 
 ### Parameter changed default
@@ -436,7 +408,6 @@ def compute_something(value: int, to_float=True):
 # user's code: condition is entered
 if isinstance(compute_something(7), float):
     ...
-
 ```
 
 after
@@ -452,7 +423,6 @@ def compute_something(value: int, to_float=False):
 # user's code: condition is not entered anymore
 if isinstance(compute_something(7), float):
     ...
-
 ```
 
 Note
@@ -480,7 +450,6 @@ def compute_something(value: int, to_float=_sentinel):
     if to_float:
         return float(value)
     return value
-
 ```
 
 In a later release you can remove the sentinel, the deprecation warning, and set `False` as default to `to_float`.
@@ -493,7 +462,6 @@ def compute_something(value: int, to_float=False):
     if to_float:
         return float(value)
     return value
-
 ```
 
 ### Parameter changed required
@@ -511,7 +479,6 @@ def greet(name, prefix="hello"):
 
 # user's code
 greet("tiff")
-
 ```
 
 after
@@ -523,7 +490,6 @@ def greet(name, prefix):
 
 # user's code: immediate error
 greet("tiff")
-
 ```
 
 Hint
@@ -540,7 +506,6 @@ def greet(name, prefix=_sentinel):
         prefix = "hello"
         warnings.warn(DeprecationWarning, "'prefix' will become required in the next release")
     print(prefix + " " + name)
-
 ```
 
 In a later release you can remove the sentinel, the deprecation warning, and the default value of `prefix`.
@@ -550,7 +515,6 @@ in a later release
 ```
 def greet(name, prefix):
     print(prefix + " " + name)
-
 ```
 
 ### Parameter added required
@@ -568,7 +532,6 @@ def greet(name):
 
 # user's code
 greet("tiff")
-
 ```
 
 after
@@ -580,7 +543,6 @@ def greet(name, prefix):
 
 # user's code: immediate error
 greet("tiff")
-
 ```
 
 Hint
@@ -592,7 +554,6 @@ in the coming release
 ```
 def greet(name, prefix="hello"):
     print(prefix + " " + name)
-
 ```
 
 ### Return changed type
@@ -621,7 +582,6 @@ from your.module import special_thing
 # other/user/module.py
 from your import module
 print(module.special_thing)
-
 ```
 
 after
@@ -633,7 +593,6 @@ from your.module import special_thing
 # other/user/module.py: attribute error
 from your import module
 print(module.special_thing)
-
 ```
 
 Hint
@@ -645,7 +604,6 @@ def __getattr__(name):
     if name == "special_thing":
         warnings.warn(DeprecationWarning, "'special_thing' is deprecated and will be removed")
         return "hey"
-
 ```
 
 ### Object changed kind
@@ -667,7 +625,6 @@ factory = Factory(...)
 # user's code: condition is entered
 if isinstance(factory, Factory):
     ...
-
 ```
 
 after
@@ -683,7 +640,6 @@ def factory(...):
 # user's code: condition is not entered anymore
 if isinstance(factory, Factory):
     ...
-
 ```
 
 Note
@@ -713,7 +669,6 @@ PY_VERSION = os.getenv("PY_VERSION")
 # user's code: condition is entered
 if PY_VERSION is None:
     ...
-
 ```
 
 after
@@ -725,7 +680,6 @@ PY_VERSION = os.getenv("PY_VERSION", "3.8")
 # user's code: condition is not entered anymore
 if PY_VERSION is None:
     ...
-
 ```
 
 Note
@@ -753,7 +707,6 @@ class C(A, B): ...
 # user's code: condition is entered
 if B in klass.__bases__:
     ...
-
 ```
 
 after
@@ -767,7 +720,6 @@ class C(A): ...
 # user's code: condition is not entered anymore
 if B in klass.__bases__:
     ...
-
 ```
 
 Note
@@ -788,29 +740,36 @@ This is the default format. Griffe will print each detected breakage on a single
 ```
 $ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0
 Traceback (most recent call last):
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 118, in _tmp_worktree
+    _git("-C", str(repo), "worktree", "add", "-b", tmp_branch, location, ref)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 39, in _git
+    raise GitError(process.stdout.strip())
+griffe._internal.exceptions.GitError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
   File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 612, in main
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 614, in main
     return commands[subcommand](**opts_dict)
            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 530, in check
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 532, in check
     new_package = load_git(
         package,
     ...<8 lines>...
         resolve_external=None,
     )
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 884, in load_git
-    with tmp_worktree(repo, ref) as worktree:
-         ~~~~~~~~~~~~^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 909, in load_git
+    with _tmp_worktree(repo, ref) as worktree:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
   File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
     return next(self.gen)
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 128, in tmp_worktree
-    raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
-RuntimeError: Could not create git worktree: Preparing worktree (new branch 'griffe-0-46-0-1-2-0')
-fatal: a branch named 'griffe-0-46-0-1-2-0' already exists
-
-
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 120, in _tmp_worktree
+    raise RuntimeError(f"Could not create git worktree: {error}") from error
+RuntimeError: Could not create git worktree:
 ```
 
 ### Verbose
@@ -823,29 +782,36 @@ Depending on the detected breakages, the lines might be hard to read (being too 
 ```
 $ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
 Traceback (most recent call last):
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 118, in _tmp_worktree
+    _git("-C", str(repo), "worktree", "add", "-b", tmp_branch, location, ref)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 39, in _git
+    raise GitError(process.stdout.strip())
+griffe._internal.exceptions.GitError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
   File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 612, in main
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 614, in main
     return commands[subcommand](**opts_dict)
            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 530, in check
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 532, in check
     new_package = load_git(
         package,
     ...<8 lines>...
         resolve_external=None,
     )
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 884, in load_git
-    with tmp_worktree(repo, ref) as worktree:
-         ~~~~~~~~~~~~^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 909, in load_git
+    with _tmp_worktree(repo, ref) as worktree:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
   File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
     return next(self.gen)
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 128, in tmp_worktree
-    raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
-RuntimeError: Could not create git worktree: Preparing worktree (new branch 'griffe-0-46-0-1-2-0')
-fatal: a branch named 'griffe-0-46-0-1-2-0' already exists
-
-
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 120, in _tmp_worktree
+    raise RuntimeError(f"Could not create git worktree: {error}") from error
+RuntimeError: Could not create git worktree:
 ```
 
 ### Markdown
@@ -878,7 +844,6 @@ The Markdown format is adapted for changelogs. It doesn't show the file and line
 - `griffe.git.load_git(lines_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
 - `griffe.git.load_git(modules_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
 - `griffe.git.load_git(allow_inspection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-
 ```
 
 - `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter kind was changed*: positional or keyword -> keyword-only
@@ -918,7 +883,6 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 ::warning file=src/griffe/finder.py,line=62,title=Package.stubs::Attribute value was changed: `stubs` -> `None`
 ::warning file=src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
 ::warning file=src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
-
 ```
 
 ## Next steps

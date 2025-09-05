@@ -16,7 +16,6 @@ from my_package.utils import enhance
 @enhance
 def my_function() -> ...:
     ...
-
 ```
 
 Start by creating an extensions module (a simple Python file) somewhere in your repository, if you don't already have one. Within it, create an extension class:
@@ -27,7 +26,6 @@ import griffe
 
 class MyDecorator(griffe.Extension):
     """An extension to suport my decorator."""
-
 ```
 
 Now we can declare the on_instance hook, which receives any kind of Griffe object (Module, Class, Function, Attribute, TypeAlias), or we could use a kind-specific hook such as on_module_instance, on_class_instance, on_function_instance, on_attribute_instance and on_type_alias_instance. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
@@ -43,7 +41,6 @@ class MyDecorator(griffe.Extension):
 
     def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         ...
-
 ```
 
 In this hook, we check if our function is decorated with our custom decorator:
@@ -59,7 +56,6 @@ class MyDecorator(griffe.Extension):
         for decorator in func.decorators:
             if decorator.callable_path == "my_package.utils.enhance":
                 ...  # Update the function attributes.
-
 ```
 
 Now all that is left to do is to actually write the code that updates the function according to what the decorator is doing. We could update the function's docstring, or its return type, or its parameters: it all depends on your decorator and what it does to the objects it decorates. Check out the API reference for function objects to see what data this object stores.

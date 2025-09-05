@@ -7,13 +7,11 @@ Class(
     decorators: list[Decorator] | None = None,
     **kwargs: Any,
 )
-
 ```
 
 Bases: `Object`
 
 ```
-
               flowchart TD
               griffe.Class[Class]
               griffe._internal.models.Object[Object]
@@ -44,7 +42,6 @@ Bases: `Object`
               click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
               click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
               click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
-            
 ```
 
 The class representing a Python class.
@@ -91,6 +88,7 @@ Attributes:
 
 - **`aliases`** (`dict[str, Alias]`) – The aliases pointing to this object.
 - **`all_members`** (`dict[str, Object | Alias]`) – All members (declared and inherited).
+- **`analysis`** (`Literal['static', 'dynamic'] | None`) – The type of analysis used to load this object.
 - **`attributes`** (`dict[str, Attribute]`) – The attribute members.
 - **`bases`** (`list[Expr | str]`) – The class bases.
 - **`canonical_path`** (`str`) – The full dotted path of this object.
@@ -103,6 +101,7 @@ Attributes:
 - **`extra`** (`dict[str, dict[str, Any]]`) – Namespaced dictionaries storing extra metadata for this object, used by extensions.
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`functions`** (`dict[str, Function]`) – The function members.
+- **`git_info`** (`GitInfo | None`) – Git information for this object, if available.
 - **`has_docstring`** (`bool`) – Whether this object has a docstring (empty or not).
 - **`has_docstrings`** (`bool`) – Whether this object or any of its members has a docstring (empty or not).
 - **`imports`** (`dict[str, str]`) – The other objects imported by this object.
@@ -151,6 +150,7 @@ Attributes:
 - **`resolved_bases`** (`list[Object]`) – Resolved class bases.
 - **`runtime`** (`bool`) – Whether this object is available at runtime.
 - **`source`** (`str`) – The source code of this object.
+- **`source_link`** (`str | None`) – Source link for this object, if available.
 - **`type_aliases`** (`dict[str, TypeAlias]`) – The type alias members.
 - **`type_parameters`** (`TypeParameters`) – The object type parameters.
 
@@ -158,7 +158,6 @@ Attributes:
 
 ```
 aliases: dict[str, Alias] = {}
-
 ```
 
 The aliases pointing to this object.
@@ -167,18 +166,26 @@ The aliases pointing to this object.
 
 ```
 all_members: dict[str, Object | Alias]
-
 ```
 
 All members (declared and inherited).
 
 This method is part of the consumer API: do not use when producing Griffe trees!
 
+## analysis
+
+```
+analysis: Literal['static', 'dynamic'] | None = analysis
+```
+
+The type of analysis used to load this object.
+
+None means the object was created manually.
+
 ## attributes
 
 ```
 attributes: dict[str, Attribute]
-
 ```
 
 The attribute members.
@@ -189,7 +196,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 bases: list[Expr | str] = list(bases) if bases else []
-
 ```
 
 The class bases.
@@ -200,7 +206,6 @@ See also: resolved_bases, mro.
 
 ```
 canonical_path: str
-
 ```
 
 The full dotted path of this object.
@@ -213,7 +218,6 @@ See also: path.
 
 ```
 classes: dict[str, Class]
-
 ```
 
 The class members.
@@ -224,7 +228,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 decorators: list[Decorator] = decorators or []
-
 ```
 
 The class decorators.
@@ -233,7 +236,6 @@ The class decorators.
 
 ```
 deprecated: bool | str | None = None
-
 ```
 
 Whether this object is deprecated (boolean or deprecation message).
@@ -242,7 +244,6 @@ Whether this object is deprecated (boolean or deprecation message).
 
 ```
 docstring: Docstring | None = docstring
-
 ```
 
 The object docstring.
@@ -253,7 +254,6 @@ See also: has_docstring, has_docstrings.
 
 ```
 endlineno: int | None = endlineno
-
 ```
 
 The ending line number of the object.
@@ -264,7 +264,6 @@ See also: lineno.
 
 ```
 exports: list[str | ExprName] | None = None
-
 ```
 
 The names of the objects exported by this (module) object through the `__all__` variable.
@@ -275,7 +274,6 @@ Exports can contain string (object names) or resolvable names, like other lists 
 from .submodule import __all__ as submodule_all
 
 __all__ = ["hello", *submodule_all]
-
 ```
 
 Exports get expanded by the loader before it expands wildcards and resolves aliases.
@@ -286,7 +284,6 @@ See also: GriffeLoader.expand_exports.
 
 ```
 extra: dict[str, dict[str, Any]] = defaultdict(dict)
-
 ```
 
 Namespaced dictionaries storing extra metadata for this object, used by extensions.
@@ -295,7 +292,6 @@ Namespaced dictionaries storing extra metadata for this object, used by extensio
 
 ```
 filepath: Path | list[Path]
-
 ```
 
 The file path (or directory list for namespace packages) where this object was defined.
@@ -309,25 +305,30 @@ Examples:
 >>> markdown = griffe.load("markdown")
 >>> markdown.filepath
 PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py')
-
 ```
 
 ## functions
 
 ```
 functions: dict[str, Function]
-
 ```
 
 The function members.
 
 This method is part of the consumer API: do not use when producing Griffe trees!
 
+## git_info
+
+```
+git_info: GitInfo | None
+```
+
+Git information for this object, if available.
+
 ## has_docstring
 
 ```
 has_docstring: bool
-
 ```
 
 Whether this object has a docstring (empty or not).
@@ -338,7 +339,6 @@ See also: docstring, has_docstrings.
 
 ```
 has_docstrings: bool
-
 ```
 
 Whether this object or any of its members has a docstring (empty or not).
@@ -351,7 +351,6 @@ See also: docstring, has_docstring.
 
 ```
 imports: dict[str, str] = {}
-
 ```
 
 The other objects imported by this object.
@@ -362,7 +361,6 @@ Keys are the names within the object (`from ... import ... as AS_NAME`), while t
 
 ```
 inherited: bool = False
-
 ```
 
 Always false for objects.
@@ -373,7 +371,6 @@ Only aliases can be marked as inherited.
 
 ```
 inherited_members: dict[str, Alias]
-
 ```
 
 Members that are inherited from base classes.
@@ -386,7 +383,6 @@ See also: members.
 
 ```
 is_alias: bool = False
-
 ```
 
 Always false for objects.
@@ -395,7 +391,6 @@ Always false for objects.
 
 ```
 is_attribute: bool
-
 ```
 
 Whether this object is an attribute.
@@ -406,7 +401,6 @@ See also: is_module. is_class, is_function, is_type_alias, is_alias, is_kind.
 
 ```
 is_class: bool
-
 ```
 
 Whether this object is a class.
@@ -417,7 +411,6 @@ See also: is_module. is_function, is_attribute, is_type_alias, is_alias, is_kind
 
 ```
 is_class_private: bool
-
 ```
 
 Whether this object/alias is class-private (starts with `__` and is a class member).
@@ -426,7 +419,6 @@ Whether this object/alias is class-private (starts with `__` and is a class memb
 
 ```
 is_collection: bool = False
-
 ```
 
 Always false for objects.
@@ -435,7 +427,6 @@ Always false for objects.
 
 ```
 is_deprecated: bool
-
 ```
 
 Whether this object is deprecated.
@@ -444,7 +435,6 @@ Whether this object is deprecated.
 
 ```
 is_exported: bool
-
 ```
 
 Whether this object/alias is exported (listed in `__all__`).
@@ -453,7 +443,6 @@ Whether this object/alias is exported (listed in `__all__`).
 
 ```
 is_function: bool
-
 ```
 
 Whether this object is a function.
@@ -464,7 +453,6 @@ See also: is_module. is_class, is_attribute, is_type_alias, is_alias, is_kind.
 
 ```
 is_generic: bool
-
 ```
 
 Whether this object is generic.
@@ -473,7 +461,6 @@ Whether this object is generic.
 
 ```
 is_imported: bool
-
 ```
 
 Whether this object/alias was imported from another module.
@@ -482,7 +469,6 @@ Whether this object/alias was imported from another module.
 
 ```
 is_init_method: bool
-
 ```
 
 Whether this function is an `__init__` method.
@@ -491,7 +477,6 @@ Whether this function is an `__init__` method.
 
 ```
 is_init_module: bool
-
 ```
 
 Whether this object is an `__init__.py` module.
@@ -502,7 +487,6 @@ See also: is_module.
 
 ```
 is_module: bool
-
 ```
 
 Whether this object is a module.
@@ -513,7 +497,6 @@ See also: is_init_module. is_class, is_function, is_attribute, is_type_alias, is
 
 ```
 is_namespace_package: bool
-
 ```
 
 Whether this object is a namespace package (top folder, no `__init__.py`).
@@ -524,7 +507,6 @@ See also: is_namespace_subpackage.
 
 ```
 is_namespace_subpackage: bool
-
 ```
 
 Whether this object is a namespace subpackage.
@@ -535,7 +517,6 @@ See also: is_namespace_package.
 
 ```
 is_package: bool
-
 ```
 
 Whether this object is a package (top module).
@@ -546,7 +527,6 @@ See also: is_subpackage.
 
 ```
 is_private: bool
-
 ```
 
 Whether this object/alias is private (starts with `_`) but not special.
@@ -555,7 +535,6 @@ Whether this object/alias is private (starts with `_`) but not special.
 
 ```
 is_public: bool
-
 ```
 
 Whether this object is considered public.
@@ -575,7 +554,6 @@ Therefore, to decide whether an object is public, we follow this algorithm:
 
 ```
 is_special: bool
-
 ```
 
 Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`).
@@ -584,7 +562,6 @@ Whether this object/alias is special ("dunder" attribute/method, starts and end 
 
 ```
 is_subpackage: bool
-
 ```
 
 Whether this object is a subpackage.
@@ -595,7 +572,6 @@ See also: is_package.
 
 ```
 is_type_alias: bool
-
 ```
 
 Whether this object is a type alias.
@@ -606,7 +582,6 @@ See also: is_module. is_class, is_function, is_attribute, is_alias, is_kind.
 
 ```
 is_wildcard_exposed: bool
-
 ```
 
 Whether this object/alias is exposed to wildcard imports.
@@ -628,7 +603,6 @@ Returns:
 
 ```
 kind = CLASS
-
 ```
 
 The object kind.
@@ -637,7 +611,6 @@ The object kind.
 
 ```
 labels: set[str] = set()
-
 ```
 
 The object labels (`property`, `dataclass`, etc.).
@@ -648,7 +621,6 @@ See also: has_labels.
 
 ```
 lineno: int | None = lineno
-
 ```
 
 The starting line number of the object.
@@ -659,7 +631,6 @@ See also: endlineno.
 
 ```
 lines: list[str]
-
 ```
 
 The lines containing the source of this object.
@@ -670,7 +641,6 @@ See also: lines_collection, source.
 
 ```
 lines_collection: LinesCollection
-
 ```
 
 The lines collection attached to this object or its parents.
@@ -685,7 +655,6 @@ Raises:
 
 ```
 members: dict[str, Object | Alias] = {}
-
 ```
 
 The object members (modules, classes, functions, attributes, type aliases).
@@ -696,7 +665,6 @@ See also: inherited_members, get_member, set_member, filter_members.
 
 ```
 module: Module
-
 ```
 
 The parent module of this object.
@@ -713,7 +681,6 @@ Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'
 >>> # The `module` of a module is itself.
 >>> markdown["core"].module
 Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/core.py'))
-
 ```
 
 Raises:
@@ -724,7 +691,6 @@ Raises:
 
 ```
 modules: dict[str, Module]
-
 ```
 
 The module members.
@@ -735,7 +701,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 modules_collection: ModulesCollection
-
 ```
 
 The modules collection attached to this object or its parents.
@@ -748,7 +713,6 @@ Raises:
 
 ```
 name: str = name
-
 ```
 
 The object name.
@@ -757,7 +721,6 @@ The object name.
 
 ```
 overloads: dict[str, list[Function]] = defaultdict(list)
-
 ```
 
 The overloaded signatures declared in this class.
@@ -766,7 +729,6 @@ The overloaded signatures declared in this class.
 
 ```
 package: Module
-
 ```
 
 The absolute top module (the package) of this object.
@@ -780,14 +742,12 @@ Examples:
 >>> markdown = griffe.load("markdown")
 >>> markdown["core.Markdown.references"].package
 Module(PosixPath('~/project/.venv/lib/python3.11/site-packages/markdown/__init__.py'))
-
 ```
 
 ## parameters
 
 ```
 parameters: Parameters
-
 ```
 
 The parameters of this class' `__init__` method, if any.
@@ -798,7 +758,6 @@ This property fetches inherited members, and therefore is part of the consumer A
 
 ```
 parent: Module | Class | None = parent
-
 ```
 
 The parent of the object (none if top module).
@@ -807,7 +766,6 @@ The parent of the object (none if top module).
 
 ```
 path: str
-
 ```
 
 The dotted path of this object.
@@ -823,14 +781,12 @@ Examples:
 >>> markdown = griffe.load("markdown")
 >>> markdown["core.Markdown.references"].path
 'markdown.core.Markdown.references'
-
 ```
 
 ## public
 
 ```
 public: bool | None = None
-
 ```
 
 Whether this object is public.
@@ -839,7 +795,6 @@ Whether this object is public.
 
 ```
 relative_filepath: Path
-
 ```
 
 The file path where this object was defined, relative to the current working directory.
@@ -856,7 +811,6 @@ Raises:
 
 ```
 relative_package_filepath: Path
-
 ```
 
 The file path where this object was defined, relative to the top module path.
@@ -871,7 +825,6 @@ Raises:
 
 ```
 resolved_bases: list[Object]
-
 ```
 
 Resolved class bases.
@@ -884,7 +837,6 @@ See also: bases, mro.
 
 ```
 runtime: bool = runtime
-
 ```
 
 Whether this object is available at runtime.
@@ -895,18 +847,24 @@ Typically, type-guarded objects (under an `if TYPE_CHECKING` condition) are not 
 
 ```
 source: str
-
 ```
 
 The source code of this object.
 
 See also: lines, lines_collection.
 
+## source_link
+
+```
+source_link: str | None
+```
+
+Source link for this object, if available.
+
 ## type_aliases
 
 ```
 type_aliases: dict[str, TypeAlias]
-
 ```
 
 The type alias members.
@@ -919,7 +877,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 type_parameters: TypeParameters = (
     type_parameters or TypeParameters()
 )
-
 ```
 
 The object type parameters.
@@ -928,7 +885,6 @@ The object type parameters.
 
 ```
 __bool__() -> bool
-
 ```
 
 An object is always true-ish.
@@ -937,7 +893,6 @@ An object is always true-ish.
 
 ```
 __delitem__(key: str | Sequence[str]) -> None
-
 ```
 
 Delete a member with its name or path.
@@ -958,14 +913,12 @@ Examples:
 >>> del griffe_object["foo"]
 >>> del griffe_object["path.to.bar"]
 >>> del griffe_object[("path", "to", "qux")]
-
 ```
 
 ## __getitem__
 
 ```
 __getitem__(key: str | Sequence[str]) -> Any
-
 ```
 
 Get a member with its name or path.
@@ -986,14 +939,12 @@ Examples:
 >>> foo = griffe_object["foo"]
 >>> bar = griffe_object["path.to.bar"]
 >>> qux = griffe_object[("path", "to", "qux")]
-
 ```
 
 ## __len__
 
 ```
 __len__() -> int
-
 ```
 
 The number of members in this object, recursively.
@@ -1004,7 +955,6 @@ The number of members in this object, recursively.
 __setitem__(
     key: str | Sequence[str], value: Object | Alias
 ) -> None
-
 ```
 
 Set a member with its name or path.
@@ -1027,14 +977,12 @@ Examples:
 >>> griffe_object["foo"] = foo
 >>> griffe_object["path.to.bar"] = bar
 >>> griffe_object[("path", "to", "qux")] = qux
-
 ```
 
 ## as_dict
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this class' data as a dictionary.
@@ -1055,7 +1003,6 @@ Returns:
 
 ```
 as_json(*, full: bool = False, **kwargs: Any) -> str
-
 ```
 
 Return this object's data as a JSON string.
@@ -1078,7 +1025,6 @@ Returns:
 
 ```
 del_member(key: str | Sequence[str]) -> None
-
 ```
 
 Delete a member with its name or path.
@@ -1099,7 +1045,6 @@ Examples:
 >>> griffe_object.del_member("foo")
 >>> griffe_object.del_member("path.to.bar")
 >>> griffe_object.del_member(("path", "to", "qux"))
-
 ```
 
 ## filter_members
@@ -1108,7 +1053,6 @@ Examples:
 filter_members(
     *predicates: Callable[[Object | Alias], bool],
 ) -> dict[str, Object | Alias]
-
 ```
 
 Filter and return members based on predicates.
@@ -1129,7 +1073,6 @@ Returns:
 
 ```
 from_json(json_string: str, **kwargs: Any) -> _ObjType
-
 ```
 
 Create an instance of this class from a JSON string.
@@ -1156,7 +1099,6 @@ Raises:
 
 ```
 get_member(key: str | Sequence[str]) -> Any
-
 ```
 
 Get a member with its name or path.
@@ -1177,14 +1119,12 @@ Examples:
 >>> foo = griffe_object["foo"]
 >>> bar = griffe_object["path.to.bar"]
 >>> bar = griffe_object[("path", "to", "bar")]
-
 ```
 
 ## has_labels
 
 ```
 has_labels(*labels: str) -> bool
-
 ```
 
 Tell if this object has all the given labels.
@@ -1205,7 +1145,6 @@ Returns:
 
 ```
 is_kind(kind: str | Kind | set[str | Kind]) -> bool
-
 ```
 
 Tell if this object is of the given kind.
@@ -1230,7 +1169,6 @@ Returns:
 
 ```
 mro() -> list[Class]
-
 ```
 
 Return a list of classes in order corresponding to Python's MRO.
@@ -1241,7 +1179,6 @@ See also: bases, resolved_bases.
 
 ```
 resolve(name: str) -> str
-
 ```
 
 Resolve a name within this object's and parents' scope.
@@ -1266,7 +1203,6 @@ Returns:
 set_member(
     key: str | Sequence[str], value: Object | Alias
 ) -> None
-
 ```
 
 Set a member with its name or path.
@@ -1289,7 +1225,6 @@ Examples:
 >>> griffe_object.set_member("foo", foo)
 >>> griffe_object.set_member("path.to.bar", bar)
 >>> griffe_object.set_member(("path", "to", "qux"), qux)
-
 ```
 
 ## signature
@@ -1298,7 +1233,6 @@ Examples:
 signature(
     *, return_type: bool = False, name: str | None = None
 ) -> str
-
 ```
 
 Construct the class signature.
@@ -1323,7 +1257,6 @@ Returns:
 
 ```
 c3linear_merge(*lists: list[_T]) -> list[_T]
-
 ```
 
 Merge lists of lists in the order defined by the C3Linear algorithm.

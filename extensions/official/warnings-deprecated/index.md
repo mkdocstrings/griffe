@@ -19,5 +19,4 @@ def deprecated_func():
 
 def another_func():
     ...
-
 ```

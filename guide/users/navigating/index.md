@@ -25,7 +25,6 @@ When [loading an object](../loading/), Griffe will give you back an instance of 
 <class 'griffe._internal.models.Alias'>
 >>> type(griffe.load("markdown.Markdown.references"))
 <class 'griffe._internal.models.Attribute'>
-
 ```
 
 However deep the object is, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.
@@ -47,7 +46,6 @@ To access an object's members, there are a few options:
   Alias('Markdown', 'markdown.core.Markdown')
   >>> markdown.members["core"].members["Markdown"]
   Class('Markdown', 46, 451)
-
   ```
 
 - Access to both regular and inherited members through the all_members attribute, which is a dictionary again. See [Inherited members](#inherited-members).
@@ -61,7 +59,6 @@ To access an object's members, there are a few options:
   Class('Markdown', 46, 451)
   >>> markdown["core.Markdown"]  # merged access
   Class('Markdown', 46, 451)
-
   ```
 
   The dictionary-like item access also accepts tuples of strings. So if for some reason you don't have a string equal to `"core.Markdown"` but a tuple equal to `("core", "Markdown")` (for example obtained from splitting another string), you can use it too:
@@ -75,7 +72,6 @@ To access an object's members, there are a few options:
   >>> # you can even use implicit tuples.
   >>> markdown["core", "Markdown"]
   Class('Markdown', 46, 451)
-
   ```
 
 - Less convenient, but safer access to members while the object tree is being built (while a package is still being loaded), using the get_member() method.
@@ -85,7 +81,6 @@ To access an object's members, there are a few options:
   >>> markdown = griffe.load("markdown")
   >>> markdown.get_member("core.Markdown")
   Class('Markdown', 46, 451)
-
   ```
 
   In particular, Griffe extensions should always use `get_member` instead of the subscript syntax `[]`. The `get_member` method only looks into regular members, while the subscript syntax looks into inherited members too (for classes), which cannot be correctly computed until a package is fully loaded (which is generally not the case when an extension is running).
@@ -121,7 +116,6 @@ loader = griffe.GriffeLoader()
 # note that we don't load package_a
 loader.load("package_b")
 loader.load("package_c")
-
 ```
 
 If a base class cannot be resolved during computation of inherited members, Griffe logs a DEBUG message.
@@ -142,7 +136,6 @@ Currently, there are three limitations to our class inheritance support:
 
    class MyClass(MyTuple):
        ...
-
    ```
 
 1. when visiting (static analysis), subclasses using the same name as one of their parent classes will prevent Griffe from computing the MRO and therefore the inherited members. To circumvent that, give a different name to your subclass:
@@ -159,7 +152,6 @@ Currently, there are three limitations to our class inheritance support:
    # do
    class SomeOtherClass(SomeClass):
        ...
-
    ```
 
 1. when inspecting (dynamic analysis), ephemeral base classes won't be resolved, and therefore their members won't appear in child classes. To circumvent that, assign these dynamic classes to variables:
@@ -176,7 +168,6 @@ Currently, there are three limitations to our class inheritance support:
 
    class MyClass(MyTuple):
        ...
-
    ```
 
 We will try to lift these limitations in the future.
@@ -203,7 +194,6 @@ Since merely accessing an alias field can raise an exception, it is often useful
 True
 >>> isinstance(load, griffe.Alias)
 True
-
 ```
 
 The kind of an alias will only return ALIAS if the alias is not resolved and cannot be resolved within the current modules collection.
@@ -215,7 +205,6 @@ try:
     print(obj.source)
 except griffe.AliasResolutionError:
     pass
-
 ```
 
 To check if an alias is already resolved, you can use its resolved attribute.
@@ -261,7 +250,6 @@ An object is identified by its path, which is its location in the object tree. T
 ```
 # pkg1.py
 from pkg2 import A as B
-
 ```
 
 ```
@@ -271,7 +259,6 @@ from pkg2 import A as B
 'pkg1.B'
 >>> B.canonical_path
 'pkg2.A'
-
 ```
 
 ### Source
@@ -307,7 +294,6 @@ Each object has fields that are related to their visibility within the API.
 
   def __getattr__(name: str):  # public
       ...
-
   ```
 
   For class-level objects, Griffe considers that the object is public if the object doesn't have a private name, and the object is not imported from elsewhere.
@@ -324,7 +310,6 @@ Each object has fields that are related to their visibility within the API.
 
       def __eq__(self, other):  # public
           ...
-
   ```
 
 - is_deprecated: whether this object is deprecated and shouldn't be used.
@@ -363,7 +348,6 @@ After a package is loaded, it is still possible to change the style used for spe
 >>> markdown = griffe.load("markdown", docstring_parser="google")
 >>> markdown["Markdown"].docstring.parse("numpy")
 [...]
-
 ```
 
 Do note, however, that the `parsed` attribute is cached, and won't be reset when overriding the `parser` or `parser_options` values.

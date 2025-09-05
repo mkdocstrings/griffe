@@ -34,7 +34,6 @@ def function(
     Just plain markup.
     """
     ...
-
 ```
 
 PEP 727 is likely to be withdrawn or rejected, but the `Doc` class will remain in `typing_extensions`, [as told by Jelle Zijlstra](https://discuss.python.org/t/pep-727-documentation-metadata-in-typing/32566/183):

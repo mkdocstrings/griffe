@@ -30,6 +30,7 @@ Serializing as JSON
 $ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
 {
   "griffe": {
+    "analysis": "static",
     "docstring": {
       "endlineno": 161,
       "lineno": 5,
@@ -42,6 +43,7 @@ $ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
       "Attribute",
       "AttributeChangedTypeBreakage",
       "AttributeChangedValueBreakage",
+      "AutoOptions",
       "Breakage",
       "BreakageKind",
       "BuiltinModuleError",
@@ -55,9 +57,6 @@ $ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
       "DocstringAdmonition",
       "DocstringAttribute",
       "DocstringClass",
-      "DocstringDeprecated",
-      "DocstringDetectionMethod",
-
 ```
 
 Checking for API breaking changes
@@ -65,29 +64,36 @@ Checking for API breaking changes
 ```
 $ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
 Traceback (most recent call last):
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 118, in _tmp_worktree
+    _git("-C", str(repo), "worktree", "add", "-b", tmp_branch, location, ref)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 39, in _git
+    raise GitError(process.stdout.strip())
+griffe._internal.exceptions.GitError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
   File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 612, in main
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 614, in main
     return commands[subcommand](**opts_dict)
            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 530, in check
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 532, in check
     new_package = load_git(
         package,
     ...<8 lines>...
         resolve_external=None,
     )
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 884, in load_git
-    with tmp_worktree(repo, ref) as worktree:
-         ~~~~~~~~~~~~^^^^^^^^^^^
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 909, in load_git
+    with _tmp_worktree(repo, ref) as worktree:
+         ~~~~~~~~~~~~~^^^^^^^^^^^
   File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
     return next(self.gen)
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 128, in tmp_worktree
-    raise RuntimeError(f"Could not create git worktree: {process.stderr.decode()}")
-RuntimeError: Could not create git worktree: Preparing worktree (new branch 'griffe-0-46-0-1-2-0')
-fatal: a branch named 'griffe-0-46-0-1-2-0' already exists
-
-
+  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 120, in _tmp_worktree
+    raise RuntimeError(f"Could not create git worktree: {error}") from error
+RuntimeError: Could not create git worktree:
 ```
 
 [Playground](playground/) [Join our Gitter channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im)

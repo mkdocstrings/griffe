@@ -27,7 +27,6 @@ class C:
 
     def d(self):
         """This is a method docstring."""
-
 ```
 
 ## Multi-line docstrings
@@ -41,7 +40,6 @@ def function():
     It spans on multiple lines.
     Blank lines are allowed, too.
     """
-
 ```
 
 When writing multi-line docstrings, it is recommended to write a short description on the first line, then separate the rest of the docstring with a blank line. The first line is called the **summary**, and the rest of docstring is called the **body**. The summary is useful to documentation generators and other tools to show the short description of an object.
@@ -82,7 +80,6 @@ def greet(name: str, end: str = "!") -> None:
 
 
 ‎
-
 ```
 
 Numpydoc-style
@@ -103,7 +100,6 @@ def greet(name: str, end: str = "!") -> None:
     Greetings are cool!
     """
     print(f"Hey {name}{end}")
-
 ```
 
 Our preferred style for docstrings is the **Google-style**, because it is in our opinion the most markup-agnostic style: it is based on any kind of markup or documentation generator. Our second choice would be the Numpydoc-style, for its readability.
@@ -126,7 +122,6 @@ def greet(
     > Greetings are cool!
     """ # (1)!
     print(f"Hey {name}{end}")
-
 ```
 
 1. Here we use the [GitHub syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts) for a "note" callout. It assumes our documentation renderer supports this syntax. The point is that we rely purely on Markdown rather than docstrings styles.
@@ -163,7 +158,6 @@ Classes:
 Functions:
     deploy(): Deploy something on the web (we're not sure what exactly).
 """
-
 ```
 
 Do the same thing for every other module of the package, except if you are [hiding your module layout](../public-apis/#module-layout).
@@ -205,7 +199,6 @@ class Ghost:
     def weight(self) -> int:
         """The ghost's weight (spoiler: it's close to 0)."""
         ...
-
 ```
 
 Note that blocks of lines starting with `>>>` or `...` are automatically parsed as code blocks by Griffe, until a blank line is found. This only works in Examples (plural!) sections. If you rely on [Python-Markdown](https://python-markdown.github.io/) to convert Markdown to HTML (which is the case for MkDocs), you can use the [markdown-pycon](https://pawamoy.github.io/markdown-pycon/) extension to recognize such `pycon` code blocks anywhere, without having to wrap them in fences. You can also choose to use explicit fences everywhere:
@@ -219,7 +212,6 @@ Note that blocks of lines starting with `>>>` or `...` are automatically parsed 
         >>> ghost = Ghost(nickname="Rattlesnake")
         ```
     """
-
 ````
 
 ## Functions
@@ -280,7 +272,6 @@ def gog_tickets_factory() -> Generator[GOGTicket, int, None]:
         Price for the next ticket, in ghost money (???).
     """
     ...
-
 ```
 
 ## Attributes
@@ -297,7 +288,6 @@ for all ghost-related things.
 Note:
     There is actually nothing scientific about any of this.
 """ # (1)!
-
 ```
 
 1. Our `Note` section here is parsed as an admonition. See [Google-style admonitions](../../../../reference/docstrings/#google-admonitions) for reference.
@@ -315,7 +305,6 @@ class GhostTown:
 
         self.size = size
         """The town's size."""
-
 ```
 
 ## Type aliases
@@ -329,7 +318,6 @@ type Callback = typing.Callable[[int, str], typing.Any]
 The first argument is the number of rounds to run, the second argument
 is the name of the widget being frobnicated.
 """
-
 ```
 
 ## Exceptions, warnings
@@ -355,7 +343,6 @@ def negotiate_return_to_the_spirit_chest():
             because the chest is too tight.
     """
     ...
-
 ```
 
 ## Going further

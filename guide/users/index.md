@@ -109,3 +109,11 @@ These how-tos will show you how to achieve specific things with Griffe.
   Sometimes the wrong docstring styles are attached to objects. You can fix this with a few different methods.
 
   [See how to set the correct docstring styles on objects](how-to/set-docstring-styles/)
+
+- **Set Git source info on objects**
+
+  ______________________________________________________________________
+
+  Griffe tries to find the right Git remote URL to provide source links to loaded objects. In some cases you might want to override the Git information or the source link directly.
+
+  [See how to set the correct Git information or source link on objects](how-to/set-git-info/)

@@ -14,7 +14,7 @@ load(
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
@@ -25,7 +25,6 @@ load(
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
 ) -> Object | Alias
-
 ```
 
 Load and return a Griffe object.
@@ -45,7 +44,6 @@ Example
 import griffe
 
 module = griffe.load(...)
-
 ```
 
 This is a shortcut for:
@@ -55,7 +53,6 @@ from griffe import GriffeLoader
 
 loader = GriffeLoader(...)
 module = loader.load(...)
-
 ```
 
 See the documentation for the loader: GriffeLoader.
@@ -88,7 +85,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -143,7 +140,7 @@ load_git(
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
@@ -153,7 +150,6 @@ load_git(
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
 ) -> Object | Alias
-
 ```
 
 Load and return a module from a specific Git reference.
@@ -168,7 +164,6 @@ Examples:
 from griffe import load_git
 
 old_api = load_git("my_module", ref="v0.1.0", repo="path/to/repo")
-
 ```
 
 Parameters:
@@ -203,7 +198,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -253,7 +248,7 @@ load_pypi(
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
@@ -263,7 +258,6 @@ load_pypi(
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
 ) -> Object | Alias
-
 ```
 
 Load and return a module from a specific package version downloaded using pip.
@@ -302,7 +296,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -346,14 +340,13 @@ GriffeLoader(
     extensions: Extensions | None = None,
     search_paths: Sequence[str | Path] | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
     force_inspection: bool = False,
     store_source: bool = True,
 )
-
 ```
 
 The Griffe loader, allowing to load data from modules.
@@ -374,7 +367,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -404,7 +397,7 @@ Methods:
 Attributes:
 
 - **`allow_inspection`** (`bool`) – Whether to allow inspecting (importing) modules for which we can't find sources.
-- **`docstring_options`** (`dict[str, Any]`) – Configured parsing options.
+- **`docstring_options`** (`DocstringOptions`) – Configured parsing options.
 - **`docstring_parser`** (`DocstringStyle | Parser | None`) – Selected docstring parser.
 - **`extensions`** (`Extensions`) – Loaded Griffe extensions.
 - **`finder`** (`ModuleFinder`) – The module source finder.
@@ -418,7 +411,6 @@ Attributes:
 
 ```
 allow_inspection: bool = allow_inspection
-
 ```
 
 Whether to allow inspecting (importing) modules for which we can't find sources.
@@ -426,8 +418,9 @@ Whether to allow inspecting (importing) modules for which we can't find sources.
 ### docstring_options
 
 ```
-docstring_options: dict[str, Any] = docstring_options or {}
-
+docstring_options: DocstringOptions = (
+    docstring_options or {}
+)
 ```
 
 Configured parsing options.
@@ -438,7 +431,6 @@ Configured parsing options.
 docstring_parser: DocstringStyle | Parser | None = (
     docstring_parser
 )
-
 ```
 
 Selected docstring parser.
@@ -447,7 +439,6 @@ Selected docstring parser.
 
 ```
 extensions: Extensions = extensions or load_extensions()
-
 ```
 
 Loaded Griffe extensions.
@@ -456,7 +447,6 @@ Loaded Griffe extensions.
 
 ```
 finder: ModuleFinder = ModuleFinder(search_paths)
-
 ```
 
 The module source finder.
@@ -465,7 +455,6 @@ The module source finder.
 
 ```
 force_inspection: bool = force_inspection
-
 ```
 
 Whether to force inspecting (importing) modules, even when sources were found.
@@ -474,7 +463,6 @@ Whether to force inspecting (importing) modules, even when sources were found.
 
 ```
 ignored_modules: set[str] = {'debugpy', '_pydev'}
-
 ```
 
 Special modules to ignore when loading.
@@ -487,7 +475,6 @@ For example, `debugpy` and `_pydev` are used when debugging with VSCode and shou
 lines_collection: LinesCollection = (
     lines_collection or LinesCollection()
 )
-
 ```
 
 Collection of source code lines.
@@ -498,7 +485,6 @@ Collection of source code lines.
 modules_collection: ModulesCollection = (
     modules_collection or ModulesCollection()
 )
-
 ```
 
 Collection of modules.
@@ -507,7 +493,6 @@ Collection of modules.
 
 ```
 store_source: bool = store_source
-
 ```
 
 Whether to store source code in the lines collection.
@@ -518,7 +503,6 @@ Whether to store source code in the lines collection.
 expand_exports(
     module: Module, seen: set | None = None
 ) -> None
-
 ```
 
 Expand exports: try to recursively expand all module exports (`__all__` values).
@@ -544,7 +528,6 @@ expand_wildcards(
     external: bool | None = None,
     seen: set | None = None,
 ) -> None
-
 ```
 
 Expand wildcards: try to recursively expand all found wildcards.
@@ -576,7 +559,6 @@ load(
     try_relative_path: bool = True,
     find_stubs_package: bool = False,
 ) -> Object | Alias
-
 ```
 
 Load an object as a Griffe object, given its Python or file path.
@@ -588,7 +570,6 @@ Examples:
 ```
 >>> loader.load("griffe.Module")
 Alias("Module", "griffe._internal.models.Module")
-
 ```
 
 Parameters:
@@ -627,7 +608,6 @@ resolve_aliases(
     external: bool | None = None,
     max_iterations: int | None = None,
 ) -> tuple[set[str], int]
-
 ```
 
 Resolve aliases.
@@ -661,7 +641,6 @@ resolve_module_aliases(
     seen: set[str] | None = None,
     load_failures: set[str] | None = None,
 ) -> tuple[set[str], set[str]]
-
 ```
 
 Follow aliases: try to recursively resolve all found aliases.
@@ -696,7 +675,6 @@ Returns:
 
 ```
 stats() -> Stats
-
 ```
 
 Compute some statistics.
@@ -709,13 +687,11 @@ Returns:
 
 ```
 ModulesCollection()
-
 ```
 
 Bases: `GetMembersMixin`, `SetMembersMixin`, `DelMembersMixin`
 
 ```
-
               flowchart TD
               griffe.ModulesCollection[ModulesCollection]
               griffe._internal.mixins.GetMembersMixin[GetMembersMixin]
@@ -734,7 +710,6 @@ Bases: `GetMembersMixin`, `SetMembersMixin`, `DelMembersMixin`
               click griffe._internal.mixins.GetMembersMixin href "" "griffe._internal.mixins.GetMembersMixin"
               click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
               click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
-            
 ```
 
 A collection of modules, allowing easy access to members.
@@ -762,7 +737,6 @@ Attributes:
 
 ```
 all_members: dict[str, Module]
-
 ```
 
 Members of the collection.
@@ -773,7 +747,6 @@ This property is overwritten to simply return `self.members`, as `all_members` d
 
 ```
 is_collection = True
-
 ```
 
 Marked as collection to distinguish from objects.
@@ -782,7 +755,6 @@ Marked as collection to distinguish from objects.
 
 ```
 members: dict[str, Module] = {}
-
 ```
 
 Members (modules) of the collection.
@@ -791,7 +763,6 @@ Members (modules) of the collection.
 
 ```
 __bool__() -> bool
-
 ```
 
 A modules collection is always true-ish.
@@ -800,7 +771,6 @@ A modules collection is always true-ish.
 
 ```
 __contains__(item: Any) -> bool
-
 ```
 
 Check if a module is in the collection.
@@ -809,7 +779,6 @@ Check if a module is in the collection.
 
 ```
 __delitem__(key: str | Sequence[str]) -> None
-
 ```
 
 Delete a member with its name or path.
@@ -830,14 +799,12 @@ Examples:
 >>> del griffe_object["foo"]
 >>> del griffe_object["path.to.bar"]
 >>> del griffe_object[("path", "to", "qux")]
-
 ```
 
 ### __getitem__
 
 ```
 __getitem__(key: str | Sequence[str]) -> Any
-
 ```
 
 Get a member with its name or path.
@@ -858,7 +825,6 @@ Examples:
 >>> foo = griffe_object["foo"]
 >>> bar = griffe_object["path.to.bar"]
 >>> qux = griffe_object[("path", "to", "qux")]
-
 ```
 
 ### __setitem__
@@ -867,7 +833,6 @@ Examples:
 __setitem__(
     key: str | Sequence[str], value: Object | Alias
 ) -> None
-
 ```
 
 Set a member with its name or path.
@@ -890,14 +855,12 @@ Examples:
 >>> griffe_object["foo"] = foo
 >>> griffe_object["path.to.bar"] = bar
 >>> griffe_object[("path", "to", "qux")] = qux
-
 ```
 
 ### del_member
 
 ```
 del_member(key: str | Sequence[str]) -> None
-
 ```
 
 Delete a member with its name or path.
@@ -918,14 +881,12 @@ Examples:
 >>> griffe_object.del_member("foo")
 >>> griffe_object.del_member("path.to.bar")
 >>> griffe_object.del_member(("path", "to", "qux"))
-
 ```
 
 ### get_member
 
 ```
 get_member(key: str | Sequence[str]) -> Any
-
 ```
 
 Get a member with its name or path.
@@ -946,7 +907,6 @@ Examples:
 >>> foo = griffe_object["foo"]
 >>> bar = griffe_object["path.to.bar"]
 >>> bar = griffe_object[("path", "to", "bar")]
-
 ```
 
 ### set_member
@@ -955,7 +915,6 @@ Examples:
 set_member(
     key: str | Sequence[str], value: Object | Alias
 ) -> None
-
 ```
 
 Set a member with its name or path.
@@ -978,14 +937,12 @@ Examples:
 >>> griffe_object.set_member("foo", foo)
 >>> griffe_object.set_member("path.to.bar", bar)
 >>> griffe_object.set_member(("path", "to", "qux"), qux)
-
 ```
 
 ## LinesCollection
 
 ```
 LinesCollection()
-
 ```
 
 A simple dictionary containing the modules source code lines.
@@ -1006,7 +963,6 @@ Methods:
 
 ```
 __bool__() -> bool
-
 ```
 
 A lines collection is always true-ish.
@@ -1015,7 +971,6 @@ A lines collection is always true-ish.
 
 ```
 __contains__(item: Path) -> bool
-
 ```
 
 Check if a file path is in the collection.
@@ -1024,7 +979,6 @@ Check if a file path is in the collection.
 
 ```
 __getitem__(key: Path) -> list[str]
-
 ```
 
 Get the lines of a file path.
@@ -1033,7 +987,6 @@ Get the lines of a file path.
 
 ```
 __setitem__(key: Path, value: list[str]) -> None
-
 ```
 
 Set the lines of a file path.
@@ -1042,7 +995,6 @@ Set the lines of a file path.
 
 ```
 items() -> ItemsView
-
 ```
 
 Return the collection items.
@@ -1055,7 +1007,6 @@ Returns:
 
 ```
 keys() -> KeysView
-
 ```
 
 Return the collection keys.
@@ -1068,7 +1019,6 @@ Returns:
 
 ```
 values() -> ValuesView
-
 ```
 
 Return the collection values.
@@ -1083,7 +1033,6 @@ Returns:
 
 ```
 Stats(loader: GriffeLoader)
-
 ```
 
 Load statistics for a Griffe loader.
@@ -1119,7 +1068,6 @@ by_kind = {
     ATTRIBUTE: 0,
     TYPE_ALIAS: 0,
 }
-
 ```
 
 Number of objects by kind.
@@ -1128,7 +1076,6 @@ Number of objects by kind.
 
 ```
 lines = sum((len(lines)) for lines in (values()))
-
 ```
 
 Total number of lines.
@@ -1137,7 +1084,6 @@ Total number of lines.
 
 ```
 loader = loader
-
 ```
 
 The loader to compute stats for.
@@ -1146,7 +1092,6 @@ The loader to compute stats for.
 
 ```
 modules_by_extension = modules_by_extension
-
 ```
 
 Number of modules by extension.
@@ -1155,7 +1100,6 @@ Number of modules by extension.
 
 ```
 packages = len(top_modules)
-
 ```
 
 Number of packages.
@@ -1164,7 +1108,6 @@ Number of packages.
 
 ```
 time_spent_inspecting = 0
-
 ```
 
 Time spent inspecting modules.
@@ -1173,7 +1116,6 @@ Time spent inspecting modules.
 
 ```
 time_spent_serializing = 0
-
 ```
 
 Time spent serializing objects.
@@ -1182,7 +1124,6 @@ Time spent serializing objects.
 
 ```
 time_spent_visiting = 0
-
 ```
 
 Time spent visiting modules.
@@ -1191,7 +1132,6 @@ Time spent visiting modules.
 
 ```
 as_text() -> str
-
 ```
 
 Format the statistics as text.
@@ -1204,7 +1144,6 @@ Returns:
 
 ```
 merge_stubs(mod1: Module, mod2: Module) -> Module
-
 ```
 
 Merge stubs into a module.

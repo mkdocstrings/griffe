@@ -6,7 +6,6 @@
 
 ```
 logger: Logger = _get()
-
 ```
 
 Our global logger, used throughout the library.
@@ -37,14 +36,12 @@ def get_logger(name):
 
 
 patch_loggers(get_logger)
-
 ```
 
 ## get_logger
 
 ```
 get_logger(name: str = 'griffe') -> Logger
-
 ```
 
 Create and return a new logger instance.
@@ -63,7 +60,6 @@ Returns:
 
 ```
 Logger(name: str)
-
 ```
 
 Methods:
@@ -74,7 +70,6 @@ Methods:
 
 ```
 disable() -> Iterator[None]
-
 ```
 
 Temporarily disable logging.
@@ -84,14 +79,12 @@ Temporarily disable logging.
 Bases: `str`, `Enum`
 
 ```
-
               flowchart TD
               griffe.LogLevel[LogLevel]
 
               
 
               click griffe.LogLevel href "" "griffe.LogLevel"
-            
 ```
 
 Enumeration of available log levels.
@@ -110,7 +103,6 @@ Attributes:
 
 ```
 critical = 'critical'
-
 ```
 
 The CRITICAL log level.
@@ -119,7 +111,6 @@ The CRITICAL log level.
 
 ```
 debug = 'debug'
-
 ```
 
 The DEBUG log level.
@@ -128,7 +119,6 @@ The DEBUG log level.
 
 ```
 error = 'error'
-
 ```
 
 The ERROR log level.
@@ -137,7 +127,6 @@ The ERROR log level.
 
 ```
 info = 'info'
-
 ```
 
 The INFO log level.
@@ -146,7 +135,6 @@ The INFO log level.
 
 ```
 success = 'success'
-
 ```
 
 The SUCCESS log level.
@@ -155,7 +143,6 @@ The SUCCESS log level.
 
 ```
 trace = 'trace'
-
 ```
 
 The TRACE log level.
@@ -164,7 +151,6 @@ The TRACE log level.
 
 ```
 warning = 'warning'
-
 ```
 
 The WARNING log level.
@@ -175,7 +161,6 @@ The WARNING log level.
 DEFAULT_LOG_LEVEL = os.getenv(
     "GRIFFE_LOG_LEVEL", "INFO"
 ).upper()
-
 ```
 
 The default log level for the CLI.
@@ -190,7 +175,6 @@ This can be overridden by the `GRIFFE_LOG_LEVEL` environment variable.
 patch_loggers(
     get_logger_func: Callable[[str], Any],
 ) -> None
-
 ```
 
 Patch Griffe logger and Griffe extensions' loggers.

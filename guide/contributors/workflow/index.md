@@ -62,7 +62,6 @@ Remove function when we bump to 2.0
 # YORE: Bump 2: Remove block.
 def deprecated_function():
     ...
-
 ```
 
 Simplify imports when Python 3.9 is EOL
@@ -73,7 +72,6 @@ try:
     import ...
 except ImportError:
     import ...
-
 ```
 
 Check [Yore's docs](https://pawamoy.github.io/yore/), and Yore-comments in our own code base (`git grep -A1 YORE`) to learn how to use it.
@@ -90,14 +88,12 @@ Commit messages must follow our convention based on the [Angular style](https://
 type(scope): Subject
 
 Body.
-
 ```
 
 **Subject and body must be valid Markdown.** Subject must have proper casing (uppercase for first letter if it makes sense), but no dot at the end, and no punctuation in general. Example:
 
 ```
 feat: Add CLI option to run in verbose mode
-
 ```
 
 Scope and body are optional. Type can be:
@@ -121,7 +117,6 @@ This is the body of the commit message.
 
 Issue-10: https://github.com/namespace/project/issues/10
 Related-to-PR-namespace/other-project#15: https://github.com/namespace/other-project/pull/15
-
 ```
 
 These "trailers" must appear at the end of the body, without any blank lines between them. The trailer title can contain any character except colons `:`. We expect a full URI for each trailer, not just GitHub autolinks (for example, full GitHub URLs for commits and issues, not the hash or the #issue-number).
@@ -141,21 +136,18 @@ During the review, we recommend using fixups:
 ```
 # SHA is the SHA of the commit you want to fix
 git commit --fixup=SHA
-
 ```
 
 Once all the changes are approved, you can squash your commits:
 
 ```
 git rebase -i --autosquash main
-
 ```
 
 And force-push:
 
 ```
 git push -f
-
 ```
 
 Occasional contributors

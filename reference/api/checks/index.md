@@ -6,7 +6,6 @@
 find_breaking_changes(
     old_obj: Object | Alias, new_obj: Object | Alias
 ) -> Iterator[Breakage]
-
 ```
 
 Find breaking changes between two versions of the same API.
@@ -35,7 +34,6 @@ Examples:
 >>> old = griffe.load_git("pkg", "1.2.3")
 >>> for breakage in griffe.find_breaking_changes(old, new)
 ...     print(breakage.explain(style=style), file=sys.stderr)
-
 ```
 
 ## ExplanationStyle
@@ -43,14 +41,12 @@ Examples:
 Bases: `str`, `Enum`
 
 ```
-
               flowchart TD
               griffe.ExplanationStyle[ExplanationStyle]
 
               
 
               click griffe.ExplanationStyle href "" "griffe.ExplanationStyle"
-            
 ```
 
 Enumeration of the possible styles for explanations.
@@ -66,7 +62,6 @@ Attributes:
 
 ```
 GITHUB = 'github'
-
 ```
 
 Explanation as GitHub workflow commands warnings, adapted to CI.
@@ -75,7 +70,6 @@ Explanation as GitHub workflow commands warnings, adapted to CI.
 
 ```
 MARKDOWN = 'markdown'
-
 ```
 
 Explanations in Markdown, adapted to changelogs.
@@ -84,7 +78,6 @@ Explanations in Markdown, adapted to changelogs.
 
 ```
 ONE_LINE = 'oneline'
-
 ```
 
 Explanations on one-line.
@@ -93,7 +86,6 @@ Explanations on one-line.
 
 ```
 VERBOSE = 'verbose'
-
 ```
 
 Explanations on multiple lines.
@@ -107,7 +99,6 @@ Breakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Breakages can explain what broke from a version to another.
@@ -147,7 +138,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -156,7 +146,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind
-
 ```
 
 The kind of breakage.
@@ -165,7 +154,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -174,7 +162,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -183,7 +170,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -194,7 +180,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -217,7 +202,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -237,14 +221,12 @@ Returns:
 Bases: `str`, `Enum`
 
 ```
-
               flowchart TD
               griffe.BreakageKind[BreakageKind]
 
               
 
               click griffe.BreakageKind href "" "griffe.BreakageKind"
-            
 ```
 
 Enumeration of the possible API breakages.
@@ -268,7 +250,6 @@ Attributes:
 
 ```
 ATTRIBUTE_CHANGED_TYPE = 'Attribute types are incompatible'
-
 ```
 
 Attribute types are incompatible
@@ -277,7 +258,6 @@ Attribute types are incompatible
 
 ```
 ATTRIBUTE_CHANGED_VALUE = 'Attribute value was changed'
-
 ```
 
 Attribute value was changed
@@ -286,7 +266,6 @@ Attribute value was changed
 
 ```
 CLASS_REMOVED_BASE = 'Base class was removed'
-
 ```
 
 Base class was removed
@@ -297,7 +276,6 @@ Base class was removed
 OBJECT_CHANGED_KIND = (
     "Public object points to a different kind of object"
 )
-
 ```
 
 Public object points to a different kind of object
@@ -306,7 +284,6 @@ Public object points to a different kind of object
 
 ```
 OBJECT_REMOVED = 'Public object was removed'
-
 ```
 
 Public object was removed
@@ -315,7 +292,6 @@ Public object was removed
 
 ```
 PARAMETER_ADDED_REQUIRED = "Parameter was added as required"
-
 ```
 
 Parameter was added as required
@@ -324,7 +300,6 @@ Parameter was added as required
 
 ```
 PARAMETER_CHANGED_DEFAULT = 'Parameter default was changed'
-
 ```
 
 Parameter default was changed
@@ -333,7 +308,6 @@ Parameter default was changed
 
 ```
 PARAMETER_CHANGED_KIND = 'Parameter kind was changed'
-
 ```
 
 Parameter kind was changed
@@ -342,7 +316,6 @@ Parameter kind was changed
 
 ```
 PARAMETER_CHANGED_REQUIRED = 'Parameter is now required'
-
 ```
 
 Parameter is now required
@@ -351,7 +324,6 @@ Parameter is now required
 
 ```
 PARAMETER_MOVED = 'Positional parameter was moved'
-
 ```
 
 Positional parameter was moved
@@ -360,7 +332,6 @@ Positional parameter was moved
 
 ```
 PARAMETER_REMOVED = 'Parameter was removed'
-
 ```
 
 Parameter was removed
@@ -369,7 +340,6 @@ Parameter was removed
 
 ```
 RETURN_CHANGED_TYPE = 'Return types are incompatible'
-
 ```
 
 Return types are incompatible
@@ -383,13 +353,11 @@ AttributeChangedTypeBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.AttributeChangedTypeBreakage[AttributeChangedTypeBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -400,7 +368,6 @@ Bases: `Breakage`
 
               click griffe.AttributeChangedTypeBreakage href "" "griffe.AttributeChangedTypeBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for attributes whose type changed.
@@ -440,7 +407,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -449,7 +415,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = ATTRIBUTE_CHANGED_TYPE
-
 ```
 
 The kind of breakage.
@@ -458,7 +423,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -467,7 +431,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -476,7 +439,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -487,7 +449,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -510,7 +471,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -534,13 +494,11 @@ AttributeChangedValueBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.AttributeChangedValueBreakage[AttributeChangedValueBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -551,7 +509,6 @@ Bases: `Breakage`
 
               click griffe.AttributeChangedValueBreakage href "" "griffe.AttributeChangedValueBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for attributes whose value changed.
@@ -591,7 +548,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -600,7 +556,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = ATTRIBUTE_CHANGED_VALUE
-
 ```
 
 The kind of breakage.
@@ -609,7 +564,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -618,7 +572,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -627,7 +580,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -638,7 +590,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -661,7 +612,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -685,13 +635,11 @@ ClassRemovedBaseBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ClassRemovedBaseBreakage[ClassRemovedBaseBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -702,7 +650,6 @@ Bases: `Breakage`
 
               click griffe.ClassRemovedBaseBreakage href "" "griffe.ClassRemovedBaseBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for removed base classes.
@@ -742,7 +689,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -751,7 +697,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = CLASS_REMOVED_BASE
-
 ```
 
 The kind of breakage.
@@ -760,7 +705,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -769,7 +713,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -778,7 +721,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -789,7 +731,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -812,7 +753,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -836,13 +776,11 @@ ObjectChangedKindBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ObjectChangedKindBreakage[ObjectChangedKindBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -853,7 +791,6 @@ Bases: `Breakage`
 
               click griffe.ObjectChangedKindBreakage href "" "griffe.ObjectChangedKindBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for objects whose kind changed.
@@ -893,7 +830,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -902,7 +838,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = OBJECT_CHANGED_KIND
-
 ```
 
 The kind of breakage.
@@ -911,7 +846,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -920,7 +854,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -929,7 +862,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -940,7 +872,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -963,7 +894,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -987,13 +917,11 @@ ObjectRemovedBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ObjectRemovedBreakage[ObjectRemovedBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1004,7 +932,6 @@ Bases: `Breakage`
 
               click griffe.ObjectRemovedBreakage href "" "griffe.ObjectRemovedBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for removed objects.
@@ -1044,7 +971,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1053,7 +979,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = OBJECT_REMOVED
-
 ```
 
 The kind of breakage.
@@ -1062,7 +987,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1071,7 +995,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1080,7 +1003,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1091,7 +1013,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -1114,7 +1035,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -1138,13 +1058,11 @@ ParameterAddedRequiredBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ParameterAddedRequiredBreakage[ParameterAddedRequiredBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1155,7 +1073,6 @@ Bases: `Breakage`
 
               click griffe.ParameterAddedRequiredBreakage href "" "griffe.ParameterAddedRequiredBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for new parameters added as required.
@@ -1195,7 +1112,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1204,7 +1120,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = PARAMETER_ADDED_REQUIRED
-
 ```
 
 The kind of breakage.
@@ -1213,7 +1128,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1222,7 +1136,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1231,7 +1144,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1242,7 +1154,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -1265,7 +1176,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -1289,13 +1199,11 @@ ParameterChangedDefaultBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ParameterChangedDefaultBreakage[ParameterChangedDefaultBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1306,7 +1214,6 @@ Bases: `Breakage`
 
               click griffe.ParameterChangedDefaultBreakage href "" "griffe.ParameterChangedDefaultBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for parameters whose default value changed.
@@ -1346,7 +1253,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1355,7 +1261,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = PARAMETER_CHANGED_DEFAULT
-
 ```
 
 The kind of breakage.
@@ -1364,7 +1269,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1373,7 +1277,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1382,7 +1285,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1393,7 +1295,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -1416,7 +1317,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -1440,13 +1340,11 @@ ParameterChangedKindBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ParameterChangedKindBreakage[ParameterChangedKindBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1457,7 +1355,6 @@ Bases: `Breakage`
 
               click griffe.ParameterChangedKindBreakage href "" "griffe.ParameterChangedKindBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for parameters whose kind changed.
@@ -1497,7 +1394,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1506,7 +1402,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = PARAMETER_CHANGED_KIND
-
 ```
 
 The kind of breakage.
@@ -1515,7 +1410,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1524,7 +1418,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1533,7 +1426,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1544,7 +1436,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -1567,7 +1458,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -1591,13 +1481,11 @@ ParameterChangedRequiredBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ParameterChangedRequiredBreakage[ParameterChangedRequiredBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1608,7 +1496,6 @@ Bases: `Breakage`
 
               click griffe.ParameterChangedRequiredBreakage href "" "griffe.ParameterChangedRequiredBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for parameters which became required.
@@ -1648,7 +1535,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1657,7 +1543,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = PARAMETER_CHANGED_REQUIRED
-
 ```
 
 The kind of breakage.
@@ -1666,7 +1551,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1675,7 +1559,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1684,7 +1567,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1695,7 +1577,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -1718,7 +1599,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -1742,13 +1622,11 @@ ParameterMovedBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ParameterMovedBreakage[ParameterMovedBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1759,7 +1637,6 @@ Bases: `Breakage`
 
               click griffe.ParameterMovedBreakage href "" "griffe.ParameterMovedBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for moved parameters.
@@ -1799,7 +1676,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1808,7 +1684,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = PARAMETER_MOVED
-
 ```
 
 The kind of breakage.
@@ -1817,7 +1692,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1826,7 +1700,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1835,7 +1708,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1846,7 +1718,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -1869,7 +1740,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -1893,13 +1763,11 @@ ParameterRemovedBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ParameterRemovedBreakage[ParameterRemovedBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -1910,7 +1778,6 @@ Bases: `Breakage`
 
               click griffe.ParameterRemovedBreakage href "" "griffe.ParameterRemovedBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for removed parameters.
@@ -1950,7 +1817,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -1959,7 +1825,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = PARAMETER_REMOVED
-
 ```
 
 The kind of breakage.
@@ -1968,7 +1833,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -1977,7 +1841,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -1986,7 +1849,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -1997,7 +1859,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -2020,7 +1881,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.
@@ -2044,13 +1904,11 @@ ReturnChangedTypeBreakage(
     new_value: Any,
     details: str = "",
 )
-
 ```
 
 Bases: `Breakage`
 
 ```
-
               flowchart TD
               griffe.ReturnChangedTypeBreakage[ReturnChangedTypeBreakage]
               griffe._internal.diff.Breakage[Breakage]
@@ -2061,7 +1919,6 @@ Bases: `Breakage`
 
               click griffe.ReturnChangedTypeBreakage href "" "griffe.ReturnChangedTypeBreakage"
               click griffe._internal.diff.Breakage href "" "griffe._internal.diff.Breakage"
-            
 ```
 
 Specific breakage class for return values which changed type.
@@ -2101,7 +1958,6 @@ Attributes:
 
 ```
 details = details
-
 ```
 
 Some details about the breakage.
@@ -2110,7 +1966,6 @@ Some details about the breakage.
 
 ```
 kind: BreakageKind = RETURN_CHANGED_TYPE
-
 ```
 
 The kind of breakage.
@@ -2119,7 +1974,6 @@ The kind of breakage.
 
 ```
 new_value = new_value
-
 ```
 
 The new, incompatible value.
@@ -2128,7 +1982,6 @@ The new, incompatible value.
 
 ```
 obj = obj
-
 ```
 
 The object related to the breakage.
@@ -2137,7 +1990,6 @@ The object related to the breakage.
 
 ```
 old_value = old_value
-
 ```
 
 The old value.
@@ -2148,7 +2000,6 @@ The old value.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this object's data as a dictionary.
@@ -2171,7 +2022,6 @@ Returns:
 
 ```
 explain(style: ExplanationStyle = ONE_LINE) -> str
-
 ```
 
 Explain the breakage by showing old and new value.

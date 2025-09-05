@@ -5,6 +5,7 @@ Third-party extensions are developed and maintained outside of the mkdocstrings 
 | Extension                                                   | Description                                                                                                                   |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | [`docstring-inheritance`](docstring-inheritance/)           | A more advanced docstring inheritance utility that also provides a Griffe extension.                                          |
+| [`fastapi`](https://github.com/fbraem/griffe-fastapi)       | Search for functions that are decorated with an APIRouter and adds the extra fields to a function.                            |
 | [`fieldz`](fieldz/)                                         | Support for data-class like objects (dataclasses, pydantic, attrs, etc.) using [fieldz](https://github.com/pyapp-kit/fieldz). |
 | [`generics`](generics/)                                     | Resolve generic type parameters as bound types in subclasses.                                                                 |
 | [`inherited-method-crossrefs`](inherited-method-crossrefs/) | Replace docstrings of inherited methods with cross-references to parents.                                                     |

@@ -52,14 +52,12 @@ def public_function():
 
 def _internal_function():
     ...
-
 ```
 
 The exception to this rule is that imported objects are not considered public. For example:
 
 ```
 from elsewhere import something
-
 ```
 
 Even though `something` doesn't start with an underscore, it was imported so it is not considered public.
@@ -87,7 +85,6 @@ class ThisClass:
 
 class ThisOtherClass:
     ...
-
 ```
 
 Here, even though `this_other_function` and `ThisOtherClass` are *not* prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
@@ -103,7 +100,6 @@ class Thing:
 
     def _internal_method(self):
         ...
-
 ```
 
 ### Redundant aliases
@@ -115,7 +111,6 @@ my_package/__init__.py
 ```
 from elsewhere import something as something
 from my_package._internal_module import Thing as Thing
-
 ```
 
 Here `Thing` and `something` are considered public even though they were imported. If `__all__` was defined, it would take precedence and redundant aliases wouldn't apply.
@@ -129,7 +124,6 @@ my_package/__init__.py
 ```
 from my_package._internal_module1 import *
 from my_package._internal_module2 import *
-
 ```
 
 Note that the wildcard imports logic stays the same, and imports either all objects that do not start with an underscore (imported objects included!), or all objects listed in `__all__` if it is defined. It doesn't care about other conventions such as redundant aliases, or the wildcard imports convention itself.
@@ -160,7 +154,6 @@ If you worry about maintenance of your `__init__` modules, know that you can ver
 └── 📁 subpackage2/
     ├──  __init__.py
     └──  _module2a.py
-
 ```
 
 my_package/subpackage1/__init__.py
@@ -169,7 +162,6 @@ my_package/subpackage1/__init__.py
 from my_package.subpackage1.module1a import this1a, that1a
 
 __all__ = ["this1a", "that1a"]
-
 ```
 
 my_package/subpackage2/__init__.py
@@ -178,7 +170,6 @@ my_package/subpackage2/__init__.py
 from my_package.subpackage2.module2a import this2a, that2a
 
 __all__ = ["this2a", "that2a"]
-
 ```
 
 my_package/__init__.py
@@ -192,8 +183,7 @@ __all__ = ["this", *subpackage1_all, *subpackage2_all]
 
 # Griffe supports the `+` and `+=` operators too:
 # __all__ = ["this"] + subpackage1_all + subpackage2_all
-# __all__ = ["this"]; __all__ += subpackage1_all; __all__ += subpackage2_all 
-
+# __all__ = ["this"]; __all__ += subpackage1_all; __all__ += subpackage2_all
 ```
 
 However we would argue that `this1a`, `that1a`, `this2a` and `that2a` should not be exposed publicly in more than one location. See our section on [unique names and public locations](#unique-names-and-public-locations).
@@ -223,7 +213,6 @@ def __getattr__(name: str) -> Any:
         return my_object
 
     raise AttributeError(f"module 'old_module' has no attribute '{name}'")
-
 ```
 
 Such changes sometimes go unnoticed before the breaking change is released, because users don't enable deprecation warnings. These changes can also be confusing to users when they do notice the warnings: maybe they don't use the deprecated import themselves, and are not sure where to report the deprecated use. These changes also require time to upgrade, and time to maintain.
@@ -242,7 +231,6 @@ The most common way to hide the module layout is to make all your modules privat
 ├──  _combat.py
 ├──  _exploration.py
 └──  _sorcery.py
-
 ```
 
 Then, you expose public objects in the top-level `__init__` module thanks to its `__all__` attribute:
@@ -259,7 +247,6 @@ __all__ [
     "navigate",
     "cast_spell",
 ]
-
 ```
 
 Now, if you want to move `cast_spell` into the `_combat` module, you can do so without impacting users. You can even rename your modules. All you have to do when doing so is update your top-level `__init__` module to import the objects from the right locations.
@@ -275,7 +262,6 @@ If you have more than one layer of submodules, you don't have to make the next l
     ├──  __init__.py
     ├──  dark.py
     └──  light.py
-
 ```
 
 If you don't want to bother prefixing every module with an underscore, you could go one step further and do one of these two things:
@@ -293,7 +279,6 @@ If you don't want to bother prefixing every module with an underscore, you could
           ├──  __init__.py
           ├──  dark.py
           └──  light.py
-
   ```
 
 - or move everything into a private package:
@@ -309,7 +294,6 @@ If you don't want to bother prefixing every module with an underscore, you could
       ├──  __init__.py
       ├──  dark.py
       └──  light.py
-
   ```
 
 Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python. We later moved the private package under an internal folder.
@@ -334,7 +318,6 @@ In accordance with our recommendation on module layouts, it is also useful to en
 📁 my_package/
 ├──  __init__.py
 └──  module.py
-
 ```
 
 Here the `Hello` class is exposed in both `my_package.module` and `my_package`.
@@ -346,7 +329,6 @@ __all__ ["Hello"]
 
 class Hello:
     ...
-
 ```
 
 my_package/__init__
@@ -355,7 +337,6 @@ my_package/__init__
 from my_package.module import Hello
 
 __all__ = ["Hello"]
-
 ```
 
 Here the `Hello` class is only exposed in `my_package.module`.
@@ -367,14 +348,12 @@ __all__ ["Hello"]
 
 class Hello:
     ...
-
 ```
 
 my_package/__init__
 
 ```
 # Nothing to see here.
-
 ```
 
 If you wanted to expose it in the top-level `__init__` module instead, then you should hide your module layout by making `module.py` private, renaming it `_module.py`, or using other hiding techniques such as described in the [Module layout](#module-layout) section.
@@ -388,7 +367,6 @@ __all__ = []
 
 class Hello:
     ...
-
 ```
 
 my_package/__init__
@@ -397,7 +375,6 @@ my_package/__init__
 from my_package.module import Hello
 
 __all__ = ["Hello"]
-
 ```
 
 It feels weird to "unpublicize" the `Hello` class in `my_package.module` by declaring an empty `__all__`, so maybe the module should be made private instead: `my_package/_module.py`. See other hiding techniques in the [Module layout](#module-layout) section.
@@ -420,7 +397,6 @@ Now, users that were relying on this name (for example to silence WARNING-level 
 # For example, the following would have zero effect if `_module` was renamed `_other_module`.
 package_module_logger = logging.getLogger("package._module")
 package_module_logger.setLevel(logging.ERROR)
-
 ```
 
 Could we emit a deprecation warning when users obtain the logger with the old name? Unfortunately, there is no standard way to do that. This would require patching `logging.getLogger`, which means it would only work when users actually use this method, in a Python interpreter, and not for all the other ways logging can be configured (configuration files, configuration dicts, etc.).
@@ -482,7 +458,6 @@ The first user of your CLI as API is... you. When you declare your project's CLI
 ```
 [project.scripts]
 griffe = "griffe:main"
-
 ```
 
 ...this entrypoint ends up as a Python script in the `bin` directory of your virtual environment:
@@ -496,7 +471,6 @@ from griffe import main
 if __name__ == "__main__":
     sys.argv[0] = re.sub(r"(-script\.pyw|\.exe)?$", "", sys.argv[0])
     sys.exit(main())
-
 ```
 
 In this script, we find our entrypoint, `griffe.main`, used programmatically.
@@ -528,7 +502,6 @@ def test_show_version(capsys: pytest.CaptureFixture) -> None:
         griffe.main(["-V"])
     captured = capsys.readouterr()
     assert griffe.get_version() in captured.out
-
 ```
 
 Now, when you start testing the logic of your CLI subcommands, such as our `dump` subcommand above, you might feel like passing again and again through the command-line arguments parser (here `argparse`) is wasteful and redundant. It is important to test that your arguments are parsed correctly (as you expect them to be parsed), but they shouldn't *have* to be parsed when you are testing the underlying logic.
@@ -553,7 +526,6 @@ def main(args: list[str] | None = None) -> int:
 
     print(f"Unknown subcommand {opts.subcommand}", file=sys.stderr)
     return 1
-
 ```
 
 Now instead of having to call `main(["dump", "..."])` in your tests, you can directly call `dump(...)`, with all the benefits from static-typing and your IDE features, such as autocompletion, linting, etc..

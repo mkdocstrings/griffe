@@ -10,14 +10,14 @@ Alias(
     runtime: bool = True,
     parent: Module | Class | Alias | None = None,
     inherited: bool = False,
+    wildcard_imported: bool = False,
+    analysis: Literal["static", "dynamic"] | None = None,
 )
-
 ```
 
 Bases: `ObjectAliasMixin`
 
 ```
-
               flowchart TD
               griffe.Alias[Alias]
               griffe._internal.mixins.ObjectAliasMixin[ObjectAliasMixin]
@@ -44,7 +44,6 @@ Bases: `ObjectAliasMixin`
               click griffe._internal.mixins.SetMembersMixin href "" "griffe._internal.mixins.SetMembersMixin"
               click griffe._internal.mixins.DelMembersMixin href "" "griffe._internal.mixins.DelMembersMixin"
               click griffe._internal.mixins.SerializationMixin href "" "griffe._internal.mixins.SerializationMixin"
-            
 ```
 
 This class represents an alias, or indirection, to an object declared in another module.
@@ -89,6 +88,14 @@ Parameters:
 
   (`bool`, default: `False` ) – Whether this alias wraps an inherited member.
 
+- ## **`wildcard_imported`**
+
+  (`bool`, default: `False` ) – Whether this alias was created using a wildcard import.
+
+- ## **`analysis`**
+
+  (`Literal['static', 'dynamic'] | None`, default: `None` ) – The type of analysis used to load this alias. None means the alias was created manually.
+
 Methods:
 
 - **`__bool__`** – An alias is always true-ish.
@@ -116,6 +123,7 @@ Attributes:
 - **`alias_lineno`** (`int | None`) – The starting line number of the alias.
 - **`aliases`** (`dict[str, Alias]`) – The aliases pointing to this object.
 - **`all_members`** (`dict[str, Object | Alias]`) – All members (declared and inherited).
+- **`analysis`** (`Literal['static', 'dynamic'] | None`) – The type of analysis used to load this alias.
 - **`annotation`** (`str | Expr | None`) – The attribute type annotation.
 - **`attributes`** (`dict[str, Attribute]`) – The attribute members.
 - **`bases`** (`list[Expr | str]`) – The class bases.
@@ -131,6 +139,7 @@ Attributes:
 - **`filepath`** (`Path | list[Path]`) – The file path (or directory list for namespace packages) where this object was defined.
 - **`final_target`** (`Object`) – The final, resolved target, if possible.
 - **`functions`** (`dict[str, Function]`) – The function members.
+- **`git_info`** (`GitInfo | None`) – Get the Git information for this object, if available.
 - **`has_docstring`** (`bool`) – Whether this alias' target has a non-empty docstring.
 - **`has_docstrings`** (`bool`) – Whether this alias' target or any of its members has a non-empty docstring.
 - **`imports`** (`dict[str, str]`) – The other objects imported by this alias' target.
@@ -183,18 +192,19 @@ Attributes:
 - **`runtime`** (`bool`) – Whether this alias is available at runtime.
 - **`setter`** (`Function | None`) – The setter linked to this function (property).
 - **`source`** (`str`) – The source code of this object.
+- **`source_link`** (`str | None`) – Get the source link for this object, if available.
 - **`target`** (`Object | Alias`) – The resolved target (actual object), if possible.
 - **`target_path`** (`str`) – The path of this alias' target.
 - **`type_aliases`** (`dict[str, TypeAlias]`) – The type alias members.
 - **`type_parameters`** (`TypeParameters`) – The target type parameters.
 - **`value`** (`str | Expr | None`) – The attribute or type alias value.
 - **`wildcard`** (`str | None`) – The module on which the wildcard import is performed (if any).
+- **`wildcard_imported`** (`bool`) – Whether this alias was created using a wildcard import.
 
 ## alias_endlineno
 
 ```
 alias_endlineno: int | None = endlineno
-
 ```
 
 The ending line number of the alias.
@@ -203,7 +213,6 @@ The ending line number of the alias.
 
 ```
 alias_lineno: int | None = lineno
-
 ```
 
 The starting line number of the alias.
@@ -212,7 +221,6 @@ The starting line number of the alias.
 
 ```
 aliases: dict[str, Alias]
-
 ```
 
 The aliases pointing to this object.
@@ -221,18 +229,26 @@ The aliases pointing to this object.
 
 ```
 all_members: dict[str, Object | Alias]
-
 ```
 
 All members (declared and inherited).
 
 This method is part of the consumer API: do not use when producing Griffe trees!
 
+## analysis
+
+```
+analysis: Literal['static', 'dynamic'] | None = analysis
+```
+
+The type of analysis used to load this alias.
+
+None means the alias was created manually.
+
 ## annotation
 
 ```
 annotation: str | Expr | None
-
 ```
 
 The attribute type annotation.
@@ -241,7 +257,6 @@ The attribute type annotation.
 
 ```
 attributes: dict[str, Attribute]
-
 ```
 
 The attribute members.
@@ -252,7 +267,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 bases: list[Expr | str]
-
 ```
 
 The class bases.
@@ -263,7 +277,6 @@ See also: Class, resolved_bases, mro.
 
 ```
 canonical_path: str
-
 ```
 
 The full dotted path of this object.
@@ -276,7 +289,6 @@ See also: path.
 
 ```
 classes: dict[str, Class]
-
 ```
 
 The class members.
@@ -287,7 +299,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 decorators: list[Decorator]
-
 ```
 
 The class/function decorators.
@@ -298,7 +309,6 @@ See also: Function, Class.
 
 ```
 deleter: Function | None
-
 ```
 
 The deleter linked to this function (property).
@@ -307,7 +317,6 @@ The deleter linked to this function (property).
 
 ```
 deprecated: str | bool | None = None
-
 ```
 
 Whether this alias is deprecated (boolean or deprecation message).
@@ -316,7 +325,6 @@ Whether this alias is deprecated (boolean or deprecation message).
 
 ```
 docstring: Docstring | None
-
 ```
 
 The target docstring.
@@ -327,7 +335,6 @@ See also: has_docstring, has_docstrings.
 
 ```
 endlineno: int | None
-
 ```
 
 The ending line number of the target object.
@@ -338,7 +345,6 @@ See also: lineno.
 
 ```
 exports: list[str | ExprName] | None
-
 ```
 
 The names of the objects exported by this (module) object through the `__all__` variable.
@@ -349,7 +355,6 @@ Exports can contain string (object names) or resolvable names, like other lists 
 from .submodule import __all__ as submodule_all
 
 __all__ = ["hello", *submodule_all]
-
 ```
 
 Exports get expanded by the loader before it expands wildcards and resolves aliases.
@@ -360,7 +365,6 @@ See also: GriffeLoader.expand_exports.
 
 ```
 extra: dict
-
 ```
 
 Namespaced dictionaries storing extra metadata for this object, used by extensions.
@@ -369,7 +373,6 @@ Namespaced dictionaries storing extra metadata for this object, used by extensio
 
 ```
 filepath: Path | list[Path]
-
 ```
 
 The file path (or directory list for namespace packages) where this object was defined.
@@ -380,7 +383,6 @@ See also: relative_filepath, relative_package_filepath.
 
 ```
 final_target: Object
-
 ```
 
 The final, resolved target, if possible.
@@ -393,18 +395,24 @@ See also: target, resolve_target, resolved.
 
 ```
 functions: dict[str, Function]
-
 ```
 
 The function members.
 
 This method is part of the consumer API: do not use when producing Griffe trees!
 
+## git_info
+
+```
+git_info: GitInfo | None
+```
+
+Get the Git information for this object, if available.
+
 ## has_docstring
 
 ```
 has_docstring: bool
-
 ```
 
 Whether this alias' target has a non-empty docstring.
@@ -415,7 +423,6 @@ See also: has_docstrings, docstring.
 
 ```
 has_docstrings: bool
-
 ```
 
 Whether this alias' target or any of its members has a non-empty docstring.
@@ -426,7 +433,6 @@ See also: has_docstring, docstring.
 
 ```
 imports: dict[str, str]
-
 ```
 
 The other objects imported by this alias' target.
@@ -439,7 +445,6 @@ See also: is_imported.
 
 ```
 imports_future_annotations: bool
-
 ```
 
 Whether this module import future annotations.
@@ -448,7 +453,6 @@ Whether this module import future annotations.
 
 ```
 inherited: bool = inherited
-
 ```
 
 Whether this alias represents an inherited member.
@@ -457,7 +461,6 @@ Whether this alias represents an inherited member.
 
 ```
 inherited_members: dict[str, Alias]
-
 ```
 
 Members that are inherited from base classes.
@@ -472,7 +475,6 @@ See also: members.
 
 ```
 is_alias: bool = True
-
 ```
 
 Always true for aliases.
@@ -481,7 +483,6 @@ Always true for aliases.
 
 ```
 is_attribute: bool
-
 ```
 
 Whether this object is an attribute.
@@ -492,7 +493,6 @@ See also: is_module, is_class, is_function, is_type_alias, is_alias, is_kind.
 
 ```
 is_class: bool
-
 ```
 
 Whether this object is a class.
@@ -503,7 +503,6 @@ See also: is_module, is_function, is_attribute, is_type_alias, is_alias, is_kind
 
 ```
 is_class_private: bool
-
 ```
 
 Whether this object/alias is class-private (starts with `__` and is a class member).
@@ -512,7 +511,6 @@ Whether this object/alias is class-private (starts with `__` and is a class memb
 
 ```
 is_collection: bool = False
-
 ```
 
 Always false for aliases.
@@ -523,7 +521,6 @@ See also: ModulesCollection.
 
 ```
 is_deprecated: bool
-
 ```
 
 Whether this object is deprecated.
@@ -532,7 +529,6 @@ Whether this object is deprecated.
 
 ```
 is_exported: bool
-
 ```
 
 Whether this object/alias is exported (listed in `__all__`).
@@ -541,7 +537,6 @@ Whether this object/alias is exported (listed in `__all__`).
 
 ```
 is_function: bool
-
 ```
 
 Whether this object is a function.
@@ -552,7 +547,6 @@ See also: is_module, is_class, is_attribute, is_type_alias, is_alias, is_kind.
 
 ```
 is_generic: bool
-
 ```
 
 Whether this object is generic.
@@ -561,7 +555,6 @@ Whether this object is generic.
 
 ```
 is_imported: bool
-
 ```
 
 Whether this object/alias was imported from another module.
@@ -570,7 +563,6 @@ Whether this object/alias was imported from another module.
 
 ```
 is_init_method: bool
-
 ```
 
 Whether this method is an `__init__` method.
@@ -579,7 +571,6 @@ Whether this method is an `__init__` method.
 
 ```
 is_init_module: bool
-
 ```
 
 Whether this module is an `__init__.py` module.
@@ -590,7 +581,6 @@ See also: is_module.
 
 ```
 is_module: bool
-
 ```
 
 Whether this object is a module.
@@ -601,7 +591,6 @@ See also: is_init_module. is_class, is_function, is_attribute, is_type_alias, is
 
 ```
 is_namespace_package: bool
-
 ```
 
 Whether this module is a namespace package (top folder, no `__init__.py`).
@@ -612,7 +601,6 @@ See also: is_namespace_subpackage.
 
 ```
 is_namespace_subpackage: bool
-
 ```
 
 Whether this module is a namespace subpackage.
@@ -623,7 +611,6 @@ See also: is_namespace_package.
 
 ```
 is_package: bool
-
 ```
 
 Whether this module is a package (top module).
@@ -634,7 +621,6 @@ See also: is_subpackage.
 
 ```
 is_private: bool
-
 ```
 
 Whether this object/alias is private (starts with `_`) but not special.
@@ -643,7 +629,6 @@ Whether this object/alias is private (starts with `_`) but not special.
 
 ```
 is_public: bool
-
 ```
 
 Whether this object is considered public.
@@ -663,7 +648,6 @@ Therefore, to decide whether an object is public, we follow this algorithm:
 
 ```
 is_special: bool
-
 ```
 
 Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`).
@@ -672,7 +656,6 @@ Whether this object/alias is special ("dunder" attribute/method, starts and end 
 
 ```
 is_subpackage: bool
-
 ```
 
 Whether this module is a subpackage.
@@ -683,7 +666,6 @@ See also: is_package.
 
 ```
 is_type_alias: bool
-
 ```
 
 Whether this object is a type alias.
@@ -694,7 +676,6 @@ See also: is_module, is_class, is_function, is_attribute, is_alias, is_kind.
 
 ```
 is_wildcard_exposed: bool
-
 ```
 
 Whether this object/alias is exposed to wildcard imports.
@@ -716,7 +697,6 @@ Returns:
 
 ```
 kind: Kind
-
 ```
 
 The target's kind, or `Kind.ALIAS` if the target cannot be resolved.
@@ -727,7 +707,6 @@ See also: is_kind.
 
 ```
 labels: set[str]
-
 ```
 
 The target labels (`property`, `dataclass`, etc.).
@@ -738,7 +717,6 @@ See also: has_labels.
 
 ```
 lineno: int | None
-
 ```
 
 The starting line number of the target object.
@@ -749,7 +727,6 @@ See also: endlineno.
 
 ```
 lines: list[str]
-
 ```
 
 The lines containing the source of this object.
@@ -760,7 +737,6 @@ See also: source, lines_collection.
 
 ```
 lines_collection: LinesCollection
-
 ```
 
 The lines collection attached to this object or its parents.
@@ -775,7 +751,6 @@ Raises:
 
 ```
 members: dict[str, Object | Alias]
-
 ```
 
 The target's members (modules, classes, functions, attributes, type aliases).
@@ -786,7 +761,6 @@ See also: inherited_members, get_member, set_member, filter_members.
 
 ```
 module: Module
-
 ```
 
 The parent module of this object.
@@ -801,7 +775,6 @@ Raises:
 
 ```
 modules: dict[str, Module]
-
 ```
 
 The module members.
@@ -812,7 +785,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 modules_collection: ModulesCollection
-
 ```
 
 The modules collection attached to the alias parents.
@@ -821,7 +793,6 @@ The modules collection attached to the alias parents.
 
 ```
 name: str = name
-
 ```
 
 The alias name.
@@ -830,7 +801,6 @@ The alias name.
 
 ```
 overloads: dict[str, list[Function]] | list[Function] | None
-
 ```
 
 The overloaded signatures declared in this class/module or for this function.
@@ -839,7 +809,6 @@ The overloaded signatures declared in this class/module or for this function.
 
 ```
 package: Module
-
 ```
 
 The absolute top module (the package) of this object.
@@ -850,7 +819,6 @@ See also: module.
 
 ```
 parameters: Parameters
-
 ```
 
 The parameters of the current function or `__init__` method for classes.
@@ -861,7 +829,6 @@ This property can fetch inherited members, and therefore is part of the consumer
 
 ```
 parent: Module | Class | Alias | None
-
 ```
 
 The parent of this alias.
@@ -870,7 +837,6 @@ The parent of this alias.
 
 ```
 path: str
-
 ```
 
 The dotted path / import path of this object.
@@ -881,7 +847,6 @@ See also: canonical_path.
 
 ```
 public: bool | None = None
-
 ```
 
 Whether this alias is public.
@@ -890,7 +855,6 @@ Whether this alias is public.
 
 ```
 relative_filepath: Path
-
 ```
 
 The file path where this object was defined, relative to the current working directory.
@@ -907,7 +871,6 @@ Raises:
 
 ```
 relative_package_filepath: Path
-
 ```
 
 The file path where this object was defined, relative to the top module path.
@@ -922,7 +885,6 @@ Raises:
 
 ```
 resolved: bool
-
 ```
 
 Whether this alias' target is resolved.
@@ -931,7 +893,6 @@ Whether this alias' target is resolved.
 
 ```
 resolved_bases: list[Object]
-
 ```
 
 Resolved class bases.
@@ -942,7 +903,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 returns: str | Expr | None
-
 ```
 
 The function return type annotation.
@@ -951,7 +911,6 @@ The function return type annotation.
 
 ```
 runtime: bool = runtime
-
 ```
 
 Whether this alias is available at runtime.
@@ -960,7 +919,6 @@ Whether this alias is available at runtime.
 
 ```
 setter: Function | None
-
 ```
 
 The setter linked to this function (property).
@@ -969,18 +927,24 @@ The setter linked to this function (property).
 
 ```
 source: str
-
 ```
 
 The source code of this object.
 
 See also: lines, lines_collection.
 
+## source_link
+
+```
+source_link: str | None
+```
+
+Get the source link for this object, if available.
+
 ## target
 
 ```
 target: Object | Alias
-
 ```
 
 The resolved target (actual object), if possible.
@@ -993,7 +957,6 @@ See also: final_target, resolve_target, resolved.
 
 ```
 target_path: str
-
 ```
 
 The path of this alias' target.
@@ -1002,7 +965,6 @@ The path of this alias' target.
 
 ```
 type_aliases: dict[str, TypeAlias]
-
 ```
 
 The type alias members.
@@ -1013,7 +975,6 @@ This method is part of the consumer API: do not use when producing Griffe trees!
 
 ```
 type_parameters: TypeParameters
-
 ```
 
 The target type parameters.
@@ -1022,7 +983,6 @@ The target type parameters.
 
 ```
 value: str | Expr | None
-
 ```
 
 The attribute or type alias value.
@@ -1031,18 +991,24 @@ The attribute or type alias value.
 
 ```
 wildcard: str | None
-
 ```
 
 The module on which the wildcard import is performed (if any).
 
 See also: GriffeLoader.expand_wildcards.
 
+## wildcard_imported
+
+```
+wildcard_imported: bool = wildcard_imported
+```
+
+Whether this alias was created using a wildcard import.
+
 ## __bool__
 
 ```
 __bool__() -> bool
-
 ```
 
 An alias is always true-ish.
@@ -1051,7 +1017,6 @@ An alias is always true-ish.
 
 ```
 __delitem__(key: str | Sequence[str]) -> None
-
 ```
 
 Delete a member with its name or path.
@@ -1072,14 +1037,12 @@ Examples:
 >>> del griffe_object["foo"]
 >>> del griffe_object["path.to.bar"]
 >>> del griffe_object[("path", "to", "qux")]
-
 ```
 
 ## __getitem__
 
 ```
 __getitem__(key: str | Sequence[str]) -> Any
-
 ```
 
 Get a member with its name or path.
@@ -1100,14 +1063,12 @@ Examples:
 >>> foo = griffe_object["foo"]
 >>> bar = griffe_object["path.to.bar"]
 >>> qux = griffe_object[("path", "to", "qux")]
-
 ```
 
 ## __len__
 
 ```
 __len__() -> int
-
 ```
 
 The length of an alias is always 1.
@@ -1118,7 +1079,6 @@ The length of an alias is always 1.
 __setitem__(
     key: str | Sequence[str], value: Object | Alias
 ) -> None
-
 ```
 
 Set a member with its name or path.
@@ -1141,7 +1101,6 @@ Examples:
 >>> griffe_object["foo"] = foo
 >>> griffe_object["path.to.bar"] = bar
 >>> griffe_object[("path", "to", "qux")] = qux
-
 ```
 
 ## as_dict
@@ -1150,7 +1109,6 @@ Examples:
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this alias' data as a dictionary.
@@ -1175,7 +1133,6 @@ Returns:
 
 ```
 as_json(*, full: bool = False, **kwargs: Any) -> str
-
 ```
 
 Return this target's data as a JSON string.
@@ -1200,7 +1157,6 @@ Returns:
 
 ```
 del_member(key: str | Sequence[str]) -> None
-
 ```
 
 Delete a member with its name or path.
@@ -1221,7 +1177,6 @@ Examples:
 >>> griffe_object.del_member("foo")
 >>> griffe_object.del_member("path.to.bar")
 >>> griffe_object.del_member(("path", "to", "qux"))
-
 ```
 
 ## filter_members
@@ -1230,7 +1185,6 @@ Examples:
 filter_members(
     *predicates: Callable[[Object | Alias], bool],
 ) -> dict[str, Object | Alias]
-
 ```
 
 Filter and return members based on predicates.
@@ -1251,7 +1205,6 @@ Returns:
 
 ```
 from_json(json_string: str, **kwargs: Any) -> _ObjType
-
 ```
 
 Create an instance of this class from a JSON string.
@@ -1278,7 +1231,6 @@ Raises:
 
 ```
 get_member(key: str | Sequence[str]) -> Any
-
 ```
 
 Get a member with its name or path.
@@ -1299,14 +1251,12 @@ Examples:
 >>> foo = griffe_object["foo"]
 >>> bar = griffe_object["path.to.bar"]
 >>> bar = griffe_object[("path", "to", "bar")]
-
 ```
 
 ## has_labels
 
 ```
 has_labels(*labels: str) -> bool
-
 ```
 
 Tell if this object has all the given labels.
@@ -1327,7 +1277,6 @@ Returns:
 
 ```
 is_kind(kind: str | Kind | set[str | Kind]) -> bool
-
 ```
 
 Tell if this object is of the given kind.
@@ -1352,7 +1301,6 @@ Returns:
 
 ```
 mro() -> list[Class]
-
 ```
 
 Return a list of classes in order corresponding to Python's MRO.
@@ -1361,7 +1309,6 @@ Return a list of classes in order corresponding to Python's MRO.
 
 ```
 resolve(name: str) -> str
-
 ```
 
 Resolve a name within this object's and parents' scope.
@@ -1384,7 +1331,6 @@ Returns:
 
 ```
 resolve_target() -> None
-
 ```
 
 Resolve the target.
@@ -1402,7 +1348,6 @@ Raises:
 set_member(
     key: str | Sequence[str], value: Object | Alias
 ) -> None
-
 ```
 
 Set a member with its name or path.
@@ -1425,7 +1370,6 @@ Examples:
 >>> griffe_object.set_member("foo", foo)
 >>> griffe_object.set_member("path.to.bar", bar)
 >>> griffe_object.set_member(("path", "to", "qux"), qux)
-
 ```
 
 ## signature
@@ -1434,7 +1378,6 @@ Examples:
 signature(
     *, return_type: bool = False, name: str | None = None
 ) -> str
-
 ```
 
 Construct the class/function signature.

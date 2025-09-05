@@ -8,7 +8,6 @@
 ModuleFinder(
     search_paths: Sequence[str | Path] | None = None,
 )
-
 ```
 
 The Griffe finder, allowing to find modules on the file system.
@@ -47,7 +46,6 @@ accepted_py_module_extensions: list[str] = [
     ".pyi",
     ".so",
 ]
-
 ```
 
 List of extensions supported by the finder.
@@ -58,7 +56,6 @@ List of extensions supported by the finder.
 extensions_set: set[str] = set(
     accepted_py_module_extensions
 )
-
 ```
 
 Set of extensions supported by the finder.
@@ -67,7 +64,6 @@ Set of extensions supported by the finder.
 
 ```
 search_paths: list[Path] = []
-
 ```
 
 The finder search paths.
@@ -76,7 +72,6 @@ The finder search paths.
 
 ```
 append_search_path(path: Path) -> None
-
 ```
 
 Append a search path.
@@ -95,7 +90,6 @@ Parameters:
 find_package(
     module_name: str,
 ) -> Package | NamespacePackage
-
 ```
 
 Find a package or namespace package.
@@ -123,7 +117,6 @@ find_spec(
     try_relative_path: bool = True,
     find_stubs_package: bool = False,
 ) -> tuple[str, Package | NamespacePackage]
-
 ```
 
 Find the top-level parent module of a module.
@@ -157,7 +150,6 @@ Returns:
 
 ```
 insert_search_path(position: int, path: Path) -> None
-
 ```
 
 Insert a search path at the given position.
@@ -180,7 +172,6 @@ Parameters:
 iter_submodules(
     path: Path | list[Path], seen: set | None = None
 ) -> Iterator[NamePartsAndPathType]
-
 ```
 
 Iterate on a module's submodules, if any.
@@ -204,7 +195,6 @@ Yields:
 
 ```
 submodules(module: Module) -> list[NamePartsAndPathType]
-
 ```
 
 Return the list of a module's submodules.
@@ -223,7 +213,6 @@ Returns:
 
 ```
 Package(name: str, path: Path, stubs: Path | None = None)
-
 ```
 
 This class is a simple placeholder used during the process of finding packages.
@@ -252,7 +241,6 @@ Attributes:
 
 ```
 name: str
-
 ```
 
 Package name.
@@ -261,7 +249,6 @@ Package name.
 
 ```
 path: Path
-
 ```
 
 Package folder path.
@@ -270,7 +257,6 @@ Package folder path.
 
 ```
 stubs: Path | None = None
-
 ```
 
 Package stubs file.
@@ -279,7 +265,6 @@ Package stubs file.
 
 ```
 NamespacePackage(name: str, path: list[Path])
-
 ```
 
 This class is a simple placeholder used during the process of finding packages.
@@ -303,7 +288,6 @@ Attributes:
 
 ```
 name: str
-
 ```
 
 Namespace package name.
@@ -312,7 +296,6 @@ Namespace package name.
 
 ```
 path: list[Path]
-
 ```
 
 Namespace package folder paths.
@@ -323,7 +306,6 @@ Namespace package folder paths.
 
 ```
 NamePartsType = tuple[str, ...]
-
 ```
 
 Type alias for the parts of a module name.
@@ -332,7 +314,6 @@ Type alias for the parts of a module name.
 
 ```
 NamePartsAndPathType = tuple[NamePartsType, Path]
-
 ```
 
 Type alias for the parts of a module name and its path.

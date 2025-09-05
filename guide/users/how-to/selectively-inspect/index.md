@@ -20,7 +20,6 @@ import griffe
 
 class InspectSpecificObjects(griffe.Extension):
     """An extension to inspect just a few specific objects."""
-
 ```
 
 Make it accept configuration options by declaring an `__init__` method:
@@ -34,7 +33,6 @@ class InspectSpecificObjects(griffe.Extension):
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
-
 ```
 
 Here we choose to store a list of strings, where each string is an object path, like `module.Class.method`. Feel free to store different values to help you filter objects according to your needs. For example, maybe you want to inspect all functions with a given label, in that case you could accept a single string which is the label name. Or you may want to inspect all functions decorated with a specific decorator, etc.
@@ -55,7 +53,6 @@ class InspectSpecificObjects(griffe.Extension):
 
     def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
         ...
-
 ```
 
 Check out the available hooks to see if there more appropriate hooks for your needs.
@@ -75,7 +72,6 @@ class InspectSpecificObjects(griffe.Extension):
     def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
         if obj.path not in self.objects:
             return
-
 ```
 
 Now we know that only the objects we're interested in will be handled, so lets handle them.
@@ -101,7 +97,6 @@ class InspectSpecificObjects(griffe.Extension):
         except ImportError as error:
             logger.warning(f"Could not import {obj.path}: {error}")  # (2)!
             return
-
 ```
 
 1. We integrate with Griffe's logging (which also ensures integration with MkDocs' logging) by creating a logger. The name should look like a package name, with underscores.
@@ -137,7 +132,6 @@ class InspectSpecificObjects(griffe.Extension):
             obj.docstring.value = runtime_obj.__doc__
         else:
             obj.docstring = griffe.Docstring(runtime_obj.__doc__)
-
 ```
 
 Or we could alter the Griffe object parameters in case of functions, which could have been modified by a signature-changing decorator:
@@ -170,7 +164,6 @@ class InspectSpecificObjects(griffe.Extension):
         for param in signature.parameters:
             if param.name in obj.parameters:
                 obj.parameters[param.name].default = repr(param.default)
-
 ```
 
 We could also entirely replace the Griffe object obtained from static analysis by the same one obtained from dynamic analysis:
@@ -191,7 +184,6 @@ class InspectSpecificObjects(griffe.Extension):
 
         inspected_module = griffe.inspect(obj.module.path, filepath=obj.filepath)
         obj.parent.set_member(obj.name, inspected_module[obj.name])  # (1)!
-
 ```
 
 1. This assumes the object we're interested in is declared at the module level.

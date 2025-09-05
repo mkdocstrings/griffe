@@ -15,11 +15,10 @@ visit(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Module
-
 ```
 
 Parse and visit a module file.
@@ -58,7 +57,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -83,11 +82,10 @@ inspect(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Module
-
 ```
 
 Inspect a module.
@@ -132,7 +130,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -158,11 +156,10 @@ Visitor(
     extensions: Extensions,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 )
-
 ```
 
 This class is used to instantiate a visitor.
@@ -197,7 +194,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – The docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -232,7 +229,7 @@ Attributes:
 
 - **`code`** (`str`) – The module source code.
 - **`current`** (`Module | Class`) – The current object being visited.
-- **`docstring_options`** (`dict[str, Any]`) – The docstring parsing options.
+- **`docstring_options`** (`DocstringOptions`) – The docstring parsing options.
 - **`docstring_parser`** (`DocstringStyle | Parser | None`) – The docstring parser to use.
 - **`extensions`** (`Extensions`) – The extensions to use when visiting the AST.
 - **`filepath`** (`Path`) – The module filepath.
@@ -246,7 +243,6 @@ Attributes:
 
 ```
 code: str = code
-
 ```
 
 The module source code.
@@ -255,7 +251,6 @@ The module source code.
 
 ```
 current: Module | Class = None
-
 ```
 
 The current object being visited.
@@ -263,8 +258,9 @@ The current object being visited.
 ### docstring_options
 
 ```
-docstring_options: dict[str, Any] = docstring_options or {}
-
+docstring_options: DocstringOptions = (
+    docstring_options or {}
+)
 ```
 
 The docstring parsing options.
@@ -275,7 +271,6 @@ The docstring parsing options.
 docstring_parser: DocstringStyle | Parser | None = (
     docstring_parser
 )
-
 ```
 
 The docstring parser to use.
@@ -284,7 +279,6 @@ The docstring parser to use.
 
 ```
 extensions: Extensions = extensions
-
 ```
 
 The extensions to use when visiting the AST.
@@ -293,7 +287,6 @@ The extensions to use when visiting the AST.
 
 ```
 filepath: Path = filepath
-
 ```
 
 The module filepath.
@@ -304,7 +297,6 @@ The module filepath.
 lines_collection: LinesCollection = (
     lines_collection or LinesCollection()
 )
-
 ```
 
 A collection of source code lines.
@@ -313,7 +305,6 @@ A collection of source code lines.
 
 ```
 module_name: str = module_name
-
 ```
 
 The module name.
@@ -324,7 +315,6 @@ The module name.
 modules_collection: ModulesCollection = (
     modules_collection or ModulesCollection()
 )
-
 ```
 
 A collection of modules.
@@ -333,7 +323,6 @@ A collection of modules.
 
 ```
 parent: Module | None = parent
-
 ```
 
 An optional parent for the final module object.
@@ -342,7 +331,6 @@ An optional parent for the final module object.
 
 ```
 type_guarded: bool = False
-
 ```
 
 Whether the current code branch is type-guarded.
@@ -353,7 +341,6 @@ Whether the current code branch is type-guarded.
 decorators_to_labels(
     decorators: list[Decorator],
 ) -> set[str]
-
 ```
 
 Build and return a set of labels based on decorators.
@@ -372,7 +359,6 @@ Returns:
 
 ```
 generic_visit(node: AST) -> None
-
 ```
 
 Extend the base generic visit with extensions.
@@ -389,7 +375,6 @@ Parameters:
 get_base_property(
     decorators: list[Decorator], function: Function
 ) -> str | None
-
 ```
 
 Check decorators to return the base property in case of setters and deleters.
@@ -409,7 +394,6 @@ Returns:
 
 ```
 get_module() -> Module
-
 ```
 
 Build and return the object representing the module attached to this visitor.
@@ -427,7 +411,6 @@ handle_attribute(
     node: Assign | AnnAssign,
     annotation: str | Expr | None = None,
 ) -> None
-
 ```
 
 Handle an attribute (assignment) node.
@@ -449,7 +432,6 @@ handle_function(
     node: AsyncFunctionDef | FunctionDef,
     labels: set | None = None,
 ) -> None
-
 ```
 
 Handle a function definition node.
@@ -468,7 +450,6 @@ Parameters:
 
 ```
 visit(node: AST) -> None
-
 ```
 
 Extend the base visit with extensions.
@@ -483,7 +464,6 @@ Parameters:
 
 ```
 visit_annassign(node: AnnAssign) -> None
-
 ```
 
 Visit an annotated assignment node.
@@ -498,7 +478,6 @@ Parameters:
 
 ```
 visit_assign(node: Assign) -> None
-
 ```
 
 Visit an assignment node.
@@ -513,7 +492,6 @@ Parameters:
 
 ```
 visit_asyncfunctiondef(node: AsyncFunctionDef) -> None
-
 ```
 
 Visit an async function definition node.
@@ -528,7 +506,6 @@ Parameters:
 
 ```
 visit_augassign(node: AugAssign) -> None
-
 ```
 
 Visit an augmented assignment node.
@@ -543,7 +520,6 @@ Parameters:
 
 ```
 visit_classdef(node: ClassDef) -> None
-
 ```
 
 Visit a class definition node.
@@ -558,7 +534,6 @@ Parameters:
 
 ```
 visit_functiondef(node: FunctionDef) -> None
-
 ```
 
 Visit a function definition node.
@@ -573,7 +548,6 @@ Parameters:
 
 ```
 visit_if(node: If) -> None
-
 ```
 
 Visit an "if" node.
@@ -588,7 +562,6 @@ Parameters:
 
 ```
 visit_import(node: Import) -> None
-
 ```
 
 Visit an import node.
@@ -603,7 +576,6 @@ Parameters:
 
 ```
 visit_importfrom(node: ImportFrom) -> None
-
 ```
 
 Visit an "import from" node.
@@ -618,7 +590,6 @@ Parameters:
 
 ```
 visit_module(node: Module) -> None
-
 ```
 
 Visit a module node.
@@ -633,7 +604,6 @@ Parameters:
 
 ```
 visit_typealias(node: TypeAlias) -> None
-
 ```
 
 Visit a type alias node.
@@ -653,11 +623,10 @@ Inspector(
     extensions: Extensions,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 )
-
 ```
 
 This class is used to instantiate an inspector.
@@ -688,7 +657,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – The docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -724,7 +693,7 @@ Methods:
 Attributes:
 
 - **`current`** (`Module | Class`) – The current object being inspected.
-- **`docstring_options`** (`dict[str, Any]`) – The docstring parsing options.
+- **`docstring_options`** (`DocstringOptions`) – The docstring parsing options.
 - **`docstring_parser`** (`DocstringStyle | Parser | None`) – The docstring parser to use.
 - **`extensions`** (`Extensions`) – The extensions to use when inspecting.
 - **`filepath`** (`Path | None`) – The module file path.
@@ -737,7 +706,6 @@ Attributes:
 
 ```
 current: Module | Class = None
-
 ```
 
 The current object being inspected.
@@ -745,8 +713,9 @@ The current object being inspected.
 ### docstring_options
 
 ```
-docstring_options: dict[str, Any] = docstring_options or {}
-
+docstring_options: DocstringOptions = (
+    docstring_options or {}
+)
 ```
 
 The docstring parsing options.
@@ -757,7 +726,6 @@ The docstring parsing options.
 docstring_parser: DocstringStyle | Parser | None = (
     docstring_parser
 )
-
 ```
 
 The docstring parser to use.
@@ -766,7 +734,6 @@ The docstring parser to use.
 
 ```
 extensions: Extensions = extensions
-
 ```
 
 The extensions to use when inspecting.
@@ -775,7 +742,6 @@ The extensions to use when inspecting.
 
 ```
 filepath: Path | None = filepath
-
 ```
 
 The module file path.
@@ -786,7 +752,6 @@ The module file path.
 lines_collection: LinesCollection = (
     lines_collection or LinesCollection()
 )
-
 ```
 
 A collection of source code lines.
@@ -795,7 +760,6 @@ A collection of source code lines.
 
 ```
 module_name: str = module_name
-
 ```
 
 The module name.
@@ -806,7 +770,6 @@ The module name.
 modules_collection: ModulesCollection = (
     modules_collection or ModulesCollection()
 )
-
 ```
 
 A collection of modules.
@@ -815,7 +778,6 @@ A collection of modules.
 
 ```
 parent: Module | None = parent
-
 ```
 
 An optional parent for the final module object.
@@ -824,7 +786,6 @@ An optional parent for the final module object.
 
 ```
 generic_inspect(node: ObjectNode) -> None
-
 ```
 
 Extend the base generic inspection with extensions.
@@ -841,7 +802,6 @@ Parameters:
 get_module(
     import_paths: Sequence[str | Path] | None = None,
 ) -> Module
-
 ```
 
 Build and return the object representing the module attached to this inspector.
@@ -864,7 +824,6 @@ Returns:
 handle_attribute(
     node: ObjectNode, annotation: str | Expr | None = None
 ) -> None
-
 ```
 
 Handle an attribute.
@@ -885,7 +844,6 @@ Parameters:
 handle_function(
     node: ObjectNode, labels: set | None = None
 ) -> None
-
 ```
 
 Handle a function.
@@ -904,7 +862,6 @@ Parameters:
 
 ```
 inspect(node: ObjectNode) -> None
-
 ```
 
 Extend the base inspection with extensions.
@@ -919,7 +876,6 @@ Parameters:
 
 ```
 inspect_attribute(node: ObjectNode) -> None
-
 ```
 
 Inspect an attribute.
@@ -934,7 +890,6 @@ Parameters:
 
 ```
 inspect_builtin_function(node: ObjectNode) -> None
-
 ```
 
 Inspect a builtin function.
@@ -949,7 +904,6 @@ Parameters:
 
 ```
 inspect_builtin_method(node: ObjectNode) -> None
-
 ```
 
 Inspect a builtin method.
@@ -964,7 +918,6 @@ Parameters:
 
 ```
 inspect_cached_property(node: ObjectNode) -> None
-
 ```
 
 Inspect a cached property.
@@ -979,7 +932,6 @@ Parameters:
 
 ```
 inspect_class(node: ObjectNode) -> None
-
 ```
 
 Inspect a class.
@@ -994,7 +946,6 @@ Parameters:
 
 ```
 inspect_classmethod(node: ObjectNode) -> None
-
 ```
 
 Inspect a class method.
@@ -1009,7 +960,6 @@ Parameters:
 
 ```
 inspect_coroutine(node: ObjectNode) -> None
-
 ```
 
 Inspect a coroutine.
@@ -1024,7 +974,6 @@ Parameters:
 
 ```
 inspect_function(node: ObjectNode) -> None
-
 ```
 
 Inspect a function.
@@ -1039,7 +988,6 @@ Parameters:
 
 ```
 inspect_getset_descriptor(node: ObjectNode) -> None
-
 ```
 
 Inspect a get/set descriptor.
@@ -1054,7 +1002,6 @@ Parameters:
 
 ```
 inspect_method(node: ObjectNode) -> None
-
 ```
 
 Inspect a method.
@@ -1069,7 +1016,6 @@ Parameters:
 
 ```
 inspect_method_descriptor(node: ObjectNode) -> None
-
 ```
 
 Inspect a method descriptor.
@@ -1084,7 +1030,6 @@ Parameters:
 
 ```
 inspect_module(node: ObjectNode) -> None
-
 ```
 
 Inspect a module.
@@ -1099,7 +1044,6 @@ Parameters:
 
 ```
 inspect_property(node: ObjectNode) -> None
-
 ```
 
 Inspect a property.
@@ -1114,7 +1058,6 @@ Parameters:
 
 ```
 inspect_staticmethod(node: ObjectNode) -> None
-
 ```
 
 Inspect a static method.
@@ -1129,7 +1072,6 @@ Parameters:
 
 ```
 inspect_type_alias(node: ObjectNode) -> None
-
 ```
 
 Inspect a type alias.
@@ -1146,7 +1088,6 @@ Parameters:
 
 ```
 sys_path(*paths: str | Path) -> Iterator[None]
-
 ```
 
 Redefine `sys.path` temporarily.
@@ -1168,7 +1109,6 @@ dynamic_import(
     import_path: str,
     import_paths: Sequence[str | Path] | None = None,
 ) -> Any
-
 ```
 
 Dynamically import the specified object.
@@ -1224,7 +1164,6 @@ Returns:
 ObjectNode(
     obj: Any, name: str, parent: ObjectNode | None = None
 )
-
 ```
 
 Helper class to represent an object tree.
@@ -1280,7 +1219,6 @@ Attributes:
 
 ```
 alias_target_path: str | None
-
 ```
 
 Alias target path of this node, if the node should be an alias.
@@ -1289,7 +1227,6 @@ Alias target path of this node, if the node should be an alias.
 
 ```
 children: Sequence[ObjectNode]
-
 ```
 
 The children of this node.
@@ -1302,7 +1239,6 @@ exclude_specials: set[str] = {
     "__loader__",
     "__spec__",
 }
-
 ```
 
 Low level attributes known to cause issues when resolving aliases.
@@ -1311,7 +1247,6 @@ Low level attributes known to cause issues when resolving aliases.
 
 ```
 is_attribute: bool
-
 ```
 
 Whether this node's object is an attribute.
@@ -1320,7 +1255,6 @@ Whether this node's object is an attribute.
 
 ```
 is_builtin_function: bool
-
 ```
 
 Whether this node's object is a builtin function.
@@ -1329,7 +1263,6 @@ Whether this node's object is a builtin function.
 
 ```
 is_builtin_method: bool
-
 ```
 
 Whether this node's object is a builtin method.
@@ -1338,7 +1271,6 @@ Whether this node's object is a builtin method.
 
 ```
 is_cached_property: bool = is_cached_property
-
 ```
 
 Whether this node's object is a cached property.
@@ -1347,7 +1279,6 @@ Whether this node's object is a cached property.
 
 ```
 is_class: bool
-
 ```
 
 Whether this node's object is a class.
@@ -1356,7 +1287,6 @@ Whether this node's object is a class.
 
 ```
 is_classmethod: bool
-
 ```
 
 Whether this node's object is a classmethod.
@@ -1365,7 +1295,6 @@ Whether this node's object is a classmethod.
 
 ```
 is_coroutine: bool
-
 ```
 
 Whether this node's object is a coroutine.
@@ -1374,7 +1303,6 @@ Whether this node's object is a coroutine.
 
 ```
 is_function: bool
-
 ```
 
 Whether this node's object is a function.
@@ -1383,7 +1311,6 @@ Whether this node's object is a function.
 
 ```
 is_getset_descriptor: bool
-
 ```
 
 Whether this node's object is a get/set descriptor.
@@ -1392,7 +1319,6 @@ Whether this node's object is a get/set descriptor.
 
 ```
 is_method: bool
-
 ```
 
 Whether this node's object is a method.
@@ -1401,7 +1327,6 @@ Whether this node's object is a method.
 
 ```
 is_method_descriptor: bool
-
 ```
 
 Whether this node's object is a method descriptor.
@@ -1412,7 +1337,6 @@ Built-in methods (e.g. those implemented in C/Rust) are often method descriptors
 
 ```
 is_module: bool
-
 ```
 
 Whether this node's object is a module.
@@ -1421,7 +1345,6 @@ Whether this node's object is a module.
 
 ```
 is_property: bool
-
 ```
 
 Whether this node's object is a property.
@@ -1430,7 +1353,6 @@ Whether this node's object is a property.
 
 ```
 is_staticmethod: bool
-
 ```
 
 Whether this node's object is a staticmethod.
@@ -1439,7 +1361,6 @@ Whether this node's object is a staticmethod.
 
 ```
 is_type_alias: bool
-
 ```
 
 Whether this node's object is a type alias.
@@ -1448,7 +1369,6 @@ Whether this node's object is a type alias.
 
 ```
 kind: ObjectKind
-
 ```
 
 The kind of this node.
@@ -1457,7 +1377,6 @@ The kind of this node.
 
 ```
 module: ObjectNode
-
 ```
 
 The object's module, fetched from the node tree.
@@ -1466,7 +1385,6 @@ The object's module, fetched from the node tree.
 
 ```
 module_path: str | None
-
 ```
 
 The object's module path.
@@ -1475,7 +1393,6 @@ The object's module path.
 
 ```
 name: str = name
-
 ```
 
 The Python object's name.
@@ -1484,7 +1401,6 @@ The Python object's name.
 
 ```
 obj: Any = obj
-
 ```
 
 The actual Python object.
@@ -1493,7 +1409,6 @@ The actual Python object.
 
 ```
 parent: ObjectNode | None = parent
-
 ```
 
 The parent node.
@@ -1502,7 +1417,6 @@ The parent node.
 
 ```
 parent_is_class: bool
-
 ```
 
 Whether the object of this node's parent is a class.
@@ -1511,7 +1425,6 @@ Whether the object of this node's parent is a class.
 
 ```
 path: str
-
 ```
 
 The object's (Python) path.
@@ -1521,14 +1434,12 @@ The object's (Python) path.
 Bases: `str`, `Enum`
 
 ```
-
               flowchart TD
               griffe.ObjectKind[ObjectKind]
 
               
 
               click griffe.ObjectKind href "" "griffe.ObjectKind"
-            
 ```
 
 Enumeration of the different runtime object kinds.
@@ -1555,7 +1466,6 @@ Attributes:
 
 ```
 ATTRIBUTE = 'attribute'
-
 ```
 
 Attributes.
@@ -1564,7 +1474,6 @@ Attributes.
 
 ```
 BUILTIN_FUNCTION = 'builtin_function'
-
 ```
 
 Built-in functions.
@@ -1573,7 +1482,6 @@ Built-in functions.
 
 ```
 BUILTIN_METHOD = 'builtin_method'
-
 ```
 
 Built-in methods.
@@ -1582,7 +1490,6 @@ Built-in methods.
 
 ```
 CACHED_PROPERTY = 'cached_property'
-
 ```
 
 Cached properties.
@@ -1591,7 +1498,6 @@ Cached properties.
 
 ```
 CLASS = 'class'
-
 ```
 
 Classes.
@@ -1600,7 +1506,6 @@ Classes.
 
 ```
 CLASSMETHOD = 'classmethod'
-
 ```
 
 Class methods.
@@ -1609,7 +1514,6 @@ Class methods.
 
 ```
 COROUTINE = 'coroutine'
-
 ```
 
 Coroutines
@@ -1618,7 +1522,6 @@ Coroutines
 
 ```
 FUNCTION = 'function'
-
 ```
 
 Functions.
@@ -1627,7 +1530,6 @@ Functions.
 
 ```
 GETSET_DESCRIPTOR = 'getset_descriptor'
-
 ```
 
 Get/set descriptors.
@@ -1636,7 +1538,6 @@ Get/set descriptors.
 
 ```
 METHOD = 'method'
-
 ```
 
 Methods.
@@ -1645,7 +1546,6 @@ Methods.
 
 ```
 METHOD_DESCRIPTOR = 'method_descriptor'
-
 ```
 
 Method descriptors.
@@ -1654,7 +1554,6 @@ Method descriptors.
 
 ```
 MODULE = 'module'
-
 ```
 
 Modules.
@@ -1663,7 +1562,6 @@ Modules.
 
 ```
 PROPERTY = 'property'
-
 ```
 
 Properties.
@@ -1672,7 +1570,6 @@ Properties.
 
 ```
 STATICMETHOD = 'staticmethod'
-
 ```
 
 Static methods.
@@ -1681,7 +1578,6 @@ Static methods.
 
 ```
 TYPE_ALIAS = 'type_alias'
-
 ```
 
 Type aliases.
@@ -1696,7 +1592,6 @@ builtin_decorators = {
     "staticmethod": "staticmethod",
     "classmethod": "classmethod",
 }
-
 ```
 
 Mapping of builtin decorators to labels.
@@ -1715,7 +1610,6 @@ stdlib_decorators = {
     "functools.lru_cache": {"cached"},
     "dataclasses.dataclass": {"dataclass"},
 }
-
 ```
 
 Mapping of standard library decorators to labels.
@@ -1727,7 +1621,6 @@ typing_overload = {
     "typing.overload",
     "typing_extensions.overload",
 }
-
 ```
 
 Set of recognized typing overload decorators.
@@ -1738,7 +1631,6 @@ When such a decorator is found, the decorated function becomes an overload.
 
 ```
 ast_kind(node: AST) -> str
-
 ```
 
 Return the kind of an AST node.
@@ -1757,7 +1649,6 @@ Returns:
 
 ```
 ast_children(node: AST) -> Iterator[AST]
-
 ```
 
 Return the children of an AST node.
@@ -1776,7 +1667,6 @@ Yields:
 
 ```
 ast_previous_siblings(node: AST) -> Iterator[AST]
-
 ```
 
 Return the previous siblings of this node, starting from the closest.
@@ -1795,7 +1685,6 @@ Yields:
 
 ```
 ast_next_siblings(node: AST) -> Iterator[AST]
-
 ```
 
 Return the next siblings of this node, starting from the closest.
@@ -1814,7 +1703,6 @@ Yields:
 
 ```
 ast_siblings(node: AST) -> Iterator[AST]
-
 ```
 
 Return the siblings of this node.
@@ -1833,7 +1721,6 @@ Yields:
 
 ```
 ast_previous(node: AST) -> AST
-
 ```
 
 Return the previous sibling of this node.
@@ -1856,7 +1743,6 @@ Returns:
 
 ```
 ast_next(node: AST) -> AST
-
 ```
 
 Return the next sibling of this node.
@@ -1879,7 +1765,6 @@ Returns:
 
 ```
 ast_first_child(node: AST) -> AST
-
 ```
 
 Return the first child of this node.
@@ -1902,7 +1787,6 @@ Returns:
 
 ```
 ast_last_child(node: AST) -> AST
-
 ```
 
 Return the lasts child of this node.
@@ -1927,7 +1811,6 @@ Returns:
 get_docstring(
     node: AST, *, strict: bool = False
 ) -> tuple[str | None, int | None, int | None]
-
 ```
 
 Extract a docstring.
@@ -1950,7 +1833,6 @@ Returns:
 
 ```
 get_name(node: AST) -> str
-
 ```
 
 Extract name from an assignment node.
@@ -1969,7 +1851,6 @@ Returns:
 
 ```
 get_names(node: AST) -> list[str]
-
 ```
 
 Extract names from an assignment node.
@@ -1988,7 +1869,6 @@ Returns:
 
 ```
 get_instance_names(node: AST) -> list[str]
-
 ```
 
 Extract names from an assignment node, only for instance attributes.
@@ -2009,7 +1889,6 @@ Returns:
 get__all__(
     node: Assign | AnnAssign | AugAssign, parent: Module
 ) -> list[str | ExprName]
-
 ```
 
 Get the values declared in `__all__`.
@@ -2036,7 +1915,6 @@ safe_get__all__(
     parent: Module,
     log_level: LogLevel = debug,
 ) -> list[str | ExprName]
-
 ```
 
 Safely (no exception) extract values in `__all__`.
@@ -2065,7 +1943,6 @@ Returns:
 relative_to_absolute(
     node: ImportFrom, name: alias, current_module: Module
 ) -> str
-
 ```
 
 Convert a relative import path to an absolute one.
@@ -2092,14 +1969,12 @@ Returns:
 
 ```
 get_parameters(node: arguments) -> ParametersType
-
 ```
 
 ## get_value
 
 ```
 get_value(node: AST | None) -> str | None
-
 ```
 
 Get the string representation of a node.
@@ -2120,7 +1995,6 @@ Returns:
 safe_get_value(
     node: AST | None, filepath: str | Path | None = None
 ) -> str | None
-
 ```
 
 Safely (no exception) get the string representation of a node.
@@ -2145,7 +2019,6 @@ Returns:
 
 ```
 ExportedName(name: str, parent: Module)
-
 ```
 
 Deprecated. An intermediate class to store names.
@@ -2161,7 +2034,6 @@ Attributes:
 
 ```
 name: str
-
 ```
 
 The exported name.
@@ -2170,7 +2042,6 @@ The exported name.
 
 ```
 parent: Module
-
 ```
 
 The parent module.

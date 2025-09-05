@@ -4,7 +4,6 @@
 
 ```
 TmpPackage(tmpdir: Path, name: str, path: Path)
-
 ```
 
 A temporary package.
@@ -21,7 +20,6 @@ Attributes:
 
 ```
 name: str
-
 ```
 
 The package name, as to dynamically import it.
@@ -30,7 +28,6 @@ The package name, as to dynamically import it.
 
 ```
 path: Path
-
 ```
 
 The package path.
@@ -39,7 +36,6 @@ The package path.
 
 ```
 tmpdir: Path
-
 ```
 
 The temporary directory containing the package.
@@ -50,7 +46,6 @@ The temporary directory containing the package.
 temporary_pyfile(
     code: str, *, module_name: str = "module"
 ) -> Iterator[tuple[str, Path]]
-
 ```
 
 Create a Python file containing the given code in a temporary directory.
@@ -82,7 +77,6 @@ temporary_pypackage(
     init: bool = True,
     inits: bool = True,
 ) -> Iterator[TmpPackage]
-
 ```
 
 Create a package containing the given modules in a temporary directory.
@@ -119,11 +113,10 @@ temporary_visited_module(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Iterator[Module]
-
 ```
 
 Create and visit a temporary module with the given code.
@@ -152,7 +145,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -179,7 +172,7 @@ temporary_visited_package(
     inits: bool = True,
     extensions: Extensions | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = False,
@@ -189,7 +182,6 @@ temporary_visited_package(
     resolve_implicit: bool = False,
     search_sys_path: bool = False,
 ) -> Iterator[Module]
-
 ```
 
 Create and visit a temporary package.
@@ -222,7 +214,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -271,11 +263,10 @@ temporary_inspected_module(
     extensions: Extensions | None = None,
     parent: Module | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
 ) -> Iterator[Module]
-
 ```
 
 Create and inspect a temporary module with the given code.
@@ -308,7 +299,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -335,7 +326,7 @@ temporary_inspected_package(
     inits: bool = True,
     extensions: Extensions | None = None,
     docstring_parser: DocstringStyle | Parser | None = None,
-    docstring_options: dict[str, Any] | None = None,
+    docstring_options: DocstringOptions | None = None,
     lines_collection: LinesCollection | None = None,
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
@@ -345,7 +336,6 @@ temporary_inspected_package(
     resolve_implicit: bool = False,
     search_sys_path: bool = False,
 ) -> Iterator[Module]
-
 ```
 
 Create and inspect a temporary package.
@@ -378,7 +368,7 @@ Parameters:
 
 - ### **`docstring_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Docstring parsing options.
 
 - ### **`lines_collection`**
 
@@ -422,7 +412,6 @@ Yields:
 vtree(
     *objects: Object, return_leaf: bool = False
 ) -> Object
-
 ```
 
 Link objects together, vertically.
@@ -449,7 +438,6 @@ Returns:
 
 ```
 htree(*objects: Object) -> Object
-
 ```
 
 Link objects together, horizontally.
@@ -477,7 +465,6 @@ module_vtree(
     leaf_package: bool = True,
     return_leaf: bool = False,
 ) -> Module
-
 ```
 
 Link objects together, vertically.

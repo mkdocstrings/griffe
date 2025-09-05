@@ -10,7 +10,6 @@ The main interface to load API data is Griffe's load function:
 import griffe
 
 my_package = griffe.load("my_package")
-
 ```
 
 You can ask to load a specific object rather than a package:
@@ -19,14 +18,12 @@ You can ask to load a specific object rather than a package:
 import griffe
 
 my_method = griffe.load("my_package.MyClass.my_method")
-
 ```
 
 Griffe will load the whole package anyway, but return the specified object directly, so that you don't have to access it manually. To manually access the object representing the method called `my_method`, you would have used the `my_package` variable instantiated before, like this:
 
 ```
 my_method = my_package["MyClass.my_method"]
-
 ```
 
 The [Navigating](../navigating/) topic will show you all the ways Griffe objects can be navigated.
@@ -38,7 +35,6 @@ import griffe
 
 griffe.load("src/my_package")
 griffe.load("some_script.py")
-
 ```
 
 In case of ambiguity, you can instruct Griffe to ignore existing relative file paths with `try_relative_paths=False`. For example, when using [the flat layout (in contrast to the src-layout)](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/), your Python package is in the root of the repository.
@@ -48,7 +44,6 @@ In case of ambiguity, you can instruct Griffe to ignore existing relative file p
 ├── 📁 my_package/
 │   └──  __init__.py
 └──  pyproject.toml
-
 ```
 
 Here if you ask Griffe to load `my_package`, it will find it as a relative path, in `./my_package`. If you want Griffe to use the version installed in your environment's site packages instead, set `try_relative_path` to false:
@@ -57,7 +52,6 @@ Here if you ask Griffe to load `my_package`, it will find it as a relative path,
 import griffe
 
 my_installed_package = griffe.load("my_package", try_relative_path=False)
-
 ```
 
 ## The `GriffeLoader` class
@@ -70,7 +64,6 @@ import griffe
 loader = GriffeLoader()
 my_package = loader.load("my_package")
 my_other_package = loader.load("my_other_package")
-
 ```
 
 Keeping a reference to the loader will reduce the number of IO operations on the file-system, as the contents of the directories that the loader searches into will be cached (only the lists of files and directories will be cached, not the file contents).
@@ -85,7 +78,6 @@ To specify in which directories Griffe should search for packages and modules, y
 import griffe
 
 my_package = griffe.load("my_package", search_paths=["src"])
-
 ```
 
 ```
@@ -93,7 +85,6 @@ import griffe
 
 loader = GriffeLoader(search_paths=["src"])
 my_package = loader.load("my_package")
-
 ```
 
 By default it will search in the paths found in sys.path, which can be influenced through the PYTHONPATH environment variable.
@@ -108,7 +99,6 @@ Griffe always tries first to find sources for the specified object. Then, unless
 import griffe
 
 my_package = griffe.load("my_package", force_inspection=True)
-
 ```
 
 Forcing inspection can be useful when your code is highly dynamic, and static analysis has trouble keeping up.
@@ -136,7 +126,6 @@ griffe.load("itertools")
 
 # While here it will raise `ModuleNotFoundError`.
 griffe.load("itertools", allow_inspection=False)
-
 ```
 
 ## Alias resolution
@@ -166,14 +155,12 @@ File layout
 └── 📁 my_package/
     ├──  __init__.py
     └──  my_module.py
-
 ```
 
 my_package/__init__.py
 
 ```
 from my_package.my_module import my_function
-
 ```
 
 my_package/my_module.py
@@ -181,7 +168,6 @@ my_package/my_module.py
 ```
 def my_function():
     print("hello")
-
 ```
 
 When loading this package, `my_package.my_function` will be an alias pointing at `my_package.my_module.my_function`:
@@ -191,7 +177,6 @@ import griffe
 
 my_package = griffe.load("my_package")
 my_package["my_function"].resolved  # False
-
 ```
 
 ```
@@ -200,7 +185,6 @@ import griffe
 my_package = griffe.load("my_package", resolve_aliases=True)
 my_package["my_function"].resolved  # True
 my_package["my_function"].target is my_package["my_module.my_function"]  # True
-
 ```
 
 The [Navigating](../navigating/) topic will tell you more about aliases and how they behave.
@@ -217,21 +201,18 @@ File layout
 │   └──  __init__.py
 └── 📁 package2/
     └──  __init__.py
-
 ```
 
 package1/__init__.py
 
 ```
 X = 0
-
 ```
 
 package2/__init__.py
 
 ```
 from package1 import X
-
 ```
 
 ```
@@ -262,7 +243,6 @@ Traceback (most recent call last):
   File "griffe/_internal/dataclasses.py", line 1377, in _resolve_target
     raise AliasResolutionError(self) from error
 griffe._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
-
 ```
 
 As you can see in the interpreter session above, Griffe did not resolve the `X` alias. When we tried to access its target object anyway, it failed with a `KeyError`, which was raised again as an AliasResolutionError.
@@ -281,7 +261,6 @@ False  # Hmm?
 Traceback (most recent call last):
 ...
 griffe._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
-
 ```
 
 The same exception again? What happened here? We loaded both packages, but Griffe still failed to resolve the alias. That is expected; here is the explanation.
@@ -308,7 +287,6 @@ Therefore, to resolve aliases *across different packages*, these packages must b
 True
 >>> package2["X"].target
 Attribute('X', lineno=1, endlineno=1)
-
 ```
 
 ```
@@ -320,7 +298,6 @@ Attribute('X', lineno=1, endlineno=1)
 True
 >>> package2["X"].target
 Attribute('X', lineno=1, endlineno=1)
-
 ```
 
 ```
@@ -334,7 +311,6 @@ Attribute('X', lineno=1, endlineno=1)
 True
 >>> package2["X"].target
 Attribute('X', lineno=1, endlineno=1)
-
 ```
 
 There is no preferred way, it depends on whether you need to instantiate different loaders with different parameters (search paths for example) while keeping every loaded module in the same collection, or if a single loader is enough, or if you explicitly need a reference to the collection, etc..
@@ -348,7 +324,6 @@ import griffe
 
 package2 = griffe.load("package2", resolve_aliases=True, resolve_external=True)
 print(package2["X"].target.name)  # X
-
 ```
 
 Here Griffe automatically loaded `package1` while resolving aliases, even though we didn't explicitly load it ourselves.
@@ -356,6 +331,37 @@ Here Griffe automatically loaded `package1` while resolving aliases, even though
 While automatically resolving aliases pointing at external packages can be convenient, we advise cautiousness: this can trigger the loading of *a lot* of external packages, *recursively*.
 
 One special case that we must mention is that Griffe will by default automatically load *private sibling packages*. For example, when resolving aliases for the `ast` module, Griffe will automatically try and load `_ast` too (if dynamic analysis is allowed, since this is a builtin module), even without `resolve_external=True`. If you want to prevent this behavior, you can pass `resolve_external=False` (it is `None` by default).
+
+## Source information
+
+By default, Griffe runs some Git commands to find the following information about a package:
+
+- the repository local path
+- the Git remote URL
+- what service it corresponds to (GitHub, etc.)
+- the current commit hash
+
+It then assigns this information to each package it loads, in the git_info attribute. This attribute can be reassigned on any object, if necessary. Each object who has it set to `None` will look into its parents.
+
+In the following cases, the information will not be set:
+
+- Griffe couldn't find the source for an object, or line numbers in the source
+- the source of a package is not tracked within the identified repository
+- Griffe cannot identify a known, supported service from the remote URL
+- any Git command failed
+
+Griffe supports the services listed in the KnownGitService symbol. Please open a feature request if you would like to add support for other services.
+
+Thanks to this source information, Griffe can then compute source links for each objects, by combining the information with the object's filepath and line numbers.
+
+You can globally change how Griffe obtains the source information with the following environment variables:
+
+- `GRIFFE_GIT_REMOTE_URL`: It is the repository remote URL, as an HTTPS link that readers of your documentation can access to see the repository online, on the service it is hosted on. Example: `GRIFFE_GIT_REMOTE_URL=https://app.radicle.at/nodes/seed.radicle.at/rad:z4M5XTPDD4Wh1sm8iPCenF85J3z8Z`.
+- `GRIFFE_GIT_REMOTE`: You can also let Griffe obtain the remote URL by getting it from the Git local configuration. The Git remote defaults to `origin`. This environment variable lets you change it to something else. Example: `GRIFFE_GIT_REMOTE=upstream`.
+- `GRIFFE_GIT_SERVICE`: Griffe infers the service by looking at the remote URL. If the remote URL contains a known service name, Griffe will use it as service. You can otherwise explicitly set the service using this environment variable. Example: `GRIFFE_GIT_SERVICE=codeberg`.
+- `GRIFFE_GIT_COMMIT_HASH`: Griffe gets the commit hash by running a Git command. If you prefer using another commit hash, you can set it using this environment variable. Example: `GRIFFE_GIT_COMMIT_HASH=77f928aeab857cb45564462a4f849c2df2cca99a`.
+
+For more complex cases, see [How to programmatically set the correct Git information or source link on objects](../how-to/set-git-info/).
 
 ## Next steps
 

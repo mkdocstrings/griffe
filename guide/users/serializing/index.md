@@ -18,7 +18,6 @@ $ griffe dump httpx fastapi
     ...
   }
 }
-
 ```
 
 It will output a JSON-serialized version of the package's API data.
@@ -33,21 +32,18 @@ $ griffe dump griffe
     ...
   }
 }
-
 ```
 
 To output in a file instead of standard output, use the `-o`, `--output` option:
 
 ```
 $ griffe dump griffe -o griffe.json
-
 ```
 
 If you load multiple packages' signatures, you can dump each in its own file with a templated filepath:
 
 ```
 $ griffe dump griffe -o './dumps/{package}.json'
-
 ```
 
 By default, Griffe will search in `sys.path`, so if you installed it through *pipx*, there are few chances it will find your packages. To explicitly specify search paths, use the `-s, --search <PATH>` option. You can use it multiple times. You can also add the search paths to the `PYTHONPATH` environment variable. If Griffe can't find the packages, it will fail with a `ModuleNotFoundError`.
@@ -104,7 +100,6 @@ For example:
     }
   ]
 }
-
 ```
 
 The `members` value, truncated here, just repeats the pattern: it's an array of maps. We use an array for members instead of a map to preserve order, which could be important to downstream tools.

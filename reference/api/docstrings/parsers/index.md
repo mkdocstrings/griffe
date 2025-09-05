@@ -10,7 +10,6 @@ parse(
     parser: DocstringStyle | Parser | None,
     **options: Any,
 ) -> list[DocstringSection]
-
 ```
 
 Parse the docstring.
@@ -44,13 +43,9 @@ parse_auto(
     | list[DocstringStyle]
     | None = None,
     default: Parser | DocstringStyle | None = None,
-    per_style_options: dict[
-        Parser | DocstringStyle, dict[str, Any]
-    ]
-    | None = None,
+    per_style_options: PerStyleOptions | None = None,
     **options: Any,
 ) -> list[DocstringSection]
-
 ```
 
 Parse a docstring by automatically detecting the style it uses.
@@ -79,7 +74,7 @@ Parameters:
 
 - ### **`per_style_options`**
 
-  (`dict[Parser | DocstringStyle, dict[str, Any]] | None`, default: `None` ) – Additional parsing options per style.
+  (`PerStyleOptions | None`, default: `None` ) – Additional parsing options per style.
 
 - ### **`**options`**
 
@@ -107,7 +102,6 @@ parse_google(
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
-
 ```
 
 Parse a Google-style docstring.
@@ -162,7 +156,7 @@ Parameters:
 
 - ### **`**options`**
 
-  (`Any`, default: `{}` ) – Additional parsing options.
+  (`Any`, default: `{}` ) – Swallowing keyword arguments for backward-compatibility.
 
 Returns:
 
@@ -181,7 +175,6 @@ parse_numpy(
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
-
 ```
 
 Parse a Numpydoc-style docstring.
@@ -216,7 +209,7 @@ Parameters:
 
 - ### **`**options`**
 
-  (`Any`, default: `{}` ) – Additional parsing options.
+  (`Any`, default: `{}` ) – Swallowing keyword arguments for backward-compatibility.
 
 Returns:
 
@@ -232,7 +225,6 @@ parse_sphinx(
     warnings: bool = True,
     **options: Any,
 ) -> list[DocstringSection]
-
 ```
 
 Parse a Sphinx-style docstring.
@@ -253,7 +245,7 @@ Parameters:
 
 - ### **`**options`**
 
-  (`Any`, default: `{}` ) – Additional parsing options.
+  (`Any`, default: `{}` ) – Swallowing keyword arguments for backward-compatibility.
 
 Returns:
 
@@ -265,10 +257,327 @@ Returns:
 DocstringStyle = Literal[
     "google", "numpy", "sphinx", "auto"
 ]
-
 ```
 
 The supported docstring styles (literal values of the Parser enumeration).
+
+## **Parser options**
+
+## DocstringOptions
+
+```
+DocstringOptions = Union[
+    GoogleOptions, NumpyOptions, SphinxOptions, AutoOptions
+]
+```
+
+The options for each docstring style.
+
+## GoogleOptions
+
+Bases: `TypedDict`
+
+```
+              flowchart TD
+              griffe.GoogleOptions[GoogleOptions]
+
+              
+
+              click griffe.GoogleOptions href "" "griffe.GoogleOptions"
+```
+
+Options for parsing Google-style docstrings.
+
+Attributes:
+
+- **`ignore_init_summary`** (`bool`) – Whether to ignore the summary in __init__ methods' docstrings.
+- **`receives_multiple_items`** (`bool`) – Whether to parse multiple items in Receives sections.
+- **`receives_named_value`** (`bool`) – Whether to parse Receives section items as name and description, rather than type and description.
+- **`returns_multiple_items`** (`bool`) – Whether to parse multiple items in Yields and Returns sections.
+- **`returns_named_value`** (`bool`) – Whether to parse Yields and Returns section items as name and description, rather than type and description.
+- **`returns_type_in_property_summary`** (`bool`) – Whether to parse the return type of properties at the beginning of their summary.
+- **`trim_doctest_flags`** (`bool`) – Whether to remove doctest flags from Python example blocks.
+- **`warn_missing_types`** (`bool`) – Whether to warn about missing types/annotations for parameters, return values, etc.
+- **`warn_unknown_params`** (`bool`) – Whether to warn about unknown parameters.
+- **`warnings`** (`bool`) – Whether to issue warnings for parsing issues.
+
+### ignore_init_summary
+
+```
+ignore_init_summary: bool
+```
+
+Whether to ignore the summary in `__init__` methods' docstrings.
+
+### receives_multiple_items
+
+```
+receives_multiple_items: bool
+```
+
+Whether to parse multiple items in `Receives` sections.
+
+### receives_named_value
+
+```
+receives_named_value: bool
+```
+
+Whether to parse `Receives` section items as name and description, rather than type and description.
+
+### returns_multiple_items
+
+```
+returns_multiple_items: bool
+```
+
+Whether to parse multiple items in `Yields` and `Returns` sections.
+
+### returns_named_value
+
+```
+returns_named_value: bool
+```
+
+Whether to parse `Yields` and `Returns` section items as name and description, rather than type and description.
+
+### returns_type_in_property_summary
+
+```
+returns_type_in_property_summary: bool
+```
+
+Whether to parse the return type of properties at the beginning of their summary.
+
+### trim_doctest_flags
+
+```
+trim_doctest_flags: bool
+```
+
+Whether to remove doctest flags from Python example blocks.
+
+### warn_missing_types
+
+```
+warn_missing_types: bool
+```
+
+Whether to warn about missing types/annotations for parameters, return values, etc.
+
+### warn_unknown_params
+
+```
+warn_unknown_params: bool
+```
+
+Whether to warn about unknown parameters.
+
+### warnings
+
+```
+warnings: bool
+```
+
+Whether to issue warnings for parsing issues.
+
+## NumpyOptions
+
+Bases: `TypedDict`
+
+```
+              flowchart TD
+              griffe.NumpyOptions[NumpyOptions]
+
+              
+
+              click griffe.NumpyOptions href "" "griffe.NumpyOptions"
+```
+
+Options for parsing Numpydoc-style docstrings.
+
+Attributes:
+
+- **`ignore_init_summary`** (`bool`) – Whether to ignore the summary in __init__ methods' docstrings.
+- **`trim_doctest_flags`** (`bool`) – Whether to remove doctest flags from Python example blocks.
+- **`warn_missing_types`** (`bool`) – Whether to warn about missing types/annotations for parameters, return values, etc.
+- **`warn_unknown_params`** (`bool`) – Whether to warn about unknown parameters.
+- **`warnings`** (`bool`) – Whether to issue warnings for parsing issues.
+
+### ignore_init_summary
+
+```
+ignore_init_summary: bool
+```
+
+Whether to ignore the summary in `__init__` methods' docstrings.
+
+### trim_doctest_flags
+
+```
+trim_doctest_flags: bool
+```
+
+Whether to remove doctest flags from Python example blocks.
+
+### warn_missing_types
+
+```
+warn_missing_types: bool
+```
+
+Whether to warn about missing types/annotations for parameters, return values, etc.
+
+### warn_unknown_params
+
+```
+warn_unknown_params: bool
+```
+
+Whether to warn about unknown parameters.
+
+### warnings
+
+```
+warnings: bool
+```
+
+Whether to issue warnings for parsing issues.
+
+## SphinxOptions
+
+Bases: `TypedDict`
+
+```
+              flowchart TD
+              griffe.SphinxOptions[SphinxOptions]
+
+              
+
+              click griffe.SphinxOptions href "" "griffe.SphinxOptions"
+```
+
+Options for parsing Sphinx-style docstrings.
+
+Attributes:
+
+- **`warn_unknown_params`** (`bool`) – Whether to warn about unknown parameters.
+- **`warnings`** (`bool`) – Whether to issue warnings for parsing issues.
+
+### warn_unknown_params
+
+```
+warn_unknown_params: bool
+```
+
+Whether to warn about unknown parameters.
+
+### warnings
+
+```
+warnings: bool
+```
+
+Whether to issue warnings for parsing issues.
+
+## AutoOptions
+
+Bases: `TypedDict`
+
+```
+              flowchart TD
+              griffe.AutoOptions[AutoOptions]
+
+              
+
+              click griffe.AutoOptions href "" "griffe.AutoOptions"
+```
+
+Options for Auto-style docstrings.
+
+Attributes:
+
+- **`default`** (`Parser | DocstringStyle | None`) – The default parser to use if the inference fails.
+- **`method`** (`DocstringDetectionMethod`) – The method to use to infer the parser.
+- **`per_style_options`** (`PerStyleOptions | None`) – Additional parsing options per style.
+- **`style_order`** (`list[Parser] | list[DocstringStyle] | None`) – The order of styles to try when inferring the parser.
+
+### default
+
+```
+default: Parser | DocstringStyle | None
+```
+
+The default parser to use if the inference fails.
+
+### method
+
+```
+method: DocstringDetectionMethod
+```
+
+The method to use to infer the parser.
+
+### per_style_options
+
+```
+per_style_options: PerStyleOptions | None
+```
+
+Additional parsing options per style.
+
+### style_order
+
+```
+style_order: list[Parser] | list[DocstringStyle] | None
+```
+
+The order of styles to try when inferring the parser.
+
+## PerStyleOptions
+
+Bases: `TypedDict`
+
+```
+              flowchart TD
+              griffe.PerStyleOptions[PerStyleOptions]
+
+              
+
+              click griffe.PerStyleOptions href "" "griffe.PerStyleOptions"
+```
+
+Per-style options for docstring parsing.
+
+Attributes:
+
+- **`google`** (`GoogleOptions`) – Options for Google-style docstrings.
+- **`numpy`** (`NumpyOptions`) – Options for Numpy-style docstrings.
+- **`sphinx`** (`SphinxOptions`) – Options for Sphinx-style docstrings.
+
+### google
+
+```
+google: GoogleOptions
+```
+
+Options for Google-style docstrings.
+
+### numpy
+
+```
+numpy: NumpyOptions
+```
+
+Options for Numpy-style docstrings.
+
+### sphinx
+
+```
+sphinx: SphinxOptions
+```
+
+Options for Sphinx-style docstrings.
 
 ## **Advanced API**
 
@@ -277,14 +586,12 @@ The supported docstring styles (literal values of the Parser enumeration).
 Bases: `str`, `Enum`
 
 ```
-
               flowchart TD
               griffe.Parser[Parser]
 
               
 
               click griffe.Parser href "" "griffe.Parser"
-            
 ```
 
 Enumeration of the different docstring parsers.
@@ -300,7 +607,6 @@ Attributes:
 
 ```
 auto = 'auto'
-
 ```
 
 Infer docstring parser.
@@ -311,7 +617,6 @@ Infer docstring parser.
 
 ```
 google = 'google'
-
 ```
 
 Google-style docstrings parser.
@@ -320,7 +625,6 @@ Google-style docstrings parser.
 
 ```
 numpy = 'numpy'
-
 ```
 
 Numpydoc-style docstrings parser.
@@ -329,7 +633,6 @@ Numpydoc-style docstrings parser.
 
 ```
 sphinx = 'sphinx'
-
 ```
 
 Sphinx-style docstrings parser.
@@ -345,7 +648,6 @@ parsers: dict[
     sphinx: parse_sphinx,
     numpy: parse_numpy,
 }
-
 ```
 
 ## parse_docstring_annotation
@@ -356,7 +658,6 @@ parse_docstring_annotation(
     docstring: Docstring,
     log_level: LogLevel = error,
 ) -> str | Expr
-
 ```
 
 Parse a string into a true name or expression that can be resolved later.
@@ -388,7 +689,6 @@ docstring_warning(
     message: str,
     log_level: LogLevel = warning,
 ) -> None
-
 ```
 
 Log a warning when parsing a docstring.
@@ -419,7 +719,6 @@ Returns:
 DocstringDetectionMethod = Literal[
     "heuristics", "max_sections"
 ]
-
 ```
 
 The supported methods to infer docstring styles.
@@ -435,13 +734,9 @@ infer_docstring_style(
     | list[DocstringStyle]
     | None = None,
     default: Parser | DocstringStyle | None = None,
-    per_style_options: dict[
-        Parser | DocstringStyle, dict[str, Any]
-    ]
-    | None = None,
+    per_style_options: PerStyleOptions | None = None,
     **options: Any,
 ) -> tuple[Parser | None, list[DocstringSection] | None]
-
 ```
 
 Infer the parser to use for the docstring.
@@ -476,7 +771,7 @@ Parameters:
 
 - ### **`per_style_options`**
 
-  (`dict[Parser | DocstringStyle, dict[str, Any]] | None`, default: `None` ) – Additional parsing options per style.
+  (`PerStyleOptions | None`, default: `None` ) – Additional parsing options per style.
 
 - ### **`**options`**
 

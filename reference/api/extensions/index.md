@@ -6,7 +6,6 @@
 
 ```
 load_extensions(*exts: LoadableExtensionType) -> Extensions
-
 ```
 
 Load configured extensions.
@@ -30,31 +29,36 @@ Methods:
 - **`generic_inspect`** – Extend the base generic inspection with extensions.
 - **`generic_visit`** – Visit children nodes.
 - **`inspect`** – Inspect a node.
-- **`on_alias`** – Run when an Alias has been created.
+- **`on_alias`** – Run on aliases once the object tree has been fully constructed.
+- **`on_alias_instance`** – Run when an Alias has been created.
+- **`on_attribute`** – Run on attributes once the object tree has been fully constructed.
 - **`on_attribute_instance`** – Run when an Attribute has been created.
 - **`on_attribute_node`** – Run when visiting a new attribute node during static/dynamic analysis.
+- **`on_class`** – Run on classes once the object tree has been fully constructed.
 - **`on_class_instance`** – Run when a Class has been created.
 - **`on_class_members`** – Run when members of a Class have been loaded.
 - **`on_class_node`** – Run when visiting a new class node during static/dynamic analysis.
+- **`on_function`** – Run on functions once the object tree has been fully constructed.
 - **`on_function_instance`** – Run when a Function has been created.
 - **`on_function_node`** – Run when visiting a new function node during static/dynamic analysis.
 - **`on_instance`** – Run when an Object has been created.
 - **`on_members`** – Run when members of an Object have been loaded.
+- **`on_module`** – Run on modules once the object tree has been fully constructed.
 - **`on_module_instance`** – Run when a Module has been created.
 - **`on_module_members`** – Run when members of a Module have been loaded.
 - **`on_module_node`** – Run when visiting a new module node during static/dynamic analysis.
 - **`on_node`** – Run when visiting a new node during static/dynamic analysis.
-- **`on_package_loaded`** – Run when a package has been completely loaded.
+- **`on_object`** – Run on objects (every kind) once the object tree has been fully constructed.
+- **`on_package`** – Run when a package has been completely loaded.
+- **`on_type_alias`** – Run on type aliases once the object tree has been fully constructed.
 - **`on_type_alias_instance`** – Run when a TypeAlias has been created.
 - **`on_type_alias_node`** – Run when visiting a new type alias node during static/dynamic analysis.
-- **`on_wildcard_expansion`** – Run when wildcard imports are expanded into aliases.
 - **`visit`** – Visit a node.
 
 ### generic_inspect
 
 ```
 generic_inspect(node: ObjectNode) -> None
-
 ```
 
 Extend the base generic inspection with extensions.
@@ -69,7 +73,6 @@ Parameters:
 
 ```
 generic_visit(node: AST) -> None
-
 ```
 
 Visit children nodes.
@@ -84,7 +87,6 @@ Parameters:
 
 ```
 inspect(node: ObjectNode) -> None
-
 ```
 
 Inspect a node.
@@ -99,16 +101,47 @@ Parameters:
 
 ```
 on_alias(
+    *, alias: Alias, loader: GriffeLoader, **kwargs: Any
+) -> None
+```
+
+Run on aliases once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`alias`**
+
+  (`Alias`) – The alias instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
+### on_alias_instance
+
+```
+on_alias_instance(
     *,
     node: AST | ObjectNode,
     alias: Alias,
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when an Alias has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -128,6 +161,34 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
+### on_attribute
+
+```
+on_attribute(
+    *, attr: Attribute, loader: GriffeLoader, **kwargs: Any
+) -> None
+```
+
+Run on attributes once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`attr`**
+
+  (`Attribute`) – The attribute instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
 ### on_attribute_instance
 
 ```
@@ -138,10 +199,13 @@ on_attribute_instance(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when an Attribute has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -170,7 +234,6 @@ on_attribute_node(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when visiting a new attribute node during static/dynamic analysis.
@@ -189,6 +252,34 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
+### on_class
+
+```
+on_class(
+    *, cls: Class, loader: GriffeLoader, **kwargs: Any
+) -> None
+```
+
+Run on classes once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`cls`**
+
+  (`Class`) – The class instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
 ### on_class_instance
 
 ```
@@ -199,10 +290,13 @@ on_class_instance(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when a Class has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -232,10 +326,13 @@ on_class_members(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when members of a Class have been loaded.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -264,7 +361,6 @@ on_class_node(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when visiting a new class node during static/dynamic analysis.
@@ -283,6 +379,34 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
+### on_function
+
+```
+on_function(
+    *, func: Function, loader: GriffeLoader, **kwargs: Any
+) -> None
+```
+
+Run on functions once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`func`**
+
+  (`Function`) – The function instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
 ### on_function_instance
 
 ```
@@ -293,10 +417,13 @@ on_function_instance(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when a Function has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -325,7 +452,6 @@ on_function_node(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when visiting a new function node during static/dynamic analysis.
@@ -354,10 +480,13 @@ on_instance(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when an Object has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -387,10 +516,13 @@ on_members(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when members of an Object have been loaded.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -410,6 +542,34 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
+### on_module
+
+```
+on_module(
+    *, mod: Module, loader: GriffeLoader, **kwargs: Any
+) -> None
+```
+
+Run on modules once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`mod`**
+
+  (`Module`) – The module instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
 ### on_module_instance
 
 ```
@@ -420,10 +580,13 @@ on_module_instance(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when a Module has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -453,10 +616,13 @@ on_module_members(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when members of a Module have been loaded.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -485,7 +651,6 @@ on_module_node(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when visiting a new module node during static/dynamic analysis.
@@ -513,7 +678,6 @@ on_node(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when visiting a new node during static/dynamic analysis.
@@ -524,22 +688,84 @@ Parameters:
 
   (`AST | ObjectNode`) – The currently visited node.
 
-### on_package_loaded
+### on_object
 
 ```
-on_package_loaded(
+on_object(
+    *, obj: Object, loader: GriffeLoader, **kwargs: Any
+) -> None
+```
+
+Run on objects (every kind) once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`obj`**
+
+  (`Object`) – The object instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
+### on_package
+
+```
+on_package(
     *, pkg: Module, loader: GriffeLoader, **kwargs: Any
 ) -> None
-
 ```
 
 Run when a package has been completely loaded.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
 
 Parameters:
 
 - #### **`pkg`**
 
   (`Module`) – The package (Module) instance.
+
+- #### **`loader`**
+
+  (`GriffeLoader`) – The loader currently in use.
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – For forward-compatibility.
+
+### on_type_alias
+
+```
+on_type_alias(
+    *,
+    type_alias: TypeAlias,
+    loader: GriffeLoader,
+    **kwargs: Any,
+) -> None
+```
+
+Run on type aliases once the object tree has been fully constructed.
+
+Note
+
+This method runs once the object tree has been fully constructed: data is therefore complete and you can safely hook onto this event.
+
+Parameters:
+
+- #### **`type_alias`**
+
+  (`TypeAlias`) – The type alias instance.
 
 - #### **`loader`**
 
@@ -559,10 +785,13 @@ on_type_alias_instance(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when a TypeAlias has been created.
+
+Warning
+
+This method runs while the object tree is still being constructed: data might be incomplete (class inheritance, alias resolution, etc.). Only hook onto this event if you know what you're doing.
 
 Parameters:
 
@@ -591,7 +820,6 @@ on_type_alias_node(
     agent: Visitor | Inspector,
     **kwargs: Any,
 ) -> None
-
 ```
 
 Run when visiting a new type alias node during static/dynamic analysis.
@@ -610,36 +838,10 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-### on_wildcard_expansion
-
-```
-on_wildcard_expansion(
-    *, alias: Alias, loader: GriffeLoader, **kwargs: Any
-) -> None
-
-```
-
-Run when wildcard imports are expanded into aliases.
-
-Parameters:
-
-- #### **`alias`**
-
-  (`Alias`) – The alias instance.
-
-- #### **`loader`**
-
-  (`GriffeLoader`) – The loader currently in use.
-
-- #### **`**kwargs`**
-
-  (`Any`, default: `{}` ) – For forward-compatibility.
-
 ### visit
 
 ```
 visit(node: AST) -> None
-
 ```
 
 Visit a node.
@@ -656,7 +858,6 @@ Parameters:
 
 ```
 Extensions(*extensions: Extension)
-
 ```
 
 This class helps iterating on extensions that should run at different times.
@@ -676,7 +877,6 @@ Methods:
 
 ```
 add(*extensions: Extension) -> None
-
 ```
 
 Add extensions to this container.
@@ -691,7 +891,6 @@ Parameters:
 
 ```
 call(event: str, **kwargs: Any) -> None
-
 ```
 
 Call the extension hook for the given event.
@@ -714,7 +913,6 @@ Parameters:
 LoadableExtensionType = Union[
     str, dict[str, Any], Extension, type[Extension]
 ]
-
 ```
 
 All the types that can be passed to `load_extensions`.
@@ -725,7 +923,6 @@ All the types that can be passed to `load_extensions`.
 
 ```
 builtin_extensions: set[str] = {'dataclasses'}
-
 ```
 
 The names of built-in Griffe extensions.
@@ -735,7 +932,6 @@ The names of built-in Griffe extensions.
 Bases: `Extension`
 
 ```
-
               flowchart TD
               griffe.DataclassesExtension[DataclassesExtension]
               griffe._internal.extensions.base.Extension[Extension]
@@ -746,7 +942,6 @@ Bases: `Extension`
 
               click griffe.DataclassesExtension href "" "griffe.DataclassesExtension"
               click griffe._internal.extensions.base.Extension href "" "griffe._internal.extensions.base.Extension"
-            
 ```
 
 Built-in extension adding support for dataclasses.
@@ -755,13 +950,12 @@ This extension creates `__init__` methods of dataclasses if they don't already e
 
 Methods:
 
-- **`on_package_loaded`** – Hook for loaded packages.
+- **`on_package`** – Hook for loaded packages.
 
-### on_package_loaded
+### on_package
 
 ```
-on_package_loaded(*, pkg: Module, **kwargs: Any) -> None
-
+on_package(*, pkg: Module, **kwargs: Any) -> None
 ```
 
 Hook for loaded packages.

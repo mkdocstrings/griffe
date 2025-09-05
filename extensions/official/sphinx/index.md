@@ -27,7 +27,6 @@ class Hello:
     def __init__(self):
         #: Summary of `instance_attr`.
         self.instance_attr = "hello"
-
 ```
 
 Comments are treated exactly like regular docstrings: they are "cleaned" (dedented and stripped of leading and trailing newlines) and can contain any markup you want, be it Markdown, rST, AsciiDoc, etc.
@@ -36,5 +35,4 @@ Trailing comments are not supported:
 
 ```
 module_attr  #: This is not supported.
-
 ```

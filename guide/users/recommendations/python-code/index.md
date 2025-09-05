@@ -14,21 +14,18 @@ Sometimes we find that an `__init__` module defines or imports an object which h
 └── 📁 subpackage/
     ├──  __init__.py
     └──  thing.py
-
 ```
 
 package/subpackage/__init__.py
 
 ```
 thing = "thing from init module"
-
 ```
 
 package/subpackage/thing.py
 
 ```
 other_thing = "other thing from thing submodule"
-
 ```
 
 We recommend not doing that.
@@ -42,7 +39,6 @@ echo 'thing = "thing from init module"' > package/subpackage/__init__.py
 echo 'other_thing = "other thing from thing submodule"' > package/subpackage/thing.py
 # Run a Python interpreter.
 python
-
 ```
 
 ```
@@ -53,7 +49,6 @@ python
 >>> from package.subpackage.thing import other_thing
 >>> subpackage.thing
 <module 'package.subpackage.thing' from 'package/subpackage/thing.py'>
-
 ```
 
 By simply importing from the `thing` submodule, the `thing` attribute of `subpackage` was overwritten by the `thing` submodule.
@@ -66,14 +61,12 @@ package/subpackage/__init__.py
 
 ```
 from package.subpackage.thing import thing
-
 ```
 
 package/subpackage/thing.py
 
 ```
 thing = "thing from thing submodule"
-
 ```
 
 ```
@@ -82,7 +75,6 @@ echo 'from package.subpackage.thing import thing' > package/subpackage/__init__.
 echo 'thing = "thing from thing submodule"' > package/subpackage/thing.py
 # Run a Python interpreter.
 python
-
 ```
 
 ```
@@ -94,7 +86,6 @@ python
 >>> subpackage.thing
 'thing from thing'
 >>> # Still OK
-
 ```
 
 From an API perspective, and given that both cases are very similar but differ in behavior, we recommend not doing that either.
@@ -107,7 +98,6 @@ If the goal is to isolate a single object into its own module, to then expose it
 └── 📁 subpackage/
     ├──  __init__.py
     └──  _thing.py
-
 ```
 
 With this, there is no ambiguity as to what `subpackage.thing` points to.
@@ -122,7 +112,6 @@ Wildcard imports allow importing from a module all objects that do not start wit
 📁 package/
 ├──  __init__.py
 └──  module.py
-
 ```
 
 **Explicitly exposed to wildcard imports**
@@ -144,7 +133,6 @@ def some_other_function(): ...
 
 some_attribute = 0
 some_other_attribute = 1
-
 ```
 
 **Implicitly exposed to wildcard imports**
@@ -160,7 +148,6 @@ def _some_other_function(): ...
 
 some_attribute = 0
 _some_other_attribute = 1
-
 ```
 
 In both cases, using a wildcard import will only import `SomeClass`, `some_function` and `some_attribute`, and not their "other" counterparts:
@@ -169,7 +156,6 @@ package/__init__.py
 
 ```
 from package.module import *
-
 ```
 
 While we recommend declaring your public API with `__all__` lists, we do not recommend using wildcard imports.
@@ -189,7 +175,6 @@ def _some_other_function(): ...
 
 some_attribute = 0
 _some_other_attribute = 1
-
 ```
 
 Here, `this` and `that` will also be imported when we do `from package.module import *`. To prevent that, we would have to alias these names as such:
@@ -198,7 +183,6 @@ package/module.py
 
 ```
 from somewhere_else import this as _this, that as _that
-
 ```
 
 ...which is not ideal.
@@ -209,7 +193,6 @@ package/module.py
 
 ```
 from somewhere_else import *
-
 ```
 
 Now using `from package.module import *` will import all objects that do not start with an underscore declared in the module, but also all the objects imported by it that do not start with an underscore, and also all the objects imported by the modules of the imported objects that do not start with an underscore, etc., recursively. Soon enough, we end up with dozens and dozens of objects exposed in `package`, while just a few of them are useful/meaningful to users.
@@ -227,7 +210,6 @@ For these reasons, we recommend not using wildcard imports. Instead, we recommen
 ├──  __init__.py
 ├──  module.py
 └──  other_module.py
-
 ```
 
 Completely explicit:
@@ -246,7 +228,6 @@ __all__ = [
 ]
 
 def function(): ...
-
 ```
 
 Combining `__all__` lists:
@@ -264,7 +245,6 @@ __all__ = [
 ]
 
 def function(): ...
-
 ```
 
 Most Python linting tools allow you to forbid the use of wildcard imports.
@@ -280,21 +260,18 @@ Given the following tree:
 ├──  __init__.py
 ├──  module_a.py
 └──  module_b.py
-
 ```
 
 package/module_a.py
 
 ```
 from package.module_b import thing
-
 ```
 
 package/module_b.py
 
 ```
 thing = True
-
 ```
 
 Don't do that:
@@ -303,7 +280,6 @@ package/__init__.py
 
 ```
 from package.module_a import thing  # Indirect import, bad.
-
 ```
 
 Instead, do this:
@@ -312,7 +288,6 @@ package/__init__.py
 
 ```
 from package.module_b import thing  # Canonical import, good.
-
 ```
 
 ______________________________________________________________________
@@ -323,14 +298,12 @@ package/__init__.py
 
 ```
 from package.module_a import thing  # Canonical import, good.
-
 ```
 
 package/module_a.py
 
 ```
 thing = True
-
 ```
 
 package/module_b.py
@@ -340,7 +313,6 @@ from package import thing  # Indirect import passing through parent, bad.
 
 # Do this instead:
 from package.module_a import thing  # Canonical import, good.
-
 ```
 
 ______________________________________________________________________
@@ -356,7 +328,6 @@ __all__ = ["np"]  # Bad.
 
 # Recommending users to do `from package import np`
 # or `import package; package.np.etc`: bad.
-
 ```
 
 Instead, let users import Numpy themselves, with `import numpy as np`. This will help other analysis tools, for example to detect that Numpy is used directly and should therefore be listed as a dependency. To quote [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
@@ -394,14 +365,12 @@ A practice that seems common in projects including compiled modules in their dis
 ├──  __init__.py
 ├──  module.py
 └──  _module.cpython-312-x86_64-linux-gnu.so
-
 ```
 
 package/module.py
 
 ```
 from package._module import *
-
 ```
 
 Since the objects are exposed in `package.module` instead of `package._module`, developers sometimes decide to make their compiled objects lie about their location, and make them say that they are defined in `package.module` instead of `package._module`. Example:
@@ -410,7 +379,6 @@ Since the objects are exposed in `package.module` instead of `package._module`, 
 >>> from package._module import MyObject
 >>> MyObject.__module__
 'package.module'
-
 ```
 
 **Don't do that.**
@@ -433,7 +401,6 @@ For example with [PyO3](https://github.com/PyO3/pyo3):
 struct MyClass {
     // ...
 }
-
 ```
 
 Some modules of the standard library are guilty of this too, and do so inconsistently (`ast` and `_ast`, `io` and `_io`, depending on the Python version...). For this reason, when checking if an object was declared in the currently inspected module, Griffe ultimately considers that any qualified name is equal to itself with each component stripped from leading underscores:
@@ -443,7 +410,6 @@ a.b.c == _a.b.c
 a.b.c == _a._b._c
 a.__b._c == __a.b.c
 ...
-
 ```
 
 When the qualified name of the object's parent module and the currently inspected module match like above, the object is inspected in-place (added as a member of the currently inspected module) instead of created as an alias.
@@ -468,7 +434,6 @@ class FooBar(Foo['Bar']):
 
 class Bar:
     ...
-
 ```
 
 ```
@@ -482,7 +447,6 @@ class FooBar(Foo['Bar']):
 
 class Bar:
     ...
-
 ```
 
 While Griffe will load this code without error, the `'Bar'` forward reference won't be resolved to the actual `Bar` class. As a consequence, downstream tools like documentation renderers won't be able to output a link to the `Bar` class. We therefore recommend to avoid using forward references in base classes, if possible.
@@ -507,7 +471,6 @@ Instead, you can try one of the following approach:
 
   class Bar:
       ...
-
   ```
 
 - make `FooBar` generic again but with a default type:
@@ -523,5 +486,4 @@ Instead, you can try one of the following approach:
 
   class Bar:
       ...
-
   ```

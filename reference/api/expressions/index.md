@@ -6,7 +6,6 @@
 
 ```
 get_annotation = partial(get_expression, parse_strings=None)
-
 ```
 
 ## get_base_class
@@ -15,14 +14,12 @@ get_annotation = partial(get_expression, parse_strings=None)
 get_base_class = partial(
     get_expression, parse_strings=False
 )
-
 ```
 
 ## get_condition
 
 ```
 get_condition = partial(get_expression, parse_strings=False)
-
 ```
 
 ## get_expression
@@ -35,7 +32,6 @@ get_expression(
     member: str | None = None,
     parse_strings: bool | None = None,
 ) -> Expr | None
-
 ```
 
 Build an expression from an AST.
@@ -70,7 +66,6 @@ safe_get_annotation = partial(
     parse_strings=None,
     msg_format=_msg_format % "annotation",
 )
-
 ```
 
 ## safe_get_base_class
@@ -81,7 +76,6 @@ safe_get_base_class = partial(
     parse_strings=False,
     msg_format=_msg_format % "base class",
 )
-
 ```
 
 ## safe_get_condition
@@ -92,7 +86,6 @@ safe_get_condition = partial(
     parse_strings=False,
     msg_format=_msg_format % "condition",
 )
-
 ```
 
 ## safe_get_expression
@@ -107,7 +100,6 @@ safe_get_expression(
     log_level: LogLevel | None = error,
     msg_format: str = "{path}:{lineno}: Failed to get expression from {node_class}: {error}",
 ) -> Expr | None
-
 ```
 
 Safely (no exception) build a resolvable annotation.
@@ -148,7 +140,6 @@ Returns:
 
 ```
 Expr()
-
 ```
 
 Base class for expressions.
@@ -175,7 +166,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -184,7 +174,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -193,7 +182,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -202,7 +190,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -211,7 +198,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -220,7 +206,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -229,7 +214,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -238,7 +222,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -247,7 +230,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -256,7 +238,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -275,7 +256,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -294,7 +274,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -309,13 +288,11 @@ Returns:
 
 ```
 ExprAttribute(values: list[str | Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprAttribute[ExprAttribute]
               griffe._internal.expressions.Expr[Expr]
@@ -326,7 +303,6 @@ Bases: `Expr`
 
               click griffe.ExprAttribute href "" "griffe.ExprAttribute"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Attributes like `a.b`.
@@ -357,7 +333,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -366,7 +341,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 The canonical path of this attribute.
@@ -375,7 +349,6 @@ The canonical path of this attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -384,7 +357,6 @@ The expression class name.
 
 ```
 first: str | Expr
-
 ```
 
 The first part of this attribute (on the left).
@@ -393,7 +365,6 @@ The first part of this attribute (on the left).
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -402,7 +373,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -411,7 +381,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -420,7 +389,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -429,7 +397,6 @@ Whether this expression is a tuple.
 
 ```
 last: ExprName
-
 ```
 
 The last part of this attribute (on the right).
@@ -438,7 +405,6 @@ The last part of this attribute (on the right).
 
 ```
 path: str
-
 ```
 
 The path of this attribute.
@@ -447,7 +413,6 @@ The path of this attribute.
 
 ```
 values: list[str | Expr]
-
 ```
 
 The different parts of the dotted chain.
@@ -456,7 +421,6 @@ The different parts of the dotted chain.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -465,7 +429,6 @@ Iterate on the expression syntax and elements.
 
 ```
 append(value: ExprName) -> None
-
 ```
 
 Append a name to this attribute.
@@ -480,7 +443,6 @@ Parameters:
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -499,7 +461,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -518,7 +479,6 @@ Yields:
 
 ```
 modernize() -> ExprName | ExprAttribute
-
 ```
 
 Modernize the expression.
@@ -535,13 +495,11 @@ Returns:
 ExprBinOp(
     left: str | Expr, operator: str, right: str | Expr
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprBinOp[ExprBinOp]
               griffe._internal.expressions.Expr[Expr]
@@ -552,7 +510,6 @@ Bases: `Expr`
 
               click griffe.ExprBinOp href "" "griffe.ExprBinOp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Binary operations like `a + b`.
@@ -582,7 +539,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -591,7 +547,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -600,7 +555,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -609,7 +563,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -618,7 +571,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -627,7 +579,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -636,7 +587,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -645,7 +595,6 @@ Whether this expression is a tuple.
 
 ```
 left: str | Expr
-
 ```
 
 Left part.
@@ -654,7 +603,6 @@ Left part.
 
 ```
 operator: str
-
 ```
 
 Binary operator.
@@ -663,7 +611,6 @@ Binary operator.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -672,7 +619,6 @@ Path of the expressed name/attribute.
 
 ```
 right: str | Expr
-
 ```
 
 Right part.
@@ -681,7 +627,6 @@ Right part.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -690,7 +635,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -709,7 +653,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -728,7 +671,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -743,13 +685,11 @@ Returns:
 
 ```
 ExprBoolOp(operator: str, values: Sequence[str | Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprBoolOp[ExprBoolOp]
               griffe._internal.expressions.Expr[Expr]
@@ -760,7 +700,6 @@ Bases: `Expr`
 
               click griffe.ExprBoolOp href "" "griffe.ExprBoolOp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Boolean operations like `a or b`.
@@ -789,7 +728,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -798,7 +736,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -807,7 +744,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -816,7 +752,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -825,7 +760,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -834,7 +768,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -843,7 +776,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -852,7 +784,6 @@ Whether this expression is a tuple.
 
 ```
 operator: str
-
 ```
 
 Boolean operator.
@@ -861,7 +792,6 @@ Boolean operator.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -870,7 +800,6 @@ Path of the expressed name/attribute.
 
 ```
 values: Sequence[str | Expr]
-
 ```
 
 Operands.
@@ -879,7 +808,6 @@ Operands.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -888,7 +816,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -907,7 +834,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -926,7 +852,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -941,13 +866,11 @@ Returns:
 
 ```
 ExprCall(function: Expr, arguments: Sequence[str | Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprCall[ExprCall]
               griffe._internal.expressions.Expr[Expr]
@@ -958,7 +881,6 @@ Bases: `Expr`
 
               click griffe.ExprCall href "" "griffe.ExprCall"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Calls like `f()`.
@@ -987,7 +909,6 @@ Attributes:
 
 ```
 arguments: Sequence[str | Expr]
-
 ```
 
 Passed arguments.
@@ -996,7 +917,6 @@ Passed arguments.
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -1005,7 +925,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 The canonical path of this subscript's left part.
@@ -1014,7 +933,6 @@ The canonical path of this subscript's left part.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -1023,7 +941,6 @@ The expression class name.
 
 ```
 function: Expr
-
 ```
 
 Function called.
@@ -1032,7 +949,6 @@ Function called.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -1041,7 +957,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -1050,7 +965,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -1059,7 +973,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -1068,7 +981,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1077,7 +989,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -1086,7 +997,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -1105,7 +1015,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -1124,7 +1033,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -1143,13 +1051,11 @@ ExprCompare(
     operators: Sequence[str],
     comparators: Sequence[str | Expr],
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprCompare[ExprCompare]
               griffe._internal.expressions.Expr[Expr]
@@ -1160,7 +1066,6 @@ Bases: `Expr`
 
               click griffe.ExprCompare href "" "griffe.ExprCompare"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Comparisons like `a > b`.
@@ -1190,7 +1095,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -1199,7 +1103,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1208,7 +1111,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -1217,7 +1119,6 @@ The expression class name.
 
 ```
 comparators: Sequence[str | Expr]
-
 ```
 
 Things compared.
@@ -1226,7 +1127,6 @@ Things compared.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -1235,7 +1135,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -1244,7 +1143,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -1253,7 +1151,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -1262,7 +1159,6 @@ Whether this expression is a tuple.
 
 ```
 left: str | Expr
-
 ```
 
 Left part.
@@ -1271,7 +1167,6 @@ Left part.
 
 ```
 operators: Sequence[str]
-
 ```
 
 Comparison operators.
@@ -1280,7 +1175,6 @@ Comparison operators.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1289,7 +1183,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -1298,7 +1191,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -1317,7 +1209,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -1336,7 +1227,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -1356,13 +1246,11 @@ ExprComprehension(
     conditions: Sequence[str | Expr],
     is_async: bool = False,
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprComprehension[ExprComprehension]
               griffe._internal.expressions.Expr[Expr]
@@ -1373,7 +1261,6 @@ Bases: `Expr`
 
               click griffe.ExprComprehension href "" "griffe.ExprComprehension"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Comprehensions like `a for b in c if d`.
@@ -1404,7 +1291,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -1413,7 +1299,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1422,7 +1307,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -1431,7 +1315,6 @@ The expression class name.
 
 ```
 conditions: Sequence[str | Expr]
-
 ```
 
 Conditions to include the target in the result.
@@ -1440,7 +1323,6 @@ Conditions to include the target in the result.
 
 ```
 is_async: bool = False
-
 ```
 
 Async comprehension or not.
@@ -1449,7 +1331,6 @@ Async comprehension or not.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -1458,7 +1339,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -1467,7 +1347,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -1476,7 +1355,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -1485,7 +1363,6 @@ Whether this expression is a tuple.
 
 ```
 iterable: str | Expr
-
 ```
 
 Value iterated on.
@@ -1494,7 +1371,6 @@ Value iterated on.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1503,7 +1379,6 @@ Path of the expressed name/attribute.
 
 ```
 target: str | Expr
-
 ```
 
 Comprehension target (value added to the result).
@@ -1512,7 +1387,6 @@ Comprehension target (value added to the result).
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -1521,7 +1395,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -1540,7 +1413,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -1559,7 +1431,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -1574,13 +1445,11 @@ Returns:
 
 ```
 ExprConstant(value: str)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprConstant[ExprConstant]
               griffe._internal.expressions.Expr[Expr]
@@ -1591,7 +1460,6 @@ Bases: `Expr`
 
               click griffe.ExprConstant href "" "griffe.ExprConstant"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Constants like `"a"` or `1`.
@@ -1619,7 +1487,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -1628,7 +1495,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1637,7 +1503,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -1646,7 +1511,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -1655,7 +1519,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -1664,7 +1527,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -1673,7 +1535,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -1682,7 +1543,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1691,7 +1551,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str
-
 ```
 
 Constant value.
@@ -1700,7 +1559,6 @@ Constant value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -1709,7 +1567,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -1728,7 +1585,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -1747,7 +1603,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -1765,13 +1620,11 @@ ExprDict(
     keys: Sequence[str | Expr | None],
     values: Sequence[str | Expr],
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprDict[ExprDict]
               griffe._internal.expressions.Expr[Expr]
@@ -1782,7 +1635,6 @@ Bases: `Expr`
 
               click griffe.ExprDict href "" "griffe.ExprDict"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Dictionaries like `{"a": 0}`.
@@ -1811,7 +1663,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -1820,7 +1671,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1829,7 +1679,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -1838,7 +1687,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -1847,7 +1695,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -1856,7 +1703,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -1865,7 +1711,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -1874,7 +1719,6 @@ Whether this expression is a tuple.
 
 ```
 keys: Sequence[str | Expr | None]
-
 ```
 
 Dict keys.
@@ -1883,7 +1727,6 @@ Dict keys.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -1892,7 +1735,6 @@ Path of the expressed name/attribute.
 
 ```
 values: Sequence[str | Expr]
-
 ```
 
 Dict values.
@@ -1901,7 +1743,6 @@ Dict values.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -1910,7 +1751,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -1929,7 +1769,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -1948,7 +1787,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -1967,13 +1805,11 @@ ExprDictComp(
     value: str | Expr,
     generators: Sequence[Expr],
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprDictComp[ExprDictComp]
               griffe._internal.expressions.Expr[Expr]
@@ -1984,7 +1820,6 @@ Bases: `Expr`
 
               click griffe.ExprDictComp href "" "griffe.ExprDictComp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Dict comprehensions like `{k: v for k, v in a}`.
@@ -2014,7 +1849,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -2023,7 +1857,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2032,7 +1865,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -2041,7 +1873,6 @@ The expression class name.
 
 ```
 generators: Sequence[Expr]
-
 ```
 
 Generators iterated on.
@@ -2050,7 +1881,6 @@ Generators iterated on.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -2059,7 +1889,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -2068,7 +1897,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -2077,7 +1905,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -2086,7 +1913,6 @@ Whether this expression is a tuple.
 
 ```
 key: str | Expr
-
 ```
 
 Target key.
@@ -2095,7 +1921,6 @@ Target key.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2104,7 +1929,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str | Expr
-
 ```
 
 Target value.
@@ -2113,7 +1937,6 @@ Target value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -2122,7 +1945,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -2141,7 +1963,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -2160,7 +1981,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -2175,13 +1995,11 @@ Returns:
 
 ```
 ExprExtSlice(dims: Sequence[str | Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprExtSlice[ExprExtSlice]
               griffe._internal.expressions.Expr[Expr]
@@ -2192,7 +2010,6 @@ Bases: `Expr`
 
               click griffe.ExprExtSlice href "" "griffe.ExprExtSlice"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Extended slice like `a[x:y, z]`.
@@ -2220,7 +2037,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -2229,7 +2045,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2238,7 +2053,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -2247,7 +2061,6 @@ The expression class name.
 
 ```
 dims: Sequence[str | Expr]
-
 ```
 
 Dims.
@@ -2256,7 +2069,6 @@ Dims.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -2265,7 +2077,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -2274,7 +2085,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -2283,7 +2093,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -2292,7 +2101,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2301,7 +2109,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -2310,7 +2117,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -2329,7 +2135,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -2348,7 +2153,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -2363,13 +2167,11 @@ Returns:
 
 ```
 ExprFormatted(value: str | Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprFormatted[ExprFormatted]
               griffe._internal.expressions.Expr[Expr]
@@ -2380,7 +2182,6 @@ Bases: `Expr`
 
               click griffe.ExprFormatted href "" "griffe.ExprFormatted"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Formatted string like `{1 + 1}`.
@@ -2408,7 +2209,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -2417,7 +2217,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2426,7 +2225,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -2435,7 +2233,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -2444,7 +2241,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -2453,7 +2249,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -2462,7 +2257,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -2471,7 +2265,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2480,7 +2273,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str | Expr
-
 ```
 
 Formatted value.
@@ -2489,7 +2281,6 @@ Formatted value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -2498,7 +2289,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -2517,7 +2307,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -2536,7 +2325,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -2553,13 +2341,11 @@ Returns:
 ExprGeneratorExp(
     element: str | Expr, generators: Sequence[Expr]
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprGeneratorExp[ExprGeneratorExp]
               griffe._internal.expressions.Expr[Expr]
@@ -2570,7 +2356,6 @@ Bases: `Expr`
 
               click griffe.ExprGeneratorExp href "" "griffe.ExprGeneratorExp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Generator expressions like `a for b in c for d in e`.
@@ -2599,7 +2384,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -2608,7 +2392,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2617,7 +2400,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -2626,7 +2408,6 @@ The expression class name.
 
 ```
 element: str | Expr
-
 ```
 
 Yielded element.
@@ -2635,7 +2416,6 @@ Yielded element.
 
 ```
 generators: Sequence[Expr]
-
 ```
 
 Generators iterated on.
@@ -2644,7 +2424,6 @@ Generators iterated on.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -2653,7 +2432,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -2662,7 +2440,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -2671,7 +2448,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -2680,7 +2456,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2689,7 +2464,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -2698,7 +2472,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -2717,7 +2490,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -2736,7 +2508,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -2753,13 +2524,11 @@ Returns:
 ExprIfExp(
     body: str | Expr, test: str | Expr, orelse: str | Expr
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprIfExp[ExprIfExp]
               griffe._internal.expressions.Expr[Expr]
@@ -2770,7 +2539,6 @@ Bases: `Expr`
 
               click griffe.ExprIfExp href "" "griffe.ExprIfExp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Conditions like `a if b else c`.
@@ -2800,7 +2568,6 @@ Attributes:
 
 ```
 body: str | Expr
-
 ```
 
 Value if test.
@@ -2809,7 +2576,6 @@ Value if test.
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -2818,7 +2584,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2827,7 +2592,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -2836,7 +2600,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -2845,7 +2608,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -2854,7 +2616,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -2863,7 +2624,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -2872,7 +2632,6 @@ Whether this expression is a tuple.
 
 ```
 orelse: str | Expr
-
 ```
 
 Other expression.
@@ -2881,7 +2640,6 @@ Other expression.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -2890,7 +2648,6 @@ Path of the expressed name/attribute.
 
 ```
 test: str | Expr
-
 ```
 
 Condition.
@@ -2899,7 +2656,6 @@ Condition.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -2908,7 +2664,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -2927,7 +2682,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -2946,7 +2700,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -2961,13 +2714,11 @@ Returns:
 
 ```
 ExprJoinedStr(values: Sequence[str | Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprJoinedStr[ExprJoinedStr]
               griffe._internal.expressions.Expr[Expr]
@@ -2978,7 +2729,6 @@ Bases: `Expr`
 
               click griffe.ExprJoinedStr href "" "griffe.ExprJoinedStr"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Joined strings like `f"a {b} c"`.
@@ -3006,7 +2756,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -3015,7 +2764,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3024,7 +2772,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -3033,7 +2780,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -3042,7 +2788,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -3051,7 +2796,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -3060,7 +2804,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -3069,7 +2812,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3078,7 +2820,6 @@ Path of the expressed name/attribute.
 
 ```
 values: Sequence[str | Expr]
-
 ```
 
 Joined values.
@@ -3087,7 +2828,6 @@ Joined values.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -3096,7 +2836,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -3115,7 +2854,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -3134,7 +2872,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -3153,13 +2890,11 @@ ExprKeyword(
     value: str | Expr,
     function: Expr | None = None,
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprKeyword[ExprKeyword]
               griffe._internal.expressions.Expr[Expr]
@@ -3170,7 +2905,6 @@ Bases: `Expr`
 
               click griffe.ExprKeyword href "" "griffe.ExprKeyword"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Keyword arguments like `a=b`.
@@ -3200,7 +2934,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -3209,7 +2942,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed keyword.
@@ -3218,7 +2950,6 @@ Path of the expressed keyword.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -3227,7 +2958,6 @@ The expression class name.
 
 ```
 function: Expr | None = None
-
 ```
 
 Expression referencing the function called with this parameter.
@@ -3236,7 +2966,6 @@ Expression referencing the function called with this parameter.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -3245,7 +2974,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -3254,7 +2982,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -3263,7 +2990,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -3272,7 +2998,6 @@ Whether this expression is a tuple.
 
 ```
 name: str
-
 ```
 
 Name.
@@ -3281,7 +3006,6 @@ Name.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3290,7 +3014,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str | Expr
-
 ```
 
 Value.
@@ -3299,7 +3022,6 @@ Value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -3308,7 +3030,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -3327,7 +3048,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -3346,7 +3066,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -3361,13 +3080,11 @@ Returns:
 
 ```
 ExprVarPositional(value: Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprVarPositional[ExprVarPositional]
               griffe._internal.expressions.Expr[Expr]
@@ -3378,7 +3095,6 @@ Bases: `Expr`
 
               click griffe.ExprVarPositional href "" "griffe.ExprVarPositional"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Variadic positional parameters like `*args`.
@@ -3406,7 +3122,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -3415,7 +3130,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3424,7 +3138,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -3433,7 +3146,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -3442,7 +3154,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -3451,7 +3162,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -3460,7 +3170,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -3469,7 +3178,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3478,7 +3186,6 @@ Path of the expressed name/attribute.
 
 ```
 value: Expr
-
 ```
 
 Starred value.
@@ -3487,7 +3194,6 @@ Starred value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -3496,7 +3202,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -3515,7 +3220,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -3534,7 +3238,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -3549,13 +3252,11 @@ Returns:
 
 ```
 ExprVarKeyword(value: Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprVarKeyword[ExprVarKeyword]
               griffe._internal.expressions.Expr[Expr]
@@ -3566,7 +3267,6 @@ Bases: `Expr`
 
               click griffe.ExprVarKeyword href "" "griffe.ExprVarKeyword"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Variadic keyword parameters like `**kwargs`.
@@ -3594,7 +3294,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -3603,7 +3302,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3612,7 +3310,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -3621,7 +3318,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -3630,7 +3326,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -3639,7 +3334,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -3648,7 +3342,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -3657,7 +3350,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3666,7 +3358,6 @@ Path of the expressed name/attribute.
 
 ```
 value: Expr
-
 ```
 
 Double-starred value.
@@ -3675,7 +3366,6 @@ Double-starred value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -3684,7 +3374,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -3703,7 +3392,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -3722,7 +3410,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -3739,13 +3426,11 @@ Returns:
 ExprLambda(
     parameters: Sequence[ExprParameter], body: str | Expr
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprLambda[ExprLambda]
               griffe._internal.expressions.Expr[Expr]
@@ -3756,7 +3441,6 @@ Bases: `Expr`
 
               click griffe.ExprLambda href "" "griffe.ExprLambda"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Lambda expressions like `lambda a: a.b`.
@@ -3785,7 +3469,6 @@ Attributes:
 
 ```
 body: str | Expr
-
 ```
 
 Lambda's body.
@@ -3794,7 +3477,6 @@ Lambda's body.
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -3803,7 +3485,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3812,7 +3493,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -3821,7 +3501,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -3830,7 +3509,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -3839,7 +3517,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -3848,7 +3525,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -3857,7 +3533,6 @@ Whether this expression is a tuple.
 
 ```
 parameters: Sequence[ExprParameter]
-
 ```
 
 Lambda's parameters.
@@ -3866,7 +3541,6 @@ Lambda's parameters.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -3875,7 +3549,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -3884,7 +3557,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -3903,7 +3575,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -3922,7 +3593,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -3937,13 +3607,11 @@ Returns:
 
 ```
 ExprList(elements: Sequence[Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprList[ExprList]
               griffe._internal.expressions.Expr[Expr]
@@ -3954,7 +3622,6 @@ Bases: `Expr`
 
               click griffe.ExprList href "" "griffe.ExprList"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Lists like `[0, 1, 2]`.
@@ -3982,7 +3649,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -3991,7 +3657,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4000,7 +3665,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -4009,7 +3673,6 @@ The expression class name.
 
 ```
 elements: Sequence[Expr]
-
 ```
 
 List elements.
@@ -4018,7 +3681,6 @@ List elements.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -4027,7 +3689,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -4036,7 +3697,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -4045,7 +3705,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -4054,7 +3713,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4063,7 +3721,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -4072,7 +3729,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -4091,7 +3747,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -4110,7 +3765,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -4127,13 +3781,11 @@ Returns:
 ExprListComp(
     element: str | Expr, generators: Sequence[Expr]
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprListComp[ExprListComp]
               griffe._internal.expressions.Expr[Expr]
@@ -4144,7 +3796,6 @@ Bases: `Expr`
 
               click griffe.ExprListComp href "" "griffe.ExprListComp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 List comprehensions like `[a for b in c]`.
@@ -4173,7 +3824,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -4182,7 +3832,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4191,7 +3840,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -4200,7 +3848,6 @@ The expression class name.
 
 ```
 element: str | Expr
-
 ```
 
 Target value.
@@ -4209,7 +3856,6 @@ Target value.
 
 ```
 generators: Sequence[Expr]
-
 ```
 
 Generators iterated on.
@@ -4218,7 +3864,6 @@ Generators iterated on.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -4227,7 +3872,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -4236,7 +3880,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -4245,7 +3888,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -4254,7 +3896,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4263,7 +3904,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -4272,7 +3912,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -4291,7 +3930,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -4310,7 +3948,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -4334,13 +3971,11 @@ ExprName(
     | None = None,
     member: str | None = None,
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprName[ExprName]
               griffe._internal.expressions.Expr[Expr]
@@ -4351,7 +3986,6 @@ Bases: `Expr`
 
               click griffe.ExprName href "" "griffe.ExprName"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 This class represents a Python object identified by a name in a given scope.
@@ -4387,7 +4021,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -4396,7 +4029,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 The canonical name (resolved one, not alias name).
@@ -4405,7 +4037,6 @@ The canonical name (resolved one, not alias name).
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -4414,7 +4045,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -4423,7 +4053,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_enum_class: bool
-
 ```
 
 Whether this name resolves to an enumeration class.
@@ -4432,7 +4061,6 @@ Whether this name resolves to an enumeration class.
 
 ```
 is_enum_instance: bool
-
 ```
 
 Whether this name resolves to an enumeration instance.
@@ -4441,7 +4069,6 @@ Whether this name resolves to an enumeration instance.
 
 ```
 is_enum_value: bool
-
 ```
 
 Whether this name resolves to an enumeration value.
@@ -4450,7 +4077,6 @@ Whether this name resolves to an enumeration value.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -4459,7 +4085,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -4468,7 +4093,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -4477,7 +4101,6 @@ Whether this expression is a tuple.
 
 ```
 is_type_parameter: bool
-
 ```
 
 Whether this name resolves to a type parameter.
@@ -4486,7 +4109,6 @@ Whether this name resolves to a type parameter.
 
 ```
 member: str | None = None
-
 ```
 
 Member name (for resolution in its scope).
@@ -4495,7 +4117,6 @@ Member name (for resolution in its scope).
 
 ```
 name: str
-
 ```
 
 Actual name.
@@ -4506,7 +4127,6 @@ Actual name.
 parent: (
     str | ExprName | Module | Class | Function | None
 ) = None
-
 ```
 
 Parent (for resolution in its scope).
@@ -4515,7 +4135,6 @@ Parent (for resolution in its scope).
 
 ```
 path: str
-
 ```
 
 The full, resolved name.
@@ -4526,7 +4145,6 @@ If it was given when creating the name, return that. If a callable was given, ca
 
 ```
 resolved: Module | Class | None
-
 ```
 
 The resolved object this name refers to.
@@ -4535,7 +4153,6 @@ The resolved object this name refers to.
 
 ```
 __eq__(other: object) -> bool
-
 ```
 
 Two name expressions are equal if they have the same `name` value (`parent` is ignored).
@@ -4544,7 +4161,6 @@ Two name expressions are equal if they have the same `name` value (`parent` is i
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -4553,7 +4169,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -4572,7 +4187,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[ExprName]
-
 ```
 
 Iterate on the expression elements.
@@ -4591,7 +4205,6 @@ Yields:
 
 ```
 modernize() -> ExprName
-
 ```
 
 Modernize the expression.
@@ -4606,13 +4219,11 @@ Returns:
 
 ```
 ExprNamedExpr(target: Expr, value: str | Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprNamedExpr[ExprNamedExpr]
               griffe._internal.expressions.Expr[Expr]
@@ -4623,7 +4234,6 @@ Bases: `Expr`
 
               click griffe.ExprNamedExpr href "" "griffe.ExprNamedExpr"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Named/assignment expressions like `a := b`.
@@ -4652,7 +4262,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -4661,7 +4270,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4670,7 +4278,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -4679,7 +4286,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -4688,7 +4294,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -4697,7 +4302,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -4706,7 +4310,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -4715,7 +4318,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4724,7 +4326,6 @@ Path of the expressed name/attribute.
 
 ```
 target: Expr
-
 ```
 
 Target name.
@@ -4733,7 +4334,6 @@ Target name.
 
 ```
 value: str | Expr
-
 ```
 
 Value.
@@ -4742,7 +4342,6 @@ Value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -4751,7 +4350,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -4770,7 +4368,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -4789,7 +4386,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -4809,13 +4405,11 @@ ExprParameter(
     annotation: Expr | None = None,
     default: str | Expr | None = None,
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprParameter[ExprParameter]
               griffe._internal.expressions.Expr[Expr]
@@ -4826,7 +4420,6 @@ Bases: `Expr`
 
               click griffe.ExprParameter href "" "griffe.ExprParameter"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Parameters in function signatures like `a: int = 0`.
@@ -4857,7 +4450,6 @@ Attributes:
 
 ```
 annotation: Expr | None = None
-
 ```
 
 Parameter type.
@@ -4866,7 +4458,6 @@ Parameter type.
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -4875,7 +4466,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4884,7 +4474,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -4893,7 +4482,6 @@ The expression class name.
 
 ```
 default: str | Expr | None = None
-
 ```
 
 Parameter default.
@@ -4902,7 +4490,6 @@ Parameter default.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -4911,7 +4498,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -4920,7 +4506,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -4929,7 +4514,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -4938,7 +4522,6 @@ Whether this expression is a tuple.
 
 ```
 kind: ParameterKind = positional_or_keyword
-
 ```
 
 Parameter kind.
@@ -4947,7 +4530,6 @@ Parameter kind.
 
 ```
 name: str
-
 ```
 
 Parameter name.
@@ -4956,7 +4538,6 @@ Parameter name.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -4965,7 +4546,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -4974,7 +4554,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -4993,7 +4572,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -5012,7 +4590,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -5027,13 +4604,11 @@ Returns:
 
 ```
 ExprSet(elements: Sequence[str | Expr])
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprSet[ExprSet]
               griffe._internal.expressions.Expr[Expr]
@@ -5044,7 +4619,6 @@ Bases: `Expr`
 
               click griffe.ExprSet href "" "griffe.ExprSet"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Sets like `{0, 1, 2}`.
@@ -5072,7 +4646,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -5081,7 +4654,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5090,7 +4662,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -5099,7 +4670,6 @@ The expression class name.
 
 ```
 elements: Sequence[str | Expr]
-
 ```
 
 Set elements.
@@ -5108,7 +4678,6 @@ Set elements.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -5117,7 +4686,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -5126,7 +4694,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -5135,7 +4702,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -5144,7 +4710,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5153,7 +4718,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -5162,7 +4726,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -5181,7 +4744,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -5200,7 +4762,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -5217,13 +4778,11 @@ Returns:
 ExprSetComp(
     element: str | Expr, generators: Sequence[Expr]
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprSetComp[ExprSetComp]
               griffe._internal.expressions.Expr[Expr]
@@ -5234,7 +4793,6 @@ Bases: `Expr`
 
               click griffe.ExprSetComp href "" "griffe.ExprSetComp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Set comprehensions like `{a for b in c}`.
@@ -5263,7 +4821,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -5272,7 +4829,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5281,7 +4837,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -5290,7 +4845,6 @@ The expression class name.
 
 ```
 element: str | Expr
-
 ```
 
 Target value.
@@ -5299,7 +4853,6 @@ Target value.
 
 ```
 generators: Sequence[Expr]
-
 ```
 
 Generators iterated on.
@@ -5308,7 +4861,6 @@ Generators iterated on.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -5317,7 +4869,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -5326,7 +4877,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -5335,7 +4885,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -5344,7 +4893,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5353,7 +4901,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -5362,7 +4909,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -5381,7 +4927,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -5400,7 +4945,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -5419,13 +4963,11 @@ ExprSlice(
     upper: str | Expr | None = None,
     step: str | Expr | None = None,
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprSlice[ExprSlice]
               griffe._internal.expressions.Expr[Expr]
@@ -5436,7 +4978,6 @@ Bases: `Expr`
 
               click griffe.ExprSlice href "" "griffe.ExprSlice"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Slices like `[a:b:c]`.
@@ -5466,7 +5007,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -5475,7 +5015,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5484,7 +5023,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -5493,7 +5031,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -5502,7 +5039,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -5511,7 +5047,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -5520,7 +5055,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -5529,7 +5063,6 @@ Whether this expression is a tuple.
 
 ```
 lower: str | Expr | None = None
-
 ```
 
 Lower bound.
@@ -5538,7 +5071,6 @@ Lower bound.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5547,7 +5079,6 @@ Path of the expressed name/attribute.
 
 ```
 step: str | Expr | None = None
-
 ```
 
 Iteration step.
@@ -5556,7 +5087,6 @@ Iteration step.
 
 ```
 upper: str | Expr | None = None
-
 ```
 
 Upper bound.
@@ -5565,7 +5095,6 @@ Upper bound.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -5574,7 +5103,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -5593,7 +5121,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -5612,7 +5139,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -5627,13 +5153,11 @@ Returns:
 
 ```
 ExprSubscript(left: str | Expr, slice: str | Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprSubscript[ExprSubscript]
               griffe._internal.expressions.Expr[Expr]
@@ -5644,7 +5168,6 @@ Bases: `Expr`
 
               click griffe.ExprSubscript href "" "griffe.ExprSubscript"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Subscripts like `a[b]`.
@@ -5673,7 +5196,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -5682,7 +5204,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 The canonical path of this subscript's left part.
@@ -5691,7 +5212,6 @@ The canonical path of this subscript's left part.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -5700,7 +5220,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -5709,7 +5228,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -5718,7 +5236,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -5727,7 +5244,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -5736,7 +5252,6 @@ Whether this expression is a tuple.
 
 ```
 left: str | Expr
-
 ```
 
 Left part.
@@ -5745,7 +5260,6 @@ Left part.
 
 ```
 path: str
-
 ```
 
 The path of this subscript's left part.
@@ -5754,7 +5268,6 @@ The path of this subscript's left part.
 
 ```
 slice: str | Expr
-
 ```
 
 Slice part.
@@ -5763,7 +5276,6 @@ Slice part.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -5772,7 +5284,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -5791,7 +5302,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -5810,7 +5320,6 @@ Yields:
 
 ```
 modernize() -> ExprBinOp | ExprSubscript
-
 ```
 
 Modernize the expression.
@@ -5827,13 +5336,11 @@ Returns:
 ExprTuple(
     elements: Sequence[str | Expr], implicit: bool = False
 )
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprTuple[ExprTuple]
               griffe._internal.expressions.Expr[Expr]
@@ -5844,7 +5351,6 @@ Bases: `Expr`
 
               click griffe.ExprTuple href "" "griffe.ExprTuple"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Tuples like `(0, 1, 2)`.
@@ -5873,7 +5379,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -5882,7 +5387,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5891,7 +5395,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -5900,7 +5403,6 @@ The expression class name.
 
 ```
 elements: Sequence[str | Expr]
-
 ```
 
 Tuple elements.
@@ -5909,7 +5411,6 @@ Tuple elements.
 
 ```
 implicit: bool = False
-
 ```
 
 Whether the tuple is implicit (e.g. without parentheses in a subscript's slice).
@@ -5918,7 +5419,6 @@ Whether the tuple is implicit (e.g. without parentheses in a subscript's slice).
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -5927,7 +5427,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -5936,7 +5435,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -5945,7 +5443,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -5954,7 +5451,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -5963,7 +5459,6 @@ Path of the expressed name/attribute.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -5972,7 +5467,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -5991,7 +5485,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -6010,7 +5503,6 @@ Yields:
 
 ```
 modernize() -> ExprTuple
-
 ```
 
 Modernize the expression.
@@ -6025,13 +5517,11 @@ Returns:
 
 ```
 ExprUnaryOp(operator: str, value: str | Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprUnaryOp[ExprUnaryOp]
               griffe._internal.expressions.Expr[Expr]
@@ -6042,7 +5532,6 @@ Bases: `Expr`
 
               click griffe.ExprUnaryOp href "" "griffe.ExprUnaryOp"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Unary operations like `-1`.
@@ -6071,7 +5560,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -6080,7 +5568,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -6089,7 +5576,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -6098,7 +5584,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -6107,7 +5592,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -6116,7 +5600,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -6125,7 +5608,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -6134,7 +5616,6 @@ Whether this expression is a tuple.
 
 ```
 operator: str
-
 ```
 
 Unary operator.
@@ -6143,7 +5624,6 @@ Unary operator.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -6152,7 +5632,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str | Expr
-
 ```
 
 Value.
@@ -6161,7 +5640,6 @@ Value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -6170,7 +5648,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -6189,7 +5666,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -6208,7 +5684,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -6223,13 +5698,11 @@ Returns:
 
 ```
 ExprYield(value: str | Expr | None = None)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprYield[ExprYield]
               griffe._internal.expressions.Expr[Expr]
@@ -6240,7 +5713,6 @@ Bases: `Expr`
 
               click griffe.ExprYield href "" "griffe.ExprYield"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Yield statements like `yield a`.
@@ -6268,7 +5740,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -6277,7 +5748,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -6286,7 +5756,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -6295,7 +5764,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -6304,7 +5772,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -6313,7 +5780,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -6322,7 +5788,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -6331,7 +5796,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -6340,7 +5804,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str | Expr | None = None
-
 ```
 
 Yielded value.
@@ -6349,7 +5812,6 @@ Yielded value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -6358,7 +5820,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -6377,7 +5838,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -6396,7 +5856,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.
@@ -6411,13 +5870,11 @@ Returns:
 
 ```
 ExprYieldFrom(value: str | Expr)
-
 ```
 
 Bases: `Expr`
 
 ```
-
               flowchart TD
               griffe.ExprYieldFrom[ExprYieldFrom]
               griffe._internal.expressions.Expr[Expr]
@@ -6428,7 +5885,6 @@ Bases: `Expr`
 
               click griffe.ExprYieldFrom href "" "griffe.ExprYieldFrom"
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
-            
 ```
 
 Yield statements like `yield from a`.
@@ -6456,7 +5912,6 @@ Attributes:
 
 ```
 canonical_name: str
-
 ```
 
 Name of the expressed name/attribute/parameter.
@@ -6465,7 +5920,6 @@ Name of the expressed name/attribute/parameter.
 
 ```
 canonical_path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -6474,7 +5928,6 @@ Path of the expressed name/attribute.
 
 ```
 classname: str
-
 ```
 
 The expression class name.
@@ -6483,7 +5936,6 @@ The expression class name.
 
 ```
 is_classvar: bool
-
 ```
 
 Whether this attribute is annotated with `ClassVar`.
@@ -6492,7 +5944,6 @@ Whether this attribute is annotated with `ClassVar`.
 
 ```
 is_generator: bool
-
 ```
 
 Whether this expression is a generator.
@@ -6501,7 +5952,6 @@ Whether this expression is a generator.
 
 ```
 is_iterator: bool
-
 ```
 
 Whether this expression is an iterator.
@@ -6510,7 +5960,6 @@ Whether this expression is an iterator.
 
 ```
 is_tuple: bool
-
 ```
 
 Whether this expression is a tuple.
@@ -6519,7 +5968,6 @@ Whether this expression is a tuple.
 
 ```
 path: str
-
 ```
 
 Path of the expressed name/attribute.
@@ -6528,7 +5976,6 @@ Path of the expressed name/attribute.
 
 ```
 value: str | Expr
-
 ```
 
 Yielded-from value.
@@ -6537,7 +5984,6 @@ Yielded-from value.
 
 ```
 __iter__() -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression syntax and elements.
@@ -6546,7 +5992,6 @@ Iterate on the expression syntax and elements.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return the expression as a dictionary.
@@ -6565,7 +6010,6 @@ Returns:
 
 ```
 iterate(*, flat: bool = True) -> Iterator[str | Expr]
-
 ```
 
 Iterate on the expression elements.
@@ -6584,7 +6028,6 @@ Yields:
 
 ```
 modernize() -> Expr
-
 ```
 
 Modernize the expression.

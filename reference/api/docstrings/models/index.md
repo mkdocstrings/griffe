@@ -12,9 +12,8 @@ Docstring(
     endlineno: int | None = None,
     parent: Object | None = None,
     parser: DocstringStyle | Parser | None = None,
-    parser_options: dict[str, Any] | None = None,
+    parser_options: DocstringOptions | None = None,
 )
-
 ```
 
 This class represents docstrings.
@@ -43,7 +42,7 @@ Parameters:
 
 - ### **`parser_options`**
 
-  (`dict[str, Any] | None`, default: `None` ) – Additional docstring parsing options.
+  (`DocstringOptions | None`, default: `None` ) – Additional docstring parsing options.
 
 Methods:
 
@@ -58,7 +57,7 @@ Attributes:
 - **`parent`** (`Object | None`) – The object this docstring is attached to.
 - **`parsed`** (`list[DocstringSection]`) – The docstring sections, parsed into structured data.
 - **`parser`** (`DocstringStyle | Parser | None`) – The selected docstring parser.
-- **`parser_options`** (`dict[str, Any]`) – The configured parsing options.
+- **`parser_options`** (`DocstringOptions`) – The configured parsing options.
 - **`source`** (`str`) – The original, uncleaned value of the docstring as written in the source.
 - **`value`** (`str`) – The original value of the docstring, cleaned by inspect.cleandoc.
 
@@ -66,7 +65,6 @@ Attributes:
 
 ```
 endlineno: int | None = endlineno
-
 ```
 
 The ending line number of the docstring.
@@ -77,7 +75,6 @@ See also: lineno.
 
 ```
 lineno: int | None = lineno
-
 ```
 
 The starting line number of the docstring.
@@ -88,7 +85,6 @@ See also: endlineno.
 
 ```
 lines: list[str]
-
 ```
 
 The lines of the docstring.
@@ -99,7 +95,6 @@ See also: source.
 
 ```
 parent: Object | None = parent
-
 ```
 
 The object this docstring is attached to.
@@ -108,7 +103,6 @@ The object this docstring is attached to.
 
 ```
 parsed: list[DocstringSection]
-
 ```
 
 The docstring sections, parsed into structured data.
@@ -117,7 +111,6 @@ The docstring sections, parsed into structured data.
 
 ```
 parser: DocstringStyle | Parser | None = parser
-
 ```
 
 The selected docstring parser.
@@ -127,8 +120,7 @@ See also: parser_options, parse.
 ### parser_options
 
 ```
-parser_options: dict[str, Any] = parser_options or {}
-
+parser_options: DocstringOptions = parser_options or {}
 ```
 
 The configured parsing options.
@@ -139,10 +131,15 @@ See also: parser, parse.
 
 ```
 source: str
-
 ```
 
 The original, uncleaned value of the docstring as written in the source.
+
+It is a simple concatenation of the source lines. These source lines will include quotes (single/double/triple) and might include leading whitespace and indentation, as well as trailing comments.
+
+Raises:
+
+- `ValueError` – If the original docstring cannot be retrieved (no parent, no line numbers, or attached to namespace package).
 
 See also: value.
 
@@ -150,7 +147,6 @@ See also: value.
 
 ```
 value: str = cleandoc(rstrip())
-
 ```
 
 The original value of the docstring, cleaned by `inspect.cleandoc`.
@@ -163,7 +159,6 @@ See also: source.
 as_dict(
     *, full: bool = False, **kwargs: Any
 ) -> dict[str, Any]
-
 ```
 
 Return this docstring's data as a dictionary.
@@ -189,7 +184,6 @@ parse(
     parser: DocstringStyle | Parser | None = None,
     **options: Any,
 ) -> list[DocstringSection]
-
 ```
 
 Parse the docstring into structured data.
@@ -217,14 +211,12 @@ Returns:
 Bases: `str`, `Enum`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionKind[DocstringSectionKind]
 
               
 
               click griffe.DocstringSectionKind href "" "griffe.DocstringSectionKind"
-            
 ```
 
 Enumeration of the possible docstring section kinds.
@@ -253,7 +245,6 @@ Attributes:
 
 ```
 admonition = 'admonition'
-
 ```
 
 Admonition block.
@@ -262,7 +253,6 @@ Admonition block.
 
 ```
 attributes = 'attributes'
-
 ```
 
 Attributes section.
@@ -271,7 +261,6 @@ Attributes section.
 
 ```
 classes = 'classes'
-
 ```
 
 Classes section.
@@ -280,7 +269,6 @@ Classes section.
 
 ```
 deprecated = 'deprecated'
-
 ```
 
 Deprecation section.
@@ -289,7 +277,6 @@ Deprecation section.
 
 ```
 examples = 'examples'
-
 ```
 
 Examples section.
@@ -298,7 +285,6 @@ Examples section.
 
 ```
 functions = 'functions'
-
 ```
 
 Functions section.
@@ -307,7 +293,6 @@ Functions section.
 
 ```
 modules = 'modules'
-
 ```
 
 Modules section.
@@ -316,7 +301,6 @@ Modules section.
 
 ```
 other_parameters = 'other parameters'
-
 ```
 
 Other parameters (keyword arguments) section.
@@ -325,7 +309,6 @@ Other parameters (keyword arguments) section.
 
 ```
 parameters = 'parameters'
-
 ```
 
 Parameters section.
@@ -334,7 +317,6 @@ Parameters section.
 
 ```
 raises = 'raises'
-
 ```
 
 Raises (exceptions) section.
@@ -343,7 +325,6 @@ Raises (exceptions) section.
 
 ```
 receives = 'receives'
-
 ```
 
 Received value(s) (generators) section.
@@ -352,7 +333,6 @@ Received value(s) (generators) section.
 
 ```
 returns = 'returns'
-
 ```
 
 Returned value(s) section.
@@ -361,7 +341,6 @@ Returned value(s) section.
 
 ```
 text = 'text'
-
 ```
 
 Text section.
@@ -370,7 +349,6 @@ Text section.
 
 ```
 type_aliases = 'type aliases'
-
 ```
 
 Type aliases section.
@@ -379,7 +357,6 @@ Type aliases section.
 
 ```
 type_parameters = 'type parameters'
-
 ```
 
 Type parameters section.
@@ -388,7 +365,6 @@ Type parameters section.
 
 ```
 warns = 'warns'
-
 ```
 
 Warnings section.
@@ -397,7 +373,6 @@ Warnings section.
 
 ```
 yields = 'yields'
-
 ```
 
 Yielded value(s) (generators) section.
@@ -406,13 +381,11 @@ Yielded value(s) (generators) section.
 
 ```
 DocstringSectionText(value: str, title: str | None = None)
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionText[DocstringSectionText]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -423,7 +396,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionText href "" "griffe.DocstringSectionText"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a text section.
@@ -453,7 +425,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = text
-
 ```
 
 The section kind.
@@ -462,7 +433,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -471,7 +441,6 @@ The section title.
 
 ```
 value: str = value
-
 ```
 
 The section value.
@@ -480,7 +449,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -489,7 +457,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -511,13 +478,11 @@ DocstringSectionParameters(
     value: list[DocstringParameter],
     title: str | None = None,
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionParameters[DocstringSectionParameters]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -528,7 +493,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionParameters href "" "griffe.DocstringSectionParameters"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a parameters section.
@@ -558,7 +522,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = parameters
-
 ```
 
 The section kind.
@@ -567,7 +530,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -576,7 +538,6 @@ The section title.
 
 ```
 value: list[DocstringParameter] = value
-
 ```
 
 The section value.
@@ -585,7 +546,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -594,7 +554,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -616,13 +575,11 @@ DocstringSectionOtherParameters(
     value: list[DocstringParameter],
     title: str | None = None,
 )
-
 ```
 
 Bases: `DocstringSectionParameters`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionOtherParameters[DocstringSectionOtherParameters]
               griffe._internal.docstrings.models.DocstringSectionParameters[DocstringSectionParameters]
@@ -637,7 +594,6 @@ Bases: `DocstringSectionParameters`
               click griffe.DocstringSectionOtherParameters href "" "griffe.DocstringSectionOtherParameters"
               click griffe._internal.docstrings.models.DocstringSectionParameters href "" "griffe._internal.docstrings.models.DocstringSectionParameters"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents an other parameters section.
@@ -667,7 +623,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = other_parameters
-
 ```
 
 The section kind.
@@ -676,7 +631,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -685,7 +639,6 @@ The section title.
 
 ```
 value: list[DocstringParameter] = value
-
 ```
 
 The section value.
@@ -694,7 +647,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -703,7 +655,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -725,13 +676,11 @@ DocstringSectionTypeParameters(
     value: list[DocstringTypeParameter],
     title: str | None = None,
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionTypeParameters[DocstringSectionTypeParameters]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -742,7 +691,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionTypeParameters href "" "griffe.DocstringSectionTypeParameters"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a type parameters section.
@@ -772,7 +720,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = type_parameters
-
 ```
 
 The section kind.
@@ -781,7 +728,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -790,7 +736,6 @@ The section title.
 
 ```
 value: list[DocstringTypeParameter] = value
-
 ```
 
 The section value.
@@ -799,7 +744,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -808,7 +752,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -829,13 +772,11 @@ Returns:
 DocstringSectionRaises(
     value: list[DocstringRaise], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionRaises[DocstringSectionRaises]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -846,7 +787,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionRaises href "" "griffe.DocstringSectionRaises"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a raises section.
@@ -876,7 +816,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = raises
-
 ```
 
 The section kind.
@@ -885,7 +824,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -894,7 +832,6 @@ The section title.
 
 ```
 value: list[DocstringRaise] = value
-
 ```
 
 The section value.
@@ -903,7 +840,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -912,7 +848,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -933,13 +868,11 @@ Returns:
 DocstringSectionWarns(
     value: list[DocstringWarn], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionWarns[DocstringSectionWarns]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -950,7 +883,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionWarns href "" "griffe.DocstringSectionWarns"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a warns section.
@@ -980,7 +912,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = warns
-
 ```
 
 The section kind.
@@ -989,7 +920,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -998,7 +928,6 @@ The section title.
 
 ```
 value: list[DocstringWarn] = value
-
 ```
 
 The section value.
@@ -1007,7 +936,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1016,7 +944,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1037,13 +964,11 @@ Returns:
 DocstringSectionReturns(
     value: list[DocstringReturn], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionReturns[DocstringSectionReturns]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1054,7 +979,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionReturns href "" "griffe.DocstringSectionReturns"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a returns section.
@@ -1084,7 +1008,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = returns
-
 ```
 
 The section kind.
@@ -1093,7 +1016,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1102,7 +1024,6 @@ The section title.
 
 ```
 value: list[DocstringReturn] = value
-
 ```
 
 The section value.
@@ -1111,7 +1032,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1120,7 +1040,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1141,13 +1060,11 @@ Returns:
 DocstringSectionYields(
     value: list[DocstringYield], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionYields[DocstringSectionYields]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1158,7 +1075,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionYields href "" "griffe.DocstringSectionYields"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a yields section.
@@ -1188,7 +1104,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = yields
-
 ```
 
 The section kind.
@@ -1197,7 +1112,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1206,7 +1120,6 @@ The section title.
 
 ```
 value: list[DocstringYield] = value
-
 ```
 
 The section value.
@@ -1215,7 +1128,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1224,7 +1136,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1245,13 +1156,11 @@ Returns:
 DocstringSectionReceives(
     value: list[DocstringReceive], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionReceives[DocstringSectionReceives]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1262,7 +1171,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionReceives href "" "griffe.DocstringSectionReceives"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a receives section.
@@ -1292,7 +1200,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = receives
-
 ```
 
 The section kind.
@@ -1301,7 +1208,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1310,7 +1216,6 @@ The section title.
 
 ```
 value: list[DocstringReceive] = value
-
 ```
 
 The section value.
@@ -1319,7 +1224,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1328,7 +1232,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1350,13 +1253,11 @@ DocstringSectionExamples(
     value: list[tuple[Literal[text, examples], str]],
     title: str | None = None,
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionExamples[DocstringSectionExamples]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1367,7 +1268,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionExamples href "" "griffe.DocstringSectionExamples"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents an examples section.
@@ -1397,7 +1297,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = examples
-
 ```
 
 The section kind.
@@ -1406,7 +1305,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1415,7 +1313,6 @@ The section title.
 
 ```
 value: list[tuple[Literal[text, examples], str]] = value
-
 ```
 
 The section value.
@@ -1424,7 +1321,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1433,7 +1329,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1455,13 +1350,11 @@ DocstringSectionAttributes(
     value: list[DocstringAttribute],
     title: str | None = None,
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionAttributes[DocstringSectionAttributes]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1472,7 +1365,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionAttributes href "" "griffe.DocstringSectionAttributes"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents an attributes section.
@@ -1502,7 +1394,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = attributes
-
 ```
 
 The section kind.
@@ -1511,7 +1402,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1520,7 +1410,6 @@ The section title.
 
 ```
 value: list[DocstringAttribute] = value
-
 ```
 
 The section value.
@@ -1529,7 +1418,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1538,7 +1426,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1559,13 +1446,11 @@ Returns:
 DocstringSectionFunctions(
     value: list[DocstringFunction], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionFunctions[DocstringSectionFunctions]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1576,7 +1461,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionFunctions href "" "griffe.DocstringSectionFunctions"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a functions/methods section.
@@ -1606,7 +1490,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = functions
-
 ```
 
 The section kind.
@@ -1615,7 +1498,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1624,7 +1506,6 @@ The section title.
 
 ```
 value: list[DocstringFunction] = value
-
 ```
 
 The section value.
@@ -1633,7 +1514,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1642,7 +1522,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1663,13 +1542,11 @@ Returns:
 DocstringSectionClasses(
     value: list[DocstringClass], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionClasses[DocstringSectionClasses]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1680,7 +1557,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionClasses href "" "griffe.DocstringSectionClasses"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a classes section.
@@ -1710,7 +1586,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = classes
-
 ```
 
 The section kind.
@@ -1719,7 +1594,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1728,7 +1602,6 @@ The section title.
 
 ```
 value: list[DocstringClass] = value
-
 ```
 
 The section value.
@@ -1737,7 +1610,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1746,7 +1618,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1768,13 +1639,11 @@ DocstringSectionTypeAliases(
     value: list[DocstringTypeAlias],
     title: str | None = None,
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionTypeAliases[DocstringSectionTypeAliases]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1785,7 +1654,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionTypeAliases href "" "griffe.DocstringSectionTypeAliases"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a type aliases section.
@@ -1815,7 +1683,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = type_aliases
-
 ```
 
 The section kind.
@@ -1824,7 +1691,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1833,7 +1699,6 @@ The section title.
 
 ```
 value: list[DocstringTypeAlias] = value
-
 ```
 
 The section value.
@@ -1842,7 +1707,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1851,7 +1715,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1872,13 +1735,11 @@ Returns:
 DocstringSectionModules(
     value: list[DocstringModule], title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionModules[DocstringSectionModules]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1889,7 +1750,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionModules href "" "griffe.DocstringSectionModules"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a modules section.
@@ -1919,7 +1779,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = modules
-
 ```
 
 The section kind.
@@ -1928,7 +1787,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -1937,7 +1795,6 @@ The section title.
 
 ```
 value: list[DocstringModule] = value
-
 ```
 
 The section value.
@@ -1946,7 +1803,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -1955,7 +1811,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -1976,13 +1831,11 @@ Returns:
 DocstringSectionDeprecated(
     version: str, text: str, title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionDeprecated[DocstringSectionDeprecated]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -1993,7 +1846,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionDeprecated href "" "griffe.DocstringSectionDeprecated"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents a deprecated section.
@@ -2027,7 +1879,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = deprecated
-
 ```
 
 The section kind.
@@ -2036,7 +1887,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -2047,7 +1897,6 @@ The section title.
 value: DocstringDeprecated = DocstringDeprecated(
     annotation=version, description=text
 )
-
 ```
 
 The section value.
@@ -2056,7 +1905,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -2065,7 +1913,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -2086,13 +1933,11 @@ Returns:
 DocstringSectionAdmonition(
     kind: str, text: str, title: str | None = None
 )
-
 ```
 
 Bases: `DocstringSection`
 
 ```
-
               flowchart TD
               griffe.DocstringSectionAdmonition[DocstringSectionAdmonition]
               griffe._internal.docstrings.models.DocstringSection[DocstringSection]
@@ -2103,7 +1948,6 @@ Bases: `DocstringSection`
 
               click griffe.DocstringSectionAdmonition href "" "griffe.DocstringSectionAdmonition"
               click griffe._internal.docstrings.models.DocstringSection href "" "griffe._internal.docstrings.models.DocstringSection"
-            
 ```
 
 This class represents an admonition section.
@@ -2137,7 +1981,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind = admonition
-
 ```
 
 The section kind.
@@ -2146,7 +1989,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -2157,7 +1999,6 @@ The section title.
 value: DocstringAdmonition = DocstringAdmonition(
     annotation=kind, description=text
 )
-
 ```
 
 The section value.
@@ -2166,7 +2007,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -2175,7 +2015,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.
@@ -2200,13 +2039,11 @@ DocstringAdmonition(
     description: str,
     annotation: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringElement`
 
 ```
-
               flowchart TD
               griffe.DocstringAdmonition[DocstringAdmonition]
               griffe._internal.docstrings.models.DocstringElement[DocstringElement]
@@ -2217,7 +2054,6 @@ Bases: `DocstringElement`
 
               click griffe.DocstringAdmonition href "" "griffe.DocstringAdmonition"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents an admonition.
@@ -2247,7 +2083,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2256,7 +2091,6 @@ The element annotation.
 
 ```
 contents: str
-
 ```
 
 The contents of this admonition.
@@ -2265,7 +2099,6 @@ The contents of this admonition.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2274,7 +2107,6 @@ The element description.
 
 ```
 kind: str | Expr | None
-
 ```
 
 The kind of this admonition.
@@ -2283,7 +2115,6 @@ The kind of this admonition.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2306,13 +2137,11 @@ DocstringDeprecated(
     description: str,
     annotation: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringElement`
 
 ```
-
               flowchart TD
               griffe.DocstringDeprecated[DocstringDeprecated]
               griffe._internal.docstrings.models.DocstringElement[DocstringElement]
@@ -2323,7 +2152,6 @@ Bases: `DocstringElement`
 
               click griffe.DocstringDeprecated href "" "griffe.DocstringDeprecated"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented deprecated item.
@@ -2352,7 +2180,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2361,7 +2188,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2370,7 +2196,6 @@ The element description.
 
 ```
 version: str
-
 ```
 
 The version of this deprecation.
@@ -2379,7 +2204,6 @@ The version of this deprecation.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2402,13 +2226,11 @@ DocstringRaise(
     description: str,
     annotation: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringElement`
 
 ```
-
               flowchart TD
               griffe.DocstringRaise[DocstringRaise]
               griffe._internal.docstrings.models.DocstringElement[DocstringElement]
@@ -2419,7 +2241,6 @@ Bases: `DocstringElement`
 
               click griffe.DocstringRaise href "" "griffe.DocstringRaise"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented raise value.
@@ -2447,7 +2268,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2456,7 +2276,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2465,7 +2284,6 @@ The element description.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2488,13 +2306,11 @@ DocstringWarn(
     description: str,
     annotation: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringElement`
 
 ```
-
               flowchart TD
               griffe.DocstringWarn[DocstringWarn]
               griffe._internal.docstrings.models.DocstringElement[DocstringElement]
@@ -2505,7 +2321,6 @@ Bases: `DocstringElement`
 
               click griffe.DocstringWarn href "" "griffe.DocstringWarn"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented warn value.
@@ -2533,7 +2348,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2542,7 +2356,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2551,7 +2364,6 @@ The element description.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2576,13 +2388,11 @@ DocstringReturn(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringReturn[DocstringReturn]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -2597,7 +2407,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringReturn href "" "griffe.DocstringReturn"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented return value.
@@ -2635,7 +2444,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2644,7 +2452,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2653,7 +2460,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -2662,7 +2468,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -2671,7 +2476,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2696,13 +2500,11 @@ DocstringYield(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringYield[DocstringYield]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -2717,7 +2519,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringYield href "" "griffe.DocstringYield"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented yield value.
@@ -2755,7 +2556,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2764,7 +2564,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2773,7 +2572,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -2782,7 +2580,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -2791,7 +2588,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2816,13 +2612,11 @@ DocstringReceive(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringReceive[DocstringReceive]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -2837,7 +2631,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringReceive href "" "griffe.DocstringReceive"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented receive value.
@@ -2875,7 +2668,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -2884,7 +2676,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -2893,7 +2684,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -2902,7 +2692,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -2911,7 +2700,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -2936,13 +2724,11 @@ DocstringParameter(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringParameter[DocstringParameter]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -2957,7 +2743,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringParameter href "" "griffe.DocstringParameter"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represent a documented function parameter.
@@ -2996,7 +2781,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3005,7 +2789,6 @@ The element annotation.
 
 ```
 default: str | Expr | None
-
 ```
 
 The default value of this parameter.
@@ -3014,7 +2797,6 @@ The default value of this parameter.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3023,7 +2805,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3032,7 +2813,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3041,7 +2821,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3066,13 +2845,11 @@ DocstringTypeParameter(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringTypeParameter[DocstringTypeParameter]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -3087,7 +2864,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringTypeParameter href "" "griffe.DocstringTypeParameter"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represent a documented type parameter.
@@ -3128,7 +2904,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3137,7 +2912,6 @@ The element annotation.
 
 ```
 bound: str | Expr | None
-
 ```
 
 The bound of this type parameter.
@@ -3146,7 +2920,6 @@ The bound of this type parameter.
 
 ```
 constraints: tuple[str | Expr, ...] | None
-
 ```
 
 The constraints of this type parameter.
@@ -3155,7 +2928,6 @@ The constraints of this type parameter.
 
 ```
 default: str | Expr | None
-
 ```
 
 The default value of this type parameter.
@@ -3164,7 +2936,6 @@ The default value of this type parameter.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3173,7 +2944,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3182,7 +2952,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3191,7 +2960,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3216,13 +2984,11 @@ DocstringAttribute(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringAttribute[DocstringAttribute]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -3237,7 +3003,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringAttribute href "" "griffe.DocstringAttribute"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented module/class attribute.
@@ -3275,7 +3040,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3284,7 +3048,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3293,7 +3056,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3302,7 +3064,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3311,7 +3072,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3336,13 +3096,11 @@ DocstringFunction(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringFunction[DocstringFunction]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -3357,7 +3115,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringFunction href "" "griffe.DocstringFunction"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented function.
@@ -3396,7 +3153,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3405,7 +3161,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3414,7 +3169,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3423,7 +3177,6 @@ The element name.
 
 ```
 signature: str | Expr | None
-
 ```
 
 The function signature.
@@ -3432,7 +3185,6 @@ The function signature.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3441,7 +3193,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3466,13 +3217,11 @@ DocstringClass(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringClass[DocstringClass]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -3487,7 +3236,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringClass href "" "griffe.DocstringClass"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented class.
@@ -3526,7 +3274,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3535,7 +3282,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3544,7 +3290,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3553,7 +3298,6 @@ The element name.
 
 ```
 signature: str | Expr | None
-
 ```
 
 The class signature.
@@ -3562,7 +3306,6 @@ The class signature.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3571,7 +3314,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3596,13 +3338,11 @@ DocstringTypeAlias(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringTypeAlias[DocstringTypeAlias]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -3617,7 +3357,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringTypeAlias href "" "griffe.DocstringTypeAlias"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented type alias.
@@ -3655,7 +3394,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3664,7 +3402,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3673,7 +3410,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3682,7 +3418,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3691,7 +3426,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3716,13 +3450,11 @@ DocstringModule(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringNamedElement`
 
 ```
-
               flowchart TD
               griffe.DocstringModule[DocstringModule]
               griffe._internal.docstrings.models.DocstringNamedElement[DocstringNamedElement]
@@ -3737,7 +3469,6 @@ Bases: `DocstringNamedElement`
               click griffe.DocstringModule href "" "griffe.DocstringModule"
               click griffe._internal.docstrings.models.DocstringNamedElement href "" "griffe._internal.docstrings.models.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This class represents a documented module.
@@ -3775,7 +3506,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3784,7 +3514,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3793,7 +3522,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3802,7 +3530,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3811,7 +3538,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3836,7 +3562,6 @@ DocstringElement(
     description: str,
     annotation: str | Expr | None = None,
 )
-
 ```
 
 This base class represents annotated, nameless elements.
@@ -3864,7 +3589,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3873,7 +3597,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3882,7 +3605,6 @@ The element description.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -3907,13 +3629,11 @@ DocstringNamedElement(
     annotation: str | Expr | None = None,
     value: str | Expr | None = None,
 )
-
 ```
 
 Bases: `DocstringElement`
 
 ```
-
               flowchart TD
               griffe.DocstringNamedElement[DocstringNamedElement]
               griffe._internal.docstrings.models.DocstringElement[DocstringElement]
@@ -3924,7 +3644,6 @@ Bases: `DocstringElement`
 
               click griffe.DocstringNamedElement href "" "griffe.DocstringNamedElement"
               click griffe._internal.docstrings.models.DocstringElement href "" "griffe._internal.docstrings.models.DocstringElement"
-            
 ```
 
 This base class represents annotated, named elements.
@@ -3962,7 +3681,6 @@ Attributes:
 
 ```
 annotation: str | Expr | None = annotation
-
 ```
 
 The element annotation.
@@ -3971,7 +3689,6 @@ The element annotation.
 
 ```
 description: str = description
-
 ```
 
 The element description.
@@ -3980,7 +3697,6 @@ The element description.
 
 ```
 name: str = name
-
 ```
 
 The element name.
@@ -3989,7 +3705,6 @@ The element name.
 
 ```
 value: str | Expr | None = value
-
 ```
 
 The element value, if any
@@ -3998,7 +3713,6 @@ The element value, if any
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this element's data as a dictionary.
@@ -4017,7 +3731,6 @@ Returns:
 
 ```
 DocstringSection(title: str | None = None)
-
 ```
 
 This class represents a docstring section.
@@ -4043,7 +3756,6 @@ Attributes:
 
 ```
 kind: DocstringSectionKind
-
 ```
 
 The section kind.
@@ -4052,7 +3764,6 @@ The section kind.
 
 ```
 title: str | None = title
-
 ```
 
 The section title.
@@ -4061,7 +3772,6 @@ The section title.
 
 ```
 value: Any = None
-
 ```
 
 The section value.
@@ -4070,7 +3780,6 @@ The section value.
 
 ```
 __bool__() -> bool
-
 ```
 
 Whether this section has a true-ish value.
@@ -4079,7 +3788,6 @@ Whether this section has a true-ish value.
 
 ```
 as_dict(**kwargs: Any) -> dict[str, Any]
-
 ```
 
 Return this section's data as a dictionary.

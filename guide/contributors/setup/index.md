@@ -8,28 +8,24 @@ The only requirement is that you have [Python](https://www.python.org/) and [uv]
 
 ```
 curl -LsSf https://astral.sh/uv/install.sh | sh
-
 ```
 
 See [Installation methods](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```
 pip install --user uv
-
 ```
 
 [pip](https://pip.pypa.io/en/stable/) is the main package installer for Python.
 
 ```
 pipx install uv
-
 ```
 
 [pipx](https://pipx.pypa.io/stable/) allows to install and run Python applications in isolated environments.
 
 ```
 rye install uv
-
 ```
 
 [Rye](https://rye.astral.sh/) is an all-in-one solution for Python project management, written in Rust.
@@ -42,21 +38,18 @@ Optionally, we recommend using [direnv](https://direnv.net/), which will add our
 
 ```
 gh repo clone griffe
-
 ```
 
 The [`gh` GitHub CLI](https://cli.github.com/) allows you to interact with GitHub on the command line.
 
 ```
 git clone git@github.com:your-username/griffe
-
 ```
 
 See the documentation on GitHub for [Connecting with SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) and for [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 
 ```
 git clone https://github.com/your-username/griffe
-
 ```
 
 See the documentation on GitHub for [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).

@@ -10,20 +10,17 @@ See the as_json() and from_json() methods of objects.
 
 ```
 JSONEncoder(*args: Any, full: bool = False, **kwargs: Any)
-
 ```
 
 Bases: `JSONEncoder`
 
 ```
-
               flowchart TD
               griffe.JSONEncoder[JSONEncoder]
 
               
 
               click griffe.JSONEncoder href "" "griffe.JSONEncoder"
-            
 ```
 
 JSON encoder.
@@ -35,14 +32,12 @@ Examples:
 ```
 >>> from griffe import JSONEncoder
 >>> JSONEncoder(full=True).encode(..., **kwargs)
-
 ```
 
 ```
 >>> import json
 >>> from griffe import JSONEncoder
 >>> json.dumps(..., cls=JSONEncoder, full=True, **kwargs)
-
 ```
 
 Parameters:
@@ -71,7 +66,6 @@ Attributes:
 
 ```
 full: bool = full
-
 ```
 
 Whether to dump full data or base data.
@@ -80,7 +74,6 @@ Whether to dump full data or base data.
 
 ```
 default(obj: Any) -> Any
-
 ```
 
 Return a serializable representation of the given object.
@@ -109,7 +102,6 @@ json_decoder(
     | str
     | Expr
 )
-
 ```
 
 Decode dictionaries as data classes.
@@ -122,7 +114,6 @@ Examples:
 >>> import json
 >>> from griffe import json_decoder
 >>> json.loads(..., object_hook=json_decoder)
-
 ```
 
 Parameters:
