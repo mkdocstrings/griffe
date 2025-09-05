@@ -9,7 +9,7 @@ from contextlib import suppress
 from dataclasses import asdict
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Literal, Union, cast
 
 from griffe._internal.c3linear import c3linear_merge
 from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle, parse
@@ -589,6 +589,7 @@ class Object(ObjectAliasMixin):
         lines_collection: LinesCollection | None = None,
         modules_collection: ModulesCollection | None = None,
         git_info: GitInfo | None = None,
+        analysis: Literal["static", "dynamic"] | None = None,
     ) -> None:
         """Initialize the object.
 
@@ -603,6 +604,8 @@ class Object(ObjectAliasMixin):
             lines_collection: A collection of source code lines.
             modules_collection: A collection of modules.
             git_info: Git information.
+            analysis: The type of analysis used to load this object.
+                None means the object was created manually.
         """
         self.name: str = name
         """The object name."""
@@ -691,6 +694,12 @@ class Object(ObjectAliasMixin):
 
         self.deprecated: bool | str | None = None
         """Whether this object is deprecated (boolean or deprecation message)."""
+
+        self.analysis: Literal["static", "dynamic"] | None = analysis
+        """The type of analysis used to load this object.
+
+        None means the object was created manually.
+        """
 
         self._lines_collection: LinesCollection | None = lines_collection
         self._modules_collection: ModulesCollection | None = modules_collection
@@ -1266,6 +1275,8 @@ class Object(ObjectAliasMixin):
             base["labels"] = self.labels
         if self.members:
             base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
+        if self.analysis:
+            base["analysis"] = self.analysis
         if self._git_info is not None:
             base["git_info"] = asdict(self._git_info)
         if self._source_link is not None:
@@ -1345,6 +1356,7 @@ class Alias(ObjectAliasMixin):
         parent: Module | Class | Alias | None = None,
         inherited: bool = False,
         wildcard_imported: bool = False,
+        analysis: Literal["static", "dynamic"] | None = None,
     ) -> None:
         """Initialize the alias.
 
@@ -1358,6 +1370,8 @@ class Alias(ObjectAliasMixin):
             parent: The alias parent.
             inherited: Whether this alias wraps an inherited member.
             wildcard_imported: Whether this alias was created using a wildcard import.
+            analysis: The type of analysis used to load this alias.
+                None means the alias was created manually.
         """
         self.name: str = name
         """The alias name."""
@@ -1382,6 +1396,12 @@ class Alias(ObjectAliasMixin):
 
         self.deprecated: str | bool | None = None
         """Whether this alias is deprecated (boolean or deprecation message)."""
+
+        self.analysis: Literal["static", "dynamic"] | None = analysis
+        """The type of analysis used to load this alias.
+
+        None means the alias was created manually.
+        """
 
         self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False
@@ -2180,6 +2200,8 @@ class Alias(ObjectAliasMixin):
             base["lineno"] = self.alias_lineno
         if self.alias_endlineno:
             base["endlineno"] = self.alias_endlineno
+        if self.analysis:
+            base["analysis"] = self.analysis
 
         if full:
             base.update(

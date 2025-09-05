@@ -291,7 +291,7 @@ class Inspector:
                         self.current.set_member(child.name, inspector.current.module)
                 # Otherwise, alias the object.
                 else:
-                    alias = Alias(child.name, target_path)
+                    alias = Alias(child.name, target_path, analysis="dynamic")
                     self.current.set_member(child.name, alias)
                     self.extensions.call("on_alias_instance", alias=alias, node=node, agent=self)
             else:
@@ -312,6 +312,7 @@ class Inspector:
             docstring=self._get_docstring(node),
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
+            analysis="dynamic",
         )
         self.extensions.call("on_instance", node=node, obj=module, agent=self)
         self.extensions.call("on_module_instance", node=node, mod=module, agent=self)
@@ -342,6 +343,7 @@ class Inspector:
             type_parameters=TypeParameters(*_convert_type_parameters(node.obj, parent=self.current, member=node.name)),
             lineno=lineno,
             endlineno=endlineno,
+            analysis="dynamic",
         )
         self.current.set_member(node.name, class_)
         self.current = class_
@@ -483,6 +485,7 @@ class Inspector:
                 docstring=self._get_docstring(node),
                 lineno=lineno,
                 endlineno=endlineno,
+                analysis="dynamic",
             )
         else:
             obj = Function(
@@ -495,6 +498,7 @@ class Inspector:
                 docstring=self._get_docstring(node),
                 lineno=lineno,
                 endlineno=endlineno,
+                analysis="dynamic",
             )
         obj.labels |= labels
         self.current.set_member(node.name, obj)
@@ -523,6 +527,7 @@ class Inspector:
             type_parameters=TypeParameters(*_convert_type_parameters(node.obj, parent=self.current, member=node.name)),
             docstring=self._get_docstring(node),
             parent=self.current,
+            analysis="dynamic",
         )
         self.current.set_member(node.name, type_alias)
         self.extensions.call("on_instance", node=node, obj=type_alias, agent=self)
@@ -574,6 +579,7 @@ class Inspector:
             value=value,
             annotation=annotation,
             docstring=docstring,
+            analysis="dynamic",
         )
         attribute.labels |= labels
         parent.set_member(node.name, attribute)

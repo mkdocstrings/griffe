@@ -188,7 +188,9 @@ Hopefully this flowchart gives you a pretty good idea of what happens when Griff
 
 ### Events and hooks
 
-There are two kinds of events in Griffe: **load events** and **analysis events**. Load events are scoped to the Griffe loader (triggered once a package is fully loaded). Analysis events are scoped to the visitor and inspector agents (triggered during static and dynamic analysis).
+There are two kinds of events in Griffe: [**load events**](#load-events) and [**analysis events**](#analysis-events). Load events are scoped to the Griffe loader (triggered once a package is fully loaded). Analysis events are scoped to the visitor and inspector agents (triggered during static and dynamic analysis).
+
+**Hooks** are methods that are called when a particular event is triggered. To target a specific event, the hook must be named after it. See [Extensions and hooks](#extensions-and-hooks).
 
 #### Load events
 
@@ -234,26 +236,23 @@ There are also specific **analysis events** for each object kind:
 - [`on_type_alias_instance`][griffe.Extension.on_type_alias_instance]
 - [`on_alias_instance`][griffe.Extension.on_alias_instance]
 
----
-
-**Hooks** are methods that are called when a particular event is triggered. To target a specific event, the hook must be named after it.
+#### Extensions and hooks
 
 **Extensions** are classes that inherit from [Griffe's Extension base class][griffe.Extension] and define some hooks as methods:
 
 ```python
-import ast
 import griffe
 
 
 class MyExtension(griffe.Extension):
-    def on_instance(
+    def on_object(
         self,
-        node: ast.AST | griffe.ObjectNode,
+        *,
         obj: griffe.Object,
-        agent: griffe.Visitor | griffe.Inspector,
+        loader: griffe.GriffeLoader,
         **kwargs,
     ) -> None:
-        """Do something with `node` and/or `obj`."""
+        """Do something with `obj`."""
 ```
 
 Hooks are always defined as methods of a class inheriting from [Extension][griffe.Extension], never as standalone functions. IDEs should autocomplete the signature when you start typing `def` followed by a hook name.
@@ -271,79 +270,42 @@ class MyExtension(Extension):
         self.state_thingy = "initial stuff"
         self.list_of_things = []
 
-    def on_instance(
+    def on_object(
         self,
-        node: ast.AST | griffe.ObjectNode,
+        *,
         obj: griffe.Object,
-        agent: griffe.Visitor | griffe.Inspector,
+        loader: griffe.GriffeLoader,
         **kwargs,
     ) -> None:
-        """Do something with `node` and/or `obj`."""
+        """Do something with `obj`."""
 ```
 
 ### Static/dynamic support
 
-Extensions can support both static and dynamic analysis of modules. If a module is scanned statically, your extension hooks will receive AST nodes (from the [ast][] module of the standard library). If the module is scanned dynamically, your extension hooks will receive [object nodes][griffe.ObjectNode]. Similarly, your hooks will receive a reference to the analysis agent that calls them, either a [Visitor][griffe.Visitor] or an [Inspector][griffe.Inspector].
+Extensions can support both static and dynamic analysis of modules.
 
-To support static analysis, dynamic analysis, or both, you can therefore check the type of the received node or agent:
+Objects have an `analysis` attribute whose value will be `"static"` if they were loaded using static analysis, or `"dynamic"` if they were loaded using dynamic analysis. If the value is `None`, it means the object was created manually (for example by another extension).
+
+To support static analysis, dynamic analysis, or both in your load events, you can therefore check the value of the `analysis` attribute:
 
 ```python
-import ast
 import griffe
 
 
 class MyExtension(griffe.Extension):
-    def on_instance(
-        self,
-        node: ast.AST | griffe.ObjectNode,
-        obj: griffe.Object,
-        agent: griffe.Visitor | griffe.Inspector,
-        **kwargs,
-    ) -> None:
-        """Do something with `node` and/or `obj`."""
-        if isinstance(node, ast.AST):
-            ...  # Apply logic for static analysis.
-        else:
-            ...  # Apply logic for dynamic analysis.
-```
-
-```python
-import ast
-import griffe
-
-
-class MyExtension(Extension):
-    def on_instance(
-        self,
-        node: ast.AST | griffe.ObjectNode,
-        obj: griffe.Object,
-        agent: griffe.Visitor | griffe.Inspector,
-        **kwargs,
-    ) -> None:
-        """Do something with `node` and/or `obj`."""
-        if isinstance(agent, griffe.Visitor):
-            ...  # Apply logic for static analysis.
-        else:
-            ...  # Apply logic for dynamic analysis.
-```
-
-The preferred method is to check the type of the received node rather than the agent.
-
-Since hooks also receive instantiated modules, classes, functions, attributes and type aliases, most of the time you will not need to use the `node` argument other than for checking its type and deciding what to do based on the result. And since we always add `**kwargs` to the hooks' signatures, you can drop any parameter you don't use from the signature:
-
-```python
-import griffe
-
-
-class MyExtension(Extension):
-    def on_instance(self, obj: griffe.Object, **kwargs) -> None:
+    def on_object(self, *, obj: griffe.Object, **kwargs) -> None:
         """Do something with `obj`."""
-        ...
+        if obj.analysis == "static":
+            ...  # Apply logic for static analysis.
+        elif obj.analysis == "dynamic":
+            ...  # Apply logic for dynamic analysis.
+        else:
+            ...  # Apply logic for manually built objects.
 ```
 
 ### Visiting trees
 
-Extensions provide basic functionality to help you visit trees:
+Extensions provide basic functionality to help you visit trees during analysis of the code:
 
 - [`visit`][griffe.Extension.visit]: call `self.visit(node)` to start visiting an abstract syntax tree.
 - [`generic_visit`][griffe.Extension.generic_visit]: call `self.generic_visit(node)` to visit each subnode of a given node.
@@ -395,7 +357,16 @@ import griffe
 
 
 class MyExtension(griffe.Extension):
-    def on_node(self, node: ast.AST | griffe.ObjectNode, agent: griffe.Visitor | griffe.Inspector, **kwargs) -> None:
+    # Example from within a load event:
+    def on_package(self, *, pkg: griffe.Module, loader: griffe.GriffeLoader, **kwargs) -> None:
+        # New object created for whatever reason.
+        function = griffe.Function(...)
+
+        # Trigger other extensions.
+        loader.extensions.call("on_function", func=function, loader=loader)
+
+    # Example from within an analysis event:
+    def on_node(self, *, node: ast.AST | griffe.ObjectNode, agent: griffe.Visitor | griffe.Inspector, **kwargs) -> None:
         # New object created for whatever reason.
         function = griffe.Function(...)
 
@@ -414,7 +385,7 @@ self_namespace = "my_extension"
 
 
 class MyExtension(griffe.Extension):
-    def on_instance(self, obj: griffe.Object, **kwargs) -> None:
+    def on_object(self, obj: griffe.Object, **kwargs) -> None:
         obj.extra[self_namespace]["some_key"] = "some_value"
 ```
 
@@ -428,8 +399,8 @@ mkdocstrings_namespace = "mkdocstrings"
 
 
 class MyExtension(griffe.Extension):
-    def on_class_instance(self, cls: griffe.Class, **kwargs) -> None:
-        obj.extra[mkdocstrings_namespace]["template"] = "my_custom_template"
+    def on_class(self, cls: griffe.Class, **kwargs) -> None:
+        cls.extra[mkdocstrings_namespace]["template"] = "my_custom_template"
 ```
 
 [Read more about mkdocstrings handler extensions.](https://mkdocstrings.github.io/usage/handlers/#handler-extensions)
@@ -448,7 +419,7 @@ class MyExtension(griffe.Extension):
         self.option1 = option1
         self.option2 = option2
 
-    def on_attribute_instance(self, attr: griffe.Attribute, **kwargs) -> None:
+    def on_attribute(self, attr: griffe.Attribute, **kwargs) -> None:
         if self.option2:
             ...  # Do something.
 ```
@@ -464,8 +435,8 @@ logger = griffe.get_logger(__name__)
 
 
 class MyExtension(griffe.Extension):
-    def on_module_members(self, mod: griffe.Module, **kwargs) -> None:
-        logger.info("Doing some work on module %s and its members", mod.path)
+    def on_module(self, mod: griffe.Module, **kwargs) -> None:
+        logger.info("Doing some work on module %s", mod.path)
 ```
 
 ### Full example
@@ -495,14 +466,13 @@ class DynamicDocstrings(griffe.Extension):
     def __init__(self, object_paths: list[str] | None = None) -> None:
         self.object_paths = object_paths
 
-    def on_instance(
+    def on_object(
         self,
-        node: ast.AST | griffe.ObjectNode,
         obj: griffe.Object,
-        agent: griffe.Visitor | griffe.Inspector,
+        loader: griffe.GriffeLoader,
         **kwargs,
     ) -> None:
-        if isinstance(node, griffe.ObjectNode):
+        if obj.analysis == "dynamic":
             return  # Skip runtime objects, their docstrings are already right.
 
         if self.object_paths and obj.path not in self.object_paths:
@@ -527,8 +497,8 @@ class DynamicDocstrings(griffe.Extension):
             obj.docstring = griffe.Docstring(
                 docstring,
                 parent=obj,
-                docstring_parser=agent.docstring_parser,
-                docstring_options=agent.docstring_options,
+                docstring_parser=loader.docstring_parser,
+                docstring_options=loader.docstring_options,
             )
 ```
 

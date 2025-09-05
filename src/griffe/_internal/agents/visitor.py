@@ -288,6 +288,7 @@ class Visitor:
             docstring=self._get_docstring(node),
             lines_collection=self.lines_collection,
             modules_collection=self.modules_collection,
+            analysis="static",
         )
         self.extensions.call("on_instance", node=node, obj=module, agent=self)
         self.extensions.call("on_module_instance", node=node, mod=module, agent=self)
@@ -331,6 +332,7 @@ class Visitor:
             type_parameters=TypeParameters(*self._get_type_parameters(node, scope=node.name)),
             bases=bases,  # type: ignore[arg-type]
             runtime=not self.type_guarded,
+            analysis="static",
         )
         class_.labels |= self.decorators_to_labels(decorators)
 
@@ -427,6 +429,7 @@ class Visitor:
                 endlineno=node.end_lineno,
                 docstring=self._get_docstring(node),
                 runtime=not self.type_guarded,
+                analysis="static",
             )
             attribute.labels |= labels
             self.current.set_member(node.name, attribute)
@@ -460,6 +463,7 @@ class Visitor:
             docstring=self._get_docstring(node),
             runtime=not self.type_guarded,
             parent=self.current,
+            analysis="static",
         )
 
         property_function = self.get_base_property(decorators, function)
@@ -538,6 +542,7 @@ class Visitor:
                 type_parameters=TypeParameters(*self._get_type_parameters(node, scope=name)),
                 docstring=docstring,
                 parent=self.current,
+                analysis="static",
             )
             self.current.set_member(name, type_alias)
             self.extensions.call("on_instance", node=node, obj=type_alias, agent=self)
@@ -559,6 +564,7 @@ class Visitor:
                 lineno=node.lineno,
                 endlineno=node.end_lineno,
                 runtime=not self.type_guarded,
+                analysis="static",
             )
             self.current.set_member(alias_name, alias)
             self.extensions.call("on_alias_instance", alias=alias, node=node, agent=self)
@@ -594,6 +600,7 @@ class Visitor:
                     lineno=node.lineno,
                     endlineno=node.end_lineno,
                     runtime=not self.type_guarded,
+                    analysis="static",
                 )
                 self.current.set_member(alias_name, alias)
                 self.extensions.call("on_alias_instance", alias=alias, node=node, agent=self)
@@ -691,6 +698,7 @@ class Visitor:
                 endlineno=node.end_lineno,
                 docstring=docstring,
                 runtime=not self.type_guarded,
+                analysis="static",
             )
             attribute.labels |= labels
             parent.set_member(name, attribute)

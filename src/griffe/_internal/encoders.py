@@ -197,6 +197,7 @@ def _load_module(obj_dict: dict[str, Any]) -> Module:
         filepath=Path(obj_dict["filepath"]) if "filepath" in obj_dict else None,
         docstring=_load_docstring(obj_dict),
         runtime=obj_dict.get("runtime", True),
+        analysis=obj_dict.get("analysis"),
     )
     # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
     members = obj_dict.get("members", [])
@@ -228,6 +229,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         type_parameters=TypeParameters(*obj_dict["type_parameters"]) if "type_parameters" in obj_dict else None,
         bases=obj_dict["bases"],
         runtime=obj_dict.get("runtime", True),
+        analysis=obj_dict.get("analysis"),
     )
     # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
     members = obj_dict.get("members", [])
@@ -260,6 +262,7 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
         runtime=obj_dict.get("runtime", True),
+        analysis=obj_dict.get("analysis"),
     )
     function.labels |= set(obj_dict.get("labels", ()))
     function.deprecated = obj_dict.get("deprecated")
@@ -278,6 +281,7 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
         docstring=_load_docstring(obj_dict),
         value=obj_dict.get("value"),
         annotation=obj_dict.get("annotation"),
+        analysis=obj_dict.get("analysis"),
     )
     attribute.labels |= set(obj_dict.get("labels", ()))
     attribute.runtime = obj_dict.get("runtime", True)
@@ -297,6 +301,7 @@ def _load_alias(obj_dict: dict[str, Any]) -> Alias:
         endlineno=obj_dict.get("endlineno"),
         runtime=obj_dict.get("runtime", True),
         inherited=obj_dict.get("inherited", False),
+        analysis=obj_dict.get("analysis"),
     )
     alias.public = obj_dict.get("public")
     alias.deprecated = obj_dict.get("deprecated")
@@ -311,6 +316,7 @@ def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:
         lineno=obj_dict["lineno"],
         endlineno=obj_dict.get("endlineno"),
         docstring=_load_docstring(obj_dict),
+        analysis=obj_dict.get("analysis"),
     )
     type_alias.labels |= set(obj_dict.get("labels", ()))
     type_alias.runtime = obj_dict.get("runtime", True)

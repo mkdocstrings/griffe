@@ -61,7 +61,21 @@
           "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.deprecated",
           "type": [
             "null",
-            "boolean"
+            "boolean",
+            "string"
+          ]
+        },
+        "analysis": {
+          "title": "The type of analysis used to load this alias.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.analysis",
+          "type": [
+            "null",
+            "string"
+          ],
+          "enum": [
+            null,
+            "static",
+            "dynamic"
           ]
         },
         "is_public": {
@@ -202,6 +216,19 @@
             "null",
             "string",
             "boolean"
+          ]
+        },
+        "analysis": {
+          "title": "The type of analysis used to load this object.",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Object.analysis",
+          "type": [
+            "null",
+            "string"
+          ],
+          "enum": [
+            null,
+            "static",
+            "dynamic"
           ]
         },
         "labels": {
