@@ -63,37 +63,35 @@ Checking for API breaking changes
 
 ```
 $ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
-Traceback (most recent call last):
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 118, in _tmp_worktree
-    _git("-C", str(repo), "worktree", "add", "-b", tmp_branch, location, ref)
-    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 39, in _git
-    raise GitError(process.stdout.strip())
-griffe._internal.exceptions.GitError
+src/griffe/mixins.py:303: ObjectAliasMixin.is_exported:
+Public object points to a different kind of object:
+  Old: function
+  New: attribute
 
-The above exception was the direct cause of the following exception:
+src/griffe/mixins.py:353: ObjectAliasMixin.is_public:
+Public object points to a different kind of object:
+  Old: function
+  New: attribute
 
-Traceback (most recent call last):
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe", line 10, in <module>
-    sys.exit(main())
-             ~~~~^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 614, in main
-    return commands[subcommand](**opts_dict)
-           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py", line 532, in check
-    new_package = load_git(
-        package,
-    ...<8 lines>...
-        resolve_external=None,
-    )
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py", line 909, in load_git
-    with _tmp_worktree(repo, ref) as worktree:
-         ~~~~~~~~~~~~~^^^^^^^^^^^
-  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
-    return next(self.gen)
-  File "/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py", line 120, in _tmp_worktree
-    raise RuntimeError(f"Could not create git worktree: {error}") from error
-RuntimeError: Could not create git worktree:
+src/griffe/dataclasses.py:520: Object.has_labels(labels):
+Parameter kind was changed:
+  Old: positional or keyword
+  New: variadic positional
+
+src/griffe/diff.py:571: find_breaking_changes(ignore_private):
+Parameter default was changed:
+  Old: True
+  New: _sentinel
+
+src/griffe/extensions/base.py:463: load_extensions(exts):
+Parameter kind was changed:
+  Old: positional or keyword
+  New: variadic positional
+
+src/griffe/dataclasses.py:1073: Alias.has_labels(labels):
+Parameter kind was changed:
+  Old: positional or keyword
+  New: variadic positional
 ```
 
 [Playground](playground/) [Join our Gitter channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im)

@@ -317,69 +317,42 @@
 <span class=k>if</span> <span class=n>B</span> <span class=ow>in</span> <span class=n>klass</span><span class=o>.</span><span class=vm>__bases__</span><span class=p>:</span>
     <span class=o>...</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Unless inherited members are lost in the process, removing a class base is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like <code>TypeError</code>. The class is here, its members as well: the contract is fulfilled. But developers sometimes rely on the actual bases of a class, so changing them will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.</p> </div> <h2 id=output-style>Output style<a class=headerlink href=#output-style title="Permanent link">¤</a></h2> <p>Griffe supports writing detected breakages in multiple formats, or styles.</p> <p><a href id=format-oneline></a></p> <h3 id=one-line>One-line<a class=headerlink href=#one-line title="Permanent link">¤</a></h3> <ul> <li><strong>CLI</strong>: <code>-f oneline</code> / no flags</li> <li><strong>API</strong>: <code>check(...)</code> / <code>check(..., style="oneline")</code> / <code>check(..., style=ExplanationStyle.ONE_LINE)</code></li> </ul> <p>This is the default format. Griffe will print each detected breakage on a single line:</p> <div class=highlight><pre><span></span><code>$ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0
-Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">118</span>, in <span class=" -Color -Color-Magenta">_tmp_worktree</span>
-    <span class=" -Color -Color-Red">_git</span><span class=" -Color -Color-Bold -Color-Bold-Red">(&quot;-C&quot;, str(repo), &quot;worktree&quot;, &quot;add&quot;, &quot;-b&quot;, tmp_branch, location, ref)</span>
-    <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">39</span>, in <span class=" -Color -Color-Magenta">_git</span>
-    raise GitError(process.stdout.strip())
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">griffe._internal.exceptions.GitError</span>
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe&quot;</span>, line <span class=" -Color -Color-Magenta">10</span>, in <span class=" -Color -Color-Magenta">&lt;module&gt;</span>
-    sys.exit(<span class=" -Color -Color-Red">main</span><span class=" -Color -Color-Bold -Color-Bold-Red">()</span>)
-             <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py&quot;</span>, line <span class=" -Color -Color-Magenta">614</span>, in <span class=" -Color -Color-Magenta">main</span>
-    return <span class=" -Color -Color-Red">commands[subcommand]</span><span class=" -Color -Color-Bold -Color-Bold-Red">(**opts_dict)</span>
-           <span class=" -Color -Color-Red">~~~~~~~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py&quot;</span>, line <span class=" -Color -Color-Magenta">532</span>, in <span class=" -Color -Color-Magenta">check</span>
-    new_package = load_git(
-        package,
-    ...&lt;8 lines&gt;...
-        resolve_external=None,
-    )
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py&quot;</span>, line <span class=" -Color -Color-Magenta">909</span>, in <span class=" -Color -Color-Magenta">load_git</span>
-    with <span class=" -Color -Color-Red">_tmp_worktree</span><span class=" -Color -Color-Bold -Color-Bold-Red">(repo, ref)</span> as worktree:
-         <span class=" -Color -Color-Red">~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/usr/lib/python3.13/contextlib.py&quot;</span>, line <span class=" -Color -Color-Magenta">141</span>, in <span class=" -Color -Color-Magenta">__enter__</span>
-    return next(self.gen)
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">120</span>, in <span class=" -Color -Color-Magenta">_tmp_worktree</span>
-    raise RuntimeError(f&quot;Could not create git worktree: {error}&quot;) from error
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">RuntimeError</span>: <span class=" -Color -Color-Magenta">Could not create git worktree: </span>
+<span class=" -Color -Color-Bold">src/griffe/mixins.py</span>:303: ObjectAliasMixin.is_exported: <span class=" -Color -Color-Yellow">Public object points to a different kind of object</span>: function -&gt; attribute
+<span class=" -Color -Color-Bold">src/griffe/mixins.py</span>:353: ObjectAliasMixin.is_public: <span class=" -Color -Color-Yellow">Public object points to a different kind of object</span>: function -&gt; attribute
+<span class=" -Color -Color-Bold">src/griffe/dataclasses.py</span>:520: Object.has_labels(<span class=" -Color -Color-Blue">labels</span>): <span class=" -Color -Color-Yellow">Parameter kind was changed</span>: positional or keyword -&gt; variadic positional
+<span class=" -Color -Color-Bold">src/griffe/diff.py</span>:571: find_breaking_changes(<span class=" -Color -Color-Blue">ignore_private</span>): <span class=" -Color -Color-Yellow">Parameter default was changed</span>: True -&gt; _sentinel
+<span class=" -Color -Color-Bold">src/griffe/extensions/base.py</span>:463: load_extensions(<span class=" -Color -Color-Blue">exts</span>): <span class=" -Color -Color-Yellow">Parameter kind was changed</span>: positional or keyword -&gt; variadic positional
+<span class=" -Color -Color-Bold">src/griffe/dataclasses.py</span>:1073: Alias.has_labels(<span class=" -Color -Color-Blue">labels</span>): <span class=" -Color -Color-Yellow">Parameter kind was changed</span>: positional or keyword -&gt; variadic positional
 </code></pre></div> <p><a href id=format-verbose></a></p> <h3 id=verbose>Verbose<a class=headerlink href=#verbose title="Permanent link">¤</a></h3> <ul> <li><strong>CLI</strong>: <code>-f verbose</code> / <code>-v</code></li> <li><strong>API</strong>: <code>check(..., style="verbose")</code> / <code>check(..., style=ExplanationStyle.VERBOSE)</code> / <code>check(..., verbose=True)</code></li> </ul> <p>Depending on the detected breakages, the lines might be hard to read (being too compact), so <code>griffe check</code> also accepts a <code>--verbose</code> or <code>-v</code> option to add some space to the output:</p> <div class=highlight><pre><span></span><code>$ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
-Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">118</span>, in <span class=" -Color -Color-Magenta">_tmp_worktree</span>
-    <span class=" -Color -Color-Red">_git</span><span class=" -Color -Color-Bold -Color-Bold-Red">(&quot;-C&quot;, str(repo), &quot;worktree&quot;, &quot;add&quot;, &quot;-b&quot;, tmp_branch, location, ref)</span>
-    <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">39</span>, in <span class=" -Color -Color-Magenta">_git</span>
-    raise GitError(process.stdout.strip())
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">griffe._internal.exceptions.GitError</span>
+<span class=" -Color -Color-Bold">src/griffe/mixins.py</span>:303: ObjectAliasMixin.is_exported:
+<span class=" -Color -Color-Yellow">Public object points to a different kind of object</span>:
+  Old: function
+  New: attribute
 
-The above exception was the direct cause of the following exception:
+<span class=" -Color -Color-Bold">src/griffe/mixins.py</span>:353: ObjectAliasMixin.is_public:
+<span class=" -Color -Color-Yellow">Public object points to a different kind of object</span>:
+  Old: function
+  New: attribute
 
-Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe&quot;</span>, line <span class=" -Color -Color-Magenta">10</span>, in <span class=" -Color -Color-Magenta">&lt;module&gt;</span>
-    sys.exit(<span class=" -Color -Color-Red">main</span><span class=" -Color -Color-Bold -Color-Bold-Red">()</span>)
-             <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py&quot;</span>, line <span class=" -Color -Color-Magenta">614</span>, in <span class=" -Color -Color-Magenta">main</span>
-    return <span class=" -Color -Color-Red">commands[subcommand]</span><span class=" -Color -Color-Bold -Color-Bold-Red">(**opts_dict)</span>
-           <span class=" -Color -Color-Red">~~~~~~~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py&quot;</span>, line <span class=" -Color -Color-Magenta">532</span>, in <span class=" -Color -Color-Magenta">check</span>
-    new_package = load_git(
-        package,
-    ...&lt;8 lines&gt;...
-        resolve_external=None,
-    )
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py&quot;</span>, line <span class=" -Color -Color-Magenta">909</span>, in <span class=" -Color -Color-Magenta">load_git</span>
-    with <span class=" -Color -Color-Red">_tmp_worktree</span><span class=" -Color -Color-Bold -Color-Bold-Red">(repo, ref)</span> as worktree:
-         <span class=" -Color -Color-Red">~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/usr/lib/python3.13/contextlib.py&quot;</span>, line <span class=" -Color -Color-Magenta">141</span>, in <span class=" -Color -Color-Magenta">__enter__</span>
-    return next(self.gen)
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">120</span>, in <span class=" -Color -Color-Magenta">_tmp_worktree</span>
-    raise RuntimeError(f&quot;Could not create git worktree: {error}&quot;) from error
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">RuntimeError</span>: <span class=" -Color -Color-Magenta">Could not create git worktree: </span>
+<span class=" -Color -Color-Bold">src/griffe/dataclasses.py</span>:520: Object.has_labels(<span class=" -Color -Color-Blue">labels</span>):
+<span class=" -Color -Color-Yellow">Parameter kind was changed</span>:
+  Old: positional or keyword
+  New: variadic positional
+
+<span class=" -Color -Color-Bold">src/griffe/diff.py</span>:571: find_breaking_changes(<span class=" -Color -Color-Blue">ignore_private</span>):
+<span class=" -Color -Color-Yellow">Parameter default was changed</span>:
+  Old: True
+  New: _sentinel
+
+<span class=" -Color -Color-Bold">src/griffe/extensions/base.py</span>:463: load_extensions(<span class=" -Color -Color-Blue">exts</span>):
+<span class=" -Color -Color-Yellow">Parameter kind was changed</span>:
+  Old: positional or keyword
+  New: variadic positional
+
+<span class=" -Color -Color-Bold">src/griffe/dataclasses.py</span>:1073: Alias.has_labels(<span class=" -Color -Color-Blue">labels</span>):
+<span class=" -Color -Color-Yellow">Parameter kind was changed</span>:
+  Old: positional or keyword
+  New: variadic positional
 </code></pre></div> <p><a href id=format-markdown></a></p> <h3 id=markdown>Markdown<a class=headerlink href=#markdown title="Permanent link">¤</a></h3> <p><a href=../../../insiders/changelog/#1.0.0><span class=twemoji><svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M7.75 6.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5"/><path d="M2.5 1h8.44a1.5 1.5 0 0 1 1.06.44l10.25 10.25a1.5 1.5 0 0 1 0 2.12l-8.44 8.44a1.5 1.5 0 0 1-2.12 0L1.44 12A1.5 1.5 0 0 1 1 10.94V2.5A1.5 1.5 0 0 1 2.5 1m0 1.5v8.44l10.25 10.25 8.44-8.44L10.94 2.5Z"/></svg></span> Insiders 1.0.0</a></p> <ul> <li><strong>CLI</strong>: <code>-f markdown</code></li> <li><strong>API</strong>: <code>check(..., style="markdown")</code> / <code>check(..., style=ExplanationStyle.MARKDOWN)</code></li> </ul> <p>The Markdown format is adapted for changelogs. It doesn't show the file and line number, and instead prints out the complete path of your API objects. With a bit of automation, you will be able to automatically insert a summary of breaking changes in your changelog entries.</p> <div class="tabbed-set tabbed-alternate" data-tabs=1:2><input checked=checked id=exec-85--output name=exec-85--__tabbed_1 type=radio><input id=exec-85--result name=exec-85--__tabbed_1 type=radio><div class=tabbed-labels><label for=exec-85--output>Output</label><label for=exec-85--result>Result</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><pre><span></span><code><span class=k>-</span><span class=w> </span><span class=sb>`griffe.loader.GriffeLoader.resolve_aliases(only_exported)`</span>: <span class=ge>*Parameter kind was changed*</span>: positional or keyword -&gt; keyword-only
 <span class=k>-</span><span class=w> </span><span class=sb>`griffe.loader.GriffeLoader.resolve_aliases(only_exported)`</span>: <span class=ge>*Parameter default was changed*</span>: <span class=sb>`True`</span> -&gt; <span class=sb>`None`</span>
 <span class=k>-</span><span class=w> </span><span class=sb>`griffe.loader.GriffeLoader.resolve_aliases(only_known_modules)`</span>: <span class=ge>*Parameter kind was changed*</span>: positional or keyword -&gt; keyword-only

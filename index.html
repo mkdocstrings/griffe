@@ -29,37 +29,35 @@
 <span class=w>      </span><span class=s2>&quot;DocstringAttribute&quot;</span><span class=p>,</span>
 <span class=w>      </span><span class=s2>&quot;DocstringClass&quot;</span><span class=p>,</span>
 </code></pre></div> </div> <div> <div class=highlight><span class=filename>Checking for API breaking changes</span><pre><span></span><code>$ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
-Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">118</span>, in <span class=" -Color -Color-Magenta">_tmp_worktree</span>
-    <span class=" -Color -Color-Red">_git</span><span class=" -Color -Color-Bold -Color-Bold-Red">(&quot;-C&quot;, str(repo), &quot;worktree&quot;, &quot;add&quot;, &quot;-b&quot;, tmp_branch, location, ref)</span>
-    <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">39</span>, in <span class=" -Color -Color-Magenta">_git</span>
-    raise GitError(process.stdout.strip())
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">griffe._internal.exceptions.GitError</span>
+<span class=" -Color -Color-Bold">src/griffe/mixins.py</span>:303: ObjectAliasMixin.is_exported:
+<span class=" -Color -Color-Yellow">Public object points to a different kind of object</span>:
+  Old: function
+  New: attribute
 
-The above exception was the direct cause of the following exception:
+<span class=" -Color -Color-Bold">src/griffe/mixins.py</span>:353: ObjectAliasMixin.is_public:
+<span class=" -Color -Color-Yellow">Public object points to a different kind of object</span>:
+  Old: function
+  New: attribute
 
-Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/.venv/bin/griffe&quot;</span>, line <span class=" -Color -Color-Magenta">10</span>, in <span class=" -Color -Color-Magenta">&lt;module&gt;</span>
-    sys.exit(<span class=" -Color -Color-Red">main</span><span class=" -Color -Color-Bold -Color-Bold-Red">()</span>)
-             <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py&quot;</span>, line <span class=" -Color -Color-Magenta">614</span>, in <span class=" -Color -Color-Magenta">main</span>
-    return <span class=" -Color -Color-Red">commands[subcommand]</span><span class=" -Color -Color-Bold -Color-Bold-Red">(**opts_dict)</span>
-           <span class=" -Color -Color-Red">~~~~~~~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/cli.py&quot;</span>, line <span class=" -Color -Color-Magenta">532</span>, in <span class=" -Color -Color-Magenta">check</span>
-    new_package = load_git(
-        package,
-    ...&lt;8 lines&gt;...
-        resolve_external=None,
-    )
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/loader.py&quot;</span>, line <span class=" -Color -Color-Magenta">909</span>, in <span class=" -Color -Color-Magenta">load_git</span>
-    with <span class=" -Color -Color-Red">_tmp_worktree</span><span class=" -Color -Color-Bold -Color-Bold-Red">(repo, ref)</span> as worktree:
-         <span class=" -Color -Color-Red">~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/usr/lib/python3.13/contextlib.py&quot;</span>, line <span class=" -Color -Color-Magenta">141</span>, in <span class=" -Color -Color-Magenta">__enter__</span>
-    return next(self.gen)
-  File <span class=" -Color -Color-Magenta">&quot;/run/media/pawamoy/Data/dev/insiders/griffe/src/griffe/_internal/git.py&quot;</span>, line <span class=" -Color -Color-Magenta">120</span>, in <span class=" -Color -Color-Magenta">_tmp_worktree</span>
-    raise RuntimeError(f&quot;Could not create git worktree: {error}&quot;) from error
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">RuntimeError</span>: <span class=" -Color -Color-Magenta">Could not create git worktree: </span>
+<span class=" -Color -Color-Bold">src/griffe/dataclasses.py</span>:520: Object.has_labels(<span class=" -Color -Color-Blue">labels</span>):
+<span class=" -Color -Color-Yellow">Parameter kind was changed</span>:
+  Old: positional or keyword
+  New: variadic positional
+
+<span class=" -Color -Color-Bold">src/griffe/diff.py</span>:571: find_breaking_changes(<span class=" -Color -Color-Blue">ignore_private</span>):
+<span class=" -Color -Color-Yellow">Parameter default was changed</span>:
+  Old: True
+  New: _sentinel
+
+<span class=" -Color -Color-Bold">src/griffe/extensions/base.py</span>:463: load_extensions(<span class=" -Color -Color-Blue">exts</span>):
+<span class=" -Color -Color-Yellow">Parameter kind was changed</span>:
+  Old: positional or keyword
+  New: variadic positional
+
+<span class=" -Color -Color-Bold">src/griffe/dataclasses.py</span>:1073: Alias.has_labels(<span class=" -Color -Color-Blue">labels</span>):
+<span class=" -Color -Color-Yellow">Parameter kind was changed</span>:
+  Old: positional or keyword
+  New: variadic positional
 </code></pre></div> </div> </div> <p><a href=playground/ class=md-button><span class=twemoji><svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M8 5.14v14l11-7z"/></svg></span> Playground</a> <a class=md-button href=https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im target=_blank><span class=twemoji><svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M8.501 4.001H10.5V24H8.501zm6.999 0V24h-2V4.001zM3.5 0h2.001v15H3.5zm15 4.001h2V15h-2z"/></svg></span> Join our Gitter channel</a></p> <aside class=md-source-file> <span class=md-source-file__fact> <span class=md-icon title="Last update"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 2, 2025 17:09:31 UTC"><span class=timeago datetime=2025-09-02T17:09:31+00:00 locale=en></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 2, 2025 17:09:31 UTC">2025-09-02</span> </span> <span class=md-source-file__fact> <span class=md-icon title=Created> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 9, 2021 17:56:22 UTC"><span class=timeago datetime=2021-09-09T17:56:22+00:00 locale=en></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 9, 2021 17:56:22 UTC">2021-09-09</span> </span> </aside> <!-- Giscus --> <!-- https://squidfunk.github.io/mkdocs-material/setup/adding-a-comment-system/#giscus-integration --> <div id=feedback style="display: none;"> <h2 id=__comments>Feedback</h2> <script src=https://giscus.app/client.js data-repo=mkdocstrings/griffe data-repo-id="MDEwOlJlcG9zaXRvcnk0MDQ4NzkwODY=" data-category=Documentation data-category-id=DIC_kwDOGCH27s4CgiFt data-mapping=pathname data-strict=1 data-reactions-enabled=0 data-emit-metadata=0 data-input-position=top data-theme=preferred_color_scheme data-lang=en data-loading=lazy crossorigin=anonymous async>
     </script> <!-- Synchronize Giscus theme with palette --> <script>
         var giscus = document.querySelector("script[src*=giscus]")
