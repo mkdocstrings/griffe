@@ -22,6 +22,10 @@ Griffe is used by various projects in the Python ecosystem.
 
 [Hippogriffe](https://github.com/patrick-kidger/hippogriffe) is a set of tweaks on top of the MkDocs + mkdocstrings-python + Griffe documentation stack. It adds source links to GitHub to each top-level class or function, pretty-formats type annotations, improves unions/generics display, and more. Hippogriffe is used as a MkDocs plugin.
 
+## mdxify
+
+[mdxify](https://github.com/zzstoatzz/mdxify) generates API documentation from Python modules with automatic navigation and source links. MDX is the default output and Markdown is also supported via `--format md`.
+
 ## mkdocstrings-python
 
 Of course, Griffe is what powers [the Python handler of mkdocstrings](https://mkdocstrings.github.io/python/). mkdocstrings is a plugin for [MkDocs](https://www.mkdocs.org/) that allows rendering API docs easily.
