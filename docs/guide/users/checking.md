@@ -107,22 +107,15 @@ jobs:
   check-api:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
-    # Griffe requires that Git tags are available.
-    - run: git fetch --depth=1 --tags
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-
-    # Install Griffe (use your preferred dependency manager).
-    - run: pip install griffe
-
-    - run: griffe check -ssrc your_package
+    - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # We the need the full Git history.
+    - uses: astral-sh/setup-uv@v6
+    # The following command will compare current changes to latest tag.
+    - run: uvx griffe check --search src --format github your_package_name
 ```
 
-The last step will fail the workflow if any breaking change is found. If you are part of [Insiders](../../insiders/index.md), you can format the output for GitHub, to enjoy GitHub annotations in PRs. See [GitHub format](#github) below.
+The last step will fail the workflow if any breaking change is found.
 
 ## Detected breakages
 
