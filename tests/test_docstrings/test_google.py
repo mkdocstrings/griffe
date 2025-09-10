@@ -1892,7 +1892,7 @@ def test_reading_property_type_in_summary(parse_google: ParserType) -> None:
     docstring = "str: Description of the property."
     parent = Attribute("prop")
     parent.labels.add("property")
-    sections, warnings = parse_google(docstring, returns_type_in_property_summary=True, parent=parent)
+    sections, _ = parse_google(docstring, returns_type_in_property_summary=True, parent=parent)
     assert len(sections) == 2
     assert sections[0].kind is DocstringSectionKind.text
     assert sections[1].kind is DocstringSectionKind.returns
