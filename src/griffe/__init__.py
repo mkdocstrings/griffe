@@ -206,6 +206,13 @@ from griffe._internal.diff import (
     ReturnChangedTypeBreakage,
     find_breaking_changes,
 )
+from griffe._internal.docstrings.auto import (
+    AutoOptions,
+    DocstringDetectionMethod,
+    PerStyleOptions,
+    infer_docstring_style,
+    parse_auto,
+)
 from griffe._internal.docstrings.google import GoogleOptions, parse_google
 from griffe._internal.docstrings.models import (
     DocstringAdmonition,
@@ -245,12 +252,9 @@ from griffe._internal.docstrings.models import (
 )
 from griffe._internal.docstrings.numpy import NumpyOptions, parse_numpy
 from griffe._internal.docstrings.parsers import (
-    DocstringDetectionMethod,
     DocstringOptions,
     DocstringStyle,
-    infer_docstring_style,
     parse,
-    parse_auto,
     parsers,
 )
 from griffe._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
@@ -409,6 +413,7 @@ __all__ = [
     "Attribute",
     "AttributeChangedTypeBreakage",
     "AttributeChangedValueBreakage",
+    "AutoOptions",
     "Breakage",
     "BreakageKind",
     "BuiltinModuleError",
@@ -539,6 +544,7 @@ __all__ = [
     "Parameters",
     "ParametersType",
     "Parser",
+    "PerStyleOptions",
     "ReturnChangedTypeBreakage",
     "RootNodeError",
     "SerializationMixin",

@@ -229,8 +229,10 @@ plugins:
         options:
           backlinks: tree
           docstring_options:
-            ignore_init_summary: true
-          docstring_style: google
+            per_style_options:
+              google:
+                ignore_init_summary: true
+          docstring_style: auto
           docstring_section_style: list
           extensions:
           - griffe_inherited_docstrings

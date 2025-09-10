@@ -24,6 +24,10 @@
 
 ::: griffe.SphinxOptions
 
+::: griffe.AutoOptions
+
+::: griffe.PerStyleOptions
+
 ## **Advanced API**
 
 ::: griffe.Parser
