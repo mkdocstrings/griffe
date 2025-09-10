@@ -134,10 +134,6 @@ def infer_docstring_style(
     parsed the same number of sections, `style_order` is used to decide which
     one to return. The `default` parser is never used with the 'max_sections' method.
 
-    For non-Insiders versions, `default` is returned if specified, else the first
-    parser in `style_order` is returned. If `style_order` is not specified,
-    `None` is returned.
-
     Additional options are parsed to the detected parser, if any.
 
     Parameters:

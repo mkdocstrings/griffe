@@ -666,8 +666,6 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 
 ### Markdown
 
-[:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
-
 - **CLI**: `-f markdown`
 - **API**: `check(..., style="markdown")` / `check(..., style=ExplanationStyle.MARKDOWN)`
 
@@ -699,8 +697,6 @@ The Markdown format is adapted for changelogs. It doesn't show the file and line
 [](){#format-github}
 
 ### GitHub
-
-[:octicons-tag-24: Insiders 1.0.0](../../insiders/changelog.md#1.0.0)
 
 - **CLI**: `-f github`
 - **API**: `check(..., style="github")` / `check(..., style=ExplanationStyle.GITHUB)`

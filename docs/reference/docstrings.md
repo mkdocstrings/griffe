@@ -1407,8 +1407,6 @@ The parser accepts a few options:
 - `default`: If heuristics fail, the `default` parser is returned. The `default` parser is never used with the 'max_sections' method. Default: `None`.
 - Any other option is passed down to the detected parser, if any.
 
-For non-Insiders versions, `default` is returned if specified, else the first parser in `style_order` is returned. If `style_order` is not specified, `None` is returned.
-
 ## Parsers features
 
 !!! tip "Want to contribute?"
