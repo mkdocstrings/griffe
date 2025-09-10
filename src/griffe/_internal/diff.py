@@ -12,8 +12,6 @@ import contextlib
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from colorama import Fore, Style
-
 from griffe._internal.enumerations import BreakageKind, ExplanationStyle, ParameterKind
 from griffe._internal.exceptions import AliasResolutionError
 from griffe._internal.git import _WORKTREE_PREFIX
@@ -28,6 +26,48 @@ _POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional
 _KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
 _POSITIONAL_KEYWORD_ONLY = frozenset((ParameterKind.positional_only, ParameterKind.keyword_only))
 _VARIADIC = frozenset((ParameterKind.var_positional, ParameterKind.var_keyword))
+
+
+# Colors for terminal output.
+class _ANSI:
+    FG_BLACK = "\033[30m"
+    FG_RED = "\033[31m"
+    FG_GREEN = "\033[32m"
+    FG_YELLOW = "\033[33m"
+    FG_BLUE = "\033[34m"
+    FG_MAGENTA = "\033[35m"
+    FG_CYAN = "\033[36m"
+    FG_WHITE = "\033[37m"
+    FG_RESET = "\033[39m"
+    FG_LIGHTBLACK_EX = "\033[90m"
+    FG_LIGHTRED_EX = "\033[91m"
+    FG_LIGHTGREEN_EX = "\033[92m"
+    FG_LIGHTYELLOW_EX = "\033[93m"
+    FG_LIGHTBLUE_EX = "\033[94m"
+    FG_LIGHTMAGENTA_EX = "\033[95m"
+    FG_LIGHTCYAN_EX = "\033[96m"
+    FG_LIGHTWHITE_EX = "\033[97m"
+    BG_BLACK = "\033[40m"
+    BG_RED = "\033[41m"
+    BG_GREEN = "\033[42m"
+    BG_YELLOW = "\033[43m"
+    BG_BLUE = "\033[44m"
+    BG_MAGENTA = "\033[45m"
+    BG_CYAN = "\033[46m"
+    BG_WHITE = "\033[47m"
+    BG_RESET = "\033[49m"
+    BG_LIGHTBLACK_EX = "\033[100m"
+    BG_LIGHTRED_EX = "\033[101m"
+    BG_LIGHTGREEN_EX = "\033[102m"
+    BG_LIGHTYELLOW_EX = "\033[103m"
+    BG_LIGHTBLUE_EX = "\033[104m"
+    BG_LIGHTMAGENTA_EX = "\033[105m"
+    BG_LIGHTCYAN_EX = "\033[106m"
+    BG_LIGHTWHITE_EX = "\033[107m"
+    BRIGHT = "\033[1m"
+    DIM = "\033[2m"
+    NORMAL = "\033[22m"
+    RESET_ALL = "\033[0m"
 
 
 class Breakage:
@@ -146,16 +186,16 @@ class Breakage:
         return self.obj.lineno or 0
 
     def _format_location(self, *, colors: bool = True) -> str:
-        bright = Style.BRIGHT if colors else ""
-        reset = Style.RESET_ALL if colors else ""
+        bright = _ANSI.BRIGHT if colors else ""
+        reset = _ANSI.RESET_ALL if colors else ""
         return f"{bright}{self._location}{reset}:{self._lineno}"
 
     def _format_title(self, *, colors: bool = True) -> str:  # noqa: ARG002
         return self._relative_path
 
     def _format_kind(self, *, colors: bool = True) -> str:
-        yellow = Fore.YELLOW if colors else ""
-        reset = Fore.RESET if colors else ""
+        yellow = _ANSI.FG_YELLOW if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{yellow}{self.kind.value}{reset}"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
@@ -251,8 +291,8 @@ class ParameterMovedBreakage(Breakage):
         return f"{super()._relative_path}({self.old_value.name})"
 
     def _format_title(self, *, colors: bool = True) -> str:
-        blue = Fore.BLUE if colors else ""
-        reset = Fore.RESET if colors else ""
+        blue = _ANSI.FG_BLUE if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
@@ -272,8 +312,8 @@ class ParameterRemovedBreakage(Breakage):
         return f"{super()._relative_path}({self.old_value.name})"
 
     def _format_title(self, *, colors: bool = True) -> str:
-        blue = Fore.BLUE if colors else ""
-        reset = Fore.RESET if colors else ""
+        blue = _ANSI.FG_BLUE if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
@@ -293,8 +333,8 @@ class ParameterChangedKindBreakage(Breakage):
         return f"{super()._relative_path}({self.old_value.name})"
 
     def _format_title(self, *, colors: bool = True) -> str:
-        blue = Fore.BLUE if colors else ""
-        reset = Fore.RESET if colors else ""
+        blue = _ANSI.FG_BLUE if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
@@ -314,8 +354,8 @@ class ParameterChangedDefaultBreakage(Breakage):
         return f"{super()._relative_path}({self.old_value.name})"
 
     def _format_title(self, *, colors: bool = True) -> str:
-        blue = Fore.BLUE if colors else ""
-        reset = Fore.RESET if colors else ""
+        blue = _ANSI.FG_BLUE if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
@@ -335,8 +375,8 @@ class ParameterChangedRequiredBreakage(Breakage):
         return f"{super()._relative_path}({self.old_value.name})"
 
     def _format_title(self, *, colors: bool = True) -> str:
-        blue = Fore.BLUE if colors else ""
-        reset = Fore.RESET if colors else ""
+        blue = _ANSI.FG_BLUE if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{super()._relative_path}({blue}{self.old_value.name}{reset})"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
@@ -356,8 +396,8 @@ class ParameterAddedRequiredBreakage(Breakage):
         return f"{super()._relative_path}({self.new_value.name})"
 
     def _format_title(self, *, colors: bool = True) -> str:
-        blue = Fore.BLUE if colors else ""
-        reset = Fore.RESET if colors else ""
+        blue = _ANSI.FG_BLUE if colors else ""
+        reset = _ANSI.FG_RESET if colors else ""
         return f"{super()._relative_path}({blue}{self.new_value.name}{reset})"
 
     def _format_old_value(self, *, colors: bool = True) -> str:  # noqa: ARG002
