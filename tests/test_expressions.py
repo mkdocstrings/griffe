@@ -95,6 +95,74 @@ def test_length_one_tuple_as_string() -> None:
         assert str(module["x"].value) == "('a',)"
 
 
+@pytest.mark.parametrize(
+    ("annotation", "modernized"),
+    [
+        ("Union[str, int, float]", "str | int | float"),
+        ("typing.Union[str, int, float]", "str | int | float"),
+        ("Union[Tuple[str, ...], Dict[str, int]]", "tuple[str, ...] | dict[str, int]"),
+        ("typing.Union[typing.Tuple[str, ...], typing.Dict[str, int]]", "tuple[str, ...] | dict[str, int]"),
+        ("Tuple[List[Dict[str, Set[str]]]]", "tuple[list[dict[str, set[str]]]]"),
+        ("typing.Tuple[typing.List[typing.Dict[str, typing.Set[str]]]]", "tuple[list[dict[str, set[str]]]]"),
+        ("Optional[Tuple[List[bool]]]", "tuple[list[bool]] | None"),
+        ("typing.Optional[typing.Tuple[typing.List[bool]]]", "tuple[list[bool]] | None"),
+    ],
+)
+def test_modernizing_specific_expressions(annotation: str, modernized: str) -> None:
+    """Modernize expressions correctly.
+
+    Parameters:
+        annotation: Original annotation (parametrized).
+        modernized: Expected modernized annotation (parametrized).
+    """
+    with temporary_visited_module(
+        f"""
+        import typing
+        from typing import Union, Optional, Tuple, Dict, List, Set, Literal
+        a: {annotation}
+        """,
+    ) as module:
+        expression = module["a"].annotation
+        assert str(expression.modernize()) == modernized
+
+
+@pytest.mark.parametrize(
+    "annotation",
+    [
+        "typing.Literal['s']",
+        "Literal['s']",
+    ],
+)
+def test_handling_modernization_without_crashing(annotation: str) -> None:
+    """Modernizing expressions never crashes.
+
+    Parameters:
+        annotation: Original annotation (parametrized).
+    """
+    with temporary_visited_module(
+        f"""
+        import typing
+        from typing import Union, Optional, Tuple, Dict, List, Set, Literal
+        a: {annotation}
+        """,
+    ) as module:
+        module["a"].annotation.modernize()
+
+
+@pytest.mark.parametrize("code", syntax_examples)
+def test_modernizing_idempotence(code: str) -> None:
+    """Modernize expressions that can't be modernized.
+
+    Parameters:
+        code: An expression (parametrized).
+    """
+    top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # type: ignore[attr-defined]
+    modernized = expression.modernize()  # type: ignore[union-attr]
+    assert expression == modernized
+    assert str(expression) == str(modernized)
+
+
 def test_resolving_init_parameter() -> None:
     """Instance attribute values should resolve to matching parameters.
 

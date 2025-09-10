@@ -150,6 +150,13 @@ def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
     return fields
 
 
+_modern_types = {
+    "typing.Tuple": "tuple",
+    "typing.Dict": "dict",
+    "typing.List": "list",
+    "typing.Set": "set",
+}
+
 # YORE: EOL 3.9: Remove block.
 _dataclass_opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
@@ -264,6 +271,11 @@ class ExprAttribute(Expr):
         for value in self.values[1:]:
             yield "."
             yield from _yield(value, flat=flat, outer_precedence=precedence)
+
+    def modernize(self) -> ExprName | ExprAttribute:
+        if modern := _modern_types.get(self.canonical_path):
+            return ExprName(modern, parent=self.last.parent)
+        return self
 
     def append(self, value: ExprName) -> None:
         """Append a name to this attribute.
@@ -716,6 +728,11 @@ class ExprName(Expr):  # noqa: PLW1641
     def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002
         yield self
 
+    def modernize(self) -> ExprName:
+        if modern := _modern_types.get(self.canonical_path):
+            return ExprName(modern, parent=self.parent)
+        return self
+
     @property
     def path(self) -> str:
         """The full, resolved name.
@@ -878,7 +895,7 @@ class ExprSubscript(Expr):
 
     left: str | Expr
     """Left part."""
-    slice: Expr
+    slice: str | Expr
     """Slice part."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -887,6 +904,33 @@ class ExprSubscript(Expr):
         # Prevent parentheses from being added, avoiding `a[(b)]`
         yield from _yield(self.slice, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
         yield "]"
+
+    @staticmethod
+    def _to_binop(elements: Sequence[Expr], op: str) -> ExprBinOp:
+        if len(elements) == 2:  # noqa: PLR2004
+            left, right = elements
+            if isinstance(left, Expr):
+                left = left.modernize()
+            if isinstance(right, Expr):
+                right = right.modernize()
+            return ExprBinOp(left=left, operator=op, right=right)
+
+        left = ExprSubscript._to_binop(elements[:-1], op=op)
+        right = elements[-1]
+        if isinstance(right, Expr):
+            right = right.modernize()
+        return ExprBinOp(left=left, operator=op, right=right)
+
+    def modernize(self) -> ExprBinOp | ExprSubscript:
+        if self.canonical_path == "typing.Union":
+            return self._to_binop(self.slice.elements, op="|")  # type: ignore[union-attr]
+        if self.canonical_path == "typing.Optional":
+            left = self.slice if isinstance(self.slice, str) else self.slice.modernize()
+            return ExprBinOp(left=left, operator="|", right="None")
+        return ExprSubscript(
+            left=self.left if isinstance(self.left, str) else self.left.modernize(),
+            slice=self.slice if isinstance(self.slice, str) else self.slice.modernize(),
+        )
 
     @property
     def path(self) -> str:
@@ -921,6 +965,12 @@ class ExprTuple(Expr):
             yield ","
         if not self.implicit:
             yield ")"
+
+    def modernize(self) -> ExprTuple:
+        return ExprTuple(
+            elements=[el if isinstance(el, str) else el.modernize() for el in self.elements],
+            implicit=self.implicit,
+        )
 
 
 # YORE: EOL 3.9: Replace `**_dataclass_opts` with `slots=True` within line.
