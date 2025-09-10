@@ -7,8 +7,11 @@ import re
 import sys
 import warnings
 from contextlib import contextmanager
+from functools import partial
 from importlib.metadata import version as pkgversion
 from pathlib import Path
+from random import sample
+from tempfile import gettempdir
 from typing import TYPE_CHECKING
 
 from duty import duty, tools
@@ -16,7 +19,7 @@ from pysource_codegen import generate
 from pysource_minimize import minimize
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import Iterator
 
     from duty.context import Context
 
