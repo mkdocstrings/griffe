@@ -152,7 +152,7 @@ def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
     ignore_paths = {"griffe.DataclassesExtension.*"}
     not_in_inventory = [
-        obj.path
+        f"{obj.relative_filepath}:{obj.lineno}: {obj.path}"
         for obj in public_objects
         if (
             obj.name not in ignore_names

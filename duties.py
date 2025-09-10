@@ -7,12 +7,9 @@ import re
 import sys
 import warnings
 from contextlib import contextmanager
-from functools import partial, wraps
 from importlib.metadata import version as pkgversion
 from pathlib import Path
-from random import sample
-from tempfile import gettempdir
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING
 
 from duty import duty, tools
 from pysource_codegen import generate
@@ -40,21 +37,6 @@ def _pyprefix(title: str) -> str:
         prefix = f"(python{sys.version_info.major}.{sys.version_info.minor})"
         return f"{prefix:14}{title}"
     return title
-
-
-def _not_from_insiders(func: Callable) -> Callable:
-    @wraps(func)
-    def wrapper(ctx: Context, *args: Any, **kwargs: Any) -> None:
-        origin = ctx.run("git config --get remote.origin.url", silent=True)
-        if "pawamoy-insiders/griffe" in origin:
-            ctx.run(
-                lambda: False,
-                title="Not running this task from insiders repository (do that from public repo instead!)",
-            )
-            return
-        func(ctx, *args, **kwargs)
-
-    return wrapper
 
 
 @contextmanager
@@ -336,7 +318,7 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
 
 
 @duty
-def docs_deploy(ctx: Context, *, force: bool = False) -> None:
+def docs_deploy(ctx: Context) -> None:
     """Deploy the documentation to GitHub pages.
 
     ```bash
@@ -344,37 +326,12 @@ def docs_deploy(ctx: Context, *, force: bool = False) -> None:
     ```
 
     Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
-
-    Parameters:
-        force: Whether to force deployment, even from non-Insiders version.
     """
     os.environ["DEPLOY"] = "true"
     with _material_insiders() as insiders:
         if not insiders:
             ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
-        origin = ctx.run("git config --get remote.origin.url", silent=True, allow_overrides=False)
-        if "pawamoy-insiders/griffe" in origin:
-            ctx.run(
-                "git remote add upstream git@github.com:mkdocstrings/griffe",
-                silent=True,
-                nofail=True,
-                allow_overrides=False,
-            )
-            ctx.run(
-                tools.mkdocs.gh_deploy(remote_name="upstream", force=True),
-                title="Deploying documentation",
-            )
-        elif force:
-            ctx.run(
-                tools.mkdocs.gh_deploy(force=True),
-                title="Deploying documentation",
-            )
-        else:
-            ctx.run(
-                lambda: False,
-                title="Not deploying docs from public repository (do that from insiders instead!)",
-                nofail=True,
-            )
+        ctx.run(tools.mkdocs.gh_deploy(), title="Deploying documentation")
 
 
 @duty
@@ -416,7 +373,6 @@ def build(ctx: Context) -> None:
 
 
 @duty
-@_not_from_insiders
 def publish(ctx: Context) -> None:
     """Publish source and wheel distributions to PyPI.
 
@@ -438,7 +394,6 @@ def publish(ctx: Context) -> None:
 
 
 @duty(post=["build", "publish", "docs-deploy"])
-@_not_from_insiders
 def release(ctx: Context, version: str = "") -> None:
     """Release a new version of the project.
 

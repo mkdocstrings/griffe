@@ -64,35 +64,10 @@ jobs:
         name: objects.inv
         path: site/objects.inv
 
-  exclude-test-jobs:
-    runs-on: ubuntu-latest
-    outputs:
-      jobs: ${{ steps.exclude-jobs.outputs.jobs }}
-    steps:
-    - id: exclude-jobs
-      run: |
-        if ${{ github.repository_owner == 'pawamoy-insiders' }}; then
-          echo 'jobs=[
-            {"os": "macos-latest"},
-            {"os": "windows-latest"},
-            {"python-version": "3.10"},
-            {"python-version": "3.11"},
-            {"python-version": "3.12"},
-            {"python-version": "3.13"},
-            {"python-version": "3.14"}
-          ]' | tr -d '[:space:]' >> $GITHUB_OUTPUT
-        else
-          echo 'jobs=[
-            {"os": "macos-latest", "resolution": "lowest-direct"},
-            {"os": "windows-latest", "resolution": "lowest-direct"}
-          ]' | tr -d '[:space:]' >> $GITHUB_OUTPUT
-        fi
-
   tests:
 
     needs:
     - quality
-    - exclude-test-jobs
     strategy:
       matrix:
         os:
@@ -109,7 +84,11 @@ jobs:
         resolution:
         - highest
         - lowest-direct
-        exclude: ${{ fromJSON(needs.exclude-test-jobs.outputs.jobs) }}
+        exclude:
+        - os: macos-latest
+          resolution: lowest-direct
+        - os: windows-latest
+          resolution: lowest-direct
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.python-version == '3.14' || matrix.python-version == '3.13' }}
 
