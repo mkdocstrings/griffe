@@ -1,7 +1,5 @@
 # `griffe-sphinx`
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders }
-
 - **PyPI**: [`griffe-sphinx`](https://pypi.org/project/griffe-sphinx/)
 - **GitHub**: [mkdocstrings/griffe-sphinx](https://github.com/mkdocstrings/griffe-sphinx)
 - **Documentation:** [mkdocstrings.github.io/griffe-sphinx](https://mkdocstrings.github.io/griffe-sphinx)
@@ -12,7 +10,7 @@
 This extension reads Sphinx comments placed above attribute assignments and uses them as docstrings.
 
 ```python
-#: Summary of `module_attr`. 
+#: Summary of `module_attr`.
 module_attr = "hello"
 
 

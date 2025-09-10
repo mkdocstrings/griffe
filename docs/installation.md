@@ -2,8 +2,6 @@
 
 Griffe is a Python package, so you can install it with your favorite Python package installer or dependency manager.
 
-TIP: **[Griffe Insiders](insiders/index.md), a version with [*more features*](insiders/index.md#whats-in-it-for-me), is also available to sponsors :octicons-heart-fill-24:{ .heart .pulse }**
-
 ## Install as a tool & library
 
 === ":simple-python: pip"

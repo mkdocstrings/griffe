@@ -951,9 +951,6 @@ def load_pypi(
 ) -> Object | Alias:
     """Load and return a module from a specific package version downloaded using pip.
 
-    [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } &mdash;
-    [:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0).
-
     Parameters:
         package: The package import name.
         distribution: The distribution name.

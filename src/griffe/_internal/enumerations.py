@@ -152,11 +152,7 @@ class Parser(str, Enum):
     """Enumeration of the different docstring parsers."""
 
     auto = "auto"
-    """Infer docstring parser.
-
-    [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;
-    [:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).
-    """
+    """Infer docstring parser."""
     google = "google"
     """Google-style docstrings parser."""
     sphinx = "sphinx"

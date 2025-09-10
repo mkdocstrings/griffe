@@ -7,7 +7,7 @@ The available parsers are:
 - `google`, to parse Google-style docstrings, see [Napoleon's documentation][napoleon]
 - `numpy`, to parse Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
 - `sphinx`, to parse Sphinx-style docstrings, see [Sphinx's documentation][sphinx]
-- `auto` (sponsors only), to automatically detect the docstring style, see [Auto-style](#auto-style)
+- `auto`, to automatically detect the docstring style, see [Auto-style](#auto-style)
 
 Most of the time, the syntax specified in the aforementioned docs is supported. In some cases, the original syntax is not supported, or is supported but with subtle differences. We will try to document these differences in the following sections.
 
@@ -129,7 +129,7 @@ The parser accepts a few options:
 - `trim_doctest_flags`: Remove the [doctest flags] written as comments in `pycon` snippets within a docstring. These flags are used to alter the behavior of [doctest] when testing docstrings, and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 - `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
-- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true. 
+- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
 ### Sections {#google-sections}
 
@@ -178,7 +178,7 @@ Attributes:
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting an attribute with `attr_name (attr_type): Attribute description`, `attr_type` will be resolved using the scope of the docstrings' parent object (class or module). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
 #### Functions/Methods {#google-section-functions}
@@ -327,7 +327,7 @@ Examples:
 """
 ```
 
-WARNING: **Not the same as *Example* sections.**  
+WARNING: **Not the same as *Example* sections.**
 *Example* (singular) sections are parsed as admonitions. Console code blocks will only be understood in *Examples* (plural) sections.
 
 #### Parameters {#google-section-parameters}
@@ -375,7 +375,7 @@ Parameters:
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting a parameter with `param_name (param_type): Parameter description`, `param_type` will be resolved using the scope of the function (or class). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
 #### Other Parameters {#google-section-other-parameters}
@@ -418,7 +418,7 @@ def foo(a, b):
     return inner
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See the same tip for parameters.
 
 #### Raises {#google-section-raises}
@@ -442,7 +442,7 @@ def foo(a: int):
         raise ValueError("message")
 ```
 
-TIP: **Exceptions names are resolved using the function's scope.**  
+TIP: **Exceptions names are resolved using the function's scope.**
 `ValueError` and other built-in exceptions are resolved as such. You can document custom exception, using the names available in the current scope, for example `my_exceptions.MyCustomException` or `MyCustomException` directly, depending on what you imported/defined in the current module.
 
 #### Warns {#google-section-warns}
@@ -465,7 +465,7 @@ def foo():
     warnings.warn("Just messing with you.", UserWarning)
 ```
 
-TIP: **Warnings names are resolved using the function's scope.**  
+TIP: **Warnings names are resolved using the function's scope.**
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
 
 #### Yields {#google-section-yields}
@@ -547,7 +547,7 @@ Yields:
 
 If you don't want to wrap the type in parentheses, use the [`returns_named_value=False`](#google-options) parser option. Setting it to false will disallow specifying a name.
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
 #### Receives {#google-section-receives}
@@ -649,7 +649,7 @@ Receives:
 
 If you don't want to wrap the type in parentheses, use the [`receives_named_value=False`](#google-options) parser option. Setting it to false will disallow specifying a name.
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
 #### Returns {#google-section-returns}
@@ -724,7 +724,7 @@ Returns:
 
 If you don't want to wrap the type in parentheses, use the [`returns_named_value=False`](#google-options) parser option. Setting it to false will disallow specifying a name.
 
-TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' function scope.**
 See previous tips for types in docstrings.
 
 ## Numpydoc-style
@@ -826,7 +826,7 @@ The parser accepts a few options:
 - `trim_doctest_flags`: Remove the [doctest flags] written as comments in `pycon` snippets within a docstring. These flags are used to alter the behavior of [doctest] when testing docstrings, and should not be visible in your docs. Default: true.
 - `warn_unknown_params`: Warn about parameters documented in docstrings that do not appear in the signature. Default: true.
 - `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
-- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true. 
+- `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
 ### Sections {#numpydoc-sections}
 
@@ -884,7 +884,7 @@ bar : Boolean
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting an attribute with `attr_name : attr_type`, `attr_type` will be resolved using the scope of the docstrings' parent object (class or module). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
 #### Functions/Methods {#numpydoc-section-functions}
@@ -1109,7 +1109,7 @@ bar : String
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting a parameter with `param_name : param_type`, `param_type` will be resolved using the scope of the function (or class). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
 #### Other Parameters {#numpydoc-section-other-parameters}
@@ -1139,7 +1139,7 @@ def foo(a, b, **kwargs):
     """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See the same tip for parameters.
 
 #### Raises {#numpydoc-section-raises}
@@ -1167,7 +1167,7 @@ def foo(a: int):
         raise ValueError("message")
 ```
 
-TIP: **Exceptions names are resolved using the function's scope.**  
+TIP: **Exceptions names are resolved using the function's scope.**
 `ValueError` and other built-in exceptions are resolved as such. You can document custom exception, using the names available in the current scope, for example `my_exceptions.MyCustomException` or `MyCustomException` directly, depending on what you imported/defined in the current module.
 
 #### Warns {#numpydoc-section-warns}
@@ -1191,7 +1191,7 @@ def foo():
     warnings.warn("Just messing with you.", UserWarning)
 ```
 
-TIP: **Warnings names are resolved using the function's scope.**  
+TIP: **Warnings names are resolved using the function's scope.**
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
 
 #### Yields {#numpydoc-section-yields}
@@ -1253,7 +1253,7 @@ t : int
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
 #### Receives {#numpydoc-section-receives}
@@ -1337,7 +1337,7 @@ flag : int
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' parent scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
 #### Returns {#numpydoc-section-returns}
@@ -1391,12 +1391,10 @@ precision : Decimal
 """
 ```
 
-TIP: **Types in docstrings are resolved using the docstrings' function scope.**  
+TIP: **Types in docstrings are resolved using the docstrings' function scope.**
 See previous tips for types in docstrings.
 
 ## Auto-style
-
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.3.0](../insiders/changelog.md#1.3.0).
 
 Automatic style detection. This parser will first try to detect the style used in the docstring, and call the corresponding parser on it.
 

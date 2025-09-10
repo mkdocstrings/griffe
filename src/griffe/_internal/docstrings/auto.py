@@ -126,9 +126,6 @@ def infer_docstring_style(
 ) -> tuple[Parser | None, list[DocstringSection] | None]:
     """Infer the parser to use for the docstring.
 
-    [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;
-    [:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).
-
     The 'heuristics' method uses regular expressions. The 'max_sections' method
     parses the docstring with all parsers specified in `style_order` and returns
     the one who parsed the most sections.
@@ -214,9 +211,6 @@ def parse_auto(
     **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring by automatically detecting the style it uses.
-
-    [:octicons-heart-fill-24:{ .pulse } Sponsors only](../../../insiders/index.md){ .insiders } &mdash;
-    [:octicons-tag-24: Insiders 1.3.0](../../../insiders/changelog.md#1.3.0).
 
     See [`infer_docstring_style`][griffe.infer_docstring_style] for more information
     on the available parameters.

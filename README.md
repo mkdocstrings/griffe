@@ -75,8 +75,7 @@ Parameter kind was changed:
 
 It's also possible to directly **check packages from PyPI.org**
 (or other indexes configured through `PIP_INDEX_URL`).
-This feature is [available to sponsors only](https://mkdocstrings.github.io/griffe/insiders/)
-and requires that you install Griffe with the `pypi` extra:
+This feature requires that you install Griffe with the `pypi` extra:
 
 ```bash
 pip install griffe[pypi]

@@ -1,7 +1,5 @@
 # `griffe-runtime-objects`
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders }
-
 - **PyPI**: [`griffe-runtime-objects`](https://pypi.org/project/griffe-runtime-objects/)
 - **GitHub**: [mkdocstrings/griffe-runtime-objects](https://github.com/mkdocstrings/griffe-runtime-objects)
 - **Documentation:** [mkdocstrings.github.io/griffe-runtime-objects](https://mkdocstrings.github.io/griffe-runtime-objects)

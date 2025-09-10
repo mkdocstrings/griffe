@@ -425,7 +425,7 @@ code = """
         return randint(0, 10)
 
     foo: Bar = Bar(baz=get_some_baz())
-"""        
+"""
 
 with temporary_visited_module(code) as module:
     pprint(module["foo"].annotation)
@@ -439,8 +439,6 @@ During static analysis, these expressions also allow analyzing decorators, datac
 To learn more about expressions, read their [API reference](../../reference/api/expressions.md).
 
 ### Modernization
-
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.2.0](../../insiders/changelog.md#1.2.0)
 
 The Python language keeps evolving, and often library developers must continue supporting a few minor versions of Python. Therefore they cannot use some features that were introduced in the latest versions.
 

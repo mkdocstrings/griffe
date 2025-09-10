@@ -45,9 +45,7 @@ $ griffe check -s back/services/identity-provider/src identity_provider
 
 ### Using PyPI
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders } — [:octicons-tag-24: Insiders 1.1.0](../../insiders/changelog.md#1.1.0)
-
-It's also possible to directly **check packages from PyPI.org** (or other indexes configured through `PIP_INDEX_URL`). This feature is [available to sponsors only](../../insiders/index.md) and requires that you install Griffe with the `pypi` extra:
+It's also possible to directly **check packages from PyPI.org** (or other indexes configured through `PIP_INDEX_URL`). This feature requires that you install Griffe with the `pypi` extra:
 
 ```console
 $ pip install griffe[pypi]

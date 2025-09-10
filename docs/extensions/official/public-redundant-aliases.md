@@ -1,7 +1,5 @@
 # `griffe-public-redundant-aliases`
 
-[:octicons-heart-fill-24:{ .pulse } Sponsors only](../../insiders/index.md){ .insiders }
-
 - **PyPI**: [`griffe-public-redundant-aliases`](https://pypi.org/project/griffe-public-redundant-aliases/)
 - **GitHub**: [mkdocstrings/griffe-public-redundant-aliases](https://github.com/mkdocstrings/griffe-public-redundant-aliases)
 - **Documentation:** [mkdocstrings.github.io/griffe-public-redundant-aliases](https://mkdocstrings.github.io/griffe-public-redundant-aliases)
