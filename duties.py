@@ -18,8 +18,6 @@ from duty import duty, tools
 from pysource_codegen import generate
 from pysource_minimize import minimize
 
-from griffe import visit
-
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
 
@@ -539,6 +537,8 @@ def fuzz(
         min_seed: Minimum value for the seeds range.
         max_seed: Maximum value for the seeds range.
     """
+    from griffe import visit  # noqa: PLC0415
+
     warnings.simplefilter("ignore", SyntaxWarning)
 
     def fails(code: str, filepath: Path) -> bool:
