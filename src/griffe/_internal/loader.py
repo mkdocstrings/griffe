@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
 from contextlib import suppress
 from datetime import datetime, timezone
+from importlib.util import find_spec
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, cast
 
@@ -925,20 +931,23 @@ def load_git(
 
 
 def load_pypi(
-    package: str,  # noqa: ARG001
-    distribution: str,  # noqa: ARG001
-    version_spec: str,  # noqa: ARG001
+    package: str,
+    distribution: str,
+    version_spec: str,
     *,
-    submodules: bool = True,  # noqa: ARG001
-    extensions: Extensions | None = None,  # noqa: ARG001
-    search_paths: Sequence[str | Path] | None = None,  # noqa: ARG001
-    docstring_parser: DocstringStyle | Parser | None = None,  # noqa: ARG001
-    docstring_options: DocstringOptions | None = None,  # noqa: ARG001
-    lines_collection: LinesCollection | None = None,  # noqa: ARG001
-    modules_collection: ModulesCollection | None = None,  # noqa: ARG001
-    allow_inspection: bool = True,  # noqa: ARG001
-    force_inspection: bool = False,  # noqa: ARG001
-    find_stubs_package: bool = False,  # noqa: ARG001
+    submodules: bool = True,
+    extensions: Extensions | None = None,
+    search_paths: Sequence[str | Path] | None = None,
+    docstring_parser: DocstringStyle | Parser | None = None,
+    docstring_options: DocstringOptions | None = None,
+    lines_collection: LinesCollection | None = None,
+    modules_collection: ModulesCollection | None = None,
+    allow_inspection: bool = True,
+    force_inspection: bool = False,
+    find_stubs_package: bool = False,
+    resolve_aliases: bool = False,
+    resolve_external: bool | None = None,
+    resolve_implicit: bool = False,
 ) -> Object | Alias:
     """Load and return a module from a specific package version downloaded using pip.
 
@@ -962,5 +971,88 @@ def load_pypi(
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
+        resolve_aliases: Whether to resolve aliases.
+        resolve_external: Whether to try to load unspecified modules to resolve aliases.
+            Default value (`None`) means to load external modules only if they are the private sibling
+            or the origin module (for example when `ast` imports from `_ast`).
+        resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
     """
-    raise ValueError("Not available in non-Insiders versions of Griffe")
+    if not all(find_spec(pkg) for pkg in ("pip", "wheel", "platformdirs")):
+        raise RuntimeError("Please install Griffe with the 'pypi' extra to use this feature.")
+
+    import platformdirs  # noqa: PLC0415
+
+    pypi_cache_dir = Path(platformdirs.user_cache_dir("griffe"))
+    install_dir = pypi_cache_dir / f"{distribution}{version_spec}"
+    if install_dir.exists():
+        logger.debug("Using cached %s%s", distribution, version_spec)
+    else:
+        with tempfile.TemporaryDirectory(dir=pypi_cache_dir) as tmpdir:
+            install_dir = Path(tmpdir) / distribution
+            logger.debug("Downloading %s%s", distribution, version_spec)
+            process = subprocess.run(  # noqa: S603
+                [
+                    sys.executable,
+                    "-mpip",
+                    "install",
+                    "--no-deps",
+                    "--no-compile",
+                    "--no-warn-script-location",
+                    "--no-input",
+                    "--disable-pip-version-check",
+                    "--no-python-version-warning",
+                    "-t",
+                    str(install_dir),
+                    f"{distribution}{version_spec}",
+                ],
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                check=False,
+            )
+            if process.returncode:
+                logger.error(process.stdout)
+                raise RuntimeError(f"Could not pip install {distribution}{version_spec}")
+            logger.debug(process.stdout)
+            shutil.rmtree(install_dir / "bin", ignore_errors=True)
+            re_dist = re.sub("[._-]", "[._-]", distribution)
+            version = next(
+                match.group(1)
+                for file in install_dir.iterdir()
+                if (match := re.match(rf"{re_dist}-(.+)\.dist-info", file.name, re.IGNORECASE))
+            )
+            dest_dir = pypi_cache_dir / f"{distribution}=={version}"
+            if not dest_dir.exists():
+                install_dir.rename(dest_dir)
+            install_dir = dest_dir
+
+    if not package:
+        files = sorted((file.name.lower() for file in install_dir.iterdir()), reverse=True)
+        name = distribution.lower().replace("-", "_")
+        if name in files or f"{name}.py" in files:
+            package = name
+        elif len(files) == 1:
+            raise RuntimeError(f"No package found in {distribution}=={version}")
+        else:
+            try:
+                package = next(file.split(".", 1)[0] for file in files if not file.endswith(".dist-info"))
+            except StopIteration:
+                raise RuntimeError(f"Could not guess package name for {distribution}=={version} (files; {files})")  # noqa: B904
+
+    return load(
+        package,
+        submodules=submodules,
+        try_relative_path=False,
+        extensions=extensions,
+        search_paths=[install_dir, *(search_paths or ())],
+        docstring_parser=docstring_parser,
+        docstring_options=docstring_options,
+        lines_collection=lines_collection,
+        modules_collection=modules_collection,
+        allow_inspection=allow_inspection,
+        force_inspection=force_inspection,
+        find_stubs_package=find_stubs_package,
+        resolve_aliases=resolve_aliases,
+        resolve_external=resolve_external,
+        resolve_implicit=resolve_implicit,
+    )

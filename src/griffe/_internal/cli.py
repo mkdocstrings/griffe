@@ -16,6 +16,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,7 +31,7 @@ from griffe._internal.enumerations import ExplanationStyle, Parser
 from griffe._internal.exceptions import ExtensionError, GitError
 from griffe._internal.extensions.base import load_extensions
 from griffe._internal.git import _get_latest_tag, _get_repo_root
-from griffe._internal.loader import GriffeLoader, load, load_git
+from griffe._internal.loader import GriffeLoader, load, load_git, load_pypi
 from griffe._internal.logger import logger
 
 if TYPE_CHECKING:
@@ -462,34 +463,61 @@ def check(
 
     against_path = against_path or package
     try:
-        against = against or _get_latest_tag(package)
-        repository = _get_repo_root(against_path)
-    except GitError as error:
-        print(f"griffe: error: {error}", file=sys.stderr)
-        return 2
-
-    try:
         loaded_extensions = load_extensions(*(extensions or ()))
     except ExtensionError:
         logger.exception("Could not load extensions")
         return 1
 
-    # Load old and new version of the package.
-    old_package = load_git(
-        against_path,
-        ref=against,
-        repo=repository,
-        extensions=loaded_extensions,
-        search_paths=search_paths,
-        allow_inspection=allow_inspection,
-        force_inspection=force_inspection,
-        resolve_aliases=True,
-        resolve_external=None,
-    )
-    if base_ref:
-        new_package = load_git(
-            package,
-            ref=base_ref,
+    if match_against := re.match(r"([\w.-]+)?((==|<=|<|>=|>|!=).+)", against or ""):
+        against_dist = (match_against.group(1) or str(package)).lower().replace("-", "_")
+        against_version = match_against.group(2)
+        old_package = load_pypi(
+            str(package),
+            against_dist,
+            against_version,
+            extensions=loaded_extensions,
+            search_paths=search_paths,
+            allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
+            find_stubs_package=find_stubs_package,
+            resolve_aliases=True,
+            resolve_external=None,
+        )
+
+        if base_ref:
+            if not (match_base := re.match(r"([\w.-]+)?((==|<=|<|>=|>|!=).+)", base_ref)):
+                raise ValueError(f"Base {base_ref} is not a valid dependency specifier.")
+            base_dist = (match_base.group(1) or str(package)).lower().replace("-", "_")
+            base_version = match_base.group(2)
+        else:
+            base_dist = against_dist
+            base_version = ""
+        new_package = load_pypi(
+            str(package),
+            base_dist,
+            base_version,
+            extensions=loaded_extensions,
+            search_paths=search_paths,
+            allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
+            find_stubs_package=find_stubs_package,
+            resolve_aliases=True,
+            resolve_external=None,
+        )
+
+    else:
+        against_path = against_path or package
+        try:
+            against = against or _get_latest_tag(package)
+            repository = _get_repo_root(against_path)
+        except GitError as error:
+            print(f"griffe: error: {error}", file=sys.stderr)
+            return 2
+
+        # Load old and new version of the package.
+        old_package = load_git(
+            against_path,
+            ref=against,
             repo=repository,
             extensions=loaded_extensions,
             search_paths=search_paths,
@@ -499,18 +527,32 @@ def check(
             resolve_aliases=True,
             resolve_external=None,
         )
-    else:
-        new_package = load(
-            package,
-            try_relative_path=True,
-            extensions=loaded_extensions,
-            search_paths=search_paths,
-            allow_inspection=allow_inspection,
-            force_inspection=force_inspection,
-            find_stubs_package=find_stubs_package,
-            resolve_aliases=True,
-            resolve_external=None,
-        )
+
+        if base_ref:
+            new_package = load_git(
+                package,
+                ref=base_ref,
+                repo=repository,
+                extensions=loaded_extensions,
+                search_paths=search_paths,
+                allow_inspection=allow_inspection,
+                force_inspection=force_inspection,
+                find_stubs_package=find_stubs_package,
+                resolve_aliases=True,
+                resolve_external=None,
+            )
+        else:
+            new_package = load(
+                package,
+                try_relative_path=True,
+                extensions=loaded_extensions,
+                search_paths=search_paths,
+                allow_inspection=allow_inspection,
+                force_inspection=force_inspection,
+                find_stubs_package=find_stubs_package,
+                resolve_aliases=True,
+                resolve_external=None,
+            )
 
     # Find and display API breakages.
     breakages = list(find_breaking_changes(old_package, new_package))

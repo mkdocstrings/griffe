@@ -40,6 +40,13 @@ dependencies = [
     "colorama>=0.4",
 ]
 
+[project.optional-dependencies]
+pypi = [
+    "pip>=24.0",
+    "platformdirs>=4.2",
+    "wheel>=0.42",
+]
+
 [project.urls]
 Homepage = "https://mkdocstrings.github.io/griffe"
 Documentation = "https://mkdocstrings.github.io/griffe"
