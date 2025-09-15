@@ -190,7 +190,8 @@ class GriffeLoader:
         return self._post_load(top_module, obj_path)
 
     def _fire_load_events(self, obj: Object) -> None:
-        for member in obj.members.values():
+        # Wrapping in tuple() to avoid "dictionary changed size during iteration" errors.
+        for member in tuple(obj.members.values()):
             if member.is_alias:
                 self.extensions.call("on_alias", alias=member, loader=self)
                 continue

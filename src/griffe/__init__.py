@@ -336,6 +336,7 @@ from griffe._internal.extensions.base import (
     load_extensions,
 )
 from griffe._internal.extensions.dataclasses import DataclassesExtension
+from griffe._internal.extensions.unpack_typeddict import UnpackTypedDictExtension
 from griffe._internal.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
 from griffe._internal.git import GitInfo, KnownGitService
 from griffe._internal.importer import dynamic_import, sys_path
@@ -558,6 +559,7 @@ __all__ = [
     "TypeParameters",
     "UnhandledEditableModuleError",
     "UnimportableModuleError",
+    "UnpackTypedDictExtension",
     "Visitor",
     "assert_git_repo",
     "ast_children",

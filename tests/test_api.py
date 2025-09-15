@@ -18,8 +18,14 @@ if TYPE_CHECKING:
 
 @pytest.fixture(name="loader", scope="module")
 def _fixture_loader() -> griffe.GriffeLoader:
-    # YORE: Bump 2: Regex-replace `extensions=.*` with `)` within line.
-    loader = griffe.GriffeLoader(extensions=griffe.load_extensions("scripts/griffe_exts.py"))
+    loader = griffe.GriffeLoader(
+        extensions=griffe.load_extensions(
+            "griffe_inherited_docstrings",
+            # YORE: Bump 2: Remove line.
+            "scripts/griffe_exts.py",
+            "unpack_typeddict",
+        ),
+    )
     loader.load("griffe")
     loader.resolve_aliases()
     return loader
@@ -150,7 +156,7 @@ def test_single_locations(public_api: griffe.Module) -> None:
 def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffe.Alias]) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
-    ignore_paths = {"griffe.DataclassesExtension.*"}
+    ignore_paths = {"griffe.DataclassesExtension.*", "griffe.UnpackTypedDictExtension.*"}
     not_in_inventory = [
         f"{obj.relative_filepath}:{obj.lineno}: {obj.path}"
         for obj in public_objects

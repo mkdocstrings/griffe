@@ -520,6 +520,7 @@ class Extensions:
 
 builtin_extensions: set[str] = {
     "dataclasses",
+    "unpack_typeddict",
 }
 """The names of built-in Griffe extensions."""
 

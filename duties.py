@@ -289,8 +289,12 @@ def check_api(ctx: Context, *cli_args: str) -> None:
             "griffe",
             search=["src"],
             color=True,
-            # YORE: Bump 2: Remove line.
-            extensions=["scripts/griffe_exts.py"],
+            extensions=[
+                "griffe_inherited_docstrings",
+                # YORE: Bump 2: Remove line.
+                "scripts/griffe_exts.py",
+                "unpack_typeddict",
+            ],
         ).add_args(*cli_args),
         title="Checking for API breaking changes",
         nofail=True,

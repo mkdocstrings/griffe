@@ -1,4 +1,4 @@
-"""Tests for the `extensions` module."""
+"""Tests for the base extension functionality."""
 
 from __future__ import annotations
 
@@ -87,24 +87,24 @@ class AnalysisEventsTest(Extension):  # noqa: D101
     "extension",
     [
         # With module path.
-        "tests.test_extensions",
-        {"tests.test_extensions": {"option": 0}},
+        "tests.test_extensions.test_base",
+        {"tests.test_extensions.test_base": {"option": 0}},
         # With extension path.
-        "tests.test_extensions.AnalysisEventsTest",
-        {"tests.test_extensions.AnalysisEventsTest": {"option": 0}},
+        "tests.test_extensions.test_base.AnalysisEventsTest",
+        {"tests.test_extensions.test_base.AnalysisEventsTest": {"option": 0}},
         # With filepath.
-        "tests/test_extensions.py",
-        {"tests/test_extensions.py": {"option": 0}},
+        "tests/test_extensions/test_base.py",
+        {"tests/test_extensions/test_base.py": {"option": 0}},
         # With filepath and extension name.
-        "tests/test_extensions.py:AnalysisEventsTest",
-        {"tests/test_extensions.py:AnalysisEventsTest": {"option": 0}},
+        "tests/test_extensions/test_base.py:AnalysisEventsTest",
+        {"tests/test_extensions/test_base.py:AnalysisEventsTest": {"option": 0}},
         # With instance.
         AnalysisEventsTest(option=0),
         # With class.
         AnalysisEventsTest,
         # With absolute paths (esp. important to test for Windows).
-        Path("tests/test_extensions.py").absolute().as_posix(),
-        Path("tests/test_extensions.py:AnalysisEventsTest").absolute().as_posix(),
+        Path("tests/test_extensions/test_base.py").absolute().as_posix(),
+        Path("tests/test_extensions/test_base.py:AnalysisEventsTest").absolute().as_posix(),
     ],
 )
 def test_loading_extensions(extension: str | dict[str, dict[str, Any]] | Extension | type[Extension]) -> None:

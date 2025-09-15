@@ -63,6 +63,7 @@ nav:
   - Built-in:
     - extensions/built-in.md
     - dataclasses: extensions/built-in/dataclasses.md
+    - unpack-typeddict: extensions/built-in/unpack-typeddict.md
   - Official:
     - extensions/official.md
     - autodocstringstyle: extensions/official/autodocstringstyle.md
@@ -232,6 +233,7 @@ plugins:
           - griffe_inherited_docstrings
           # YORE: Bump 2: Remove line.
           - scripts/griffe_exts.py
+          - unpack_typeddict
           heading_level: 2
           inherited_members: true
           merge_init_into_class: true

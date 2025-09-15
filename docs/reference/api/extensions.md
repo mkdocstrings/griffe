@@ -21,3 +21,7 @@
 ::: griffe.DataclassesExtension
     options:
         inherited_members: false
+
+::: griffe.UnpackTypedDictExtension
+    options:
+        inherited_members: false
