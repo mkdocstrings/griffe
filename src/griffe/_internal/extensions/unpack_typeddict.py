@@ -26,7 +26,7 @@ def _update_docstring(func: Function, parameters: Iterable[Parameter], kwparam: 
         # Create a parameters section if none exists.
         params_section = DocstringSectionParameters([])
         func.docstring.parsed.append(params_section)
-    # Add entries for all TypedDict attributes.
+    # Add entries for all parameters.
     for param in parameters:
         if param.name != "self":
             params_section.value.append(
@@ -82,7 +82,7 @@ class UnpackTypedDictExtension(Extension):
             cls.del_member(attr.name)
 
     def on_function(self, *, func: Function, **kwargs: Any) -> None:  # noqa: ARG002
-        """Replace `**kwargs: Unpack[TypedDict]` parameters with the actual TypedDict attributes."""
+        """Expand `**kwargs: Unpack[TypedDict]` in function signatures."""
         # Find any `**kwargs: Unpack[TypedDict]` parameter.
         for parameter in func.parameters:
             if parameter.kind is ParameterKind.var_keyword:

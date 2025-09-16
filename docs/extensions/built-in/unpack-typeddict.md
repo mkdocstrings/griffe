@@ -1,6 +1,6 @@
-# `unpack`
+# `unpack_typeddict`
 
-The `unpack_typeddict` extension adds support for [`Unpack`][typing.Unpack] and [`TypedDict`][typing.TypedDict] from the standard library. When enabled, it will add an `__init__` method to typed dictionaries, and expand `**kwargs: Unpack[...]` (the ellipsis being a [typed dict][typing.TypedDict] class) in function signatures to the relevant parameters, using the typed dict attributes. The extension will also update any Parameters section in the function docstring, to reflect the signature update.
+The `unpack_typeddict` extension adds support for [`Unpack`][typing.Unpack] and [`TypedDict`][typing.TypedDict] from the standard library. When enabled, it will add an `__init__` method to typed dictionaries, and expand `**kwargs: Unpack[...]` (the ellipsis being a [typed dict][typing.TypedDict] class) in function signatures to the relevant parameters, using the typed dict attributes or added signature. The extension will also update any Parameters section in the function docstring, to reflect the signature update.
 
 Example:
 
@@ -34,10 +34,10 @@ With the `unpack_typeddict` extension enabled, the data loaded by Griffe will be
 
 ```python
 class GreetKwargs(TypedDict):
-    # Attributes removed from Griffe data (not from runtime class).
+    # Attributes removed from Griffe data.
 
-    # Added by the `typeddict` extension to Griffe data (not to the runtime class):
-    def __init__(self, name: str, shout: bool) -> None:
+    # Added by the extension to Griffe data (not to the runtime class):
+    def __init__(self, *, name: str, shout: bool) -> None:
         """
         Parameters:
             name: The name of a person to greet.
