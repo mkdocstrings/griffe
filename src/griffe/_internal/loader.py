@@ -92,7 +92,6 @@ class GriffeLoader:
         self.store_source: bool = store_source
         """Whether to store source code in the lines collection."""
         self._search_paths: Sequence[str | Path] | None = search_paths
-        self.finder
         self._time_stats: dict = {
             "time_spent_visiting": 0,
             "time_spent_inspecting": 0,
