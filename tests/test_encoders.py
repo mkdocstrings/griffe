@@ -8,7 +8,7 @@ import sys
 import pytest
 from jsonschema import ValidationError, validate
 
-from griffe import Attribute, Class, Function, GriffeLoader, Kind, Module, Object, temporary_visited_module
+from griffelib import Attribute, Class, Function, GriffeLoader, Kind, Module, Object, temporary_visited_module
 
 
 def test_minimal_data_is_enough() -> None:

@@ -2,7 +2,7 @@
 # and exposes them as public objects. We have tests to make sure
 # no object is forgotten in this list.
 
-"""Griffe package.
+"""Griffe package (library).
 
 Signatures for entire Python programs.
 Extract the structure, the frame, the skeleton of your project,
@@ -165,9 +165,9 @@ from __future__ import annotations
 import warnings
 from typing import Any
 
-from griffe._internal.agents.inspector import Inspector, inspect
-from griffe._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
-from griffe._internal.agents.nodes.ast import (
+from griffelib._internal.agents.inspector import Inspector, inspect
+from griffelib._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
+from griffelib._internal.agents.nodes.ast import (
     ast_children,
     ast_first_child,
     ast_kind,
@@ -178,19 +178,19 @@ from griffe._internal.agents.nodes.ast import (
     ast_previous_siblings,
     ast_siblings,
 )
-from griffe._internal.agents.nodes.docstrings import get_docstring
+from griffelib._internal.agents.nodes.docstrings import get_docstring
 
 # YORE: Bump 2: Replace `ExportedName, ` with `` within line.
-from griffe._internal.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
-from griffe._internal.agents.nodes.imports import relative_to_absolute
-from griffe._internal.agents.nodes.parameters import ParametersType, get_parameters
-from griffe._internal.agents.nodes.runtime import ObjectNode
-from griffe._internal.agents.nodes.values import get_value, safe_get_value
-from griffe._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
-from griffe._internal.c3linear import c3linear_merge
-from griffe._internal.cli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
-from griffe._internal.collections import LinesCollection, ModulesCollection
-from griffe._internal.diff import (
+from griffelib._internal.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
+from griffelib._internal.agents.nodes.imports import relative_to_absolute
+from griffelib._internal.agents.nodes.parameters import ParametersType, get_parameters
+from griffelib._internal.agents.nodes.runtime import ObjectNode
+from griffelib._internal.agents.nodes.values import get_value, safe_get_value
+from griffelib._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
+from griffelib._internal.c3linear import c3linear_merge
+from griffelib._internal.cli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
+from griffelib._internal.collections import LinesCollection, ModulesCollection
+from griffelib._internal.diff import (
     AttributeChangedTypeBreakage,
     AttributeChangedValueBreakage,
     Breakage,
@@ -206,8 +206,8 @@ from griffe._internal.diff import (
     ReturnChangedTypeBreakage,
     find_breaking_changes,
 )
-from griffe._internal.docstrings.google import GoogleOptions, parse_google
-from griffe._internal.docstrings.models import (
+from griffelib._internal.docstrings.google import GoogleOptions, parse_google
+from griffelib._internal.docstrings.models import (
     DocstringAdmonition,
     DocstringAttribute,
     DocstringClass,
@@ -243,8 +243,8 @@ from griffe._internal.docstrings.models import (
     DocstringWarn,
     DocstringYield,
 )
-from griffe._internal.docstrings.numpy import NumpyOptions, parse_numpy
-from griffe._internal.docstrings.parsers import (
+from griffelib._internal.docstrings.numpy import NumpyOptions, parse_numpy
+from griffelib._internal.docstrings.parsers import (
     DocstringDetectionMethod,
     DocstringOptions,
     DocstringStyle,
@@ -253,10 +253,10 @@ from griffe._internal.docstrings.parsers import (
     parse_auto,
     parsers,
 )
-from griffe._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
-from griffe._internal.docstrings.utils import docstring_warning, parse_docstring_annotation
-from griffe._internal.encoders import JSONEncoder, json_decoder
-from griffe._internal.enumerations import (
+from griffelib._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
+from griffelib._internal.docstrings.utils import docstring_warning, parse_docstring_annotation
+from griffelib._internal.encoders import JSONEncoder, json_decoder
+from griffelib._internal.enumerations import (
     BreakageKind,
     DocstringSectionKind,
     ExplanationStyle,
@@ -267,7 +267,7 @@ from griffe._internal.enumerations import (
     Parser,
     TypeParameterKind,
 )
-from griffe._internal.exceptions import (
+from griffelib._internal.exceptions import (
     AliasResolutionError,
     BuiltinModuleError,
     CyclicAliasError,
@@ -282,7 +282,7 @@ from griffe._internal.exceptions import (
     UnhandledEditableModuleError,
     UnimportableModuleError,
 )
-from griffe._internal.expressions import (
+from griffelib._internal.expressions import (
     Expr,
     ExprAttribute,
     ExprBinOp,
@@ -324,28 +324,28 @@ from griffe._internal.expressions import (
     safe_get_condition,
     safe_get_expression,
 )
-from griffe._internal.extensions.base import (
+from griffelib._internal.extensions.base import (
     Extension,
     Extensions,
     LoadableExtensionType,
     builtin_extensions,
     load_extensions,
 )
-from griffe._internal.extensions.dataclasses import DataclassesExtension
-from griffe._internal.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
-from griffe._internal.git import GitInfo, KnownGitService
-from griffe._internal.importer import dynamic_import, sys_path
-from griffe._internal.loader import GriffeLoader, load, load_git, load_pypi
-from griffe._internal.logger import Logger, get_logger, logger, patch_loggers
-from griffe._internal.merger import merge_stubs
-from griffe._internal.mixins import (
+from griffelib._internal.extensions.dataclasses import DataclassesExtension
+from griffelib._internal.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
+from griffelib._internal.git import GitInfo, KnownGitService
+from griffelib._internal.importer import dynamic_import, sys_path
+from griffelib._internal.loader import GriffeLoader, load, load_git, load_pypi
+from griffelib._internal.logger import Logger, get_logger, logger, patch_loggers
+from griffelib._internal.merger import merge_stubs
+from griffelib._internal.mixins import (
     DelMembersMixin,
     GetMembersMixin,
     ObjectAliasMixin,
     SerializationMixin,
     SetMembersMixin,
 )
-from griffe._internal.models import (
+from griffelib._internal.models import (
     Alias,
     Attribute,
     Class,
@@ -360,8 +360,8 @@ from griffe._internal.models import (
     TypeParameter,
     TypeParameters,
 )
-from griffe._internal.stats import Stats
-from griffe._internal.tests import (
+from griffelib._internal.stats import Stats
+from griffelib._internal.tests import (
     TmpPackage,
     htree,
     module_vtree,
@@ -386,12 +386,12 @@ _deprecated_names = (
 # YORE: Bump 2: Remove block.
 def __getattr__(name: str) -> Any:
     if name in _deprecated_names:
-        from griffe._internal import git  # noqa: PLC0415
+        from griffelib._internal import git  # noqa: PLC0415
 
         warnings.warn(
             f"The `{name}` function is deprecated and will become unavailable in the next major version.",
             DeprecationWarning,
-            stacklevel=2,
+            stacklevel=3,
         )
         return getattr(git, f"_{name}")
 
