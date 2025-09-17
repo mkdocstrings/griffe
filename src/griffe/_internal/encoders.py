@@ -192,9 +192,12 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute | TypeAlias, paren
 
 
 def _load_module(obj_dict: dict[str, Any]) -> Module:
+    filepath = obj_dict.get("filepath")
+    if filepath is not None:
+        filepath = [*map(Path, filepath)] if isinstance(filepath, list) else Path(filepath)
     module = Module(
         name=obj_dict["name"],
-        filepath=Path(obj_dict["filepath"]) if "filepath" in obj_dict else None,
+        filepath=filepath,
         docstring=_load_docstring(obj_dict),
         runtime=obj_dict.get("runtime", True),
         analysis=obj_dict.get("analysis"),
