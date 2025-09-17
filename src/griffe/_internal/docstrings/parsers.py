@@ -49,4 +49,4 @@ def parse(
         if not isinstance(parser, Parser):
             parser = Parser(parser)
         return parsers[parser](docstring, **options)
-    return [DocstringSectionText(docstring.value)]
+    return [DocstringSectionText(docstring.value)] if docstring.value else []
