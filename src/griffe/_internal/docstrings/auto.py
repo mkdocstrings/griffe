@@ -154,7 +154,7 @@ def infer_docstring_style(
         if per_style_options:
             raise ValueError("Cannot use both `options` and `per_style_options`.")
         warn("`**options` is deprecated. Use `per_style_options` instead.", DeprecationWarning, stacklevel=2)
-        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[typeddict-item]
+        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[assignment]
     elif not per_style_options:
         per_style_options = {}
 
@@ -173,7 +173,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # type: ignore[arg-type]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # type: ignore[arg-type,union-attr]
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:
@@ -229,7 +229,7 @@ def parse_auto(
         if per_style_options:
             raise ValueError("Cannot use both `options` and `per_style_options`.")
         warn("`**options` are deprecated. Use `per_style_options` instead.", DeprecationWarning, stacklevel=2)
-        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[typeddict-item]
+        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[assignment]
     elif not per_style_options:
         per_style_options = {}
 
@@ -241,5 +241,5 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # type: ignore[arg-type,typeddict-item]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # type: ignore[arg-type,typeddict-item,union-attr]
     return sections
