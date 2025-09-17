@@ -1041,7 +1041,7 @@ def parse_google(
 
         offset += 1
 
-    if current_section:
+    if current_section and any(current_section):
         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
 
     if (

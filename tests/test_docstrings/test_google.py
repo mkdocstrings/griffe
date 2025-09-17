@@ -576,6 +576,17 @@ def test_invalid_sections(parse_google: ParserType) -> None:
     assert not warnings
 
 
+def test_no_empty_text_section(parse_google: ParserType) -> None:
+    """Don't create a single empty text section for an empty docstring.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    sections, warnings = parse_google("")
+    assert not sections
+    assert not warnings
+
+
 # =============================================================================================
 # Parameters sections
 def test_parse_args_and_kwargs(parse_google: ParserType) -> None:
