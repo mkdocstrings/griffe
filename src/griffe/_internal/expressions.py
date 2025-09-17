@@ -1492,6 +1492,12 @@ safe_get_base_class = partial(
     parse_strings=False,
     msg_format=_msg_format % "base class",
 )
+get_class_keyword = partial(get_expression, parse_strings=False)
+safe_get_class_keyword = partial(
+    safe_get_expression,
+    parse_strings=False,
+    msg_format=_msg_format % "class keyword",
+)
 get_condition = partial(get_expression, parse_strings=False)
 safe_get_condition = partial(
     safe_get_expression,

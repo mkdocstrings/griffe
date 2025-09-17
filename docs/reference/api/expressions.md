@@ -14,6 +14,8 @@
 
 ::: griffe.get_base_class
 
+::: griffe.get_class_keyword
+
 ::: griffe.get_condition
 
 ::: griffe.get_expression
@@ -21,6 +23,8 @@
 ::: griffe.safe_get_annotation
 
 ::: griffe.safe_get_base_class
+
+::: griffe.safe_get_class_keyword
 
 ::: griffe.safe_get_condition
 

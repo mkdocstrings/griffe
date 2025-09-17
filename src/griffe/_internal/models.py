@@ -1911,6 +1911,11 @@ class Alias(ObjectAliasMixin):
         return cast("Class", self.final_target).bases
 
     @property
+    def keywords(self) -> dict[str, Expr | str]:
+        """The class keywords."""
+        return cast("Class", self.final_target).keywords
+
+    @property
     def decorators(self) -> list[Decorator]:
         """The class/function decorators.
 
@@ -2354,6 +2359,7 @@ class Class(Object):
         *args: Any,
         bases: Sequence[Expr | str] | None = None,
         decorators: list[Decorator] | None = None,
+        keywords: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the class.
@@ -2362,6 +2368,7 @@ class Class(Object):
             *args: See [`griffe.Object`][].
             bases: The list of base classes, if any.
             decorators: The class decorators, if any.
+            keywords: The class keywords arguments, if any.
             **kwargs: See [`griffe.Object`][].
         """
         super().__init__(*args, **kwargs)
@@ -2375,6 +2382,9 @@ class Class(Object):
 
         self.decorators: list[Decorator] = decorators or []
         """The class decorators."""
+
+        self.keywords: dict[str, Any] = keywords or {}
+        """The class keywords arguments."""
 
         self.overloads: dict[str, list[Function]] = defaultdict(list)
         """The overloaded signatures declared in this class."""

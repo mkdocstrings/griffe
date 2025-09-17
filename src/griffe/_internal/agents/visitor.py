@@ -26,6 +26,7 @@ from griffe._internal.expressions import (
     ExprName,
     safe_get_annotation,
     safe_get_base_class,
+    safe_get_class_keyword,
     safe_get_condition,
     safe_get_expression,
 )
@@ -320,8 +321,11 @@ class Visitor:
         else:
             lineno = node.lineno
 
-        # Handle base classes.
+        # Handle base classes and keywords.
         bases = [safe_get_base_class(base, parent=self.current, member=node.name) for base in node.bases]
+        keywords = {
+            kw.arg: safe_get_class_keyword(kw.value, parent=self.current) for kw in node.keywords if kw.arg is not None
+        }
 
         class_ = Class(
             name=node.name,
@@ -331,6 +335,7 @@ class Visitor:
             decorators=decorators,
             type_parameters=TypeParameters(*self._get_type_parameters(node, scope=node.name)),
             bases=bases,  # type: ignore[arg-type]
+            keywords=keywords,
             runtime=not self.type_guarded,
             analysis="static",
         )

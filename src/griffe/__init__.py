@@ -127,10 +127,12 @@ Griffe provides a few helpers to extract expressions from regular AST nodes.
 
 - [`griffe.get_annotation`][]: Get a type annotation as expression.
 - [`griffe.get_base_class`][]: Get a base class as expression.
+- [`griffe.get_class_keyword`][]: Get a class keyword as expression.
 - [`griffe.get_condition`][]: Get a condition as expression.
 - [`griffe.get_expression`][]: Get an expression from an AST node.
 - [`griffe.safe_get_annotation`][]: Get a type annotation as expression, safely (returns `None` on error).
 - [`griffe.safe_get_base_class`][]: Get a base class as expression, safely (returns `None` on error).
+- [`griffe.safe_get_class_keyword`][]: Get a class keyword as expression, safely (returns `None` on error).
 - [`griffe.safe_get_condition`][]: Get a condition as expression, safely (returns `None` on error).
 - [`griffe.safe_get_expression`][]: Get an expression from an AST node, safely (returns `None` on error).
 
@@ -321,10 +323,12 @@ from griffe._internal.expressions import (
     ExprYieldFrom,
     get_annotation,
     get_base_class,
+    get_class_keyword,
     get_condition,
     get_expression,
     safe_get_annotation,
     safe_get_base_class,
+    safe_get_class_keyword,
     safe_get_condition,
     safe_get_expression,
 )
@@ -582,6 +586,7 @@ __all__ = [
     "get__all__",
     "get_annotation",
     "get_base_class",
+    "get_class_keyword",
     "get_condition",
     "get_docstring",
     "get_expression",
@@ -618,6 +623,7 @@ __all__ = [
     "safe_get__all__",
     "safe_get_annotation",
     "safe_get_base_class",
+    "safe_get_class_keyword",
     "safe_get_condition",
     "safe_get_expression",
     "safe_get_value",
