@@ -9,6 +9,7 @@ import sys
 import tempfile
 from contextlib import suppress
 from datetime import datetime, timezone
+from functools import cached_property
 from importlib.util import find_spec
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, cast
@@ -90,12 +91,16 @@ class GriffeLoader:
         """Whether to force inspecting (importing) modules, even when sources were found."""
         self.store_source: bool = store_source
         """Whether to store source code in the lines collection."""
-        self.finder: ModuleFinder = ModuleFinder(search_paths)
-        """The module source finder."""
+        self._search_paths: Sequence[str | Path] | None = search_paths
         self._time_stats: dict = {
             "time_spent_visiting": 0,
             "time_spent_inspecting": 0,
         }
+
+    @cached_property
+    def finder(self) -> ModuleFinder:
+        """The module source finder."""
+        return ModuleFinder(search_paths=self._search_paths)
 
     def load(
         self,
