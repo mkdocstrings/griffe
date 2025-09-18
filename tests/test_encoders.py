@@ -43,7 +43,7 @@ def test_namespace_packages() -> None:
     """
     with temporary_pypackage("namespace_package", init=False) as pkg:
         loader = GriffeLoader()
-        module = loader.load(pkg.name)
+        module = loader.load(pkg.path)
         dump_options = {"indent": 2, "sort_keys": True}
         assert module.filepath == [pkg.path]
         minimal = module.as_json(full=False, **dump_options)
