@@ -9,6 +9,7 @@ import pytest
 from jsonschema import ValidationError, validate
 
 from griffe import Attribute, Class, Function, GriffeLoader, Kind, Module, Object, temporary_visited_module
+from griffe._internal.tests import temporary_pypackage
 
 
 def test_minimal_data_is_enough() -> None:
@@ -33,6 +34,20 @@ def test_minimal_data_is_enough() -> None:
     # Won't work if the JSON doesn't represent the type requested.
     with pytest.raises(TypeError, match="provided JSON object is not of type"):
         Function.from_json(minimal)
+
+
+def test_namespace_packages() -> None:
+    with temporary_pypackage("namespace_package", init=False):
+        loader = GriffeLoader()
+        module = loader.load("namespace_package")
+        dump_options = {"indent": 2, "sort_keys": True}
+        minimal = module.as_json(full=False, **dump_options)
+        full = module.as_json(full=True, **dump_options)
+        reloaded = Module.from_json(minimal)
+        assert reloaded.as_json(full=False, **dump_options) == minimal
+        assert reloaded.as_json(full=True, **dump_options) == full
+        assert Object.from_json(minimal)
+        assert Object.from_json(full)
 
 
 @pytest.mark.parametrize(
