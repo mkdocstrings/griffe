@@ -42,11 +42,11 @@ def test_namespace_packages() -> None:
 
     Namespace packages are a bit special as they have no `__init__.py` file.
     """
-    with temporary_pypackage("namespace_package", init=False):
+    with temporary_pypackage("namespace_package", init=False) as pkg:
         loader = GriffeLoader()
-        module = loader.load("namespace_package")
+        module = loader.load(pkg.name)
         dump_options = {"indent": 2, "sort_keys": True}
-        assert module.filepath == [Path("namespace_package")]
+        assert module.filepath == [pkg.path]
         minimal = module.as_json(full=False, **dump_options)
         full = module.as_json(full=True, **dump_options)
         reloaded = Module.from_json(minimal)
