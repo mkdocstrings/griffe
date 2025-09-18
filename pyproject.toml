@@ -96,10 +96,10 @@ maintain = [
 ]
 ci = [
     "duty>=1.6",
-    "griffe-inherited-docstrings>=1.0",
+    "griffe-inherited-docstrings>=1.1.2",
     "jsonschema>=4.17",
-    "pysource-codegen>=0.4",
-    "pysource-minimize>=0.5",
+    "pysource-codegen>=0.7",
+    "pysource-minimize>=0.10",
     "pytest>=8.2",
     "pytest-cov>=5.0",
     "pytest-randomly>=3.15",
@@ -111,7 +111,7 @@ ci = [
 ]
  docs = [
     "code2flow>=2.5",
-    "griffe-inherited-docstrings>=1.0",
+    "griffe-inherited-docstrings>=1.1.2",
     "markdown-callouts>=0.4",
     "markdown-exec[ansi]>=1.8",
     "mkdocs>=1.6",
