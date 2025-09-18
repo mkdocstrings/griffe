@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 
 import pytest
 from jsonschema import ValidationError, validate
@@ -37,10 +38,16 @@ def test_minimal_data_is_enough() -> None:
 
 
 def test_namespace_packages() -> None:
+    """
+    Test support for namespace packages.
+
+    Namespace packages are a bit special as they have no `__init__.py` file.
+    """
     with temporary_pypackage("namespace_package", init=False):
         loader = GriffeLoader()
         module = loader.load("namespace_package")
         dump_options = {"indent": 2, "sort_keys": True}
+        assert module.filepath == [Path("namespace_package")]
         minimal = module.as_json(full=False, **dump_options)
         full = module.as_json(full=True, **dump_options)
         reloaded = Module.from_json(minimal)
