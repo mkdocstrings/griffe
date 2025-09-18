@@ -38,8 +38,7 @@ def test_minimal_data_is_enough() -> None:
 
 
 def test_namespace_packages() -> None:
-    """
-    Test support for namespace packages.
+    """Test support for namespace packages.
 
     Namespace packages are a bit special as they have no `__init__.py` file.
     """
