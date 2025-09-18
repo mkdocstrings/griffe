@@ -50,11 +50,11 @@ def test_namespace_packages() -> None:
 
     Namespace packages are a bit special as they have no `__init__.py` file.
     """
-    with temporary_inspected_package("namespace_package", init=False) as pkg:
+    with temporary_inspected_package("namespace_package", init=False) as package:
         dump_options = {"indent": 2, "sort_keys": True}
-        full = pkg.as_json(full=True, **dump_options)
-        reloaded = Object.from_json(full)
-        assert reloaded.as_json(full=True, **dump_options) == full
+        as_json = package.as_json(full=True, **dump_options)
+        from_json = Object.from_json(as_json)
+        assert from_json.as_json(full=True, **dump_options) == as_json
 
 
 @pytest.mark.parametrize(
