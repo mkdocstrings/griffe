@@ -214,7 +214,6 @@ def test_explicit_requiredness() -> None:
     assert [p.name for p in init.parameters] == ["self", "b", "a"]
 
 
-
 def test_readonly_fields() -> None:
     """Test our `TypedDict` support with `ReadOnly` fields."""
     code = """

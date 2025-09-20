@@ -35,7 +35,7 @@ def _unwrap_annotation(annotation: str | Expr | None, *, default_required: bool)
         "typing.ReadOnly",
         "typing_extensions.ReadOnly",
     }:
-        annotation = annotation.slice  # type: ignore[union-attr]
+        annotation = annotation.slice
 
     # Unwrap `Required` and `NotRequired`, set `required` accordingly.
     if isinstance(annotation, ExprSubscript):
@@ -43,13 +43,13 @@ def _unwrap_annotation(annotation: str | Expr | None, *, default_required: bool)
             "typing.Required",
             "typing_extensions.Required",
         }:
-            annotation = annotation.slice  # type: ignore[union-attr]
+            annotation = annotation.slice
             required = True
         elif annotation.canonical_path in {
             "typing.NotRequired",
             "typing_extensions.NotRequired",
         }:
-            annotation = annotation.slice  # type: ignore[union-attr]
+            annotation = annotation.slice
             required = False
 
     # Unwrap `ReadOnly` a second time here.
@@ -57,7 +57,7 @@ def _unwrap_annotation(annotation: str | Expr | None, *, default_required: bool)
         "typing.ReadOnly",
         "typing_extensions.ReadOnly",
     }:
-        annotation = annotation.slice  # type: ignore[union-attr]
+        annotation = annotation.slice
 
     return annotation, required
 
