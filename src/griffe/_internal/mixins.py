@@ -249,6 +249,23 @@ class SerializationMixin:
             raise TypeError(f"provided JSON object is not of type {cls}")
         return obj
 
+    def as_index(self, **kwargs: Any) -> dict[str, dict[str, Any]]:
+        """Return an index of this object/alias and its members.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary mapping paths to dictionaries.
+        """
+        index = {self.path: self.as_dict(full=True, flat=True, **kwargs)}  # type: ignore[attr-defined]
+        try:
+            for member in self.members.values():  # type: ignore[attr-defined]
+                index.update(member.as_index(**kwargs))
+        except AliasResolutionError:
+            pass
+        return index
+
 
 class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, SerializationMixin):
     """Mixin class to share methods that appear both in objects and aliases, unchanged."""

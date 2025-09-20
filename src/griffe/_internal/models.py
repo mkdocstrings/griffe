@@ -271,6 +271,13 @@ class Parameter:  # noqa: PLW1641
         """Whether this parameter is required."""
         return self.default is None
 
+    @property
+    def path(self) -> str:
+        """The full path of the parameter, including the parent function."""
+        if self.function:
+            return f"{self.function.path}<-{self.name}"
+        raise ValueError("Cannot get parameter path without parent function")
+
     def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this parameter's data as a dictionary.
 
@@ -289,6 +296,17 @@ class Parameter:  # noqa: PLW1641
         if self.docstring:
             base["docstring"] = self.docstring.as_dict(full=full)
         return base
+
+    def as_index(self, **kwargs: Any) -> dict[str, Any]:
+        """Return this parameter's data as a dictionary for indexing.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        return {self.path: self.as_dict(full=True, flat=True, **kwargs)}
 
 
 class Parameters:
@@ -419,6 +437,8 @@ class TypeParameter:
         self.annotation: str | Expr | None
         """The type parameter bound or constraints."""
 
+        # These assignments use the property setters below,
+        # ultimately assigning to `self.annotation`.
         if constraints:
             self.constraints = constraints
         else:
@@ -426,6 +446,11 @@ class TypeParameter:
 
         self.default: str | Expr | None = default
         """The type parameter default value."""
+
+        # The parent is set in the class, function or type alias' `__init__` method,
+        # when the type parameters are assigned to it.
+        self.parent: Class | Function | TypeAlias | None = None
+        """The parent of the type parameter."""
 
     def __repr__(self) -> str:
         return f"TypeParameter(name={self.name!r}, kind={self.kind!r}, bound={self.annotation!r}, default={self.default!r})"
@@ -455,6 +480,13 @@ class TypeParameter:
         else:
             self.annotation = None
 
+    @property
+    def path(self) -> str:
+        """The full path of the type parameter, including the parent object."""
+        if self.parent:
+            return f"{self.parent.path}@{self.name}"
+        raise ValueError("Cannot get type parameter path without parent object")
+
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this type parameter's data as a dictionary.
 
@@ -471,6 +503,17 @@ class TypeParameter:
             "default": self.default,
         }
         return base
+
+    def as_index(self, **kwargs: Any) -> dict[str, Any]:
+        """Return this type parameter's data as a dictionary for indexing.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        return {self.path: self.as_dict(full=True, flat=True, **kwargs)}
 
 
 class TypeParameters:
@@ -1237,7 +1280,7 @@ class Object(ObjectAliasMixin):
         # Recurse in parent.
         return self.parent.resolve(name)
 
-    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, *, full: bool = False, flat: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
         See also: [`as_json`][griffe.Object.as_json].
@@ -1270,11 +1313,17 @@ class Object(ObjectAliasMixin):
         if self.docstring:
             base["docstring"] = self.docstring
         if self.type_parameters:
-            base["type_parameters"] = [type_param.as_dict(**kwargs) for type_param in self.type_parameters]
+            if flat:
+                base["type_parameters"] = [type_param.path for type_param in self.type_parameters]
+            else:
+                base["type_parameters"] = [type_param.as_dict(**kwargs) for type_param in self.type_parameters]
         if self.labels:
             base["labels"] = self.labels
         if self.members:
-            base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
+            if flat:
+                base["members"] = [member.path for member in self.members.values()]
+            else:
+                base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
         if self.analysis:
             base["analysis"] = self.analysis
         if self._git_info is not None:
@@ -1320,6 +1369,20 @@ class Object(ObjectAliasMixin):
                 base["source_link"] = source_link
 
         return base
+
+    def as_index(self, **kwargs: Any) -> dict[str, dict[str, Any]]:
+        """Return this object's data as a dictionary suitable for indexing.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        index = super().as_index(**kwargs)
+        for type_param in self.type_parameters:
+            index.update(type_param.as_index(**kwargs))
+        return index
 
 
 class Alias(ObjectAliasMixin):
@@ -2177,7 +2240,7 @@ class Alias(ObjectAliasMixin):
             return self.target_path
         return None
 
-    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    def as_dict(self, *, full: bool = False, flat: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this alias' data as a dictionary.
 
         See also: [`as_json`][griffe.Alias.as_json].
@@ -2556,7 +2619,7 @@ class Function(Object):
         """Whether this function is an `__init__` method."""
         return bool(self.parent and self.parent.is_class and self.name == "__init__")
 
-    def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    def as_dict(self, *, flat: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 
         See also: [`as_json`][griffe.Function.as_json].
@@ -2569,9 +2632,26 @@ class Function(Object):
         """
         base = super().as_dict(**kwargs)
         base["decorators"] = [dec.as_dict(**kwargs) for dec in self.decorators]
-        base["parameters"] = [param.as_dict(**kwargs) for param in self.parameters]
+        if flat:
+            base["parameters"] = [param.path for param in self.parameters]
+        else:
+            base["parameters"] = [param.as_dict(**kwargs) for param in self.parameters]
         base["returns"] = self.returns
         return base
+
+    def as_index(self, **kwargs: Any) -> dict[str, dict[str, Any]]:
+        """Return this function's data as a dictionary for indexing purposes.
+
+        Parameters:
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        index = super().as_index(**kwargs)
+        for param in self.parameters:
+            index.update(param.as_index(**kwargs))
+        return index
 
     def signature(self, *, return_type: bool = True, name: str | None = None) -> str:
         """Construct the function signature.
