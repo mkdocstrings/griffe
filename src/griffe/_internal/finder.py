@@ -125,7 +125,9 @@ class ModuleFinder:
         Parameters:
             path: The path to append.
         """
-        path = path.resolve()
+        self._append_search_path(path.resolve())
+
+    def _append_search_path(self, path: Path) -> None:
         if path not in self.search_paths:
             self.search_paths.append(path)
 
@@ -378,10 +380,6 @@ class ModuleFinder:
             except (FileNotFoundError, NotADirectoryError):
                 self._paths_contents[path] = []
         return self._paths_contents[path]
-
-    def _append_search_path(self, path: Path) -> None:
-        if path not in self.search_paths:
-            self.search_paths.append(path)
 
     def _extend_from_pth_files(self) -> None:
         for path in self.search_paths:
