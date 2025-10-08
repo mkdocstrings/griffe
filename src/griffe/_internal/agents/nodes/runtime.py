@@ -6,7 +6,7 @@ import inspect
 import sys
 import typing
 from functools import cached_property
-from types import GetSetDescriptorType
+from types import GetSetDescriptorType, ModuleType
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from griffe._internal.enumerations import ObjectKind
@@ -106,7 +106,7 @@ class ObjectNode:
     def module_path(self) -> str | None:
         """The object's module path."""
         try:
-            return self.obj.__module__
+            module = self.obj.__module__
         except AttributeError:
             try:
                 module = inspect.getmodule(self.obj) or self.module.obj
@@ -116,6 +116,12 @@ class ObjectNode:
                 return module.__spec__.name  # type: ignore[union-attr]
             except AttributeError:
                 return getattr(module, "__name__", None)
+        else:
+            if isinstance(module, ModuleType):
+                return getattr(module, "__qualname__", getattr(module, "__name__", None))
+            if isinstance(module, str):
+                return module
+            return None
 
     @property
     def kind(self) -> ObjectKind:
