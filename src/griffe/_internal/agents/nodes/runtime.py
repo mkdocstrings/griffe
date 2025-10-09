@@ -117,10 +117,25 @@ class ObjectNode:
             except AttributeError:
                 return getattr(module, "__name__", None)
         else:
+            # Some libraries mistakenly set `__module__` to a module object instead of a string.
+            # Handle this case specifically, but do not cast any other object to a string.
             if isinstance(module, ModuleType):
+                logger.debug(
+                    "Object %s has its `__module__` attribute set to a module object: "
+                    "it must be a string instead (the module fully qualified name). "
+                    "Please report to the maintainers of this library.",
+                    self.path,
+                )
                 return getattr(module, "__qualname__", getattr(module, "__name__", None))
             if isinstance(module, str):
                 return module
+            logger.debug(
+                "Object %s has its `__module__` attribute set to a %s object: "
+                "it must be a string instead (the module fully qualified name). "
+                "Please report to the maintainers of this library.",
+                self.path,
+                getattr(type(module), "__name__", str(type(module))),
+            )
             return None
 
     @property
