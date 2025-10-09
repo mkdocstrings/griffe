@@ -233,7 +233,6 @@ def test_resolving_type_parameters() -> None:
         assert module["C.func"].parameters["arg2"].annotation.canonical_path == "Y"
 
 
-@pytest.mark.xfail(reason="Tuple in comprehension target is not yet implicit")
 def test_render_dict_comprehension() -> None:
     """Assert dict comprehensions are rendered correctly."""
     with temporary_visited_module(
