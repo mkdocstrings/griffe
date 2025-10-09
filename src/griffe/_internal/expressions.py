@@ -473,6 +473,7 @@ class ExprDictComp(Expr):
         yield from _yield(self.key, flat=flat)
         yield ": "
         yield from _yield(self.value, flat=flat)
+        yield " "
         yield from _join(self.generators, " ", flat=flat)
         yield "}"
 
