@@ -1315,10 +1315,8 @@ class Object(ObjectAliasMixin):
                 },
             )
 
-            try:
+            with suppress(ValueError):
                 base["relative_filepath"] = self.relative_filepath
-            except ValueError:
-                pass
 
             if "source_link" not in base and (source_link := self.source_link) is not None:
                 base["source_link"] = source_link
