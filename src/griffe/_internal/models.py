@@ -1288,7 +1288,6 @@ class Object(ObjectAliasMixin):
                 {
                     "path": self.path,
                     "filepath": self.filepath,
-                    "relative_filepath": self.relative_filepath,
                     "relative_package_filepath": self.relative_package_filepath,
                     "is_public": self.is_public,
                     "is_deprecated": self.is_deprecated,
@@ -1315,6 +1314,9 @@ class Object(ObjectAliasMixin):
                     # "has_docstrings": self.has_docstrings,
                 },
             )
+
+            with suppress(ValueError):
+                base["relative_filepath"] = self.relative_filepath
 
             if "source_link" not in base and (source_link := self.source_link) is not None:
                 base["source_link"] = source_link
