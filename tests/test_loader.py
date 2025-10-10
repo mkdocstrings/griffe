@@ -519,3 +519,14 @@ def test_loading_utf8_with_bom_files(tmp_path: Path) -> None:
     loader = GriffeLoader(search_paths=[tmp_path])
     package = loader.load("pkg")
     assert "func" in package.members  # Just checking all went well, no SyntaxError exceptions raised.
+
+
+def test_deferred_finder(tmp_path: Path) -> None:
+    """Check that the deferred finder works as expected."""
+    ns = tmp_path / "ns"
+    l1 = GriffeLoader(search_paths=[tmp_path])
+    ns.mkdir(exist_ok=False)
+    l2 = GriffeLoader(search_paths=[tmp_path])
+    l1_result = l1.load("ns")
+    l2_result = l2.load("ns")
+    assert l1_result.as_dict() == l2_result.as_dict()

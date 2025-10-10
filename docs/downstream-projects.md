@@ -1,10 +1,14 @@
 # Downstream projects
 
-Griffe is used by various projects in the Python ecosystem.
+Griffe is used by various projects in the Python ecosystem. They are listed below in alphabetical order.
 
 ## api2mdx
 
 [api2mdx](https://github.com/Mirascope/api2mdx) is a Python tool that generates `mdx` documentation for Python APIs. Under the hood, it uses Griffe.
+
+## Fumadocs
+
+[Fumadocs](https://fumadocs.dev/) is a beautiful documentation framework for developers, flexible, performant, running on your React framework. It uses Griffe to extract and render Python API documentation.
 
 ## griffe2md
 
@@ -48,7 +52,7 @@ The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is a lig
 
 ## rafe
 
-[rafe](https://pypi.org/project/rafe/) is a tool for inspecting Python environments and building packages (irrespective of language) in a reproducible manner. It wraps Griffe to provide a CLI command to check for API breaking changes.
+[rafe](https://pypi.org/project/rafe/) is a tool for inspecting Python environments and building packages (irrespective of the language) in a reproducible manner. It wraps Griffe to provide a CLI command to check for API breaking changes.
 
 ## Yapper
 

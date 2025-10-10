@@ -473,6 +473,7 @@ class ExprDictComp(Expr):
         yield from _yield(self.key, flat=flat)
         yield ": "
         yield from _yield(self.value, flat=flat)
+        yield " "
         yield from _join(self.generators, " ", flat=flat)
         yield "}"
 
@@ -1163,7 +1164,7 @@ def _build_compare(node: ast.Compare, parent: Module | Class, **kwargs: Any) -> 
 
 def _build_comprehension(node: ast.comprehension, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprComprehension(
-        _build(node.target, parent, **kwargs),
+        _build(node.target, parent, compr_target=True, **kwargs),
         _build(node.iter, parent, **kwargs),
         [_build(condition, parent, **kwargs) for condition in node.ifs],
         is_async=bool(node.is_async),
@@ -1324,7 +1325,7 @@ def _build_subscript(
     *,
     parse_strings: bool = False,
     literal_strings: bool = False,
-    in_subscript: bool = False,  # noqa: ARG001
+    subscript_slice: bool = False,  # noqa: ARG001
     **kwargs: Any,
 ) -> Expr:
     left = _build(node.value, parent, **kwargs)
@@ -1339,11 +1340,11 @@ def _build_subscript(
             parent,
             parse_strings=True,
             literal_strings=literal_strings,
-            in_subscript=True,
+            subscript_slice=True,
             **kwargs,
         )
     else:
-        slice_expr = _build(node.slice, parent, in_subscript=True, **kwargs)
+        slice_expr = _build(node.slice, parent, subscript_slice=True, **kwargs)
     return ExprSubscript(left, slice_expr)
 
 
@@ -1351,10 +1352,11 @@ def _build_tuple(
     node: ast.Tuple,
     parent: Module | Class,
     *,
-    in_subscript: bool = False,
+    subscript_slice: bool = False,
+    compr_target: bool = False,
     **kwargs: Any,
 ) -> Expr:
-    return ExprTuple([_build(el, parent, **kwargs) for el in node.elts], implicit=in_subscript)
+    return ExprTuple([_build(el, parent, **kwargs) for el in node.elts], implicit=subscript_slice or compr_target)
 
 
 def _build_unaryop(node: ast.UnaryOp, parent: Module | Class, **kwargs: Any) -> Expr:
