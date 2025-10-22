@@ -86,12 +86,9 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                 # not the canonical one. Therefore, we must allow merging stubs into the target of an alias,
                 # as long as the stub and target are of the same kind.
                 if obj_member.kind is not stub_member.kind:
-                    logger.debug(
-                        "Cannot merge stubs for %s: kind %s != %s",
-                        obj_member.path,
-                        stub_member.kind.value,
-                        obj_member.kind.value,
-                    )
+                    # If the stub and the target are not of the same kind, prefer the
+                    # stub over the target.
+                    obj.set_member(stub_member.name, stub_member)
                 elif obj_member.is_module:
                     _merge_module_stubs(obj_member, stub_member)  # type: ignore[arg-type]
                 elif obj_member.is_class:
