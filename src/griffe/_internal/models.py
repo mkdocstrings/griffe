@@ -2717,7 +2717,7 @@ class TypeAlias(Object):
             value: The type alias value.
             **kwargs: See [`griffe.Object`][].
         """
-        super().__init__(*args, **kwargs, runtime=False)
+        super().__init__(*args, **kwargs)
         self.value: str | Expr | None = value
         """The type alias value."""
 
