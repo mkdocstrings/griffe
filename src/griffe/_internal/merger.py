@@ -88,6 +88,10 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                 if obj_member.kind is not stub_member.kind:
                     # If the stub and the target are not of the same kind, prefer the
                     # stub over the target.
+                    logger.debug(
+                        "Source object `%s` will be overwritten by stub object.",
+                        obj_member.path,
+                    )
                     obj.set_member(stub_member.name, stub_member)
                 elif obj_member.is_module:
                     _merge_module_stubs(obj_member, stub_member)  # type: ignore[arg-type]
