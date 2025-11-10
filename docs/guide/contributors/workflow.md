@@ -43,7 +43,7 @@ The development worklow is rather usual.
 
 Once you are ready to commit, follow our [commit message convention](#commit-message-convention).
 
-NOTE: **Occasional contributors**  
+NOTE: **Occasional contributors**
 If you are unsure about how to fix or ignore a warning, just let the continuous integration fail, and we will help you during review. Don't bother updating the changelog, we will take care of this.
 
 ## Breaking changes and deprecations
@@ -72,7 +72,7 @@ except ImportError:
 
 Check [Yore's docs](https://pawamoy.github.io/yore/), and Yore-comments in our own code base (`git grep -A1 YORE`) to learn how to use it.
 
-NOTE: **Occasional contributors**  
+NOTE: **Occasional contributors**
 If you are unsure about how to deprecate something or mark legacy code, let us do it during review.
 
 ## Commit message convention
@@ -118,7 +118,7 @@ These "trailers" must appear at the end of the body, without any blank lines bet
 
 We do not enforce a line length on commit messages summary and body.
 
-NOTE: **Occasional contributors**  
+NOTE: **Occasional contributors**
 If this convention seems unclear to you, just write the message of your choice, and we will rewrite it ourselves before merging.
 
 ## Pull requests guidelines
@@ -144,7 +144,7 @@ And force-push:
 git push -f
 ```
 
-NOTE: **Occasional contributors**  
+NOTE: **Occasional contributors**
 If this seems all too complicated, you can push or force-push each new commit, and we will squash them ourselves if needed, before merging.
 
 ## Release process
