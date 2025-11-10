@@ -5,6 +5,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.15.0](https://github.com/mkdocstrings/griffe/releases/tag/1.15.0) - 2025-11-10
+
+<small>[Compare with 1.14.0](https://github.com/mkdocstrings/griffe/compare/1.14.0...1.15.0)</small>
+
+### Features
+
+- Prefer stub over target object if not the same kind ([196bcf4](https://github.com/mkdocstrings/griffe/commit/196bcf412972ac2a8c79346ac37655a4199dffb6) by Kattni). [Discussion-mkdocstrings-803](https://github.com/mkdocstrings/mkdocstrings/discussions/803), [PR-422](https://github.com/mkdocstrings/griffe/pull/422)
+- Parse keywords in class declarations ([0709f0d](https://github.com/mkdocstrings/griffe/commit/0709f0d15411b1c1707fc43f10def8c38b3eba93) by Timothée Mazzucotelli).
+- Support unpacking typed dicts in signatures and docstrings ([60cbb5f](https://github.com/mkdocstrings/griffe/commit/60cbb5f4af0e20831c25d4ba7d5fa8aa13556340) by Timothée Mazzucotelli). [Issue-mkdocstrings-python-207](https://github.com/mkdocstrings/python/issues/207), [Issue-284](https://github.com/mkdocstrings/griffe/issues/284)
+- Support checking packages from PyPI directly ([e04a5cf](https://github.com/mkdocstrings/griffe/commit/e04a5cfe381439e14b78e21b55c2f7a75082b30c) by Timothée Mazzucotelli).
+- Support expression modernization ([4ae5d25](https://github.com/mkdocstrings/griffe/commit/4ae5d257024cdc5f128dde5aa961390cd233d08e) by Timothée Mazzucotelli).
+- Support `auto` docstring style (infer from docstring) ([4d0a9ee](https://github.com/mkdocstrings/griffe/commit/4d0a9ee29a3f17e795c3bbb3e32303890d7c1432) by Timothée Mazzucotelli).
+
+### Bug Fixes
+
+- Make type aliases available at runtime ([9debb52](https://github.com/mkdocstrings/griffe/commit/9debb52b2906cca704df32c45333c8ae3bd6e162) by sgt). [Discussion-425](https://github.com/mkdocstrings/griffe/discussions/425), [PR-426](https://github.com/mkdocstrings/griffe/pull/426)
+- Fix loading namespace packages from JSON ([3cccf27](https://github.com/mkdocstrings/griffe/commit/3cccf2740ebcf174671aed1cf5fdbf787c076679) by Bartosz Sławecki). [Issue-407](https://github.com/mkdocstrings/griffe/issues/407), [PR-413](https://github.com/mkdocstrings/griffe/pull/413)
+- Catch error when computing relative filepath for serialization ([92a23d4](https://github.com/mkdocstrings/griffe/commit/92a23d4aa4b967777bfd4c8cbc19eb4a0795102d) by Timothée Mazzucotelli).
+- Defer creating module finder until first load ([c52dd22](https://github.com/mkdocstrings/griffe/commit/c52dd22a3b8690bf3ecfe5359b47b8bf65ca59f9) by Bartosz Sławecki). [Issue-410](https://github.com/mkdocstrings/griffe/issues/410), [PR-411](https://github.com/mkdocstrings/griffe/pull/411), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Always return a string or `None` from `ObjectNode.module_path` ([06c2f2f](https://github.com/mkdocstrings/griffe/commit/06c2f2f1974a62bf8195a089b0cc8cd343ae1784) by Frank David Martínez M). [PR-419](https://github.com/mkdocstrings/griffe/pull/419), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Don't add parentheses around comprehension target (implicit) tuple ([cbdb6a9](https://github.com/mkdocstrings/griffe/commit/cbdb6a9a398acc4adc924b7ec4cc1abe966a4db4) by Timothée Mazzucotelli). [Issue-mkdocstrings-python-311](https://github.com/mkdocstrings/python/issues/311)
+- Add missing space in dictionary comprehension ([3a6dc36](https://github.com/mkdocstrings/griffe/commit/3a6dc3628982770d65e7ce7adeeadfc0ab601ef1) by Nicolas IOOSS). [Issue-mkdocstrings-python-311](https://github.com/mkdocstrings/python/issues/311), [PR-420](https://github.com/mkdocstrings/griffe/pull/420)
+- Do not ignore stderr in case there is a problem in a git call. (#416) ([9a5d014](https://github.com/mkdocstrings/griffe/commit/9a5d014b3f9d5f7ac4ffdf27a49dacc437776f84) by Muhammet Soytürk). [Issue-415](https://github.com/mkdocstrings/griffe/issues/415), [PR-416](https://github.com/mkdocstrings/griffe/pull/416)
+
+### Code Refactoring
+
+- Update code base for Python 3.10 ([37aaf06](https://github.com/mkdocstrings/griffe/commit/37aaf06f06311ea1f114442233af750d18583173) by Timothée Mazzucotelli).
+- Improve handling of typed dicts ([5bed1be](https://github.com/mkdocstrings/griffe/commit/5bed1be1c62b4e8c083f8f1a808ec9664caacc4f) by Timothée Mazzucotelli). [Issue-284](https://github.com/mkdocstrings/griffe/issues/284), [Issue-mkdocstrings-python-207](https://github.com/mkdocstrings/python/issues/207), [PR-414](https://github.com/mkdocstrings/griffe/pull/414)
+- Reuse private method to append search path to reduce code duplication ([0a82cf5](https://github.com/mkdocstrings/griffe/commit/0a82cf52a118204f8290c309273bae9b14ec2126) by Timothée Mazzucotelli).
+- Don't produce an empty text section when "parsing" an empty unstyled docstring ([90bd71c](https://github.com/mkdocstrings/griffe/commit/90bd71cb2a2f438c39b32f821b588af3b8feed66) by Timothée Mazzucotelli).
+- Don't produce empty text section when parsing an empty Google-style docstring ([1cbf2a3](https://github.com/mkdocstrings/griffe/commit/1cbf2a38a8b9988f91030623e01c0ce883e33abe) by Timothée Mazzucotelli).
+- Use plain ANSI codes, don't import them from Colorama ([90978b4](https://github.com/mkdocstrings/griffe/commit/90978b4d86307b283948064e5a5f411114d30748) by Timothée Mazzucotelli).
+
 ## [1.14.0](https://github.com/mkdocstrings/griffe/releases/tag/1.14.0) - 2025-09-05
 
 <small>[Compare with 1.13.0](https://github.com/mkdocstrings/griffe/compare/1.13.0...1.14.0)</small>
