@@ -62,8 +62,8 @@ def deprecated_function():
     ...
 ```
 
-```python title="Simplify imports when Python 3.9 is EOL"
-# YORE: EOL 3.9: Replace block with line 4.
+```python title="Simplify imports when Python 3.15 is EOL"
+# YORE: EOL 3.15: Replace block with line 4.
 try:
     import ...
 except ImportError:
