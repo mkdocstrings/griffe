@@ -14,6 +14,8 @@ from tests import FIXTURES_DIR
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from pytest_gitconfig import GitConfig
+
 REPO_NAME = "my-repo"
 REPO_SOURCE = FIXTURES_DIR / "_repo"
 MODULE_NAME = "my_module"
@@ -36,7 +38,7 @@ def _copy_contents(src: Path, dst: Path) -> None:
 
 
 @pytest.fixture
-def git_repo(tmp_path: Path) -> Path:
+def git_repo(tmp_path: Path, gitconfig: GitConfig) -> Path:  # noqa: ARG001
     """Fixture that creates a git repo with multiple tagged versions.
 
     For each directory in `tests/test_git/_repo/`
@@ -58,8 +60,6 @@ def git_repo(tmp_path: Path) -> Path:
     repo_path = tmp_path / REPO_NAME
     repo_path.mkdir()
     run(["git", "-C", str(repo_path), "init"], check=True)
-    run(["git", "-C", str(repo_path), "config", "user.name", "Name"], check=True)
-    run(["git", "-C", str(repo_path), "config", "user.email", "my@email.com"], check=True)
     for tagdir in REPO_SOURCE.iterdir():
         ver = tagdir.name
         _copy_contents(tagdir, repo_path)
