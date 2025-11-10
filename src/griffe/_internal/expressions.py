@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import ast
-import sys
 from dataclasses import dataclass
 from dataclasses import fields as getfields
 from enum import IntEnum, auto
@@ -156,7 +155,6 @@ _modern_types = {
     "typing.List": "list",
     "typing.Set": "set",
 }
-
 
 
 @dataclass
@@ -579,7 +577,7 @@ class ExprKeyword(Expr):
         """Path of the expressed keyword."""
         if self.function:
             return f"{self.function.canonical_path}({self.name})"
-        return super(ExprKeyword, self).canonical_path  # noqa: UP008
+        return super(ExprKeyword, self).canonical_path
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.name

@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import ast
 import functools
-import sys
 import types
 import typing
 from inspect import Parameter as SignatureParameter
