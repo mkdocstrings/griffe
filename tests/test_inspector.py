@@ -40,8 +40,6 @@ def test_annotations_from_classes() -> None:
 
 
 # YORE: EOL 3.13: Remove block.
-# YORE: EOL 3.9: Remove line.
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="Type unions not supported on 3.9")
 @pytest.mark.skipif(sys.version_info >= (3, 14), reason="3.14 changes type annotations, see test below")
 @pytest.mark.parametrize(
     ("annotation", "expected"),

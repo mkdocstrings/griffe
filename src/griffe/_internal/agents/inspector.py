@@ -711,10 +711,8 @@ def _convert_type_to_annotation(obj: Any, *, parent: Module | Class, member: str
         _convert_type_to_annotation(arg, parent=parent, member=member) for arg in typing.get_args(obj)
     ]
 
-    # YORE: EOL 3.9: Replace block with lines 2-3.
-    if sys.version_info >= (3, 10):
-        if origin is types.UnionType:
-            return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)  # type: ignore[arg-type]
+    if origin is types.UnionType:
+        return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)  # type: ignore[arg-type]
 
     origin = _convert_type_to_annotation(origin, parent=parent, member=member)
     if origin is None:
