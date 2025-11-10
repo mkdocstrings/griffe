@@ -448,7 +448,7 @@ def coverage(ctx: Context) -> None:
 
 
 @duty(nofail=PY_VERSION == PY_DEV)
-def test(ctx: Context, *cli_args: str) -> None:  # noqa: PT028
+def test(ctx: Context, *cli_args: str) -> None:
     """Run the test suite.
 
     ```bash
