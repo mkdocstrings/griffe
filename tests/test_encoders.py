@@ -165,7 +165,7 @@ def test_json_schema() -> None:
     module = loader.load("griffe")
     loader.resolve_aliases()
     data = json.loads(module.as_json(full=True))
-    with open("docs/schema.json") as f:  # noqa: PTH123
+    with open("docs/schema.json", encoding="utf8") as f:  # noqa: PTH123
         schema = json.load(f)
     validate(data, schema)
 
@@ -186,7 +186,7 @@ def test_json_schema_for_pep695_generics_without_defaults() -> None:
         """,
     ) as module:
         data = json.loads(module.as_json(full=True))
-        with open("docs/schema.json") as f:  # noqa: PTH123
+        with open("docs/schema.json", encoding="utf8") as f:  # noqa: PTH123
             schema = json.load(f)
         validate(data, schema)
 
@@ -206,6 +206,6 @@ def test_json_schema_for_pep695_generics() -> None:
         """,
     ) as module:
         data = json.loads(module.as_json(full=True))
-        with open("docs/schema.json") as f:  # noqa: PTH123
+        with open("docs/schema.json", encoding="utf8") as f:  # noqa: PTH123
             schema = json.load(f)
         validate(data, schema)

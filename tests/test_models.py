@@ -65,8 +65,8 @@ def test_handle_aliases_chain_in_has_docstrings() -> None:
     with temporary_pypackage("package", ["mod_a.py", "mod_b.py"]) as tmp_package:
         mod_a = tmp_package.path / "mod_a.py"
         mod_b = tmp_package.path / "mod_b.py"
-        mod_a.write_text("from .mod_b import someobj")
-        mod_b.write_text("from somelib import someobj")
+        mod_a.write_text("from .mod_b import someobj", encoding="utf8")
+        mod_b.write_text("from somelib import someobj", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -80,8 +80,8 @@ def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
     with temporary_pypackage("package", ["mod_a.py", "mod_b.py"]) as tmp_package:
         mod_a = tmp_package.path / "mod_a.py"
         mod_b = tmp_package.path / "mod_b.py"
-        mod_a.write_text("from .mod_b import someobj")
-        mod_b.write_text("from somelib import someobj")
+        mod_a.write_text("from .mod_b import someobj", encoding="utf8")
+        mod_b.write_text("from somelib import someobj", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)

@@ -64,7 +64,7 @@ def temporary_pyfile(code: str, *, module_name: str = "module") -> Iterator[tupl
     """
     with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpfile = Path(tmpdir) / f"{module_name}.py"
-        tmpfile.write_text(dedent(code))
+        tmpfile.write_text(dedent(code), encoding="utf8")
         yield module_name, tmpfile
 
 
@@ -108,7 +108,7 @@ def temporary_pypackage(
             current_path = package_path
             for part in Path(module_name).parts:
                 if part.endswith((".py", ".pyi")):
-                    current_path.joinpath(part).write_text(dedent(module_contents))
+                    current_path.joinpath(part).write_text(dedent(module_contents), encoding="utf8")
                 else:
                     current_path /= part
                     current_path.mkdir(**mkdir_kwargs)

@@ -64,8 +64,8 @@ def test_find_pkg_style_namespace_packages(statement: str) -> None:
         temporary_pypackage("namespace/package1") as tmp_package1,
         temporary_pypackage("namespace/package2") as tmp_package2,
     ):
-        tmp_package1.path.parent.joinpath("__init__.py").write_text(statement)
-        tmp_package2.path.parent.joinpath("__init__.py").write_text(statement)
+        tmp_package1.path.parent.joinpath("__init__.py").write_text(statement, encoding="utf8")
+        tmp_package2.path.parent.joinpath("__init__.py").write_text(statement, encoding="utf8")
         finder = ModuleFinder(search_paths=[tmp_package1.tmpdir, tmp_package2.tmpdir])
         _, package = finder.find_spec("namespace")
         assert package.name == "namespace"
@@ -91,6 +91,7 @@ def test_pth_file_handling(tmp_path: Path) -> None:
             tests
             """,
         ),
+        encoding="utf8",
     )
     paths = [sp.path for sp in _handle_pth_file(pth_file)]
     assert paths == [Path("tests")]
@@ -110,6 +111,7 @@ def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
             import thing; import\tthing; /doesnotexist; tests
             """,
         ),
+        encoding="utf8",
     )
     paths = [sp.path for sp in _handle_pth_file(pth_file)]
     assert paths == [Path("tests")]
@@ -123,7 +125,7 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
         tmp_path: Pytest fixture.
     """
     pth_file = tmp_path / editable_file_name
-    pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')")
+    pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
@@ -137,7 +139,7 @@ def test_setuptools_file_handling(tmp_path: Path, annotation: str) -> None:
         annotation: The type annotation of the MAPPING variable.
     """
     pth_file = tmp_path / "__editable__whatever.py"
-    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}")
+    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
@@ -155,6 +157,7 @@ def test_setuptools_file_handling_multiple_paths(tmp_path: Path, annotation: str
         "hello=1\n"
         f"MAPPING{annotation} = {{\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}}\n"
         "def printer():\n  print(hello)",
+        encoding="utf8",
     )
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src1"), Path("src2")]
@@ -169,6 +172,7 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     pth_file = tmp_path / "_whatever_editable.py"
     pth_file.write_text(
         "hello=1\ninstall({'whatever': '/path/to/whatever'}, {'whatever.else': '/else'}, None, False, True)",
+        encoding="utf8",
     )
     # The second dict is not handled: scikit-build-core puts these files
     # in a location that Griffe won't be able to discover anyway
@@ -188,6 +192,7 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     pth_file.write_text(
         # The path in argument 2 suffixed with src must exist, so we pass `.`.
         "hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)",
+        encoding="utf8",
     )
     search_paths = _handle_editable_module(pth_file)
     assert all(sp.always_scan_for == "griffe" for sp in search_paths)

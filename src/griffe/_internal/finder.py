@@ -485,7 +485,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
         # Support for how 'setuptools' writes these files:
         # example line: `MAPPING = {'griffe': '/media/data/dev/griffe/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}`.
         # with annotation: `MAPPING: dict[str, str] = {...}`.
-        parsed_module = ast.parse(path.read_text())
+        parsed_module = ast.parse(path.read_text(encoding="utf8"))
         for node in parsed_module.body:
             if isinstance(node, ast.Assign):
                 target = node.targets[0]
@@ -499,7 +499,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
         # Support for how 'meson-python' writes these files:
         # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.
         # Compiled modules then found in the cp311 folder, under src/package.
-        parsed_module = ast.parse(path.read_text())
+        parsed_module = ast.parse(path.read_text(encoding="utf8"))
         for node in parsed_module.body:
             if (
                 isinstance(node, ast.Expr)

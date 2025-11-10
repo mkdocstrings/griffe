@@ -34,7 +34,14 @@ def _normalize(value: str) -> str:
 
 
 def _git(*args: str, check: bool = True) -> str:
-    process = subprocess.run(["git", *args], check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = subprocess.run(
+        ["git", *args],
+        check=False,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf8",
+    )
     if check and process.returncode != 0:
         raise GitError(process.stdout.strip())
     return process.stdout.strip()

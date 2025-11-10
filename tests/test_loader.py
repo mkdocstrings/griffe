@@ -41,9 +41,9 @@ def test_recursive_wildcard_expansion() -> None:
         mod_a = mod_a_dir / "__init__.py"
         mod_b = mod_b_dir / "__init__.py"
         mod_c = mod_b_dir / "mod_c.py"
-        mod_c.write_text("CONST_X = 'X'\nCONST_Y = 'Y'")
-        mod_b.write_text("from .mod_c import *")
-        mod_a.write_text("from .mod_b import *")
+        mod_c.write_text("CONST_X = 'X'\nCONST_Y = 'Y'", encoding="utf8")
+        mod_b.write_text("from .mod_c import *", encoding="utf8")
+        mod_a.write_text("from .mod_b import *", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -69,9 +69,9 @@ def test_dont_shortcut_alias_chain_after_expanding_wildcards() -> None:
         mod_b = tmp_package.path / "mod_b.py"
         mod_c = tmp_package.path / "mod_c.py"
 
-        mod_a.write_text("from package.mod_b import *\nclass Child(Base): ...\n")
-        mod_b.write_text("from package.mod_c import Base\n__all__ = ['Base']\n")
-        mod_c.write_text("class Base: ...\n")
+        mod_a.write_text("from package.mod_b import *\nclass Child(Base): ...\n", encoding="utf8")
+        mod_b.write_text("from package.mod_c import Base\n__all__ = ['Base']\n", encoding="utf8")
+        mod_c.write_text("class Base: ...\n", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -90,8 +90,8 @@ def test_dont_overwrite_lower_member_when_expanding_wildcard() -> None:
         mod_a = tmp_package.path / "mod_a.py"
         mod_b = tmp_package.path / "mod_b.py"
 
-        mod_a.write_text("overwritten = 0\nfrom package.mod_b import *\nnot_overwritten = 0\n")
-        mod_b.write_text("overwritten = 1\nnot_overwritten = 1\n")
+        mod_a.write_text("overwritten = 0\nfrom package.mod_b import *\nnot_overwritten = 0\n", encoding="utf8")
+        mod_b.write_text("overwritten = 1\nnot_overwritten = 1\n", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -129,9 +129,10 @@ def test_load_data_from_stubs() -> None:
                         debug: if true, print details about all events to stderr
                     """
         '''
-        tmp_package.path.joinpath("_rust_notify.pyi").write_text(dedent(code))
+        tmp_package.path.joinpath("_rust_notify.pyi").write_text(dedent(code), encoding="utf8")
         tmp_package.path.joinpath("__init__.py").write_text(
             "from ._rust_notify import RustNotify\n__all__ = ['RustNotify']",
+            encoding="utf8",
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -160,6 +161,7 @@ def test_load_from_both_py_and_pyi_files() -> None:
                         pass
                 """,
             ),
+            encoding="utf8",
         )
         tmp_package.path.joinpath("mod.pyi").write_text(
             dedent(
@@ -179,6 +181,7 @@ def test_load_from_both_py_and_pyi_files() -> None:
                     def function2(self, arg1: float) -> float: ...
                 """,
             ),
+            encoding="utf8",
         )
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -215,8 +218,8 @@ def test_load_from_both_py_and_pyi_files() -> None:
 def test_overwrite_module_with_attribute() -> None:
     """Check we are able to overwrite a module with an attribute."""
     with temporary_pypackage("package", ["mod.py"]) as tmp_package:
-        tmp_package.path.joinpath("mod.py").write_text("mod: list = [0, 1, 2]")
-        tmp_package.path.joinpath("__init__.py").write_text("from package.mod import *")
+        tmp_package.path.joinpath("mod.py").write_text("mod: list = [0, 1, 2]", encoding="utf8")
+        tmp_package.path.joinpath("__init__.py").write_text("from package.mod import *", encoding="utf8")
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         loader.load(tmp_package.name)
         loader.resolve_aliases()
@@ -229,8 +232,8 @@ def test_load_package_from_both_py_and_pyi_files() -> None:
     `__init__.pyi` (not so uncommon).
     """
     with temporary_pypackage("package", ["__init__.py", "__init__.pyi"]) as tmp_package:
-        tmp_package.path.joinpath("__init__.py").write_text("globals()['f'] = lambda x: str(x)")
-        tmp_package.path.joinpath("__init__.pyi").write_text("def f(x: int) -> str: ...")
+        tmp_package.path.joinpath("__init__.py").write_text("globals()['f'] = lambda x: str(x)", encoding="utf8")
+        tmp_package.path.joinpath("__init__.pyi").write_text("def f(x: int) -> str: ...", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
@@ -245,8 +248,8 @@ def test_load_single_module_from_both_py_and_pyi_files() -> None:
     """
     with temporary_pypackage("just_a_folder", ["mod.py", "mod.pyi"]) as tmp_folder:
         tmp_folder.path.joinpath("__init__.py").unlink()
-        tmp_folder.path.joinpath("mod.py").write_text("globals()['f'] = lambda x: str(x)")
-        tmp_folder.path.joinpath("mod.pyi").write_text("def f(x: int) -> str: ...")
+        tmp_folder.path.joinpath("mod.py").write_text("globals()['f'] = lambda x: str(x)", encoding="utf8")
+        tmp_folder.path.joinpath("mod.pyi").write_text("def f(x: int) -> str: ...", encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_folder.path])
         package = loader.load("mod")
@@ -261,8 +264,11 @@ def test_unsupported_item_in_all(caplog: pytest.LogCaptureFixture) -> None:
     """
     item_name = "XXX"
     with temporary_pypackage("package", ["mod.py"]) as tmp_folder:
-        tmp_folder.path.joinpath("__init__.py").write_text(f"from .mod import {item_name}\n__all__ = [{item_name}]")
-        tmp_folder.path.joinpath("mod.py").write_text(f"class {item_name}: ...")
+        tmp_folder.path.joinpath("__init__.py").write_text(
+            f"from .mod import {item_name}\n__all__ = [{item_name}]",
+            encoding="utf8",
+        )
+        tmp_folder.path.joinpath("mod.py").write_text(f"class {item_name}: ...", encoding="utf8")
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
         loader.expand_exports(loader.load("package"))  # type: ignore[arg-type]
     assert any(item_name in record.message and record.levelname == "WARNING" for record in caplog.records)
@@ -384,8 +390,8 @@ def test_loading_stubs_only_packages(tmp_path: Path, namespace: bool) -> None:
     package = package_parent / "package"
     package.mkdir()
     if not namespace:
-        package.joinpath("__init__.py").write_text("a: int = 0")
-    package.joinpath("module.py").write_text("a: int = 0")
+        package.joinpath("__init__.py").write_text("a: int = 0", encoding="utf8")
+    package.joinpath("module.py").write_text("a: int = 0", encoding="utf8")
 
     # Create stubs.
     stubs_parent = tmp_path / "stubs_parent"
@@ -393,8 +399,8 @@ def test_loading_stubs_only_packages(tmp_path: Path, namespace: bool) -> None:
     stubs = stubs_parent / "package-stubs"
     stubs.mkdir()
     if not namespace:
-        stubs.joinpath("__init__.pyi").write_text("b: int")
-    stubs.joinpath("module.pyi").write_text("b: int")
+        stubs.joinpath("__init__.pyi").write_text("b: int", encoding="utf8")
+    stubs.joinpath("module.pyi").write_text("b: int", encoding="utf8")
 
     # Exposing stubs first, to make sure order doesn't matter.
     loader = GriffeLoader(search_paths=[stubs_parent, package_parent])

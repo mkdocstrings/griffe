@@ -20,7 +20,7 @@ from griffe import (
 def test_not_defined_at_runtime() -> None:
     """Assert that objects not defined at runtime are not added to wildcards expansions."""
     with temporary_pypackage("package", ["module_a.py", "module_b.py", "module_c.py"]) as tmp_package:
-        tmp_package.path.joinpath("__init__.py").write_text("from package.module_a import *")
+        tmp_package.path.joinpath("__init__.py").write_text("from package.module_a import *", encoding="utf8")
         tmp_package.path.joinpath("module_a.py").write_text(
             dedent(
                 """
@@ -36,9 +36,10 @@ def test_not_defined_at_runtime() -> None:
                     from package.module_c import TYPE_C
                 """,
             ),
+            encoding="utf8",
         )
-        tmp_package.path.joinpath("module_b.py").write_text("CONST_B = 'hi'\nTYPE_B = str")
-        tmp_package.path.joinpath("module_c.py").write_text("CONST_C = 'ho'\nTYPE_C = str")
+        tmp_package.path.joinpath("module_b.py").write_text("CONST_B = 'hi'\nTYPE_B = str", encoding="utf8")
+        tmp_package.path.joinpath("module_c.py").write_text("CONST_C = 'ho'\nTYPE_C = str", encoding="utf8")
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)
         loader.resolve_aliases()
@@ -208,9 +209,9 @@ def test_parse_complex__all__assignments(statements: str) -> None:
         statements: Parametrized text containing `__all__` [augmented] assignments.
     """
     with temporary_pypackage("package", ["moda.py", "modb.py", "modc.py"]) as tmp_package:
-        tmp_package.path.joinpath("moda.py").write_text("CONST_A = 1\n\n__all__ = ['CONST_A']")
-        tmp_package.path.joinpath("modb.py").write_text("CONST_B = 1\n\n__all__ = ['CONST_B']")
-        tmp_package.path.joinpath("modc.py").write_text("CONST_C = 2\n\n__all__ = ['CONST_C']")
+        tmp_package.path.joinpath("moda.py").write_text("CONST_A = 1\n\n__all__ = ['CONST_A']", encoding="utf8")
+        tmp_package.path.joinpath("modb.py").write_text("CONST_B = 1\n\n__all__ = ['CONST_B']", encoding="utf8")
+        tmp_package.path.joinpath("modc.py").write_text("CONST_C = 2\n\n__all__ = ['CONST_C']", encoding="utf8")
         code = """
             from package.moda import *
             from package.moda import __all__ as moda_all
@@ -221,7 +222,7 @@ def test_parse_complex__all__assignments(statements: str) -> None:
 
             CONST_INIT = 0
         """
-        tmp_package.path.joinpath("__init__.py").write_text(dedent(code) + dedent(statements))
+        tmp_package.path.joinpath("__init__.py").write_text(dedent(code) + dedent(statements), encoding="utf8")
 
         loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
         package = loader.load(tmp_package.name)

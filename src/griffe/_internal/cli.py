@@ -59,7 +59,7 @@ class _DebugInfo(argparse.Action):
 
 def _print_data(data: str, output_file: str | IO | None) -> None:
     if isinstance(output_file, str):
-        with open(output_file, "w") as fd:  # noqa: PTH123
+        with open(output_file, "w", encoding="utf8") as fd:  # noqa: PTH123
             print(data, file=fd)
     else:
         if output_file is None:
