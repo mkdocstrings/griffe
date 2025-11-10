@@ -43,7 +43,6 @@ def fixture_stdlib_loader() -> Iterator[GriffeLoader]:
     loader.stats()
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="Python less than 3.10 does not have sys.stdlib_module_names")
 @pytest.mark.parametrize("mod", sorted([m for m in getattr(sys, "stdlib_module_names", ()) if not m.startswith("_")]))
 def test_fuzzing_on_stdlib(stdlib_loader: GriffeLoader, mod: str) -> None:
     """Run Griffe on the standard library."""
