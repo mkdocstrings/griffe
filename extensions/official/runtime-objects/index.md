@@ -1,7 +1,5 @@
 # `griffe-runtime-objects`
 
-[Sponsors only](../../../insiders/)
-
 - **PyPI**: [`griffe-runtime-objects`](https://pypi.org/project/griffe-runtime-objects/)
 - **GitHub**: [mkdocstrings/griffe-runtime-objects](https://github.com/mkdocstrings/griffe-runtime-objects)
 - **Documentation:** [mkdocstrings.github.io/griffe-runtime-objects](https://mkdocstrings.github.io/griffe-runtime-objects)

@@ -1,10 +1,18 @@
 # Downstream projects
 
-Griffe is used by various projects in the Python ecosystem.
+Griffe is used by various projects in the Python ecosystem. They are listed below in alphabetical order. [Griffe extensions are listed on their own page.](../extensions/)
 
 ## api2mdx
 
 [api2mdx](https://github.com/Mirascope/api2mdx) is a Python tool that generates `mdx` documentation for Python APIs. Under the hood, it uses Griffe.
+
+## Cybersecurity AI (CAI)
+
+[Cybersecurity AI (CAI)](https://github.com/aliasrobotics/cai) is a lightweight, open-source framework that empowers security professionals to build and deploy AI-powered offensive and defensive automation. It uses Griffe to parse docstrings in order to generate function schema for MCP tools. I believe it reused code from Pydantic AI.
+
+## Fumadocs
+
+[Fumadocs](https://fumadocs.dev/) is a beautiful documentation framework for developers, flexible, performant, running on your React framework. It uses Griffe to extract and render Python API documentation.
 
 ## griffe2md
 
@@ -21,6 +29,14 @@ Griffe is used by various projects in the Python ecosystem.
 ## Hippogriffe
 
 [Hippogriffe](https://github.com/patrick-kidger/hippogriffe) is a set of tweaks on top of the MkDocs + mkdocstrings-python + Griffe documentation stack. It adds source links to GitHub to each top-level class or function, pretty-formats type annotations, improves unions/generics display, and more. Hippogriffe is used as a MkDocs plugin.
+
+## mdxify
+
+[mdxify](https://github.com/zzstoatzz/mdxify) generates API documentation from Python modules with automatic navigation and source links. MDX is the default output and Markdown is also supported via `--format md`.
+
+## Mistral AI Python Client
+
+The [Python client of Mistral AI](https://github.com/mistralai/client-python) uses Griffe to parse docstrings of Python-written MCP tools.
 
 ## mkdocstrings-python
 
@@ -41,11 +57,3 @@ The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is a lig
 ## quartodoc
 
 [quartodoc](https://machow.github.io/quartodoc/) lets you quickly generate Python package API reference documentation using Markdown and [Quarto](https://quarto.org/). quartodoc is designed as an alternative to [Sphinx](https://www.sphinx-doc.org/en/master/). It uses Griffe to load API data and parse docstrings in order to render HTML documentation, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but for Quarto instead of Mkdocs.
-
-## rafe
-
-[rafe](https://pypi.org/project/rafe/) is a tool for inspecting Python environments and building packages (irrespective of language) in a reproducible manner. It wraps Griffe to provide a CLI command to check for API breaking changes.
-
-## Yapper
-
-[Yapper](https://pypi.org/project/yapper/) converts Python docstrings to `astro` files for use by the [Astro](https://astro.build/) static site generator. It uses Griffe to parse Python modules and extracts Numpydoc-style docstrings.

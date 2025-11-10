@@ -116,10 +116,12 @@ Griffe stores snippets of code (attribute values, decorators, base class, type a
 
 - griffe.get_annotation: Get a type annotation as expression.
 - griffe.get_base_class: Get a base class as expression.
+- griffe.get_class_keyword: Get a class keyword as expression.
 - griffe.get_condition: Get a condition as expression.
 - griffe.get_expression: Get an expression from an AST node.
 - griffe.safe_get_annotation: Get a type annotation as expression, safely (returns `None` on error).
 - griffe.safe_get_base_class: Get a base class as expression, safely (returns `None` on error).
+- griffe.safe_get_class_keyword: Get a class keyword as expression, safely (returns `None` on error).
 - griffe.safe_get_condition: Get a condition as expression, safely (returns `None` on error).
 - griffe.safe_get_expression: Get an expression from an AST node, safely (returns `None` on error).
 

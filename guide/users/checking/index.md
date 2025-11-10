@@ -47,9 +47,7 @@ $ griffe check -s back/services/identity-provider/src identity_provider
 
 ### Using PyPI
 
-[Sponsors only](../../../insiders/) — [Insiders 1.1.0](../../../insiders/changelog/#1.1.0)
-
-It's also possible to directly **check packages from PyPI.org** (or other indexes configured through `PIP_INDEX_URL`). This feature is [available to sponsors only](../../../insiders/) and requires that you install Griffe with the `pypi` extra:
+It's also possible to directly **check packages from PyPI.org** (or other indexes configured through `PIP_INDEX_URL`). This feature requires that you install Griffe with the `pypi` extra:
 
 ```
 $ pip install griffe[pypi]
@@ -109,22 +107,15 @@ jobs:
   check-api:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
-    # Griffe requires that Git tags are available.
-    - run: git fetch --depth=1 --tags
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-
-    # Install Griffe (use your preferred dependency manager).
-    - run: pip install griffe
-
-    - run: griffe check -ssrc your_package
+    - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # We the need the full Git history.
+    - uses: astral-sh/setup-uv@v6
+    # The following command will compare current changes to latest tag.
+    - run: uvx griffe check --search src --format github your_package_name
 ```
 
-The last step will fail the workflow if any breaking change is found. If you are part of [Insiders](../../../insiders/), you can format the output for GitHub, to enjoy GitHub annotations in PRs. See [GitHub format](#github) below.
+The last step will fail the workflow if any breaking change is found.
 
 ## Detected breakages
 
@@ -738,11 +729,11 @@ Griffe supports writing detected breakages in multiple formats, or styles.
 This is the default format. Griffe will print each detected breakage on a single line:
 
 ```
-$ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0
+$ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 src/griffe/mixins.py:303: ObjectAliasMixin.is_exported: Public object points to a different kind of object: function -> attribute
 src/griffe/mixins.py:353: ObjectAliasMixin.is_public: Public object points to a different kind of object: function -> attribute
 src/griffe/dataclasses.py:520: Object.has_labels(labels): Parameter kind was changed: positional or keyword -> variadic positional
-src/griffe/diff.py:571: find_breaking_changes(ignore_private): Parameter default was changed: True -> _sentinel
+src/griffe/diff.py:535: find_breaking_changes(ignore_private): Parameter default was changed: True -> _sentinel
 src/griffe/extensions/base.py:463: load_extensions(exts): Parameter kind was changed: positional or keyword -> variadic positional
 src/griffe/dataclasses.py:1073: Alias.has_labels(labels): Parameter kind was changed: positional or keyword -> variadic positional
 ```
@@ -755,7 +746,7 @@ src/griffe/dataclasses.py:1073: Alias.has_labels(labels): Parameter kind was cha
 Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
 
 ```
-$ griffe check griffe -ssrc -b0.46.0.1.2.0 -a0.45.0.1.2.0 --verbose
+$ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 src/griffe/mixins.py:303: ObjectAliasMixin.is_exported:
 Public object points to a different kind of object:
   Old: function
@@ -771,7 +762,7 @@ Parameter kind was changed:
   Old: positional or keyword
   New: variadic positional
 
-src/griffe/diff.py:571: find_breaking_changes(ignore_private):
+src/griffe/diff.py:535: find_breaking_changes(ignore_private):
 Parameter default was changed:
   Old: True
   New: _sentinel
@@ -788,8 +779,6 @@ Parameter kind was changed:
 ```
 
 ### Markdown
-
-[Insiders 1.0.0](../../../insiders/changelog/#1.0.0)
 
 - **CLI**: `-f markdown`
 - **API**: `check(..., style="markdown")` / `check(..., style=ExplanationStyle.MARKDOWN)`
@@ -841,8 +830,6 @@ The Markdown format is adapted for changelogs. It doesn't show the file and line
 - `griffe.git.load_git(allow_inspection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
 
 ### GitHub
-
-[Insiders 1.0.0](../../../insiders/changelog/#1.0.0)
 
 - **CLI**: `-f github`
 - **API**: `check(..., style="github")` / `check(..., style=ExplanationStyle.GITHUB)`

@@ -4,7 +4,7 @@ Griffe attaches the specified docstring style and parsing options to each object
 
 There are currently two ways to make sure objects have the right docstring style attached as early as possible:
 
-1. Use the [`auto` docstring style](https://mkdocstrings.github.io/griffe/reference/docstrings/#auto-style) (currently only available to sponsors). Griffe will use regular expressions to infer the docstring style used. 100% accuracy is impossible to achieve, so it's possible that you get incorrect styles for some objects.
+1. Use the [`auto` docstring style](https://mkdocstrings.github.io/griffe/reference/docstrings/#auto-style). Griffe will use regular expressions to infer the docstring style used. 100% accuracy is impossible to achieve, so it's possible that you get incorrect styles for some objects.
 1. Write and use a custom Griffe extension.
 
 This how-to provides a few extension-based solutions to correctly set docstring styles in your packages. **Just make sure to enable these extensions in first position.**
@@ -118,11 +118,11 @@ plugins:
         options:
           extensions:
           - your_griffe_extension.py:
-              config:                
+              config:
                 path.to.obj1: google
                 path.to.obj2: numpy
                 path.to.obj3.*: sphinx
                 path.to.obj4*: google
 ```
 
-The benefit of this last solution is that it works for code you don't have control over. An alternative solution is to use the [griffe-autodocstringstyle extension](https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/) (sponsors only), which automatically assigns the `auto` style to all objects coming from sources found in a virtual environment.
+The benefit of this last solution is that it works for code you don't have control over. An alternative solution is to use the [griffe-autodocstringstyle extension](https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/), which automatically assigns the `auto` style to all objects coming from sources found in a virtual environment.

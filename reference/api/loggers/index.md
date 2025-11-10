@@ -56,6 +56,21 @@ Returns:
 
 - `Logger` – The logger.
 
+Source code in `src/griffe/_internal/logger.py`
+
+```
+def get_logger(name: str = "griffe") -> Logger:
+    """Create and return a new logger instance.
+
+    Parameters:
+        name: The logger name.
+
+    Returns:
+        The logger.
+    """
+    return Logger._get(name)
+```
+
 ## Logger
 
 ```
@@ -66,6 +81,14 @@ Methods:
 
 - **`disable`** – Temporarily disable logging.
 
+Source code in `src/griffe/_internal/logger.py`
+
+```
+def __init__(self, name: str) -> None:
+    # Default logger that can be patched by third-party.
+    self._logger = self.__class__._default_logger(name)
+```
+
 ### disable
 
 ```
@@ -73,6 +96,20 @@ disable() -> Iterator[None]
 ```
 
 Temporarily disable logging.
+
+Source code in `src/griffe/_internal/logger.py`
+
+```
+@contextmanager
+def disable(self) -> Iterator[None]:
+    """Temporarily disable logging."""
+    old_level = self._logger.level
+    self._logger.setLevel(100)
+    try:
+        yield
+    finally:
+        self._logger.setLevel(old_level)
+```
 
 ## LogLevel
 
@@ -184,3 +221,15 @@ Parameters:
 - ### **`get_logger_func`**
 
   (`Callable[[str], Any]`) – A function accepting a name as parameter and returning a logger.
+
+Source code in `src/griffe/_internal/logger.py`
+
+```
+def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:
+    """Patch Griffe logger and Griffe extensions' loggers.
+
+    Parameters:
+        get_logger_func: A function accepting a name as parameter and returning a logger.
+    """
+    Logger._patch_loggers(get_logger_func)
+```

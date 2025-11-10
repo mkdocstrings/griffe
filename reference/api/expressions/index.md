@@ -16,6 +16,14 @@ get_base_class = partial(
 )
 ```
 
+## get_class_keyword
+
+```
+get_class_keyword = partial(
+    get_expression, parse_strings=False
+)
+```
+
 ## get_condition
 
 ```
@@ -58,6 +66,39 @@ Returns:
 
 - `Expr | None` – A string or resovable name or expression.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def get_expression(
+    node: ast.AST | None,
+    parent: Module | Class,
+    *,
+    member: str | None = None,
+    parse_strings: bool | None = None,
+) -> Expr | None:
+    """Build an expression from an AST.
+
+    Parameters:
+        node: The annotation node.
+        parent: The parent used to resolve the name.
+        member: The member name (for resolution in its scope).
+        parse_strings: Whether to try and parse strings as type annotations.
+
+    Returns:
+        A string or resovable name or expression.
+    """
+    if node is None:
+        return None
+    if parse_strings is None:
+        try:
+            module = parent.module
+        except ValueError:
+            parse_strings = False
+        else:
+            parse_strings = not module.imports_future_annotations
+    return _build(node, parent, member=member, parse_strings=parse_strings)
+```
+
 ## safe_get_annotation
 
 ```
@@ -75,6 +116,16 @@ safe_get_base_class = partial(
     safe_get_expression,
     parse_strings=False,
     msg_format=_msg_format % "base class",
+)
+```
+
+## safe_get_class_keyword
+
+```
+safe_get_class_keyword = partial(
+    safe_get_expression,
+    parse_strings=False,
+    msg_format=_msg_format % "class keyword",
 )
 ```
 
@@ -133,6 +184,49 @@ Parameters:
 Returns:
 
 - `Expr | None` – A string or resovable name or expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def safe_get_expression(
+    node: ast.AST | None,
+    parent: Module | Class,
+    *,
+    member: str | None = None,
+    parse_strings: bool | None = None,
+    log_level: LogLevel | None = LogLevel.error,
+    msg_format: str = "{path}:{lineno}: Failed to get expression from {node_class}: {error}",
+) -> Expr | None:
+    """Safely (no exception) build a resolvable annotation.
+
+    Parameters:
+        node: The annotation node.
+        parent: The parent used to resolve the name.
+        member: The member name (for resolution in its scope).
+        parse_strings: Whether to try and parse strings as type annotations.
+        log_level: Log level to use to log a message. None to disable logging.
+        msg_format: A format string for the log message. Available placeholders:
+            path, lineno, node, error.
+
+    Returns:
+        A string or resovable name or expression.
+    """
+    try:
+        return get_expression(node, parent, member=member, parse_strings=parse_strings)
+    except Exception as error:  # noqa: BLE001
+        if log_level is None:
+            return None
+        node_class = node.__class__.__name__
+        try:
+            path: Path | str = parent.relative_filepath
+        except ValueError:
+            path = "<in-memory>"
+        lineno = node.lineno  # type: ignore[union-attr]
+        error_str = f"{error.__class__.__name__}: {error}"
+        message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
+        getattr(logger, log_level.value)(message)
+    return None
+```
 
 ## **Expression nodes**
 
@@ -234,6 +328,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -251,6 +353,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -270,6 +388,29 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
+    """Iterate on the expression elements.
+
+    Parameters:
+        flat: Expressions are trees.
+
+            When flat is false, this method iterates only on the first layer of the tree.
+            To iterate on all the subparts of the expression, you have to do so recursively.
+            It allows to handle each subpart specifically (for example subscripts, attribute, etc.),
+            without them getting rendered as strings.
+
+            On the contrary, when flat is true, the whole tree is flattened as a sequence
+            of strings and instances of [Names][griffe.ExprName].
+
+    Yields:
+        Strings and names when flat, strings and expressions otherwise.
+    """
+    yield from ()
+```
+
 ### modernize
 
 ```
@@ -283,6 +424,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprAttribute
 
@@ -425,6 +580,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### append
 
 ```
@@ -438,6 +601,20 @@ Parameters:
 - #### **`value`**
 
   (`ExprName`) – The expression name to append.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def append(self, value: ExprName) -> None:
+    """Append a name to this attribute.
+
+    Parameters:
+        value: The expression name to append.
+    """
+    if value.parent is None:
+        value.parent = self.last
+    self.values.append(value)
+```
 
 ### as_dict
 
@@ -457,6 +634,22 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
+
 ### iterate
 
 ```
@@ -475,6 +668,17 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    precedence = _get_precedence(self)
+    yield from _yield(self.values[0], flat=flat, outer_precedence=precedence, is_left=True)
+    for value in self.values[1:]:
+        yield "."
+        yield from _yield(value, flat=flat, outer_precedence=precedence)
+```
+
 ### modernize
 
 ```
@@ -488,6 +692,15 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> ExprName | ExprAttribute:
+    if modern := _modern_types.get(self.canonical_path):
+        return ExprName(modern, parent=self.last.parent)
+    return self
+```
 
 ## ExprBinOp
 
@@ -631,6 +844,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -648,6 +869,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -667,6 +904,20 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    precedence = _get_precedence(self)
+    right_precedence = precedence
+    if self.operator == "**" and isinstance(self.right, ExprUnaryOp):
+        # Unary operators on the right have higher precedence, e.g. `a ** -b`.
+        right_precedence = _OperatorPrecedence(precedence - 1)
+    yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
+    yield f" {self.operator} "
+    yield from _yield(self.right, flat=flat, outer_precedence=right_precedence, is_left=False)
+```
+
 ### modernize
 
 ```
@@ -680,6 +931,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprBoolOp
 
@@ -812,6 +1077,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -829,6 +1102,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -848,6 +1137,18 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    precedence = _get_precedence(self)
+    it = iter(self.values)
+    yield from _yield(next(it), flat=flat, outer_precedence=precedence, is_left=True)
+    for value in it:
+        yield f" {self.operator} "
+        yield from _yield(value, flat=flat, outer_precedence=precedence, is_left=False)
+```
+
 ### modernize
 
 ```
@@ -861,6 +1162,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprCall
 
@@ -993,6 +1308,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -1010,6 +1333,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -1029,6 +1368,16 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield from _yield(self.function, flat=flat, outer_precedence=_get_precedence(self))
+    yield "("
+    yield from _join(self.arguments, ", ", flat=flat)
+    yield ")"
+```
+
 ### modernize
 
 ```
@@ -1042,6 +1391,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprCompare
 
@@ -1187,6 +1550,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -1204,6 +1575,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -1223,6 +1610,17 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    precedence = _get_precedence(self)
+    yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
+    for op, comp in zip(self.operators, self.comparators):
+        yield f" {op} "
+        yield from _yield(comp, flat=flat, outer_precedence=precedence)
+```
+
 ### modernize
 
 ```
@@ -1236,6 +1634,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprComprehension
 
@@ -1391,6 +1803,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -1408,6 +1828,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -1427,6 +1863,21 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    if self.is_async:
+        yield "async "
+    yield "for "
+    yield from _yield(self.target, flat=flat)
+    yield " in "
+    yield from _yield(self.iterable, flat=flat)
+    if self.conditions:
+        yield " if "
+        yield from _join(self.conditions, " if ", flat=flat)
+```
+
 ### modernize
 
 ```
@@ -1440,6 +1891,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprConstant
 
@@ -1563,6 +2028,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -1580,6 +2053,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -1599,6 +2088,13 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
+    yield self.value
+```
+
 ### modernize
 
 ```
@@ -1612,6 +2108,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprDict
 
@@ -1747,6 +2257,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -1764,6 +2282,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -1783,6 +2317,19 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "{"
+    yield from _join(
+        (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
+        ", ",
+        flat=flat,
+    )
+    yield "}"
+```
+
 ### modernize
 
 ```
@@ -1796,6 +2343,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprDictComp
 
@@ -1941,6 +2502,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -1958,6 +2527,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -1977,6 +2562,19 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "{"
+    yield from _yield(self.key, flat=flat)
+    yield ": "
+    yield from _yield(self.value, flat=flat)
+    yield " "
+    yield from _join(self.generators, " ", flat=flat)
+    yield "}"
+```
+
 ### modernize
 
 ```
@@ -1990,6 +2588,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprExtSlice
 
@@ -2113,6 +2725,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -2130,6 +2750,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -2149,6 +2785,13 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield from _join(self.dims, ", ", flat=flat)
+```
+
 ### modernize
 
 ```
@@ -2162,6 +2805,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprFormatted
 
@@ -2285,6 +2942,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -2302,6 +2967,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -2321,6 +3002,16 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "{"
+    # Prevent parentheses from being added, avoiding `{(1 + 1)}`
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+    yield "}"
+```
+
 ### modernize
 
 ```
@@ -2334,6 +3025,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprGeneratorExp
 
@@ -2468,6 +3173,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -2485,6 +3198,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -2504,6 +3233,15 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield from _yield(self.element, flat=flat)
+    yield " "
+    yield from _join(self.generators, " ", flat=flat)
+```
+
 ### modernize
 
 ```
@@ -2517,6 +3255,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprIfExp
 
@@ -2660,6 +3412,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -2677,6 +3437,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -2696,6 +3472,27 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    precedence = _get_precedence(self)
+    yield from _yield(self.body, flat=flat, outer_precedence=precedence, is_left=True)
+    yield " if "
+    # If the test itself is another if/else, its precedence is the same, which will not give
+    # a parenthesis: force it.
+    test_outer_precedence = _OperatorPrecedence(precedence + 1)
+    yield from _yield(self.test, flat=flat, outer_precedence=test_outer_precedence)
+    yield " else "
+    # If/else is right associative. For example, a nested if/else
+    # `a if b else c if d else e` is effectively `a if b else (c if d else e)`, so produce a
+    # flattened version without parentheses.
+    if isinstance(self.orelse, ExprIfExp):
+        yield from self.orelse.iterate(flat=flat)
+    else:
+        yield from _yield(self.orelse, flat=flat, outer_precedence=precedence, is_left=False)
+```
+
 ### modernize
 
 ```
@@ -2709,6 +3506,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprJoinedStr
 
@@ -2832,6 +3643,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -2849,6 +3668,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -2868,6 +3703,15 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "f'"
+    yield from _join(self.values, "", flat=flat)
+    yield "'"
+```
+
 ### modernize
 
 ```
@@ -2881,6 +3725,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprKeyword
 
@@ -3026,6 +3884,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -3043,6 +3909,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -3062,6 +3944,15 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield self.name
+    yield "="
+    yield from _yield(self.value, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -3075,6 +3966,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprVarPositional
 
@@ -3198,6 +4103,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -3215,6 +4128,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -3234,6 +4163,14 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "*"
+    yield from _yield(self.value, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -3247,6 +4184,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprVarKeyword
 
@@ -3370,6 +4321,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -3387,6 +4346,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -3406,6 +4381,14 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "**"
+    yield from _yield(self.value, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -3419,6 +4402,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprLambda
 
@@ -3553,6 +4550,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -3570,6 +4575,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -3589,6 +4610,43 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    pos_only = False
+    pos_or_kw = False
+    kw_only = False
+    length = len(self.parameters)
+    yield "lambda"
+    if length:
+        yield " "
+    for index, parameter in enumerate(self.parameters, 1):
+        if parameter.kind is ParameterKind.positional_only:
+            pos_only = True
+        elif parameter.kind is ParameterKind.var_positional:
+            yield "*"
+        elif parameter.kind is ParameterKind.var_keyword:
+            yield "**"
+        elif parameter.kind is ParameterKind.positional_or_keyword and not pos_or_kw:
+            pos_or_kw = True
+        elif parameter.kind is ParameterKind.keyword_only and not kw_only:
+            kw_only = True
+            yield "*, "
+        if parameter.kind is not ParameterKind.positional_only and pos_only:
+            pos_only = False
+            yield "/, "
+        yield parameter.name
+        if parameter.default and parameter.kind not in (ParameterKind.var_positional, ParameterKind.var_keyword):
+            yield "="
+            yield from _yield(parameter.default, flat=flat)
+        if index < length:
+            yield ", "
+    yield ": "
+    # Body of lambda should not have parentheses, avoiding `lambda: a.b`
+    yield from _yield(self.body, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+```
+
 ### modernize
 
 ```
@@ -3602,6 +4660,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprList
 
@@ -3725,6 +4797,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -3742,6 +4822,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -3761,6 +4857,15 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "["
+    yield from _join(self.elements, ", ", flat=flat)
+    yield "]"
+```
+
 ### modernize
 
 ```
@@ -3774,6 +4879,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprListComp
 
@@ -3908,6 +5027,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -3925,6 +5052,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -3944,6 +5087,17 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "["
+    yield from _yield(self.element, flat=flat)
+    yield " "
+    yield from _join(self.generators, " ", flat=flat)
+    yield "]"
+```
+
 ### modernize
 
 ```
@@ -3957,6 +5111,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprName
 
@@ -4157,6 +5325,16 @@ __eq__(other: object) -> bool
 
 Two name expressions are equal if they have the same `name` value (`parent` is ignored).
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __eq__(self, other: object) -> bool:
+    """Two name expressions are equal if they have the same `name` value (`parent` is ignored)."""
+    if isinstance(other, ExprName):
+        return self.name == other.name
+    return NotImplemented
+```
+
 ### __iter__
 
 ```
@@ -4164,6 +5342,14 @@ __iter__() -> Iterator[str | Expr]
 ```
 
 Iterate on the expression syntax and elements.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
 
 ### as_dict
 
@@ -4183,6 +5369,22 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
+
 ### iterate
 
 ```
@@ -4201,6 +5403,13 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002
+    yield self
+```
+
 ### modernize
 
 ```
@@ -4214,6 +5423,15 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> ExprName:
+    if modern := _modern_types.get(self.canonical_path):
+        return ExprName(modern, parent=self.parent)
+    return self
+```
 
 ## ExprNamedExpr
 
@@ -4346,6 +5564,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -4363,6 +5589,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -4382,6 +5624,15 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield from _yield(self.target, flat=flat)
+    yield " := "
+    yield from _yield(self.value, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -4395,6 +5646,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprParameter
 
@@ -4550,6 +5815,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -4567,6 +5840,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -4586,6 +5875,29 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
+    """Iterate on the expression elements.
+
+    Parameters:
+        flat: Expressions are trees.
+
+            When flat is false, this method iterates only on the first layer of the tree.
+            To iterate on all the subparts of the expression, you have to do so recursively.
+            It allows to handle each subpart specifically (for example subscripts, attribute, etc.),
+            without them getting rendered as strings.
+
+            On the contrary, when flat is true, the whole tree is flattened as a sequence
+            of strings and instances of [Names][griffe.ExprName].
+
+    Yields:
+        Strings and names when flat, strings and expressions otherwise.
+    """
+    yield from ()
+```
+
 ### modernize
 
 ```
@@ -4599,6 +5911,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprSet
 
@@ -4722,6 +6048,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -4739,6 +6073,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -4758,6 +6108,15 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "{"
+    yield from _join(self.elements, ", ", flat=flat)
+    yield "}"
+```
+
 ### modernize
 
 ```
@@ -4771,6 +6130,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprSetComp
 
@@ -4905,6 +6278,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -4922,6 +6303,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -4941,6 +6338,17 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "{"
+    yield from _yield(self.element, flat=flat)
+    yield " "
+    yield from _join(self.generators, " ", flat=flat)
+    yield "}"
+```
+
 ### modernize
 
 ```
@@ -4954,6 +6362,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprSlice
 
@@ -5099,6 +6521,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -5116,6 +6546,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -5135,6 +6581,20 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    if self.lower is not None:
+        yield from _yield(self.lower, flat=flat)
+    yield ":"
+    if self.upper is not None:
+        yield from _yield(self.upper, flat=flat)
+    if self.step is not None:
+        yield ":"
+        yield from _yield(self.step, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -5148,6 +6608,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprSubscript
 
@@ -5280,6 +6754,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -5297,6 +6779,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -5316,6 +6814,17 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield from _yield(self.left, flat=flat, outer_precedence=_get_precedence(self))
+    yield "["
+    # Prevent parentheses from being added, avoiding `a[(b)]`
+    yield from _yield(self.slice, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+    yield "]"
+```
+
 ### modernize
 
 ```
@@ -5329,6 +6838,21 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> ExprBinOp | ExprSubscript:
+    if self.canonical_path == "typing.Union":
+        return self._to_binop(self.slice.elements, op="|")  # type: ignore[union-attr]
+    if self.canonical_path == "typing.Optional":
+        left = self.slice if isinstance(self.slice, str) else self.slice.modernize()
+        return ExprBinOp(left=left, operator="|", right="None")
+    return ExprSubscript(
+        left=self.left if isinstance(self.left, str) else self.left.modernize(),
+        slice=self.slice if isinstance(self.slice, str) else self.slice.modernize(),
+    )
+```
 
 ## ExprTuple
 
@@ -5463,6 +6987,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -5480,6 +7012,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -5499,6 +7047,19 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    if not self.implicit:
+        yield "("
+    yield from _join(self.elements, ", ", flat=flat)
+    if len(self.elements) == 1:
+        yield ","
+    if not self.implicit:
+        yield ")"
+```
+
 ### modernize
 
 ```
@@ -5512,6 +7073,16 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> ExprTuple:
+    return ExprTuple(
+        elements=[el if isinstance(el, str) else el.modernize() for el in self.elements],
+        implicit=self.implicit,
+    )
+```
 
 ## ExprUnaryOp
 
@@ -5644,6 +7215,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -5661,6 +7240,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -5680,6 +7275,16 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield self.operator
+    if self.operator == "not":
+        yield " "
+    yield from _yield(self.value, flat=flat, outer_precedence=_get_precedence(self))
+```
+
 ### modernize
 
 ```
@@ -5693,6 +7298,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprYield
 
@@ -5816,6 +7435,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -5833,6 +7460,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -5852,6 +7495,16 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "yield"
+    if self.value is not None:
+        yield " "
+        yield from _yield(self.value, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -5865,6 +7518,20 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
 
 ## ExprYieldFrom
 
@@ -5988,6 +7655,14 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
 ### as_dict
 
 ```
@@ -6005,6 +7680,22 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
 
 ### iterate
 
@@ -6024,6 +7715,14 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "yield from "
+    yield from _yield(self.value, flat=flat)
+```
+
 ### modernize
 
 ```
@@ -6037,3 +7736,17 @@ For example, use PEP 604 type unions `|` instead of `typing.Union`.
 Returns:
 
 - `Expr` – A modernized expression.
+
+Source code in `src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```

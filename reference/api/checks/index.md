@@ -36,6 +36,35 @@ Examples:
 ...     print(breakage.explain(style=style), file=sys.stderr)
 ```
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def find_breaking_changes(
+    old_obj: Object | Alias,
+    new_obj: Object | Alias,
+) -> Iterator[Breakage]:
+    """Find breaking changes between two versions of the same API.
+
+    The function will iterate recursively on all objects
+    and yield breaking changes with detailed information.
+
+    Parameters:
+        old_obj: The old version of an object.
+        new_obj: The new version of an object.
+
+    Yields:
+        Breaking changes.
+
+    Examples:
+        >>> import sys, griffe
+        >>> new = griffe.load("pkg")
+        >>> old = griffe.load_git("pkg", "1.2.3")
+        >>> for breakage in griffe.find_breaking_changes(old, new)
+        ...     print(breakage.explain(style=style), file=sys.stderr)
+    """
+    yield from _member_incompatibilities(old_obj, new_obj)
+```
+
 ## ExplanationStyle
 
 Bases: `str`, `Enum`
@@ -134,6 +163,28 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
+
 ### details
 
 ```
@@ -198,6 +249,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -215,6 +287,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## BreakageKind
 
@@ -403,6 +490,28 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
+
 ### details
 
 ```
@@ -467,6 +576,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -484,6 +614,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## AttributeChangedValueBreakage
 
@@ -543,6 +688,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -608,6 +775,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -625,6 +813,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ClassRemovedBaseBreakage
 
@@ -684,6 +887,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -749,6 +974,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -766,6 +1012,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ObjectChangedKindBreakage
 
@@ -825,6 +1086,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -890,6 +1173,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -907,6 +1211,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ObjectRemovedBreakage
 
@@ -966,6 +1285,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1031,6 +1372,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1048,6 +1410,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ParameterAddedRequiredBreakage
 
@@ -1107,6 +1484,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1172,6 +1571,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1189,6 +1609,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ParameterChangedDefaultBreakage
 
@@ -1248,6 +1683,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1313,6 +1770,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1330,6 +1808,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ParameterChangedKindBreakage
 
@@ -1389,6 +1882,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1454,6 +1969,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1471,6 +2007,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ParameterChangedRequiredBreakage
 
@@ -1530,6 +2081,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1595,6 +2168,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1612,6 +2206,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ParameterMovedBreakage
 
@@ -1671,6 +2280,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1736,6 +2367,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1753,6 +2405,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ParameterRemovedBreakage
 
@@ -1812,6 +2479,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -1877,6 +2566,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -1894,6 +2604,21 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```
 
 ## ReturnChangedTypeBreakage
 
@@ -1953,6 +2678,28 @@ Attributes:
 - **`new_value`** – The new, incompatible value.
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
+    """Initialize the breakage.
+
+    Parameters:
+        obj: The object related to the breakage.
+        old_value: The old value.
+        new_value: The new, incompatible value.
+        details: Some details about the breakage.
+    """
+    self.obj = obj
+    """The object related to the breakage."""
+    self.old_value = old_value
+    """The old value."""
+    self.new_value = new_value
+    """The new, incompatible value."""
+    self.details = details
+    """Some details about the breakage."""
+```
 
 ### details
 
@@ -2018,6 +2765,27 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this object's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "kind": self.kind,
+        "object_path": self.obj.path,
+        "old_value": self.old_value,
+        "new_value": self.new_value,
+    }
+```
+
 ### explain
 
 ```
@@ -2035,3 +2803,18 @@ Parameters:
 Returns:
 
 - `str` – An explanation.
+
+Source code in `src/griffe/_internal/diff.py`
+
+```
+def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
+    """Explain the breakage by showing old and new value.
+
+    Parameters:
+        style: The explanation style to use.
+
+    Returns:
+        An explanation.
+    """
+    return getattr(self, f"_explain_{style.value}")()
+```

@@ -5,6 +5,7 @@ Class(
     *args: Any,
     bases: Sequence[Expr | str] | None = None,
     decorators: list[Decorator] | None = None,
+    keywords: dict[str, Any] | None = None,
     **kwargs: Any,
 )
 ```
@@ -59,6 +60,10 @@ Parameters:
 - ## **`decorators`**
 
   (`list[Decorator] | None`, default: `None` ) – The class decorators, if any.
+
+- ## **`keywords`**
+
+  (`dict[str, Any] | None`, default: `None` ) – The class keywords arguments, if any.
 
 - ## **`**kwargs`**
 
@@ -129,6 +134,7 @@ Attributes:
 - **`is_subpackage`** (`bool`) – Whether this object is a subpackage.
 - **`is_type_alias`** (`bool`) – Whether this object is a type alias.
 - **`is_wildcard_exposed`** (`bool`) – Whether this object/alias is exposed to wildcard imports.
+- **`keywords`** (`dict[str, Any]`) – The class keywords arguments.
 - **`kind`** – The object kind.
 - **`labels`** (`set[str]`) – The object labels (property, dataclass, etc.).
 - **`lineno`** (`int | None`) – The starting line number of the object.
@@ -153,6 +159,45 @@ Attributes:
 - **`source_link`** (`str | None`) – Source link for this object, if available.
 - **`type_aliases`** (`dict[str, TypeAlias]`) – The type alias members.
 - **`type_parameters`** (`TypeParameters`) – The object type parameters.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def __init__(
+    self,
+    *args: Any,
+    bases: Sequence[Expr | str] | None = None,
+    decorators: list[Decorator] | None = None,
+    keywords: dict[str, Any] | None = None,
+    **kwargs: Any,
+) -> None:
+    """Initialize the class.
+
+    Parameters:
+        *args: See [`griffe.Object`][].
+        bases: The list of base classes, if any.
+        decorators: The class decorators, if any.
+        keywords: The class keywords arguments, if any.
+        **kwargs: See [`griffe.Object`][].
+    """
+    super().__init__(*args, **kwargs)
+
+    self.bases: list[Expr | str] = list(bases) if bases else []
+    """The class bases.
+
+    See also: [`resolved_bases`][griffe.Class.resolved_bases],
+    [`mro`][griffe.Class.mro].
+    """
+
+    self.decorators: list[Decorator] = decorators or []
+    """The class decorators."""
+
+    self.keywords: dict[str, Any] = keywords or {}
+    """The class keywords arguments."""
+
+    self.overloads: dict[str, list[Function]] = defaultdict(list)
+    """The overloaded signatures declared in this class."""
+```
 
 ## aliases
 
@@ -599,6 +644,14 @@ Returns:
 
 - `bool` – True or False.
 
+## keywords
+
+```
+keywords: dict[str, Any] = keywords or {}
+```
+
+The class keywords arguments.
+
 ## kind
 
 ```
@@ -889,6 +942,14 @@ __bool__() -> bool
 
 An object is always true-ish.
 
+Source code in `src/griffe/_internal/models.py`
+
+```
+def __bool__(self) -> bool:
+    """An object is always true-ish."""
+    return True
+```
+
 ## __delitem__
 
 ```
@@ -913,6 +974,37 @@ Examples:
 >>> del griffe_object["foo"]
 >>> del griffe_object["path.to.bar"]
 >>> del griffe_object[("path", "to", "qux")]
+```
+
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def __delitem__(self, key: str | Sequence[str]) -> None:
+    """Delete a member with its name or path.
+
+    This method is part of the consumer API:
+    do not use when producing Griffe trees!
+
+    Members will be looked up in both declared members and inherited ones,
+    triggering computation of the latter.
+
+    Parameters:
+        key: The name or path of the member.
+
+    Examples:
+        >>> del griffe_object["foo"]
+        >>> del griffe_object["path.to.bar"]
+        >>> del griffe_object[("path", "to", "qux")]
+    """
+    parts = _get_parts(key)
+    if len(parts) == 1:
+        name = parts[0]
+        try:
+            del self.members[name]  # type: ignore[attr-defined]
+        except KeyError:
+            del self.inherited_members[name]  # type: ignore[attr-defined]
+    else:
+        del self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
 ```
 
 ## __getitem__
@@ -941,6 +1033,32 @@ Examples:
 >>> qux = griffe_object[("path", "to", "qux")]
 ```
 
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def __getitem__(self, key: str | Sequence[str]) -> Any:
+    """Get a member with its name or path.
+
+    This method is part of the consumer API:
+    do not use when producing Griffe trees!
+
+    Members will be looked up in both declared members and inherited ones,
+    triggering computation of the latter.
+
+    Parameters:
+        key: The name or path of the member.
+
+    Examples:
+        >>> foo = griffe_object["foo"]
+        >>> bar = griffe_object["path.to.bar"]
+        >>> qux = griffe_object[("path", "to", "qux")]
+    """
+    parts = _get_parts(key)
+    if len(parts) == 1:
+        return self.all_members[parts[0]]  # type: ignore[attr-defined]
+    return self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+```
+
 ## __len__
 
 ```
@@ -948,6 +1066,14 @@ __len__() -> int
 ```
 
 The number of members in this object, recursively.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def __len__(self) -> int:
+    """The number of members in this object, recursively."""
+    return len(self.members) + sum(len(member) for member in self.members.values())
+```
 
 ## __setitem__
 
@@ -979,6 +1105,36 @@ Examples:
 >>> griffe_object[("path", "to", "qux")] = qux
 ```
 
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
+    """Set a member with its name or path.
+
+    This method is part of the consumer API:
+    do not use when producing Griffe trees!
+
+    Parameters:
+        key: The name or path of the member.
+        value: The member.
+
+    Examples:
+        >>> griffe_object["foo"] = foo
+        >>> griffe_object["path.to.bar"] = bar
+        >>> griffe_object[("path", "to", "qux")] = qux
+    """
+    parts = _get_parts(key)
+    if len(parts) == 1:
+        name = parts[0]
+        self.members[name] = value  # type: ignore[attr-defined]
+        if self.is_collection:  # type: ignore[attr-defined]
+            value._modules_collection = self  # type: ignore[union-attr]
+        else:
+            value.parent = self  # type: ignore[assignment]
+    else:
+        self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
+```
+
 ## as_dict
 
 ```
@@ -998,6 +1154,26 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this class' data as a dictionary.
+
+    See also: [`as_json`][griffe.Class.as_json].
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = super().as_dict(**kwargs)
+    base["bases"] = self.bases
+    base["decorators"] = [dec.as_dict(**kwargs) for dec in self.decorators]
+    return base
+```
 
 ## as_json
 
@@ -1020,6 +1196,24 @@ Parameters:
 Returns:
 
 - `str` – A JSON string.
+
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
+    """Return this object's data as a JSON string.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options passed to encoder.
+
+    Returns:
+        A JSON string.
+    """
+    from griffe._internal.encoders import JSONEncoder  # Avoid circular import.  # noqa: PLC0415
+
+    return json.dumps(self, cls=JSONEncoder, full=full, **kwargs)
+```
 
 ## del_member
 
@@ -1047,6 +1241,34 @@ Examples:
 >>> griffe_object.del_member(("path", "to", "qux"))
 ```
 
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def del_member(self, key: str | Sequence[str]) -> None:
+    """Delete a member with its name or path.
+
+    This method is part of the producer API:
+    you can use it safely while building Griffe trees
+    (for example in Griffe extensions).
+
+    Members will be looked up in declared members only, not inherited ones.
+
+    Parameters:
+        key: The name or path of the member.
+
+    Examples:
+        >>> griffe_object.del_member("foo")
+        >>> griffe_object.del_member("path.to.bar")
+        >>> griffe_object.del_member(("path", "to", "qux"))
+    """
+    parts = _get_parts(key)
+    if len(parts) == 1:
+        name = parts[0]
+        del self.members[name]  # type: ignore[attr-defined]
+    else:
+        self.members[parts[0]].del_member(parts[1:])  # type: ignore[attr-defined]
+```
+
 ## filter_members
 
 ```
@@ -1068,6 +1290,28 @@ Parameters:
 Returns:
 
 - `dict[str, Object | Alias]` – A dictionary of members.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
+    """Filter and return members based on predicates.
+
+    See also: [`members`][griffe.Object.members].
+
+    Parameters:
+        *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.
+
+    Returns:
+        A dictionary of members.
+    """
+    if not predicates:
+        return self.members
+    members: dict[str, Object | Alias] = {
+        name: member for name, member in self.members.items() if all(predicate(member) for predicate in predicates)
+    }
+    return members
+```
 
 ## from_json
 
@@ -1095,6 +1339,33 @@ Raises:
 
 - `TypeError` – When the json_string does not represent and object of the class from which this classmethod has been called.
 
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+@classmethod
+def from_json(cls: type[_ObjType], json_string: str, **kwargs: Any) -> _ObjType:  # noqa: PYI019
+    """Create an instance of this class from a JSON string.
+
+    Parameters:
+        json_string: JSON to decode into Object.
+        **kwargs: Additional options passed to decoder.
+
+    Returns:
+        An Object instance.
+
+    Raises:
+        TypeError: When the json_string does not represent and object
+            of the class from which this classmethod has been called.
+    """
+    from griffe._internal.encoders import json_decoder  # Avoid circular import.  # noqa: PLC0415
+
+    kwargs.setdefault("object_hook", json_decoder)
+    obj = json.loads(json_string, **kwargs)
+    if not isinstance(obj, cls):
+        raise TypeError(f"provided JSON object is not of type {cls}")
+    return obj
+```
+
 ## get_member
 
 ```
@@ -1121,6 +1392,32 @@ Examples:
 >>> bar = griffe_object[("path", "to", "bar")]
 ```
 
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def get_member(self, key: str | Sequence[str]) -> Any:
+    """Get a member with its name or path.
+
+    This method is part of the producer API:
+    you can use it safely while building Griffe trees
+    (for example in Griffe extensions).
+
+    Members will be looked up in declared members only, not inherited ones.
+
+    Parameters:
+        key: The name or path of the member.
+
+    Examples:
+        >>> foo = griffe_object["foo"]
+        >>> bar = griffe_object["path.to.bar"]
+        >>> bar = griffe_object[("path", "to", "bar")]
+    """
+    parts = _get_parts(key)
+    if len(parts) == 1:
+        return self.members[parts[0]]  # type: ignore[attr-defined]
+    return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
+```
+
 ## has_labels
 
 ```
@@ -1140,6 +1437,23 @@ Parameters:
 Returns:
 
 - `bool` – True or False.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def has_labels(self, *labels: str) -> bool:
+    """Tell if this object has all the given labels.
+
+    See also: [`labels`][griffe.Object.labels].
+
+    Parameters:
+        *labels: Labels that must be present.
+
+    Returns:
+        True or False.
+    """
+    return set(labels).issubset(self.labels)
+```
 
 ## is_kind
 
@@ -1165,6 +1479,37 @@ Returns:
 
 - `bool` – True or False.
 
+Source code in `src/griffe/_internal/models.py`
+
+```
+def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
+    """Tell if this object is of the given kind.
+
+    See also: [`is_module`][griffe.Object.is_module],
+    [`is_class`][griffe.Object.is_class],
+    [`is_function`][griffe.Object.is_function],
+    [`is_attribute`][griffe.Object.is_attribute],
+    [`is_type_alias`][griffe.Object.is_type_alias],
+    [`is_alias`][griffe.Object.is_alias].
+
+    Parameters:
+        kind: An instance or set of kinds (strings or enumerations).
+
+    Raises:
+        ValueError: When an empty set is given as argument.
+
+    Returns:
+        True or False.
+    """
+    if isinstance(kind, set):
+        if not kind:
+            raise ValueError("kind must not be an empty set")
+        return self.kind in (knd if isinstance(knd, Kind) else Kind(knd) for knd in kind)
+    if isinstance(kind, str):
+        kind = Kind(kind)
+    return self.kind is kind
+```
+
 ## mro
 
 ```
@@ -1174,6 +1519,18 @@ mro() -> list[Class]
 Return a list of classes in order corresponding to Python's MRO.
 
 See also: bases, resolved_bases.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def mro(self) -> list[Class]:
+    """Return a list of classes in order corresponding to Python's MRO.
+
+    See also: [`bases`][griffe.Class.bases],
+    [`resolved_bases`][griffe.Class.resolved_bases].
+    """
+    return self._mro()[1:]  # Remove self.
+```
 
 ## resolve
 
@@ -1196,6 +1553,53 @@ Raises:
 Returns:
 
 - `str` – The resolved name.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def resolve(self, name: str) -> str:
+    """Resolve a name within this object's and parents' scope.
+
+    Parameters:
+        name: The name to resolve.
+
+    Raises:
+        NameResolutionError: When the name could not be resolved.
+
+    Returns:
+        The resolved name.
+    """
+    # TODO: Better match Python's own scoping rules?
+    # Also, maybe return regular paths instead of canonical ones?
+
+    # Name is a type parameter.
+    if name in self.type_parameters:
+        type_parameter = self.type_parameters[name]
+        if type_parameter.kind is TypeParameterKind.type_var_tuple:
+            prefix = "*"
+        elif type_parameter.kind is TypeParameterKind.param_spec:
+            prefix = "**"
+        else:
+            prefix = ""
+        return f"{self.path}[{prefix}{name}]"
+
+    # Name is a member of this object.
+    if name in self.members:
+        if self.members[name].is_alias:
+            return self.members[name].target_path  # type: ignore[union-attr]
+        return self.members[name].path
+
+    # Name unknown and no more parent scope, could be a built-in.
+    if self.parent is None:
+        raise NameResolutionError(f"{name} could not be resolved in the scope of {self.path}")
+
+    # Name is parent, non-module object.
+    if name == self.parent.name and not self.parent.is_module:
+        return self.parent.path
+
+    # Recurse in parent.
+    return self.parent.resolve(name)
+```
 
 ## set_member
 
@@ -1227,6 +1631,53 @@ Examples:
 >>> griffe_object.set_member(("path", "to", "qux"), qux)
 ```
 
+Source code in `src/griffe/_internal/mixins.py`
+
+```
+def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
+    """Set a member with its name or path.
+
+    This method is part of the producer API:
+    you can use it safely while building Griffe trees
+    (for example in Griffe extensions).
+
+    Parameters:
+        key: The name or path of the member.
+        value: The member.
+
+    Examples:
+        >>> griffe_object.set_member("foo", foo)
+        >>> griffe_object.set_member("path.to.bar", bar)
+        >>> griffe_object.set_member(("path", "to", "qux"), qux)
+    """
+    parts = _get_parts(key)
+    if len(parts) == 1:
+        name = parts[0]
+        if name in self.members:  # type: ignore[attr-defined]
+            member = self.members[name]  # type: ignore[attr-defined]
+            if not member.is_alias:
+                # When reassigning a module to an existing one,
+                # try to merge them as one regular and one stubs module
+                # (implicit support for .pyi modules).
+                if member.is_module and not (member.is_namespace_package or member.is_namespace_subpackage):
+                    # Accessing attributes of the value or member can trigger alias errors.
+                    # Accessing file paths can trigger a builtin module error.
+                    with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
+                        if value.is_module and value.filepath != member.filepath:
+                            with suppress(ValueError):
+                                value = merge_stubs(member, value)  # type: ignore[arg-type]
+                for alias in member.aliases.values():
+                    with suppress(CyclicAliasError):
+                        alias.target = value
+        self.members[name] = value  # type: ignore[attr-defined]
+        if self.is_collection:  # type: ignore[attr-defined]
+            value._modules_collection = self  # type: ignore[union-attr]
+        else:
+            value.parent = self  # type: ignore[assignment]
+    else:
+        self.members[parts[0]].set_member(parts[1:], value)  # type: ignore[attr-defined]
+```
+
 ## signature
 
 ```
@@ -1251,6 +1702,27 @@ Returns:
 
 - `str` – A string representation of the class signature.
 
+Source code in `src/griffe/_internal/models.py`
+
+```
+def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
+    """Construct the class signature.
+
+    Parameters:
+        return_type: Whether to include the return type in the signature.
+        name: The name of the class to use in the signature.
+
+    Returns:
+        A string representation of the class signature.
+    """
+    all_members = self.all_members
+    if "__init__" in all_members:
+        init = all_members["__init__"]
+        if isinstance(init, Function):
+            return init.signature(return_type=return_type, name=name or self.name)
+    return ""
+```
+
 ## **Utilities**
 
 ## c3linear_merge
@@ -1270,3 +1742,35 @@ Parameters:
 Returns:
 
 - `list[_T]` – The merged list of items.
+
+Source code in `src/griffe/_internal/c3linear.py`
+
+```
+def c3linear_merge(*lists: list[_T]) -> list[_T]:
+    """Merge lists of lists in the order defined by the C3Linear algorithm.
+
+    Parameters:
+        *lists: Lists of items.
+
+    Returns:
+        The merged list of items.
+    """
+    result: list[_T] = []
+    linearizations = _DependencyList(*lists)  # type: ignore[arg-type]
+
+    while True:
+        if linearizations.exhausted:
+            return result
+
+        for head in linearizations.heads:
+            if head and (head not in linearizations.tails):
+                result.append(head)  # type: ignore[arg-type]
+                linearizations.remove(head)
+
+                # Once candidate is found, continue iteration
+                # from the first element of the list.
+                break
+        else:
+            # Loop never broke, no linearization could possibly be found.
+            raise ValueError("Cannot compute C3 linearization")
+```

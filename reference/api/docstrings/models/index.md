@@ -61,6 +61,63 @@ Attributes:
 - **`source`** (`str`) – The original, uncleaned value of the docstring as written in the source.
 - **`value`** (`str`) – The original value of the docstring, cleaned by inspect.cleandoc.
 
+Source code in `src/griffe/_internal/models.py`
+
+```
+def __init__(
+    self,
+    value: str,
+    *,
+    lineno: int | None = None,
+    endlineno: int | None = None,
+    parent: Object | None = None,
+    parser: DocstringStyle | Parser | None = None,
+    parser_options: DocstringOptions | None = None,
+) -> None:
+    """Initialize the docstring.
+
+    Parameters:
+        value: The docstring value.
+        lineno: The starting line number.
+        endlineno: The ending line number.
+        parent: The parent object on which this docstring is attached.
+        parser: The docstring parser to use. By default, no parsing is done.
+        parser_options: Additional docstring parsing options.
+    """
+    self.value: str = inspect.cleandoc(value.rstrip())
+    """The original value of the docstring, cleaned by `inspect.cleandoc`.
+
+    See also: [`source`][griffe.Docstring.source].
+    """
+
+    self.lineno: int | None = lineno
+    """The starting line number of the docstring.
+
+    See also: [`endlineno`][griffe.Docstring.endlineno]."""
+
+    self.endlineno: int | None = endlineno
+    """The ending line number of the docstring.
+
+    See also: [`lineno`][griffe.Docstring.lineno]."""
+
+    self.parent: Object | None = parent
+    """The object this docstring is attached to."""
+
+    self.parser: DocstringStyle | Parser | None = parser
+    """The selected docstring parser.
+
+    See also: [`parser_options`][griffe.Docstring.parser_options],
+    [`parse`][griffe.Docstring.parse].
+    """
+
+    self.parser_options: DocstringOptions = parser_options or {}
+    """The configured parsing options.
+
+    See also: [`parser`][griffe.Docstring.parser],
+    [`parse`][griffe.Docstring.parse].
+    """
+```
+
 ### endlineno
 
 ```
@@ -177,6 +234,34 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/models.py`
+
+```
+def as_dict(
+    self,
+    *,
+    full: bool = False,
+    **kwargs: Any,  # noqa: ARG002
+) -> dict[str, Any]:
+    """Return this docstring's data as a dictionary.
+
+    Parameters:
+        full: Whether to return full info, or just base info.
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base: dict[str, Any] = {
+        "value": self.value,
+        "lineno": self.lineno,
+        "endlineno": self.endlineno,
+    }
+    if full:
+        base["parsed"] = self.parsed
+    return base
+```
+
 ### parse
 
 ```
@@ -203,6 +288,30 @@ Parameters:
 Returns:
 
 - `list[DocstringSection]` – The parsed docstring as a list of sections.
+
+Source code in `src/griffe/_internal/models.py`
+
+```
+def parse(
+    self,
+    parser: DocstringStyle | Parser | None = None,
+    **options: Any,
+) -> list[DocstringSection]:
+    """Parse the docstring into structured data.
+
+    See also: [`parser`][griffe.Docstring.parser],
+    [`parser_options`][griffe.Docstring.parser_options].
+
+    Parameters:
+        parser: The docstring parser to use.
+            In order: use the given parser, or the self parser, or no parser (return a single text section).
+        **options: Additional docstring parsing options.
+
+    Returns:
+        The parsed docstring as a list of sections.
+    """
+    return parse(self, parser or self.parser, **(options or self.parser_options))
+```
 
 ## **Advanced API: Sections**
 
@@ -421,6 +530,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`str`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: str, title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section text.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: str = value
+```
+
 ### kind
 
 ```
@@ -453,6 +576,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -470,6 +601,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionParameters
 
@@ -518,6 +671,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringParameter]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringParameter], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section parameters.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringParameter] = value
+```
+
 ### kind
 
 ```
@@ -550,6 +717,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -567,6 +742,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionOtherParameters
 
@@ -619,6 +816,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringParameter]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringParameter], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section parameters.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringParameter] = value
+```
+
 ### kind
 
 ```
@@ -651,6 +862,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -668,6 +887,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionTypeParameters
 
@@ -716,6 +957,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringTypeParameter]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringTypeParameter], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section type parameters.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringTypeParameter] = value
+```
+
 ### kind
 
 ```
@@ -748,6 +1003,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -765,6 +1028,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionRaises
 
@@ -812,6 +1097,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringRaise]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringRaise], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section exceptions.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringRaise] = value
+```
+
 ### kind
 
 ```
@@ -844,6 +1143,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -861,6 +1168,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionWarns
 
@@ -908,6 +1237,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringWarn]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringWarn], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section warnings.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringWarn] = value
+```
+
 ### kind
 
 ```
@@ -940,6 +1283,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -957,6 +1308,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionReturns
 
@@ -1004,6 +1377,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringReturn]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringReturn], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section returned items.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringReturn] = value
+```
+
 ### kind
 
 ```
@@ -1036,6 +1423,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1053,6 +1448,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionYields
 
@@ -1100,6 +1517,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringYield]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringYield], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section yielded items.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringYield] = value
+```
+
 ### kind
 
 ```
@@ -1132,6 +1563,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1149,6 +1588,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionReceives
 
@@ -1196,6 +1657,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringReceive]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringReceive], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section received items.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringReceive] = value
+```
+
 ### kind
 
 ```
@@ -1228,6 +1703,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1245,6 +1728,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionExamples
 
@@ -1293,6 +1798,24 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[tuple[Literal[text, examples], str]]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    value: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]],
+    title: str | None = None,
+) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section examples.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = value
+```
+
 ### kind
 
 ```
@@ -1325,6 +1848,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1342,6 +1873,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionAttributes
 
@@ -1390,6 +1943,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringAttribute]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringAttribute], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section attributes.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringAttribute] = value
+```
+
 ### kind
 
 ```
@@ -1422,6 +1989,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1439,6 +2014,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionFunctions
 
@@ -1486,6 +2083,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringFunction]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringFunction], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section functions.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringFunction] = value
+```
+
 ### kind
 
 ```
@@ -1518,6 +2129,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1535,6 +2154,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionClasses
 
@@ -1582,6 +2223,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringClass]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringClass], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section classes.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringClass] = value
+```
+
 ### kind
 
 ```
@@ -1614,6 +2269,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1631,6 +2294,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionTypeAliases
 
@@ -1679,6 +2364,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringTypeAlias]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringTypeAlias], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section classes.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringTypeAlias] = value
+```
+
 ### kind
 
 ```
@@ -1711,6 +2410,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1728,6 +2435,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionModules
 
@@ -1775,6 +2504,20 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringModule]`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, value: list[DocstringModule], title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        value: The section modules.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: list[DocstringModule] = value
+```
+
 ### kind
 
 ```
@@ -1807,6 +2550,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1824,6 +2575,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionDeprecated
 
@@ -1875,6 +2648,21 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`DocstringDeprecated`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, version: str, text: str, title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        version: The deprecation version.
+        text: The deprecation text.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: DocstringDeprecated = DocstringDeprecated(annotation=version, description=text)
+```
+
 ### kind
 
 ```
@@ -1909,6 +2697,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -1926,6 +2722,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## DocstringSectionAdmonition
 
@@ -1977,6 +2795,21 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`DocstringAdmonition`) – The section value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, kind: str, text: str, title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        kind: The admonition kind.
+        text: The admonition text.
+        title: An optional title.
+    """
+    super().__init__(title)
+    self.value: DocstringAdmonition = DocstringAdmonition(annotation=kind, description=text)
+```
+
 ### kind
 
 ```
@@ -2011,6 +2844,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -2028,6 +2869,28 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```
 
 ## **Advanced API: Section items**
 
@@ -2079,6 +2942,22 @@ Attributes:
 - **`description`** (`str`) – The element description.
 - **`kind`** (`str | Expr | None`) – The kind of this admonition.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
+    """Initialize the element.
+
+    Parameters:
+        annotation: The element annotation, if any.
+        description: The element description.
+    """
+    self.description: str = description
+    """The element description."""
+    self.annotation: str | Expr | None = annotation
+    """The element annotation."""
+```
+
 ### annotation
 
 ```
@@ -2129,6 +3008,24 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "annotation": self.annotation,
+        "description": self.description,
+    }
+```
+
 ## DocstringDeprecated
 
 ```
@@ -2176,6 +3073,22 @@ Attributes:
 - **`description`** (`str`) – The element description.
 - **`version`** (`str`) – The version of this deprecation.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
+    """Initialize the element.
+
+    Parameters:
+        annotation: The element annotation, if any.
+        description: The element description.
+    """
+    self.description: str = description
+    """The element description."""
+    self.annotation: str | Expr | None = annotation
+    """The element annotation."""
+```
+
 ### annotation
 
 ```
@@ -2217,6 +3130,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "annotation": self.annotation,
+        "description": self.description,
+    }
+```
 
 ## DocstringRaise
 
@@ -2264,6 +3195,22 @@ Attributes:
 - **`annotation`** (`str | Expr | None`) – The element annotation.
 - **`description`** (`str`) – The element description.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
+    """Initialize the element.
+
+    Parameters:
+        annotation: The element annotation, if any.
+        description: The element description.
+    """
+    self.description: str = description
+    """The element description."""
+    self.annotation: str | Expr | None = annotation
+    """The element annotation."""
+```
+
 ### annotation
 
 ```
@@ -2297,6 +3244,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "annotation": self.annotation,
+        "description": self.description,
+    }
+```
 
 ## DocstringWarn
 
@@ -2344,6 +3309,22 @@ Attributes:
 - **`annotation`** (`str | Expr | None`) – The element annotation.
 - **`description`** (`str`) – The element description.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
+    """Initialize the element.
+
+    Parameters:
+        annotation: The element annotation, if any.
+        description: The element description.
+    """
+    self.description: str = description
+    """The element description."""
+    self.annotation: str | Expr | None = annotation
+    """The element annotation."""
+```
+
 ### annotation
 
 ```
@@ -2377,6 +3358,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "annotation": self.annotation,
+        "description": self.description,
+    }
+```
 
 ## DocstringReturn
 
@@ -2440,6 +3439,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -2489,6 +3514,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringYield
 
@@ -2552,6 +3595,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -2601,6 +3670,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringReceive
 
@@ -2664,6 +3751,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -2713,6 +3826,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringParameter
 
@@ -2777,6 +3908,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -2834,6 +3991,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringTypeParameter
 
@@ -2899,6 +4074,32 @@ Attributes:
 - **`description`** (`str`) – The element description.
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
 
 ### annotation
 
@@ -2974,6 +4175,24 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
+
 ## DocstringAttribute
 
 ```
@@ -3036,6 +4255,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -3085,6 +4330,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringFunction
 
@@ -3149,6 +4412,32 @@ Attributes:
 - **`signature`** (`str | Expr | None`) – The function signature.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -3206,6 +4495,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringClass
 
@@ -3270,6 +4577,32 @@ Attributes:
 - **`signature`** (`str | Expr | None`) – The class signature.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -3327,6 +4660,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringTypeAlias
 
@@ -3390,6 +4741,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -3439,6 +4816,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
 
 ## DocstringModule
 
@@ -3502,6 +4897,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -3552,6 +4973,24 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
+
 ## **Models base classes**
 
 ## DocstringElement
@@ -3584,6 +5023,22 @@ Attributes:
 
 - **`annotation`** (`str | Expr | None`) – The element annotation.
 - **`description`** (`str`) – The element description.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
+    """Initialize the element.
+
+    Parameters:
+        annotation: The element annotation, if any.
+        description: The element description.
+    """
+    self.description: str = description
+    """The element description."""
+    self.annotation: str | Expr | None = annotation
+    """The element annotation."""
+```
 
 ### annotation
 
@@ -3618,6 +5073,24 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    return {
+        "annotation": self.annotation,
+        "description": self.description,
+    }
+```
 
 ## DocstringNamedElement
 
@@ -3677,6 +5150,32 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(
+    self,
+    name: str,
+    *,
+    description: str,
+    annotation: str | Expr | None = None,
+    value: str | Expr | None = None,
+) -> None:
+    """Initialize the element.
+
+    Parameters:
+        name: The element name.
+        description: The element description.
+        annotation: The element annotation, if any.
+        value: The element value, as a string.
+    """
+    super().__init__(description=description, annotation=annotation)
+    self.name: str = name
+    """The element name."""
+    self.value: str | Expr | None = value
+    """The element value, if any"""
+```
+
 ### annotation
 
 ```
@@ -3727,6 +5226,24 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this element's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    base = {"name": self.name, **super().as_dict(**kwargs)}
+    if self.value is not None:
+        base["value"] = self.value
+    return base
+```
+
 ## DocstringSection
 
 ```
@@ -3751,6 +5268,21 @@ Attributes:
 - **`kind`** (`DocstringSectionKind`) – The section kind.
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`Any`) – The section value.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __init__(self, title: str | None = None) -> None:
+    """Initialize the section.
+
+    Parameters:
+        title: An optional title.
+    """
+    self.title: str | None = title
+    """The section title."""
+    self.value: Any = None
+    """The section value."""
+```
 
 ### kind
 
@@ -3784,6 +5316,14 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def __bool__(self) -> bool:
+    """Whether this section has a true-ish value."""
+    return bool(self.value)
+```
+
 ### as_dict
 
 ```
@@ -3801,3 +5341,25 @@ Parameters:
 Returns:
 
 - `dict[str, Any]` – A dictionary.
+
+Source code in `src/griffe/_internal/docstrings/models.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return this section's data as a dictionary.
+
+    Parameters:
+        **kwargs: Additional serialization options.
+
+    Returns:
+        A dictionary.
+    """
+    if hasattr(self.value, "as_dict"):  # noqa: SIM108
+        serialized_value = self.value.as_dict(**kwargs)
+    else:
+        serialized_value = self.value
+    base = {"kind": self.kind.value, "value": serialized_value}
+    if self.title:
+        base["title"] = self.title
+    return base
+```

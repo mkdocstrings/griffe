@@ -1,7 +1,5 @@
 # `griffe-public-redundant-aliases`
 
-[Sponsors only](../../../insiders/)
-
 - **PyPI**: [`griffe-public-redundant-aliases`](https://pypi.org/project/griffe-public-redundant-aliases/)
 - **GitHub**: [mkdocstrings/griffe-public-redundant-aliases](https://github.com/mkdocstrings/griffe-public-redundant-aliases)
 - **Documentation:** [mkdocstrings.github.io/griffe-public-redundant-aliases](https://mkdocstrings.github.io/griffe-public-redundant-aliases)

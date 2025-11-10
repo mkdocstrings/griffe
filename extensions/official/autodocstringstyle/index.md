@@ -1,7 +1,5 @@
 # `griffe-autodocstringstyle`
 
-[Sponsors only](../../../insiders/)
-
 - **PyPI**: [`griffe-autodocstringstyle`](https://pypi.org/project/griffe-autodocstringstyle/)
 - **GitHub**: [mkdocstrings/griffe-autodocstringstyle](https://github.com/mkdocstrings/griffe-autodocstringstyle)
 - **Documentation:** [mkdocstrings.github.io/griffe-autodocstringstyle](https://mkdocstrings.github.io/griffe-autodocstringstyle)

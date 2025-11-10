@@ -61,6 +61,7 @@
 
 - [Built-in](https://mkdocstrings.github.io/griffe/extensions/built-in/index.md)
 - [dataclasses](https://mkdocstrings.github.io/griffe/extensions/built-in/dataclasses/index.md)
+- [unpack-typeddict](https://mkdocstrings.github.io/griffe/extensions/built-in/unpack-typeddict/index.md)
 - [Official](https://mkdocstrings.github.io/griffe/extensions/official/index.md)
 - [autodocstringstyle](https://mkdocstrings.github.io/griffe/extensions/official/autodocstringstyle/index.md)
 - [inherited-docstrings](https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/index.md)
