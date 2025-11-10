@@ -12,8 +12,9 @@ from typing import TYPE_CHECKING, Any, Callable
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.9 3.10 3.11 3.12 3.13 3.14").split()
-PYTHON_DEV = "3.14"
+
+PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.10 3.11 3.12 3.13 3.14 3.15").split()
+PYTHON_DEV = "3.15"
 
 _commands = []
 

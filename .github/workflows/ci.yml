@@ -2,9 +2,16 @@ name: ci
 
 on:
   push:
+    branches:
+    - main
+    - test-me-*
   pull_request:
     branches:
     - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 defaults:
   run:
@@ -14,13 +21,30 @@ env:
   LANG: en_US.utf-8
   LC_ALL: en_US.utf-8
   PYTHONIOENCODING: UTF-8
+  PYTHONWARNDEFAULTENCODING: "1"
   PYTHON_VERSIONS: ""
 
 jobs:
 
   quality:
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - macos-latest
+        - windows-latest
+        python-version:
+        - "3.10"
+        - "3.14"
+        include:
+        - os: ubuntu-latest
+          python-version: "3.11"
+        - os: ubuntu-latest
+          python-version: "3.12"
+        - os: ubuntu-latest
+          python-version: "3.13"
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout
@@ -33,9 +57,9 @@ jobs:
       uses: ts-graphviz/setup-graphviz@v2
 
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
-        python-version: "3.12"
+        python-version: ${{ matrix.python-version }}
 
     - name: Setup uv
       uses: astral-sh/setup-uv@v5
@@ -60,6 +84,7 @@ jobs:
 
     - name: Store objects inventory for tests
       uses: actions/upload-artifact@v4
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13' }}
       with:
         name: objects.inv
         path: site/objects.inv
@@ -75,12 +100,12 @@ jobs:
         - macos-latest
         - windows-latest
         python-version:
-        - "3.9"
         - "3.10"
         - "3.11"
         - "3.12"
         - "3.13"
         - "3.14"
+        - "3.15"
         resolution:
         - highest
         - lowest-direct
@@ -90,7 +115,7 @@ jobs:
         - os: windows-latest
           resolution: lowest-direct
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.python-version == '3.14' || matrix.python-version == '3.13' }}
+    continue-on-error: true
 
     steps:
     - name: Checkout
@@ -100,7 +125,7 @@ jobs:
         fetch-tags: true
 
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true

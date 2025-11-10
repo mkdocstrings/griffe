@@ -112,3 +112,8 @@ for breakage in griffe.find_breaking_changes(previous, current):
 ```
 
 See the [Loading chapter](https://mkdocstrings.github.io/griffe/guide/users/loading/) for more examples.
+
+## Sponsors
+
+<!-- sponsors-start -->
+<!-- sponsors-end -->

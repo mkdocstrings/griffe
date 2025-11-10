@@ -338,7 +338,7 @@ def docs_deploy(ctx: Context) -> None:
     with _material_insiders() as insiders:
         if not insiders:
             ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
-        ctx.run(tools.mkdocs.gh_deploy(), title="Deploying documentation")
+        ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
 
 
 @duty
@@ -425,7 +425,7 @@ def release(ctx: Context, version: str = "") -> None:
         ctx.run("false", title="A version must be provided")
     ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
     ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
-    ctx.run(f"git tag {version}", title="Tagging commit", pty=PTY)
+    ctx.run(f"git tag -m '' -a {version}", title="Tagging commit", pty=PTY)
     ctx.run("git push", title="Pushing commits", pty=False)
     ctx.run("git push --tags", title="Pushing tags", pty=False)
 
@@ -448,11 +448,11 @@ def coverage(ctx: Context) -> None:
 
 
 @duty(nofail=PY_VERSION == PY_DEV)
-def test(ctx: Context, *cli_args: str, match: str = "") -> None:  # noqa: PT028
+def test(ctx: Context, *cli_args: str) -> None:  # noqa: PT028
     """Run the test suite.
 
     ```bash
-    make test [match=EXPR]
+    make test
     ```
 
     Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
@@ -461,14 +461,13 @@ def test(ctx: Context, *cli_args: str, match: str = "") -> None:  # noqa: PT028
 
     Parameters:
         *cli_args: Additional Pytest CLI arguments.
-        match: A pytest expression to filter selected tests.
     """
     os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
+    os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
     ctx.run(
         tools.pytest(
             "tests",
             config_file="config/pytest.ini",
-            select=match,
             color="yes",
         ).add_args("-n", "auto", *cli_args),
         title=_pyprefix("Running tests"),

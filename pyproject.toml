@@ -9,7 +9,7 @@ authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
 license = "ISC"
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
 dynamic = ["version"]
 classifiers = [
@@ -18,8 +18,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    # YORE: EOL 3.9: Remove line.
-    "Programming Language :: Python :: 3.9",
     # YORE: EOL 3.10: Remove line.
     "Programming Language :: Python :: 3.10",
     # YORE: EOL 3.11: Remove line.
