@@ -67,7 +67,7 @@ expression = "get_version()"
 
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
-exclude = ["**/.pytest_cache", "**/.mypy_cache"]
+exclude = ["**/.pytest_cache", "**/.mypy_cache", "**/.github"]
 
 [tool.hatch.build.targets.sdist]
 include = [
