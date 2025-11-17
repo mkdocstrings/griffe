@@ -1,6 +1,8 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+# pdm-backend is left here as a dependency of the version discovery script currently in use.
+# It might be removed in the future. See mkdocstrings/griffe#430
+requires = ["hatchling", "pdm-backend"]
+build-backend = "hatchling.build"
 
 [project]
 name = "griffe"
@@ -58,14 +60,17 @@ Funding = "https://github.com/sponsors/pawamoy"
 [project.scripts]
 griffe = "griffe:main"
 
-[tool.pdm.version]
-source = "call"
-getter = "scripts.get_version:get_version"
+[tool.hatch.version]
+source = "code"
+path = "scripts/get_version.py"
+expression = "get_version()"
 
-[tool.pdm.build]
+[tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
-excludes = ["**/.pytest_cache", "**/.mypy_cache"]
-source-includes = [
+exclude = ["**/.pytest_cache", "**/.mypy_cache"]
+
+[tool.hatch.build.targets.sdist]
+include = [
     "config",
     "docs",
     "scripts",
@@ -77,13 +82,12 @@ source-includes = [
     "LICENSE",
 ]
 
-[tool.pdm.build.wheel-data]
+[tool.hatch.build.targets.wheel]
 # Manual pages can be included in the wheel.
 # Depending on the installation tool, they will be accessible to users.
 # pipx supports it, uv does not yet, see https://github.com/astral-sh/uv/issues/4731.
-data = [
-    {path = "share/**/*", relative-to = "."},
-]
+packages = ["src/griffe"]
+artifacts = ["share/**/*"]
 
 [dependency-groups]
 maintain = [
