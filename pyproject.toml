@@ -1,6 +1,6 @@
 [build-system]
 # pdm-backend is left here as a dependency of the version discovery script currently in use.
-# It might be removed in the future. See mkdocstrings/griffe#430
+# It may be removed in the future. See mkdocstrings/griffe#430
 requires = ["hatchling", "pdm-backend"]
 build-backend = "hatchling.build"
 
