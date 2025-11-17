@@ -68,6 +68,7 @@ expression = "get_version()"
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
 ignore-vcs = true
+exclude = [".github", ".pdm-build"]
 
 [tool.hatch.build.targets.sdist]
 include = [
