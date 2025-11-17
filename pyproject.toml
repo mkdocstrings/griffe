@@ -68,12 +68,14 @@ expression = "get_version()"
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
 exclude = ["**/.pytest_cache", "**/.mypy_cache"]
+sources = ["src"]
 
 [tool.hatch.build.targets.sdist]
 include = [
     "config",
     "docs",
     "scripts",
+    "src",
     "share",
     "tests",
     "duties.py",
@@ -86,7 +88,6 @@ include = [
 # Manual pages can be included in the wheel.
 # Depending on the installation tool, they will be accessible to users.
 # pipx supports it, uv does not yet, see https://github.com/astral-sh/uv/issues/4731.
-packages = ["src/griffe"]
 artifacts = ["share/**/*"]
 
 [dependency-groups]
