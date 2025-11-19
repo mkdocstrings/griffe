@@ -467,18 +467,12 @@ def foo():
 TIP: **Warnings names are resolved using the function's scope.**
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
 
-#### Warnings {#google-section-warnings}
+TIP: **Warnings section are not Warning admonitions!**
+To create a warning admonition/callout, use the singular form:
 
-Warnings sections are not supported, use `warning`  admonitions instead.
-
-```python
-def foo():
-    """Foo.
-
-    !!! warning
-
-        This is a warning!
-    """
+```
+Warning:
+    This is a warning.
 ```
 
 #### Yields {#google-section-yields}
@@ -1206,20 +1200,6 @@ def foo():
 
 TIP: **Warnings names are resolved using the function's scope.**
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
-
-#### Warnings {#numpydoc-section-warnings}
-
-Warnings sections are not supported, use `warning`  admonitions instead.
-
-```python
-def foo():
-    """Foo.
-
-    !!! warning
-
-        This is a warning!
-    """
-```
 
 #### Yields {#numpydoc-section-yields}
 
