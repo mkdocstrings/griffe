@@ -77,7 +77,6 @@ _section_kind = {
     "type aliases": DocstringSectionKind.type_aliases,
     "modules": DocstringSectionKind.modules,
     "warns": DocstringSectionKind.warns,
-    "warnings": DocstringSectionKind.warns,
 }
 
 _BlockItem = tuple[int, list[str]]
