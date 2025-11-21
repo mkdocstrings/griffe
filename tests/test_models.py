@@ -8,7 +8,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     Docstring,
@@ -92,7 +92,7 @@ def test_has_docstrings_does_not_trigger_alias_resolution() -> None:
 def test_deepcopy() -> None:
     """Assert we can deep-copy object trees."""
     loader = GriffeLoader()
-    mod = loader.load("griffe")
+    mod = loader.load("griffelib")
 
     deepcopy(mod)
     deepcopy(mod.as_dict())

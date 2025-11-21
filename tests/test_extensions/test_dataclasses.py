@@ -1,6 +1,6 @@
 """Test the dataclasses extension."""
 
-from griffe import ParameterKind, load_extensions, temporary_visited_package
+from griffelib import ParameterKind, load_extensions, temporary_visited_package
 
 
 def test_dataclass_support() -> None:

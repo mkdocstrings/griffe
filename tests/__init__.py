@@ -1,4 +1,4 @@
-"""Tests suite for `griffe`."""
+"""Tests suite for `griffelib`."""
 
 from __future__ import annotations
 

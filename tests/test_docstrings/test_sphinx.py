@@ -1,4 +1,4 @@
-"""Tests for the [Sphinx-style parser][griffe.docstrings.sphinx]."""
+"""Tests for the [Sphinx-style parser][griffelib.docstrings.sphinx]."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     DocstringAttribute,
