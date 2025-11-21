@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 [tool.hatch.version]
 source = "code"
 path = "scripts/get_version.py"
-expression = "get_version()"
+expression = "get_version()"H
 
 [project]
 name = "griffe"
