@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from griffe import (
+from griffelib import (
     Alias,
     Extension,
     GriffeLoader,
@@ -19,12 +19,12 @@ from griffe import (
     temporary_visited_module,
     temporary_visited_package,
 )
-from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
+from griffelib._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 if TYPE_CHECKING:
     import ast
 
-    from griffe import Attribute, Class, Function, Module, Object, ObjectNode, TypeAlias
+    from griffelib import Attribute, Class, Function, Module, Object, ObjectNode, TypeAlias
 
 
 class AnalysisEventsTest(Extension):  # noqa: D101

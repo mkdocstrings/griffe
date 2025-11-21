@@ -713,11 +713,11 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 
 ```console
 % python -m griffe check -fgithub -ssrc griffe
-::warning file=src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -> unset
-::warning file=src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -> unset
-::warning file=src/griffe/finder.py,line=62,title=Package.stubs::Attribute value was changed: `stubs` -> `None`
-::warning file=src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
-::warning file=src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=62,title=Package.stubs::Attribute value was changed: `stubs` -> `None`
+::warning file=packages/griffe/src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
 ```
 
 ## Next steps

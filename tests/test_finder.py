@@ -8,8 +8,8 @@ from textwrap import dedent
 
 import pytest
 
-from griffe import Module, ModuleFinder, NamespacePackage, Package, temporary_pypackage
-from griffe._internal.finder import _handle_editable_module, _handle_pth_file
+from griffelib import Module, ModuleFinder, NamespacePackage, Package, temporary_pypackage
+from griffelib._internal.finder import _handle_editable_module, _handle_pth_file
 
 
 @pytest.mark.parametrize(
@@ -125,7 +125,7 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
         tmp_path: Pytest fixture.
     """
     pth_file = tmp_path / editable_file_name
-    pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')", encoding="utf8")
+    pth_file.write_text("hello\nF.map_module('griffelib', 'packages/griffelib/src/griffelib/__init__.py')", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
@@ -139,7 +139,7 @@ def test_setuptools_file_handling(tmp_path: Path, annotation: str) -> None:
         annotation: The type annotation of the MAPPING variable.
     """
     pth_file = tmp_path / "__editable__whatever.py"
-    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}", encoding="utf8")
+    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffelib': 'packages/griffelib/src/griffelib'}}", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
@@ -155,7 +155,7 @@ def test_setuptools_file_handling_multiple_paths(tmp_path: Path, annotation: str
     pth_file = tmp_path / "__editable__whatever.py"
     pth_file.write_text(
         "hello=1\n"
-        f"MAPPING{annotation} = {{\n'griffe':\n 'src1/griffe', 'briffe':'src2/briffe'}}\n"
+        f"MAPPING{annotation} = {{\n'griffelib':\n 'src1/griffelib', 'briffe':'src2/briffe'}}\n"
         "def printer():\n  print(hello)",
         encoding="utf8",
     )
@@ -191,11 +191,11 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     pth_file = tmp_path / "_whatever_editable_loader.py"
     pth_file.write_text(
         # The path in argument 2 suffixed with src must exist, so we pass `.`.
-        "hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)",
+        "hello=1\ninstall({'griffelib', 'hello'}, '.', ['/tmp/ninja'], False)",
         encoding="utf8",
     )
     search_paths = _handle_editable_module(pth_file)
-    assert all(sp.always_scan_for == "griffe" for sp in search_paths)
+    assert all(sp.always_scan_for == "griffelib" for sp in search_paths)
     paths = [sp.path for sp in search_paths]
     assert paths == [Path("src")]
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from griffe import Breakage, BreakageKind, find_breaking_changes, temporary_visited_module, temporary_visited_package
+from griffelib import Breakage, BreakageKind, find_breaking_changes, temporary_visited_module, temporary_visited_package
 
 
 @pytest.mark.parametrize(
@@ -165,7 +165,7 @@ from griffe import Breakage, BreakageKind, find_breaking_changes, temporary_visi
         ),
     ],
 )
-def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Breakage]) -> None:
+def test_diff_griffelib(old_code: str, new_code: str, expected_breakages: list[Breakage]) -> None:
     """Test the different incompatibility finders.
 
     Parameters:

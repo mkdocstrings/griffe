@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from griffe import ParameterKind, temporary_visited_module
+from griffelib import ParameterKind, temporary_visited_module
 
 
 def test_visit_simple_function() -> None:

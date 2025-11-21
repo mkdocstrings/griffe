@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from griffe import temporary_visited_package
+from griffelib import temporary_visited_package
 
 
 def test_dont_trigger_alias_resolution_when_merging_stubs() -> None:

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import (
+from griffelib import (
     ExprName,
     GriffeLoader,
     temporary_inspected_package,
@@ -20,7 +20,7 @@ from griffe import (
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe import Alias
+    from griffelib import Alias
 
 
 def test_has_docstrings_does_not_try_to_resolve_alias() -> None:
@@ -485,7 +485,7 @@ def test_relying_on_modules_path_attribute(monkeypatch: pytest.MonkeyPatch) -> N
 
     loader = GriffeLoader()
     monkeypatch.setattr(loader.finder, "find_spec", raise_module_not_found_error)
-    assert loader.load("griffe")
+    assert loader.load("griffelib")
 
 
 def test_not_calling_package_hook_on_something_else_than_package() -> None:

@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING, Callable
 
 import pytest
 
-from griffe import ModulesCollection, temporary_inspected_module, temporary_visited_module
+from griffelib import ModulesCollection, temporary_inspected_module, temporary_visited_module
 
 if TYPE_CHECKING:
-    from griffe import Class
+    from griffelib import Class
 
 
 def _mro_paths(cls: Class) -> list[str]:

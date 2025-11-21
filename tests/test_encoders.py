@@ -8,7 +8,7 @@ import sys
 import pytest
 from jsonschema import ValidationError, validate
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     Function,
@@ -29,7 +29,7 @@ def test_minimal_data_is_enough() -> None:
     infer as much data as within the original tree.
     """
     loader = GriffeLoader()
-    module = loader.load("griffe")
+    module = loader.load("griffelib")
     dump_options = {"indent": 2, "sort_keys": True}
     minimal = module.as_json(full=False, **dump_options)
     full = module.as_json(full=True, **dump_options)
@@ -73,7 +73,7 @@ def test_namespace_packages() -> None:
 def test_minimal_light_data_is_enough(symbol: str) -> None:
     """Test serialization and de-serialization."""
     loader = GriffeLoader()
-    package = loader.load("griffe")
+    package = loader.load("griffelib")
     obj = package[symbol]
     dump_options = {"indent": 2, "sort_keys": True}
     minimal = obj.as_json(full=False, **dump_options)
@@ -162,7 +162,7 @@ def _validate(obj: dict, schema: dict) -> None:
 def test_json_schema() -> None:
     """Assert that our serialized data matches our JSON schema."""
     loader = GriffeLoader()
-    module = loader.load("griffe")
+    module = loader.load("griffelib")
     loader.resolve_aliases()
     data = json.loads(module.as_json(full=True))
     with open("docs/schema.json", encoding="utf8") as f:  # noqa: PTH123
