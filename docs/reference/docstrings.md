@@ -447,6 +447,7 @@ TIP: **Exceptions names are resolved using the function's scope.**
 
 #### Warns {#google-section-warns}
 
+- Aliases: Warnings
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code. They are usually only used in functions docstrings.
@@ -468,7 +469,7 @@ TIP: **Warnings names are resolved using the function's scope.**
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
 
 TIP: **Warnings section are not Warning admonitions!**
-To create a warning admonition/callout, use the singular form:
+To create a warning [admonition/callout][google-admonitions], use the singular form:
 
 ```
 Warning:
