@@ -23,7 +23,6 @@ from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Callable
 
 import colorama
-
 from griffelib._internal import debug
 from griffelib._internal.diff import find_breaking_changes
 from griffelib._internal.encoders import JSONEncoder
@@ -138,7 +137,9 @@ def get_parser() -> argparse.ArgumentParser:
     description = "Signatures for entire Python programs. "
     "Extract the structure, the frame, the skeleton of your project, "
     "to generate API documentation or find breaking changes in your API."
-    parser = argparse.ArgumentParser(add_help=False, usage=usage, description=description, prog="griffe")
+    parser = argparse.ArgumentParser(
+        add_help=False, usage=usage, description=description, prog="griffe"
+    )
 
     main_help = "Show this help message and exit. Commands also accept the -h/--help option."
     subcommand_help = "Show this help message and exit."
