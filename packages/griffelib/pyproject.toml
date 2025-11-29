@@ -10,7 +10,7 @@ path = "../../scripts/get_version.py"
 expression = "get_version()"
 
 [project]
-name = "griffe"
+name = "griffelib"
 description = "The griffelib library"
 authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
 license = "ISC"
