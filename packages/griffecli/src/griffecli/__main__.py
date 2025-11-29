@@ -7,7 +7,7 @@
 
 import sys
 
-from griffecli._internal.cli import main
+from griffecli import main
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
