@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     Docstring,

@@ -1,6 +1,6 @@
 """Test the unpack extension."""
 
-from griffe import DocstringSectionKind, load_extensions, temporary_visited_package
+from griffelib import DocstringSectionKind, load_extensions, temporary_visited_package
 
 
 def test_typeddict_support() -> None:

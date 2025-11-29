@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-from griffe import Module, Parser, get_expression, temporary_visited_module
+from griffelib import Module, Parser, get_expression, temporary_visited_module
 from tests.test_nodes import syntax_examples
 
 

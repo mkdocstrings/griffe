@@ -8,7 +8,7 @@ from textwrap import dedent
 
 import pytest
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     Docstring,

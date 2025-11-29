@@ -10,15 +10,15 @@ from typing import TYPE_CHECKING
 import pytest
 from mkdocstrings import Inventory
 
-import griffe
+import griffelib
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
 
 @pytest.fixture(name="loader", scope="module")
-def _fixture_loader() -> griffe.GriffeLoader:
-    loader = griffe.GriffeLoader(
+def _fixture_loader() -> griffelib.GriffeLoader:
+    loader = griffelib.GriffeLoader(
         extensions=griffe.load_extensions(
             "griffe_inherited_docstrings",
             # YORE: Bump 2: Remove line.
@@ -32,23 +32,23 @@ def _fixture_loader() -> griffe.GriffeLoader:
 
 
 @pytest.fixture(name="internal_api", scope="module")
-def _fixture_internal_api(loader: griffe.GriffeLoader) -> griffe.Module:
+def _fixture_internal_api(loader: griffelib.GriffeLoader) -> griffelib.Module:
     return loader.modules_collection["griffe._internal"]
 
 
 @pytest.fixture(name="public_api", scope="module")
-def _fixture_public_api(loader: griffe.GriffeLoader) -> griffe.Module:
+def _fixture_public_api(loader: griffelib.GriffeLoader) -> griffelib.Module:
     return loader.modules_collection["griffe"]
 
 
 def _yield_public_objects(
-    obj: griffe.Module | griffe.Class,
+    obj: griffelib.Module | griffelib.Class,
     *,
     modules: bool = False,
     modulelevel: bool = True,
     inherited: bool = False,
     special: bool = False,
-) -> Iterator[griffe.Object | griffe.Alias]:
+) -> Iterator[griffe.Object | griffelib.Alias]:
     for member in obj.all_members.values() if inherited else obj.members.values():
         try:
             if member.is_module:
@@ -74,22 +74,22 @@ def _yield_public_objects(
                     inherited=inherited,
                     special=special,
                 )
-        except (griffe.AliasResolutionError, griffe.CyclicAliasError):
+        except (griffe.AliasResolutionError, griffelib.CyclicAliasError):
             continue
 
 
 @pytest.fixture(name="modulelevel_internal_objects", scope="module")
-def _fixture_modulelevel_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
+def _fixture_modulelevel_internal_objects(internal_api: griffelib.Module) -> list[griffe.Object | griffelib.Alias]:
     return list(_yield_public_objects(internal_api, modulelevel=True))
 
 
 @pytest.fixture(name="internal_objects", scope="module")
-def _fixture_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
+def _fixture_internal_objects(internal_api: griffelib.Module) -> list[griffe.Object | griffelib.Alias]:
     return list(_yield_public_objects(internal_api, modulelevel=False, special=True))
 
 
 @pytest.fixture(name="public_objects", scope="module")
-def _fixture_public_objects(public_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
+def _fixture_public_objects(public_api: griffelib.Module) -> list[griffe.Object | griffelib.Alias]:
     return list(_yield_public_objects(public_api, modulelevel=False, inherited=True, special=True))
 
 
@@ -102,7 +102,7 @@ def _fixture_inventory() -> Inventory:
         return Inventory.parse_sphinx(file)
 
 
-def test_alias_proxies(internal_api: griffe.Module) -> None:
+def test_alias_proxies(internal_api: griffelib.Module) -> None:
     """The Alias class has all the necessary methods and properties."""
     alias_members = set(internal_api["models.Alias"].all_members.keys())
     for cls in (
@@ -116,17 +116,17 @@ def test_alias_proxies(internal_api: griffe.Module) -> None:
                 assert name in alias_members
 
 
-def test_exposed_objects(modulelevel_internal_objects: list[griffe.Object | griffe.Alias]) -> None:
+def test_exposed_objects(modulelevel_internal_objects: list[griffe.Object | griffelib.Alias]) -> None:
     """All public objects in the internal API are exposed under `griffe`."""
     not_exposed = [
         obj.path
         for obj in modulelevel_internal_objects
-        if obj.name not in griffe.__all__ or not hasattr(griffe, obj.name)
+        if obj.name not in griffelib.__all__ or not hasattr(griffe, obj.name)
     ]
     assert not not_exposed, "Objects not exposed:\n" + "\n".join(sorted(not_exposed))
 
 
-def test_unique_names(modulelevel_internal_objects: list[griffe.Object | griffe.Alias]) -> None:
+def test_unique_names(modulelevel_internal_objects: list[griffe.Object | griffelib.Alias]) -> None:
     """All internal objects have unique names."""
     names_to_paths = defaultdict(list)
     for obj in modulelevel_internal_objects:
@@ -135,14 +135,14 @@ def test_unique_names(modulelevel_internal_objects: list[griffe.Object | griffe.
     assert not non_unique, "Non-unique names:\n" + "\n".join(str(paths) for paths in non_unique)
 
 
-def test_single_locations(public_api: griffe.Module) -> None:
+def test_single_locations(public_api: griffelib.Module) -> None:
     """All objects have a single public location."""
 
-    def _public_path(obj: griffe.Object | griffe.Alias) -> bool:
+    def _public_path(obj: griffelib.Object | griffelib.Alias) -> bool:
         return obj.is_public and (obj.parent is None or _public_path(obj.parent))
 
     multiple_locations = {}
-    for obj_name in griffe.__all__:
+    for obj_name in griffelib.__all__:
         obj = public_api[obj_name]
         if obj.aliases and (
             public_aliases := [path for path, alias in obj.aliases.items() if path != obj.path and _public_path(alias)]
@@ -153,7 +153,7 @@ def test_single_locations(public_api: griffe.Module) -> None:
     )
 
 
-def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffe.Alias]) -> None:
+def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffelib.Alias]) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
     ignore_paths = {"griffe.DataclassesExtension.*", "griffe.UnpackTypedDictExtension.*"}
@@ -172,8 +172,8 @@ def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe
 
 def test_inventory_matches_api(
     inventory: Inventory,
-    public_objects: list[griffe.Object | griffe.Alias],
-    loader: griffe.GriffeLoader,
+    public_objects: list[griffe.Object | griffelib.Alias],
+    loader: griffelib.GriffeLoader,
 ) -> None:
     """The inventory doesn't contain any additional Python object."""
     not_in_api = []
@@ -188,14 +188,14 @@ def test_inventory_matches_api(
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))
 
 
-def test_no_module_docstrings_in_internal_api(internal_api: griffe.Module) -> None:
+def test_no_module_docstrings_in_internal_api(internal_api: griffelib.Module) -> None:
     """No module docstrings should be written in our internal API.
 
     The reasoning is that docstrings are addressed to users of the public API,
     but internal modules are not exposed to users, so they should not have docstrings.
     """
 
-    def _modules(obj: griffe.Module) -> Iterator[griffe.Module]:
+    def _modules(obj: griffelib.Module) -> Iterator[griffe.Module]:
         for member in obj.modules.values():
             yield member
             yield from _modules(member)

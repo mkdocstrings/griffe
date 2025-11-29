@@ -8,7 +8,7 @@ import sys
 import pytest
 from jsonschema import ValidationError, validate
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     Function,

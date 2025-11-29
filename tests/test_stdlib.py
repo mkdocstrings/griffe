@@ -8,12 +8,12 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import GriffeLoader, LoadingError
+from griffelib import GriffeLoader, LoadingError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from griffe import Alias, Object
+    from griffelib import Alias, Object
 
 
 def _access_inherited_members(obj: Object | Alias) -> None:

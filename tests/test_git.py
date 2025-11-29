@@ -1,4 +1,4 @@
-"""Tests for creating a griffe Module from specific commits in a git repository."""
+"""Tests for creating a griffelib Module from specific commits in a git repository."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import Module, check, load_git
+from griffelib import Module, check, load_git
 from tests import FIXTURES_DIR
 
 if TYPE_CHECKING:

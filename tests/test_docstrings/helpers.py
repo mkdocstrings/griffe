@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Protocol, Union
 
-from griffe import (
+from griffelib import (
     Attribute,
     Class,
     Docstring,

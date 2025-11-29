@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import (
+from griffelib import (
     ExprName,
     GriffeLoader,
     temporary_inspected_package,
@@ -20,7 +20,7 @@ from griffe import (
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from griffe import Alias
+    from griffelib import Alias
 
 
 def test_has_docstrings_does_not_try_to_resolve_alias() -> None:

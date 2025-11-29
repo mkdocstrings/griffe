@@ -498,7 +498,7 @@ def fuzz(
         min_seed: Minimum value for the seeds range.
         max_seed: Maximum value for the seeds range.
     """
-    from griffe import visit  # noqa: PLC0415
+    from griffelib import visit  # noqa: PLC0415
 
     warnings.simplefilter("ignore", SyntaxWarning)
 

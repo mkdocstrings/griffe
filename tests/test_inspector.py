@@ -6,7 +6,7 @@ import sys
 
 import pytest
 
-from griffe import (
+from griffelib import (
     Expr,
     TypeParameterKind,
     inspect,
