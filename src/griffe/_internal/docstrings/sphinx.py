@@ -98,8 +98,6 @@ def parse_sphinx(
     *,
     warn_unknown_params: bool = True,
     warnings: bool = True,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
 
@@ -114,9 +112,6 @@ def parse_sphinx(
     """
     parsed_values = _ParsedValues()
 
-    # YORE: Bump 2: Remove block.
-    if options:
-        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
 
     options = {
         "warn_unknown_params": warn_unknown_params,
