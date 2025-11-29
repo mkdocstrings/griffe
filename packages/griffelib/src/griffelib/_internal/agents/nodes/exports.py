@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class ExportedName:
     """Deprecated. An intermediate class to store names.
 
-    The [`get__all__`][griffe.get__all__] function now returns instances of [`ExprName`][griffe.ExprName] instead.
+    The [`get__all__`][griffelib.get__all__] function now returns instances of [`ExprName`][griffelib.ExprName] instead.
     """
 
     name: str

@@ -47,9 +47,9 @@ In the above two examples, `pydantic` would be a built-in extension, `scripts/ex
 
 ### Programmatically
 
-Within Python code, extensions can be specified with the `extensions` parameter of the [`GriffeLoader` class][griffe.GriffeLoader] or [`load` function][griffe.load].
+Within Python code, extensions can be specified with the `extensions` parameter of the [`GriffeLoader` class][griffelib.GriffeLoader] or [`load` function][griffelib.load].
 
-The parameter accepts an instance of the [`Extensions` class][griffe.Extensions]. Such an instance is created with the help of the [`load_extensions` function][griffe.load_extensions], which itself accepts a list of strings, dictionaries, extension classes and extension instances.
+The parameter accepts an instance of the [`Extensions` class][griffelib.Extensions]. Such an instance is created with the help of the [`load_extensions` function][griffelib.load_extensions], which itself accepts a list of strings, dictionaries, extension classes and extension instances.
 
 Strings and dictionaries are used the same way as [on the command-line](#on-the-command-line). Extension instances are used as such, and extension classes are instantiated without any options.
 
@@ -88,7 +88,7 @@ plugins:
           - griffe_attrs
 ```
 
-The `extensions` key accepts a list that is passed to the [`load_extensions` function][griffe.load_extensions]. See [how to use extensions programmatically](#programmatically) to learn more.
+The `extensions` key accepts a list that is passed to the [`load_extensions` function][griffelib.load_extensions]. See [how to use extensions programmatically](#programmatically) to learn more.
 
 ## Writing extensions
 
@@ -100,9 +100,9 @@ To extract information from your Python sources, Griffe tries to build Abstract 
 
 If the source code is not available (the modules are built-in or compiled), Griffe imports the modules and builds object trees instead.
 
-Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pattern) to walk the tree and extract information. For ASTs, Griffe uses its [Visitor agent][griffe.Visitor] and for object trees, it uses its [Inspector agent][griffe.Inspector].
+Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pattern) to walk the tree and extract information. For ASTs, Griffe uses its [Visitor agent][griffelib.Visitor] and for object trees, it uses its [Inspector agent][griffelib.Inspector].
 
-Sometimes during the walk through the source or runtime objects, both the visitor and inspector agents will trigger events, called **analysis events**. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], an [Attribute][griffe.Attribute], or a [Type Alias][griffe.TypeAlias]. Extensions will therefore be able to modify these instances.
+Sometimes during the walk through the source or runtime objects, both the visitor and inspector agents will trigger events, called **analysis events**. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffelib.Object] subclass, such as a [Module][griffelib.Module], a [Class][griffelib.Class], a [Function][griffelib.Function], an [Attribute][griffelib.Attribute], or a [Type Alias][griffelib.TypeAlias]. Extensions will therefore be able to modify these instances.
 
 Once the Griffe tree for a given package has been fully constructed, Griffe will trigger a second set of events, called **load events**, by walking the tree again. **It is safer to use load events as they are triggered only once data is complete for a given package**, contrary to the analysis events which are triggered *while the Griffe tree is still being built*.
 
@@ -114,7 +114,7 @@ M(Module definition) --- C(Class definition) & F(Function definition)
 C --- m(Function definition) & A(Variable assignment)
 ```
 
-The following flow chart shows an example of an object tree inspection. The tree is simplified as well: [many more types of objects are handled][griffe.ObjectKind].
+The following flow chart shows an example of an object tree inspection. The tree is simplified as well: [many more types of objects are handled][griffelib.ObjectKind].
 
 ```mermaid
 flowchart TB
@@ -125,9 +125,9 @@ C --- m(Method) & A(Attribute)
 For a more concrete example, let say that we visit (or inspect) an AST (or object tree) for a given module, and that this module contains a single class, which itself contains a single method:
 
 - the agent (visitor or inspector) will walk through the tree by starting with the module node
-- it will instantiate a [Module][griffe.Module], then walk through its members, continuing with the class node
-- it will instantiate a [Class][griffe.Class], then walk through its members, continuing with the function node
-- it will instantiate a [Function][griffe.Function]
+- it will instantiate a [Module][griffelib.Module], then walk through its members, continuing with the class node
+- it will instantiate a [Class][griffelib.Class], then walk through its members, continuing with the function node
+- it will instantiate a [Function][griffelib.Function]
 - then it will go back up and finish walking since there are no more nodes to walk through
 
 Every time the agent enters a node, creates an object instance, or finishes handling members of an object, it will trigger an event.
@@ -198,17 +198,17 @@ There are two kinds of events in Griffe: [**load events**](#load-events) and [**
 
 There is 1 generic **load event**:
 
-- [`on_object`][griffe.Extension.on_object]: The "on object" event is triggered on any kind of object (except for aliases and packages, so modules, classes, functions, attributes and type aliases), once the tree for the object's package has been fully constructed.
+- [`on_object`][griffelib.Extension.on_object]: The "on object" event is triggered on any kind of object (except for aliases and packages, so modules, classes, functions, attributes and type aliases), once the tree for the object's package has been fully constructed.
 
 There are also specific **load events** for each object kind:
 
-- [`on_module`][griffe.Extension.on_module]: The "on module" event is triggered on modules.
-- [`on_class`][griffe.Extension.on_class]: The "on class" event is triggered on classes.
-- [`on_function`][griffe.Extension.on_function]: The "on function" event is triggered on functions.
-- [`on_attribute`][griffe.Extension.on_attribute]: The "on attribute" event is triggered on attributes.
-- [`on_type_alias`][griffe.Extension.on_type_alias]: The "on type alias" event is triggered on type aliases.
-- [`on_alias`][griffe.Extension.on_alias]: The "on alias" event is triggered on aliases (imported/inherited objects).
-- [`on_package`][griffe.Extension.on_package]: The "on package" event is triggered on top-level modules (packages) only.
+- [`on_module`][griffelib.Extension.on_module]: The "on module" event is triggered on modules.
+- [`on_class`][griffelib.Extension.on_class]: The "on class" event is triggered on classes.
+- [`on_function`][griffelib.Extension.on_function]: The "on function" event is triggered on functions.
+- [`on_attribute`][griffelib.Extension.on_attribute]: The "on attribute" event is triggered on attributes.
+- [`on_type_alias`][griffelib.Extension.on_type_alias]: The "on type alias" event is triggered on type aliases.
+- [`on_alias`][griffelib.Extension.on_alias]: The "on alias" event is triggered on aliases (imported/inherited objects).
+- [`on_package`][griffelib.Extension.on_package]: The "on package" event is triggered on top-level modules (packages) only.
 
 #### Analysis events
 
@@ -216,29 +216,29 @@ There are also specific **load events** for each object kind:
 
 There are 3 generic **analysis events**:
 
-- [`on_node`][griffe.Extension.on_node]: The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
-- [`on_instance`][griffe.Extension.on_instance]: The "on instance" events are triggered when the agent just created an instance of [Module][griffe.Module], [Class][griffe.Class], [Function][griffe.Function], [Attribute][griffe.Attribute], or [Type Alias][griffe.TypeAlias], and added it as a member of its parent. The "on instance" event is **not** triggered when an [Alias][griffe.Alias] is created.
-- [`on_members`][griffe.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions, attributes and type aliases do not have members, so there are no "on members" events for these kinds.
+- [`on_node`][griffelib.Extension.on_node]: The "on node" events are triggered when the agent (visitor or inspector) starts handling a node in the tree (AST or object tree).
+- [`on_instance`][griffelib.Extension.on_instance]: The "on instance" events are triggered when the agent just created an instance of [Module][griffelib.Module], [Class][griffelib.Class], [Function][griffelib.Function], [Attribute][griffelib.Attribute], or [Type Alias][griffelib.TypeAlias], and added it as a member of its parent. The "on instance" event is **not** triggered when an [Alias][griffelib.Alias] is created.
+- [`on_members`][griffelib.Extension.on_members]: The "on members" events are triggered when the agent just finished handling all the members of an object. Functions, attributes and type aliases do not have members, so there are no "on members" events for these kinds.
 
 There are also specific **analysis events** for each object kind:
 
-- [`on_module_node`][griffe.Extension.on_module_node]
-- [`on_module_instance`][griffe.Extension.on_module_instance]
-- [`on_module_members`][griffe.Extension.on_module_members]
-- [`on_class_node`][griffe.Extension.on_class_node]
-- [`on_class_instance`][griffe.Extension.on_class_instance]
-- [`on_class_members`][griffe.Extension.on_class_members]
-- [`on_function_node`][griffe.Extension.on_function_node]
-- [`on_function_instance`][griffe.Extension.on_function_instance]
-- [`on_attribute_node`][griffe.Extension.on_attribute_node]
-- [`on_attribute_instance`][griffe.Extension.on_attribute_instance]
-- [`on_type_alias_node`][griffe.Extension.on_type_alias_node]
-- [`on_type_alias_instance`][griffe.Extension.on_type_alias_instance]
-- [`on_alias_instance`][griffe.Extension.on_alias_instance]
+- [`on_module_node`][griffelib.Extension.on_module_node]
+- [`on_module_instance`][griffelib.Extension.on_module_instance]
+- [`on_module_members`][griffelib.Extension.on_module_members]
+- [`on_class_node`][griffelib.Extension.on_class_node]
+- [`on_class_instance`][griffelib.Extension.on_class_instance]
+- [`on_class_members`][griffelib.Extension.on_class_members]
+- [`on_function_node`][griffelib.Extension.on_function_node]
+- [`on_function_instance`][griffelib.Extension.on_function_instance]
+- [`on_attribute_node`][griffelib.Extension.on_attribute_node]
+- [`on_attribute_instance`][griffelib.Extension.on_attribute_instance]
+- [`on_type_alias_node`][griffelib.Extension.on_type_alias_node]
+- [`on_type_alias_instance`][griffelib.Extension.on_type_alias_instance]
+- [`on_alias_instance`][griffelib.Extension.on_alias_instance]
 
 #### Extensions and hooks
 
-**Extensions** are classes that inherit from [Griffe's Extension base class][griffe.Extension] and define some hooks as methods:
+**Extensions** are classes that inherit from [Griffe's Extension base class][griffelib.Extension] and define some hooks as methods:
 
 ```python
 import griffe
@@ -255,7 +255,7 @@ class MyExtension(griffe.Extension):
         """Do something with `obj`."""
 ```
 
-Hooks are always defined as methods of a class inheriting from [Extension][griffe.Extension], never as standalone functions. IDEs should autocomplete the signature when you start typing `def` followed by a hook name.
+Hooks are always defined as methods of a class inheriting from [Extension][griffelib.Extension], never as standalone functions. IDEs should autocomplete the signature when you start typing `def` followed by a hook name.
 
 Since hooks are declared in a class, feel free to also declare state variables (or any other variable) in the `__init__` method:
 
@@ -307,10 +307,10 @@ class MyExtension(griffe.Extension):
 
 Extensions provide basic functionality to help you visit trees during analysis of the code:
 
-- [`visit`][griffe.Extension.visit]: call `self.visit(node)` to start visiting an abstract syntax tree.
-- [`generic_visit`][griffe.Extension.generic_visit]: call `self.generic_visit(node)` to visit each subnode of a given node.
-- [`inspect`][griffe.Extension.inspect]: call `self.inspect(node)` to start visiting an object tree. Nodes contain references to the runtime objects, see [`ObjectNode`][griffe.ObjectNode].
-- [`generic_inspect`][griffe.Extension.generic_inspect]: call `self.generic_inspect(node)` to visit each subnode of a given node.
+- [`visit`][griffelib.Extension.visit]: call `self.visit(node)` to start visiting an abstract syntax tree.
+- [`generic_visit`][griffelib.Extension.generic_visit]: call `self.generic_visit(node)` to visit each subnode of a given node.
+- [`inspect`][griffelib.Extension.inspect]: call `self.inspect(node)` to start visiting an object tree. Nodes contain references to the runtime objects, see [`ObjectNode`][griffelib.ObjectNode].
+- [`generic_inspect`][griffelib.Extension.generic_inspect]: call `self.generic_inspect(node)` to visit each subnode of a given node.
 
 Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you actually implement methods that handle specific types of nodes:
 
@@ -333,7 +333,7 @@ Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you ac
 
     See the [list of existing AST classes](#ast-nodes) to learn what method you can implement.
 
-- for object trees, methods must be named `inspect_<node_type>`, where `<node_type>` is replaced with the string value of the node's kind. The different kinds are listed in the [`ObjectKind`][griffe.ObjectKind] enumeration. For example, to allow inspecting coroutine nodes, you must implement the `inspect_coroutine` method:
+- for object trees, methods must be named `inspect_<node_type>`, where `<node_type>` is replaced with the string value of the node's kind. The different kinds are listed in the [`ObjectKind`][griffelib.ObjectKind] enumeration. For example, to allow inspecting coroutine nodes, you must implement the `inspect_coroutine` method:
 
     ```python
     from griffe import Extension, ObjectNode
@@ -349,7 +349,7 @@ Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you ac
 
 ### Triggering other extensions
 
-If your extension creates new objects, you might want to trigger the other enabled extensions on these object instances. To do this you can use [`agent.extensions.call`][griffe.Extensions.call]:
+If your extension creates new objects, you might want to trigger the other enabled extensions on these object instances. To do this you can use [`agent.extensions.call`][griffelib.Extensions.call]:
 
 ```python
 import ast

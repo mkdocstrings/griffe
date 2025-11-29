@@ -1,4 +1,4 @@
-"""Tests for the [Google-style parser][griffe.docstrings.google]."""
+"""Tests for the [Google-style parser][griffelib.docstrings.google]."""
 
 from __future__ import annotations
 

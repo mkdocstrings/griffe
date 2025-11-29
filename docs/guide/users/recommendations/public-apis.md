@@ -438,7 +438,7 @@ if __name__ == "__main__":
     sys.exit(main())
 ```
 
-In this script, we find our entrypoint, `griffe.main`, used programmatically.
+In this script, we find our entrypoint, `griffecli.main`, used programmatically.
 
 ---
 

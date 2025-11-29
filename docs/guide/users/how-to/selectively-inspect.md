@@ -63,7 +63,7 @@ class InspectSpecificObjects(griffe.Extension):
         ...
 ```
 
-Check out the [available hooks][griffe.Extension] to see if there more appropriate hooks for your needs.
+Check out the [available hooks][griffelib.Extension] to see if there more appropriate hooks for your needs.
 
 Lets now use our configuration option to decide whether to do something or skip:
 

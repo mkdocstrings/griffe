@@ -80,7 +80,7 @@ Griffe will actually install packages in a cache directory. It means a few thing
 
 ## Python API
 
-To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffe.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffe.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffe.Breakage]. It's up to you how you want to use these breakage instances.
+To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffelib.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffelib.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffelib.Breakage]. It's up to you how you want to use these breakage instances.
 
 ```python
 import griffe

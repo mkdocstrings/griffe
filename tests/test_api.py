@@ -32,7 +32,7 @@ def _fixture_loader() -> griffelib.GriffeLoader:
 
 @pytest.fixture(name="internal_api", scope="module")
 def _fixture_internal_api(loader: griffelib.GriffeLoader) -> griffelib.Module:
-    return loader.modules_collection["griffe._internal"]
+    return loader.modules_collection["griffelib._internal"]
 
 
 @pytest.fixture(name="public_api", scope="module")
@@ -47,7 +47,7 @@ def _yield_public_objects(
     modulelevel: bool = True,
     inherited: bool = False,
     special: bool = False,
-) -> Iterator[griffe.Object | griffelib.Alias]:
+) -> Iterator[griffelib.Object | griffelib.Alias]:
     for member in obj.all_members.values() if inherited else obj.members.values():
         try:
             if member.is_module:
@@ -78,17 +78,23 @@ def _yield_public_objects(
 
 
 @pytest.fixture(name="modulelevel_internal_objects", scope="module")
-def _fixture_modulelevel_internal_objects(internal_api: griffelib.Module) -> list[griffe.Object | griffelib.Alias]:
+def _fixture_modulelevel_internal_objects(
+    internal_api: griffelib.Module,
+) -> list[griffelib.Object | griffelib.Alias]:
     return list(_yield_public_objects(internal_api, modulelevel=True))
 
 
 @pytest.fixture(name="internal_objects", scope="module")
-def _fixture_internal_objects(internal_api: griffelib.Module) -> list[griffe.Object | griffelib.Alias]:
+def _fixture_internal_objects(
+    internal_api: griffelib.Module,
+) -> list[griffelib.Object | griffelib.Alias]:
     return list(_yield_public_objects(internal_api, modulelevel=False, special=True))
 
 
 @pytest.fixture(name="public_objects", scope="module")
-def _fixture_public_objects(public_api: griffelib.Module) -> list[griffe.Object | griffelib.Alias]:
+def _fixture_public_objects(
+    public_api: griffelib.Module,
+) -> list[griffelib.Object | griffelib.Alias]:
     return list(_yield_public_objects(public_api, modulelevel=False, inherited=True, special=True))
 
 
@@ -115,7 +121,9 @@ def test_alias_proxies(internal_api: griffelib.Module) -> None:
                 assert name in alias_members
 
 
-def test_exposed_objects(modulelevel_internal_objects: list[griffe.Object | griffelib.Alias]) -> None:
+def test_exposed_objects(
+    modulelevel_internal_objects: list[griffelib.Object | griffelib.Alias],
+) -> None:
     """All public objects in the internal API are exposed under `griffe`."""
     not_exposed = [
         obj.path
@@ -125,7 +133,9 @@ def test_exposed_objects(modulelevel_internal_objects: list[griffe.Object | grif
     assert not not_exposed, "Objects not exposed:\n" + "\n".join(sorted(not_exposed))
 
 
-def test_unique_names(modulelevel_internal_objects: list[griffe.Object | griffelib.Alias]) -> None:
+def test_unique_names(
+    modulelevel_internal_objects: list[griffelib.Object | griffelib.Alias],
+) -> None:
     """All internal objects have unique names."""
     names_to_paths = defaultdict(list)
     for obj in modulelevel_internal_objects:
@@ -152,7 +162,9 @@ def test_single_locations(public_api: griffelib.Module) -> None:
     )
 
 
-def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffelib.Alias]) -> None:
+def test_api_matches_inventory(
+    inventory: Inventory, public_objects: list[griffelib.Object | griffelib.Alias]
+) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
     ignore_paths = {"griffe.DataclassesExtension.*", "griffe.UnpackTypedDictExtension.*"}
@@ -171,7 +183,7 @@ def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe
 
 def test_inventory_matches_api(
     inventory: Inventory,
-    public_objects: list[griffe.Object | griffelib.Alias],
+    public_objects: list[griffelib.Object | griffelib.Alias],
     loader: griffelib.GriffeLoader,
 ) -> None:
     """The inventory doesn't contain any additional Python object."""
@@ -194,7 +206,7 @@ def test_no_module_docstrings_in_internal_api(internal_api: griffelib.Module) ->
     but internal modules are not exposed to users, so they should not have docstrings.
     """
 
-    def _modules(obj: griffelib.Module) -> Iterator[griffe.Module]:
+    def _modules(obj: griffelib.Module) -> Iterator[griffelib.Module]:
         for member in obj.modules.values():
             yield member
             yield from _modules(member)

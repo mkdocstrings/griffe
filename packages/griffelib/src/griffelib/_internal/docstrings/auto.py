@@ -208,7 +208,7 @@ def parse_auto(
 ) -> list[DocstringSection]:
     """Parse a docstring by automatically detecting the style it uses.
 
-    See [`infer_docstring_style`][griffe.infer_docstring_style] for more information
+    See [`infer_docstring_style`][griffelib.infer_docstring_style] for more information
     on the available parameters.
 
     Parameters:

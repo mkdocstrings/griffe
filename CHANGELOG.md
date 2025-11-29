@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Deprecations
 
 - The `on_alias` event's signature changed from `on_alias(self, *, node: AST | ObjectNode, alias: Alias, agent: Visitor | Inspector, **kwargs)` (an [analysis event][analysis-events]) to `on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs)` ([a load event][load-events]). Use the new signature, or rename your method to `on_alias_instance` to keep the old signature (`on_alias_instance` is a new analysis event that replaces the old `on_alias` one). Backward compatibility is maintained until next major version.
-- The `on_wildcard_expansion` event is deprecated. Instead, use the `on_alias` event, and check the [`wildcard_imported`][griffe.Alias.wildcard_imported] boolean attribute of aliases.
+- The `on_wildcard_expansion` event is deprecated. Instead, use the `on_alias` event, and check the [`wildcard_imported`][griffelib.Alias.wildcard_imported] boolean attribute of aliases.
 - The `on_package_loaded` event is renamed to `on_package`. Backward compatibility is maintained until next major version.
 - The use of previously exposed Git-related utilities (`assert_git_repo`, `get_repo_root`, `get_latest_tag` and `tmp_worktree`) is deprecated, as they are not a core part of the library's functionality. These utilities are now part of our internal API.
 
@@ -498,10 +498,10 @@ WARNING: **⚡ Imminent v1! ⚡🚀 See [v0.46](#0460-2024-06-16).**
 ### Deprecations
 
 - All submodules are deprecated. All objects are now exposed in the top-level `griffe` module.
-- All logger names are deprecated, and will be replaced with `"griffe"` in v1. In v1 our single `"griffe"` logger will provide a method to temporarily disable logging, [`logger.disable()`][griffe.Logger.disable], since that's the most common third-party use.
+- All logger names are deprecated, and will be replaced with `"griffe"` in v1. In v1 our single `"griffe"` logger will provide a method to temporarily disable logging, [`logger.disable()`][griffelib.Logger.disable], since that's the most common third-party use.
 - The `get_logger` function is deprecated. Instead, we'll use a global `logger` internally, and users are welcome to use it too.
 - The `patch_loggers` function is renamed `patch_logger`.
-- Following the logging changes, the [`docstring_warning`][griffe.docstring_warning] function can now directly log a warning message instead of returning a callable that does. Passing it a logger name (to get a callable) is deprecated in favor of passing it a docstring, message and offset directly.
+- Following the logging changes, the [`docstring_warning`][griffelib.docstring_warning] function can now directly log a warning message instead of returning a callable that does. Passing it a logger name (to get a callable) is deprecated in favor of passing it a docstring, message and offset directly.
 
 ### Features
 
@@ -571,16 +571,16 @@ We are working on v1, and it will come soon, so we recommend that you consider a
 
 We are still in v0, so no major bump yet.
 
-- Calling objects' [`has_labels()`][griffe.Object.has_labels] method with a `labels` keyword argument is not supported anymore. The parameter became a variadic positional parameter, so it cannot be used as a keyword argument anymore. Passing a sequence instead of multiple positional arguments still works but will emit a deprecation warning.
-- Calling the [`load_extensions()`][griffe.load_extensions] function with an `exts` keyword argument is not supported anymore. The parameter became a variadic positional parameter, so it cannot be used as a keyword argument anymore. Passing a sequence instead of multiple positional arguments still works but will emit a deprecation warning.
+- Calling objects' [`has_labels()`][griffelib.Object.has_labels] method with a `labels` keyword argument is not supported anymore. The parameter became a variadic positional parameter, so it cannot be used as a keyword argument anymore. Passing a sequence instead of multiple positional arguments still works but will emit a deprecation warning.
+- Calling the [`load_extensions()`][griffelib.load_extensions] function with an `exts` keyword argument is not supported anymore. The parameter became a variadic positional parameter, so it cannot be used as a keyword argument anymore. Passing a sequence instead of multiple positional arguments still works but will emit a deprecation warning.
 
 ### Deprecations
 
-- As seen above in the breaking changes section, the only parameters of [`Object.has_labels()`][griffe.Object.has_labels] and [`load_extensions()`][griffe.load_extensions] both became variadic positional parameters. Passing a sequence as single argument is deprecated in favor of passing multiple arguments. This is an ergonomic change: I myself often forgot to wrap extensions in a list. Passing sequences of labels (lists, sets, tuples) is also difficult from Jinja templates.
-- The following methods and properties on objects and aliases are deprecated: `member_is_exported()`, `is_explicitely_exported`, `is_implicitely_exported`. Use the [`is_exported`][griffe.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- The [`is_exported()`][griffe.ObjectAliasMixin.is_exported] and [`is_public()`][griffe.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- The `ignore_private` parameter of the [`find_breaking_changes()`][griffe.find_breaking_changes] function is now deprecated and unused. With the reworked "exported" and "public" API, this parameter became useless. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
-- Using `stats()` instead of [`Stats`][griffe.Stats] will now emit a deprecation warning.
+- As seen above in the breaking changes section, the only parameters of [`Object.has_labels()`][griffelib.Object.has_labels] and [`load_extensions()`][griffelib.load_extensions] both became variadic positional parameters. Passing a sequence as single argument is deprecated in favor of passing multiple arguments. This is an ergonomic change: I myself often forgot to wrap extensions in a list. Passing sequences of labels (lists, sets, tuples) is also difficult from Jinja templates.
+- The following methods and properties on objects and aliases are deprecated: `member_is_exported()`, `is_explicitely_exported`, `is_implicitely_exported`. Use the [`is_exported`][griffelib.ObjectAliasMixin.is_exported] property instead. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The [`is_exported()`][griffelib.ObjectAliasMixin.is_exported] and [`is_public()`][griffelib.ObjectAliasMixin.is_public] methods became properties. They can still be called like methods, but will emit deprecation warnings when doing so. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- The `ignore_private` parameter of the [`find_breaking_changes()`][griffelib.find_breaking_changes] function is now deprecated and unused. With the reworked "exported" and "public" API, this parameter became useless. See [issue 281](https://github.com/mkdocstrings/griffe/issues/281).
+- Using `stats()` instead of [`Stats`][griffelib.Stats] will now emit a deprecation warning.
 
 ### Features
 
@@ -1062,7 +1062,7 @@ We are still in v0, so no major bump yet.
 ### Deprecations
 
 - Classes `InspectorExtension` and `VisitorExtension`
-    are deprecated in favor of [`Extension`][griffe.Extension].
+    are deprecated in favor of [`Extension`][griffelib.Extension].
     As a side-effect, the `hybrid` extension is also deprecated.
     See [how to use and write extensions](guide/users/extending.md).
 
@@ -1077,7 +1077,7 @@ We are still in v0, so no major bump yet.
 - Function `load_extension` was removed (made private)
 - Function `patch_ast` was removed
 - Function `tmp_worktree` was removed (made private)
-- Type [`Extension`][griffe.Extension] is now a class
+- Type [`Extension`][griffelib.Extension] is now a class
 
 ### Features
 
@@ -1113,9 +1113,9 @@ We are still in v0, so no major bump yet.
 
 - Drop support for Python 3.7
 - API changes:
-    - [`GriffeLoader.resolve_aliases(only_exported)`][griffe.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
-    - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffe.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
-    - [`LinesCollection.tokens`][griffe.LinesCollection]: Public object was removed (Python 3.7)
+    - [`GriffeLoader.resolve_aliases(only_exported)`][griffelib.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `implicit` (inverse semantics)
+    - [`GriffeLoader.resolve_aliases(only_known_modules)`][griffelib.GriffeLoader.resolve_aliases]: Deprecated parameter was removed and replaced by `external` (inverse semantics)
+    - [`LinesCollection.tokens`][griffelib.LinesCollection]: Public object was removed (Python 3.7)
     - `ASTNode.end_lineno`: Public object was removed (Python 3.7)
     - `griffe.agents.extensions`: Deprecated module was removed and replaced by `griffe.extensions`
 
@@ -1387,7 +1387,7 @@ We are still in v0, so no major bump yet.
 <small>[Compare with 0.24.1](https://github.com/mkdocstrings/griffe/compare/0.24.1...0.25.0)</small>
 
 ### Breaking changes
-- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcards()`][griffe.GriffeLoader.expand_wildcards] method of the loader.
+- Parameter `only_known_modules` was renamed `external` in the [`expand_wildcards()`][griffelib.GriffeLoader.expand_wildcards] method of the loader.
 - Exception `UnhandledEditablesModuleError` was renamed `UnhandledEditableModuleError` since we now support editable installation from other packages than `editables`.
 
 ### Highlights
@@ -1443,18 +1443,18 @@ for the initial code allowing to compare two Griffe trees.
 
 ### Breaking Changes
 
-- All parameters of the [`load_git`][griffe.load_git] function, except `module`, are now keyword-only.
-- Parameter `try_relative_path` of the [`load_git`][griffe.load_git] function was removed.
-- Parameter `commit` was renamed `ref` in the [`load_git`][griffe.load_git] function.
+- All parameters of the [`load_git`][griffelib.load_git] function, except `module`, are now keyword-only.
+- Parameter `try_relative_path` of the [`load_git`][griffelib.load_git] function was removed.
+- Parameter `commit` was renamed `ref` in the [`load_git`][griffelib.load_git] function.
 - Parameter `commit` was renamed `ref` in the `tmp_worktree` helper, which will probably become private later.
 - Parameters `ref` and `repo` switched positions in the `tmp_worktree` helper.
-- All parameters of the [`resolve_aliases`][griffe.GriffeLoader.resolve_aliases] method are now keyword-only.
-- Parameters `only_exported` and `only_known_modules` of the [`resolve_module_aliases`][griffe.GriffeLoader.resolve_module_aliases]
+- All parameters of the [`resolve_aliases`][griffelib.GriffeLoader.resolve_aliases] method are now keyword-only.
+- Parameters `only_exported` and `only_known_modules` of the [`resolve_module_aliases`][griffelib.GriffeLoader.resolve_module_aliases]
     method were removed. This method is most probably not used by anyone, and will probably be made private in the future.
 
 ### Deprecations
 
-- Parameters `only_exported` and `only_known_modules` of the [`resolve_aliases`][griffe.GriffeLoader.resolve_aliases]
+- Parameters `only_exported` and `only_known_modules` of the [`resolve_aliases`][griffelib.GriffeLoader.resolve_aliases]
     method are deprecated in favor of their inverted counter-part `implicit` and `external` parameters.
 
     - Example before: `loader.resolve_aliases(only_exported=True, only_known_modules=True)`

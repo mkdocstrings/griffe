@@ -92,13 +92,13 @@ def visit(
     """Parse and visit a module file.
 
     We provide this function for static analysis. It uses a [`NodeVisitor`][ast.NodeVisitor]-like class,
-    the [`Visitor`][griffe.Visitor], to compile and parse code (using [`compile`][])
+    the [`Visitor`][griffelib.Visitor], to compile and parse code (using [`compile`][])
     then visit the resulting AST (Abstract Syntax Tree).
 
     Important:
         This function is generally not used directly.
-        In most cases, users can rely on the [`GriffeLoader`][griffe.GriffeLoader]
-        and its accompanying [`load`][griffe.load] shortcut and their respective options
+        In most cases, users can rely on the [`GriffeLoader`][griffelib.GriffeLoader]
+        and its accompanying [`load`][griffelib.load] shortcut and their respective options
         to load modules using static analysis.
 
     Parameters:

@@ -60,7 +60,7 @@ logger: Logger = Logger._get()
 
 Griffe's output and error messages are logging messages.
 
-Griffe provides the [`patch_loggers`][griffe.patch_loggers]
+Griffe provides the [`patch_loggers`][griffelib.patch_loggers]
 function so dependent libraries can patch Griffe loggers as they see fit.
 
 For example, to fit in the MkDocs logging configuration

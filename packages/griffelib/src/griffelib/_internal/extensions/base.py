@@ -587,7 +587,7 @@ def _load_extension(
 
     # If the import path corresponds to a built-in extension, expand it.
     if import_path in builtin_extensions:
-        import_path = f"griffe._internal.extensions.{import_path}"
+        import_path = f"griffelib._internal.extensions.{import_path}"
     # If the import path is a path to an existing file, load it.
     elif os.path.exists(import_path):  # noqa: PTH110
         try:

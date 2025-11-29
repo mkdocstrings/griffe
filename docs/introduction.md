@@ -34,7 +34,7 @@ griffe.visit(...)
 griffe.inspect(...)
 ```
 
-To start exploring your API within Griffe data models, use the [`load`][griffe.load] function to load your package and access its various objects:
+To start exploring your API within Griffe data models, use the [`load`][griffelib.load] function to load your package and access its various objects:
 
 ```python
 import griffe
@@ -46,7 +46,7 @@ print(some_method.docstring.value)
 print(f"Is `some_method` public? {'yes' if some_method.is_public else 'no'}")
 ```
 
-Use the [`load_git`][griffe.load_git] function to load your API at a particular moment in time, specified with a Git reference (commit hash, branch name, tag name):
+Use the [`load_git`][griffelib.load_git] function to load your API at a particular moment in time, specified with a Git reference (commit hash, branch name, tag name):
 
 ```python
 import griffe
