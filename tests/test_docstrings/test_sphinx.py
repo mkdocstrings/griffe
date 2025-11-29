@@ -6,7 +6,6 @@ import inspect
 from typing import TYPE_CHECKING, Any
 
 import pytest
-
 from griffelib import (
     Attribute,
     Class,

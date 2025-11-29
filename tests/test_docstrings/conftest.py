@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
-
 from griffelib._internal.docstrings import google, numpy, sphinx
+
 from tests.test_docstrings.helpers import ParserType, parser
 
 if TYPE_CHECKING:

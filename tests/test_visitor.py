@@ -6,7 +6,6 @@ import sys
 from textwrap import dedent
 
 import pytest
-
 from griffelib import (
     Expr,
     GriffeLoader,

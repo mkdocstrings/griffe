@@ -7,7 +7,6 @@ from pathlib import Path
 from textwrap import dedent
 
 import pytest
-
 from griffelib import Module, ModuleFinder, NamespacePackage, Package, temporary_pypackage
 from griffelib._internal.finder import _handle_editable_module, _handle_pth_file
 

@@ -6,7 +6,6 @@ import logging
 from ast import PyCF_ONLY_AST
 
 import pytest
-
 from griffelib import Expr, ExprName, module_vtree, relative_to_absolute, temporary_visited_module
 
 syntax_examples = [

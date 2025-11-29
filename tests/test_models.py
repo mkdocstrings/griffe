@@ -7,7 +7,6 @@ from copy import deepcopy
 from textwrap import dedent
 
 import pytest
-
 from griffelib import (
     Attribute,
     Class,

@@ -6,8 +6,6 @@ import json
 import sys
 
 import pytest
-from jsonschema import ValidationError, validate
-
 from griffelib import (
     Attribute,
     Class,
@@ -19,6 +17,7 @@ from griffelib import (
     temporary_inspected_package,
     temporary_visited_module,
 )
+from jsonschema import ValidationError, validate
 
 
 def test_minimal_data_is_enough() -> None:

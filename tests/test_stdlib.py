@@ -7,7 +7,6 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 
 import pytest
-
 from griffelib import GriffeLoader, LoadingError
 
 if TYPE_CHECKING:

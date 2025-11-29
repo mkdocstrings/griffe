@@ -7,7 +7,6 @@ from textwrap import dedent
 from typing import TYPE_CHECKING
 
 import pytest
-
 from griffelib import (
     ExprName,
     GriffeLoader,

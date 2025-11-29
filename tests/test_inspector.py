@@ -5,7 +5,6 @@ from __future__ import annotations
 import sys
 
 import pytest
-
 from griffelib import (
     Expr,
     TypeParameterKind,
@@ -14,6 +13,7 @@ from griffelib import (
     temporary_inspected_package,
     temporary_pypackage,
 )
+
 from tests.helpers import clear_sys_modules
 
 
@@ -28,7 +28,9 @@ def test_annotations_from_builtin_types() -> None:
 
 def test_annotations_from_classes() -> None:
     """Assert custom classes are correctly transformed to annotations."""
-    with temporary_inspected_module("class A: pass\ndef func(a: A) -> A: pass") as module:
+    with temporary_inspected_module(
+        "class A: pass\ndef func(a: A) -> A: pass",
+    ) as module:
         func = module["func"]
         assert func.parameters[0].name == "a"
         param = func.parameters[0].annotation
@@ -40,7 +42,10 @@ def test_annotations_from_classes() -> None:
 
 
 # YORE: EOL 3.13: Remove block.
-@pytest.mark.skipif(sys.version_info >= (3, 14), reason="3.14 changes type annotations, see test below")
+@pytest.mark.skipif(
+    sys.version_info >= (3, 14),
+    reason="3.14 changes type annotations, see test below",
+)
 @pytest.mark.parametrize(
     ("annotation", "expected"),
     [
@@ -104,7 +109,10 @@ def test_class_level_imports() -> None:
 def test_missing_dependency() -> None:
     """Assert missing dependencies are handled during dynamic imports."""
     with (
-        pytest.raises(ImportError, match="ModuleNotFoundError: No module named 'missing'"),
+        pytest.raises(
+            ImportError,
+            match="ModuleNotFoundError: No module named 'missing'",
+        ),
         temporary_inspected_module("import missing"),
     ):
         pass
@@ -143,7 +151,9 @@ def test_inspecting_module_importing_other_module() -> None:
 
 def test_inspecting_parameters_with_functions_as_default_values() -> None:
     """Assert functions as default parameter values are serialized with their name."""
-    with temporary_inspected_module("def func(): ...\ndef other_func(f=func): ...") as module:
+    with temporary_inspected_module(
+        "def func(): ...\ndef other_func(f=func): ...",
+    ) as module:
         default = module["other_func"].parameters["f"].default
     assert default == "func"
 

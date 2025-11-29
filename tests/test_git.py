@@ -7,8 +7,8 @@ from subprocess import run
 from typing import TYPE_CHECKING
 
 import pytest
-
 from griffelib import Module, check, load_git
+
 from tests import FIXTURES_DIR
 
 if TYPE_CHECKING:

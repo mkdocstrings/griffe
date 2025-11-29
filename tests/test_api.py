@@ -7,10 +7,9 @@ from fnmatch import fnmatch
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import griffelib
 import pytest
 from mkdocstrings import Inventory
-
-import griffelib
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
