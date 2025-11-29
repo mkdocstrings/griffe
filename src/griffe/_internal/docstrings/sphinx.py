@@ -9,7 +9,6 @@ from __future__ import annotations
 from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable, TypedDict
-from warnings import warn
 
 from griffe._internal.docstrings.models import (
     DocstringAttribute,
@@ -111,7 +110,6 @@ def parse_sphinx(
         A list of docstring sections.
     """
     parsed_values = _ParsedValues()
-
 
     options = {
         "warn_unknown_params": warn_unknown_params,

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import ast
 from contextlib import suppress
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable
 
 from griffe._internal.agents.nodes.values import get_value
@@ -14,8 +13,6 @@ from griffe._internal.logger import logger
 
 if TYPE_CHECKING:
     from griffe._internal.models import Module
-
-
 
 
 def _extract_attribute(node: ast.Attribute, parent: Module) -> list[str | ExprName]:

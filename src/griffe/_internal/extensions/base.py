@@ -3,11 +3,8 @@
 
 from __future__ import annotations
 
-import inspect
 import os
 import sys
-import warnings
-from contextlib import suppress
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from pathlib import Path
@@ -25,12 +22,18 @@ if TYPE_CHECKING:
     from griffe._internal.agents.nodes.runtime import ObjectNode
     from griffe._internal.agents.visitor import Visitor
     from griffe._internal.loader import GriffeLoader
-    from griffe._internal.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
+    from griffe._internal.models import (
+        Alias,
+        Attribute,
+        Class,
+        Function,
+        Module,
+        Object,
+        TypeAlias,
+    )
 
 
-
-
-class Extension(metaclass=_ExtensionMetaclass):
+class Extension:
     """Base class for Griffe extensions."""
 
     def visit(self, node: ast.AST) -> None:
@@ -608,7 +611,9 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
 
     # TODO: Deprecate and remove at some point?
     # Always add our built-in dataclasses extension.
-    from griffe._internal.extensions.dataclasses import DataclassesExtension  # noqa: PLC0415
+    from griffe._internal.extensions.dataclasses import (
+        DataclassesExtension,
+    )
 
     for ext in extensions._extensions:
         if type(ext) is DataclassesExtension:

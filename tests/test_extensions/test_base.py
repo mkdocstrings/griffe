@@ -12,9 +12,7 @@ from griffe import (
     Alias,
     Extension,
     GriffeLoader,
-    Inspector,
     ObjectNode,
-    Visitor,
     load_extensions,
     temporary_visited_module,
     temporary_visited_package,
@@ -195,14 +193,6 @@ def test_analysis_events() -> None:
         "on_type_alias_node",
     ]
     assert set(events) == set(extension.records)
-
-
-
-
-
-
-
-
 
 
 class LoadEventsTest(Extension):  # noqa: D101

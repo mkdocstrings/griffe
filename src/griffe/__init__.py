@@ -181,7 +181,6 @@ from griffe._internal.agents.nodes.ast import (
     ast_siblings,
 )
 from griffe._internal.agents.nodes.docstrings import get_docstring
-
 from griffe._internal.agents.nodes.exports import get__all__, safe_get__all__
 from griffe._internal.agents.nodes.imports import relative_to_absolute
 from griffe._internal.agents.nodes.parameters import ParametersType, get_parameters
@@ -381,10 +380,6 @@ from griffe._internal.tests import (
     temporary_visited_package,
     vtree,
 )
-
-
-
-
 
 # Regenerate this list with the following Python snippet:
 # import griffe

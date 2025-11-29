@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 from contextlib import suppress
 from typing import TYPE_CHECKING, TypedDict
-from warnings import warn
 
 from griffe._internal.docstrings.models import (
     DocstringAttribute,
@@ -929,7 +928,6 @@ def parse_google(
 
     in_code_block = False
     lines = docstring.lines
-
 
     options = {
         "ignore_init_summary": ignore_init_summary,
