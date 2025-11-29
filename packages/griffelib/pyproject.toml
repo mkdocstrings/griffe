@@ -44,5 +44,6 @@ classifiers = [
 [tool.hatch.metadata.hooks.uv-dynamic-versioning]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
 
 [tool.hatch.build.targets.sdist]

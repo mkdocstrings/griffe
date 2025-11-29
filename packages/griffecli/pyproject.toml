@@ -41,8 +41,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-[tool.hatch.metadata.hooks.uv-dynamic-versioning]
+[project.scripts]
+griffe = "griffecli:main"
 
-[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
-
-[tool.hatch.build.targets.sdist]
+[tool.hatch.build.targets.wheel]
+# Manual pages can be included in the wheel.
+# Depending on the installation tool, they will be accessible to users.
+# pipx supports it, uv does not yet, see https://github.com/astral-sh/uv/issues/4731.
+sources = ["src/"]
+artifacts = ["share/**/*"]

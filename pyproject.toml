@@ -1,19 +1,30 @@
 [build-system]
 # pdm-backend is left here as a dependency of the version discovery script currently in use.
 # It may be removed in the future. See mkdocstrings/griffe#430
-requires = ["hatchling", "pdm-backend"]
+requires = ["hatchling", "pdm-backend", "uv-dynamic-versioning>=0.7.0"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "code"
+path = "scripts/get_version.py"
+expression = "get_version()"
 
 [project]
 name = "griffe"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
-authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
+authors = [{ name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr" }]
 license = "ISC"
 license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.10"
-keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
-dynamic = ["version"]
+keywords = [
+    "api",
+    "signature",
+    "breaking-changes",
+    "static-analysis",
+    "dynamic-analysis",
+]
+dynamic = ["version", "dependencies", "optional-dependencies"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -36,16 +47,12 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-dependencies = [
-    "colorama>=0.4",
-]
 
-[project.optional-dependencies]
-pypi = [
-    "pip>=24.0",
-    "platformdirs>=4.2",
-    "wheel>=0.42",
-]
+[tool.hatch.metadata.hooks.uv-dynamic-versioning]
+dependencies = ["griffecli=={{version}}", "griffelib=={{version}}"]
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+pypi = ["griffelib[pypi]=={{version}}"]
 
 [project.urls]
 Homepage = "https://mkdocstrings.github.io/griffe"
@@ -58,23 +65,19 @@ Gitter = "https://gitter.im/mkdocstrings/griffe"
 Funding = "https://github.com/sponsors/pawamoy"
 
 [project.scripts]
-griffelib = "griffe:main"
-
-[tool.hatch.version]
-source = "code"
-path = "scripts/get_version.py"
-expression = "get_version()"
+griffe = "griffecli:main"
 
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
 ignore-vcs = true
-exclude = [".github", ".pdm-build"]
+exclude = [".github"]
 
 [tool.hatch.build.targets.sdist]
 include = [
     "config",
     "docs",
     "scripts",
+    "packages",
     "src",
     "share",
     "tests",
@@ -92,12 +95,7 @@ sources = ["src/"]
 artifacts = ["share/**/*"]
 
 [dependency-groups]
-maintain = [
-    "build>=1.2",
-    "git-changelog>=2.5",
-    "twine>=5.1",
-    "yore>=0.3.3",
-]
+maintain = ["build>=1.2", "git-changelog>=2.5", "twine>=5.1", "yore>=0.3.3"]
 ci = [
     "duty>=1.6",
     "griffe-inherited-docstrings>=1.1.2",
@@ -114,7 +112,7 @@ ci = [
     "types-markdown>=3.6",
     "types-pyyaml>=6.0",
 ]
- docs = [
+docs = [
     "code2flow>=2.5",
     "griffe-inherited-docstrings>=1.1.2",
     "markdown-callouts>=0.4",
@@ -136,3 +134,10 @@ ci = [
 
 [tool.uv]
 default-groups = ["maintain", "ci", "docs"]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+griffelib = { workspace = true }
+griffecli = { workspace = true }
