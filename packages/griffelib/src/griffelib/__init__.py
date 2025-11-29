@@ -168,7 +168,11 @@ import warnings
 from typing import Any
 
 from griffelib._internal.agents.inspector import Inspector, inspect
-from griffelib._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
+from griffelib._internal.agents.nodes.assignments import (
+    get_instance_names,
+    get_name,
+    get_names,
+)
 from griffelib._internal.agents.nodes.ast import (
     ast_children,
     ast_first_child,
@@ -183,14 +187,23 @@ from griffelib._internal.agents.nodes.ast import (
 from griffelib._internal.agents.nodes.docstrings import get_docstring
 
 # YORE: Bump 2: Replace `ExportedName, ` with `` within line.
-from griffelib._internal.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
+from griffelib._internal.agents.nodes.exports import (
+    ExportedName,
+    get__all__,
+    safe_get__all__,
+)
 from griffelib._internal.agents.nodes.imports import relative_to_absolute
 from griffelib._internal.agents.nodes.parameters import ParametersType, get_parameters
 from griffelib._internal.agents.nodes.runtime import ObjectNode
 from griffelib._internal.agents.nodes.values import get_value, safe_get_value
-from griffelib._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
+from griffelib._internal.agents.visitor import (
+    Visitor,
+    builtin_decorators,
+    stdlib_decorators,
+    typing_overload,
+    visit,
+)
 from griffelib._internal.c3linear import c3linear_merge
-from griffecli._internal.cli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
 from griffelib._internal.collections import LinesCollection, ModulesCollection
 from griffelib._internal.diff import (
     AttributeChangedTypeBreakage,
@@ -260,7 +273,10 @@ from griffelib._internal.docstrings.parsers import (
     parsers,
 )
 from griffelib._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
-from griffelib._internal.docstrings.utils import docstring_warning, parse_docstring_annotation
+from griffelib._internal.docstrings.utils import (
+    docstring_warning,
+    parse_docstring_annotation,
+)
 from griffelib._internal.encoders import JSONEncoder, json_decoder
 from griffelib._internal.enumerations import (
     BreakageKind,
@@ -341,7 +357,13 @@ from griffelib._internal.extensions.base import (
 )
 from griffelib._internal.extensions.dataclasses import DataclassesExtension
 from griffelib._internal.extensions.unpack_typeddict import UnpackTypedDictExtension
-from griffelib._internal.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
+from griffelib._internal.finder import (
+    ModuleFinder,
+    NamePartsAndPathType,
+    NamePartsType,
+    NamespacePackage,
+    Package,
+)
 from griffelib._internal.git import GitInfo, KnownGitService
 from griffelib._internal.importer import dynamic_import, sys_path
 from griffelib._internal.loader import GriffeLoader, load, load_git, load_pypi
@@ -412,7 +434,6 @@ def __getattr__(name: str) -> Any:
 # names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("Any", "annotations", "lazy_importing", "warnings"))
 # print('__all__ = [\n    "' + '",\n    "'.join(names) + '",\n]')
 __all__ = [
-    "DEFAULT_LOG_LEVEL",
     "Alias",
     "AliasResolutionError",
     "Attribute",
@@ -578,9 +599,7 @@ __all__ = [
     "builtin_decorators",
     "builtin_extensions",
     "c3linear_merge",
-    "check",
     "docstring_warning",
-    "dump",
     "dynamic_import",
     "find_breaking_changes",
     "get__all__",
@@ -596,7 +615,6 @@ __all__ = [
     "get_name",
     "get_names",
     "get_parameters",
-    "get_parser",
     "get_repo_root",
     "get_value",
     "htree",
@@ -608,7 +626,6 @@ __all__ = [
     "load_git",
     "load_pypi",
     "logger",
-    "main",
     "merge_stubs",
     "module_vtree",
     "parse",
