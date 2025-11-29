@@ -1,4 +1,4 @@
-# This module contains Git utilities, used by our [`load_git`][griffelib.load_git] function,
+# This module contains Git utilities, used by our [`load_git`][griffe.load_git] function,
 # which in turn is used to load the API for different snapshots of a Git repository
 # and find breaking changes between them.
 

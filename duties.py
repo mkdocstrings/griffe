@@ -291,8 +291,6 @@ def check_api(ctx: Context, *cli_args: str) -> None:
             color=True,
             extensions=[
                 "griffe_inherited_docstrings",
-                # YORE: Bump 2: Remove line.
-                "scripts/griffe_exts.py",
                 "unpack_typeddict",
             ],
         ).add_args(*cli_args),

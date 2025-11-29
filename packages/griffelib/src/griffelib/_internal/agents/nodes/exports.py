@@ -16,18 +16,6 @@ if TYPE_CHECKING:
     from griffelib._internal.models import Module
 
 
-# YORE: Bump 2: Remove block.
-@dataclass
-class ExportedName:
-    """Deprecated. An intermediate class to store names.
-
-    The [`get__all__`][griffelib.get__all__] function now returns instances of [`ExprName`][griffelib.ExprName] instead.
-    """
-
-    name: str
-    """The exported name."""
-    parent: Module
-    """The parent module."""
 
 
 def _extract_attribute(node: ast.Attribute, parent: Module) -> list[str | ExprName]:

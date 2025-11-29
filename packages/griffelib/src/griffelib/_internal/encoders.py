@@ -202,11 +202,7 @@ def _load_module(obj_dict: dict[str, Any]) -> Module:
         runtime=obj_dict.get("runtime", True),
         analysis=obj_dict.get("analysis"),
     )
-    # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
-    members = obj_dict.get("members", [])
-    # YORE: Bump 2: Remove block.
-    if isinstance(members, dict):
-        members = members.values()
+    members = obj_dict.get("members", {}).values()
 
     for module_member in members:
         module.set_member(module_member.name, module_member)
@@ -234,11 +230,7 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
         runtime=obj_dict.get("runtime", True),
         analysis=obj_dict.get("analysis"),
     )
-    # YORE: Bump 2: Replace line with `members = obj_dict.get("members", {}).values()`.
-    members = obj_dict.get("members", [])
-    # YORE: Bump 2: Remove block.
-    if isinstance(members, dict):
-        members = members.values()
+    members = obj_dict.get("members", {}).values()
 
     for class_member in members:
         class_.set_member(class_member.name, class_member)

@@ -916,8 +916,6 @@ def parse_numpy(
     warn_unknown_params: bool = True,
     warn_missing_types: bool = True,
     warnings: bool = True,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Numpydoc-style docstring.
 
@@ -943,9 +941,6 @@ def parse_numpy(
     in_code_block = False
     lines = docstring.lines
 
-    # YORE: Bump 2: Remove block.
-    if options:
-        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
 
     options = {
         "trim_doctest_flags": trim_doctest_flags,

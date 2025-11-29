@@ -28,37 +28,6 @@ if TYPE_CHECKING:
     from griffelib._internal.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
 
 
-# YORE: Bump 2: Remove block.
-class _ExtensionMetaclass(type):
-    """Metaclass for Griffe extensions."""
-
-    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any]) -> _ExtensionMetaclass:
-        if "on_package_loaded" in attrs:
-            warnings.warn(
-                "The `on_package_loaded` event is deprecated and renamed to `on_package`.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-        if "on_alias" in attrs:
-            parameters = inspect.signature(attrs["on_alias"]).parameters
-            if "node" in parameters or "agent" in parameters:
-                attrs["__old_on_alias"] = True
-                warnings.warn(
-                    "The `on_alias` event is now a load event and receives the `alias` and `loader` parameters. "
-                    "It doesn't receive the `node` or `agent` parameters anymore. "
-                    "Please use the new `on_alias` signature, or rename your hook to `on_alias_instance`.",
-                    DeprecationWarning,
-                    stacklevel=1,
-                )
-        if "on_wildcard_expansion" in attrs:
-            warnings.warn(
-                "The `on_wildcard_expansion` event is deprecated. "
-                "Instead, hook onto the `on_alias` event "
-                "and check for aliases' `wildcard_imported` boolean attribute.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-        return super().__new__(cls, name, bases, attrs)
 
 
 class Extension(metaclass=_ExtensionMetaclass):
@@ -469,9 +438,6 @@ class Extension(metaclass=_ExtensionMetaclass):
             loader: The loader currently in use.
             **kwargs: For forward-compatibility.
         """
-        # YORE: Bump 2: Remove block.
-        if hasattr(self, "on_package_loaded"):
-            self.on_package_loaded(pkg=pkg, loader=loader, **kwargs)
 
 
 LoadableExtensionType = Union[str, dict[str, Any], Extension, type[Extension]]
@@ -510,12 +476,7 @@ class Extensions:
             **kwargs: Arguments passed to the hook.
         """
         for extension in self._extensions:
-            # YORE: Bump 2: Replace block with line 5.
-            if event == "on_alias" and getattr(extension, "__old_on_alias", False):
-                with suppress(TypeError):
-                    getattr(extension, event)(**kwargs)
-            else:
-                getattr(extension, event, self._noop)(**kwargs)
+            getattr(extension, event, self._noop)(**kwargs)
 
 
 builtin_extensions: set[str] = {

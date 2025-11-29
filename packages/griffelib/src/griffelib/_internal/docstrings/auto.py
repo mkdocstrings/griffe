@@ -121,8 +121,6 @@ def infer_docstring_style(
     style_order: list[Parser] | list[DocstringStyle] | None = None,
     default: Parser | DocstringStyle | None = None,
     per_style_options: PerStyleOptions | None = None,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> tuple[Parser | None, list[DocstringSection] | None]:
     """Infer the parser to use for the docstring.
 
@@ -149,14 +147,7 @@ def infer_docstring_style(
     """
     from griffelib._internal.docstrings.parsers import parsers  # noqa: PLC0415
 
-    # YORE: Bump 2: Replace block with `per_style_options = per_style_options or {}`.
-    if options:
-        if per_style_options:
-            raise ValueError("Cannot use both `options` and `per_style_options`.")
-        warn("`**options` is deprecated. Use `per_style_options` instead.", DeprecationWarning, stacklevel=2)
-        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[assignment]
-    elif not per_style_options:
-        per_style_options = {}
+    per_style_options = per_style_options or {}
 
     style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
 
@@ -203,8 +194,6 @@ def parse_auto(
     style_order: list[Parser] | list[DocstringStyle] | None = None,
     default: Parser | DocstringStyle | None = None,
     per_style_options: PerStyleOptions | None = None,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring by automatically detecting the style it uses.
 
@@ -224,14 +213,7 @@ def parse_auto(
     """
     from griffelib._internal.docstrings.parsers import parse  # noqa: PLC0415
 
-    # YORE: Bump 2: Replace block with `per_style_options = per_style_options or {}`.
-    if options:
-        if per_style_options:
-            raise ValueError("Cannot use both `options` and `per_style_options`.")
-        warn("`**options` are deprecated. Use `per_style_options` instead.", DeprecationWarning, stacklevel=2)
-        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[assignment]
-    elif not per_style_options:
-        per_style_options = {}
+    per_style_options = per_style_options or {}
 
     style, sections = infer_docstring_style(
         docstring,

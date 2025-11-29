@@ -70,8 +70,4 @@ Griffe is able to analyze code both statically and dynamically.
 
 ::: griffelib.safe_get_value
 
-<!-- YORE: Bump 2: Remove line. -->
-## **Deprecated API**
 
-<!-- YORE: Bump 2: Remove line. -->
-::: griffelib.ExportedName
