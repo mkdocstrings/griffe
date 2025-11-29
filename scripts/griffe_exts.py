@@ -5,7 +5,7 @@ from typing import Any
 import griffelib
 
 
-class ModuleGetAttrExtension(griffe.Extension):
+class ModuleGetAttrExtension(griffelib.Extension):
     def on_package(self, *, pkg: griffelib.Module, **kwargs: Any) -> None:  # noqa: ARG002,D102
         if pkg.name == "griffe":
             for name in griffelib._deprecated_names:
