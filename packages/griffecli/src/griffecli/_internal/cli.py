@@ -4,11 +4,11 @@
 # We might be tempted to import things from `__main__` later,
 # but that will cause problems; the code will get executed twice:
 #
-# - When we run `python -m griffelib`, Python will execute
+# - When we run `python -m griffecli`, Python will execute
 #   `__main__.py` as a script. That means there won't be any
-#   `griffelib.__main__` in `sys.modules`.
+#   `griffecli.__main__` in `sys.modules`.
 # - When you import `__main__` it will get executed again (as a module) because
-#   there's no `griffelib.__main__` in `sys.modules`.
+#   there's no `griffecli.__main__` in `sys.modules`.
 
 from __future__ import annotations
 

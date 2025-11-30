@@ -37,7 +37,8 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "colorama>=0.4",
+    "griffelib",
+    "griffecli",
 ]
 
 [project.optional-dependencies]
@@ -136,3 +137,4 @@ ci = [
 
 [tool.uv]
 default-groups = ["maintain", "ci", "docs"]
+workspace = { members = ["packages/*"] }
