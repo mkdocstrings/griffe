@@ -29,14 +29,14 @@ Additional metadata like `ClassVar`, the `init` and `kw_only` parameters, or the
 
 === "CLI"
     ```console
-    $ griffecli dump -e dataclasses,other my_package
+    $ griffe dump -e dataclasses,other my_package
     ```
 
 === "Python"
     ```python
     import griffe
 
-    my_package = griffelib.load("my_package", extensions=griffelib.load_extensions("dataclasses", "other"))
+    my_package = griffe.load("my_package", extensions=griffe.load_extensions("dataclasses", "other"))
     ```
 
 === "mkdocstrings"

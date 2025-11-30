@@ -138,7 +138,7 @@ def get_parser() -> argparse.ArgumentParser:
     description = "Signatures for entire Python programs. "
     "Extract the structure, the frame, the skeleton of your project, "
     "to generate API documentation or find breaking changes in your API."
-    parser = argparse.ArgumentParser(add_help=False, usage=usage, description=description, prog="griffelib")
+    parser = argparse.ArgumentParser(add_help=False, usage=usage, description=description, prog="griffe")
 
     main_help = "Show this help message and exit. Commands also accept the -h/--help option."
     subcommand_help = "Show this help message and exit."
@@ -215,7 +215,7 @@ def get_parser() -> argparse.ArgumentParser:
         dest="subcommand",
         title="Commands",
         metavar="COMMAND",
-        prog="griffelib",
+        prog="griffe",
         required=True,
     )
 
@@ -511,7 +511,7 @@ def check(
             against = against or _get_latest_tag(package)
             repository = _get_repo_root(against_path)
         except GitError as error:
-            print(f"griffelib: error: {error}", file=sys.stderr)
+            print(f"griffe: error: {error}", file=sys.stderr)
             return 2
 
         # Load old and new version of the package.
@@ -577,7 +577,7 @@ def check(
 def main(args: list[str] | None = None) -> int:
     """Run the main program.
 
-    This function is executed when you type `griffelib` or `python -m griffelib`.
+    This function is executed when you type `griffe` or `python -m griffe`.
 
     Parameters:
         args: Arguments passed from the command line.
@@ -599,7 +599,7 @@ def main(args: list[str] | None = None) -> int:
     except AttributeError:
         choices = "', '".join(_level_choices)
         print(
-            f"griffelib: error: invalid log level '{log_level}' (choose from '{choices}')",
+            f"griffe: error: invalid log level '{log_level}' (choose from '{choices}')",
             file=sys.stderr,
         )
         return 1
