@@ -2,14 +2,14 @@
 
 ## **Advanced API**
 
-::: griffe.ModuleFinder
+::: griffelib.ModuleFinder
 
-::: griffe.Package
+::: griffelib.Package
 
-::: griffe.NamespacePackage
+::: griffelib.NamespacePackage
 
 ## **Types**
 
-::: griffe.NamePartsType
+::: griffelib.NamePartsType
 
-::: griffe.NamePartsAndPathType
+::: griffelib.NamePartsAndPathType

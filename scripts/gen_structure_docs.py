@@ -96,5 +96,5 @@ def render_entrypoint(heading_level: int = 4) -> None:
     root = Path(os.environ["MKDOCS_CONFIG_DIR"])
     src = root / "src"
     public_api = src / "griffe"
-    print(f"{'#' * heading_level} `griffe.__main__`\n")
+    print(f"{'#' * heading_level} `griffelib.__main__`\n")
     print(_comment_block(public_api / "__main__.py"))

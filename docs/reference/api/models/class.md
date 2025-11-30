@@ -1,5 +1,5 @@
-# ::: griffe.Class
+# ::: griffelib.Class
 
 ## **Utilities**
 
-::: griffe.c3linear_merge
+::: griffelib.c3linear_merge

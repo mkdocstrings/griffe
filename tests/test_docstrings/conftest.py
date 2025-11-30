@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe._internal.docstrings import google, numpy, sphinx
+from griffelib._internal.docstrings import google, numpy, sphinx
 from tests.test_docstrings.helpers import ParserType, parser
 
 if TYPE_CHECKING:
