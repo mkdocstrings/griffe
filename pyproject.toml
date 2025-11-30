@@ -1,7 +1,7 @@
 [build-system]
 # pdm-backend is left here as a dependency of the version discovery script currently in use.
 # It may be removed in the future. See mkdocstrings/griffe#430
-requires = ["hatchling", "pdm-backend"]
+requires = ["hatchling", "pdm-backend", "uv-dynamic-versioning>=0.7.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -13,7 +13,7 @@ license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
-dynamic = ["version"]
+dynamic = ["version", "dependencies", "optional-dependencies"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -36,16 +36,6 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-dependencies = [
-    "colorama>=0.4",
-]
-
-[project.optional-dependencies]
-pypi = [
-    "pip>=24.0",
-    "platformdirs>=4.2",
-    "wheel>=0.42",
-]
 
 [project.urls]
 Homepage = "https://mkdocstrings.github.io/griffe"
@@ -64,6 +54,15 @@ griffe = "griffecli:main"
 source = "code"
 path = "scripts/get_version.py"
 expression = "get_version()"
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning]
+# Dependencies are dynamically versioned; {{version}} is substituted at build time.
+# This ensures griffe, griffelib, and griffecli versions are always 1:1.
+dependencies = ["griffelib=={{version}}", "griffecli=={{version}}"]
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+# The 'pypi' extra re-exports griffelib[pypi] for backward compatibility.
+pypi = ["griffelib[pypi]=={{version}}"]
 
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
@@ -136,3 +135,4 @@ ci = [
 
 [tool.uv]
 default-groups = ["maintain", "ci", "docs"]
+workspace = { members = ["packages/*"] }

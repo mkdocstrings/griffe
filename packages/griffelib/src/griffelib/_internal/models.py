@@ -14,7 +14,12 @@ from typing import TYPE_CHECKING, Any, Callable, Literal, Union, cast
 from griffelib._internal.c3linear import c3linear_merge
 from griffelib._internal.docstrings.parsers import DocstringOptions, DocstringStyle, parse
 from griffelib._internal.enumerations import Kind, ParameterKind, Parser, TypeParameterKind
-from griffelib._internal.exceptions import AliasResolutionError, BuiltinModuleError, CyclicAliasError, NameResolutionError
+from griffelib._internal.exceptions import (
+    AliasResolutionError,
+    BuiltinModuleError,
+    CyclicAliasError,
+    NameResolutionError,
+)
 from griffelib._internal.expressions import ExprCall, ExprName, ExprTuple
 from griffelib._internal.logger import logger
 from griffelib._internal.mixins import ObjectAliasMixin
