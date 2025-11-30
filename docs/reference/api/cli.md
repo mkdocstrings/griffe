@@ -2,12 +2,12 @@
 
 ## **Main API**
 
-::: griffecli.main
+::: griffe.main
 
-::: griffecli.check
+::: griffe.check
 
-::: griffecli.dump
+::: griffe.dump
 
 ## **Advanced API**
 
-::: griffecli.get_parser
+::: griffe.get_parser

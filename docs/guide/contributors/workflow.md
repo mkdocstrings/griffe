@@ -57,6 +57,10 @@ Deprecated code should also be marked as legacy code. We use [Yore](https://pawa
 Examples:
 
 ```python title="Remove function when we bump to 2.0"
+# YORE: Bump 2: Remove block.
+def deprecated_function():
+    ...
+```
 
 ```python title="Simplify imports when Python 3.15 is EOL"
 # YORE: EOL 3.15: Replace block with line 4.

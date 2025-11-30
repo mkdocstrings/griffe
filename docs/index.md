@@ -10,7 +10,7 @@ hide:
 
 <img src="logo.svg" alt="Griffe logo, created by François Rozet &lt;francois.rozet@outlook.com&gt;" title="Griffe logo, created by François Rozet &lt;francois.rozet@outlook.com&gt;" style="float: right; max-width: 200px; margin: 0 15px;">
 
-> Griffe, pronounced "grif" (`/ɡʁif/`), is a french word that means "claw", but also "signature" in a familiar way. "On reconnaît bien là sa griffelib."
+> Griffe, pronounced "grif" (`/ɡʁif/`), is a french word that means "claw", but also "signature" in a familiar way. "On reconnaît bien là sa griffe."
 
 <div class="grid cards" markdown>
 
@@ -41,17 +41,17 @@ Griffe can be used as a Python library. For example, the [Python handler](https:
 <div class="grid cards" markdown>
 <div markdown>
 
-```console exec="1" source="console" result="json" title="Serializing as JSON" id="griffecli-dump"
+```console exec="1" source="console" result="json" title="Serializing as JSON" id="griffe-dump"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffecli dump griffe -ssrc -r 2>/dev/null | head -n29
+$ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
 ```
 
 </div>
 <div markdown>
 
-```console exec="1" source="console" result="ansi" returncode="1" title="Checking for API breaking changes" id="griffecli-check"
+```console exec="1" source="console" result="ansi" returncode="1" title="Checking for API breaking changes" id="griffe-check"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffecli check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
+$ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
 
 </div>

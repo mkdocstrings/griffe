@@ -12,7 +12,7 @@ Start by creating an extensions module (a simple Python file) somewhere in your 
 import griffe
 
 
-class GitInfo(griffelib.Extension):
+class GitInfo(griffe.Extension):
     """An extension to set the right Git information."""
 ```
 
@@ -25,12 +25,12 @@ from typing import Any
 import griffe
 
 
-class GitInfo(griffelib.Extension):
+class GitInfo(griffe.Extension):
     """An extension to set the right Git information."""
 
-    def on_package(self, *, pkg: griffelib.Module, **kwargs: Any) -> None:
+    def on_package(self, *, pkg: griffe.Module, **kwargs: Any) -> None:
         if pkg.name == "my_package_name":
-            pkg.git_info = griffelib.GitInfo(
+            pkg.git_info = griffe.GitInfo(
                 repository=Path("/path/to/this/package/local/repository"),
                 service="forgejo",
                 remote_url="https://myhostedforge.mydomain.com/myaccount/myproject",
@@ -51,7 +51,7 @@ We could also reuse properties that Griffe found:
 
 ```python
 # Here we reuse `repository` and `commit_hash` while overriding only `service` and `remote_url`.
-pkg.git_info = griffelib.GitInfo(
+pkg.git_info = griffe.GitInfo(
     repository=pkg.git_info.repository,
     service="forgejo",
     remote_url="https://myhostedforge.mydomain.com/myaccount/myproject",
@@ -74,7 +74,7 @@ Start by creating an extensions module (a simple Python file) somewhere in your 
 import griffe
 
 
-class SourceLinks(griffelib.Extension):
+class SourceLinks(griffe.Extension):
     """An extension to set the right source links."""
 ```
 
@@ -87,10 +87,10 @@ from typing import Any
 import griffe
 
 
-class SourceLinks(griffelib.Extension):
+class SourceLinks(griffe.Extension):
     """An extension to set the right source links."""
 
-    def on_object(self, *, obj: griffelib.Object, **kwargs: Any) -> None:
+    def on_object(self, *, obj: griffe.Object, **kwargs: Any) -> None:
         if obj.path == "my_package_name.my_function":
             obj.source_link = "https://myhostedforge.mydomain.com/myaccount/myproject/src/commit/77f928aeab857cb45564462a4f849c2df2cca99a/src/lib.rs#L35-L48"
         # Handle any other object you want.
@@ -107,10 +107,10 @@ from typing import Any
 import griffe
 
 
-class SourceLinks(griffelib.Extension):
+class SourceLinks(griffe.Extension):
     """An extension to set the right source links."""
 
-    def on_object(self, *, obj: griffelib.Object, **kwargs: Any) -> None:
+    def on_object(self, *, obj: griffe.Object, **kwargs: Any) -> None:
         if obj.path == "my_package_name.my_function":
             obj.source_link = obj.git_info.get_source_link(
                 filepath="src/lib.rs",

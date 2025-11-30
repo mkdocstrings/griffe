@@ -1,1 +1,1 @@
-# ::: griffelib.Attribute
+# ::: griffe.Attribute

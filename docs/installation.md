@@ -104,3 +104,20 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
     </div>
+
+## Running Griffe
+
+Once installed, you can run Griffe using the `griffe` command:
+
+```console
+$ griffe check mypackage
+```
+
+Or as a Python module:
+
+```console
+$ python -m griffe check mypackage
+```
+
+TIP: **Alternative CLI Package**
+If you need to run Griffe without the full library, you can also use `python -m griffecli` instead of `python -m griffe`. This runs the CLI directly from the `griffecli` package.

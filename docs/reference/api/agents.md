@@ -4,70 +4,74 @@ Griffe is able to analyze code both statically and dynamically.
 
 ## **Main API**
 
-::: griffelib.visit
+::: griffe.visit
 
-::: griffelib.inspect
+::: griffe.inspect
 
 ## **Advanced API**
 
-::: griffelib.Visitor
+::: griffe.Visitor
 
-::: griffelib.Inspector
+::: griffe.Inspector
 
 ## **Dynamic analysis helpers**
 
-::: griffelib.sys_path
+::: griffe.sys_path
 
-::: griffelib.dynamic_import
+::: griffe.dynamic_import
 
-::: griffelib.ObjectNode
+::: griffe.ObjectNode
 
-::: griffelib.ObjectKind
+::: griffe.ObjectKind
 
 ## **Static analysis helpers**
 
-::: griffelib.builtin_decorators
+::: griffe.builtin_decorators
 
-::: griffelib.stdlib_decorators
+::: griffe.stdlib_decorators
 
-::: griffelib.typing_overload
+::: griffe.typing_overload
 
-::: griffelib.ast_kind
+::: griffe.ast_kind
 
-::: griffelib.ast_children
+::: griffe.ast_children
 
-::: griffelib.ast_previous_siblings
+::: griffe.ast_previous_siblings
 
-::: griffelib.ast_next_siblings
+::: griffe.ast_next_siblings
 
-::: griffelib.ast_siblings
+::: griffe.ast_siblings
 
-::: griffelib.ast_previous
+::: griffe.ast_previous
 
-::: griffelib.ast_next
+::: griffe.ast_next
 
-::: griffelib.ast_first_child
+::: griffe.ast_first_child
 
-::: griffelib.ast_last_child
+::: griffe.ast_last_child
 
-::: griffelib.get_docstring
+::: griffe.get_docstring
 
-::: griffelib.get_name
+::: griffe.get_name
 
-::: griffelib.get_names
+::: griffe.get_names
 
-::: griffelib.get_instance_names
+::: griffe.get_instance_names
 
-::: griffelib.get__all__
+::: griffe.get__all__
 
-::: griffelib.safe_get__all__
+::: griffe.safe_get__all__
 
-::: griffelib.relative_to_absolute
+::: griffe.relative_to_absolute
 
-::: griffelib.get_parameters
+::: griffe.get_parameters
 
-::: griffelib.get_value
+::: griffe.get_value
 
-::: griffelib.safe_get_value
+::: griffe.safe_get_value
 
+<!-- YORE: Bump 2: Remove line. -->
+## **Deprecated API**
 
+<!-- YORE: Bump 2: Remove line. -->
+::: griffe.ExportedName

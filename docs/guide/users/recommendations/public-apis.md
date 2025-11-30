@@ -287,7 +287,7 @@ Start hiding your module layout early! It is much easier to (partially) expose t
 
 ## Unique names and public locations
 
-Whether or not you are planning to hide your module layout, as recommended in the previous section, one thing that will help both you and your users is making sure your object names are unique across your code base. Having unique names ensures that you can expose everything at the top-level module of your package without having to alias objects (using `from ... import x as y`). It will also ensure that your users don't end up importing multiple different objects with the same name, again having to alias them. Finally, it forces you to use meaningful names for your objects, names that don't need the context of the above namespaces (generally modules) to understand what they mean. For example, in Griffe we previously exposed `griffelib.docstrings.utils.warning`. Exposing `warning` at the top-level made it very vague: what does it do? So we renamed it `docstring_warning`, which is much clearer.
+Whether or not you are planning to hide your module layout, as recommended in the previous section, one thing that will help both you and your users is making sure your object names are unique across your code base. Having unique names ensures that you can expose everything at the top-level module of your package without having to alias objects (using `from ... import x as y`). It will also ensure that your users don't end up importing multiple different objects with the same name, again having to alias them. Finally, it forces you to use meaningful names for your objects, names that don't need the context of the above namespaces (generally modules) to understand what they mean. For example, in Griffe we previously exposed `griffe.docstrings.utils.warning`. Exposing `warning` at the top-level made it very vague: what does it do? So we renamed it `docstring_warning`, which is much clearer.
 
 Ensuring unique names across a code base is sometimes not feasible, or not desirable; in this case, try to use namespacing while still hiding the module layout the best you can.
 
@@ -422,7 +422,7 @@ The first user of your CLI as API is... you. When you declare your project's CLI
 
 ```toml
 [project.scripts]
-griffe = "griffecli:main"
+griffe = "griffe:main"
 ```
 
 ...this entrypoint ends up as a Python script in the `bin` directory of your virtual environment:
@@ -438,7 +438,7 @@ if __name__ == "__main__":
     sys.exit(main())
 ```
 
-In this script, we find our entrypoint, `griffecli.main`, used programmatically.
+In this script, we find our entrypoint, `griffe.main`, used programmatically.
 
 ---
 
@@ -450,21 +450,21 @@ import griffe
 
 
 def test_main() -> None:
-    assert griffecli.main(["dump", "griffe", "-s", "src", "-o/dev/null"]) == 0
+    assert griffe.main(["dump", "griffe", "-s", "src", "-o/dev/null"]) == 0
 
 
 def test_show_help(capsys: pytest.CaptureFixture) -> None:
     with pytest.raises(SystemExit):
-        griffecli.main(["-h"])
+        griffe.main(["-h"])
     captured = capsys.readouterr()
     assert "griffe" in captured.out
 
 
 def test_show_version(capsys: pytest.CaptureFixture) -> None:
     with pytest.raises(SystemExit):
-        griffecli.main(["-V"])
+        griffe.main(["-V"])
     captured = capsys.readouterr()
-    assert griffelib.get_version() in captured.out
+    assert griffe.get_version() in captured.out
 ```
 
 Now, when you start testing the logic of your CLI subcommands, such as our `dump` subcommand above, you might feel like passing again and again through the command-line arguments parser (here `argparse`) is wasteful and redundant. It is important to test that your arguments are parsed correctly (as you expect them to be parsed), but they shouldn't *have* to be parsed when you are testing the underlying logic.

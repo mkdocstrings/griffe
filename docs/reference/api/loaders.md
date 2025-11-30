@@ -2,22 +2,22 @@
 
 ## **Main API**
 
-::: griffelib.load
+::: griffe.load
 
-::: griffelib.load_git
+::: griffe.load_git
 
-::: griffelib.load_pypi
+::: griffe.load_pypi
 
 ## **Advanced API**
 
-::: griffelib.GriffeLoader
+::: griffe.GriffeLoader
 
-::: griffelib.ModulesCollection
+::: griffe.ModulesCollection
 
-::: griffelib.LinesCollection
+::: griffe.LinesCollection
 
 ## **Additional API**
 
-::: griffelib.Stats
+::: griffe.Stats
 
-::: griffelib.merge_stubs
+::: griffe.merge_stubs

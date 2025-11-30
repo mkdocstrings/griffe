@@ -2,26 +2,26 @@
 
 ## **Main API**
 
-::: griffelib.load_extensions
+::: griffe.load_extensions
 
-::: griffelib.Extension
+::: griffe.Extension
 
 ## **Advanced API**
 
-::: griffelib.Extensions
+::: griffe.Extensions
 
 ## **Types**
 
-::: griffelib.LoadableExtensionType
+::: griffe.LoadableExtensionType
 
 ## **Builtin extensions**
 
-::: griffelib.builtin_extensions
+::: griffe.builtin_extensions
 
-::: griffelib.DataclassesExtension
+::: griffe.DataclassesExtension
     options:
         inherited_members: false
 
-::: griffelib.UnpackTypedDictExtension
+::: griffe.UnpackTypedDictExtension
     options:
         inherited_members: false

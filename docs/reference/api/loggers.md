@@ -2,18 +2,18 @@
 
 ## **Main API**
 
-::: griffelib.logger
+::: griffe.logger
 
-::: griffelib.get_logger
+::: griffe.get_logger
 
-::: griffelib.Logger
+::: griffe.Logger
 
-::: griffelib.LogLevel
+::: griffe.LogLevel
 
-::: griffecli.DEFAULT_LOG_LEVEL
+::: griffe.DEFAULT_LOG_LEVEL
     options:
         annotations_path: full
 
 ## **Advanced API**
 
-::: griffelib.patch_loggers
+::: griffe.patch_loggers
