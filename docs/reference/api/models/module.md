@@ -1,1 +1,1 @@
-# ::: griffe.Module
+# ::: griffelib.Module

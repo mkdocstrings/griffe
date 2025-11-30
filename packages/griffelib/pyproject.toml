@@ -1,0 +1,48 @@
+[build-system]
+# pdm-backend is left here as a dependency of the version discovery script currently in use.
+# It may be removed in the future. See mkdocstrings/griffe#430
+requires = ["hatchling", "pdm-backend", "uv-dynamic-versioning>=0.7.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "code"
+path = "../../scripts/get_version.py"
+expression = "get_version()"
+
+[project]
+name = "griffelib"
+description = "The griffe library"
+authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
+license = "ISC"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
+dynamic = ["version", "dependencies", "optional-dependencies"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    # YORE: EOL 3.10: Remove line.
+    "Programming Language :: Python :: 3.10",
+    # YORE: EOL 3.11: Remove line.
+    "Programming Language :: Python :: 3.11",
+    # YORE: EOL 3.12: Remove line.
+    "Programming Language :: Python :: 3.12",
+    # YORE: EOL 3.13: Remove line.
+    "Programming Language :: Python :: 3.13",
+    # YORE: EOL 3.14: Remove line.
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Documentation",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning]
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+
+[tool.hatch.build.targets.sdist]

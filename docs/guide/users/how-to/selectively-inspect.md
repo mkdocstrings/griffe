@@ -26,7 +26,7 @@ Start by creating an extensions module (a simple Python file) somewhere in your 
 import griffe
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 ```
 
@@ -36,7 +36,7 @@ Make it accept configuration options by declaring an `__init__` method:
 import griffe
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
@@ -53,17 +53,17 @@ Now that our extension accepts options, we implement its core functionality. We 
 import griffe
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         ...
 ```
 
-Check out the [available hooks][griffe.Extension] to see if there more appropriate hooks for your needs.
+Check out the [available hooks][griffelib.Extension] to see if there more appropriate hooks for your needs.
 
 Lets now use our configuration option to decide whether to do something or skip:
 
@@ -71,13 +71,13 @@ Lets now use our configuration option to decide whether to do something or skip:
 import griffe
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.path not in self.objects:
             return
 ```
@@ -87,21 +87,21 @@ Now we know that only the objects we're interested in will be handled, so lets h
 ```python hl_lines="3 16-20"
 import griffe
 
-logger = griffe.get_logger("griffe_inspect_specific_objects")  # (1)!
+logger = griffelib.get_logger("griffe_inspect_specific_objects")  # (1)!
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.path not in self.objects:
             return
 
         try:
-            runtime_obj = griffe.dynamic_import(obj.path)
+            runtime_obj = griffelib.dynamic_import(obj.path)
         except ImportError as error:
             logger.warning(f"Could not import {obj.path}: {error}")  # (2)!
             return
@@ -117,21 +117,21 @@ For example, we could use the runtime object's `__doc__` attribute, which could 
 ```python hl_lines="22-25"
 import griffe
 
-logger = griffe.get_logger("griffe_inspect_specific_objects")
+logger = griffelib.get_logger("griffe_inspect_specific_objects")
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.path not in self.objects:
             return
 
         try:
-            runtime_obj = griffe.dynamic_import(obj.path)
+            runtime_obj = griffelib.dynamic_import(obj.path)
         except ImportError as error:
             logger.warning(f"Could not import {obj.path}: {error}")
             return
@@ -139,7 +139,7 @@ class InspectSpecificObjects(griffe.Extension):
         if obj.docstring:
             obj.docstring.value = runtime_obj.__doc__
         else:
-            obj.docstring = griffe.Docstring(runtime_obj.__doc__)
+            obj.docstring = griffelib.Docstring(runtime_obj.__doc__)
 ```
 
 Or we could alter the Griffe object parameters in case of functions, which could have been modified by a signature-changing decorator:
@@ -148,21 +148,21 @@ Or we could alter the Griffe object parameters in case of functions, which could
 import inspect
 import griffe
 
-logger = griffe.get_logger("griffe_inspect_specific_objects")
+logger = griffelib.get_logger("griffe_inspect_specific_objects")
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.path not in self.objects:
             return
 
         try:
-            runtime_obj = griffe.dynamic_import(obj.path)
+            runtime_obj = griffelib.dynamic_import(obj.path)
         except ImportError as error:
             logger.warning(f"Could not import {obj.path}: {error}")
             return
@@ -181,17 +181,17 @@ We could also entirely replace the Griffe object obtained from static analysis b
 import griffe
 
 
-class InspectSpecificObjects(griffe.Extension):
+class InspectSpecificObjects(griffelib.Extension):
     """An extension to inspect just a few specific objects."""
 
     def __init__(self, objects: list[str]) -> None:
         self.objects = objects
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.path not in self.objects:
             return
 
-        inspected_module = griffe.inspect(obj.module.path, filepath=obj.filepath)
+        inspected_module = griffelib.inspect(obj.module.path, filepath=obj.filepath)
         obj.parent.set_member(obj.name, inspected_module[obj.name])  # (1)!
 ```
 

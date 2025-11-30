@@ -1,33 +1,33 @@
 # API checks
 
-::: griffe.find_breaking_changes
+::: griffelib.find_breaking_changes
 
-::: griffe.ExplanationStyle
+::: griffelib.ExplanationStyle
 
-::: griffe.Breakage
+::: griffelib.Breakage
 
-::: griffe.BreakageKind
+::: griffelib.BreakageKind
 
-::: griffe.AttributeChangedTypeBreakage
+::: griffelib.AttributeChangedTypeBreakage
 
-::: griffe.AttributeChangedValueBreakage
+::: griffelib.AttributeChangedValueBreakage
 
-::: griffe.ClassRemovedBaseBreakage
+::: griffelib.ClassRemovedBaseBreakage
 
-::: griffe.ObjectChangedKindBreakage
+::: griffelib.ObjectChangedKindBreakage
 
-::: griffe.ObjectRemovedBreakage
+::: griffelib.ObjectRemovedBreakage
 
-::: griffe.ParameterAddedRequiredBreakage
+::: griffelib.ParameterAddedRequiredBreakage
 
-::: griffe.ParameterChangedDefaultBreakage
+::: griffelib.ParameterChangedDefaultBreakage
 
-::: griffe.ParameterChangedKindBreakage
+::: griffelib.ParameterChangedKindBreakage
 
-::: griffe.ParameterChangedRequiredBreakage
+::: griffelib.ParameterChangedRequiredBreakage
 
-::: griffe.ParameterMovedBreakage
+::: griffelib.ParameterMovedBreakage
 
-::: griffe.ParameterRemovedBreakage
+::: griffelib.ParameterRemovedBreakage
 
-::: griffe.ReturnChangedTypeBreakage
+::: griffelib.ReturnChangedTypeBreakage

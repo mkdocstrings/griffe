@@ -1,21 +1,21 @@
 # Helpers
 
-::: griffe.TmpPackage
+::: griffelib.TmpPackage
 
-::: griffe.temporary_pyfile
+::: griffelib.temporary_pyfile
 
-::: griffe.temporary_pypackage
+::: griffelib.temporary_pypackage
 
-::: griffe.temporary_visited_module
+::: griffelib.temporary_visited_module
 
-::: griffe.temporary_visited_package
+::: griffelib.temporary_visited_package
 
-::: griffe.temporary_inspected_module
+::: griffelib.temporary_inspected_module
 
-::: griffe.temporary_inspected_package
+::: griffelib.temporary_inspected_package
 
-::: griffe.vtree
+::: griffelib.vtree
 
-::: griffe.htree
+::: griffelib.htree
 
-::: griffe.module_vtree
+::: griffelib.module_vtree
