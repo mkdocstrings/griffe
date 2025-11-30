@@ -136,3 +136,7 @@ ci = [
 [tool.uv]
 default-groups = ["maintain", "ci", "docs"]
 workspace = { members = ["packages/*"] }
+
+[tool.uv.sources]
+griffelib = { workspace = true }
+griffecli = { workspace = true }

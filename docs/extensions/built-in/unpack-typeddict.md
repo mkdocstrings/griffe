@@ -65,14 +65,14 @@ To enable the extension:
 
 === "CLI"
     ```console
-    $ griffecli dump -e unpack_typeddict my_package
+    $ griffe dump -e unpack_typeddict my_package
     ```
 
 === "Python"
     ```python
     import griffe
 
-    my_package = griffelib.load("my_package", extensions=griffelib.load_extensions("unpack_typeddict"))
+    my_package = griffe.load("my_package", extensions=griffe.load_extensions("unpack_typeddict"))
     ```
 
 === "mkdocstrings"

@@ -68,7 +68,7 @@ Note:
 Find out possibly invalid section syntax by grepping for "reasons" in Griffe debug logs:
 
 ```bash
-griffecli dump -Ldebug -o/dev/null -fdgoogle your_package 2>&1 | grep reasons
+griffe dump -Ldebug -o/dev/null -fdgoogle your_package 2>&1 | grep reasons
 ```
 
 Some sections support documenting multiple items (attributes, parameters, etc.). When multiple items are supported, each item description can use multiple lines, and continuation lines must be indented once more so that the parser is able to differentiate items.

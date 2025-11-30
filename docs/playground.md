@@ -16,6 +16,6 @@ import griffe, micropip
 await micropip.install("cowsay")
 
 # And load it with Griffe!
-cowsay = griffelib.load("cowsay")
+cowsay = griffe.load("cowsay")
 cowsay.as_json(indent=2)[:1000]
 ```

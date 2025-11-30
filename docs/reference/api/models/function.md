@@ -1,11 +1,11 @@
-# ::: griffelib.Function
+# ::: griffe.Function
 
-::: griffelib.Parameters
+::: griffe.Parameters
 
-::: griffelib.Parameter
+::: griffe.Parameter
 
-::: griffelib.ParameterKind
+::: griffe.ParameterKind
 
-::: griffelib.ParametersType
+::: griffe.ParametersType
 
-::: griffelib.Decorator
+::: griffe.Decorator

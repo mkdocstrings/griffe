@@ -1,1 +1,1 @@
-# ::: griffelib.Alias
+# ::: griffe.Alias
