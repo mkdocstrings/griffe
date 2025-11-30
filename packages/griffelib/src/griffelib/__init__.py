@@ -157,9 +157,6 @@ To test your Griffe extensions, or to load API data from code in memory, Griffe 
 
 from __future__ import annotations
 
-import warnings
-from typing import Any
-
 from griffelib._internal.agents.inspector import Inspector, inspect
 from griffelib._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
 from griffelib._internal.agents.nodes.ast import (
