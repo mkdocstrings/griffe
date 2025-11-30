@@ -14,17 +14,17 @@ When [loading an object](loading.md), Griffe will give you back an instance of o
 ```python
 >>> import griffe
 >>> type(griffe.load("markdown"))
-<class 'griffe._internal.models.Module'>
+<class 'griffelib._internal.models.Module'>
 >>> type(griffe.load("markdown.core.Markdown"))
-<class 'griffe._internal.models.Class'>
+<class 'griffelib._internal.models.Class'>
 >>> type(griffe.load("markdown.Markdown"))
-<class 'griffe._internal.models.Alias'>
+<class 'griffelib._internal.models.Alias'>
 >>> type(griffe.load("markdown.core.markdown"))
-<class 'griffe._internal.models.Function'>
+<class 'griffelib._internal.models.Function'>
 >>> type(griffe.load("markdown.markdown"))
-<class 'griffe._internal.models.Alias'>
+<class 'griffelib._internal.models.Alias'>
 >>> type(griffe.load("markdown.Markdown.references"))
-<class 'griffe._internal.models.Attribute'>
+<class 'griffelib._internal.models.Attribute'>
 ```
 
 However deep the object is, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.

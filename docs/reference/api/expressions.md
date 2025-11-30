@@ -1,6 +1,6 @@
 # Expressions
 
-::: griffe._internal.expressions
+::: griffelib._internal.expressions
     options:
         members: false
         show_root_heading: false
