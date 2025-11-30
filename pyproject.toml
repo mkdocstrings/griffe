@@ -56,14 +56,13 @@ path = "scripts/get_version.py"
 expression = "get_version()"
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning]
-# Dependencies are dynamically versioned; {version} is substituted at build time.
+# Dependencies are dynamically versioned; {{version}} is substituted at build time.
 # This ensures griffe, griffelib, and griffecli versions are always 1:1.
-dependencies = ["griffelib=={version}", "griffecli=={version}"]
+dependencies = ["griffelib=={{version}}", "griffecli=={{version}}"]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
-# The 'pypi' extra provides dependencies needed for the load_pypi functionality
-# to download and inspect packages from PyPI.
-pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
+# The 'pypi' extra re-exports griffelib[pypi] for backward compatibility.
+pypi = ["griffelib[pypi]=={{version}}"]
 
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
