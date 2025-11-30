@@ -45,9 +45,11 @@ classifiers = [
 griffecli = "griffecli:main"
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning]
+# Dependencies are dynamically versioned; {version} is substituted at build time.
 dependencies = ["griffelib=={version}", "colorama>=0.4"]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+# No optional dependencies for the CLI package
 
 [tool.hatch.build.targets.sdist]
 
