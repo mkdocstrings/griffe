@@ -11,7 +11,7 @@ This extension stores runtime objects corresponding to each loaded Griffe object
 
 ```pycon
 >>> import griffe
->>> griffe_data = griffelib.load("griffe", extensions=griffelib.load_extensions("griffe_runtime_objects"), resolve_aliases=True)
+>>> griffe_data = griffe.load("griffe", extensions=griffe.load_extensions("griffe_runtime_objects"), resolve_aliases=True)
 >>> griffe_data["parse"].extra
 defaultdict(<class 'dict'>, {'runtime-objects': {'object': <function parse at 0x78685c951260>}})
 >>> griffe_data["Module"].extra

@@ -2,80 +2,80 @@
 
 ## **Main API**
 
-::: griffelib.Docstring
+::: griffe.Docstring
 
 ## **Advanced API: Sections**
 
-::: griffelib.DocstringSectionKind
+::: griffe.DocstringSectionKind
 
-::: griffelib.DocstringSectionText
+::: griffe.DocstringSectionText
 
-::: griffelib.DocstringSectionParameters
+::: griffe.DocstringSectionParameters
 
-::: griffelib.DocstringSectionOtherParameters
+::: griffe.DocstringSectionOtherParameters
 
-::: griffelib.DocstringSectionTypeParameters
+::: griffe.DocstringSectionTypeParameters
 
-::: griffelib.DocstringSectionRaises
+::: griffe.DocstringSectionRaises
 
-::: griffelib.DocstringSectionWarns
+::: griffe.DocstringSectionWarns
 
-::: griffelib.DocstringSectionReturns
+::: griffe.DocstringSectionReturns
 
-::: griffelib.DocstringSectionYields
+::: griffe.DocstringSectionYields
 
-::: griffelib.DocstringSectionReceives
+::: griffe.DocstringSectionReceives
 
-::: griffelib.DocstringSectionExamples
+::: griffe.DocstringSectionExamples
 
-::: griffelib.DocstringSectionAttributes
+::: griffe.DocstringSectionAttributes
 
-::: griffelib.DocstringSectionFunctions
+::: griffe.DocstringSectionFunctions
 
-::: griffelib.DocstringSectionClasses
+::: griffe.DocstringSectionClasses
 
-::: griffelib.DocstringSectionTypeAliases
+::: griffe.DocstringSectionTypeAliases
 
-::: griffelib.DocstringSectionModules
+::: griffe.DocstringSectionModules
 
-::: griffelib.DocstringSectionDeprecated
+::: griffe.DocstringSectionDeprecated
 
-::: griffelib.DocstringSectionAdmonition
+::: griffe.DocstringSectionAdmonition
 
 ## **Advanced API: Section items**
 
-::: griffelib.DocstringAdmonition
+::: griffe.DocstringAdmonition
 
-::: griffelib.DocstringDeprecated
+::: griffe.DocstringDeprecated
 
-::: griffelib.DocstringRaise
+::: griffe.DocstringRaise
 
-::: griffelib.DocstringWarn
+::: griffe.DocstringWarn
 
-::: griffelib.DocstringReturn
+::: griffe.DocstringReturn
 
-::: griffelib.DocstringYield
+::: griffe.DocstringYield
 
-::: griffelib.DocstringReceive
+::: griffe.DocstringReceive
 
-::: griffelib.DocstringParameter
+::: griffe.DocstringParameter
 
-::: griffelib.DocstringTypeParameter
+::: griffe.DocstringTypeParameter
 
-::: griffelib.DocstringAttribute
+::: griffe.DocstringAttribute
 
-::: griffelib.DocstringFunction
+::: griffe.DocstringFunction
 
-::: griffelib.DocstringClass
+::: griffe.DocstringClass
 
-::: griffelib.DocstringTypeAlias
+::: griffe.DocstringTypeAlias
 
-::: griffelib.DocstringModule
+::: griffe.DocstringModule
 
 ## **Models base classes**
 
-::: griffelib.DocstringElement
+::: griffe.DocstringElement
 
-::: griffelib.DocstringNamedElement
+::: griffe.DocstringNamedElement
 
-::: griffelib.DocstringSection
+::: griffe.DocstringSection

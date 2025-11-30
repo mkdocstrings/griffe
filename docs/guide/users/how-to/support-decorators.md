@@ -24,11 +24,11 @@ Start by creating an extensions module (a simple Python file) somewhere in your 
 import griffe
 
 
-class MyDecorator(griffelib.Extension):
+class MyDecorator(griffe.Extension):
     """An extension to suport my decorator."""
 ```
 
-Now we can declare the [`on_instance`][griffelib.Extension.on_instance] hook, which receives any kind of Griffe object ([`Module`][griffelib.Module], [`Class`][griffelib.Class], [`Function`][griffelib.Function], [`Attribute`][griffelib.Attribute], [`TypeAlias`][griffelib.TypeAlias]), or we could use a kind-specific hook such as [`on_module_instance`][griffelib.Extension.on_module_instance], [`on_class_instance`][griffelib.Extension.on_class_instance], [`on_function_instance`][griffelib.Extension.on_function_instance], [`on_attribute_instance`][griffelib.Extension.on_attribute_instance] and [`on_type_alias_instance`][griffelib.Extension.on_type_alias_instance]. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
+Now we can declare the [`on_instance`][griffe.Extension.on_instance] hook, which receives any kind of Griffe object ([`Module`][griffe.Module], [`Class`][griffe.Class], [`Function`][griffe.Function], [`Attribute`][griffe.Attribute], [`TypeAlias`][griffe.TypeAlias]), or we could use a kind-specific hook such as [`on_module_instance`][griffe.Extension.on_module_instance], [`on_class_instance`][griffe.Extension.on_class_instance], [`on_function_instance`][griffe.Extension.on_function_instance], [`on_attribute_instance`][griffe.Extension.on_attribute_instance] and [`on_type_alias_instance`][griffe.Extension.on_type_alias_instance]. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
 
 For the example, lets use the `on_function_instance` hook, which receives `Function` instances.
 
@@ -36,10 +36,10 @@ For the example, lets use the `on_function_instance` hook, which receives `Funct
 import griffe
 
 
-class MyDecorator(griffelib.Extension):
+class MyDecorator(griffe.Extension):
     """An extension to suport my decorator."""
 
-    def on_function_instance(self, *, func: griffelib.Function, **kwargs) -> None:
+    def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         ...
 ```
 
@@ -49,13 +49,13 @@ In this hook, we check if our function is decorated with our custom decorator:
 import griffe
 
 
-class MyDecorator(griffelib.Extension):
+class MyDecorator(griffe.Extension):
     """An extension to suport my decorator."""
 
-    def on_function_instance(self, *, func: griffelib.Function, **kwargs) -> None:
+    def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         for decorator in func.decorators:
             if decorator.callable_path == "my_package.utils.enhance":
                 ...  # Update the function attributes.
 ```
 
-Now all that is left to do is to actually write the code that updates the function according to what the decorator is doing. We could update the function's docstring, or its return type, or its parameters: it all depends on your decorator and what it does to the objects it decorates. Check out the [API reference for function objects][griffelib.Function] to see what data this object stores.
+Now all that is left to do is to actually write the code that updates the function according to what the decorator is doing. We could update the function's docstring, or its return type, or its parameters: it all depends on your decorator and what it does to the objects it decorates. Check out the [API reference for function objects][griffe.Function] to see what data this object stores.

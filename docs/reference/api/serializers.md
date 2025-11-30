@@ -2,10 +2,10 @@
 
 ## **Main API**
 
-See the [`as_json()`][griffelib.Object.as_json] and [`from_json()`][griffelib.Object.from_json] methods of objects.
+See the [`as_json()`][griffe.Object.as_json] and [`from_json()`][griffe.Object.from_json] methods of objects.
 
 ## **Advanced API**
 
-::: griffelib.JSONEncoder
+::: griffe.JSONEncoder
 
-::: griffelib.json_decoder
+::: griffe.json_decoder

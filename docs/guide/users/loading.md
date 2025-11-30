@@ -4,12 +4,12 @@ Griffe can load API data from both source code (static analysis) and objects at 
 
 ## The `load` function
 
-The main interface to load API data is Griffe's [`load`][griffelib.load] function:
+The main interface to load API data is Griffe's [`load`][griffe.load] function:
 
 ```python
 import griffe
 
-my_package = griffelib.load("my_package")
+my_package = griffe.load("my_package")
 ```
 
 You can ask to load a specific object rather than a package:
@@ -17,7 +17,7 @@ You can ask to load a specific object rather than a package:
 ```python
 import griffe
 
-my_method = griffelib.load("my_package.MyClass.my_method")
+my_method = griffe.load("my_package.MyClass.my_method")
 ```
 
 Griffe will load the whole package anyway, but return the specified object directly, so that you don't have to access it manually. To manually access the object representing the method called `my_method`, you would have used the `my_package` variable instantiated before, like this:
@@ -33,8 +33,8 @@ Finally, you can even load packages or modules by passing absolute or relative f
 ```python
 import griffe
 
-griffelib.load("src/my_package")
-griffelib.load("some_script.py")
+griffe.load("src/my_package")
+griffe.load("some_script.py")
 ```
 
 In case of ambiguity, you can instruct Griffe to ignore existing relative file paths with `try_relative_paths=False`. For example, when using [the flat layout (in contrast to the src-layout)](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/), your Python package is in the root of the repository.
@@ -51,12 +51,12 @@ Here if you ask Griffe to load `my_package`, it will find it as a relative path,
 ```python
 import griffe
 
-my_installed_package = griffelib.load("my_package", try_relative_path=False)
+my_installed_package = griffe.load("my_package", try_relative_path=False)
 ```
 
 ## The `GriffeLoader` class
 
-The [`load`][griffelib.load] function is a shortcut for instantiating the [`GriffeLoader`][griffelib.GriffeLoader] class and calling its [`load`][griffelib.GriffeLoader.load] method. Calling the [`load`][griffelib.load] function multiple times will instantiate a new Griffe loader each time. If you care about efficiency, it is better to instantiate the loader yourself and use its `load` method:
+The [`load`][griffe.load] function is a shortcut for instantiating the [`GriffeLoader`][griffe.GriffeLoader] class and calling its [`load`][griffe.GriffeLoader.load] method. Calling the [`load`][griffe.load] function multiple times will instantiate a new Griffe loader each time. If you care about efficiency, it is better to instantiate the loader yourself and use its `load` method:
 
 ```python
 import griffe
@@ -72,13 +72,13 @@ Reusing the same loader will also help resolving aliases across different packag
 
 ## Search paths
 
-To specify in which directories Griffe should search for packages and modules, you can use the `search_paths` parameter on both the [`load` function][griffelib.load] and the [`GriffeLoader` class][griffelib.GriffeLoader].
+To specify in which directories Griffe should search for packages and modules, you can use the `search_paths` parameter on both the [`load` function][griffe.load] and the [`GriffeLoader` class][griffe.GriffeLoader].
 
 === "`load`"
     ```python
     import griffe
 
-    my_package = griffelib.load("my_package", search_paths=["src"])
+    my_package = griffe.load("my_package", search_paths=["src"])
     ```
 
 === "`GriffeLoader`"
@@ -100,7 +100,7 @@ Griffe always tries first to find sources for the specified object. Then, unless
 ```python
 import griffe
 
-my_package = griffelib.load("my_package", force_inspection=True)
+my_package = griffe.load("my_package", force_inspection=True)
 ```
 
 [](){#forcing-dynamic-analysis-not-recommended}
@@ -125,10 +125,10 @@ If you want to be careful about what gets executed in the current Python process
 import griffe
 
 # Here Griffe will fall back on dynamic analysis and import `itertools`.
-griffelib.load("itertools")
+griffe.load("itertools")
 
 # While here it will raise `ModuleNotFoundError`.
-griffelib.load("itertools", allow_inspection=False)
+griffe.load("itertools", allow_inspection=False)
 ```
 
 ## Alias resolution
@@ -138,7 +138,7 @@ griffelib.load("itertools", allow_inspection=False)
 >
 > The name "alias" comes from the fact that imported objects can be aliased under a different name: `from X import A as B`. In the case of inherited members, this doesn't really apply, but we reuse the concept for conciseness.
 >
-> An [`Alias`][griffelib.Alias] instance is therefore a pointer to another object. It has its own name, parent, line numbers, and stores the path to the target object. Thanks to this path, we can access the actual target object and all its metadata, such as name, parent, line numbers, docstring, etc.. Obtaining a reference to the target object is what we call "alias resolution".
+> An [`Alias`][griffe.Alias] instance is therefore a pointer to another object. It has its own name, parent, line numbers, and stores the path to the target object. Thanks to this path, we can access the actual target object and all its metadata, such as name, parent, line numbers, docstring, etc.. Obtaining a reference to the target object is what we call "alias resolution".
 >
 > **To summarize, alias resolution is a post-process task that resolves imports after loading everything.**
 
@@ -171,14 +171,14 @@ When loading this package, `my_package.my_function` will be an alias pointing at
 ```python
 import griffe
 
-my_package = griffelib.load("my_package")
+my_package = griffe.load("my_package")
 my_package["my_function"].resolved  # False
 ```
 
 ```python
 import griffe
 
-my_package = griffelib.load("my_package", resolve_aliases=True)
+my_package = griffe.load("my_package", resolve_aliases=True)
 my_package["my_function"].resolved  # True
 my_package["my_function"].target is my_package["my_module.my_function"]  # True
 ```
@@ -207,17 +207,17 @@ from package1 import X
 
 ```pycon
 >>> import griffe
->>> package2 = griffelib.load("package2", resolve_aliases=True)
+>>> package2 = griffe.load("package2", resolve_aliases=True)
 >>> package2["X"].target_path
 'package1.X'
 >>> package2["X"].resolved
 False
 >>> package2["X"].target
 Traceback (most recent call last):
-  File "griffe/_internal/models.py", line 1375, in _resolve_target
+  File "griffelib/_internal/models.py", line 1375, in _resolve_target
     resolved = self.modules_collection.get_member(self.target_path)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "griffe/_internal/mixins.py", line 84, in get_member
+  File "griffelib/_internal/mixins.py", line 84, in get_member
     return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
            ~~~~~~~~~~~~^^^^^^^^^^
 KeyError: 'package1'
@@ -226,23 +226,23 @@ The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "griffe/_internal/dataclasses.py", line 1310, in target
+  File "griffelib/_internal/dataclasses.py", line 1310, in target
     self.resolve_target()
-  File "griffe/_internal/dataclasses.py", line 1369, in resolve_target
+  File "griffelib/_internal/dataclasses.py", line 1369, in resolve_target
     self._resolve_target()
-  File "griffe/_internal/dataclasses.py", line 1377, in _resolve_target
+  File "griffelib/_internal/dataclasses.py", line 1377, in _resolve_target
     raise AliasResolutionError(self) from error
 griffelib._internal.exceptions.AliasResolutionError: Could not resolve alias package2.X pointing at package1.X (in package2/__init__.py:1)
 ```
 
-As you can see in the interpreter session above, Griffe did not resolve the `X` alias. When we tried to access its target object anyway, it failed with a `KeyError`, which was raised again as an [`AliasResolutionError`][griffelib.AliasResolutionError].
+As you can see in the interpreter session above, Griffe did not resolve the `X` alias. When we tried to access its target object anyway, it failed with a `KeyError`, which was raised again as an [`AliasResolutionError`][griffe.AliasResolutionError].
 
 Lets try again, but this time by loading both packages.
 
 ```pycon
 >>> import griffe
->>> package1 = griffelib.load("package1")  # nothing to resolve
->>> package2 = griffelib.load("package2", resolve_aliases=True)
+>>> package1 = griffe.load("package1")  # nothing to resolve
+>>> package2 = griffe.load("package2", resolve_aliases=True)
 >>> package2["X"].target_path
 'package1.X'
 >>> package2["X"].resolved
@@ -257,20 +257,20 @@ The same exception again? What happened here? We loaded both packages, but Griff
 
 If you look closely at the first exception traceback, you will see that Griffe searched the target path in `self.modules_collection`. So what is this modules collection?
 
-Each instance of [`GriffeLoader`][griffelib.GriffeLoader] holds a reference to an instance of [`ModulesCollection`][griffelib.ModulesCollection]. If you don't create such a collection manually to pass it to the loader, it will instantiate one itself. All objects loaded with this loader are added to this very modules collection, and gain a reference to it.
+Each instance of [`GriffeLoader`][griffe.GriffeLoader] holds a reference to an instance of [`ModulesCollection`][griffe.ModulesCollection]. If you don't create such a collection manually to pass it to the loader, it will instantiate one itself. All objects loaded with this loader are added to this very modules collection, and gain a reference to it.
 
-Since the [`load` function][griffelib.load] is just a shortcut for creating a loader and calling its [`load` method][griffelib.GriffeLoader.load], when we called `griffelib.load(...)` twice, it actually created two distinct collections of modules. When Griffe tried to resolve aliases of `package2`, it looked for `package1` in `package2`'s collection, and couldn't find it. Indeed, `package1` was in another modules collection.
+Since the [`load` function][griffe.load] is just a shortcut for creating a loader and calling its [`load` method][griffe.GriffeLoader.load], when we called `griffe.load(...)` twice, it actually created two distinct collections of modules. When Griffe tried to resolve aliases of `package2`, it looked for `package1` in `package2`'s collection, and couldn't find it. Indeed, `package1` was in another modules collection.
 
 Therefore, to resolve aliases *across different packages*, these packages must be loaded within the same modules collection. In order to do that, you have a few options:
 
 - instantiate a single loader, and use it to load both packages
-- create your own modules collection, and pass it to the [`load` function][griffelib.load] each time you call it
-- create your own modules collection, and pass it to the different instances of [`GriffeLoader`][griffelib.GriffeLoader] you create
+- create your own modules collection, and pass it to the [`load` function][griffe.load] each time you call it
+- create your own modules collection, and pass it to the different instances of [`GriffeLoader`][griffe.GriffeLoader] you create
 
 === "Same loader"
     ```pycon
     >>> import griffe
-    >>> loader = griffelib.GriffeLoader()
+    >>> loader = griffe.GriffeLoader()
     >>> package1 = loader.load("package1")
     >>> package2 = loader.load("package2")
     >>> loader.resolve_aliases()
@@ -283,9 +283,9 @@ Therefore, to resolve aliases *across different packages*, these packages must b
 === "Same collection with `load`"
     ```pycon
     >>> import griffe
-    >>> collection = griffelib.ModulesCollection()
-    >>> package1 = griffelib.load("package1", modules_collection=collection)
-    >>> package2 = griffelib.load("package2", modules_collection=collection, resolve_aliases=True)
+    >>> collection = griffe.ModulesCollection()
+    >>> package1 = griffe.load("package1", modules_collection=collection)
+    >>> package2 = griffe.load("package2", modules_collection=collection, resolve_aliases=True)
     >>> package2["X"].resolved
     True
     >>> package2["X"].target
@@ -295,10 +295,10 @@ Therefore, to resolve aliases *across different packages*, these packages must b
 === "Same collection, different loaders"
     ```pycon
     >>> import griffe
-    >>> collection = griffelib.ModulesCollection()
-    >>> loader1 = griffelib.GriffeLoader(modules_collection=collection, ...)
+    >>> collection = griffe.ModulesCollection()
+    >>> loader1 = griffe.GriffeLoader(modules_collection=collection, ...)
     >>> package1 = loader1.load("package1")
-    >>> loader2 = griffelib.GriffeLoader(modules_collection=collection, ...)  # different parameters
+    >>> loader2 = griffe.GriffeLoader(modules_collection=collection, ...)  # different parameters
     >>> package2 = loader2.load("package2")
     >>> package2["X"].resolved
     True
@@ -315,7 +315,7 @@ By default, when resolving aliases, Griffe loaders will not be able to resolve a
 ```python
 import griffe
 
-package2 = griffelib.load("package2", resolve_aliases=True, resolve_external=True)
+package2 = griffe.load("package2", resolve_aliases=True, resolve_external=True)
 print(package2["X"].target.name)  # X
 ```
 
@@ -334,7 +334,7 @@ By default, Griffe runs some Git commands to find the following information abou
 - what service it corresponds to (GitHub, etc.)
 - the current commit hash
 
-It then assigns this information to each package it loads, in the [`git_info`][griffelib.Object.git_info] attribute. This attribute can be reassigned on any object, if necessary. Each object who has it set to `None` will look into its parents.
+It then assigns this information to each package it loads, in the [`git_info`][griffe.Object.git_info] attribute. This attribute can be reassigned on any object, if necessary. Each object who has it set to `None` will look into its parents.
 
 In the following cases, the information will not be set:
 
@@ -343,15 +343,15 @@ In the following cases, the information will not be set:
 - Griffe cannot identify a known, supported service from the remote URL
 - any Git command failed
 
-Griffe supports the services listed in the [`KnownGitService`][griffelib.KnownGitService] symbol. Please open a feature request if you would like to add support for other services.
+Griffe supports the services listed in the [`KnownGitService`][griffe.KnownGitService] symbol. Please open a feature request if you would like to add support for other services.
 
-Thanks to this source information, Griffe can then compute [source links][griffelib.Object.source_link] for each objects, by combining the information with the object's filepath and line numbers.
+Thanks to this source information, Griffe can then compute [source links][griffe.Object.source_link] for each objects, by combining the information with the object's filepath and line numbers.
 
 You can globally change how Griffe obtains the source information with the following environment variables:
 
 - `GRIFFE_GIT_REMOTE_URL`: It is the repository remote URL, as an HTTPS link that readers of your documentation can access to see the repository online, on the service it is hosted on. Example: `GRIFFE_GIT_REMOTE_URL=https://app.radicle.at/nodes/seed.radicle.at/rad:z4M5XTPDD4Wh1sm8iPCenF85J3z8Z`.
 - `GRIFFE_GIT_REMOTE`: You can also let Griffe obtain the remote URL by getting it from the Git local configuration. The Git remote defaults to `origin`. This environment variable lets you change it to something else. Example: `GRIFFE_GIT_REMOTE=upstream`.
-- `GRIFFE_GIT_SERVICE`: Griffe infers the service by looking at the remote URL. If the remote URL contains a [known service name][griffelib.KnownGitService], Griffe will use it as service. You can otherwise explicitly set the service using this environment variable. Example: `GRIFFE_GIT_SERVICE=codeberg`.
+- `GRIFFE_GIT_SERVICE`: Griffe infers the service by looking at the remote URL. If the remote URL contains a [known service name][griffe.KnownGitService], Griffe will use it as service. You can otherwise explicitly set the service using this environment variable. Example: `GRIFFE_GIT_SERVICE=codeberg`.
 - `GRIFFE_GIT_COMMIT_HASH`: Griffe gets the commit hash by running a Git command. If you prefer using another commit hash, you can set it using this environment variable. Example: `GRIFFE_GIT_COMMIT_HASH=77f928aeab857cb45564462a4f849c2df2cca99a`.
 
 For more complex cases, see [How to programmatically set the correct Git information or source link on objects](how-to/set-git-info.md).

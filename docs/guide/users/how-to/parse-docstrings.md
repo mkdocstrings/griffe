@@ -1,6 +1,6 @@
 # Using Griffe as a docstring-parsing library
 
-You can use Griffe to parse arbitrary docstrings. You don't have to load anything through the Griffe loader. You just need to import the [`Docstring`][griffelib.Docstring] class. Then you can build a `Docstring` instance and call its `parse` method, choosing the parsing-style to use:
+You can use Griffe to parse arbitrary docstrings. You don't have to load anything through the Griffe loader. You just need to import the [`Docstring`][griffe.Docstring] class. Then you can build a `Docstring` instance and call its `parse` method, choosing the parsing-style to use:
 
 ```python
 from griffe import Docstring

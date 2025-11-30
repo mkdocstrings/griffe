@@ -7,32 +7,32 @@
       "properties": {
         "name": {
           "title": "The name of the alias.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.name",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.name",
           "type": "string"
         },
         "kind": {
           "title": "The 'alias' kind.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.kind",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.kind",
           "const": "alias"
         },
         "path": {
           "title": "The alias path.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.path",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.path",
           "type": "string"
         },
         "target_path": {
           "title": "For aliases, the Python path of their target.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.target_path",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.target_path",
           "type": "string"
         },
         "lineno": {
           "title": "For aliases, the import starting line number in their own module.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.lineno",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.lineno",
           "type": "integer"
         },
         "endlineno": {
           "title": "For aliases, the import ending line number in their own module.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.endlineno",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.endlineno",
           "type": [
             "integer",
             "null"
@@ -40,17 +40,17 @@
         },
         "inherited": {
           "title": "Whether the alias is the member of another alias.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.inherited",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.inherited",
           "type": "boolean"
         },
         "runtime": {
           "title": "Whether the alias exists at runtime.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.runtime",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.runtime",
           "type": "boolean"
         },
         "public": {
           "title": "Whether the alias is public.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.public",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.public",
           "type": [
             "null",
             "boolean"
@@ -58,7 +58,7 @@
         },
         "deprecated": {
           "title": "Whether the alias is explicitly marked as deprecated.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.deprecated",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.deprecated",
           "type": [
             "null",
             "boolean",
@@ -67,7 +67,7 @@
         },
         "analysis": {
           "title": "The type of analysis used to load this alias.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.analysis",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.analysis",
           "type": [
             "null",
             "string"
@@ -80,42 +80,42 @@
         },
         "is_public": {
           "title": "Whether the alias is public.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_public",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_public",
           "type": "boolean"
         },
         "is_deprecated": {
           "title": "Whether the alias is deprecated.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_deprecated",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_deprecated",
           "type": "boolean"
         },
         "is_private": {
           "title": "Whether the alias is private.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_private",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_private",
           "type": "boolean"
         },
         "is_class_private": {
           "title": "Whether the alias is class-private.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_class_private",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_class_private",
           "type": "boolean"
         },
         "is_special": {
           "title": "Whether the alias is special.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_special",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_special",
           "type": "boolean"
         },
         "is_imported": {
           "title": "Whether the alias is imported.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_imported",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_imported",
           "type": "boolean"
         },
         "is_exported": {
           "title": "Whether the alias is exported.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_exported",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_exported",
           "type": "boolean"
         },
         "is_wildcard_exposed": {
           "title": "Whether the alias is wildcard-exposed.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Alias.is_wildcard_exposed",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Alias.is_wildcard_exposed",
           "type": "boolean"
         }
       },
@@ -133,12 +133,12 @@
       "properties": {
         "name": {
           "title": "The name of the object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.name",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.name",
           "type": "string"
         },
         "kind": {
           "title": "The kind of object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.kind",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.kind",
           "enum": [
             "module",
             "class",
@@ -149,32 +149,32 @@
         },
         "path": {
           "title": "The path of the object (dot-separated Python path).",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.path",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.path",
           "type": "string"
         },
         "filepath": {
           "title": "The file path of the object's parent module.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.filepath",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.filepath",
           "type": "string"
         },
         "relative_filepath": {
           "title": "The file path of the object's parent module, relative to the (at the time) current working directory.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.relative_filepath",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.relative_filepath",
           "type": "string"
         },
         "relative_package_filepath": {
           "title": "The file path of the object's package, as found in the explored directories of the Python paths.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.relative_package_filepath",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.relative_package_filepath",
           "type": "string"
         },
         "git_info": {
           "title": "The Git information associated to this object's package.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Object.git_info",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Object.git_info",
           "$ref": "#/$defs/GitInfo"
         },
         "source_link": {
           "title": "The source link of the object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.source_link",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.source_link",
           "type": [
             "string",
             "null"
@@ -182,7 +182,7 @@
         },
         "public": {
           "title": "Whether the object was explicitly marked as public.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.public",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.public",
           "type": [
             "null",
             "boolean"
@@ -190,7 +190,7 @@
         },
         "exports": {
           "title": "The exports of the object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.exports",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.exports",
           "type": [
             "null",
             "array"
@@ -201,17 +201,17 @@
         },
         "imports": {
           "title": "The imports of the object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.imports",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.imports",
           "type": "object"
         },
         "runtime": {
           "title": "Whether this object exists at runtime.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.runtime",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.runtime",
           "type": "boolean"
         },
         "deprecated": {
           "title": "Whether the object was explicitly marked as deprecated.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.deprecated",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.deprecated",
           "type": [
             "null",
             "string",
@@ -220,7 +220,7 @@
         },
         "analysis": {
           "title": "The type of analysis used to load this object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffelib.Object.analysis",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/alias/#griffe.Object.analysis",
           "type": [
             "null",
             "string"
@@ -233,27 +233,27 @@
         },
         "labels": {
           "title": "The labels of the object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.labels",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.labels",
           "type": "array"
         },
         "docstring": {
           "title": "The docstring of the object.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring",
           "type": "object",
           "properties": {
             "value": {
               "title": "The actual string.",
-              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring.value",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring.value",
               "type": "string"
             },
             "lineno": {
               "title": "The docstring starting line number.",
-              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring.lineno",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring.lineno",
               "type": "integer"
             },
             "endlineno": {
               "title": "The docstring ending line number.",
-              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring.endlineno",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring.endlineno",
               "type": [
                 "integer",
                 "null"
@@ -261,7 +261,7 @@
             },
             "parsed": {
               "title": "The parsed docstring (list of docstring sections).",
-              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring.parsed",
+              "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring.parsed",
               "type": "array",
               "items": {
                 "type": "object",
@@ -312,12 +312,12 @@
         },
         "lineno": {
           "title": "The docstring starting line number.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring.lineno",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring.lineno",
           "type": "integer"
         },
         "endlineno": {
           "title": "The docstring ending line number.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffelib.Docstring.endlineno",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/docstrings/models/#griffe.Docstring.endlineno",
           "type": [
             "integer",
             "null"
@@ -325,42 +325,42 @@
         },
         "is_public": {
           "title": "Whether the object is public.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_public",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_public",
           "type": "boolean"
         },
         "is_deprecated": {
           "title": "Whether the object is deprecated.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_deprecated",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_deprecated",
           "type": "boolean"
         },
         "is_private": {
           "title": "Whether the object is private.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_private",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_private",
           "type": "boolean"
         },
         "is_class_private": {
           "title": "Whether the object is class-private.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_class_private",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_class_private",
           "type": "boolean"
         },
         "is_special": {
           "title": "Whether the object is special.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_special",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_special",
           "type": "boolean"
         },
         "is_imported": {
           "title": "Whether the object is imported.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_imported",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_imported",
           "type": "boolean"
         },
         "is_exported": {
           "title": "Whether the object is exported.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_exported",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_exported",
           "type": "boolean"
         },
         "is_wildcard_exposed": {
           "title": "Whether the object is wildcard-exposed.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.Object.is_wildcard_exposed",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.is_wildcard_exposed",
           "type": "boolean"
         },
         "bases": true,
@@ -390,7 +390,7 @@
             "properties": {
               "bases": {
                 "title": "For classes, their bases classes.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffelib.Class.bases",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffe.Class.bases",
                 "type": "array",
                 "items": {
                   "$ref": "#/$defs/annotation"
@@ -398,24 +398,24 @@
               },
               "decorators": {
                 "title": "For classes, their decorators.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffelib.Class.decorators",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffe.Class.decorators",
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
                     "value": {
                       "title": "The decorator value (string, name or expression).",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Decorator.value",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Decorator.value",
                       "$ref": "#/$defs/annotation"
                     },
                     "lineno": {
                       "title": "The decorator starting line number.",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Decorator.lineno",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Decorator.lineno",
                       "type": "integer"
                     },
                     "endlineno": {
                       "title": "The decorator ending line number.",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Decorator.endlineno",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Decorator.endlineno",
                       "type": [
                         "integer",
                         "null"
@@ -432,7 +432,7 @@
               },
               "type_parameters": {
                 "title": "For classes, their type parameters.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffelib.Class.type_parameters",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/class/#griffe.Class.type_parameters",
                 "type": "array",
                 "items": {
                   "$ref": "#/$defs/type_parameter"
@@ -457,29 +457,29 @@
             "properties": {
               "parameters": {
                 "title": "For functions, their parameters.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Function.parameters",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Function.parameters",
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
                     "name": {
                       "title": "The name of the parameter.",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Parameter.name",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Parameter.name",
                       "type": "string"
                     },
                     "annotation": {
                       "title": "The annotation of the parameter.",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Parameter.annotation",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Parameter.annotation",
                       "$ref": "#/$defs/annotation"
                     },
                     "kind": {
                       "title": "The kind of parameter.",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Parameter.kind",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Parameter.kind",
                       "type": "string"
                     },
                     "default": {
                       "title": "The default value of the parameter.",
-                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Parameter.default",
+                      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Parameter.default",
                       "$ref": "#/$defs/annotation"
                     }
                   },
@@ -491,12 +491,12 @@
               },
               "returns": {
                 "title": "For functions, their return annotation.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Function.returns",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Function.returns",
                 "$ref": "#/$defs/annotation"
               },
               "type_parameters": {
                 "title": "For functions, their type parameters.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffelib.Function.type_parameters",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/function/#griffe.Function.type_parameters",
                 "type": "array",
                 "items": {
                   "$ref": "#/$defs/type_parameter"
@@ -521,12 +521,12 @@
             "properties": {
               "value": {
                 "title": "For attributes, their value.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/attribute/#griffelib.Attribute.value",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/attribute/#griffe.Attribute.value",
                 "$ref": "#/$defs/annotation"
               },
               "annotation": {
                 "title": "For attributes, their type annotation.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/attribute/#griffelib.Attribute.annotation",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/attribute/#griffe.Attribute.annotation",
                 "$ref": "#/$defs/annotation"
               }
             }
@@ -544,12 +544,12 @@
             "properties": {
               "value": {
                 "title": "For type aliases, their value.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/type_alias/#griffelib.TypeAlias.value",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/type_alias/#griffe.TypeAlias.value",
                 "$ref": "#/$defs/annotation"
               },
               "type_parameters": {
                 "title": "For type aliases, their type parameters.",
-                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/type_alias/#griffelib.TypeAlias.type_parameters",
+                "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/type_alias/#griffe.TypeAlias.type_parameters",
                 "type": "array",
                 "items": {
                   "$ref": "#/$defs/type_parameter"
@@ -584,17 +584,17 @@
     },
     "type_parameter": {
       "title": "Type Parameter.",
-      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.TypeParameter",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter",
       "type": "object",
       "properties": {
         "name": {
           "title": "The type parameter name.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.TypeParameter.name",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.name",
           "type": "string"
         },
         "kind": {
           "title": "The type parameter kind.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.TypeParameter.kind",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.kind",
           "enum": [
             "type-var",
             "type-var-tuple",
@@ -603,12 +603,12 @@
         },
         "annotation": {
           "title": "The type parameter bound or constraints.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.TypeParameter.annotation",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.annotation",
           "$ref": "#/$defs/annotation"
         },
         "default": {
           "title": "The type parameter default.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.TypeParameter.default",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.TypeParameter.default",
           "$ref": "#/$defs/annotation"
         }
       },
@@ -622,19 +622,19 @@
     },
     "GitInfo": {
       "title": "Git information.",
-      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.GitInfo",
+      "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo",
       "type": "object",
       "properties": {
         "repository": {
           "title": "The repository local path.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.GitInfo.repository",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.repository",
           "type": [
             "string"
           ]
         },
         "service": {
           "title": "The Git service (e.g., 'github', 'gitlab', 'bitbucket').",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.GitInfo.service",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.service",
           "type": [
             "string"
           ],
@@ -651,14 +651,14 @@
         },
         "remote_url": {
           "title": "The remote URL.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.GitInfo.remote_url",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.remote_url",
           "type": [
             "string"
           ]
         },
         "commit_hash": {
           "title": "The commit hash.",
-          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffelib.GitInfo.commit_hash",
+          "markdownDescription": "https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.GitInfo.commit_hash",
           "type": [
             "string"
           ]
