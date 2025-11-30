@@ -42,8 +42,11 @@ classifiers = [
 ]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning]
+# No base dependencies needed for griffelib
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+# The 'pypi' extra provides dependencies needed for the load_pypi functionality
+# to download and inspect packages from PyPI.
 pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
 
 [tool.hatch.build.targets.sdist]
