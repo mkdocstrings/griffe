@@ -4,7 +4,8 @@
 # For example, mkdocstrings-python patches the logger to relocate it as a child
 # of `mkdocs.plugins` so that it fits in the MkDocs logging configuration.
 #
-# We use a single, global logger because our public API is exposed in a single module, `griffelib`.
+# We use a single, global logger because our public API is exposed in a single module.
+# The logger name is "griffe" for backward compatibility.
 # Extensions however should use their own logger, which is why we provide the `get_logger` function.
 
 from __future__ import annotations
@@ -40,7 +41,7 @@ class Logger:
             self._logger.setLevel(old_level)
 
     @classmethod
-    def _get(cls, name: str = "griffelib") -> Logger:
+    def _get(cls, name: str = "griffe") -> Logger:
         if name not in cls._instances:
             cls._instances[name] = cls(name)
         return cls._instances[name]
@@ -60,7 +61,7 @@ logger: Logger = Logger._get()
 
 Griffe's output and error messages are logging messages.
 
-Griffe provides the [`patch_loggers`][griffelib.patch_loggers]
+Griffe provides the [`patch_loggers`][griffe.patch_loggers]
 function so dependent libraries can patch Griffe loggers as they see fit.
 
 For example, to fit in the MkDocs logging configuration
@@ -68,7 +69,7 @@ and prefix each log message with the module name:
 
 ```python
 import logging
-from griffelib import patch_loggers
+from griffe import patch_loggers
 
 
 class LoggerAdapter(logging.LoggerAdapter):
@@ -90,7 +91,7 @@ patch_loggers(get_logger)
 """
 
 
-def get_logger(name: str = "griffelib") -> Logger:
+def get_logger(name: str = "griffe") -> Logger:
     """Create and return a new logger instance.
 
     Parameters:
