@@ -35,27 +35,27 @@ ignore = [
     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
-logger-objects = ["griffelib.logger"]
+logger-objects = ["griffe.logger", "griffelib.logger"]
 
 [lint.per-file-ignores]
-"packages/griffe/src/griffe/__main__.py" = [
+"packages/griffecli/src/griffecli/__main__.py" = [
     "D100",  # Missing module docstring
 ]
-"packages/griffe/src/griffe/_internal/cli.py" = [
+"packages/griffecli/src/griffecli/_internal/cli.py" = [
     "T201",  # Print statement
 ]
-"packages/griffe/src/griffe/_internal/git.py" = [
+"packages/griffelib/src/griffelib/_internal/git.py" = [
     "S603",  # `subprocess` call: check for execution of untrusted input
     "S607",  # Starting a process with a partial executable path
 ]
-"packages/griffe/src/griffe/_internal/agents/nodes/*.py" = [
+"packages/griffelib/src/griffelib/_internal/agents/nodes/*.py" = [
     "ARG001",  # Unused function argument
     "N812",  # Lowercase `keyword` imported as non-lowercase `NodeKeyword`
 ]
-"packages/griffe/src/griffe/_internal/debug.py" = [
+"packages/griffelib/src/griffelib/_internal/debug.py" = [
     "T201",  # Print statement
 ]
-"packages/griffe/src/griffe/_internal/**.py" = [
+"packages/griffelib/src/griffelib/_internal/**.py" = [
     "D100",  # Missing docstring in public module
 ]
 "scripts/*.py" = [
@@ -84,7 +84,7 @@ docstring-quotes = "double"
 ban-relative-imports = "all"
 
 [lint.isort]
-known-first-party = ["griffe"]
+known-first-party = ["griffe", "griffelib", "griffecli"]
 
 [lint.pydocstyle]
 convention = "google"

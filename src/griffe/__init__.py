@@ -20,9 +20,9 @@ Their actual messages are not part of the public API (they might change without 
 See the `griffelib` and `griffecli` packages for detailed API documentation.
 """
 
-from griffecli import *
+from griffecli import *  # noqa: F403
 from griffecli import __all__ as __cli_all__
-from griffelib import *
+from griffelib import *  # noqa: F403
 from griffelib import __all__ as __lib_all__
 
-__all__ = [*__lib_all__, *__cli_all__]
+__all__ = [*__lib_all__, *__cli_all__]  # noqa: PLE0604
