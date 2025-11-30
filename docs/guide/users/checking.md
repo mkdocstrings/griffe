@@ -9,13 +9,13 @@ Griffe is able to compare two snapshots of your project to detect API breakages 
 By default, Griffe will compare the current code to the latest tag:
 
 ```console
-$ griffe check mypackage
+$ griffecli check mypackage
 ```
 
 To specify another Git reference to check against, use the `--against` or `-a` option:
 
 ```console
-$ griffe check mypackage -a 0.2.0
+$ griffecli check mypackage -a 0.2.0
 ```
 
 You can specify a Git tag, commit (hash), or even a branch: Griffe will create a worktree at this reference in a temporary directory, and clean it up after finishing.
@@ -23,24 +23,24 @@ You can specify a Git tag, commit (hash), or even a branch: Griffe will create a
 If you want to also specify the *base* reference to use (instead of the current code), use the `--base` or `-b` option. Some examples:
 
 ```console
-$ griffe check mypackage -b HEAD -a 2.0.0
-$ griffe check mypackage -b 2.0.0 -a 1.0.0
-$ griffe check mypackage -b fix-issue-90 -a 1.2.3
-$ griffe check mypackage -b 8afcfd6e
+$ griffecli check mypackage -b HEAD -a 2.0.0
+$ griffecli check mypackage -b 2.0.0 -a 1.0.0
+$ griffecli check mypackage -b fix-issue-90 -a 1.2.3
+$ griffecli check mypackage -b 8afcfd6e
 ```
 
 TIP: **Important:** Remember that the base is the most recent reference, and the one we compare it against is the oldest one.
 
-The package name you pass to `griffe check` must be found relative to the repository root. For Griffe to find packages in subfolders, pass the parent subfolder to the `--search` or `-s` option. Example for `src`-layouts:
+The package name you pass to `griffecli check` must be found relative to the repository root. For Griffe to find packages in subfolders, pass the parent subfolder to the `--search` or `-s` option. Example for `src`-layouts:
 
 ```console
-$ griffe check -s src griffe
+$ griffecli check -s src griffe
 ```
 
 Example in a monorepo, within a deeper file tree:
 
 ```console
-$ griffe check -s back/services/identity-provider/src identity_provider
+$ griffecli check -s back/services/identity-provider/src identity_provider
 ```
 
 ### Using PyPI
@@ -54,39 +54,39 @@ $ pip install griffe[pypi]
 The command syntax is:
 
 ```console
-$ griffe check package_name -b project-name==2.0 -a project-name==1.0
+$ griffecli check package_name -b project-name==2.0 -a project-name==1.0
 ```
 
 You can let Griffe guess the package name by passing an empty string:
 
 ```console
-$ griffe check "" -b project-name==2.0 -a project-name==1.0
+$ griffecli check "" -b project-name==2.0 -a project-name==1.0
 ```
 
 [PEP 508 version specifiers](https://peps.python.org/pep-0508/) are supported (`<`, `<=`, `!=`, `==`, `>=`, `>`, `~=`). For example, to compare v2 against the version just before it:
 
 ```console
-$ griffe check "" -b project-name==2.0 -a project-name<2.0
+$ griffecli check "" -b project-name==2.0 -a project-name<2.0
 ```
 
 Without a version specifier on the base reference, or without a base reference at all, Griffe will use the latest available version. The two following commands compare the latest version against v1:
 
 ```console
-$ griffe check "" -b project-name -a project-name==1.0
-$ griffe check "" -a project-name==1.0
+$ griffecli check "" -b project-name -a project-name==1.0
+$ griffecli check "" -a project-name==1.0
 ```
 
 Griffe will actually install packages in a cache directory. It means a few things: source distributions are supported, and only packages that are compatible with your current environment can be checked.
 
 ## Python API
 
-To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffe.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffe.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffe.Breakage]. It's up to you how you want to use these breakage instances.
+To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffelib.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffelib.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffelib.Breakage]. It's up to you how you want to use these breakage instances.
 
 ```python
 import griffe
 
-my_pkg_v1 = griffe.load_git("my_pkg", ref="v1")
-my_pkg_v2 = griffe.load_git("my_pkg", ref="v2")
+my_pkg_v1 = griffelib.load_git("my_pkg", ref="v1")
+my_pkg_v2 = griffelib.load_git("my_pkg", ref="v2")
 
 for breaking_change in find_breaking_changes(my_pkg_v1, my_pkg_v2):
     print(breaking_change.explain())
@@ -110,7 +110,7 @@ jobs:
           fetch-depth: 0  # We the need the full Git history.
     - uses: astral-sh/setup-uv@v6
     # The following command will compare current changes to latest tag.
-    - run: uvx griffe check --search src --format github your_package_name
+    - run: uvx griffecli check --search src --format github your_package_name
 ```
 
 The last step will fail the workflow if any breaking change is found.
@@ -643,9 +643,9 @@ Griffe supports writing detected breakages in multiple formats, or styles.
 
 This is the default format. Griffe will print each detected breakage on a single line:
 
-```console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-oneline"
+```console exec="1" source="console" result="ansi" returncode="1" id="griffecli-check-oneline"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe check griffe -ssrc -b0.46.0 -a0.45.0
+$ griffecli check griffe -ssrc -b0.46.0 -a0.45.0
 ```
 
 [](){#format-verbose}
@@ -655,11 +655,11 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 - **CLI**: `-f verbose` / `-v`
 - **API**: `check(..., style="verbose")` / `check(..., style=ExplanationStyle.VERBOSE)` / `check(..., verbose=True)`
 
-Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
+Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffecli check` also accepts a `--verbose` or `-v` option to add some space to the output:
 
-```console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-verbose"
+```console exec="1" source="console" result="ansi" returncode="1" id="griffecli-check-verbose"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
+$ griffecli check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
 
 [](){#format-markdown}
@@ -672,26 +672,26 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 The Markdown format is adapted for changelogs. It doesn't show the file and line number, and instead prints out the complete path of your API objects. With a bit of automation, you will be able to automatically insert a summary of breaking changes in your changelog entries.
 
 ```md exec="1" source="tabbed-left" tabs="Output|Result"
-- `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter default was changed*: `True` -> `None`
-- `griffe.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter default was changed*: `True` -> `None`
-- `griffe.loader.GriffeLoader.resolve_aliases(max_iterations)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.loader.GriffeLoader.resolve_module_aliases(only_exported)`: *Parameter was removed*
-- `griffe.loader.GriffeLoader.resolve_module_aliases(only_known_modules)`: *Parameter was removed*
-- `griffe.git.tmp_worktree(commit)`: *Parameter was removed*
-- `griffe.git.tmp_worktree(repo)`: *Positional parameter was moved*: position: from 2 to 1 (-1)
-- `griffe.git.load_git(commit)`: *Parameter was removed*
-- `griffe.git.load_git(repo)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(submodules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(try_relative_path)`: *Parameter was removed*
-- `griffe.git.load_git(extensions)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(search_paths)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(docstring_parser)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(docstring_options)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(lines_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(modules_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
-- `griffe.git.load_git(allow_inspection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter default was changed*: `True` -> `None`
+- `griffelib.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter default was changed*: `True` -> `None`
+- `griffelib.loader.GriffeLoader.resolve_aliases(max_iterations)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.loader.GriffeLoader.resolve_module_aliases(only_exported)`: *Parameter was removed*
+- `griffelib.loader.GriffeLoader.resolve_module_aliases(only_known_modules)`: *Parameter was removed*
+- `griffelib.git.tmp_worktree(commit)`: *Parameter was removed*
+- `griffelib.git.tmp_worktree(repo)`: *Positional parameter was moved*: position: from 2 to 1 (-1)
+- `griffelib.git.load_git(commit)`: *Parameter was removed*
+- `griffelib.git.load_git(repo)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(submodules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(try_relative_path)`: *Parameter was removed*
+- `griffelib.git.load_git(extensions)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(search_paths)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(docstring_parser)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(docstring_options)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(lines_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(modules_collection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
+- `griffelib.git.load_git(allow_inspection)`: *Parameter kind was changed*: positional or keyword -> keyword-only
 ```
 
 [](){#format-github}
@@ -701,7 +701,7 @@ The Markdown format is adapted for changelogs. It doesn't show the file and line
 - **CLI**: `-f github`
 - **API**: `check(..., style="github")` / `check(..., style=ExplanationStyle.GITHUB)`
 
-When running `griffe check` in CI, you can enable GitHub's annotations thanks to the GitHub output style. Annotations are displayed on specific lines of code. They are visible in the Checks tab. When you create an annotation for a file that is part of the pull request, the annotations are also shown in the Files changed tab.
+When running `griffecli check` in CI, you can enable GitHub's annotations thanks to the GitHub output style. Annotations are displayed on specific lines of code. They are visible in the Checks tab. When you create an annotation for a file that is part of the pull request, the annotations are also shown in the Files changed tab.
 
 /// tab | Files changed tab
 ![gha_annotations_2](../../img/gha_annotations_2.png)
@@ -712,12 +712,12 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 ///
 
 ```console
-% python -m griffe check -fgithub -ssrc griffe
-::warning file=src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -> unset
-::warning file=src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -> unset
-::warning file=src/griffe/finder.py,line=62,title=Package.stubs::Attribute value was changed: `stubs` -> `None`
-::warning file=src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
-::warning file=src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
+% python -m griffecli check -fgithub -ssrc griffe
+::warning file=packages/griffe/src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=62,title=Package.stubs::Attribute value was changed: `stubs` -> `None`
+::warning file=packages/griffe/src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
+::warning file=packages/griffe/src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
 ```
 
 ## Next steps

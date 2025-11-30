@@ -10,41 +10,41 @@ Indirections to objects declared in other modules are represented as "aliases". 
 
 The 6 models:
 
-- [`Module`][griffe.Module]
-- [`Class`][griffe.Class]
-- [`Function`][griffe.Function]
-- [`Attribute`][griffe.Attribute]
-- [`Alias`][griffe.Alias]
-- [`TypeAlias`][griffe.TypeAlias]
+- [`Module`][griffelib.Module]
+- [`Class`][griffelib.Class]
+- [`Function`][griffelib.Function]
+- [`Attribute`][griffelib.Attribute]
+- [`Alias`][griffelib.Alias]
+- [`TypeAlias`][griffelib.TypeAlias]
 
 ## **Model kind enumeration**
 
-::: griffe.Kind
+::: griffelib.Kind
 
 ## **Model base classes**
 
-::: griffe.GetMembersMixin
+::: griffelib.GetMembersMixin
 
-::: griffe.SetMembersMixin
+::: griffelib.SetMembersMixin
 
-::: griffe.DelMembersMixin
+::: griffelib.DelMembersMixin
 
-::: griffe.SerializationMixin
+::: griffelib.SerializationMixin
 
-::: griffe.ObjectAliasMixin
+::: griffelib.ObjectAliasMixin
 
-::: griffe.Object
+::: griffelib.Object
 
 ## **Type parameters**
 
-::: griffe.TypeParameters
+::: griffelib.TypeParameters
 
-::: griffe.TypeParameter
+::: griffelib.TypeParameter
 
-::: griffe.TypeParameterKind
+::: griffelib.TypeParameterKind
 
 ## **Git information**
 
-::: griffe.KnownGitService
+::: griffelib.KnownGitService
 
-::: griffe.GitInfo
+::: griffelib.GitInfo

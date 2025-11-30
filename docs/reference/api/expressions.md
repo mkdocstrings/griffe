@@ -1,6 +1,6 @@
 # Expressions
 
-::: griffe._internal.expressions
+::: griffelib._internal.expressions
     options:
         members: false
         show_root_heading: false
@@ -10,88 +10,88 @@
 
 ## **Helpers**
 
-::: griffe.get_annotation
+::: griffelib.get_annotation
 
-::: griffe.get_base_class
+::: griffelib.get_base_class
 
-::: griffe.get_class_keyword
+::: griffelib.get_class_keyword
 
-::: griffe.get_condition
+::: griffelib.get_condition
 
-::: griffe.get_expression
+::: griffelib.get_expression
 
-::: griffe.safe_get_annotation
+::: griffelib.safe_get_annotation
 
-::: griffe.safe_get_base_class
+::: griffelib.safe_get_base_class
 
-::: griffe.safe_get_class_keyword
+::: griffelib.safe_get_class_keyword
 
-::: griffe.safe_get_condition
+::: griffelib.safe_get_condition
 
-::: griffe.safe_get_expression
+::: griffelib.safe_get_expression
 
 ## **Expression nodes**
 
-::: griffe.Expr
+::: griffelib.Expr
 
-::: griffe.ExprAttribute
+::: griffelib.ExprAttribute
 
-::: griffe.ExprBinOp
+::: griffelib.ExprBinOp
 
-::: griffe.ExprBoolOp
+::: griffelib.ExprBoolOp
 
-::: griffe.ExprCall
+::: griffelib.ExprCall
 
-::: griffe.ExprCompare
+::: griffelib.ExprCompare
 
-::: griffe.ExprComprehension
+::: griffelib.ExprComprehension
 
-::: griffe.ExprConstant
+::: griffelib.ExprConstant
 
-::: griffe.ExprDict
+::: griffelib.ExprDict
 
-::: griffe.ExprDictComp
+::: griffelib.ExprDictComp
 
-::: griffe.ExprExtSlice
+::: griffelib.ExprExtSlice
 
-::: griffe.ExprFormatted
+::: griffelib.ExprFormatted
 
-::: griffe.ExprGeneratorExp
+::: griffelib.ExprGeneratorExp
 
-::: griffe.ExprIfExp
+::: griffelib.ExprIfExp
 
-::: griffe.ExprJoinedStr
+::: griffelib.ExprJoinedStr
 
-::: griffe.ExprKeyword
+::: griffelib.ExprKeyword
 
-::: griffe.ExprVarPositional
+::: griffelib.ExprVarPositional
 
-::: griffe.ExprVarKeyword
+::: griffelib.ExprVarKeyword
 
-::: griffe.ExprLambda
+::: griffelib.ExprLambda
 
-::: griffe.ExprList
+::: griffelib.ExprList
 
-::: griffe.ExprListComp
+::: griffelib.ExprListComp
 
-::: griffe.ExprName
+::: griffelib.ExprName
 
-::: griffe.ExprNamedExpr
+::: griffelib.ExprNamedExpr
 
-::: griffe.ExprParameter
+::: griffelib.ExprParameter
 
-::: griffe.ExprSet
+::: griffelib.ExprSet
 
-::: griffe.ExprSetComp
+::: griffelib.ExprSetComp
 
-::: griffe.ExprSlice
+::: griffelib.ExprSlice
 
-::: griffe.ExprSubscript
+::: griffelib.ExprSubscript
 
-::: griffe.ExprTuple
+::: griffelib.ExprTuple
 
-::: griffe.ExprUnaryOp
+::: griffelib.ExprUnaryOp
 
-::: griffe.ExprYield
+::: griffelib.ExprYield
 
-::: griffe.ExprYieldFrom
+::: griffelib.ExprYieldFrom

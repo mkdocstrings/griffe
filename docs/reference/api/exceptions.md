@@ -1,27 +1,27 @@
 # Exceptions
 
-::: griffe.GriffeError
+::: griffelib.GriffeError
 
-::: griffe.LoadingError
+::: griffelib.LoadingError
 
-::: griffe.NameResolutionError
+::: griffelib.NameResolutionError
 
-::: griffe.UnhandledEditableModuleError
+::: griffelib.UnhandledEditableModuleError
 
-::: griffe.UnimportableModuleError
+::: griffelib.UnimportableModuleError
 
-::: griffe.AliasResolutionError
+::: griffelib.AliasResolutionError
 
-::: griffe.CyclicAliasError
+::: griffelib.CyclicAliasError
 
-::: griffe.LastNodeError
+::: griffelib.LastNodeError
 
-::: griffe.RootNodeError
+::: griffelib.RootNodeError
 
-::: griffe.BuiltinModuleError
+::: griffelib.BuiltinModuleError
 
-::: griffe.ExtensionError
+::: griffelib.ExtensionError
 
-::: griffe.ExtensionNotLoadedError
+::: griffelib.ExtensionNotLoadedError
 
-::: griffe.GitError
+::: griffelib.GitError

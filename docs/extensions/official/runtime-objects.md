@@ -11,11 +11,11 @@ This extension stores runtime objects corresponding to each loaded Griffe object
 
 ```pycon
 >>> import griffe
->>> griffe_data = griffe.load("griffe", extensions=griffe.load_extensions("griffe_runtime_objects"), resolve_aliases=True)
+>>> griffe_data = griffelib.load("griffe", extensions=griffelib.load_extensions("griffe_runtime_objects"), resolve_aliases=True)
 >>> griffe_data["parse"].extra
 defaultdict(<class 'dict'>, {'runtime-objects': {'object': <function parse at 0x78685c951260>}})
 >>> griffe_data["Module"].extra
-defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class 'griffe._internal.models.Module'>}})
+defaultdict(<class 'dict'>, {'runtime-objects': {'object': <class 'griffelib._internal.models.Module'>}})
 ```
 
 It can be useful in combination with mkdocstrings-python and custom templates, to iterate over object values or their attributes that couldn't be loaded by Griffe itself (for example, objects built dynamically and loaded as attributes won't have "members" to iterate over).

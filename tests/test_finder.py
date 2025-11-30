@@ -9,7 +9,7 @@ from textwrap import dedent
 import pytest
 
 from griffe import Module, ModuleFinder, NamespacePackage, Package, temporary_pypackage
-from griffe._internal.finder import _handle_editable_module, _handle_pth_file
+from griffelib._internal.finder import _handle_editable_module, _handle_pth_file
 
 
 @pytest.mark.parametrize(
@@ -125,7 +125,7 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
         tmp_path: Pytest fixture.
     """
     pth_file = tmp_path / editable_file_name
-    pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')", encoding="utf8")
+    pth_file.write_text("hello\nF.map_module('griffe', 'packages/griffe/src/griffe/__init__.py')", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
@@ -139,7 +139,7 @@ def test_setuptools_file_handling(tmp_path: Path, annotation: str) -> None:
         annotation: The type annotation of the MAPPING variable.
     """
     pth_file = tmp_path / "__editable__whatever.py"
-    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}", encoding="utf8")
+    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'packages/griffe/src/griffe'}}", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 

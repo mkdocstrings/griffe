@@ -44,11 +44,11 @@ import re
 import griffe
 
 
-class ApplyDocstringStyle(griffe.Extension):
+class ApplyDocstringStyle(griffelib.Extension):
     def __init__(self, regex: str = "<!-- style: (google|numpy|sphinx) -->") -> None:
          self.regex = re.compile(regex)
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.docstring:
             if match := self.regex.search(obj.docstring.value):
                 obj.docstring.parser = match.group(1)
@@ -73,11 +73,11 @@ import re
 import griffe
 
 
-class ApplyDocstringStyle(griffe.Extension):
+class ApplyDocstringStyle(griffelib.Extension):
     def __init__(self, regex: str = ".*# style: (google|numpy|sphinx)$") -> None:
          self.regex = re.compile(regex)
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.docstring:
             if match := self.regex.search(obj.docstring.source):
                 obj.docstring.parser = match.group(1)
@@ -91,7 +91,7 @@ Finally, you could decide to map a list of objects to the docstring style they s
 import griffe
 from fnmatch import fnmatch
 
-class ApplyDocstringStyle(griffe.Extension):
+class ApplyDocstringStyle(griffelib.Extension):
     def __init__(self, config: dict[str, str]):
         self.instances = {}
         self.globs = {}
@@ -101,7 +101,7 @@ class ApplyDocstringStyle(griffe.Extension):
             else:
                 self.instances[key] = value
 
-    def on_instance(self, *, obj: griffe.Object, **kwargs) -> None:
+    def on_instance(self, *, obj: griffelib.Object, **kwargs) -> None:
         if obj.path in self.instances:
             if obj.docstring:
                 obj.docsring.parser = self.instances[obj.path]

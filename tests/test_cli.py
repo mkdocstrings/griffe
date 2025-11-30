@@ -6,7 +6,7 @@ import sys
 
 import pytest
 
-from griffe._internal import cli, debug
+from griffelib._internal import cli, debug
 
 
 def test_main() -> None:

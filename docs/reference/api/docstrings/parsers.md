@@ -2,42 +2,42 @@
 
 ## **Main API**
 
-::: griffe.parse
+::: griffelib.parse
 
-::: griffe.parse_auto
+::: griffelib.parse_auto
 
-::: griffe.parse_google
+::: griffelib.parse_google
 
-::: griffe.parse_numpy
+::: griffelib.parse_numpy
 
-::: griffe.parse_sphinx
+::: griffelib.parse_sphinx
 
-::: griffe.DocstringStyle
+::: griffelib.DocstringStyle
 
 ## **Parser options**
 
-::: griffe.DocstringOptions
+::: griffelib.DocstringOptions
 
-::: griffe.GoogleOptions
+::: griffelib.GoogleOptions
 
-::: griffe.NumpyOptions
+::: griffelib.NumpyOptions
 
-::: griffe.SphinxOptions
+::: griffelib.SphinxOptions
 
-::: griffe.AutoOptions
+::: griffelib.AutoOptions
 
-::: griffe.PerStyleOptions
+::: griffelib.PerStyleOptions
 
 ## **Advanced API**
 
-::: griffe.Parser
+::: griffelib.Parser
 
-::: griffe.parsers
+::: griffelib.parsers
 
-::: griffe.parse_docstring_annotation
+::: griffelib.parse_docstring_annotation
 
-::: griffe.docstring_warning
+::: griffelib.docstring_warning
 
-::: griffe.DocstringDetectionMethod
+::: griffelib.DocstringDetectionMethod
 
-::: griffe.infer_docstring_style
+::: griffelib.infer_docstring_style
