@@ -22,15 +22,7 @@ if TYPE_CHECKING:
     from griffe._internal.agents.nodes.runtime import ObjectNode
     from griffe._internal.agents.visitor import Visitor
     from griffe._internal.loader import GriffeLoader
-    from griffe._internal.models import (
-        Alias,
-        Attribute,
-        Class,
-        Function,
-        Module,
-        Object,
-        TypeAlias,
-    )
+    from griffe._internal.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
 
 
 class Extension:
@@ -611,9 +603,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
 
     # TODO: Deprecate and remove at some point?
     # Always add our built-in dataclasses extension.
-    from griffe._internal.extensions.dataclasses import (
-        DataclassesExtension,
-    )
+    from griffe._internal.extensions.dataclasses import DataclassesExtension # noqa: PLC0415
 
     for ext in extensions._extensions:
         if type(ext) is DataclassesExtension:
