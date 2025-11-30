@@ -1,1 +1,1 @@
-# Internal module for griffecli.
+# Internal modules for the griffecli package.
