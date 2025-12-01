@@ -794,6 +794,7 @@ def test_parse__param_multiline(parse_sphinx: ParserType) -> None:
         "* Third thing"
     )
 
+
 @pytest.mark.parametrize(
     "docstring",
     [

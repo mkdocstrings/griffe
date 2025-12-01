@@ -8,9 +8,9 @@ from __future__ import annotations
 
 from contextlib import suppress
 from dataclasses import dataclass, field
+from inspect import cleandoc
 from typing import TYPE_CHECKING, Any, Callable, TypedDict
 from warnings import warn
-from inspect import cleandoc
 
 from griffe._internal.docstrings.models import (
     DocstringAttribute,
