@@ -11,6 +11,7 @@ import pytest
 from mkdocstrings import Inventory
 
 import griffe
+import griffelib
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -24,6 +25,9 @@ def _fixture_loader() -> griffelib.GriffeLoader:
             "unpack_typeddict",
         ),
     )
+    # Load griffelib and griffecli first so aliases can be resolved
+    loader.load("griffelib")
+    loader.load("griffecli")
     loader.load("griffe")
     loader.resolve_aliases()
     return loader
@@ -134,7 +138,10 @@ def test_unique_names(modulelevel_internal_objects: list[griffelib.Object | grif
 
 
 def test_single_locations(public_api: griffelib.Module) -> None:
-    """All objects have a single public location."""
+    """All objects have a single public location (excluding griffe/griffelib aliasing).
+
+    Objects can have aliases in both griffe and griffelib since griffe re-exports from griffelib.
+    """
 
     def _public_path(obj: griffelib.Object | griffelib.Alias) -> bool:
         return obj.is_public and (obj.parent is None or _public_path(obj.parent))
@@ -142,10 +149,19 @@ def test_single_locations(public_api: griffelib.Module) -> None:
     multiple_locations = {}
     for obj_name in griffelib.__all__:
         obj = public_api[obj_name]
-        if obj.aliases and (
-            public_aliases := [path for path, alias in obj.aliases.items() if path != obj.path and _public_path(alias)]
-        ):
-            multiple_locations[obj.path] = public_aliases
+        if obj.aliases:
+            # Filter out griffe.X -> griffelib.X aliases since that's expected for re-exports
+            public_aliases = [
+                path
+                for path, alias in obj.aliases.items()
+                if path != obj.path
+                and _public_path(alias)
+                # Exclude griffe <-> griffelib aliasing which is expected
+                and not (path.startswith("griffe.") and obj.path.startswith("griffelib."))
+                and not (path.startswith("griffelib.") and obj.path.startswith("griffe."))
+            ]
+            if public_aliases:
+                multiple_locations[obj.path] = public_aliases
     assert not multiple_locations, "Multiple public locations:\n" + "\n".join(
         f"{path}: {aliases}" for path, aliases in multiple_locations.items()
     )
@@ -154,7 +170,7 @@ def test_single_locations(public_api: griffelib.Module) -> None:
 def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffelib.Object | griffelib.Alias]) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
-    ignore_paths = {"griffelib.DataclassesExtension.*", "griffelib.UnpackTypedDictExtension.*"}
+    ignore_paths = {"griffe.DataclassesExtension.*", "griffe.UnpackTypedDictExtension.*", "griffelib.DataclassesExtension.*", "griffelib.UnpackTypedDictExtension.*"}
     not_in_inventory = [
         f"{obj.relative_filepath}:{obj.lineno}: {obj.path}"
         for obj in public_objects
