@@ -74,4 +74,4 @@ Griffe is able to analyze code both statically and dynamically.
 ## **Deprecated API**
 
 <!-- YORE: Bump 2: Remove line. -->
-::: griffe.ExportedName
+<!-- ::: griffe.ExportedName -->

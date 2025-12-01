@@ -4,6 +4,7 @@
 
 DANGER: **Deprecated utilities.** We have decided to stop exposing Git-related utilities as it's not a core part of the library's functionality. The functions documented on this page will become unavailable in the next major version.
 
+<!-- These git utilities have been removed/made internal
 ::: griffe.assert_git_repo
 
 ::: griffe.get_latest_tag
@@ -11,3 +12,4 @@ DANGER: **Deprecated utilities.** We have decided to stop exposing Git-related u
 ::: griffe.get_repo_root
 
 ::: griffe.tmp_worktree
+-->

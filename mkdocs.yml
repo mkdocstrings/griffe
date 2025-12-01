@@ -4,7 +4,7 @@ site_url: "https://mkdocstrings.github.io/griffe"
 repo_url: "https://github.com/mkdocstrings/griffe"
 repo_name: "mkdocstrings/griffe"
 site_dir: "site"
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src]
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src, packages/griffelib/src, packages/griffecli/src]
 copyright: Copyright &copy; 2021 Timothée Mazzucotelli
 edit_uri: edit/main/docs/
 
@@ -218,7 +218,8 @@ plugins:
         - url: https://docs.python.org/3/objects.inv
           domains: [std, py]
         - https://typing-extensions.readthedocs.io/en/latest/objects.inv
-        paths: [src, scripts, .]
+        paths: [src, packages/griffelib/src, packages/griffecli/src, scripts, .]
+        load_external_modules: true
         options:
           backlinks: tree
           docstring_options:

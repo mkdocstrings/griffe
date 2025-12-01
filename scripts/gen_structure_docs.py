@@ -68,8 +68,7 @@ def render_internal_api(heading_level: int = 4) -> None:
         heading_level: The initial level of Markdown headings.
     """
     root = Path(os.environ["MKDOCS_CONFIG_DIR"])
-    src = root / "src"
-    internal_api = src / "griffe" / "_internal"
+    internal_api = root / "packages" / "griffelib" / "src" / "griffelib" / "_internal"
     print(_comment_block(internal_api / "__init__.py"))
     _render_api(internal_api, internal_api, heading_level)
 
@@ -81,9 +80,8 @@ def render_public_api(heading_level: int = 4) -> None:
         heading_level: The initial level of Markdown headings.
     """
     root = Path(os.environ["MKDOCS_CONFIG_DIR"])
-    src = root / "src"
-    public_api = src / "griffe"
-    print(f"{'#' * heading_level} `griffe`\n")
+    public_api = root / "packages" / "griffelib" / "src" / "griffelib"
+    print(f"{'#' * heading_level} `griffelib`\n")
     print(_comment_block(public_api / "__init__.py"))
 
 
@@ -94,7 +92,6 @@ def render_entrypoint(heading_level: int = 4) -> None:
         heading_level: The initial level of Markdown headings.
     """
     root = Path(os.environ["MKDOCS_CONFIG_DIR"])
-    src = root / "src"
-    public_api = src / "griffe"
-    print(f"{'#' * heading_level} `griffelib.__main__`\n")
-    print(_comment_block(public_api / "__main__.py"))
+    cli_api = root / "packages" / "griffecli" / "src" / "griffecli"
+    print(f"{'#' * heading_level} `griffecli.__main__`\n")
+    print(_comment_block(cli_api / "__main__.py"))
