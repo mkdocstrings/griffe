@@ -70,7 +70,7 @@ def exptree(path):
         print(f"{index}. {descriptions.get(str(node), '')}\n")
         if node.is_dir() and node in recurse:
             print('    ```python exec="1" session="filetree" idprefix=""')
-            print(f'    exptree("{node}")')
+            print(f'    exptree("{node.as_posix()}")')
             print("    ```\n")
 ```
 
