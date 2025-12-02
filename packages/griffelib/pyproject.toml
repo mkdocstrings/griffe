@@ -4,14 +4,9 @@
 requires = ["hatchling", "pdm-backend", "uv-dynamic-versioning>=0.7.0"]
 build-backend = "hatchling.build"
 
-[tool.hatch.version]
-source = "code"
-path = "../../scripts/get_version.py"
-expression = "get_version()"
-
 [project]
 name = "griffelib"
-description = "The griffe library"
+description = "The Griffe library"
 authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
 license = "ISC"
 license-files = ["LICENSE"]
@@ -40,6 +35,11 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
+
+[tool.hatch.version]
+source = "code"
+path = "../../scripts/get_version.py"
+expression = "get_version()"
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning]
 # No base dependencies needed for griffelib
