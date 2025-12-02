@@ -164,9 +164,6 @@ To test your Griffe extensions, or to load API data from code in memory, Griffe 
 
 from __future__ import annotations
 
-import warnings
-from typing import Any
-
 from griffe._internal.agents.inspector import Inspector, inspect
 from griffe._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
 from griffe._internal.agents.nodes.ast import (
@@ -181,9 +178,7 @@ from griffe._internal.agents.nodes.ast import (
     ast_siblings,
 )
 from griffe._internal.agents.nodes.docstrings import get_docstring
-
-# YORE: Bump 2: Replace `ExportedName, ` with `` within line.
-from griffe._internal.agents.nodes.exports import ExportedName, get__all__, safe_get__all__
+from griffe._internal.agents.nodes.exports import get__all__, safe_get__all__
 from griffe._internal.agents.nodes.imports import relative_to_absolute
 from griffe._internal.agents.nodes.parameters import ParametersType, get_parameters
 from griffe._internal.agents.nodes.runtime import ObjectNode
@@ -383,33 +378,9 @@ from griffe._internal.tests import (
     vtree,
 )
 
-# YORE: Bump 2: Remove block.
-_deprecated_names = (
-    "assert_git_repo",
-    "get_latest_tag",
-    "get_repo_root",
-    "tmp_worktree",
-)
-
-
-# YORE: Bump 2: Remove block.
-def __getattr__(name: str) -> Any:
-    if name in _deprecated_names:
-        from griffe._internal import git  # noqa: PLC0415
-
-        warnings.warn(
-            f"The `{name}` function is deprecated and will become unavailable in the next major version.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return getattr(git, f"_{name}")
-
-    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
-
-
 # Regenerate this list with the following Python snippet:
 # import griffe
-# names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("Any", "annotations", "lazy_importing", "warnings"))
+# names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("annotations",))
 # print('__all__ = [\n    "' + '",\n    "'.join(names) + '",\n]')
 __all__ = [
     "DEFAULT_LOG_LEVEL",
@@ -468,8 +439,6 @@ __all__ = [
     "DocstringWarn",
     "DocstringYield",
     "ExplanationStyle",
-    # YORE: Bump 2: Remove line.
-    "ExportedName",
     "Expr",
     "ExprAttribute",
     "ExprBinOp",
@@ -565,7 +534,6 @@ __all__ = [
     "UnimportableModuleError",
     "UnpackTypedDictExtension",
     "Visitor",
-    "assert_git_repo",
     "ast_children",
     "ast_first_child",
     "ast_kind",
@@ -591,13 +559,11 @@ __all__ = [
     "get_docstring",
     "get_expression",
     "get_instance_names",
-    "get_latest_tag",
     "get_logger",
     "get_name",
     "get_names",
     "get_parameters",
     "get_parser",
-    "get_repo_root",
     "get_value",
     "htree",
     "infer_docstring_style",
@@ -635,7 +601,6 @@ __all__ = [
     "temporary_pypackage",
     "temporary_visited_module",
     "temporary_visited_package",
-    "tmp_worktree",
     "typing_overload",
     "visit",
     "vtree",

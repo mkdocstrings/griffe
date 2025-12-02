@@ -110,8 +110,6 @@ nav:
       - Parsers: reference/api/docstrings/parsers.md
     - Exceptions: reference/api/exceptions.md
     - Expressions: reference/api/expressions.md
-    # YORE: Bump 2: Remove line.
-    - Git utilities: reference/api/git.md
     - Loggers: reference/api/loggers.md
     - Helpers: reference/api/helpers.md
 - Changelog: changelog.md
@@ -231,8 +229,6 @@ plugins:
           docstring_section_style: list
           extensions:
           - griffe_inherited_docstrings
-          # YORE: Bump 2: Remove line.
-          - scripts/griffe_exts.py
           - unpack_typeddict
           heading_level: 2
           inherited_members: true

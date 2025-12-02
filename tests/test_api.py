@@ -21,8 +21,6 @@ def _fixture_loader() -> griffe.GriffeLoader:
     loader = griffe.GriffeLoader(
         extensions=griffe.load_extensions(
             "griffe_inherited_docstrings",
-            # YORE: Bump 2: Remove line.
-            "scripts/griffe_exts.py",
             "unpack_typeddict",
         ),
     )

@@ -12,9 +12,7 @@ from griffe import (
     Alias,
     Extension,
     GriffeLoader,
-    Inspector,
     ObjectNode,
-    Visitor,
     load_extensions,
     temporary_visited_module,
     temporary_visited_package,
@@ -195,84 +193,6 @@ def test_analysis_events() -> None:
         "on_type_alias_node",
     ]
     assert set(events) == set(extension.records)
-
-
-# YORE: Bump 2: Remove block.
-def test_on_alias_renamed_to_on_alias_instance() -> None:
-    """Hook still runs, a deprecation warning is emitted when the class is declared."""
-    with pytest.warns(DeprecationWarning, match="`on_alias` event is now a load event"):
-
-        class Ext(Extension):
-            def __init__(self) -> None:
-                self.records: list[str] = []
-
-            def on_alias(  # type: ignore[override]
-                self,
-                *,
-                node: ast.AST | ObjectNode,  # noqa: ARG002
-                alias: Alias,  # noqa: ARG002
-                agent: Visitor | Inspector,  # noqa: ARG002
-                **kwargs: Any,  # noqa: ARG002
-            ) -> None:
-                self.records.append("called as on_alias_instance")
-
-    extension = Ext()
-    with temporary_visited_module("import x", extensions=load_extensions(extension)):
-        assert extension.records == ["called as on_alias_instance"]
-
-
-# YORE: Bump 2: Remove block.
-def test_new_on_alias_event() -> None:
-    """No deprecation warning, hook is correctly called."""
-
-    class Ext(Extension):
-        def __init__(self) -> None:
-            self.records: list[str] = []
-
-        def on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002
-            self.records.append("called as on_alias")
-
-    extension = Ext()
-    with temporary_visited_package("pkg", {"__init__.py": "import x"}, extensions=load_extensions(extension)):
-        assert extension.records == ["called as on_alias"]
-
-
-# YORE: Bump 2: Remove block.
-def test_deprecated_on_package_loaded_event() -> None:
-    """Hook still runs, a deprecation warning is emitted when the class is declared."""
-    with pytest.warns(DeprecationWarning, match="`on_package_loaded` event is deprecated and renamed"):
-
-        class Ext(Extension):
-            def __init__(self) -> None:
-                self.records: list[str] = []
-
-            def on_package_loaded(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002
-                self.records.append("called as on_package")
-
-    extension = Ext()
-    with temporary_visited_package("pkg", {}, extensions=load_extensions(extension)):
-        assert extension.records == ["called as on_package"]
-
-
-# YORE: Bump 2: Remove block.
-def test_deprecated_on_wildcard_expansion_event() -> None:
-    """Hook still runs, a deprecation warning is emitted when the class is declared."""
-    with pytest.warns(DeprecationWarning, match="`on_wildcard_expansion` event is deprecated"):
-
-        class Ext(Extension):
-            def __init__(self) -> None:
-                self.records: list[str] = []
-
-            def on_wildcard_expansion(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002
-                self.records.append("called as on_wildcard_expansion")
-
-    extension = Ext()
-    with temporary_visited_package(
-        "pkg",
-        {"__init__.py": "from pkg.module import *", "module.py": "def func(): ..."},
-        extensions=load_extensions(extension),
-    ):
-        assert extension.records == ["called as on_wildcard_expansion"]
 
 
 class LoadEventsTest(Extension):  # noqa: D101
