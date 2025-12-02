@@ -190,7 +190,7 @@ def test_parse__param_field_multi_line__param_section(parse_sphinx: ParserType, 
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.parameters
     actual = sections[1].value[0]
-    expected = DocstringParameter(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}")
+    expected = DocstringParameter(SOME_NAME, description=f"{SOME_TEXT}\n{SOME_EXTRA_TEXT}")
     assert isinstance(actual, type(expected))
     assert actual.as_dict() == expected.as_dict()
 
@@ -747,6 +747,54 @@ def test_parse__param_type_no_name__error_message(parse_sphinx: ParserType) -> N
     assert "Failed to get parameter name from" in warnings[0]
 
 
+def test_parse__param_multiline(parse_sphinx: ParserType) -> None:
+    """Parse multiline parameter descriptions.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = """Do something.
+
+        :param foo: This is a docstring that is long enough to run onto a second line,
+            because it is quite long.
+
+            A second paragraph is also required.
+        :param bar: This is an example that is quite long, and also requires bullet
+            points to be clear about intent:
+
+            * First thing
+
+                ```
+                a code block
+                ```
+
+            * Second thing
+            * Third thing
+    """
+
+    sections, _ = parse_sphinx(docstring)
+    param_section = sections[1]
+
+    param_foo = param_section.value[0]
+    assert param_foo.description == (
+        "This is a docstring that is long enough to run onto a second line,\n"
+        "because it is quite long.\n\n"
+        "A second paragraph is also required."
+    )
+
+    param_bar = param_section.value[1]
+    assert param_bar.description == (
+        "This is an example that is quite long, and also requires bullet\n"
+        "points to be clear about intent:\n\n"
+        "* First thing\n\n"
+        "    ```\n"
+        "    a code block\n"
+        "    ```\n\n"
+        "* Second thing\n"
+        "* Third thing"
+    )
+
+
 @pytest.mark.parametrize(
     "docstring",
     [
@@ -775,7 +823,7 @@ def test_parse__attribute_field_multi_line__param_section(parse_sphinx: ParserTy
     assert len(sections) == 2
     assert sections[1].kind is DocstringSectionKind.attributes
     actual = sections[1].value[0]
-    expected = DocstringAttribute(SOME_NAME, description=f"{SOME_TEXT} {SOME_EXTRA_TEXT}")
+    expected = DocstringAttribute(SOME_NAME, description=f"{SOME_TEXT}\n{SOME_EXTRA_TEXT}")
     assert isinstance(actual, type(expected))
     assert actual.as_dict() == expected.as_dict()
     assert not warnings

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from contextlib import suppress
 from dataclasses import dataclass, field
+from inspect import cleandoc
 from typing import TYPE_CHECKING, Any, Callable, TypedDict
 
 from griffe._internal.docstrings.models import (
@@ -458,10 +459,10 @@ def _consolidate_continuation_lines(lines: list[str], offset: int) -> tuple[str,
     # start processing after first item
     curr_line_index += 1
     while curr_line_index < len(lines) and not lines[curr_line_index].startswith(":"):
-        block.append(lines[curr_line_index].lstrip())
+        block.append(lines[curr_line_index])
         curr_line_index += 1
 
-    return " ".join(block).rstrip("\n"), curr_line_index - 1
+    return cleandoc("\n".join(block)).rstrip("\n"), curr_line_index - 1
 
 
 def _consolidate_descriptive_type(descriptive_type: str) -> str:
