@@ -56,8 +56,8 @@ Deprecated code should also be marked as legacy code. We use [Yore](https://pawa
 
 Examples:
 
-```python title="Remove function when we bump to 2.0"
-# YORE: Bump 2: Remove block.
+```python title="Remove function when we bump to 5.0"
+# YORE: Bump 5: Remove block.
 def deprecated_function():
     ...
 ```
