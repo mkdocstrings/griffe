@@ -6,7 +6,7 @@ import os
 import sys
 from tempfile import gettempdir
 
-from griffe._internal.tests import _TMPDIR_PREFIX
+from griffelib._internal.tests import _TMPDIR_PREFIX
 
 
 def clear_sys_modules(name: str | None = None) -> None:
