@@ -139,7 +139,6 @@ def infer_docstring_style(
         style_order: The order of the styles to try when inferring the parser.
         default: The default parser to use if the inference fails.
         per_style_options: Additional parsing options per style.
-        **options: Deprecated. Use `per_style_options` instead.
 
     Returns:
         The inferred parser, and optionally parsed sections (when method is 'max_sections').
@@ -205,7 +204,6 @@ def parse_auto(
         style_order: The order of the styles to try when inferring the parser.
         default: The default parser to use if the inference fails.
         per_style_options: Additional parsing options per style.
-        **options: Deprecated. Use `per_style_options` instead.
 
     Returns:
         A list of docstring sections.

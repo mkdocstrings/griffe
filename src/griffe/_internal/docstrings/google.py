@@ -918,7 +918,6 @@ def parse_google(
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warn_missing_types: Warn about missing types/annotations for parameters, return values, etc.
         warnings: Whether to log warnings at all.
-        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.

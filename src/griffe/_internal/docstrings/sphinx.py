@@ -104,7 +104,6 @@ def parse_sphinx(
         docstring: The docstring to parse.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warnings: Whether to log warnings at all.
-        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.

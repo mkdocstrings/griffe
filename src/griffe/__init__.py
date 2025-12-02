@@ -164,9 +164,6 @@ To test your Griffe extensions, or to load API data from code in memory, Griffe 
 
 from __future__ import annotations
 
-import warnings
-from typing import Any
-
 from griffe._internal.agents.inspector import Inspector, inspect
 from griffe._internal.agents.nodes.assignments import get_instance_names, get_name, get_names
 from griffe._internal.agents.nodes.ast import (
@@ -383,7 +380,7 @@ from griffe._internal.tests import (
 
 # Regenerate this list with the following Python snippet:
 # import griffe
-# names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("Any", "annotations", "lazy_importing", "warnings"))
+# names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("annotations",))
 # print('__all__ = [\n    "' + '",\n    "'.join(names) + '",\n]')
 __all__ = [
     "DEFAULT_LOG_LEVEL",
@@ -537,7 +534,6 @@ __all__ = [
     "UnimportableModuleError",
     "UnpackTypedDictExtension",
     "Visitor",
-    "assert_git_repo",
     "ast_children",
     "ast_first_child",
     "ast_kind",
@@ -563,13 +559,11 @@ __all__ = [
     "get_docstring",
     "get_expression",
     "get_instance_names",
-    "get_latest_tag",
     "get_logger",
     "get_name",
     "get_names",
     "get_parameters",
     "get_parser",
-    "get_repo_root",
     "get_value",
     "htree",
     "infer_docstring_style",
@@ -607,7 +601,6 @@ __all__ = [
     "temporary_pypackage",
     "temporary_visited_module",
     "temporary_visited_package",
-    "tmp_worktree",
     "typing_overload",
     "visit",
     "vtree",
