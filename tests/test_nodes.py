@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import sys
 from ast import PyCF_ONLY_AST
 
 import pytest
@@ -51,6 +52,7 @@ syntax_examples = [
     "call(something=something)",
     # Strings.
     "f'a {round(key, 2)} {z}'",
+    *(["t'a {round(key, 2)} {z}'"] if sys.version_info >= (3, 14) else []),
     # Slices.
     "o[x]",
     "o[x, y]",
