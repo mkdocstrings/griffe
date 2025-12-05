@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import ast
+import sys
 from dataclasses import dataclass
 from dataclasses import fields as getfields
 from enum import IntEnum, auto
@@ -533,6 +534,20 @@ class ExprIfExp(Expr):
 
 
 @dataclass(eq=True, slots=True)
+class ExprInterpolation(Expr):
+    """Template string interpolation like `{name}`."""
+
+    value: str | Expr
+    """Interpolated value."""
+
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+        yield "{"
+        # Prevent parentheses from being added, avoiding `{(1 + 1)}`
+        yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+        yield "}"
+
+
+@dataclass(eq=True, slots=True)
 class ExprJoinedStr(Expr):
     """Joined strings like `f"a {b} c"`."""
 
@@ -913,6 +928,19 @@ class ExprSubscript(Expr):
         if isinstance(self.left, str):
             return self.left
         return self.left.canonical_path
+
+
+@dataclass(eq=True, slots=True)
+class ExprTemplateStr(Expr):
+    """Template strings like `t"a {name}"`."""
+
+    values: Sequence[str | Expr]
+    """Joined values."""
+
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+        yield "t'"
+        yield from _join(self.values, "", flat=flat)
+        yield "'"
 
 
 @dataclass(eq=True, slots=True)
@@ -1368,6 +1396,25 @@ _node_map: dict[type, _BuildCallable] = {
     ast.Yield: _build_yield,
     ast.YieldFrom: _build_yield_from,
 }
+
+if sys.version_info >= (3, 14):
+
+    def _build_interpolation(node: ast.Interpolation, parent: Module | Class, **kwargs: Any) -> Expr:
+        return ExprInterpolation(_build(node.value, parent, **kwargs))
+
+    def _build_templatestr(
+        node: ast.TemplateStr,
+        parent: Module | Class,
+        **kwargs: Any,
+    ) -> Expr:
+        return ExprTemplateStr([_build(value, parent, in_joined_str=True, **kwargs) for value in node.values])
+
+    _node_map.update(
+        {
+            ast.Interpolation: _build_interpolation,
+            ast.TemplateStr: _build_templatestr,
+        },
+    )
 
 
 def _build(node: ast.AST, parent: Module | Class, /, **kwargs: Any) -> Expr:
