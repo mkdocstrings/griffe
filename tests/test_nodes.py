@@ -117,7 +117,10 @@ syntax_examples = [
     ],
 )
 def test_relative_to_absolute_imports(
-    code: str, path: str, is_package: bool, expected: str
+    code: str,
+    path: str,
+    is_package: bool,
+    expected: str,
 ) -> None:
     """Check if relative imports are correctly converted to absolute ones.
 
@@ -170,7 +173,7 @@ def test_building_annotations_from_nodes(expression: str) -> None:
     """
     class_defs = "\n\n".join(f"class {letter}: ..." for letter in "ABCD")
     with temporary_visited_module(
-        f"{class_defs}\n\nx: {expression}\ny: {expression} = 0"
+        f"{class_defs}\n\nx: {expression}\ny: {expression} = 0",
     ) as module:
         assert "x" in module.members
         assert "y" in module.members
@@ -214,18 +217,11 @@ def test_forward_references(code: str, has_name: bool) -> None:
     with temporary_visited_module(code) as module:
         annotation = list(module["a"].annotation.iterate(flat=True))
         if has_name:
-            assert any(
-                isinstance(item, ExprName) and item.name == "A" for item in annotation
-            )
-            assert all(
-                not (isinstance(item, str) and item == "A") for item in annotation
-            )
+            assert any(isinstance(item, ExprName) and item.name == "A" for item in annotation)
+            assert all(not (isinstance(item, str) and item == "A") for item in annotation)
         else:
             assert "'A'" in annotation
-            assert all(
-                not (isinstance(item, ExprName) and item.name == "A")
-                for item in annotation
-            )
+            assert all(not (isinstance(item, ExprName) and item.name == "A") for item in annotation)
 
 
 @pytest.mark.parametrize(
@@ -271,9 +267,7 @@ def test_parsing_complex_string_annotations() -> None:
                 ...
         """,
     ) as module:
-        init_args_annotation = (
-            module["ArgsKwargs.__init__"].parameters["args"].annotation
-        )
+        init_args_annotation = module["ArgsKwargs.__init__"].parameters["args"].annotation
         assert isinstance(init_args_annotation, Expr)
         assert init_args_annotation.is_tuple
         kwargs_return_annotation = module["ArgsKwargs.kwargs"].annotation
