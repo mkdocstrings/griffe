@@ -1241,12 +1241,6 @@ def _build_ifexp(node: ast.IfExp, parent: Module | Class, **kwargs: Any) -> Expr
     )
 
 
-if sys.version_info >= (3, 14):
-
-    def _build_interpolation(node: ast.Interpolation, parent: Module | Class, **kwargs: Any) -> Expr:
-        return ExprInterpolation(_build(node.value, parent, **kwargs))
-
-
 def _build_joinedstr(
     node: ast.JoinedStr,
     parent: Module | Class,
@@ -1345,16 +1339,6 @@ def _build_subscript(
     return ExprSubscript(left, slice_expr)
 
 
-if sys.version_info >= (3, 14):
-
-    def _build_templatestr(
-        node: ast.TemplateStr,
-        parent: Module | Class,
-        **kwargs: Any,
-    ) -> Expr:
-        return ExprTemplateStr([_build(value, parent, in_joined_str=True, **kwargs) for value in node.values])
-
-
 def _build_tuple(
     node: ast.Tuple,
     parent: Module | Class,
@@ -1414,6 +1398,17 @@ _node_map: dict[type, _BuildCallable] = {
 }
 
 if sys.version_info >= (3, 14):
+
+    def _build_interpolation(node: ast.Interpolation, parent: Module | Class, **kwargs: Any) -> Expr:
+        return ExprInterpolation(_build(node.value, parent, **kwargs))
+
+    def _build_templatestr(
+        node: ast.TemplateStr,
+        parent: Module | Class,
+        **kwargs: Any,
+    ) -> Expr:
+        return ExprTemplateStr([_build(value, parent, in_joined_str=True, **kwargs) for value in node.values])
+
     _node_map.update(
         {
             ast.Interpolation: _build_interpolation,
