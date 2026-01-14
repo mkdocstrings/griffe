@@ -3,11 +3,18 @@
 from __future__ import annotations
 
 import logging
+import sys
 from ast import PyCF_ONLY_AST
 
 import pytest
 
-from griffe import Expr, ExprName, module_vtree, relative_to_absolute, temporary_visited_module
+from griffe import (
+    Expr,
+    ExprName,
+    module_vtree,
+    relative_to_absolute,
+    temporary_visited_module,
+)
 
 syntax_examples = [
     # Operations.
@@ -51,6 +58,8 @@ syntax_examples = [
     "call(something=something)",
     # Strings.
     "f'a {round(key, 2)} {z}'",
+    # YORE: EOL 3.13: Replace line with `"t'a {round(key, 2)} {z}'",`.
+    *(["t'a {round(key, 2)} {z}'"] if sys.version_info >= (3, 14) else []),
     # Slices.
     "o[x]",
     "o[x, y]",
@@ -107,7 +116,12 @@ syntax_examples = [
         ("from ...c.d import *", "a.c.d.i", False, "a.c.d.*"),
     ],
 )
-def test_relative_to_absolute_imports(code: str, path: str, is_package: bool, expected: str) -> None:
+def test_relative_to_absolute_imports(
+    code: str,
+    path: str,
+    is_package: bool,
+    expected: str,
+) -> None:
     """Check if relative imports are correctly converted to absolute ones.
 
     Parameters:
@@ -158,7 +172,9 @@ def test_building_annotations_from_nodes(expression: str) -> None:
         expression: An expression (parametrized).
     """
     class_defs = "\n\n".join(f"class {letter}: ..." for letter in "ABCD")
-    with temporary_visited_module(f"{class_defs}\n\nx: {expression}\ny: {expression} = 0") as module:
+    with temporary_visited_module(
+        f"{class_defs}\n\nx: {expression}\ny: {expression} = 0",
+    ) as module:
         assert "x" in module.members
         assert "y" in module.members
         assert str(module["x"].annotation) == expression
