@@ -1,4 +1,4 @@
-"""Tests for the [Numpy-style parser][griffe.docstrings.numpy]."""
+"""Tests for the [Numpy-style parser][griffelib.docstrings.numpy]."""
 
 from __future__ import annotations
 

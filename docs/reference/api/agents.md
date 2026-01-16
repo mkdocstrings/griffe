@@ -4,7 +4,7 @@ Griffe is able to analyze code both statically and dynamically.
 
 ## **Main API**
 
-::: griffe.visit
+::: griffelib.visit
 
 ::: griffe.inspect
 
