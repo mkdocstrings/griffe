@@ -22,10 +22,10 @@ Both commands accept a `-h`, `--help` argument to show all the available options
 
 ## Python library
 
-As a library, Griffe exposes all its public API directly in the top-level module. It means you can simply import `griffe` to access all its API.
+As a library, Griffe exposes all its public API directly in the top-level module. It means you can simply import `griffe` or `griffelib` to access all its API.
 
 ```python
-import griffe
+import griffe  # or griffelib
 
 griffe.load(...)
 griffe.find_breaking_changes(...)
