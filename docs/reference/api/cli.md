@@ -2,7 +2,7 @@
 
 ## **Main API**
 
-::: griffe.main
+::: griffecli.main
 
 ::: griffe.check
 
