@@ -16,4 +16,4 @@ There are multiple ways to contribute to this project:
 
 For easy documentation fixes, you can edit a file and send a pull request [directly from the GitHub web interface](https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files#editing-files-in-another-users-repository). For more complex fixes or improvements, please read our contributor guide. The guide will show you how to set up a development environment to run tests or serve the documentation locally.
 
-[:fontawesome-solid-helmet-safety: Contributor guide](guide/contributors.md){ .md-button }
+[:fontawesome-solid-helmet-safety: Contributor guide](guide/contributors/index.md){ .md-button }

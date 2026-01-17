@@ -1,6 +1,6 @@
 # Downstream projects
 
-Griffe is used by various projects in the Python ecosystem. They are listed below in alphabetical order. [Griffe extensions are listed on their own page.](extensions.md)
+Griffe is used by various projects in the Python ecosystem. They are listed below in alphabetical order. [Griffe extensions are listed on their own page.](extensions/index.md)
 
 ## api2mdx
 

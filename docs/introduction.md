@@ -56,4 +56,4 @@ my_package_v2_1 = griffe.load_git("my_package", ref="2.1")
 
 For more advanced usage, see our guide on [loading and navigating data](guide/users/loading.md).
 
-For a complete reference of the application programming interface, see [Reference / Python API](reference/api.md).
+For a complete reference of the application programming interface, see [Reference / Python API](reference/api/index.md).
