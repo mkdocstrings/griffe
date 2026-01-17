@@ -57,5 +57,5 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 </div>
 </div>
 
-[:material-play: Playground](playground.md){ .md-button }
-[:simple-gitter: Join our Gitter channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ .md-button target="_blank" }
+[:material-play: Playground](playground.md){ .md-button .md-button--primary }
+[:simple-gitter: Join our Gitter channel](https://app.gitter.im/#/room/#mkdocstrings_griffe:gitter.im){ .md-button .md-button--primary target="_blank" }

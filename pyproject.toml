@@ -94,7 +94,6 @@ artifacts = ["share/**/*"]
 
 [dependency-groups]
 maintain = [
-    "build>=1.2",
     "git-changelog>=2.5",
     "twine>=5.1",
     "yore>=0.3.3",
@@ -117,22 +116,15 @@ ci = [
 ]
  docs = [
     "code2flow>=2.5",
+    "ghp-import>=2.1",
     "griffe-inherited-docstrings>=1.1.2",
     "markdown-callouts>=0.4",
     "markdown-exec[ansi]>=1.8",
-    "mkdocs>=1.6",
-    "mkdocs-coverage>=1.0",
-    "mkdocs-gen-files>=0.5",
-    "mkdocs-git-revision-date-localized-plugin>=1.2",
-    "mkdocs-llmstxt>=0.2",
-    "mkdocs-material>=9.5",
-    "mkdocs-minify-plugin>=0.8",
-    "mkdocs-section-index>=0.3",
-    "mkdocs-redirects>=1.2",
     "mkdocstrings[python]>=0.29",
     "pydeps>=1.12",
     # YORE: EOL 3.10: Remove line.
     "tomli>=2.0; python_version < '3.11'",
+    "zensical>=0.0.21",
 ]
 
 [tool.uv]
