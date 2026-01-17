@@ -1,0 +1,323 @@
+[project]
+site_name = "Griffe"
+site_description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
+site_author = "Timothée Mazzucotelli"
+site_url = "https://mkdocstrings.github.io/griffe"
+repo_url = "https://github.com/mkdocstrings/griffe"
+repo_name = "mkdocstrings/griffe"
+copyright = "Copyright &copy; 2021 Timothée Mazzucotelli"
+extra_css = [
+  "css/apidocs.css",
+  "css/ansi.css",
+  "css/custom.css",
+  "css/pyodide.css",
+]
+extra_javascript = [
+  "js/feedback.js",
+  "js/pyodide.js",
+  "https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js",
+]
+nav = [
+  { "Home" = "index.md" },
+  { "Getting started" = [
+    "getting-started/index.md",
+    { "Installation" = "installation.md" },
+    { "Introduction" = "introduction.md" },
+    { "Playground" = "playground.md" },
+    { "License" = "license.md" },
+    { "Community" = [
+      "community/index.md",
+      { "Getting help" = "getting-help.md" },
+      { "Contributing" = "contributing.md" },
+      { "Code of conduct" = "code-of-conduct.md" },
+      { "Alternatives" = "alternatives.md" },
+      { "Downstream projects" = "downstream-projects.md" },
+      { "Credits" = "credits.md" },
+    ] },
+  ] },
+  { "Guide" = [
+    "guide/index.md",
+    { "User guide" = [
+      "guide/users/index.md",
+      { "Manipulating APIs" = [
+        { "Loading" = "guide/users/loading.md" },
+        { "Navigating" = "guide/users/navigating.md" },
+        { "Serializing" = "guide/users/serializing.md" },
+        { "Checking" = "guide/users/checking.md" },
+        { "Extending" = "guide/users/extending.md" },
+      ] },
+      { "Recommendations" = [
+        { "Public APIs" = "guide/users/recommendations/public-apis.md" },
+        { "Python code" = "guide/users/recommendations/python-code.md" },
+        { "Docstrings" = "guide/users/recommendations/docstrings.md" },
+      ] },
+      { "How-to" = [
+        { "Parse docstrings" = "guide/users/how-to/parse-docstrings.md" },
+        { "Support custom decorators" = "guide/users/how-to/support-decorators.md" },
+        { "Selectively inspect objects" = "guide/users/how-to/selectively-inspect.md" },
+        { "Set objects' docstring style" = "guide/users/how-to/set-docstring-styles.md" },
+        { "Set Git info on objects" = "guide/users/how-to/set-git-info.md" },
+      ] },
+    ] },
+    { "Contributor guide" = [
+      "guide/contributors/index.md",
+      { "Environment setup" = "guide/contributors/setup.md" },
+      { "Management commands" = "guide/contributors/commands.md" },
+      { "Development workflow" = "guide/contributors/workflow.md" },
+      { "Project architecture" = "guide/contributors/architecture.md" },
+      { "Coverage report" = "guide/contributors/coverage.md" },
+    ] },
+  ] },
+  { "Extensions" = [
+    "extensions/index.md",
+    { "Built-in" = [
+      "extensions/built-in/index.md",
+      { "dataclasses" = "extensions/built-in/dataclasses.md" },
+      { "unpack-typeddict" = "extensions/built-in/unpack-typeddict.md" },
+    ] },
+    { "Official" = [
+      "extensions/official/index.md",
+      { "autodocstringstyle" = "extensions/official/autodocstringstyle.md" },
+      { "inherited-docstrings" = "extensions/official/inherited-docstrings.md" },
+      { "public-redundant-aliases" = "extensions/official/public-redundant-aliases.md" },
+      { "public-wildcard-imports" = "extensions/official/public-wildcard-imports.md" },
+      { "pydantic" = "extensions/official/pydantic.md" },
+      { "runtime-objects" = "extensions/official/runtime-objects.md" },
+      { "sphinx" = "extensions/official/sphinx.md" },
+      { "typingdoc" = "extensions/official/typingdoc.md" },
+      { "warnings-deprecated" = "extensions/official/warnings-deprecated.md" },
+    ] },
+    { "Third-party" = [
+      "extensions/third-party/index.md",
+      { "docstring-inheritance" = "extensions/third-party/docstring-inheritance.md" },
+      { "fastapi" = "extensions/third-party/fastapi.md" },
+      { "fieldz" = "extensions/third-party/fieldz.md" },
+      { "generics" = "extensions/third-party/generics.md" },
+      { "inherited-method-crossrefs" = "extensions/third-party/inherited-method-crossrefs.md" },
+      { "modernized-annotations" = "extensions/third-party/modernized-annotations.md" },
+    ] },
+  ] },
+  { "Reference" = [
+    "reference/index.md",
+    { "Command-line interface" = "reference/cli.md" },
+    { "Docstring parsers" = "reference/docstrings.md" },
+    { "Python API" = [
+      "reference/api/index.md",
+      { "CLI entrypoints" = "reference/api/cli.md" },
+      { "Loaders" = "reference/api/loaders.md" },
+      { "Finder" = "reference/api/finder.md" },
+      { "Models" = [
+        "reference/api/models/index.md",
+        { "Module" = "reference/api/models/module.md" },
+        { "Class" = "reference/api/models/class.md" },
+        { "Function" = "reference/api/models/function.md" },
+        { "Attribute" = "reference/api/models/attribute.md" },
+        { "Type Alias" = "reference/api/models/type_alias.md" },
+        { "Alias" = "reference/api/models/alias.md" },
+      ] },
+      { "Agents" = "reference/api/agents.md" },
+      { "Serializers" = "reference/api/serializers.md" },
+      { "API checks" = "reference/api/checks.md" },
+      { "Extensions" = "reference/api/extensions.md" },
+      { "Docstrings" = [
+        "reference/api/docstrings/index.md",
+        { "Models" = "reference/api/docstrings/models.md" },
+        { "Parsers" = "reference/api/docstrings/parsers.md" },
+      ] },
+      { "Exceptions" = "reference/api/exceptions.md" },
+      { "Expressions" = "reference/api/expressions.md" },
+      { "Loggers" = "reference/api/loggers.md" },
+      { "Helpers" = "reference/api/helpers.md" },
+    ] },
+  ] },
+  { "Changelog" = "changelog.md" },
+  { "Author's website" = "https://pawamoy.github.io/" },
+]
+
+# ----------------------------------------------------------------------------
+# Theme configuration
+# ----------------------------------------------------------------------------
+[project.theme]
+custom_dir = "docs/.overrides"
+language = "en"
+features = [
+    "announce.dismiss",
+    "content.action.edit",
+    "content.action.view",
+    "content.code.annotate",
+    "content.code.copy",
+    "content.code.select",
+    "content.footnote.tooltips",
+    "content.tabs.link",
+    "content.tooltips",
+    "navigation.footer",
+    "navigation.indexes",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.path",
+    "navigation.sections",
+    "navigation.tabs",
+    "navigation.tabs.sticky",
+    "navigation.top",
+    "search.highlight",
+    "toc.follow",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "material/brightness-auto"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "teal"
+accent = "purple"
+toggle.icon = "material/weather-sunny"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "black"
+accent = "lime"
+toggle.icon = "material/weather-night"
+toggle.name = "Switch to system preference"
+
+[project.theme.icon]
+logo = "material/currency-sign"
+
+# ----------------------------------------------------------------------------
+# Social configuration
+# ----------------------------------------------------------------------------
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/pawamoy"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/mastodon"
+link = "https://fosstodon.org/@pawamoy"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/twitter"
+link = "https://twitter.com/pawamoy"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/gitter"
+link = "https://gitter.im/griffe/community"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/python"
+link = "https://pypi.org/project/griffe/"
+
+[project.extra.analytics.feedback]
+title = "Was this page helpful?"
+
+[[project.extra.analytics.feedback.ratings]]
+icon = "material/emoticon-happy-outline"
+name = "This page was helpful"
+data = 1
+note = "Thank you for your feedback!"
+
+[[project.extra.analytics.feedback.ratings]]
+icon = "material/emoticon-sad-outline"
+name = "This page could be improved"
+data = 0
+note = "Let us know how we can improve this page."
+
+# ----------------------------------------------------------------------------
+# Markdown extensions configuration
+# ----------------------------------------------------------------------------
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.def_list]
+[project.markdown_extensions.footnotes]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.toc]
+permalink = "¤"
+[project.markdown_extensions.pymdownx.arithmatex]
+generic = true
+[project.markdown_extensions.pymdownx.betterem]
+smart_enable = "all"
+[project.markdown_extensions.pymdownx.caret]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.emoji]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
+[project.markdown_extensions.pymdownx.highlight]
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.keys]
+[project.markdown_extensions.pymdownx.mark]
+[project.markdown_extensions.pymdownx.smartsymbols]
+[project.markdown_extensions.pymdownx.snippets]
+check_paths = true
+[project.markdown_extensions.pymdownx.superfences]
+[[project.markdown_extensions.pymdownx.superfences.custom_fences]]
+name = "console"
+class = "console"
+validator = "markdown_exec.validator"
+format = "markdown_exec.formatter"
+[[project.markdown_extensions.pymdownx.superfences.custom_fences]]
+name = "md"
+class = "md"
+validator = "markdown_exec.validator"
+format = "markdown_exec.formatter"
+[[project.markdown_extensions.pymdownx.superfences.custom_fences]]
+name = "mermaid"
+class = "mermaid"
+format = "pymdownx.superfences.fence_code_format"
+[[project.markdown_extensions.pymdownx.superfences.custom_fences]]
+name = "pyodide"
+class = "pyodide"
+validator = "markdown_exec.validator"
+format = "markdown_exec.formatter"
+[[project.markdown_extensions.pymdownx.superfences.custom_fences]]
+name = "python"
+class = "python"
+validator = "markdown_exec.validator"
+format = "markdown_exec.formatter"
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+[project.markdown_extensions.pymdownx.tilde]
+[project.markdown_extensions.zensical.extensions.preview]
+configurations = [{targets.include = ["reference/api.md"]}]
+
+# ----------------------------------------------------------------------------
+# Plugins configuration
+# ----------------------------------------------------------------------------
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["packages/griffelib/src", "packages/griffecli/src", "scripts", "."]
+inventories = [
+  { url = "https://docs.python.org/3/objects.inv", domains = ["std", "py"] },
+  { url = "https://typing-extensions.readthedocs.io/en/latest/objects.inv" },
+]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+backlinks = "tree"
+docstring_options = { per_style_options = { google = { ignore_init_summary = true } } }
+docstring_style = "auto"
+docstring_section_style = "list"
+extensions = [
+  "griffe_inherited_docstrings",
+  "unpack_typeddict",
+]
+filters = "public"
+heading_level = 2
+inherited_members = true
+merge_init_into_class = true
+parameter_headings = true
+separate_signature = true
+show_bases = true
+show_inheritance_diagram = true
+show_root_heading = true
+show_root_full_path = false
+show_signature_annotations = true
+show_source = true
+show_symbol_type_heading = true
+show_symbol_type_toc = true
+signature_crossrefs = true
+summary = true
+unwrap_annotated = true

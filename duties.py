@@ -194,7 +194,7 @@ def check_docs(ctx: Context) -> None:
     if CI:
         os.environ["DEPLOY"] = "true"
     ctx.run(
-        tools.mkdocs.build(strict=True, verbose=True),
+        tools.zensical.build(strict=True),
         title=_pyprefix("Building documentation"),
     )
 
@@ -317,7 +317,7 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
         port: The port to serve the docs on.
     """
     ctx.run(
-        tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
+        tools.zensical.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
         title="Serving documentation",
         capture=False,
     )
@@ -331,10 +331,24 @@ def docs_deploy(ctx: Context) -> None:
     make docs-deploy
     ```
 
-    Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
+    Use [Zensical](https://zensical.org/) to build the documentation,
+    then [ghp-import](https://pypi.org/project/ghp-import/) to deploy to GitHub Pages.
     """
-    os.environ["DEPLOY"] = "true"
-    ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
+    from ghp_import import ghp_import  # noqa: PLC0415
+
+    ctx.run(tools.zensical.build(), title="Building documentation site")
+    ctx.run(
+        ghp_import,
+        kwargs={
+            "srcdir": "site",
+            "mesg": "chore: Update documentation",
+            "push": True,
+            "force": True,
+        },
+        title="Deploying site to GitHub pages",
+        command="ghp-import site -fpm 'chore: Update documentation'",
+        pty=PTY,
+    )
 
 
 @duty
