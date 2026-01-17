@@ -18,7 +18,6 @@
 
 from __future__ import annotations
 
-import os
 import sys
 from collections import defaultdict
 from collections.abc import Iterable
@@ -37,7 +36,7 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
-project_dir = Path(os.getenv("MKDOCS_CONFIG_DIR", "."))
+project_dir = Path.cwd()
 with project_dir.joinpath("pyproject.toml").open("rb") as pyproject_file:
     pyproject = tomllib.load(pyproject_file)
 project = pyproject["project"]
