@@ -18,9 +18,9 @@ ignore = [
     "D417",  # Missing argument description in the docstring
     "E501",  # Line too long
     "EM",  # Raw strings in exceptions
-    "FIX001",  # Line contains FIXME
-    "FIX002",  # Line contains TODO
     "ERA001",  # Commented out code
+    "FIX",  # TODO, FIXME, etc.
+    "G004",  # Logging statement uses f-string
     "PD",  # Pandas-related
     "PERF203",  # Try-except block in for loop (zero-cost with Python 3.11+)
     "PLR0911",  # Too many return statements
@@ -30,7 +30,7 @@ ignore = [
     "SLF001",  # Private member accessed
     "TD001",  # Invalid TODO tag: FIXME
     "TD002",  # Missing author in TODO
-    "TD003",  # Missing issue link on the line following this TODO
+    "TD003",  # Missing issue link for TODO
     "TRY003",  # Avoid specifying long messages outside the exception class
     "UP007",  # Use `X | Y` for type annotations
 ]

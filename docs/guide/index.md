@@ -10,7 +10,7 @@ Welcome to the Griffe guide! Here, you’ll find a series of topics on using Gri
 
     A collection of topics for Griffe users.
 
-    [:octicons-arrow-right-24: Browse the user guide](guide/users.md)
+    [:octicons-arrow-right-24: Browse the user guide](users/index.md)
 
 -   :fontawesome-solid-helmet-safety:{ .lg .middle } **Contributor guide**
 
@@ -18,6 +18,6 @@ Welcome to the Griffe guide! Here, you’ll find a series of topics on using Gri
 
     Explanation of the project and more, for Griffe contributors.
 
-    [:octicons-arrow-right-24: Browse the contributor guide](guide/contributors.md)
+    [:octicons-arrow-right-24: Browse the contributor guide](contributors/index.md)
 
 </div>
