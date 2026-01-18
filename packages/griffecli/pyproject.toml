@@ -12,7 +12,7 @@ license = "ISC"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
-dynamic = ["version", "dependencies", "optional-dependencies"]
+dynamic = ["version", "dependencies"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -44,14 +44,17 @@ source = "code"
 path = "../../scripts/get_version.py"
 expression = "get_version()"
 
+[tool.hatch.build.targets.sdist.force-include]
+"../../CHANGELOG.md" = "CHANGELOG.md"
+"../../LICENSE" = "LICENSE"
+"../../README.md" = "README.md"
+
 [tool.hatch.metadata.hooks.uv-dynamic-versioning]
 # Dependencies are dynamically versioned; {{version}} is substituted at build time.
 dependencies = ["griffelib=={{version}}", "colorama>=0.4"]
 
-[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
-# No optional dependencies for the CLI package
-
-[tool.hatch.build.targets.sdist]
-
 [tool.hatch.build.targets.wheel]
-sources = ["src/"]
+packages = ["src/griffecli"]
+
+[tool.uv.sources]
+griffelib = { workspace = true }

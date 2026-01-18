@@ -12,7 +12,7 @@ license = "ISC"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
-dynamic = ["version", "dependencies", "optional-dependencies"]
+dynamic = ["version"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -36,20 +36,20 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.optional-dependencies]
+# The 'pypi' extra provides dependencies needed for the load_pypi functionality
+# to download and inspect packages from PyPI.
+pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
+
 [tool.hatch.version]
 source = "code"
 path = "../../scripts/get_version.py"
 expression = "get_version()"
 
-[tool.hatch.metadata.hooks.uv-dynamic-versioning]
-# No base dependencies needed for griffelib
-
-[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
-# The 'pypi' extra provides dependencies needed for the load_pypi functionality
-# to download and inspect packages from PyPI.
-pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
-
-[tool.hatch.build.targets.sdist]
+[tool.hatch.build.targets.sdist.force-include]
+"../../CHANGELOG.md" = "CHANGELOG.md"
+"../../LICENSE" = "LICENSE"
+"../../README.md" = "README.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/griffe"]
