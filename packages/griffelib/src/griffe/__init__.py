@@ -609,5 +609,5 @@ else:
 
 def __getattr__(attr: str) -> object:
     if attr in _CLI_MISSING_FEATURES:
-        raise ImportError(f'Please install `griffecli` to use {"griffe." + attr!r}')
+        raise ImportError(f"Please install `griffecli` to use {'griffe.' + attr!r}")
     raise AttributeError(attr)
