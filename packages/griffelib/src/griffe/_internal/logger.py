@@ -4,8 +4,7 @@
 # For example, mkdocstrings-python patches the logger to relocate it as a child
 # of `mkdocs.plugins` so that it fits in the MkDocs logging configuration.
 #
-# We use a single, global logger because our public API is exposed in a single module.
-# The logger name is "griffe" for backward compatibility.
+# We use a single, global logger because our public API is exposed in a single module, `griffe`.
 # Extensions however should use their own logger, which is why we provide the `get_logger` function.
 
 from __future__ import annotations
