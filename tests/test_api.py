@@ -79,12 +79,12 @@ def _yield_public_objects(
             continue
 
 
-def _get_modulelevel_internal_objects(tested_module: ModuleType) -> list[griffe.Object | griffe.Alias]:
-    return list(_yield_public_objects(_get_internal_api(tested_module), modulelevel=True))
+def _get_modulelevel_internal_objects(internal_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
+    return list(_yield_public_objects(internal_api, modulelevel=True))
 
 
-def _get_public_objects(tested_module: ModuleType) -> list[griffe.Object | griffe.Alias]:
-    return list(_yield_public_objects(_get_public_api(tested_module), modulelevel=False, inherited=True, special=True))
+def _get_public_objects(public_api: griffe.Module) -> list[griffe.Object | griffe.Alias]:
+    return list(_yield_public_objects(public_api, modulelevel=False, inherited=True, special=True))
 
 
 @pytest.fixture(name="inventory", scope="module")
@@ -114,7 +114,7 @@ def test_alias_proxies() -> None:
 @pytest.mark.parametrize("tested_module", [griffe, griffecli])
 def test_exposed_objects(tested_module: ModuleType) -> None:
     """All public objects in the internal API are exposed under `griffe`."""
-    modulelevel_internal_objects = _get_modulelevel_internal_objects(tested_module)
+    modulelevel_internal_objects = _get_modulelevel_internal_objects(_get_internal_api(tested_module))
     not_exposed = [
         obj.path
         for obj in modulelevel_internal_objects
@@ -126,7 +126,7 @@ def test_exposed_objects(tested_module: ModuleType) -> None:
 @pytest.mark.parametrize("tested_module", [griffe, griffecli])
 def test_unique_names(tested_module: ModuleType) -> None:
     """All internal objects have unique names."""
-    modulelevel_internal_objects = _get_modulelevel_internal_objects(tested_module)
+    modulelevel_internal_objects = _get_modulelevel_internal_objects(_get_public_api(tested_module))
     names_to_paths = defaultdict(list)
     for obj in modulelevel_internal_objects:
         names_to_paths[obj.name].append(obj.path)
