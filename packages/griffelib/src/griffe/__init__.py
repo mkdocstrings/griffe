@@ -601,10 +601,10 @@ __cli_all__ = [
     "main",
 ]
 
-__all__ += __cli_all__
+__all__ += __cli_all__  # noqa: PLE0605
 
-try:
-    from griffecli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
+try:  # noqa: SIM105
+    from griffecli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main  # noqa: F401
 except ImportError:
     pass
 
