@@ -10,11 +10,11 @@ import sys
 
 try:
     from griffecli import main
-except ModuleNotFoundError:
-    raise ImportError(
-        "`griffecli` is not installed. Install `griffecli` "
-        "to use `python -m griffe`."
-    )
+except ModuleNotFoundError as exc:
+    raise ModuleNotFoundError(
+        "`griffecli` or its dependencies are not installed. "
+        "Install `griffecli` to use `python -m griffe`.",
+    ) from exc
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

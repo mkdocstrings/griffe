@@ -125,9 +125,9 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
         tmp_path: Pytest fixture.
     """
     pth_file = tmp_path / editable_file_name
-    pth_file.write_text("hello\nF.map_module('griffe', 'src/griffe/__init__.py')", encoding="utf8")
+    pth_file.write_text("hello\nF.map_module('griffe', 'packages/griffelib/src/griffe/__init__.py')", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
-    assert paths == [Path("src")]
+    assert paths == [Path("packages/griffelib/src")]
 
 
 @pytest.mark.parametrize("annotation", ["", ": dict[str, str]"])
@@ -197,7 +197,7 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     search_paths = _handle_editable_module(pth_file)
     assert all(sp.always_scan_for == "griffe" for sp in search_paths)
     paths = [sp.path for sp in search_paths]
-    assert paths == [Path("src")]
+    assert paths == [Path("packages/griffelib/src")]
 
 
 @pytest.mark.parametrize(

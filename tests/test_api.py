@@ -140,7 +140,7 @@ def test_single_locations(public_api: griffe.Module) -> None:
         return obj.is_public and (obj.parent is None or _public_path(obj.parent))
 
     multiple_locations = {}
-    for obj_name in griffe.__all__:
+    for obj_name in set(griffe.__all__) - set(griffe.__cli_all__):
         obj = public_api[obj_name]
         if obj.aliases and (
             public_aliases := [path for path, alias in obj.aliases.items() if path != obj.path and _public_path(alias)]
