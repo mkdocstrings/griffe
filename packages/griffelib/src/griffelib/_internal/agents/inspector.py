@@ -15,7 +15,13 @@ from typing import TYPE_CHECKING, Any
 from griffelib._internal.agents.nodes.runtime import ObjectNode
 from griffelib._internal.collections import LinesCollection, ModulesCollection
 from griffelib._internal.enumerations import Kind, ParameterKind, TypeParameterKind
-from griffelib._internal.expressions import Expr, ExprBinOp, ExprSubscript, ExprTuple, safe_get_annotation
+from griffelib._internal.expressions import (
+    Expr,
+    ExprBinOp,
+    ExprSubscript,
+    ExprTuple,
+    safe_get_annotation,
+)
 from griffelib._internal.extensions.base import Extensions, load_extensions
 from griffelib._internal.importer import dynamic_import
 from griffelib._internal.logger import logger
@@ -75,16 +81,16 @@ def inspect(
     In this case, we load the module using introspection.
 
     Griffe therefore provides this function for dynamic analysis.
-    It uses a [`NodeVisitor`][ast.NodeVisitor]-like class, the [`Inspector`][griffelib.Inspector],
+    It uses a [`NodeVisitor`][ast.NodeVisitor]-like class, the [`Inspector`][griffe.Inspector],
     to inspect the module with [`inspect.getmembers()`][inspect.getmembers].
 
-    The inspection agent works similarly to the regular [`Visitor`][griffelib.Visitor] agent,
+    The inspection agent works similarly to the regular [`Visitor`][griffe.Visitor] agent,
     in that it maintains a state with the current object being handled, and recursively handle its members.
 
     Important:
         This function is generally not used directly.
-        In most cases, users can rely on the [`GriffeLoader`][griffelib.GriffeLoader]
-        and its accompanying [`load`][griffelib.load] shortcut and their respective options
+        In most cases, users can rely on the [`GriffeLoader`][griffe.GriffeLoader]
+        and its accompanying [`load`][griffe.load] shortcut and their respective options
         to load modules using dynamic analysis.
 
     Parameters:

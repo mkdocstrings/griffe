@@ -180,7 +180,7 @@ class Expr:
                 without them getting rendered as strings.
 
                 On the contrary, when flat is true, the whole tree is flattened as a sequence
-                of strings and instances of [Names][griffelib.ExprName].
+                of strings and instances of [Names][griffe.ExprName].
 
         Yields:
             Strings and names when flat, strings and expressions otherwise.

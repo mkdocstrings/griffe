@@ -1,5 +1,5 @@
 # This module contains utilities to dynamically import objects.
-# These utilities are used by our [`Inspector`][griffelib.Inspector] to dynamically import objects
+# These utilities are used by our [`Inspector`][griffe.Inspector] to dynamically import objects
 # specified as Python paths, like `package.module.Class.method`.
 
 from __future__ import annotations

@@ -12,8 +12,17 @@ from textwrap import dedent
 from typing import TYPE_CHECKING, Any, Callable, Literal, Union, cast
 
 from griffelib._internal.c3linear import c3linear_merge
-from griffelib._internal.docstrings.parsers import DocstringOptions, DocstringStyle, parse
-from griffelib._internal.enumerations import Kind, ParameterKind, Parser, TypeParameterKind
+from griffelib._internal.docstrings.parsers import (
+    DocstringOptions,
+    DocstringStyle,
+    parse,
+)
+from griffelib._internal.enumerations import (
+    Kind,
+    ParameterKind,
+    Parser,
+    TypeParameterKind,
+)
 from griffelib._internal.exceptions import (
     AliasResolutionError,
     BuiltinModuleError,
@@ -102,18 +111,18 @@ class Docstring:
         self.value: str = inspect.cleandoc(value.rstrip())
         """The original value of the docstring, cleaned by `inspect.cleandoc`.
 
-        See also: [`source`][griffelib.Docstring.source].
+        See also: [`source`][griffe.Docstring.source].
         """
 
         self.lineno: int | None = lineno
         """The starting line number of the docstring.
 
-        See also: [`endlineno`][griffelib.Docstring.endlineno]."""
+        See also: [`endlineno`][griffe.Docstring.endlineno]."""
 
         self.endlineno: int | None = endlineno
         """The ending line number of the docstring.
 
-        See also: [`lineno`][griffelib.Docstring.lineno]."""
+        See also: [`lineno`][griffe.Docstring.lineno]."""
 
         self.parent: Object | None = parent
         """The object this docstring is attached to."""
@@ -121,22 +130,22 @@ class Docstring:
         self.parser: DocstringStyle | Parser | None = parser
         """The selected docstring parser.
 
-        See also: [`parser_options`][griffelib.Docstring.parser_options],
-        [`parse`][griffelib.Docstring.parse].
+        See also: [`parser_options`][griffe.Docstring.parser_options],
+        [`parse`][griffe.Docstring.parse].
         """
 
         self.parser_options: DocstringOptions = parser_options or {}
         """The configured parsing options.
 
-        See also: [`parser`][griffelib.Docstring.parser],
-        [`parse`][griffelib.Docstring.parse].
+        See also: [`parser`][griffe.Docstring.parser],
+        [`parse`][griffe.Docstring.parse].
         """
 
     @property
     def lines(self) -> list[str]:
         """The lines of the docstring.
 
-        See also: [`source`][griffelib.Docstring.source].
+        See also: [`source`][griffe.Docstring.source].
         """
         return self.value.split("\n")
 
@@ -152,7 +161,7 @@ class Docstring:
             ValueError: If the original docstring cannot be retrieved
                 (no parent, no line numbers, or attached to namespace package).
 
-        See also: [`value`][griffelib.Docstring.value].
+        See also: [`value`][griffe.Docstring.value].
         """
         if self.parent is None:
             raise ValueError("Cannot get original docstring without parent object")
@@ -174,8 +183,8 @@ class Docstring:
     ) -> list[DocstringSection]:
         """Parse the docstring into structured data.
 
-        See also: [`parser`][griffelib.Docstring.parser],
-        [`parser_options`][griffelib.Docstring.parser_options].
+        See also: [`parser`][griffe.Docstring.parser],
+        [`parser_options`][griffe.Docstring.parser_options].
 
         Parameters:
             parser: The docstring parser to use.
@@ -215,7 +224,7 @@ class Docstring:
 class Parameter:  # noqa: PLW1641
     """This class represent a function parameter.
 
-    See also: [`Parameters`][griffelib.Parameters].
+    See also: [`Parameters`][griffe.Parameters].
     """
 
     def __init__(
@@ -307,7 +316,7 @@ class Parameters:
     True
     ```
 
-    See also: [`Parameter`][griffelib.Parameter].
+    See also: [`Parameter`][griffe.Parameter].
     """
 
     def __init__(self, *parameters: Parameter) -> None:
@@ -618,20 +627,20 @@ class Object(ObjectAliasMixin):
         self.lineno: int | None = lineno
         """The starting line number of the object.
 
-        See also: [`endlineno`][griffelib.Object.endlineno].
+        See also: [`endlineno`][griffe.Object.endlineno].
         """
 
         self.endlineno: int | None = endlineno
         """The ending line number of the object.
 
-        See also: [`lineno`][griffelib.Object.lineno].
+        See also: [`lineno`][griffe.Object.lineno].
         """
 
         self.docstring: Docstring | None = docstring
         """The object docstring.
 
-        See also: [`has_docstring`][griffelib.Object.has_docstring],
-        [`has_docstrings`][griffelib.Object.has_docstrings].
+        See also: [`has_docstring`][griffe.Object.has_docstring],
+        [`has_docstrings`][griffe.Object.has_docstrings].
         """
 
         # TODO: Maybe move these into `Class` and `Function`.
@@ -646,16 +655,16 @@ class Object(ObjectAliasMixin):
         self.members: dict[str, Object | Alias] = {}
         """The object members (modules, classes, functions, attributes, type aliases).
 
-        See also: [`inherited_members`][griffelib.Object.inherited_members],
-        [`get_member`][griffelib.Object.get_member],
-        [`set_member`][griffelib.Object.set_member],
-        [`filter_members`][griffelib.Object.filter_members].
+        See also: [`inherited_members`][griffe.Object.inherited_members],
+        [`get_member`][griffe.Object.get_member],
+        [`set_member`][griffe.Object.set_member],
+        [`filter_members`][griffe.Object.filter_members].
         """
 
         self.labels: set[str] = set()
         """The object labels (`property`, `dataclass`, etc.).
 
-        See also: [`has_labels`][griffelib.Object.has_labels]."""
+        See also: [`has_labels`][griffe.Object.has_labels]."""
 
         self.imports: dict[str, str] = {}
         """The other objects imported by this object.
@@ -678,7 +687,7 @@ class Object(ObjectAliasMixin):
 
         Exports get expanded by the loader before it expands wildcards and resolves aliases.
 
-        See also: [`GriffeLoader.expand_exports`][griffelib.GriffeLoader.expand_exports].
+        See also: [`GriffeLoader.expand_exports`][griffe.GriffeLoader.expand_exports].
         """
 
         self.aliases: dict[str, Alias] = {}
@@ -762,8 +771,8 @@ class Object(ObjectAliasMixin):
     def has_docstring(self) -> bool:
         """Whether this object has a docstring (empty or not).
 
-        See also: [`docstring`][griffelib.Object.docstring],
-        [`has_docstrings`][griffelib.Object.has_docstrings].
+        See also: [`docstring`][griffe.Object.docstring],
+        [`has_docstrings`][griffe.Object.has_docstrings].
         """
         return bool(self.docstring)
 
@@ -782,8 +791,8 @@ class Object(ObjectAliasMixin):
         Inherited members are not considered. Imported members are not considered,
         unless they are also public.
 
-        See also: [`docstring`][griffelib.Object.docstring],
-        [`has_docstring`][griffelib.Object.has_docstring].
+        See also: [`docstring`][griffe.Object.docstring],
+        [`has_docstring`][griffe.Object.has_docstring].
         """
         if self.has_docstring:
             return True
@@ -798,12 +807,12 @@ class Object(ObjectAliasMixin):
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
         """Tell if this object is of the given kind.
 
-        See also: [`is_module`][griffelib.Object.is_module],
-        [`is_class`][griffelib.Object.is_class],
-        [`is_function`][griffelib.Object.is_function],
-        [`is_attribute`][griffelib.Object.is_attribute],
-        [`is_type_alias`][griffelib.Object.is_type_alias],
-        [`is_alias`][griffelib.Object.is_alias].
+        See also: [`is_module`][griffe.Object.is_module],
+        [`is_class`][griffe.Object.is_class],
+        [`is_function`][griffe.Object.is_function],
+        [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
+        [`is_alias`][griffe.Object.is_alias].
 
         Parameters:
             kind: An instance or set of kinds (strings or enumerations).
@@ -829,7 +838,7 @@ class Object(ObjectAliasMixin):
         This method is part of the consumer API:
         do not use when producing Griffe trees!
 
-        See also: [`members`][griffelib.Object.members].
+        See also: [`members`][griffe.Object.members].
         """
         if not isinstance(self, Class):
             return {}
@@ -849,13 +858,13 @@ class Object(ObjectAliasMixin):
     def is_module(self) -> bool:
         """Whether this object is a module.
 
-        See also:  [`is_init_module`][griffelib.Object.is_init_module].
-        [`is_class`][griffelib.Object.is_class],
-        [`is_function`][griffelib.Object.is_function],
-        [`is_attribute`][griffelib.Object.is_attribute],
-        [`is_type_alias`][griffelib.Object.is_type_alias],
-        [`is_alias`][griffelib.Object.is_alias],
-        [`is_kind`][griffelib.Object.is_kind].
+        See also:  [`is_init_module`][griffe.Object.is_init_module].
+        [`is_class`][griffe.Object.is_class],
+        [`is_function`][griffe.Object.is_function],
+        [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
+        [`is_alias`][griffe.Object.is_alias],
+        [`is_kind`][griffe.Object.is_kind].
         """
         return self.kind is Kind.MODULE
 
@@ -863,12 +872,12 @@ class Object(ObjectAliasMixin):
     def is_class(self) -> bool:
         """Whether this object is a class.
 
-        See also:  [`is_module`][griffelib.Object.is_module].
-        [`is_function`][griffelib.Object.is_function],
-        [`is_attribute`][griffelib.Object.is_attribute],
-        [`is_type_alias`][griffelib.Object.is_type_alias],
-        [`is_alias`][griffelib.Object.is_alias],
-        [`is_kind`][griffelib.Object.is_kind].
+        See also:  [`is_module`][griffe.Object.is_module].
+        [`is_function`][griffe.Object.is_function],
+        [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
+        [`is_alias`][griffe.Object.is_alias],
+        [`is_kind`][griffe.Object.is_kind].
         """
         return self.kind is Kind.CLASS
 
@@ -876,12 +885,12 @@ class Object(ObjectAliasMixin):
     def is_function(self) -> bool:
         """Whether this object is a function.
 
-        See also:  [`is_module`][griffelib.Object.is_module].
-        [`is_class`][griffelib.Object.is_class],
-        [`is_attribute`][griffelib.Object.is_attribute],
-        [`is_type_alias`][griffelib.Object.is_type_alias],
-        [`is_alias`][griffelib.Object.is_alias],
-        [`is_kind`][griffelib.Object.is_kind].
+        See also:  [`is_module`][griffe.Object.is_module].
+        [`is_class`][griffe.Object.is_class],
+        [`is_attribute`][griffe.Object.is_attribute],
+        [`is_type_alias`][griffe.Object.is_type_alias],
+        [`is_alias`][griffe.Object.is_alias],
+        [`is_kind`][griffe.Object.is_kind].
         """
         return self.kind is Kind.FUNCTION
 
@@ -889,12 +898,12 @@ class Object(ObjectAliasMixin):
     def is_attribute(self) -> bool:
         """Whether this object is an attribute.
 
-        See also:  [`is_module`][griffelib.Object.is_module].
-        [`is_class`][griffelib.Object.is_class],
-        [`is_function`][griffelib.Object.is_function],
-        [`is_type_alias`][griffelib.Object.is_type_alias],
-        [`is_alias`][griffelib.Object.is_alias],
-        [`is_kind`][griffelib.Object.is_kind].
+        See also:  [`is_module`][griffe.Object.is_module].
+        [`is_class`][griffe.Object.is_class],
+        [`is_function`][griffe.Object.is_function],
+        [`is_type_alias`][griffe.Object.is_type_alias],
+        [`is_alias`][griffe.Object.is_alias],
+        [`is_kind`][griffe.Object.is_kind].
         """
         return self.kind is Kind.ATTRIBUTE
 
@@ -902,12 +911,12 @@ class Object(ObjectAliasMixin):
     def is_type_alias(self) -> bool:
         """Whether this object is a type alias.
 
-        See also:  [`is_module`][griffelib.Object.is_module].
-        [`is_class`][griffelib.Object.is_class],
-        [`is_function`][griffelib.Object.is_function],
-        [`is_attribute`][griffelib.Object.is_attribute],
-        [`is_alias`][griffelib.Object.is_alias],
-        [`is_kind`][griffelib.Object.is_kind].
+        See also:  [`is_module`][griffe.Object.is_module].
+        [`is_class`][griffe.Object.is_class],
+        [`is_function`][griffe.Object.is_function],
+        [`is_attribute`][griffe.Object.is_attribute],
+        [`is_alias`][griffe.Object.is_alias],
+        [`is_kind`][griffe.Object.is_kind].
         """
         return self.kind is Kind.TYPE_ALIAS
 
@@ -920,7 +929,7 @@ class Object(ObjectAliasMixin):
     def is_init_module(self) -> bool:
         """Whether this object is an `__init__.py` module.
 
-        See also:  [`is_module`][griffelib.Object.is_module].
+        See also:  [`is_module`][griffe.Object.is_module].
         """
         return False
 
@@ -928,7 +937,7 @@ class Object(ObjectAliasMixin):
     def is_package(self) -> bool:
         """Whether this object is a package (top module).
 
-        See also:  [`is_subpackage`][griffelib.Object.is_subpackage].
+        See also:  [`is_subpackage`][griffe.Object.is_subpackage].
         """
         return False
 
@@ -936,7 +945,7 @@ class Object(ObjectAliasMixin):
     def is_subpackage(self) -> bool:
         """Whether this object is a subpackage.
 
-        See also:  [`is_package`][griffelib.Object.is_package].
+        See also:  [`is_package`][griffe.Object.is_package].
         """
         return False
 
@@ -944,7 +953,7 @@ class Object(ObjectAliasMixin):
     def is_namespace_package(self) -> bool:
         """Whether this object is a namespace package (top folder, no `__init__.py`).
 
-        See also:  [`is_namespace_subpackage`][griffelib.Object.is_namespace_subpackage].
+        See also:  [`is_namespace_subpackage`][griffe.Object.is_namespace_subpackage].
         """
         return False
 
@@ -952,14 +961,14 @@ class Object(ObjectAliasMixin):
     def is_namespace_subpackage(self) -> bool:
         """Whether this object is a namespace subpackage.
 
-        See also:  [`is_namespace_package`][griffelib.Object.is_namespace_package].
+        See also:  [`is_namespace_package`][griffe.Object.is_namespace_package].
         """
         return False
 
     def has_labels(self, *labels: str) -> bool:
         """Tell if this object has all the given labels.
 
-        See also: [`labels`][griffelib.Object.labels].
+        See also: [`labels`][griffe.Object.labels].
 
         Parameters:
             *labels: Labels that must be present.
@@ -972,7 +981,7 @@ class Object(ObjectAliasMixin):
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
         """Filter and return members based on predicates.
 
-        See also: [`members`][griffelib.Object.members].
+        See also: [`members`][griffe.Object.members].
 
         Parameters:
             *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.
@@ -991,7 +1000,7 @@ class Object(ObjectAliasMixin):
     def module(self) -> Module:
         """The parent module of this object.
 
-        See also: [`package`][griffelib.Object.package].
+        See also: [`package`][griffe.Object.package].
 
         Examples:
             >>> import griffelib
@@ -1015,7 +1024,7 @@ class Object(ObjectAliasMixin):
     def package(self) -> Module:
         """The absolute top module (the package) of this object.
 
-        See also: [`module`][griffelib.Object.module].
+        See also: [`module`][griffe.Object.module].
 
         Examples:
             >>> import griffelib
@@ -1032,8 +1041,8 @@ class Object(ObjectAliasMixin):
     def filepath(self) -> Path | list[Path]:
         """The file path (or directory list for namespace packages) where this object was defined.
 
-        See also: [`relative_filepath`][griffelib.Object.relative_filepath],
-        [`relative_package_filepath`][griffelib.Object.relative_package_filepath].
+        See also: [`relative_filepath`][griffe.Object.relative_filepath],
+        [`relative_package_filepath`][griffe.Object.relative_package_filepath].
 
         Examples:
             >>> import griffelib
@@ -1047,8 +1056,8 @@ class Object(ObjectAliasMixin):
     def relative_package_filepath(self) -> Path:
         """The file path where this object was defined, relative to the top module path.
 
-        See also: [`filepath`][griffelib.Object.filepath],
-        [`relative_filepath`][griffelib.Object.relative_filepath].
+        See also: [`filepath`][griffe.Object.filepath],
+        [`relative_filepath`][griffe.Object.relative_filepath].
 
         Raises:
             ValueError: When the relative path could not be computed.
@@ -1093,8 +1102,8 @@ class Object(ObjectAliasMixin):
 
         If this object's file path is not relative to the current working directory, return its absolute path.
 
-        See also: [`filepath`][griffelib.Object.filepath],
-        [`relative_package_filepath`][griffelib.Object.relative_package_filepath].
+        See also: [`filepath`][griffe.Object.filepath],
+        [`relative_package_filepath`][griffe.Object.relative_package_filepath].
 
         Raises:
             ValueError: When the relative path could not be computed.
@@ -1116,7 +1125,7 @@ class Object(ObjectAliasMixin):
 
         On regular objects (not aliases), the path is the canonical path.
 
-        See also: [`canonical_path`][griffelib.Object.canonical_path].
+        See also: [`canonical_path`][griffe.Object.canonical_path].
 
         Examples:
             >>> import griffelib
@@ -1132,7 +1141,7 @@ class Object(ObjectAliasMixin):
 
         The canonical path is the path where the object was defined (not imported).
 
-        See also: [`path`][griffelib.Object.path].
+        See also: [`path`][griffe.Object.path].
         """
         if self.parent is None:
             return self.name
@@ -1155,8 +1164,8 @@ class Object(ObjectAliasMixin):
     def lines_collection(self) -> LinesCollection:
         """The lines collection attached to this object or its parents.
 
-        See also: [`lines`][griffelib.Object.lines],
-        [`source`][griffelib.Object.source].
+        See also: [`lines`][griffe.Object.lines],
+        [`source`][griffe.Object.source].
 
         Raises:
             ValueError: When no modules collection can be found in the object or its parents.
@@ -1171,8 +1180,8 @@ class Object(ObjectAliasMixin):
     def lines(self) -> list[str]:
         """The lines containing the source of this object.
 
-        See also: [`lines_collection`][griffelib.Object.lines_collection],
-        [`source`][griffelib.Object.source].
+        See also: [`lines_collection`][griffe.Object.lines_collection],
+        [`source`][griffe.Object.source].
         """
         try:
             filepath = self.filepath
@@ -1194,8 +1203,8 @@ class Object(ObjectAliasMixin):
     def source(self) -> str:
         """The source code of this object.
 
-        See also: [`lines`][griffelib.Object.lines],
-        [`lines_collection`][griffelib.Object.lines_collection].
+        See also: [`lines`][griffe.Object.lines],
+        [`lines_collection`][griffe.Object.lines_collection].
         """
         return dedent("\n".join(self.lines))
 
@@ -1245,7 +1254,7 @@ class Object(ObjectAliasMixin):
     def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         """Return this object's data as a dictionary.
 
-        See also: [`as_json`][griffelib.Object.as_json].
+        See also: [`as_json`][griffe.Object.as_json].
 
         Parameters:
             full: Whether to return full info, or just base info.
@@ -1341,7 +1350,7 @@ class Alias(ObjectAliasMixin):
     - the path is the alias path, not the canonical one
     - the name can be different from the target's
     - if the target can be resolved, the kind is the target's kind
-    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffelib.Kind]
+    - if the target cannot be resolved, the kind becomes [Kind.ALIAS][griffe.Kind]
     """
 
     is_alias: bool = True
@@ -1349,7 +1358,7 @@ class Alias(ObjectAliasMixin):
     is_collection: bool = False
     """Always false for aliases.
 
-    See also: [`ModulesCollection`][griffelib.ModulesCollection].
+    See also: [`ModulesCollection`][griffe.ModulesCollection].
     """
 
     def __init__(
@@ -1444,7 +1453,7 @@ class Alias(ObjectAliasMixin):
     def kind(self) -> Kind:
         """The target's kind, or `Kind.ALIAS` if the target cannot be resolved.
 
-        See also: [`is_kind`][griffelib.Alias.is_kind].
+        See also: [`is_kind`][griffe.Alias.is_kind].
         """
         # custom behavior to avoid raising exceptions
         try:
@@ -1456,8 +1465,8 @@ class Alias(ObjectAliasMixin):
     def has_docstring(self) -> bool:
         """Whether this alias' target has a non-empty docstring.
 
-        See also: [`has_docstrings`][griffelib.Alias.has_docstrings],
-        [`docstring`][griffelib.Alias.docstring].
+        See also: [`has_docstrings`][griffe.Alias.has_docstrings],
+        [`docstring`][griffe.Alias.docstring].
         """
         try:
             return self.final_target.has_docstring
@@ -1468,8 +1477,8 @@ class Alias(ObjectAliasMixin):
     def has_docstrings(self) -> bool:
         """Whether this alias' target or any of its members has a non-empty docstring.
 
-        See also: [`has_docstring`][griffelib.Alias.has_docstring],
-        [`docstring`][griffelib.Alias.docstring].
+        See also: [`has_docstring`][griffe.Alias.has_docstring],
+        [`docstring`][griffe.Alias.docstring].
         """
         try:
             return self.final_target.has_docstrings
@@ -1490,7 +1499,7 @@ class Alias(ObjectAliasMixin):
     def path(self) -> str:
         """The dotted path / import path of this object.
 
-        See also: [`canonical_path`][griffelib.Alias.canonical_path].
+        See also: [`canonical_path`][griffe.Alias.canonical_path].
         """
         return f"{self.parent.path}.{self.name}"  # type: ignore[union-attr]
 
@@ -1504,10 +1513,10 @@ class Alias(ObjectAliasMixin):
     def members(self) -> dict[str, Object | Alias]:
         """The target's members (modules, classes, functions, attributes, type aliases).
 
-        See also: [`inherited_members`][griffelib.Alias.inherited_members],
-        [`get_member`][griffelib.Alias.get_member],
-        [`set_member`][griffelib.Alias.set_member],
-        [`filter_members`][griffelib.Alias.filter_members].
+        See also: [`inherited_members`][griffe.Alias.inherited_members],
+        [`get_member`][griffe.Alias.get_member],
+        [`set_member`][griffe.Alias.set_member],
+        [`filter_members`][griffe.Alias.filter_members].
         """
         final_target = self.final_target
 
@@ -1530,7 +1539,7 @@ class Alias(ObjectAliasMixin):
         This method is part of the consumer API:
         do not use when producing Griffe trees!
 
-        See also: [`members`][griffelib.Alias.members].
+        See also: [`members`][griffe.Alias.members].
         """
         final_target = self.final_target
 
@@ -1546,7 +1555,7 @@ class Alias(ObjectAliasMixin):
     def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
         """Return this target's data as a JSON string.
 
-        See also: [`as_dict`][griffelib.Alias.as_dict].
+        See also: [`as_dict`][griffe.Alias.as_dict].
 
         Parameters:
             full: Whether to return full info, or just base info.
@@ -1594,7 +1603,7 @@ class Alias(ObjectAliasMixin):
     def lineno(self) -> int | None:
         """The starting line number of the target object.
 
-        See also: [`endlineno`][griffelib.Alias.endlineno].
+        See also: [`endlineno`][griffe.Alias.endlineno].
         """
         return self.final_target.lineno
 
@@ -1606,7 +1615,7 @@ class Alias(ObjectAliasMixin):
     def endlineno(self) -> int | None:
         """The ending line number of the target object.
 
-        See also: [`lineno`][griffelib.Alias.lineno].
+        See also: [`lineno`][griffe.Alias.lineno].
         """
         return self.final_target.endlineno
 
@@ -1618,8 +1627,8 @@ class Alias(ObjectAliasMixin):
     def docstring(self) -> Docstring | None:
         """The target docstring.
 
-        See also: [`has_docstring`][griffelib.Alias.has_docstring],
-        [`has_docstrings`][griffelib.Alias.has_docstrings].
+        See also: [`has_docstring`][griffe.Alias.has_docstring],
+        [`has_docstrings`][griffe.Alias.has_docstrings].
         """
         return self.final_target.docstring
 
@@ -1636,7 +1645,7 @@ class Alias(ObjectAliasMixin):
     def labels(self) -> set[str]:
         """The target labels (`property`, `dataclass`, etc.).
 
-        See also: [`has_labels`][griffelib.Alias.has_labels].
+        See also: [`has_labels`][griffe.Alias.has_labels].
         """
         return self.final_target.labels
 
@@ -1647,7 +1656,7 @@ class Alias(ObjectAliasMixin):
         Keys are the names within the object (`from ... import ... as AS_NAME`),
         while the values are the actual names of the objects (`from ... import REAL_NAME as ...`).
 
-        See also: [`is_imported`][griffelib.Alias.is_imported].
+        See also: [`is_imported`][griffe.Alias.is_imported].
         """
         return self.final_target.imports
 
@@ -1666,7 +1675,7 @@ class Alias(ObjectAliasMixin):
 
         Exports get expanded by the loader before it expands wildcards and resolves aliases.
 
-        See also: [`GriffeLoader.expand_exports`][griffelib.GriffeLoader.expand_exports].
+        See also: [`GriffeLoader.expand_exports`][griffe.GriffeLoader.expand_exports].
         """
         return self.final_target.exports
 
@@ -1678,12 +1687,12 @@ class Alias(ObjectAliasMixin):
     def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
         """Tell if this object is of the given kind.
 
-        See also: [`is_module`][griffelib.Alias.is_module],
-        [`is_class`][griffelib.Alias.is_class],
-        [`is_function`][griffelib.Alias.is_function],
-        [`is_attribute`][griffelib.Alias.is_attribute],
-        [`is_type_alias`][griffelib.Alias.is_type_alias],
-        [`is_alias`][griffelib.Alias.is_alias].
+        See also: [`is_module`][griffe.Alias.is_module],
+        [`is_class`][griffe.Alias.is_class],
+        [`is_function`][griffe.Alias.is_function],
+        [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
+        [`is_alias`][griffe.Alias.is_alias].
 
         Parameters:
             kind: An instance or set of kinds (strings or enumerations).
@@ -1700,13 +1709,13 @@ class Alias(ObjectAliasMixin):
     def is_module(self) -> bool:
         """Whether this object is a module.
 
-        See also:  [`is_init_module`][griffelib.Alias.is_init_module].
-        [`is_class`][griffelib.Alias.is_class],
-        [`is_function`][griffelib.Alias.is_function],
-        [`is_attribute`][griffelib.Alias.is_attribute],
-        [`is_type_alias`][griffelib.Alias.is_type_alias],
-        [`is_alias`][griffelib.Alias.is_alias],
-        [`is_kind`][griffelib.Alias.is_kind].
+        See also:  [`is_init_module`][griffe.Alias.is_init_module].
+        [`is_class`][griffe.Alias.is_class],
+        [`is_function`][griffe.Alias.is_function],
+        [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
+        [`is_alias`][griffe.Alias.is_alias],
+        [`is_kind`][griffe.Alias.is_kind].
         """
         return self.final_target.is_module
 
@@ -1714,12 +1723,12 @@ class Alias(ObjectAliasMixin):
     def is_class(self) -> bool:
         """Whether this object is a class.
 
-        See also: [`is_module`][griffelib.Alias.is_module],
-        [`is_function`][griffelib.Alias.is_function],
-        [`is_attribute`][griffelib.Alias.is_attribute],
-        [`is_type_alias`][griffelib.Alias.is_type_alias],
-        [`is_alias`][griffelib.Alias.is_alias],
-        [`is_kind`][griffelib.Alias.is_kind].
+        See also: [`is_module`][griffe.Alias.is_module],
+        [`is_function`][griffe.Alias.is_function],
+        [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
+        [`is_alias`][griffe.Alias.is_alias],
+        [`is_kind`][griffe.Alias.is_kind].
         """
         return self.final_target.is_class
 
@@ -1727,12 +1736,12 @@ class Alias(ObjectAliasMixin):
     def is_function(self) -> bool:
         """Whether this object is a function.
 
-        See also: [`is_module`][griffelib.Alias.is_module],
-        [`is_class`][griffelib.Alias.is_class],
-        [`is_attribute`][griffelib.Alias.is_attribute],
-        [`is_type_alias`][griffelib.Alias.is_type_alias],
-        [`is_alias`][griffelib.Alias.is_alias],
-        [`is_kind`][griffelib.Alias.is_kind].
+        See also: [`is_module`][griffe.Alias.is_module],
+        [`is_class`][griffe.Alias.is_class],
+        [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
+        [`is_alias`][griffe.Alias.is_alias],
+        [`is_kind`][griffe.Alias.is_kind].
         """
         return self.final_target.is_function
 
@@ -1740,12 +1749,12 @@ class Alias(ObjectAliasMixin):
     def is_attribute(self) -> bool:
         """Whether this object is an attribute.
 
-        See also: [`is_module`][griffelib.Alias.is_module],
-        [`is_class`][griffelib.Alias.is_class],
-        [`is_function`][griffelib.Alias.is_function],
-        [`is_type_alias`][griffelib.Alias.is_type_alias],
-        [`is_alias`][griffelib.Alias.is_alias],
-        [`is_kind`][griffelib.Alias.is_kind].
+        See also: [`is_module`][griffe.Alias.is_module],
+        [`is_class`][griffe.Alias.is_class],
+        [`is_function`][griffe.Alias.is_function],
+        [`is_type_alias`][griffe.Alias.is_type_alias],
+        [`is_alias`][griffe.Alias.is_alias],
+        [`is_kind`][griffe.Alias.is_kind].
         """
         return self.final_target.is_attribute
 
@@ -1753,19 +1762,19 @@ class Alias(ObjectAliasMixin):
     def is_type_alias(self) -> bool:
         """Whether this object is a type alias.
 
-        See also: [`is_module`][griffelib.Alias.is_module],
-        [`is_class`][griffelib.Alias.is_class],
-        [`is_function`][griffelib.Alias.is_function],
-        [`is_attribute`][griffelib.Alias.is_attribute],
-        [`is_alias`][griffelib.Alias.is_alias],
-        [`is_kind`][griffelib.Alias.is_kind].
+        See also: [`is_module`][griffe.Alias.is_module],
+        [`is_class`][griffe.Alias.is_class],
+        [`is_function`][griffe.Alias.is_function],
+        [`is_attribute`][griffe.Alias.is_attribute],
+        [`is_alias`][griffe.Alias.is_alias],
+        [`is_kind`][griffe.Alias.is_kind].
         """
         return self.final_target.is_type_alias
 
     def has_labels(self, *labels: str) -> bool:
         """Tell if this object has all the given labels.
 
-        See also: [`labels`][griffelib.Alias.labels].
+        See also: [`labels`][griffe.Alias.labels].
 
         Parameters:
             *labels: Labels that must be present.
@@ -1778,9 +1787,9 @@ class Alias(ObjectAliasMixin):
     def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
         """Filter and return members based on predicates.
 
-        See also: [`members`][griffelib.Alias.members],
-        [`get_member`][griffelib.Alias.get_member],
-        [`set_member`][griffelib.Alias.set_member].
+        See also: [`members`][griffe.Alias.members],
+        [`get_member`][griffe.Alias.get_member],
+        [`set_member`][griffe.Alias.set_member].
 
         Parameters:
             *predicates: A list of predicates, i.e. callables accepting a member as argument and returning a boolean.
@@ -1794,7 +1803,7 @@ class Alias(ObjectAliasMixin):
     def module(self) -> Module:
         """The parent module of this object.
 
-        See also: [`package`][griffelib.Alias.package].
+        See also: [`package`][griffe.Alias.package].
 
         Raises:
             ValueError: When the object is not a module and does not have a parent.
@@ -1805,7 +1814,7 @@ class Alias(ObjectAliasMixin):
     def package(self) -> Module:
         """The absolute top module (the package) of this object.
 
-        See also: [`module`][griffelib.Alias.module].
+        See also: [`module`][griffe.Alias.module].
         """
         return self.final_target.package
 
@@ -1813,8 +1822,8 @@ class Alias(ObjectAliasMixin):
     def filepath(self) -> Path | list[Path]:
         """The file path (or directory list for namespace packages) where this object was defined.
 
-        See also: [`relative_filepath`][griffelib.Alias.relative_filepath],
-        [`relative_package_filepath`][griffelib.Alias.relative_package_filepath].
+        See also: [`relative_filepath`][griffe.Alias.relative_filepath],
+        [`relative_package_filepath`][griffe.Alias.relative_package_filepath].
         """
         return self.final_target.filepath
 
@@ -1824,8 +1833,8 @@ class Alias(ObjectAliasMixin):
 
         If this object's file path is not relative to the current working directory, return its absolute path.
 
-        See also: [`filepath`][griffelib.Alias.filepath],
-        [`relative_package_filepath`][griffelib.Alias.relative_package_filepath].
+        See also: [`filepath`][griffe.Alias.filepath],
+        [`relative_package_filepath`][griffe.Alias.relative_package_filepath].
 
         Raises:
             ValueError: When the relative path could not be computed.
@@ -1836,8 +1845,8 @@ class Alias(ObjectAliasMixin):
     def relative_package_filepath(self) -> Path:
         """The file path where this object was defined, relative to the top module path.
 
-        See also: [`filepath`][griffelib.Alias.filepath],
-        [`relative_filepath`][griffelib.Alias.relative_filepath].
+        See also: [`filepath`][griffe.Alias.filepath],
+        [`relative_filepath`][griffe.Alias.relative_filepath].
 
         Raises:
             ValueError: When the relative path could not be computed.
@@ -1850,7 +1859,7 @@ class Alias(ObjectAliasMixin):
 
         The canonical path is the path where the object was defined (not imported).
 
-        See also: [`path`][griffelib.Alias.path].
+        See also: [`path`][griffe.Alias.path].
         """
         return self.final_target.canonical_path
 
@@ -1858,8 +1867,8 @@ class Alias(ObjectAliasMixin):
     def lines_collection(self) -> LinesCollection:
         """The lines collection attached to this object or its parents.
 
-        See also: [`lines`][griffelib.Alias.lines],
-        [`source`][griffelib.Alias.source].
+        See also: [`lines`][griffe.Alias.lines],
+        [`source`][griffe.Alias.source].
 
         Raises:
             ValueError: When no modules collection can be found in the object or its parents.
@@ -1870,8 +1879,8 @@ class Alias(ObjectAliasMixin):
     def lines(self) -> list[str]:
         """The lines containing the source of this object.
 
-        See also: [`source`][griffelib.Alias.source],
-        [`lines_collection`][griffelib.Alias.lines_collection].
+        See also: [`source`][griffe.Alias.source],
+        [`lines_collection`][griffe.Alias.lines_collection].
         """
         return self.final_target.lines
 
@@ -1879,8 +1888,8 @@ class Alias(ObjectAliasMixin):
     def source(self) -> str:
         """The source code of this object.
 
-        See also: [`lines`][griffelib.Alias.lines],
-        [`lines_collection`][griffelib.Alias.lines_collection].
+        See also: [`lines`][griffe.Alias.lines],
+        [`lines_collection`][griffe.Alias.lines_collection].
         """
         return self.final_target.source
 
@@ -1911,9 +1920,9 @@ class Alias(ObjectAliasMixin):
     def bases(self) -> list[Expr | str]:
         """The class bases.
 
-        See also: [`Class`][griffelib.Class],
-        [`resolved_bases`][griffelib.Alias.resolved_bases],
-        [`mro`][griffelib.Alias.mro].
+        See also: [`Class`][griffe.Class],
+        [`resolved_bases`][griffe.Alias.resolved_bases],
+        [`mro`][griffe.Alias.mro].
         """
         return cast("Class", self.final_target).bases
 
@@ -1926,8 +1935,8 @@ class Alias(ObjectAliasMixin):
     def decorators(self) -> list[Decorator]:
         """The class/function decorators.
 
-        See also: [`Function`][griffelib.Function],
-        [`Class`][griffelib.Class].
+        See also: [`Function`][griffe.Function],
+        [`Class`][griffe.Class].
         """
         return cast("Union[Class, Function]", self.target).decorators
 
@@ -1945,7 +1954,7 @@ class Alias(ObjectAliasMixin):
     def is_init_module(self) -> bool:
         """Whether this module is an `__init__.py` module.
 
-        See also: [`is_module`][griffelib.Alias.is_module].
+        See also: [`is_module`][griffe.Alias.is_module].
         """
         return cast("Module", self.final_target).is_init_module
 
@@ -1953,7 +1962,7 @@ class Alias(ObjectAliasMixin):
     def is_package(self) -> bool:
         """Whether this module is a package (top module).
 
-        See also: [`is_subpackage`][griffelib.Alias.is_subpackage].
+        See also: [`is_subpackage`][griffe.Alias.is_subpackage].
         """
         return cast("Module", self.final_target).is_package
 
@@ -1961,7 +1970,7 @@ class Alias(ObjectAliasMixin):
     def is_subpackage(self) -> bool:
         """Whether this module is a subpackage.
 
-        See also: [`is_package`][griffelib.Alias.is_package].
+        See also: [`is_package`][griffe.Alias.is_package].
         """
         return cast("Module", self.final_target).is_subpackage
 
@@ -1969,7 +1978,7 @@ class Alias(ObjectAliasMixin):
     def is_namespace_package(self) -> bool:
         """Whether this module is a namespace package (top folder, no `__init__.py`).
 
-        See also: [`is_namespace_subpackage`][griffelib.Alias.is_namespace_subpackage].
+        See also: [`is_namespace_subpackage`][griffe.Alias.is_namespace_subpackage].
         """
         return cast("Module", self.final_target).is_namespace_package
 
@@ -1977,7 +1986,7 @@ class Alias(ObjectAliasMixin):
     def is_namespace_subpackage(self) -> bool:
         """Whether this module is a namespace subpackage.
 
-        See also: [`is_namespace_package`][griffelib.Alias.is_namespace_package].
+        See also: [`is_namespace_package`][griffe.Alias.is_namespace_package].
         """
         return cast("Module", self.final_target).is_namespace_subpackage
 
@@ -2073,9 +2082,9 @@ class Alias(ObjectAliasMixin):
         Upon accessing this property, if the target is not already resolved,
         a lookup is done using the modules collection to find the target.
 
-        See also: [`final_target`][griffelib.Alias.final_target],
-        [`resolve_target`][griffelib.Alias.resolve_target],
-        [`resolved`][griffelib.Alias.resolved].
+        See also: [`final_target`][griffe.Alias.final_target],
+        [`resolve_target`][griffe.Alias.resolve_target],
+        [`resolved`][griffe.Alias.resolved].
         """
         if not self.resolved:
             self.resolve_target()
@@ -2096,9 +2105,9 @@ class Alias(ObjectAliasMixin):
 
         This will iterate through the targets until a non-alias object is found.
 
-        See also: [`target`][griffelib.Alias.target],
-        [`resolve_target`][griffelib.Alias.resolve_target],
-        [`resolved`][griffelib.Alias.resolved].
+        See also: [`target`][griffe.Alias.target],
+        [`resolve_target`][griffe.Alias.resolve_target],
+        [`resolved`][griffe.Alias.resolved].
         """
         # Here we quickly iterate on the alias chain,
         # remembering which path we've seen already to detect cycles.
@@ -2119,9 +2128,9 @@ class Alias(ObjectAliasMixin):
     def resolve_target(self) -> None:
         """Resolve the target.
 
-        See also: [`target`][griffelib.Alias.target],
-        [`final_target`][griffelib.Alias.final_target],
-        [`resolved`][griffelib.Alias.resolved].
+        See also: [`target`][griffe.Alias.target],
+        [`final_target`][griffe.Alias.final_target],
+        [`resolved`][griffe.Alias.resolved].
 
         Raises:
             AliasResolutionError: When the target cannot be resolved.
@@ -2178,7 +2187,7 @@ class Alias(ObjectAliasMixin):
     def wildcard(self) -> str | None:
         """The module on which the wildcard import is performed (if any).
 
-        See also: [`GriffeLoader.expand_wildcards`][griffelib.GriffeLoader.expand_wildcards].
+        See also: [`GriffeLoader.expand_wildcards`][griffe.GriffeLoader.expand_wildcards].
         """
         if self.name.endswith("/*"):
             return self.target_path
@@ -2187,7 +2196,7 @@ class Alias(ObjectAliasMixin):
     def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
         """Return this alias' data as a dictionary.
 
-        See also: [`as_json`][griffelib.Alias.as_json].
+        See also: [`as_json`][griffe.Alias.as_json].
 
         Parameters:
             full: Whether to return full info, or just base info.
@@ -2281,7 +2290,7 @@ class Module(Object):
     def is_init_module(self) -> bool:
         """Whether this module is an `__init__.py` module.
 
-        See also: [`is_module`][griffelib.Module.is_module].
+        See also: [`is_module`][griffe.Module.is_module].
         """
         if isinstance(self.filepath, list):
             return False
@@ -2294,7 +2303,7 @@ class Module(Object):
     def is_package(self) -> bool:
         """Whether this module is a package (top module).
 
-        See also: [`is_subpackage`][griffelib.Module.is_subpackage].
+        See also: [`is_subpackage`][griffe.Module.is_subpackage].
         """
         return not bool(self.parent) and self.is_init_module
 
@@ -2302,7 +2311,7 @@ class Module(Object):
     def is_subpackage(self) -> bool:
         """Whether this module is a subpackage.
 
-        See also: [`is_package`][griffelib.Module.is_package].
+        See also: [`is_package`][griffe.Module.is_package].
         """
         return bool(self.parent) and self.is_init_module
 
@@ -2310,7 +2319,7 @@ class Module(Object):
     def is_namespace_package(self) -> bool:
         """Whether this module is a namespace package (top folder, no `__init__.py`).
 
-        See also: [`is_namespace_subpackage`][griffelib.Module.is_namespace_subpackage].
+        See also: [`is_namespace_subpackage`][griffe.Module.is_namespace_subpackage].
         """
         try:
             return self.parent is None and isinstance(self.filepath, list)
@@ -2321,7 +2330,7 @@ class Module(Object):
     def is_namespace_subpackage(self) -> bool:
         """Whether this module is a namespace subpackage.
 
-        See also: [`is_namespace_package`][griffelib.Module.is_namespace_package].
+        See also: [`is_namespace_package`][griffe.Module.is_namespace_package].
         """
         try:
             return (
@@ -2338,7 +2347,7 @@ class Module(Object):
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this module's data as a dictionary.
 
-        See also: [`as_json`][griffelib.Module.as_json].
+        See also: [`as_json`][griffe.Module.as_json].
 
         Parameters:
             **kwargs: Additional serialization options.
@@ -2383,8 +2392,8 @@ class Class(Object):
         self.bases: list[Expr | str] = list(bases) if bases else []
         """The class bases.
 
-        See also: [`resolved_bases`][griffelib.Class.resolved_bases],
-        [`mro`][griffelib.Class.mro].
+        See also: [`resolved_bases`][griffe.Class.resolved_bases],
+        [`mro`][griffe.Class.mro].
         """
 
         self.decorators: list[Decorator] = decorators or []
@@ -2433,8 +2442,8 @@ class Class(Object):
         This method is part of the consumer API:
         do not use when producing Griffe trees!
 
-        See also: [`bases`][griffelib.Class.bases],
-        [`mro`][griffelib.Class.mro].
+        See also: [`bases`][griffe.Class.bases],
+        [`mro`][griffe.Class.mro].
         """
         resolved_bases = []
         for base in self.bases:
@@ -2463,15 +2472,15 @@ class Class(Object):
     def mro(self) -> list[Class]:
         """Return a list of classes in order corresponding to Python's MRO.
 
-        See also: [`bases`][griffelib.Class.bases],
-        [`resolved_bases`][griffelib.Class.resolved_bases].
+        See also: [`bases`][griffe.Class.bases],
+        [`resolved_bases`][griffe.Class.resolved_bases].
         """
         return self._mro()[1:]  # Remove self.
 
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this class' data as a dictionary.
 
-        See also: [`as_json`][griffelib.Class.as_json].
+        See also: [`as_json`][griffe.Class.as_json].
 
         Parameters:
             **kwargs: Additional serialization options.
@@ -2566,7 +2575,7 @@ class Function(Object):
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this function's data as a dictionary.
 
-        See also: [`as_json`][griffelib.Function.as_json].
+        See also: [`as_json`][griffe.Function.as_json].
 
         Parameters:
             **kwargs: Additional serialization options.
@@ -2688,7 +2697,7 @@ class Attribute(Object):
     def as_dict(self, **kwargs: Any) -> dict[str, Any]:
         """Return this attribute's data as a dictionary.
 
-        See also: [`as_json`][griffelib.Attribute.as_json].
+        See also: [`as_json`][griffe.Attribute.as_json].
 
         Parameters:
             **kwargs: Additional serialization options.

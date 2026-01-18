@@ -150,7 +150,7 @@ class Breakage:
     def _location(self) -> Path:
         # Absolute file path probably means temporary worktree.
         # We use our worktree prefix to remove some components
-        # of the path on the left (`/tmp/griffelib-worktree-*/griffe_*/repo`).
+        # of the path on the left (`/tmp/griffe-worktree-*/griffe_*/repo`).
         if self._relative_filepath.is_absolute():
             parts = self._relative_filepath.parts
             for index, part in enumerate(parts):

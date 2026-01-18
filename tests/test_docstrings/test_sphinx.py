@@ -1,4 +1,4 @@
-"""Tests for the [Sphinx-style parser][griffelib.docstrings.sphinx]."""
+"""Tests for the [Sphinx-style parser][griffe.docstrings.sphinx]."""
 
 from __future__ import annotations
 

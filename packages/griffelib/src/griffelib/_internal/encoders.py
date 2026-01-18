@@ -61,7 +61,7 @@ class JSONEncoder(json.JSONEncoder):
             *args: See [`json.JSONEncoder`][].
             full: Whether to dump full data or base data.
                 If you plan to reload the data in Python memory
-                using the [`json_decoder`][griffelib.json_decoder],
+                using the [`json_decoder`][griffe.json_decoder],
                 you don't need the full data as it can be inferred again
                 using the base data. If you want to feed a non-Python
                 tool instead, dump the full data.

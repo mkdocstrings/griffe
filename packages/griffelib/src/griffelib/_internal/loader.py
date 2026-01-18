@@ -293,7 +293,7 @@ class GriffeLoader:
     def expand_exports(self, module: Module, seen: set | None = None) -> None:
         """Expand exports: try to recursively expand all module exports (`__all__` values).
 
-        See also: [`Module.exports`][griffelib.Module.exports].
+        See also: [`Module.exports`][griffe.Module.exports].
 
         Parameters:
             module: The module to recurse on.
@@ -340,7 +340,7 @@ class GriffeLoader:
     ) -> None:
         """Expand wildcards: try to recursively expand all found wildcards.
 
-        See also: [`Alias.wildcard`][griffelib.Alias.wildcard].
+        See also: [`Alias.wildcard`][griffe.Alias.wildcard].
 
         Parameters:
             obj: The object and its members to recurse on.
@@ -769,19 +769,19 @@ def load(
     In Griffe's context, loading means:
 
     - searching for a package, and finding it on the file system or as a builtin module
-        (see the [`ModuleFinder`][griffelib.ModuleFinder] class for more information)
+        (see the [`ModuleFinder`][griffe.ModuleFinder] class for more information)
     - extracting information from each of its (sub)modules, by either parsing
-        the source code (see the [`visit`][griffelib.visit] function)
-        or inspecting the module at runtime (see the [`inspect`][griffelib.inspect] function)
+        the source code (see the [`visit`][griffe.visit] function)
+        or inspecting the module at runtime (see the [`inspect`][griffe.inspect] function)
 
     The extracted information is stored in a collection of modules, which can be queried later.
     Each collected module is a tree of objects, representing the structure of the module.
-    See the [`Module`][griffelib.Module], [`Class`][griffelib.Class],
-    [`Function`][griffelib.Function], [`Attribute`][griffelib.Attribute], and
-    [`TypeAlias`][griffelib.TypeAlias] classes for more information.
+    See the [`Module`][griffe.Module], [`Class`][griffe.Class],
+    [`Function`][griffe.Function], [`Attribute`][griffe.Attribute], and
+    [`TypeAlias`][griffe.TypeAlias] classes for more information.
 
-    The main class used to load modules is [`GriffeLoader`][griffelib.GriffeLoader].
-    Convenience functions like this one and [`load_git`][griffelib.load_git] are also available.
+    The main class used to load modules is [`GriffeLoader`][griffe.GriffeLoader].
+    Convenience functions like this one and [`load_git`][griffe.load_git] are also available.
 
     Example:
         ```python
@@ -799,7 +799,7 @@ def load(
         module = loader.load(...)
         ```
 
-        See the documentation for the loader: [`GriffeLoader`][griffelib.GriffeLoader].
+        See the documentation for the loader: [`GriffeLoader`][griffe.GriffeLoader].
 
     Parameters:
         objspec: The Python path of an object, or file path to a module.
@@ -873,7 +873,7 @@ def load_git(
 
     This function will create a temporary
     [git worktree](https://git-scm.com/docs/git-worktree) at the requested reference
-    before loading `module` with [`griffelib.load`][griffelib.load].
+    before loading `module` with [`griffelib.load`][griffe.load].
 
     This function requires that the `git` executable is installed.
 
