@@ -483,7 +483,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
         return [_SP(new_path)]
     if _match_pattern(path.name, _editable_setuptools_patterns):
         # Support for how 'setuptools' writes these files:
-        # example line: `MAPPING = {'griffe': '/media/data/dev/griffelib/packages/griffe/src/griffe', 'briffe': '/media/data/dev/griffelib/src/briffe'}`.
+        # example line: `MAPPING = {'griffe': '/media/data/dev/griffe/packages/griffelib/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}`.
         # with annotation: `MAPPING: dict[str, str] = {...}`.
         parsed_module = ast.parse(path.read_text(encoding="utf8"))
         for node in parsed_module.body:
@@ -497,7 +497,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 return [_SP(Path(cst.value).parent) for cst in node.value.values if isinstance(cst, ast.Constant)]  # type: ignore[arg-type]
     if _match_pattern(path.name, _editable_meson_python_patterns):
         # Support for how 'meson-python' writes these files:
-        # example line: `install({'package', 'module1'}, '/media/data/dev/griffelib/build/cp311', ["path"], False)`.
+        # example line: `install({'package', 'module1'}, '/media/data/dev/griffe/build/cp311', ["path"], False)`.
         # Compiled modules then found in the cp311 folder, under src/package.
         parsed_module = ast.parse(path.read_text(encoding="utf8"))
         for node in parsed_module.body:
