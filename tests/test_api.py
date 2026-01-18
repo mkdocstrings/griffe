@@ -18,6 +18,19 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 
+TESTED_MODULES = (griffe, griffecli)
+test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
+
+
+@pytest.fixture(name="inventory", scope="module")
+def _fixture_inventory() -> Inventory:
+    inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
+    if not inventory_file.exists():
+        pytest.skip("The objects inventory is not available.")  # ty: ignore[call-non-callable]
+    with inventory_file.open("rb") as file:
+        return Inventory.parse_sphinx(file)
+
+
 def _load_modules(*modules: ModuleType) -> griffe.GriffeLoader:
     loader = griffe.GriffeLoader(
         extensions=griffe.load_extensions(
@@ -92,15 +105,6 @@ def _get_public_objects(public_api: griffe.Module) -> list[griffe.Object | griff
     return list(_yield_public_objects(public_api, modulelevel=False, inherited=True, special=True))
 
 
-@pytest.fixture(name="inventory", scope="module")
-def _fixture_inventory() -> Inventory:
-    inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
-    if not inventory_file.exists():
-        pytest.skip("The objects inventory is not available.")  # ty: ignore[call-non-callable]
-    with inventory_file.open("rb") as file:
-        return Inventory.parse_sphinx(file)
-
-
 def test_alias_proxies() -> None:
     """The Alias class has all the necessary methods and properties."""
     internal_api = _get_internal_api(griffe)
@@ -116,7 +120,7 @@ def test_alias_proxies() -> None:
                 assert name in alias_members
 
 
-@pytest.mark.parametrize("tested_module", [griffe, griffecli])
+@test_all_modules
 def test_exposed_objects(tested_module: ModuleType) -> None:
     """All public objects in the internal API are exposed under `griffe`."""
     modulelevel_internal_objects = _get_modulelevel_internal_objects(_get_internal_api(tested_module))
@@ -128,7 +132,7 @@ def test_exposed_objects(tested_module: ModuleType) -> None:
     assert not not_exposed, "Objects not exposed:\n" + "\n".join(sorted(not_exposed))
 
 
-@pytest.mark.parametrize("tested_module", [griffe, griffecli])
+@test_all_modules
 def test_unique_names(tested_module: ModuleType) -> None:
     """All internal objects have unique names."""
     modulelevel_internal_objects = _get_modulelevel_internal_objects(_get_public_api(tested_module))
@@ -139,7 +143,7 @@ def test_unique_names(tested_module: ModuleType) -> None:
     assert not non_unique, "Non-unique names:\n" + "\n".join(str(paths) for paths in non_unique)
 
 
-@pytest.mark.parametrize("tested_module", [griffe, griffecli])
+@test_all_modules
 def test_single_locations(tested_module: ModuleType) -> None:
     """All objects have a single public location."""
 
@@ -159,7 +163,7 @@ def test_single_locations(tested_module: ModuleType) -> None:
     )
 
 
-@pytest.mark.parametrize("tested_module", [griffe, griffecli])
+@test_all_modules
 def test_api_matches_inventory(inventory: Inventory, tested_module: ModuleType) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
@@ -183,13 +187,12 @@ def test_api_matches_inventory(inventory: Inventory, tested_module: ModuleType) 
 
 def test_inventory_matches_api(inventory: Inventory) -> None:
     """The inventory doesn't contain any additional Python object."""
-    tested_modules = (griffe, griffecli)
-    loader = _load_modules(*tested_modules)
+    loader = _load_modules(*TESTED_MODULES)
     not_in_api = []
     public_objects = []
     public_api_paths = set()
 
-    for tested_module in tested_modules:
+    for tested_module in TESTED_MODULES:
         public_api = _get_public_api(tested_module, loader=loader)
         module_public_objects = _get_public_objects(public_api)
         public_api_paths.add(tested_module.__name__)
@@ -206,7 +209,7 @@ def test_inventory_matches_api(inventory: Inventory) -> None:
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))
 
 
-@pytest.mark.parametrize("tested_module", [griffe, griffecli])
+@test_all_modules
 def test_no_module_docstrings_in_internal_api(tested_module: ModuleType) -> None:
     """No module docstrings should be written in our internal API.
 
