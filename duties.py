@@ -294,7 +294,7 @@ def check_api(ctx: Context, *cli_args: str) -> None:
                 "unpack_typeddict",
             ],
         ).add_args(*cli_args),
-        title="Checking for API breaking changes",
+        title="Checking for API breaking changes in Griffe library",
         nofail=True,
     )
     ctx.run(
@@ -307,7 +307,7 @@ def check_api(ctx: Context, *cli_args: str) -> None:
                 "unpack_typeddict",
             ],
         ).add_args(*cli_args),
-        title="Checking for API breaking changes",
+        title="Checking for API breaking changes in Griffe CLI",
         nofail=True,
     )
 
