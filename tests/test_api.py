@@ -143,7 +143,7 @@ def test_single_locations(tested_module: ModuleType) -> None:
 
     public_api = _get_public_api(tested_module)
     multiple_locations = {}
-    for obj_name in tested_module.__all__:
+    for obj_name in set(tested_module.__all__) - getattr(tested_module, "_SINGLE_LOCATIONS_IGNORE", set()):
         obj = public_api[obj_name]
         if obj.aliases and (
             public_aliases := [path for path, alias in obj.aliases.items() if path != obj.path and _public_path(alias)]

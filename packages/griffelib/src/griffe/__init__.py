@@ -593,21 +593,25 @@ __all__ = [
     "vtree",
 ]
 
+# Re-export griffecli for backward compatibility.
 try:
-    from griffecli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main  # noqa: F401
+    from griffecli import *
+    from griffecli import __all__ as __cli_all__
 except ImportError:
-    _CLI_MISSING_FEATURES = {
+    # Keep this in sync with the exported members of griffecli.
+    _MISSING_FROM_GRIFFECLI = {
         "DEFAULT_LOG_LEVEL",
         "check",
         "dump",
         "get_parser",
         "main",
     }
+
+    def __getattr__(attr: str) -> object:
+        if attr in _MISSING_FROM_GRIFFECLI:
+            raise ImportError(f"Please install `griffecli` to use {'griffe.' + attr!r}")
+        raise AttributeError(attr)
 else:
-    _CLI_MISSING_FEATURES = set()
-
-
-def __getattr__(attr: str) -> object:
-    if attr in _CLI_MISSING_FEATURES:
-        raise ImportError(f"Please install `griffecli` to use {'griffe.' + attr!r}")
-    raise AttributeError(attr)
+    __all__ += __cli_all__
+    # Ignore this namespace in internal API tests.
+    _SINGLE_LOCATIONS_IGNORE = set(__cli_all__)
