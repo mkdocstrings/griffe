@@ -593,22 +593,21 @@ __all__ = [
     "vtree",
 ]
 
-__cli_all__ = [
-    "DEFAULT_LOG_LEVEL",
-    "check",
-    "dump",
-    "get_parser",
-    "main",
-]
-
-__all__ += __cli_all__  # noqa: PLE0605
-
 try:  # noqa: SIM105
     from griffecli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main  # noqa: F401
 except ImportError:
-    pass
+    _CLI_MISSING_FEATURES = {
+        "DEFAULT_LOG_LEVEL",
+        "check",
+        "dump",
+        "get_parser",
+        "main",
+    }
+else:
+    _CLI_MISSING_FEATURES = set()
+
 
 def __getattr__(attr: str) -> object:
-    if attr in __cli_all__:
-        raise ImportError(f'Install `griffecli` to use {"griffe." + attr!r}')
+    if attr in _CLI_MISSING_FEATURES:
+        raise ImportError(f'Please install `griffecli` to use {"griffe." + attr!r}')
     raise AttributeError(attr)
