@@ -17,7 +17,7 @@ from griffe import (
     temporary_visited_module,
     temporary_visited_package,
 )
-from griffelib._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
+from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 if TYPE_CHECKING:
     import ast

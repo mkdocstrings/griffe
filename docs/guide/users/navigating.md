@@ -14,17 +14,17 @@ When [loading an object](loading.md), Griffe will give you back an instance of o
 ```python
 >>> import griffe
 >>> type(griffe.load("markdown"))
-<class 'griffelib._internal.models.Module'>
+<class 'griffe._internal.models.Module'>
 >>> type(griffe.load("markdown.core.Markdown"))
-<class 'griffelib._internal.models.Class'>
+<class 'griffe._internal.models.Class'>
 >>> type(griffe.load("markdown.Markdown"))
-<class 'griffelib._internal.models.Alias'>
+<class 'griffe._internal.models.Alias'>
 >>> type(griffe.load("markdown.core.markdown"))
-<class 'griffelib._internal.models.Function'>
+<class 'griffe._internal.models.Function'>
 >>> type(griffe.load("markdown.markdown"))
-<class 'griffelib._internal.models.Alias'>
+<class 'griffe._internal.models.Alias'>
 >>> type(griffe.load("markdown.Markdown.references"))
-<class 'griffelib._internal.models.Attribute'>
+<class 'griffe._internal.models.Attribute'>
 ```
 
 However deep the object is, Griffe loads the entire package. It means that in all the cases above, Griffe loaded the whole `markdown` package. The model instance Griffe gives you back is therefore part of a tree that you can navigate.
@@ -41,7 +41,7 @@ To access an object's members, there are a few options:
 
     ```pycon
     >>> import griffe
-    >>> markdown = griffelib.load("markdown")
+    >>> markdown = griffe.load("markdown")
     >>> markdown.members["Markdown"]
     Alias('Markdown', 'markdown.core.Markdown')
     >>> markdown.members["core"].members["Markdown"]
@@ -54,7 +54,7 @@ To access an object's members, there are a few options:
 
     ```pycon
     >>> import griffe
-    >>> markdown = griffelib.load("markdown")
+    >>> markdown = griffe.load("markdown")
     >>> markdown["core"]["Markdown"]  # chained access
     Class('Markdown', 46, 451)
     >>> markdown["core.Markdown"]  # merged access
@@ -65,7 +65,7 @@ To access an object's members, there are a few options:
 
     ```pycon
     >>> import griffe
-    >>> markdown = griffelib.load("markdown")
+    >>> markdown = griffe.load("markdown")
     >>> markdown[("core", "Markdown")]  # tuple access
     Class('Markdown', 46, 451)
     >>> # Due to the nature of the subscript syntax,
@@ -78,7 +78,7 @@ To access an object's members, there are a few options:
 
     ```pycon
     >>> import griffe
-    >>> markdown = griffelib.load("markdown")
+    >>> markdown = griffe.load("markdown")
     >>> markdown.get_member("core.Markdown")
     Class('Markdown', 46, 451)
     ```
@@ -122,7 +122,7 @@ If a base class cannot be resolved during computation of inherited members, Grif
 
 If you want to access all members at once (both declared and inherited), use the [`all_members`][griffe.Object.all_members] attribute. If you want to access only declared members, use the [`members`][griffe.Object] attribute.
 
-Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by griffelib. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by griffe. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
 #### Limitations
 
@@ -254,7 +254,7 @@ from pkg2 import A as B
 
 ```pycon
 >>> import griffe
->>> B = griffelib.load("pkg1.B")
+>>> B = griffe.load("pkg1.B")
 >>> B.path
 'pkg1.B'
 >>> B.canonical_path
@@ -339,13 +339,13 @@ Each object has an optional [`docstring`][griffe.Object.docstring] attached to i
 
 Docstrings can be parsed against several [docstring-styles](../../reference/docstrings.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
 
-When loading a package, it is possible to specify the docstring style to attach to every docstring (see the `docstring_parser` parameter of [`griffelib.load`][griffe.load]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depends on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
+When loading a package, it is possible to specify the docstring style to attach to every docstring (see the `docstring_parser` parameter of [`griffe.load`][griffe.load]). Accessing the [`parsed`][griffe.Docstring.parsed] field of a docstring will use this style to parse the docstring and return a list of [docstring sections][advanced-api-sections]. Each section has a `value` whose shape depends on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
 
 After a package is loaded, it is still possible to change the style used for specific docstrings by either overriding their [`parser`][griffe.Docstring.parser] and [`parser_options`][griffe.Docstring.parser_options] attributes, or by calling their [`parse()`][griffe.Docstring.parse] method with a different style:
 
 ```pycon
 >>> import griffe
->>> markdown = griffelib.load("markdown", docstring_parser="google")
+>>> markdown = griffe.load("markdown", docstring_parser="google")
 >>> markdown["Markdown"].docstring.parse("numpy")
 [...]
 ```

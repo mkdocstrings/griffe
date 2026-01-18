@@ -285,7 +285,7 @@ def check_api(ctx: Context, *cli_args: str) -> None:
         *cli_args: Additional Griffe CLI arguments.
     """
     ctx.run(
-        tools.griffecli.check(
+        tools.griffe.check(
             "griffe",
             search=["src"],
             color=True,

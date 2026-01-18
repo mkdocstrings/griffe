@@ -4,7 +4,7 @@ site_url: "https://mkdocstrings.github.io/griffe"
 repo_url: "https://github.com/mkdocstrings/griffe"
 repo_name: "mkdocstrings/griffe"
 site_dir: "site"
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src]
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, packages]
 copyright: Copyright &copy; 2021 Timothée Mazzucotelli
 edit_uri: edit/main/docs/
 

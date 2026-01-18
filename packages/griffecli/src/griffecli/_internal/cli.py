@@ -24,21 +24,21 @@ from typing import IO, TYPE_CHECKING, Any, Callable
 
 import colorama
 
-from griffelib._internal import debug
-from griffelib._internal.diff import find_breaking_changes
-from griffelib._internal.encoders import JSONEncoder
-from griffelib._internal.enumerations import ExplanationStyle, Parser
-from griffelib._internal.exceptions import ExtensionError, GitError
-from griffelib._internal.extensions.base import load_extensions
-from griffelib._internal.git import _get_latest_tag, _get_repo_root
-from griffelib._internal.loader import GriffeLoader, load, load_git, load_pypi
-from griffelib._internal.logger import logger
+from griffe._internal import debug
+from griffe._internal.diff import find_breaking_changes
+from griffe._internal.encoders import JSONEncoder
+from griffe._internal.enumerations import ExplanationStyle, Parser
+from griffe._internal.exceptions import ExtensionError, GitError
+from griffe._internal.extensions.base import load_extensions
+from griffe._internal.git import _get_latest_tag, _get_repo_root
+from griffe._internal.loader import GriffeLoader, load, load_git, load_pypi
+from griffe._internal.logger import logger
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from griffelib._internal.docstrings.parsers import DocstringOptions, DocstringStyle
-    from griffelib._internal.extensions.base import Extension, Extensions
+    from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
+    from griffe._internal.extensions.base import Extension, Extensions
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()

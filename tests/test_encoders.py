@@ -73,7 +73,7 @@ def test_namespace_packages() -> None:
 def test_minimal_light_data_is_enough(symbol: str) -> None:
     """Test serialization and de-serialization."""
     loader = GriffeLoader()
-    package = loader.load("griffelib")
+    package = loader.load("griffe")
     obj = package[symbol]
     dump_options = {"indent": 2, "sort_keys": True}
     minimal = obj.as_json(full=False, **dump_options)
