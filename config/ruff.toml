@@ -35,7 +35,7 @@ ignore = [
     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
-logger-objects = ["griffe.logger", "griffe.logger"]
+logger-objects = ["griffe.logger"]
 
 [lint.per-file-ignores]
 "packages/griffecli/src/griffecli/__main__.py" = [
