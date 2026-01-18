@@ -603,6 +603,11 @@ __cli_all__ = [
 
 __all__ += __cli_all__
 
+try:
+    from griffecli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
+except ImportError:
+    pass
+
 def __getattr__(attr: str) -> object:
     if attr in __cli_all__:
         raise ImportError(f'Install `griffecli` to use {"griffe." + attr!r}')
