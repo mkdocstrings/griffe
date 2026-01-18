@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 TESTED_MODULES = (griffe, griffecli)
-test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
+_test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
 
 
 @pytest.fixture(name="inventory", scope="module")
@@ -120,7 +120,7 @@ def test_alias_proxies() -> None:
                 assert name in alias_members
 
 
-@test_all_modules
+@_test_all_modules
 def test_exposed_objects(tested_module: ModuleType) -> None:
     """All public objects in the internal API are exposed under `griffe`."""
     modulelevel_internal_objects = _get_modulelevel_internal_objects(_get_internal_api(tested_module))
@@ -132,7 +132,7 @@ def test_exposed_objects(tested_module: ModuleType) -> None:
     assert not not_exposed, "Objects not exposed:\n" + "\n".join(sorted(not_exposed))
 
 
-@test_all_modules
+@_test_all_modules
 def test_unique_names(tested_module: ModuleType) -> None:
     """All internal objects have unique names."""
     modulelevel_internal_objects = _get_modulelevel_internal_objects(_get_public_api(tested_module))
@@ -143,7 +143,7 @@ def test_unique_names(tested_module: ModuleType) -> None:
     assert not non_unique, "Non-unique names:\n" + "\n".join(str(paths) for paths in non_unique)
 
 
-@test_all_modules
+@_test_all_modules
 def test_single_locations(tested_module: ModuleType) -> None:
     """All objects have a single public location."""
 
@@ -163,7 +163,7 @@ def test_single_locations(tested_module: ModuleType) -> None:
     )
 
 
-@test_all_modules
+@_test_all_modules
 def test_api_matches_inventory(inventory: Inventory, tested_module: ModuleType) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
@@ -209,7 +209,7 @@ def test_inventory_matches_api(inventory: Inventory) -> None:
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))
 
 
-@test_all_modules
+@_test_all_modules
 def test_no_module_docstrings_in_internal_api(tested_module: ModuleType) -> None:
     """No module docstrings should be written in our internal API.
 
