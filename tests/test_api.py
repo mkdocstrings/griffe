@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Iterable
 from fnmatch import fnmatch
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -18,27 +19,32 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 
-def _load_module(module: ModuleType) -> griffe.GriffeLoader:
+def _load_modules(*modules: ModuleType) -> griffe.GriffeLoader:
     loader = griffe.GriffeLoader(
         extensions=griffe.load_extensions(
             "griffe_inherited_docstrings",
             "unpack_typeddict",
         ),
     )
-    loader.load(module.__name__)
+    for module in modules:
+        loader.load(module.__name__)
     loader.resolve_aliases()
     return loader
 
 
 def _get_internal_api(module: ModuleType, loader: griffe.GriffeLoader | None = None) -> griffe.Module:
     if loader is None:
-        loader = _load_module(module)
+        loader = _load_modules(module)
     return loader.modules_collection[module.__name__ + "._internal"]
+
+
+def _get_reexported_names(module: ModuleType) -> Iterable[str]:
+    return getattr(module, "_REEXPORTED_EXTERNAL_API", ())
 
 
 def _get_public_api(module: ModuleType, loader: griffe.GriffeLoader | None = None) -> griffe.Module:
     if loader is None:
-        loader = _load_module(module)
+        loader = _load_modules(module)
     return loader.modules_collection[module.__name__]
 
 
@@ -143,7 +149,7 @@ def test_single_locations(tested_module: ModuleType) -> None:
 
     public_api = _get_public_api(tested_module)
     multiple_locations = {}
-    for obj_name in set(tested_module.__all__) - getattr(tested_module, "_SINGLE_LOCATIONS_IGNORE", set()):
+    for obj_name in set(tested_module.__all__).difference(_get_reexported_names(tested_module)):
         obj = public_api[obj_name]
         if obj.aliases and (
             public_aliases := [path for path, alias in obj.aliases.items() if path != obj.path and _public_path(alias)]
@@ -154,10 +160,15 @@ def test_single_locations(tested_module: ModuleType) -> None:
     )
 
 
-def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe.Object | griffe.Alias]) -> None:
+@pytest.mark.parametrize("tested_module", [griffe, griffecli])
+def test_api_matches_inventory(inventory: Inventory, tested_module: ModuleType) -> None:
     """All public objects are added to the inventory."""
     ignore_names = {"__getattr__", "__init__", "__repr__", "__str__", "__post_init__"}
+    ignore_names.update(_get_reexported_names(tested_module))
     ignore_paths = {"griffe.DataclassesExtension.*", "griffe.UnpackTypedDictExtension.*"}
+    loader = _load_modules(tested_module)
+    public_api = _get_public_api(tested_module, loader=loader)
+    public_objects = _get_public_objects(public_api)
     not_in_inventory = [
         f"{obj.relative_filepath}:{obj.lineno}: {obj.path}"
         for obj in public_objects
@@ -171,20 +182,27 @@ def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe
     assert not not_in_inventory, msg.format(paths="\n".join(sorted(not_in_inventory)))
 
 
-@pytest.mark.parametrize("tested_module", [griffe, griffecli])
-def test_inventory_matches_api(inventory: Inventory, tested_module: ModuleType) -> None:
+def test_inventory_matches_api(inventory: Inventory) -> None:
     """The inventory doesn't contain any additional Python object."""
-    loader = _load_module(tested_module)
-    public_api = _get_public_api(tested_module, loader=loader)
-    public_objects = _get_public_objects(public_api)
+    tested_modules = (griffe, griffecli)
+    loader = _load_modules(*tested_modules)
     not_in_api = []
-    public_api_paths = {obj.path for obj in public_objects}
-    public_api_paths.add(tested_module.__name__)
+    public_objects = []
+    public_api_paths = set()
+
+    for tested_module in tested_modules:
+        public_api = _get_public_api(tested_module, loader=loader)
+        module_public_objects = _get_public_objects(public_api)
+        public_api_paths.add(tested_module.__name__)
+        public_api_paths.update({obj.path for obj in module_public_objects})
+        public_objects.extend(module_public_objects)
+
     for item in inventory.values():
         if item.domain == "py" and "(" not in item.name:
             obj = loader.modules_collection[item.name]
             if obj.path not in public_api_paths and not any(path in public_api_paths for path in obj.aliases):
                 not_in_api.append(item.name)
+
     msg = "Inventory objects not in public API (try running `make run mkdocs build`):\n{paths}"
     assert not not_in_api, msg.format(paths="\n".join(sorted(not_in_api)))
 

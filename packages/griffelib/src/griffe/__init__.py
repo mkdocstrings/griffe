@@ -613,5 +613,5 @@ except ImportError:
         raise AttributeError(attr)
 else:
     __all__ += __cli_all__  # noqa: PLE0605
-    # Ignore this namespace in internal API tests.
-    _SINGLE_LOCATIONS_IGNORE = set(__cli_all__)
+    # Ignore any reexpected API in internal API tests.
+    _REEXPORTED_EXTERNAL_API = set(__cli_all__)
