@@ -10,7 +10,7 @@
 
 ::: griffe.LogLevel
 
-::: griffe.DEFAULT_LOG_LEVEL
+::: griffecli.DEFAULT_LOG_LEVEL
     options:
         annotations_path: full
 
