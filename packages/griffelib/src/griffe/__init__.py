@@ -595,7 +595,7 @@ __all__ = [
 
 # Re-export griffecli for backward compatibility.
 try:
-    from griffecli import *
+    from griffecli import *  # noqa: F403
     from griffecli import __all__ as __cli_all__
 except ImportError:
     # Keep this in sync with the exported members of griffecli.
@@ -612,6 +612,6 @@ except ImportError:
             raise ImportError(f"Please install `griffecli` to use {'griffe.' + attr!r}")
         raise AttributeError(attr)
 else:
-    __all__ += __cli_all__
+    __all__ += __cli_all__  # noqa: PLE0605
     # Ignore this namespace in internal API tests.
     _SINGLE_LOCATIONS_IGNORE = set(__cli_all__)

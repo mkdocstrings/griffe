@@ -5,7 +5,6 @@ from __future__ import annotations
 from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
-from types import ModuleType
 from typing import TYPE_CHECKING
 
 import pytest
@@ -16,6 +15,7 @@ import griffecli
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from types import ModuleType
 
 
 def _load_module(module: ModuleType) -> griffe.GriffeLoader:
@@ -200,7 +200,6 @@ def test_no_module_docstrings_in_internal_api(tested_module: ModuleType) -> None
     The reasoning is that docstrings are addressed to users of the public API,
     but internal modules are not exposed to users, so they should not have docstrings.
     """
-
     internal_api = _get_internal_api(tested_module)
 
     def _modules(obj: griffe.Module) -> Iterator[griffe.Module]:
