@@ -122,7 +122,7 @@ If a base class cannot be resolved during computation of inherited members, Grif
 
 If you want to access all members at once (both declared and inherited), use the [`all_members`][griffe.Object.all_members] attribute. If you want to access only declared members, use the [`members`][griffe.Object] attribute.
 
-Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by griffe. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes will trigger inheritance computation, so make sure to only access them once everything is loaded by Griffe. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
 #### Limitations
 
