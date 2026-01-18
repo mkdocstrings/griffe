@@ -118,6 +118,8 @@ If you only need the library for API introspection and analysis without the CLI 
 
      </div>
 
+This installs the `griffe` package as usual, but without the CLI program, nor its API, nor its dependencies.
+
 ## Install as a tool only
 
 === ":simple-python: pip"
@@ -177,6 +179,3 @@ Or as a Python module:
 ```console
 $ python -m griffe check mypackage
 ```
-
-TIP: **Alternative CLI Package**
-If you need to run Griffe without the full library, you can also use `python -m griffecli` instead of `python -m griffe`. This runs the CLI directly from the `griffecli` package.
