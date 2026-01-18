@@ -172,11 +172,7 @@ def test_api_matches_inventory(inventory: Inventory, public_objects: list[griffe
 
 
 @pytest.mark.parametrize("tested_module", [griffe, griffecli])
-def test_inventory_matches_api(
-    inventory: Inventory,
-    public_objects: list[griffe.Object | griffe.Alias],
-    tested_module: ModuleType,
-) -> None:
+def test_inventory_matches_api(inventory: Inventory, tested_module: ModuleType) -> None:
     """The inventory doesn't contain any additional Python object."""
     loader = _load_module(tested_module)
     public_api = _get_public_api(tested_module, loader=loader)
