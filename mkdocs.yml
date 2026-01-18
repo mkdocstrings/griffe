@@ -218,7 +218,7 @@ plugins:
         - url: https://docs.python.org/3/objects.inv
           domains: [std, py]
         - https://typing-extensions.readthedocs.io/en/latest/objects.inv
-        paths: [packages/griffelib, packages/griffecli, scripts, .]
+        paths: [packages/griffelib/src, packages/griffecli/src, scripts, .]
         options:
           backlinks: tree
           docstring_options:
