@@ -593,7 +593,7 @@ __all__ = [
     "vtree",
 ]
 
-try:  # noqa: SIM105
+try:
     from griffecli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main  # noqa: F401
 except ImportError:
     _CLI_MISSING_FEATURES = {
