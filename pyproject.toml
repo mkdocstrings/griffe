@@ -74,7 +74,6 @@ include = [
     "config",
     "docs",
     "scripts",
-    "src",
     "share",
     "tests",
     "duties.py",
@@ -87,7 +86,7 @@ include = [
 # Manual pages can be included in the wheel.
 # Depending on the installation tool, they will be accessible to users.
 # pipx supports it, uv does not yet, see https://github.com/astral-sh/uv/issues/4731.
-sources = ["src/"]
+bypass-selection = true
 artifacts = ["share/**/*"]
 
 [dependency-groups]
