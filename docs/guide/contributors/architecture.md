@@ -112,6 +112,7 @@ The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test mod
 Griffe is split into two pieces: the library and the CLI.
 
 Each of them has an internal API contained within an `_internal` folder:
+
 - `packages/griffelib/src/griffe/_internal` for the library,
 - `packages/griffecli/src/griffecli/_internal` for the CLI.
 

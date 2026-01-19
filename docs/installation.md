@@ -61,7 +61,7 @@ Griffe is a Python package, so you can install it with your favorite Python pack
 
 ## Install as a library only
 
-If you only need the library for API introspection and analysis without the CLI tool, you can install just `griffelib`:
+If you only need the library for API introspection and analysis without the CLI tool, you can install `griffelib`:
 
 === ":simple-python: pip"
      ```bash
@@ -118,7 +118,7 @@ If you only need the library for API introspection and analysis without the CLI 
 
      </div>
 
-This installs the `griffe` package as usual, but without the CLI program, nor its API, nor its dependencies.
+This installs the `griffe` package as usual, but without the CLI program and its dependencies.
 
 ## Install as a tool only
 

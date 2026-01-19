@@ -470,7 +470,7 @@ def _handle_pth_file(path: Path) -> list[_SP]:
 def _handle_editable_module(path: Path) -> list[_SP]:
     if _match_pattern(path.name, (*_editable_editables_patterns, *_editable_scikit_build_core_patterns)):
         # Support for how 'editables' write these files:
-        # example line: `F.map_module('griffe', '/media/data/dev/griffelib/packages/griffe/src/griffe/__init__.py')`.
+        # example line: `F.map_module('pkg', '/data/dev/pkg/src/pkg/__init__.py')`.
         # And how 'scikit-build-core' writes these files:
         # example line: `install({'griffe': '/media/data/dev/griffelib/packages/griffe/src/griffe/__init__.py'}, {'cmake_example': ...}, None, False, True)`.
         try:
@@ -483,7 +483,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
         return [_SP(new_path)]
     if _match_pattern(path.name, _editable_setuptools_patterns):
         # Support for how 'setuptools' writes these files:
-        # example line: `MAPPING = {'griffe': '/media/data/dev/griffe/packages/griffelib/src/griffe', 'briffe': '/media/data/dev/griffe/src/briffe'}`.
+        # example line: `MAPPING = {'pkg': '/data/dev/pkg/src/pkg', 'pkg2': '/data/dev/pkg/src/pkg2'}`.
         # with annotation: `MAPPING: dict[str, str] = {...}`.
         parsed_module = ast.parse(path.read_text(encoding="utf8"))
         for node in parsed_module.body:
@@ -508,7 +508,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 and node.value.func.id == "install"
                 and isinstance(node.value.args[1], ast.Constant)
             ):
-                build_path = Path(node.value.args[1].value, "packages/griffelib/src")  # type: ignore[arg-type]
+                build_path = Path(node.value.args[1].value, "src")  # type: ignore[arg-type]
                 # NOTE: What if there are multiple packages?
                 pkg_name = next(build_path.iterdir()).name
                 return [_SP(build_path, always_scan_for=pkg_name)]

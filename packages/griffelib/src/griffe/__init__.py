@@ -8,8 +8,7 @@ Signatures for entire Python programs.
 Extract the structure, the frame, the skeleton of your project,
 to generate API documentation or find breaking changes in your API.
 
-The entirety of the library API is exposed here, in the top-level `griffelib` module.
-For backward compatibility, you can also import from `griffe` which re-exports everything.
+The entirety of the library API is exposed here, in the top-level `griffe` module.
 
 All messages written to standard output or error are logged using the `logging` module.
 Our logger's name is set to `"griffe"` and is public (you can rely on it).
@@ -613,5 +612,5 @@ except ImportError:
         raise AttributeError(attr)
 else:
     __all__ += __cli_all__  # noqa: PLE0605
-    # Ignore any reexpected API in internal API tests.
+    # Ignore any re-exported API in internal API tests.
     _REEXPORTED_EXTERNAL_API = set(__cli_all__)
