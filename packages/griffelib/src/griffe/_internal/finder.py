@@ -472,7 +472,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
         # Support for how 'editables' write these files:
         # example line: `F.map_module('pkg', '/data/dev/pkg/src/pkg/__init__.py')`.
         # And how 'scikit-build-core' writes these files:
-        # example line: `install({'griffe': '/media/data/dev/griffelib/packages/griffe/src/griffe/__init__.py'}, {'cmake_example': ...}, None, False, True)`.
+        # example line: `install({'pkg': '/data/dev/pkg/src/pkg/__init__.py'}, {'cmake_example': ...}, None, False, True)`.
         try:
             editable_lines = path.read_text(encoding="utf-8-sig").strip().splitlines(keepends=False)
         except FileNotFoundError as error:
