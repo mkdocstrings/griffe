@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "griffelib"
-description = "The Griffe library"
+description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
 license = "ISC"
 license-files = ["LICENSE"]
