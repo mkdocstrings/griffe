@@ -73,3 +73,25 @@ def test_merge_attribute_values() -> None:
         },
     ) as pkg:
         assert str(pkg["__all__"].value) == "['hello']"
+
+
+def test_merge_overload_annotations() -> None:
+    """Assert that overload annotations are merged correctly."""
+    with temporary_visited_package(
+        "package",
+        {
+            "mod.py": "def func(x): ...",
+            "mod.pyi": """
+                from typing import overload
+
+                @overload
+                def func(x: int) -> int: ...
+
+                @overload
+                def func(x: float) -> float: ...
+                """,
+        },
+    ) as pkg:
+        func = pkg["mod.func"]
+        assert str(func.parameters["x"].annotation) == "int | float"
+        assert str(func.returns) == "int | float"

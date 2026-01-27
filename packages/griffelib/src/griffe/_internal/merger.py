@@ -6,9 +6,12 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 
 from griffe._internal.exceptions import AliasResolutionError, CyclicAliasError
+from griffe._internal.expressions import Expr
 from griffe._internal.logger import logger
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 
@@ -60,8 +63,41 @@ def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
     for function_name, overloads in list(stubs.overloads.items()):
         if overloads:
             with suppress(KeyError):
-                obj.get_member(function_name).overloads = overloads
+                _merge_overload_annotations(obj.get_member(function_name), overloads)
         del stubs.overloads[function_name]
+
+
+def _merge_annotations(annotations: Sequence[Expr]) -> Expr | None:
+    if len(annotations) == 1:
+        return annotations[0]
+    if annotations:
+        return Expr._to_binop(annotations, op="|")
+    return None
+
+
+def _merge_overload_annotations(function: Function, overloads: list[Function]) -> None:
+    function.overloads = overloads
+    for parameter in function.parameters:
+        if parameter.annotation is None:
+            seen = set()
+            annotations = []
+            for overload in overloads:
+                with suppress(KeyError):
+                    annotation = overload.parameters[parameter.name].annotation
+                    str_annotation = str(annotation)
+                    if isinstance(annotation, Expr) and str_annotation not in seen:
+                        annotations.append(annotation)
+                        seen.add(str_annotation)
+            parameter.annotation = _merge_annotations(annotations)
+    if function.returns is None:
+        seen = set()
+        return_annotations = []
+        for overload in overloads:
+            str_annotation = str(overload.returns)
+            if isinstance(overload.returns, Expr) and str_annotation not in seen:
+                return_annotations.append(overload.returns)
+                seen.add(str_annotation)
+        function.returns = _merge_annotations(return_annotations)
 
 
 def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
