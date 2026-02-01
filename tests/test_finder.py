@@ -191,7 +191,7 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     pth_file = tmp_path / "_whatever_editable_loader.py"
     pth_file.write_text(
         # The path in argument 2 suffixed with src must exist, so we pass `.`.
-        "hello=1\ninstall({'griffe', 'hello'}, '.', ['/tmp/ninja'], False)",
+        "hello=1\ninstall({'griffe', 'hello'}, 'packages/griffelib', ['/tmp/ninja'], False)",
         encoding="utf8",
     )
     search_paths = _handle_editable_module(pth_file)
