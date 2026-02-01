@@ -508,7 +508,7 @@ def _handle_editable_module(path: Path) -> list[_SP]:
                 and node.value.func.id == "install"
                 and isinstance(node.value.args[1], ast.Constant)
             ):
-                build_path = Path(node.value.args[1].value, "packages/griffelib/src")  # type: ignore[arg-type]
+                build_path = Path(node.value.args[1].value, "src")  # type: ignore[arg-type]
                 # NOTE: What if there are multiple packages?
                 pkg_name = next(build_path.iterdir()).name
                 return [_SP(build_path, always_scan_for=pkg_name)]
