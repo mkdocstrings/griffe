@@ -59,6 +59,67 @@ Griffe is a Python package, so you can install it with your favorite Python pack
 
     </div>
 
+## Install as a library only
+
+If you only need the library for API introspection and analysis without the CLI tool, you can install `griffelib`:
+
+=== ":simple-python: pip"
+     ```bash
+     pip install griffelib
+     ```
+
+     <div class="result" markdown>
+
+     [pip](https://pip.pypa.io/en/stable/) is the main package installer for Python.
+
+     </div>
+
+=== ":simple-pdm: pdm"
+     ```bash
+     pdm add griffelib
+     ```
+
+     <div class="result" markdown>
+
+     [PDM](https://pdm-project.org/en/latest/) is an all-in-one solution for Python project management.
+
+     </div>
+
+=== ":simple-poetry: poetry"
+     ```bash
+     poetry add griffelib
+     ```
+
+     <div class="result" markdown>
+
+     [Poetry](https://python-poetry.org/) is an all-in-one solution for Python project management.
+
+     </div>
+
+=== ":simple-rye: rye"
+     ```bash
+     rye add griffelib
+     ```
+
+     <div class="result" markdown>
+
+     [Rye](https://rye.astral.sh/) is an all-in-one solution for Python project management, written in Rust.
+
+     </div>
+
+=== ":simple-astral: uv"
+     ```bash
+     uv add griffelib
+     ```
+
+     <div class="result" markdown>
+
+     [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
+
+     </div>
+
+This installs the `griffe` package as usual, but without the CLI program and its dependencies.
+
 ## Install as a tool only
 
 === ":simple-python: pip"
@@ -104,3 +165,17 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
     </div>
+
+## Running Griffe
+
+Once installed, you can run Griffe using the `griffe` command:
+
+```console
+$ griffe check mypackage
+```
+
+Or as a Python module:
+
+```console
+$ python -m griffe check mypackage
+```

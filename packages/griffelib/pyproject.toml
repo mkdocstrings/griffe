@@ -1,0 +1,55 @@
+[build-system]
+# pdm-backend is left here as a dependency of the version discovery script currently in use.
+# It may be removed in the future. See mkdocstrings/griffe#430
+requires = ["hatchling", "pdm-backend", "uv-dynamic-versioning>=0.7.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "griffelib"
+description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
+authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
+license = "ISC"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    # YORE: EOL 3.10: Remove line.
+    "Programming Language :: Python :: 3.10",
+    # YORE: EOL 3.11: Remove line.
+    "Programming Language :: Python :: 3.11",
+    # YORE: EOL 3.12: Remove line.
+    "Programming Language :: Python :: 3.12",
+    # YORE: EOL 3.13: Remove line.
+    "Programming Language :: Python :: 3.13",
+    # YORE: EOL 3.14: Remove line.
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Documentation",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+# The 'pypi' extra provides dependencies needed for the load_pypi functionality
+# to download and inspect packages from PyPI.
+pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
+
+[tool.hatch.version]
+source = "code"
+path = "../../scripts/get_version.py"
+expression = "get_version()"
+
+[tool.hatch.build.targets.sdist.force-include]
+"../../CHANGELOG.md" = "CHANGELOG.md"
+"../../LICENSE" = "LICENSE"
+"../../README.md" = "README.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/griffe"]

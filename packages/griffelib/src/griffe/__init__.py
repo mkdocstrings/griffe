@@ -2,13 +2,13 @@
 # and exposes them as public objects. We have tests to make sure
 # no object is forgotten in this list.
 
-"""Griffe package.
+"""Griffe library package.
 
 Signatures for entire Python programs.
 Extract the structure, the frame, the skeleton of your project,
 to generate API documentation or find breaking changes in your API.
 
-The entirety of the public API is exposed here, in the top-level `griffe` module.
+The entirety of the library API is exposed here, in the top-level `griffe` module.
 
 All messages written to standard output or error are logged using the `logging` module.
 Our logger's name is set to `"griffe"` and is public (you can rely on it).
@@ -19,14 +19,6 @@ Raised exceptions throughout the package are part of the public API (you can rel
 Their actual messages are not part of the public API (they might change without notice).
 
 The following paragraphs will help you discover the package's content.
-
-## CLI entrypoints
-
-Griffe provides a command-line interface (CLI) to interact with the package. The CLI entrypoints can be called from Python code.
-
-- [`griffe.main`][]: Run the main program.
-- [`griffe.check`][]: Check for API breaking changes in two versions of the same package.
-- [`griffe.dump`][]: Load packages data and dump it as JSON.
 
 ## Loaders
 
@@ -185,7 +177,6 @@ from griffe._internal.agents.nodes.runtime import ObjectNode
 from griffe._internal.agents.nodes.values import get_value, safe_get_value
 from griffe._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
 from griffe._internal.c3linear import c3linear_merge
-from griffe._internal.cli import DEFAULT_LOG_LEVEL, check, dump, get_parser, main
 from griffe._internal.collections import LinesCollection, ModulesCollection
 from griffe._internal.diff import (
     AttributeChangedTypeBreakage,
@@ -383,7 +374,6 @@ from griffe._internal.tests import (
 # names = sorted(n for n in dir(griffe) if not n.startswith("_") and n not in ("annotations",))
 # print('__all__ = [\n    "' + '",\n    "'.join(names) + '",\n]')
 __all__ = [
-    "DEFAULT_LOG_LEVEL",
     "Alias",
     "AliasResolutionError",
     "Attribute",
@@ -546,9 +536,7 @@ __all__ = [
     "builtin_decorators",
     "builtin_extensions",
     "c3linear_merge",
-    "check",
     "docstring_warning",
-    "dump",
     "dynamic_import",
     "find_breaking_changes",
     "get__all__",
@@ -563,7 +551,6 @@ __all__ = [
     "get_name",
     "get_names",
     "get_parameters",
-    "get_parser",
     "get_value",
     "htree",
     "infer_docstring_style",
@@ -574,7 +561,6 @@ __all__ = [
     "load_git",
     "load_pypi",
     "logger",
-    "main",
     "merge_stubs",
     "module_vtree",
     "parse",
@@ -605,3 +591,26 @@ __all__ = [
     "visit",
     "vtree",
 ]
+
+# Re-export griffecli for backward compatibility.
+try:
+    from griffecli import *  # noqa: F403
+    from griffecli import __all__ as __cli_all__
+except ImportError:
+    # Keep this in sync with the exported members of griffecli.
+    _MISSING_FROM_GRIFFECLI = {
+        "DEFAULT_LOG_LEVEL",
+        "check",
+        "dump",
+        "get_parser",
+        "main",
+    }
+
+    def __getattr__(attr: str) -> object:
+        if attr in _MISSING_FROM_GRIFFECLI:
+            raise ImportError(f"Please install `griffecli` to use {'griffe.' + attr!r}")
+        raise AttributeError(attr)
+else:
+    __all__ += __cli_all__  # noqa: PLE0605
+    # Ignore any re-exported API in internal API tests.
+    _REEXPORTED_EXTERNAL_API = set(__cli_all__)

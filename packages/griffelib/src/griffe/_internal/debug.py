@@ -62,7 +62,7 @@ def _interpreter_name_version() -> tuple[str, str]:
     return "", "0.0.0"
 
 
-def _get_version(dist: str = "griffe") -> str:
+def _get_version(dist: str = "griffelib") -> str:
     """Get version of the given distribution.
 
     Parameters:
@@ -84,7 +84,7 @@ def _get_debug_info() -> _Environment:
         Environment information.
     """
     py_name, py_version = _interpreter_name_version()
-    packages = ["griffe"]
+    packages = ["griffelib", "griffecli", "griffe"]
     variables = ["PYTHONPATH", *[var for var in os.environ if var.startswith("GRIFFE")]]
     return _Environment(
         interpreter_name=py_name,

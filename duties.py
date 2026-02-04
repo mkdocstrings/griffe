@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from duty.context import Context
 
 
-PY_SRC_PATHS = (Path(_) for _ in ("src", "tests", "duties.py", "scripts"))
+PY_SRC_PATHS = (Path(_) for _ in ("packages/griffecli/src", "packages/griffelib/src", "tests", "duties.py", "scripts"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
 PY_SRC = " ".join(PY_SRC_LIST)
 CI = os.environ.get("CI", "0") in {"1", "true", "yes", ""}
@@ -287,14 +287,27 @@ def check_api(ctx: Context, *cli_args: str) -> None:
     ctx.run(
         tools.griffe.check(
             "griffe",
-            search=["src"],
+            search=["packages/griffelib/src"],
             color=True,
             extensions=[
                 "griffe_inherited_docstrings",
                 "unpack_typeddict",
             ],
         ).add_args(*cli_args),
-        title="Checking for API breaking changes",
+        title="Checking for API breaking changes in Griffe library",
+        nofail=True,
+    )
+    ctx.run(
+        tools.griffe.check(
+            "griffecli",
+            search=["packages/griffecli/src"],
+            color=True,
+            extensions=[
+                "griffe_inherited_docstrings",
+                "unpack_typeddict",
+            ],
+        ).add_args(*cli_args),
+        title="Checking for API breaking changes in Griffe CLI",
         nofail=True,
     )
 
