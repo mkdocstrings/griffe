@@ -67,19 +67,19 @@ pypi = ["griffelib[pypi]=={{version}}"]
 [tool.hatch.build]
 # Include as much as possible in the source distribution, to help redistributors.
 ignore-vcs = true
-exclude = [".github", ".pdm-build"]
+exclude = [".github"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "config",
-    "docs",
-    "scripts",
-    "share",
-    "tests",
-    "duties.py",
-    "mkdocs.yml",
-    "*.md",
-    "LICENSE",
+    "/config",
+    "/docs",
+    "/scripts",
+    "/share",
+    "/tests",
+    "/duties.py",
+    "/mkdocs.yml",
+    "/*.md",
+    "/LICENSE",
 ]
 
 [tool.hatch.build.targets.wheel]
