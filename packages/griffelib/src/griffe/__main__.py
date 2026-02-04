@@ -12,8 +12,7 @@ try:
     from griffecli import main
 except ModuleNotFoundError as exc:
     raise ModuleNotFoundError(
-        "`griffecli` or its dependencies are not installed. "
-        "Install `griffecli` to use `python -m griffe`.",
+        "`griffecli` or its dependencies are not installed. Install `griffecli` to use `python -m griffe`.",
     ) from exc
 
 if __name__ == "__main__":
