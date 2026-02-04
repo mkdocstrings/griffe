@@ -8,7 +8,7 @@
 .venv/
 .venvs/
 /build/
-/dist/
+dist/
 
 # tools
 .coverage*
