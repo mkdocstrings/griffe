@@ -251,6 +251,22 @@ class Expr:
         """Whether this expression is a generator."""
         return isinstance(self, ExprSubscript) and self.canonical_name == "Generator"
 
+    @staticmethod
+    def _to_binop(elements: Sequence[Expr], op: str) -> ExprBinOp:
+        if len(elements) == 2:  # noqa: PLR2004
+            left, right = elements
+            if isinstance(left, Expr):
+                left = left.modernize()
+            if isinstance(right, Expr):
+                right = right.modernize()
+            return ExprBinOp(left=left, operator=op, right=right)
+
+        left = ExprSubscript._to_binop(elements[:-1], op=op)
+        right = elements[-1]
+        if isinstance(right, Expr):
+            right = right.modernize()
+        return ExprBinOp(left=left, operator=op, right=right)
+
 
 @dataclass(eq=True, slots=True)
 class ExprAttribute(Expr):
@@ -887,22 +903,6 @@ class ExprSubscript(Expr):
         # Prevent parentheses from being added, avoiding `a[(b)]`
         yield from _yield(self.slice, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
         yield "]"
-
-    @staticmethod
-    def _to_binop(elements: Sequence[Expr], op: str) -> ExprBinOp:
-        if len(elements) == 2:  # noqa: PLR2004
-            left, right = elements
-            if isinstance(left, Expr):
-                left = left.modernize()
-            if isinstance(right, Expr):
-                right = right.modernize()
-            return ExprBinOp(left=left, operator=op, right=right)
-
-        left = ExprSubscript._to_binop(elements[:-1], op=op)
-        right = elements[-1]
-        if isinstance(right, Expr):
-            right = right.modernize()
-        return ExprBinOp(left=left, operator=op, right=right)
 
     def modernize(self) -> ExprBinOp | ExprSubscript:
         if self.canonical_path == "typing.Union":
