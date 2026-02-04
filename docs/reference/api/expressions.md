@@ -60,6 +60,8 @@
 
 ::: griffe.ExprIfExp
 
+::: griffe.ExprInterpolation
+
 ::: griffe.ExprJoinedStr
 
 ::: griffe.ExprKeyword
@@ -87,6 +89,8 @@
 ::: griffe.ExprSlice
 
 ::: griffe.ExprSubscript
+
+::: griffe.ExprTemplateStr
 
 ::: griffe.ExprTuple
 
