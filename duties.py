@@ -385,7 +385,19 @@ def build(ctx: Context) -> None:
     """
     ctx.run(
         tools.build(),
-        title="Building source and wheel distributions",
+        title="Building meta package source and wheel distributions",
+        pty=PTY,
+    )
+    ctx.run(
+        tools.build(outdir="../../dist"),
+        workdir="packages/griffelib",
+        title="Building library source and wheel distributions",
+        pty=PTY,
+    )
+    ctx.run(
+        tools.build(outdir="../../dist"),
+        workdir="packages/griffecli",
+        title="Building CLI source and wheel distributions",
         pty=PTY,
     )
 
