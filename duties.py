@@ -379,25 +379,11 @@ def build(ctx: Context) -> None:
     ```
 
     Build distributions of your project for the current version.
-    The build task uses the [`build` tool](https://build.pypa.io/en/stable/)
-    to build `.tar.gz` (Gzipped sources archive) and `.whl` (wheel) distributions
-    of your project in the `dist` directory.
+    Distribution files will be created in the `dist` directory.
     """
     ctx.run(
-        tools.build(),
-        title="Building meta package source and wheel distributions",
-        pty=PTY,
-    )
-    ctx.run(
-        tools.build(outdir="../../dist"),
-        workdir="packages/griffelib",
-        title="Building library source and wheel distributions",
-        pty=PTY,
-    )
-    ctx.run(
-        tools.build(outdir="../../dist"),
-        workdir="packages/griffecli",
-        title="Building CLI source and wheel distributions",
+        ["uv", "build", "--all"],
+        title="Building package source and wheel distributions",
         pty=PTY,
     )
 
