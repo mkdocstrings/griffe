@@ -41,6 +41,9 @@ classifiers = [
 # to download and inspect packages from PyPI.
 pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
 
+[tool.uv-dynamic-versioning]
+pattern = '(?P<base>\d+\.\d+\.\d+)'
+
 [tool.hatch.version]
 source = "code"
 path = "../../scripts/get_version.py"

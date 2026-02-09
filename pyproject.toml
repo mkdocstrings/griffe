@@ -50,6 +50,9 @@ Funding = "https://github.com/sponsors/pawamoy"
 [project.scripts]
 griffe = "griffecli:main"
 
+[tool.uv-dynamic-versioning]
+pattern = '(?P<base>\d+\.\d+\.\d+)'
+
 [tool.hatch.version]
 source = "code"
 path = "scripts/get_version.py"
