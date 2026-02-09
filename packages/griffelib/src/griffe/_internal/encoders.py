@@ -71,7 +71,7 @@ class JSONEncoder(json.JSONEncoder):
         self.full: bool = full
         """Whether to dump full data or base data."""
 
-    def default(self, obj: Any) -> Any:
+    def default(self, obj: Any) -> Any:  # ty:ignore[invalid-method-override]
         """Return a serializable representation of the given object.
 
         Parameters:

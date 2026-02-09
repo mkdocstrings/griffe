@@ -37,11 +37,11 @@ def docstring_warning(
 
     def warn(docstring: Docstring, offset: int, message: str, log_level: LogLevel = LogLevel.warning) -> None:
         try:
-            prefix = docstring.parent.relative_filepath  # type: ignore[union-attr]
+            prefix = docstring.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
         except (AttributeError, ValueError):
             prefix = "<module>"
         except BuiltinModuleError:
-            prefix = f"<module: {docstring.parent.module.name}>"  # type: ignore[union-attr]
+            prefix = f"<module: {docstring.parent.module.name}>"  # ty:ignore[possibly-missing-attribute]
         log = getattr(logger, log_level.value)
         log(f"{prefix}:{(docstring.lineno or 0) + offset}: {message}")
 
@@ -69,10 +69,10 @@ def parse_docstring_annotation(
         SyntaxError,  # Annotation contains syntax errors.
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-        if code.body:  # type: ignore[attr-defined]
+        if code.body:  # ty:ignore[unresolved-attribute]
             name_or_expr = safe_get_annotation(
-                code.body,  # type: ignore[attr-defined]
-                parent=docstring.parent,  # type: ignore[arg-type]
+                code.body,  # ty:ignore[unresolved-attribute]
+                parent=docstring.parent,
                 log_level=log_level,
             )
             return name_or_expr or annotation

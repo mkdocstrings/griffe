@@ -42,7 +42,7 @@ class AliasResolutionError(GriffeError):
 
         message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
         try:
-            filepath = alias.parent.relative_filepath  # type: ignore[union-attr]
+            filepath = alias.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
         except BuiltinModuleError:
             pass
         else:

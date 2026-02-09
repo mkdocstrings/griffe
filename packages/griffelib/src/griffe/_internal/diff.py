@@ -131,19 +131,19 @@ class Breakage:
     @property
     def _filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.filepath  # type: ignore[union-attr,return-value]
-        return self.obj.filepath  # type: ignore[return-value]
+            return self.obj.parent.filepath  # ty:ignore[invalid-return-type, possibly-missing-attribute]
+        return self.obj.filepath  # ty:ignore[invalid-return-type]
 
     @property
     def _relative_filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.relative_filepath  # type: ignore[union-attr]
+            return self.obj.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
         return self.obj.relative_filepath
 
     @property
     def _relative_package_filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.relative_package_filepath  # type: ignore[union-attr]
+            return self.obj.parent.relative_package_filepath  # ty:ignore[possibly-missing-attribute]
         return self.obj.relative_package_filepath
 
     @property
@@ -167,7 +167,7 @@ class Breakage:
     @property
     def _module_path(self) -> str:
         if self.obj.is_alias:
-            return self.obj.parent.module.path  # type: ignore[union-attr]
+            return self.obj.parent.module.path  # ty:ignore[possibly-missing-attribute]
         return self.obj.module.path
 
     @property
@@ -182,7 +182,7 @@ class Breakage:
         if self.kind is BreakageKind.OBJECT_REMOVED and self._relative_filepath != self._location:
             return 0
         if self.obj.is_alias:
-            return self.obj.alias_lineno or 0  # type: ignore[attr-defined]
+            return self.obj.alias_lineno or 0  # ty:ignore[possibly-missing-attribute]
         return self.obj.lineno or 0
 
     def _format_location(self, *, colors: bool = True) -> str:
@@ -566,8 +566,8 @@ def _alias_incompatibilities(
     seen_paths: set[str],
 ) -> Iterable[Breakage]:
     try:
-        old_member = old_obj.target if old_obj.is_alias else old_obj  # type: ignore[union-attr]
-        new_member = new_obj.target if new_obj.is_alias else new_obj  # type: ignore[union-attr]
+        old_member = old_obj.target if old_obj.is_alias else old_obj  # ty:ignore[possibly-missing-attribute]
+        new_member = new_obj.target if new_obj.is_alias else new_obj  # ty:ignore[possibly-missing-attribute]
     except AliasResolutionError:
         logger.debug("API check: %s | %s: skip alias with unknown target", old_obj.path, new_obj.path)
         return
@@ -591,7 +591,7 @@ def _member_incompatibilities(
             new_member = new_obj.all_members[name]
         except KeyError:
             if (not old_member.is_alias and old_member.is_module) or old_member.is_public:
-                yield ObjectRemovedBreakage(old_member, old_member, None)  # type: ignore[arg-type]
+                yield ObjectRemovedBreakage(old_member, old_member, None)  # ty:ignore[invalid-argument-type]
         else:
             yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
 
@@ -614,7 +614,7 @@ def _type_based_yield(
             seen_paths=seen_paths,
         )
     elif new_member.kind != old_member.kind:
-        yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # type: ignore[arg-type]
+        yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # ty:ignore[invalid-argument-type]
     elif old_member.is_module:
         yield from _member_incompatibilities(
             old_member,
@@ -623,14 +623,14 @@ def _type_based_yield(
         )
     elif old_member.is_class:
         yield from _class_incompatibilities(
-            old_member,  # type: ignore[arg-type]
-            new_member,  # type: ignore[arg-type]
+            old_member,  # ty:ignore[invalid-argument-type]
+            new_member,  # ty:ignore[invalid-argument-type]
             seen_paths=seen_paths,
         )
     elif old_member.is_function:
-        yield from _function_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
+        yield from _function_incompatibilities(old_member, new_member)  # ty:ignore[invalid-argument-type]
     elif old_member.is_attribute:
-        yield from _attribute_incompatibilities(old_member, new_member)  # type: ignore[arg-type]
+        yield from _attribute_incompatibilities(old_member, new_member)  # ty:ignore[invalid-argument-type]
 
 
 def _returns_are_compatible(old_function: Function, new_function: Function) -> bool:

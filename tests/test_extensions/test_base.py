@@ -112,7 +112,7 @@ def test_loading_extensions(extension: str | dict[str, dict[str, Any]] | Extensi
         extension: Extension specification (parametrized).
     """
     extensions = load_extensions(extension)
-    loaded: AnalysisEventsTest = extensions._extensions[0]  # type: ignore[assignment]
+    loaded: AnalysisEventsTest = extensions._extensions[0]  # ty:ignore[invalid-assignment]
     # We cannot use isinstance here,
     # because loading from a filepath drops the parent `tests` package,
     # resulting in a different object than the present ExtensionTest.

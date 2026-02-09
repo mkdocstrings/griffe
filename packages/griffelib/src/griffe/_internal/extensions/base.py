@@ -488,7 +488,7 @@ def _load_extension_path(path: str) -> ModuleType:
         raise ExtensionNotLoadedError(f"Could not import module from path '{path}'")
     module = module_from_spec(spec)
     sys.modules[module_name] = module
-    spec.loader.exec_module(module)  # type: ignore[union-attr]
+    spec.loader.exec_module(module)  # ty:ignore[possibly-missing-attribute]
     return module
 
 
@@ -597,7 +597,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
     for extension in exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):
-            extensions.add(*ext)
+            extensions.add(*ext)  # ty:ignore[invalid-argument-type]
         else:
             extensions.add(ext)
 
@@ -609,6 +609,6 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
         if type(ext) is DataclassesExtension:
             break
     else:
-        extensions.add(*_load_extension("dataclasses"))  # type: ignore[misc]
+        extensions.add(*_load_extension("dataclasses"))  # ty:ignore[not-iterable]
 
     return extensions

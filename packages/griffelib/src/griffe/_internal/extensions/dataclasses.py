@@ -34,12 +34,12 @@ def _expr_args(expr: Expr) -> dict[str, str | Expr]:
     if isinstance(expr, ExprCall):
         for argument in expr.arguments:
             try:
-                args[argument.name] = argument.value  # type: ignore[union-attr]
+                args[argument.name] = argument.value  # ty:ignore[unresolved-attribute]
             except AttributeError:
                 # Argument is a unpacked variable.
                 with suppress(Exception):
-                    collection = expr.function.parent.modules_collection  # type: ignore[attr-defined]
-                    var = collection[argument.value.canonical_path]  # type: ignore[union-attr]
+                    collection = expr.function.parent.modules_collection  # ty:ignore[unresolved-attribute]
+                    var = collection[argument.value.canonical_path]  # ty:ignore[unresolved-attribute]
                     args.update(_expr_args(var.value))
     elif isinstance(expr, ExprDict):
         args.update({ast.literal_eval(str(key)): value for key, value in zip(expr.keys, expr.values)})
@@ -160,7 +160,7 @@ def _set_dataclass_init(class_: Class) -> None:
     try:
         mro = class_.mro()
     except ValueError:
-        mro = ()  # type: ignore[assignment]
+        mro = ()
     for parent in reversed(mro):
         if _dataclass_decorator(parent.decorators):
             parameters.extend(_dataclass_parameters(parent))
@@ -210,11 +210,11 @@ def _apply_recursively(mod_cls: Module | Class, processed: set[str]) -> None:
             _del_members_annotated_as_initvar(mod_cls)
         for member in mod_cls.members.values():
             if not member.is_alias and member.is_class:
-                _apply_recursively(member, processed)  # type: ignore[arg-type]
+                _apply_recursively(member, processed)  # ty:ignore[invalid-argument-type]
     elif isinstance(mod_cls, Module):
         for member in mod_cls.members.values():
             if not member.is_alias and (member.is_module or member.is_class):
-                _apply_recursively(member, processed)  # type: ignore[arg-type]
+                _apply_recursively(member, processed)  # ty:ignore[invalid-argument-type]
 
 
 class DataclassesExtension(Extension):

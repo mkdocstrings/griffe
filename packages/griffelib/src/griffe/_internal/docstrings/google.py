@@ -225,12 +225,12 @@ def _read_parameters(
             name = name_with_type
             # Try to use the annotation from the signature.
             try:
-                annotation = docstring.parent.parameters[name].annotation  # type: ignore[union-attr]
+                annotation = docstring.parent.parameters[name].annotation  # ty:ignore[unresolved-attribute]
             except (AttributeError, KeyError):
                 annotation = None
 
         try:
-            default = docstring.parent.parameters[name].default  # type: ignore[union-attr]
+            default = docstring.parent.parameters[name].default  # ty:ignore[unresolved-attribute]
         except (AttributeError, KeyError):
             default = None
 
@@ -239,7 +239,7 @@ def _read_parameters(
 
         if warnings and warn_unknown_params:
             with suppress(AttributeError):  # For Parameters sections in objects without parameters.
-                params = docstring.parent.parameters  # type: ignore[union-attr]
+                params = docstring.parent.parameters  # ty:ignore[unresolved-attribute]
                 if name not in params:
                     message = f"Parameter '{name}' does not appear in the function signature"
                     for starred_name in (f"*{name}", f"**{name}"):
@@ -311,20 +311,20 @@ def _read_type_parameters_section(
             name = name_with_bound
             # try to use the annotation from the signature
             try:
-                bound = docstring.parent.type_parameters[name].annotation  # type: ignore[union-attr]
+                bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[possibly-missing-attribute]
             except (AttributeError, KeyError):
                 bound = None
 
         try:
-            default = docstring.parent.type_parameters[name].default  # type: ignore[union-attr]
+            default = docstring.parent.type_parameters[name].default  # ty:ignore[possibly-missing-attribute]
         except (AttributeError, KeyError):
             default = None
 
         if warn_unknown_params:
             with suppress(AttributeError):  # for type parameters sections in objects without type parameters
-                type_params = docstring.parent.type_parameters  # type: ignore[union-attr]
+                type_params = docstring.parent.type_parameters  # ty:ignore[possibly-missing-attribute]
                 if name not in type_params:
-                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # type: ignore[union-attr]
+                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # ty:ignore[possibly-missing-attribute]
                     for starred_name in (f"*{name}", f"**{name}"):
                         if starred_name in type_params:
                             message += f". Did you mean '{starred_name}'?"
@@ -378,7 +378,7 @@ def _read_attributes_section(
             name = name_with_type
             with suppress(AttributeError, KeyError, TypeError):
                 # Use subscript syntax to fetch annotation from inherited members too.
-                annotation = docstring.parent[name].annotation  # type: ignore[index]
+                annotation = docstring.parent[name].annotation  # ty:ignore[not-subscriptable]
 
         attributes.append(DocstringAttribute(name=name, annotation=annotation, description=description))
 
@@ -624,7 +624,7 @@ def _annotation_from_parent(
 ) -> str | Expr | None:
     annotation = None
     with suppress(Exception):
-        annotation = docstring.parent.annotation  # type: ignore[union-attr]
+        annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
         if annotation.is_generator:
             annotation = annotation.slice.elements[gen_index]
         elif annotation.is_iterator and gen_index == 0:
@@ -1009,7 +1009,7 @@ def parse_google(
                         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                     current_section = []
                 reader = _section_reader[_section_kind[admonition_type.lower()]]
-                section, offset = reader(docstring, offset=offset + 1, **options)  # type: ignore[operator]
+                section, offset = reader(docstring, offset=offset + 1, **options)
                 if section:
                     section.title = title
                     sections.append(section)

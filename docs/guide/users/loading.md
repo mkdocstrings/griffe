@@ -218,7 +218,7 @@ Traceback (most recent call last):
     resolved = self.modules_collection.get_member(self.target_path)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "griffe/_internal/mixins.py", line 84, in get_member
-    return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
+    return self.members[parts[0]].get_member(parts[1:])
            ~~~~~~~~~~~~^^^^^^^^^^
 KeyError: 'package1'
 

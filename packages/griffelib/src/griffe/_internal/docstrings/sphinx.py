@@ -175,7 +175,7 @@ def _read_parameter(
 
     if warnings and warn_unknown_params:
         with suppress(AttributeError):  # For Parameters sections in objects without parameters.
-            params = docstring.parent.parameters  # type: ignore[union-attr]
+            params = docstring.parent.parameters  # ty:ignore[unresolved-attribute]
             if name not in params:
                 message = f"Parameter '{name}' does not appear in the function signature"
                 for starred_name in (f"*{name}", f"**{name}"):
@@ -199,7 +199,7 @@ def _read_parameter(
 
 def _determine_param_default(docstring: Docstring, name: str) -> str | None:
     try:
-        return docstring.parent.parameters[name.lstrip()].default  # type: ignore[union-attr]
+        return docstring.parent.parameters[name.lstrip()].default  # ty:ignore[unresolved-attribute]
     except (AttributeError, KeyError):
         return None
 
@@ -231,7 +231,7 @@ def _determine_param_annotation(
 
     if annotation is None:
         try:
-            annotation = docstring.parent.parameters[name.lstrip()].annotation  # type: ignore[union-attr]
+            annotation = docstring.parent.parameters[name.lstrip()].annotation  # ty:ignore[unresolved-attribute]
         except (AttributeError, KeyError):
             if warnings:
                 docstring_warning(docstring, 0, f"No matching parameter for '{name}'")
@@ -303,7 +303,7 @@ def _read_attribute(
         # try to use the annotation from the parent
         with suppress(AttributeError, KeyError, TypeError):
             # Use subscript syntax to fetch annotation from inherited members too.
-            annotation = docstring.parent[name].annotation  # type: ignore[index]
+            annotation = docstring.parent[name].annotation  # ty:ignore[not-subscriptable]
     if name in parsed_values.attributes:
         if warnings:
             docstring_warning(docstring, 0, f"Duplicate attribute entry for '{name}'")
@@ -390,7 +390,7 @@ def _read_return(
         annotation = parsed_values.return_type
     else:
         try:
-            annotation = docstring.parent.annotation  # type: ignore[union-attr]
+            annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
         except AttributeError:
             if warnings and warn_missing_types:
                 docstring_warning(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")

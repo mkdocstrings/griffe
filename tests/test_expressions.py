@@ -84,7 +84,7 @@ def test_expressions(code: str) -> None:
         code: An expression (parametrized).
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # type: ignore[attr-defined]
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == code
 
 
@@ -157,8 +157,8 @@ def test_modernizing_idempotence(code: str) -> None:
         code: An expression (parametrized).
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # type: ignore[attr-defined]
-    modernized = expression.modernize()  # type: ignore[union-attr]
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
+    modernized = expression.modernize()  # ty:ignore[possibly-missing-attribute]
     assert expression == modernized
     assert str(expression) == str(modernized)
 

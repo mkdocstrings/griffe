@@ -26,7 +26,7 @@ _test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
 def _fixture_inventory() -> Inventory:
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
-        pytest.skip("The objects inventory is not available.")  # ty: ignore[call-non-callable]
+        pytest.skip("The objects inventory is not available.")
     with inventory_file.open("rb") as file:
         return Inventory.parse_sphinx(file)
 
@@ -77,7 +77,7 @@ def _yield_public_objects(
                     if modules:
                         yield member
                     yield from _yield_public_objects(
-                        member,  # type: ignore[arg-type]
+                        member,  # ty:ignore[invalid-argument-type]
                         modules=modules,
                         modulelevel=modulelevel,
                         inherited=inherited,
@@ -87,7 +87,7 @@ def _yield_public_objects(
                 yield member
             if member.is_class and not modulelevel:
                 yield from _yield_public_objects(
-                    member,  # ty: ignore[invalid-argument-type]
+                    member,  # ty:ignore[invalid-argument-type]
                     modules=modules,
                     modulelevel=False,
                     inherited=inherited,

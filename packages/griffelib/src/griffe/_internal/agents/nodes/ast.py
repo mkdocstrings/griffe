@@ -38,12 +38,12 @@ def ast_children(node: AST) -> Iterator[AST]:
         except AttributeError:
             continue
         if isinstance(field, AST):
-            field.parent = node  # type: ignore[attr-defined]
+            field.parent = node
             yield field
         elif isinstance(field, list):
             for child in field:
                 if isinstance(child, AST):
-                    child.parent = node  # type: ignore[attr-defined]
+                    child.parent = node
                     yield child
 
 
@@ -56,7 +56,7 @@ def ast_previous_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The previous siblings.
     """
-    for sibling in ast_children(node.parent):  # type: ignore[attr-defined]
+    for sibling in ast_children(node.parent):  # ty:ignore[unresolved-attribute]
         if sibling is not node:
             yield sibling
         else:
@@ -72,7 +72,7 @@ def ast_next_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The next siblings.
     """
-    siblings = ast_children(node.parent)  # type: ignore[attr-defined]
+    siblings = ast_children(node.parent)  # ty:ignore[unresolved-attribute]
     for sibling in siblings:
         if sibling is node:
             break
@@ -88,7 +88,7 @@ def ast_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The siblings.
     """
-    siblings = ast_children(node.parent)  # type: ignore[attr-defined]
+    siblings = ast_children(node.parent)  # ty:ignore[unresolved-attribute]
     for sibling in siblings:
         if sibling is not node:
             yield sibling

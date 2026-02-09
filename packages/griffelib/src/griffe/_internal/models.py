@@ -1020,8 +1020,8 @@ class Object(ObjectAliasMixin):
         """
         module = self.module
         while module.parent:
-            module = module.parent  # type: ignore[assignment]
-        return module
+            module = module.parent
+        return module  # ty:ignore[invalid-return-type]
 
     @property
     def filepath(self) -> Path | list[Path]:
@@ -1223,7 +1223,7 @@ class Object(ObjectAliasMixin):
         # Name is a member of this object.
         if name in self.members:
             if self.members[name].is_alias:
-                return self.members[name].target_path  # type: ignore[union-attr]
+                return self.members[name].target_path  # ty:ignore[possibly-missing-attribute]
             return self.members[name].path
 
         # Name unknown and no more parent scope, could be a built-in.
@@ -1487,13 +1487,13 @@ class Alias(ObjectAliasMixin):
 
         See also: [`canonical_path`][griffe.Alias.canonical_path].
         """
-        return f"{self.parent.path}.{self.name}"  # type: ignore[union-attr]
+        return f"{self.parent.path}.{self.name}"  # ty:ignore[possibly-missing-attribute]
 
     @property
     def modules_collection(self) -> ModulesCollection:
         """The modules collection attached to the alias parents."""
         # No need to forward to the target.
-        return self.parent.modules_collection  # type: ignore[union-attr]
+        return self.parent.modules_collection  # ty:ignore[possibly-missing-attribute]
 
     @property
     def members(self) -> dict[str, Object | Alias]:
@@ -1983,7 +1983,7 @@ class Alias(ObjectAliasMixin):
 
     @overloads.setter
     def overloads(self, overloads: list[Function] | None) -> None:
-        cast("Union[Module, Class, Function]", self.final_target).overloads = overloads
+        cast("Union[Module, Class, Function]", self.final_target).overloads = overloads  # ty:ignore[invalid-assignment]
 
     @property
     def parameters(self) -> Parameters:
@@ -2074,7 +2074,7 @@ class Alias(ObjectAliasMixin):
         """
         if not self.resolved:
             self.resolve_target()
-        return self._target  # type: ignore[return-value]
+        return self._target  # ty:ignore[invalid-return-type]
 
     @target.setter
     def target(self, value: Object | Alias) -> None:
@@ -2108,8 +2108,8 @@ class Alias(ObjectAliasMixin):
             if target.path in paths_seen:
                 raise CyclicAliasError([*paths_seen, target.path])
             paths_seen[target.path] = None
-            target = target.target  # type: ignore[assignment]
-        return target  # type: ignore[return-value]
+            target = target.target
+        return target  # ty:ignore[invalid-return-type]
 
     def resolve_target(self) -> None:
         """Resolve the target.
@@ -2162,7 +2162,7 @@ class Alias(ObjectAliasMixin):
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
-            self._target.aliases[self.path] = self  # type: ignore[union-attr]
+            self._target.aliases[self.path] = self  # ty:ignore[possibly-missing-attribute]
 
     @property
     def resolved(self) -> bool:
@@ -2269,7 +2269,7 @@ class Module(Object):
         return (
             "annotations" in self.members
             and self.members["annotations"].is_alias
-            and self.members["annotations"].target_path == "__future__.annotations"  # type: ignore[union-attr]
+            and self.members["annotations"].target_path == "__future__.annotations"  # ty:ignore[possibly-missing-attribute]
         )
 
     @property
@@ -2400,7 +2400,7 @@ class Class(Object):
         do not use when producing Griffe trees!
         """
         try:
-            return self.all_members["__init__"].parameters  # type: ignore[union-attr]
+            return self.all_members["__init__"].parameters  # ty:ignore[possibly-missing-attribute]
         except KeyError:
             return Parameters()
 
@@ -2446,7 +2446,7 @@ class Class(Object):
 
     def _mro(self, seen: tuple[str, ...] = ()) -> list[Class]:
         seen = (*seen, self.path)
-        bases: list[Class] = [base for base in self.resolved_bases if base.is_class]  # type: ignore[misc]
+        bases: list[Class] = [base for base in self.resolved_bases if base.is_class]  # ty:ignore[invalid-assignment]
         if not bases:
             return [self]
         for base in bases:

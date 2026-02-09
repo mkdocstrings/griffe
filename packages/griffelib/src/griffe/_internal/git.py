@@ -157,16 +157,16 @@ def _get_git_remote_url(repo: str | Path = ".") -> str:
 KnownGitService = Literal["github", "gitlab", "sourcehut", "gitea", "gogs", "forgejo", "codeberg", "radicle"]
 """Known Git hosting services."""
 
-_service_re = re.compile(rf"({'|'.join(KnownGitService.__args__)})")  # type: ignore[attr-defined]
+_service_re = re.compile(rf"({'|'.join(KnownGitService.__args__)})")
 
 
 def _get_git_known_service(git_remote_url: str) -> KnownGitService | None:
     if service := os.getenv("GRIFFE_GIT_SERVICE"):
-        if service not in KnownGitService.__args__:  # type: ignore[attr-defined]
+        if service not in KnownGitService.__args__:
             return None
-        return service  # type: ignore[return-value]
+        return service  # ty:ignore[invalid-return-type]
     if match := _service_re.search(urlsplit(git_remote_url).netloc):
-        return match.group(1)  # type: ignore[return-value]
+        return match.group(1)  # ty:ignore[invalid-return-type]
     return None
 
 

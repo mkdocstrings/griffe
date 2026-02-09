@@ -130,15 +130,15 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                     )
                     obj.set_member(stub_member.name, stub_member)
                 elif obj_member.is_module:
-                    _merge_module_stubs(obj_member, stub_member)  # type: ignore[arg-type]
+                    _merge_module_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_class:
-                    _merge_class_stubs(obj_member, stub_member)  # type: ignore[arg-type]
+                    _merge_class_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_function:
-                    _merge_function_stubs(obj_member, stub_member)  # type: ignore[arg-type]
+                    _merge_function_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_attribute:
-                    _merge_attribute_stubs(obj_member, stub_member)  # type: ignore[arg-type]
+                    _merge_attribute_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_type_alias:
-                    _merge_type_alias_stubs(obj_member, stub_member)  # type: ignore[arg-type]
+                    _merge_type_alias_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
         else:
             stub_member.runtime = False
             obj.set_member(member_name, stub_member)
@@ -158,10 +158,10 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
         The regular module.
     """
     logger.debug("Trying to merge %s and %s", mod1.filepath, mod2.filepath)
-    if mod1.filepath.suffix == ".pyi":  # type: ignore[union-attr]
+    if mod1.filepath.suffix == ".pyi":  # ty:ignore[possibly-missing-attribute]
         stubs = mod1
         module = mod2
-    elif mod2.filepath.suffix == ".pyi":  # type: ignore[union-attr]
+    elif mod2.filepath.suffix == ".pyi":  # ty:ignore[possibly-missing-attribute]
         stubs = mod2
         module = mod1
     else:

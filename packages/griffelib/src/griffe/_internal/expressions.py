@@ -163,7 +163,7 @@ class Expr:
     """Base class for expressions."""
 
     def __str__(self) -> str:
-        return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # type: ignore[attr-defined]
+        return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # ty:ignore[unresolved-attribute]
 
     def __iter__(self) -> Iterator[str | Expr]:
         """Iterate on the expression syntax and elements."""
@@ -302,7 +302,7 @@ class ExprAttribute(Expr):
         """The last part of this attribute (on the right)."""
         # All values except the first one can *only* be names:
         # we can't do `a.(b or c)` or `a."string"`.
-        return self.values[-1]  # type: ignore[return-value]
+        return self.values[-1]  # ty:ignore[invalid-return-type]
 
     @property
     def first(self) -> str | Expr:
@@ -759,7 +759,7 @@ class ExprName(Expr):  # noqa: PLW1641
             return f"{self.parent.canonical_path}.{self.name}"
         if isinstance(self.parent, str):
             return f"{self.parent}.{self.name}"
-        parent = self.parent.members.get(self.member, self.parent)  # type: ignore[arg-type]
+        parent = self.parent.members.get(self.member, self.parent)  # ty:ignore[no-matching-overload]
         try:
             return parent.resolve(self.name)
         except NameResolutionError:
@@ -769,15 +769,15 @@ class ExprName(Expr):  # noqa: PLW1641
     def resolved(self) -> Module | Class | None:
         """The resolved object this name refers to."""
         try:
-            return self.parent.modules_collection[self.parent.resolve(self.name)]  # type: ignore[union-attr]
+            return self.parent.modules_collection[self.parent.resolve(self.name)]  # ty:ignore[possibly-missing-attribute]
         except Exception:  # noqa: BLE001
-            return self.parent.resolved[self.name]  # type: ignore[union-attr,index]
+            return self.parent.resolved[self.name]  # ty:ignore[not-subscriptable, possibly-missing-attribute]
 
     @property
     def is_enum_class(self) -> bool:
         """Whether this name resolves to an enumeration class."""
         try:
-            bases = self.resolved.bases  # type: ignore[union-attr]
+            bases = self.resolved.bases  # ty:ignore[possibly-missing-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -789,7 +789,7 @@ class ExprName(Expr):  # noqa: PLW1641
     def is_enum_instance(self) -> bool:
         """Whether this name resolves to an enumeration instance."""
         try:
-            return self.parent.is_enum_class  # type: ignore[union-attr]
+            return self.parent.is_enum_class  # ty:ignore[possibly-missing-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -797,7 +797,7 @@ class ExprName(Expr):  # noqa: PLW1641
     def is_enum_value(self) -> bool:
         """Whether this name resolves to an enumeration value."""
         try:
-            return self.name == "value" and self.parent.is_enum_instance  # type: ignore[union-attr]
+            return self.name == "value" and self.parent.is_enum_instance  # ty:ignore[possibly-missing-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -906,7 +906,7 @@ class ExprSubscript(Expr):
 
     def modernize(self) -> ExprBinOp | ExprSubscript:
         if self.canonical_path == "typing.Union":
-            return self._to_binop(self.slice.elements, op="|")  # type: ignore[union-attr]
+            return self._to_binop(self.slice.elements, op="|")  # ty:ignore[unresolved-attribute]
         if self.canonical_path == "typing.Optional":
             left = self.slice if isinstance(self.slice, str) else self.slice.modernize()
             return ExprBinOp(left=left, operator="|", right="None")
@@ -1197,8 +1197,8 @@ def _build_constant(
                     node.value,
                 )
             else:
-                return _build(parsed.body, parent, **kwargs)  # type: ignore[attr-defined]
-    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)  # type: ignore[arg-type]
+                return _build(parsed.body, parent, **kwargs)  # ty:ignore[unresolved-attribute]
+    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
 def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1373,7 +1373,7 @@ _node_map: dict[type, _BuildCallable] = {
     ast.Call: _build_call,
     ast.Compare: _build_compare,
     ast.comprehension: _build_comprehension,
-    ast.Constant: _build_constant,  # type: ignore[dict-item]
+    ast.Constant: _build_constant,
     ast.Dict: _build_dict,
     ast.DictComp: _build_dictcomp,
     ast.FormattedValue: _build_formatted,
@@ -1395,7 +1395,7 @@ _node_map: dict[type, _BuildCallable] = {
     ast.UnaryOp: _build_unaryop,
     ast.Yield: _build_yield,
     ast.YieldFrom: _build_yield_from,
-}
+}  # ty:ignore[invalid-assignment]
 
 if sys.version_info >= (3, 14):
 
@@ -1484,7 +1484,7 @@ def safe_get_expression(
             path: Path | str = parent.relative_filepath
         except ValueError:
             path = "<in-memory>"
-        lineno = node.lineno  # type: ignore[union-attr]
+        lineno = node.lineno  # ty:ignore[unresolved-attribute]
         error_str = f"{error.__class__.__name__}: {error}"
         message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
         getattr(logger, log_level.value)(message)

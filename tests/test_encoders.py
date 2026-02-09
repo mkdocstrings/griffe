@@ -83,7 +83,7 @@ def test_minimal_light_data_is_enough(symbol: str) -> None:
         Kind.CLASS: Class,
         Kind.FUNCTION: Function,
         Kind.ATTRIBUTE: Attribute,
-    }[obj.kind].from_json(minimal)  # type: ignore[attr-defined]
+    }[obj.kind].from_json(minimal)
     reloaded.parent = obj.parent
     assert reloaded.as_json(full=False, **dump_options) == minimal
     assert reloaded.as_json(full=True, **dump_options) == full

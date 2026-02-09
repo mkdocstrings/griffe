@@ -113,7 +113,7 @@ class ObjectNode:
             except ValueError:
                 return None
             try:
-                return module.__spec__.name  # type: ignore[union-attr]
+                return module.__spec__.name  # ty:ignore[possibly-missing-attribute]
             except AttributeError:
                 return getattr(module, "__name__", None)
         else:

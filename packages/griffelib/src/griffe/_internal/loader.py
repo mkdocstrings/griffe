@@ -147,7 +147,7 @@ class GriffeLoader:
         logger.debug("Searching path(s) for %s", objspec)
         try:
             obj_path, package = self.finder.find_spec(
-                objspec,  # type: ignore[arg-type]
+                objspec,  # ty:ignore[invalid-argument-type]
                 try_relative_path=try_relative_path,
                 find_stubs_package=find_stubs_package,
             )
@@ -211,7 +211,7 @@ class GriffeLoader:
                 self.extensions.call("on_attribute", attr=member, loader=self)
             elif member.is_type_alias:
                 self.extensions.call("on_type_alias", type_alias=member, loader=self)
-            self._fire_load_events(member)  # type: ignore[arg-type]
+            self._fire_load_events(member)  # ty:ignore[invalid-argument-type]
 
     def _post_load(self, module: Module, obj_path: str) -> Object | Alias:
         # Pre-emptively expand exports (`__all__` values),
@@ -252,7 +252,7 @@ class GriffeLoader:
             The unresolved aliases and the number of iterations done.
         """
         if max_iterations is None:
-            max_iterations = float("inf")  # type: ignore[assignment]
+            max_iterations = float("inf")  # ty:ignore[invalid-assignment]
         prev_unresolved: set[str] = set()
         unresolved: set[str] = set("0")  # Init to enter loop.
         iteration = 0
@@ -267,7 +267,7 @@ class GriffeLoader:
             self.expand_wildcards(wildcards_module, external=external)
 
         load_failures: set[str] = set()
-        while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
+        while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # ty:ignore[unsupported-operator]
             prev_unresolved = unresolved - {"0"}
             unresolved = set()
             resolved: set[str] = set()
@@ -356,8 +356,8 @@ class GriffeLoader:
         # while also keeping track of the members representing wildcard import, to remove them later.
         for member in obj.members.values():
             # Handle a wildcard.
-            if member.is_alias and member.wildcard:  # type: ignore[union-attr]
-                package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
+            if member.is_alias and member.wildcard:  # ty:ignore[possibly-missing-attribute]
+                package = member.wildcard.split(".", 1)[0]  # ty:ignore[possibly-missing-attribute]
                 not_loaded = obj.package.path != package and package not in self.modules_collection
 
                 # Try loading the (unknown) package containing the wildcard importe module (if allowed to).
@@ -372,7 +372,7 @@ class GriffeLoader:
 
                 # Try getting the module from which every public object is imported.
                 try:
-                    target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
+                    target = self.modules_collection.get_member(member.target_path)  # ty:ignore[possibly-missing-attribute]
                 except KeyError:
                     logger.debug(
                         "Could not expand wildcard import %s in %s: %s not found in modules collection",
@@ -391,12 +391,12 @@ class GriffeLoader:
                         continue
 
                 # Collect every imported object.
-                expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
+                expanded.extend(self._expand_wildcard(member))  # ty:ignore[invalid-argument-type]
                 to_remove.append(member.name)
 
             # Recurse in unseen submodules.
             elif not member.is_alias and member.is_module and member.path not in seen:
-                self.expand_wildcards(member, external=external, seen=seen)  # type: ignore[arg-type]
+                self.expand_wildcards(member, external=external, seen=seen)  # ty:ignore[invalid-argument-type]
 
         # Then we remove the members representing wildcard imports.
         for name in to_remove:
@@ -416,7 +416,7 @@ class GriffeLoader:
             if already_present:
                 old_member = obj.get_member(new_member.name)
                 old_lineno = old_member.alias_lineno if old_member.is_alias else old_member.lineno
-                overwrite = alias_lineno > (old_lineno or 0)  # type: ignore[operator]
+                overwrite = alias_lineno > (old_lineno or 0)
 
             # 1. If the expanded member is an alias with a target path equal to its own path, we stop.
             #    This situation can arise because of Griffe's mishandling of (abusive) wildcard imports.
@@ -430,7 +430,7 @@ class GriffeLoader:
                     new_member,
                     lineno=alias_lineno,
                     endlineno=alias_endlineno,
-                    parent=obj,  # type: ignore[arg-type]
+                    parent=obj,  # ty:ignore[invalid-argument-type]
                     wildcard_imported=True,
                 )
                 # Special case: we avoid overwriting a submodule with an alias.
@@ -478,7 +478,7 @@ class GriffeLoader:
         for member in obj.members.values():
             # Handle aliases.
             if member.is_alias:
-                if member.wildcard or member.resolved:  # type: ignore[union-attr]
+                if member.wildcard or member.resolved:  # ty:ignore[possibly-missing-attribute]
                     continue
                 if not implicit and not member.is_exported:
                     continue
@@ -487,7 +487,7 @@ class GriffeLoader:
                 # from an external package, and decide if we should load that package
                 # to allow the alias to be resolved at the next iteration (maybe).
                 try:
-                    member.resolve_target()  # type: ignore[union-attr]
+                    member.resolve_target()  # ty:ignore[possibly-missing-attribute]
                 except AliasResolutionError as error:
                     target = error.alias.target_path
                     unresolved.add(member.path)
@@ -508,7 +508,7 @@ class GriffeLoader:
                 except CyclicAliasError as error:
                     logger.debug(str(error))
                 else:
-                    logger.debug("Alias %s was resolved to %s", member.path, member.final_target.path)  # type: ignore[union-attr]
+                    logger.debug("Alias %s was resolved to %s", member.path, member.final_target.path)  # ty:ignore[possibly-missing-attribute]
                     resolved.add(member.path)
 
             # Recurse into unseen modules and classes.
@@ -736,7 +736,7 @@ class GriffeLoader:
         return parent_module
 
     def _expand_wildcard(self, wildcard_obj: Alias) -> list[tuple[Object | Alias, int | None, int | None]]:
-        module = self.modules_collection.get_member(wildcard_obj.wildcard)  # type: ignore[arg-type]
+        module = self.modules_collection.get_member(wildcard_obj.wildcard)  # ty:ignore[invalid-argument-type]
         return [
             (imported_member, wildcard_obj.alias_lineno, wildcard_obj.alias_endlineno)
             for imported_member in module.members.values()

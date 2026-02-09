@@ -225,12 +225,12 @@ class UnpackTypedDictExtension(Extension):
                     "typing.Annotated",
                     "typing_extensions.Annotated",
                 }:
-                    annotation = annotation.slice.elements[0]  # type: ignore[union-attr]
+                    annotation = annotation.slice.elements[0]
                 if isinstance(annotation, ExprSubscript) and annotation.canonical_path in {
                     "typing.Unpack",
                     "typing_extensions.Unpack",
                 }:
-                    slice_path = annotation.slice.canonical_path  # type: ignore[union-attr]
+                    slice_path = annotation.slice.canonical_path
                     typed_dict = func.modules_collection[slice_path]
                     break
         else:

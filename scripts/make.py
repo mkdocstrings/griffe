@@ -70,7 +70,7 @@ def _run(version: str, cmd: str, *args: str, **kwargs: Any) -> None:
 
 def _command(name: str) -> Callable[[Callable[..., None]], Callable[..., None]]:
     def wrapper(func: Callable[..., None]) -> Callable[..., None]:
-        func.__cmdname__ = name  # type: ignore[attr-defined]
+        func.__cmdname__ = name  # ty:ignore[unresolved-attribute]
         _commands.append(func)
         return func
 
@@ -101,7 +101,7 @@ def help(*args: str) -> None:
     else:
         print("Available commands", flush=True)
         for cmd in _commands:
-            print(f"  {cmd.__cmdname__:21} {cmd.__doc__.splitlines()[0]}", flush=True)  # type: ignore[attr-defined,union-attr]
+            print(f"  {cmd.__cmdname__:21} {cmd.__doc__.splitlines()[0]}", flush=True)
         if Path(".venv").exists():
             print("\nAvailable tasks", flush=True)
             run("duty", "--list")
@@ -297,7 +297,7 @@ def main(args: list[str]) -> int:
             if not args:
                 print("make: run: missing command", file=sys.stderr)
                 return 1
-            run(*args)  # ty: ignore[missing-argument]
+            run(*args)
             return 0
 
         if cmd == "multirun":
@@ -318,7 +318,7 @@ def main(args: list[str]) -> int:
             if not args:
                 print("make: run: missing command", file=sys.stderr)
                 return 1
-            run3x(cmd, *args)  # ty: ignore[missing-argument]
+            run3x(cmd, *args)
             return 0
 
         opts = []

@@ -145,7 +145,7 @@ def infer_docstring_style(
     """
     from griffe._internal.docstrings.parsers import parsers  # noqa: PLC0415
 
-    per_style_options = per_style_options or {}
+    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
 
     style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
 
@@ -162,7 +162,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # type: ignore[arg-type]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[possibly-missing-attribute]
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:
@@ -210,7 +210,7 @@ def parse_auto(
     """
     from griffe._internal.docstrings.parsers import parse  # noqa: PLC0415
 
-    per_style_options = per_style_options or {}
+    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
 
     style, sections = infer_docstring_style(
         docstring,
@@ -220,5 +220,5 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # type: ignore[arg-type,typeddict-item]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, possibly-missing-attribute]
     return sections

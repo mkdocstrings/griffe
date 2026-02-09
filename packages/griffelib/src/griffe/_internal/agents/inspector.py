@@ -156,7 +156,7 @@ class Inspector:
         self.parent: Module | None = parent
         """An optional parent for the final module object."""
 
-        self.current: Module | Class = None  # type: ignore[assignment]
+        self.current: Module | Class = None
         """The current object being inspected."""
 
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
@@ -351,7 +351,7 @@ class Inspector:
         self.generic_inspect(node)
         self.extensions.call("on_members", node=node, obj=class_, agent=self)
         self.extensions.call("on_class_members", node=node, cls=class_, agent=self)
-        self.current = self.current.parent  # type: ignore[assignment]
+        self.current = self.current.parent  # ty:ignore[invalid-assignment]
 
     def inspect_staticmethod(self, node: ObjectNode) -> None:
         """Inspect a static method.
@@ -561,7 +561,7 @@ class Inspector:
         elif parent.kind is Kind.FUNCTION:
             if parent.name != "__init__":
                 return
-            parent = parent.parent  # type: ignore[assignment]
+            parent = parent.parent
             labels.add("instance-attribute")
 
         try:
@@ -581,10 +581,10 @@ class Inspector:
             analysis="dynamic",
         )
         attribute.labels |= labels
-        parent.set_member(node.name, attribute)
+        parent.set_member(node.name, attribute)  # ty:ignore[possibly-missing-attribute]
 
         if node.name == "__all__":
-            parent.exports = list(node.obj)
+            parent.exports = list(node.obj)  # ty:ignore[invalid-assignment]
         self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
         self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 
@@ -642,7 +642,7 @@ def _convert_object_to_annotation(obj: Any, *, parent: Module | Class, member: s
         annotation_node = compile(annotation, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
-    return safe_get_annotation(annotation_node.body, parent, member=member)  # type: ignore[attr-defined]
+    return safe_get_annotation(annotation_node.body, parent, member=member)  # ty:ignore[unresolved-attribute]
 
 
 _type_parameter_kind_map = {
@@ -674,9 +674,9 @@ def _convert_type_parameters(
         if bound is not None:
             bound = _convert_type_to_annotation(bound, parent=parent, member=member)
         constraints: list[str | Expr] = [
-            _convert_type_to_annotation(constraint, parent=parent, member=member)  # type: ignore[misc]
+            _convert_type_to_annotation(constraint, parent=parent, member=member)
             for constraint in getattr(type_parameter, "__constraints__", ())
-        ]
+        ]  # ty:ignore[invalid-assignment]
 
         if getattr(type_parameter, "has_default", lambda: False)():
             default = _convert_type_to_annotation(
@@ -711,10 +711,10 @@ def _convert_type_to_annotation(obj: Any, *, parent: Module | Class, member: str
     ]
 
     if origin is types.UnionType:
-        return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)  # type: ignore[arg-type]
+        return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)
 
     origin = _convert_type_to_annotation(origin, parent=parent, member=member)
     if origin is None:
         return None
 
-    return ExprSubscript(origin, ExprTuple(args, implicit=True))  # type: ignore[arg-type]
+    return ExprSubscript(origin, ExprTuple(args, implicit=True))  # ty:ignore[invalid-argument-type]

@@ -9,13 +9,13 @@ from unittest.mock import MagicMock
 
 from code2flow import code2flow, engine, model
 
-engine.logging = MagicMock()
+engine.logging = MagicMock()  # ty:ignore[invalid-assignment]
 
 
-model.TRUNK_COLOR = "#fca311"
-model.LEAF_COLOR = "#98c1d9"
+model.TRUNK_COLOR = "#fca311"  # ty:ignore[invalid-assignment]
+model.LEAF_COLOR = "#98c1d9"  # ty:ignore[invalid-assignment]
 model.EDGE_COLORS = ["#b8b8ff"] * 8
-model.NODE_COLOR = "#e5e5e5"
+model.NODE_COLOR = "#e5e5e5"  # ty:ignore[invalid-assignment]
 
 
 def _render_call_graph(module: Path) -> None:

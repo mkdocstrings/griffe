@@ -176,7 +176,7 @@ class Visitor:
         self.parent: Module | None = parent
         """An optional parent for the final module object."""
 
-        self.current: Module | Class = None  # type: ignore[assignment]
+        self.current: Module | Class = None
         """The current object being visited."""
 
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
@@ -222,7 +222,7 @@ class Visitor:
         ) -> list[TypeParameter]:
             return [
                 TypeParameter(
-                    type_param.name,  # type: ignore[attr-defined]
+                    type_param.name,  # ty:ignore[unresolved-attribute,unused-ignore-comment,unused-ignore-comment]
                     kind=self._type_parameter_kind_map[type(type_param)],
                     bound=safe_get_annotation(getattr(type_param, "bound", None), parent=self.current, member=scope),
                     default=safe_get_annotation(
@@ -231,7 +231,7 @@ class Visitor:
                         member=scope,
                     ),
                 )
-                for type_param in node.type_params
+                for type_param in node.type_params  # ty:ignore[possibly-missing-attribute,unused-ignore-comment,unused-ignore-comment]
             ]
     else:
 
@@ -312,7 +312,7 @@ class Visitor:
             lineno = node.decorator_list[0].lineno
             decorators.extend(
                 Decorator(
-                    safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # type: ignore[arg-type]
+                    safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # ty:ignore[invalid-argument-type]
                     lineno=decorator_node.lineno,
                     endlineno=decorator_node.end_lineno,
                 )
@@ -334,7 +334,7 @@ class Visitor:
             docstring=self._get_docstring(node),
             decorators=decorators,
             type_parameters=TypeParameters(*self._get_type_parameters(node, scope=node.name)),
-            bases=bases,  # type: ignore[arg-type]
+            bases=bases,  # ty:ignore[invalid-argument-type]
             keywords=keywords,
             runtime=not self.type_guarded,
             analysis="static",
@@ -348,7 +348,7 @@ class Visitor:
         self.generic_visit(node)
         self.extensions.call("on_members", node=node, obj=class_, agent=self)
         self.extensions.call("on_class_members", node=node, cls=class_, agent=self)
-        self.current = self.current.parent  # type: ignore[assignment]
+        self.current = self.current.parent  # ty:ignore[invalid-assignment]
 
     def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:
         """Build and return a set of labels based on decorators.
@@ -476,7 +476,7 @@ class Visitor:
         if overload:
             self.current.overloads[function.name].append(function)
         elif property_function:
-            base_property: Attribute = self.current.members[node.name]  # type: ignore[assignment]
+            base_property: Attribute = self.current.members[node.name]  # ty:ignore[invalid-assignment]
             if property_function == "setter":
                 base_property.setter = function
                 base_property.labels.add("writable")
@@ -494,9 +494,9 @@ class Visitor:
         self.extensions.call("on_instance", node=node, obj=function, agent=self)
         self.extensions.call("on_function_instance", node=node, func=function, agent=self)
         if self.current.kind is Kind.CLASS and function.name == "__init__":
-            self.current = function  # type: ignore[assignment]
+            self.current = function  # ty:ignore[invalid-assignment]
             self.generic_visit(node)
-            self.current = self.current.parent  # type: ignore[assignment]
+            self.current = self.current.parent  # ty:ignore[invalid-assignment]
 
     def visit_functiondef(self, node: ast.FunctionDef) -> None:
         """Visit a function definition node.
@@ -641,7 +641,7 @@ class Visitor:
 
             if isinstance(annotation, Expr) and annotation.is_classvar:
                 # Explicit `ClassVar`: class attribute only.
-                annotation = annotation.slice  # type: ignore[attr-defined]
+                annotation = annotation.slice  # ty:ignore[unresolved-attribute]
                 labels.add("class-attribute")
             elif node.value:
                 # Attribute assigned at class-level: available in instances as well.
@@ -658,7 +658,7 @@ class Visitor:
                 names = get_instance_names(node)
             except KeyError:  # Unsupported nodes, like subscript.
                 return
-            parent = parent.parent  # type: ignore[assignment]
+            parent = parent.parent
             if parent is None:
                 return
             labels.add("instance-attribute")
@@ -682,7 +682,7 @@ class Visitor:
             if name in parent.members:
                 # Assigning multiple times.
                 # TODO: Might be better to inspect.
-                if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
+                if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # ty:ignore[unresolved-attribute]
                     continue  # Prefer "no-exception" case.
 
                 existing_member = parent.members[name]
@@ -692,8 +692,8 @@ class Visitor:
                     if existing_member.docstring and not docstring:
                         docstring = existing_member.docstring
                     with suppress(AttributeError):
-                        if existing_member.annotation and not annotation:  # type: ignore[union-attr]
-                            annotation = existing_member.annotation  # type: ignore[union-attr]
+                        if existing_member.annotation and not annotation:  # ty:ignore[possibly-missing-attribute]
+                            annotation = existing_member.annotation  # ty:ignore[possibly-missing-attribute]
 
             attribute = Attribute(
                 name=name,
@@ -712,7 +712,7 @@ class Visitor:
                 with suppress(AttributeError):
                     parent.exports = [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
-                        for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
+                        for name in safe_get__all__(node, self.current)  # ty:ignore[invalid-argument-type]
                     ]
             self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
             self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
@@ -741,16 +741,16 @@ class Visitor:
         """
         with suppress(AttributeError):
             all_augment = (
-                node.target.id == "__all__"  # type: ignore[union-attr]
+                node.target.id == "__all__"  # ty:ignore[possibly-missing-attribute]
                 and self.current.is_module
                 and isinstance(node.op, ast.Add)
             )
             if all_augment:
                 # We assume `exports` is not `None` at this point.
-                self.current.exports.extend(  # type: ignore[union-attr]
+                self.current.exports.extend(  # ty:ignore[possibly-missing-attribute]
                     [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
-                        for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
+                        for name in safe_get__all__(node, self.current)  # ty:ignore[invalid-argument-type]
                     ],
                 )
 
@@ -760,7 +760,7 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # type: ignore[attr-defined]
+        if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # ty:ignore[unresolved-attribute]
             condition = safe_get_condition(node.test, parent=self.current, log_level=None)
             if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
                 self.type_guarded = True

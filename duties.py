@@ -41,7 +41,7 @@ def _pyprefix(title: str) -> str:
 def _get_changelog_version() -> str:
     changelog_version_re = re.compile(r"^## \[(\d+\.\d+\.\d+)\].*$")
     with Path(__file__).parent.joinpath("CHANGELOG.md").open("r", encoding="utf8") as file:
-        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty: ignore[invalid-argument-type]
+        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty:ignore[invalid-argument-type]
 
 
 @duty
@@ -215,7 +215,7 @@ def check_types(ctx: Context) -> None:
     as a last resort you can ignore this specific error with a comment:
 
     ```python title="src/your_package/module.py"
-    print("a code line that triggers a ty warning")  # ty: ignore[ID]
+    print("a code line that triggers a ty warning")  # ty:ignore[ID]
     ```
 
     ...where ID is the name of the warning.
@@ -235,7 +235,7 @@ def check_types(ctx: Context) -> None:
         Now add a comment to ignore this warning.
 
         ```python title="src/your_package/module.py"
-        result = data_dict.get(key, None).value  # ty: ignore[possibly-missing-attribute]
+        result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
         ```
 
         ```console
@@ -246,8 +246,12 @@ def check_types(ctx: Context) -> None:
     """Check that the code is correctly typed."""
     py = f"{sys.version_info.major}.{sys.version_info.minor}"
     ctx.run(
-        tools.ty.check(*PY_SRC_LIST, color=True, error_on_warning=True, python_version=py),
-        title=_pyprefix("Type-checking"),
+        tools.ty.check(
+            *PY_SRC_LIST,
+            config_file="config/ty.toml",
+            color=True,
+            python_version=py,
+        ),
     )
 
 
@@ -517,6 +521,6 @@ def fuzz(
         return True
 
     revisit = bool(seeds)
-    seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # type: ignore[assignment]
+    seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # ty:ignore[invalid-assignment]
     for seed in seeds:
         ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")

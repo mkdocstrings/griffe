@@ -54,7 +54,7 @@ def test_recursive_wildcard_expansion() -> None:
         assert "CONST_X" not in package.members
         assert "CONST_Y" not in package.members
 
-        loader.expand_wildcards(package)  # type: ignore[arg-type]
+        loader.expand_wildcards(package)  # ty:ignore[invalid-argument-type]
 
         assert "CONST_X" in package["mod_a"].members
         assert "CONST_Y" in package["mod_a"].members
@@ -270,7 +270,7 @@ def test_unsupported_item_in_all(caplog: pytest.LogCaptureFixture) -> None:
         )
         tmp_folder.path.joinpath("mod.py").write_text(f"class {item_name}: ...", encoding="utf8")
         loader = GriffeLoader(search_paths=[tmp_folder.tmpdir])
-        loader.expand_exports(loader.load("package"))  # type: ignore[arg-type]
+        loader.expand_exports(loader.load("package"))  # ty:ignore[invalid-argument-type]
     assert any(item_name in record.message and record.levelname == "WARNING" for record in caplog.records)
 
 
@@ -311,22 +311,22 @@ def test_multiple_nested_namespace_packages() -> None:
 
                 a_package = loader.load("a")
                 for tmp_ns in tmp_namespace_pkgs:
-                    assert tmp_ns.joinpath("a") in a_package.filepath  # type: ignore[operator]
+                    assert tmp_ns.joinpath("a") in a_package.filepath  # ty:ignore[unsupported-operator]
                 assert "b" in a_package.members
 
                 b_package = a_package.members["b"]
                 for tmp_ns in tmp_namespace_pkgs:
-                    assert tmp_ns.joinpath("a/b") in b_package.filepath  # type: ignore[operator]
+                    assert tmp_ns.joinpath("a/b") in b_package.filepath  # ty:ignore[unsupported-operator]
                 assert "c" in b_package.members
 
                 c_package = b_package.members["c"]
                 for tmp_ns in tmp_namespace_pkgs:
-                    assert tmp_ns.joinpath("a/b/c") in c_package.filepath  # type: ignore[operator]
+                    assert tmp_ns.joinpath("a/b/c") in c_package.filepath  # ty:ignore[unsupported-operator]
                 assert "d" in c_package.members
 
                 d_package = c_package.members["d"]
                 for tmp_ns in tmp_namespace_pkgs:
-                    assert tmp_ns.joinpath("a/b/c/d") in d_package.filepath  # type: ignore[operator]
+                    assert tmp_ns.joinpath("a/b/c/d") in d_package.filepath  # ty:ignore[unsupported-operator]
                 assert "mod1" in d_package.members
                 assert "mod2" in d_package.members
                 assert "mod3" in d_package.members
@@ -492,7 +492,7 @@ def test_not_calling_package_hook_on_something_else_than_package() -> None:
     """Always call the `on_package` hook on a package, not any other object."""
     with temporary_pypackage("pkg", {"__init__.py": "from typing import List as L"}) as pkg:
         loader = GriffeLoader(search_paths=[pkg.tmpdir])
-        alias: Alias = loader.load("pkg.L")  # type: ignore[assignment]
+        alias: Alias = loader.load("pkg.L")  # ty:ignore[invalid-assignment]
         assert alias.is_alias
         assert not alias.resolved
 

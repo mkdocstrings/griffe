@@ -67,7 +67,7 @@ class _DependencyList:
     @property
     def heads(self) -> list[_T | None]:
         """Return the heads."""
-        return [lst.head for lst in self._lists]  # type: ignore[misc]
+        return [lst.head for lst in self._lists]  # ty:ignore[invalid-return-type]
 
     @property
     def tails(self) -> _DependencyList:
@@ -100,7 +100,7 @@ def c3linear_merge(*lists: list[_T]) -> list[_T]:
         The merged list of items.
     """
     result: list[_T] = []
-    linearizations = _DependencyList(*lists)  # type: ignore[arg-type]
+    linearizations = _DependencyList(*lists)  # ty:ignore[invalid-argument-type]
 
     while True:
         if linearizations.exhausted:
@@ -108,7 +108,7 @@ def c3linear_merge(*lists: list[_T]) -> list[_T]:
 
         for head in linearizations.heads:
             if head and (head not in linearizations.tails):
-                result.append(head)  # type: ignore[arg-type]
+                result.append(head)
                 linearizations.remove(head)
 
                 # Once candidate is found, continue iteration

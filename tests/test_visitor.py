@@ -261,7 +261,7 @@ def test_get_correct_docstring_starting_line_number() -> None:
                 '''
         """,
     ) as module:
-        assert module.docstring.lineno == 2  # type: ignore[union-attr]
+        assert module.docstring.lineno == 2  # ty:ignore[possibly-missing-attribute]
         assert module["C"].docstring.lineno == 6
         assert module["C.method"].docstring.lineno == 10
 
@@ -384,7 +384,7 @@ def test_parse_attributes_in__all__() -> None:
             "module.py": "def hello(): ...\n__all__ = ['hello']",
         },
     ) as package:
-        assert "hello" in package.exports  # type: ignore[operator]
+        assert "hello" in package.exports  # ty:ignore[unsupported-operator]
 
 
 def test_parse_deep_attributes_in__all__() -> None:
@@ -397,7 +397,7 @@ def test_parse_deep_attributes_in__all__() -> None:
             "subpackage/module.py": "def hello(): ...\n__all__ = ['hello']",
         },
     ) as package:
-        assert "hello" in package.exports  # type: ignore[operator]
+        assert "hello" in package.exports  # ty:ignore[unsupported-operator]
 
 
 # YORE: EOL 3.12: Remove block.
