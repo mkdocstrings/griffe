@@ -24,21 +24,13 @@ from typing import IO, TYPE_CHECKING, Any, Callable
 
 import colorama
 
-from griffe._internal import debug
-from griffe._internal.diff import find_breaking_changes
-from griffe._internal.encoders import JSONEncoder
-from griffe._internal.enumerations import ExplanationStyle, Parser
-from griffe._internal.exceptions import ExtensionError, GitError
-from griffe._internal.extensions.base import load_extensions
-from griffe._internal.git import _get_latest_tag, _get_repo_root
-from griffe._internal.loader import GriffeLoader, load, load_git, load_pypi
-from griffe._internal.logger import logger
-
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
+    from griffe._internal.enumerations import ExplanationStyle, Parser
     from griffe._internal.extensions.base import Extension, Extensions
+    from griffe._internal.loader import GriffeLoader
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
@@ -53,6 +45,8 @@ class _DebugInfo(argparse.Action):
         super().__init__(nargs=nargs, **kwargs)
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ARG002
+        from griffe._internal import debug  # noqa: PLC0415
+
         debug._print_debug_info()
         sys.exit(0)
 
@@ -82,6 +76,9 @@ def _load_packages(
     store_source: bool = True,
     find_stubs_package: bool = False,
 ) -> GriffeLoader:
+    from griffe._internal.loader import GriffeLoader  # noqa: PLC0415
+    from griffe._internal.logger import logger  # noqa: PLC0415
+
     # Create a single loader.
     loader = GriffeLoader(
         extensions=extensions,
@@ -134,6 +131,9 @@ def get_parser() -> argparse.ArgumentParser:
     Returns:
         An argparse parser.
     """
+    from griffe._internal import debug  # noqa: PLC0415
+    from griffe._internal.enumerations import ExplanationStyle, Parser  # noqa: PLC0415
+
     usage = "%(prog)s [GLOBAL_OPTS...] COMMAND [COMMAND_OPTS...]"
     description = "Signatures for entire Python programs. "
     "Extract the structure, the frame, the skeleton of your project, "
@@ -372,6 +372,11 @@ def dump(
     Returns:
         `0` for success, `1` for failure.
     """
+    from griffe._internal.encoders import JSONEncoder  # noqa: PLC0415
+    from griffe._internal.exceptions import ExtensionError  # noqa: PLC0415
+    from griffe._internal.extensions.base import load_extensions  # noqa: PLC0415
+    from griffe._internal.logger import logger  # noqa: PLC0415
+
     # Prepare options.
     per_package_output = False
     if isinstance(output, str) and output.format(package="package") != output:
@@ -456,6 +461,14 @@ def check(
     Returns:
         `0` for success, `1` for failure.
     """
+    from griffe._internal.diff import find_breaking_changes  # noqa: PLC0415
+    from griffe._internal.enumerations import ExplanationStyle  # noqa: PLC0415
+    from griffe._internal.exceptions import ExtensionError, GitError  # noqa: PLC0415
+    from griffe._internal.extensions.base import load_extensions  # noqa: PLC0415
+    from griffe._internal.git import _get_latest_tag, _get_repo_root  # noqa: PLC0415
+    from griffe._internal.loader import load, load_git, load_pypi  # noqa: PLC0415
+    from griffe._internal.logger import logger  # noqa: PLC0415
+
     # Prepare options.
     search_paths = list(search_paths) if search_paths else []
     if append_sys_path:
