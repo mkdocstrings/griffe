@@ -43,8 +43,11 @@ jobs:
           python-version: "3.12"
         - os: ubuntu-latest
           python-version: "3.13"
+        - os: ubuntu-latest
+          python-version: "3.15-dev"
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
 
     steps:
     - name: Checkout
@@ -105,7 +108,7 @@ jobs:
         - "3.12"
         - "3.13"
         - "3.14"
-        - "3.15"
+        - "3.15-dev"
         resolution:
         - highest
         - lowest-direct
@@ -114,6 +117,7 @@ jobs:
           resolution: lowest-direct
         - os: windows-latest
           resolution: lowest-direct
+
     runs-on: ${{ matrix.os }}
     continue-on-error: true
 

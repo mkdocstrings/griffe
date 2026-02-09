@@ -110,8 +110,8 @@ ci = [
     "pytest-gitconfig>=0.8.0",
     "pytest-randomly>=3.15",
     "pytest-xdist>=3.6",
-    "mypy>=1.10",
     "ruff>=0.4",
+    "ty>=0.0.14",
     "types-markdown>=3.6",
     "types-pyyaml>=6.0",
 ]

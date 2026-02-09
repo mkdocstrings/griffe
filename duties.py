@@ -6,9 +6,7 @@ import os
 import re
 import sys
 import warnings
-from contextlib import contextmanager
 from functools import partial
-from importlib.metadata import version as pkgversion
 from pathlib import Path
 from random import sample
 from tempfile import gettempdir
@@ -19,8 +17,6 @@ from pysource_codegen import generate
 from pysource_minimize import minimize
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-
     from duty.context import Context
 
 
@@ -32,7 +28,7 @@ WINDOWS = os.name == "nt"
 PTY = not WINDOWS and not CI
 MULTIRUN = os.environ.get("MULTIRUN", "0") == "1"
 PY_VERSION = f"{sys.version_info.major}{sys.version_info.minor}"
-PY_DEV = "314"
+PY_DEV = "315"
 
 
 def _pyprefix(title: str) -> str:
@@ -42,22 +38,10 @@ def _pyprefix(title: str) -> str:
     return title
 
 
-@contextmanager
-def _material_insiders() -> Iterator[bool]:
-    if "+insiders" in pkgversion("mkdocs-material"):
-        os.environ["MATERIAL_INSIDERS"] = "true"
-        try:
-            yield True
-        finally:
-            os.environ.pop("MATERIAL_INSIDERS")
-    else:
-        yield False
-
-
 def _get_changelog_version() -> str:
     changelog_version_re = re.compile(r"^## \[(\d+\.\d+\.\d+)\].*$")
     with Path(__file__).parent.joinpath("CHANGELOG.md").open("r", encoding="utf8") as file:
-        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # type: ignore[union-attr]
+        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty: ignore[invalid-argument-type]
 
 
 @duty
@@ -209,11 +193,10 @@ def check_docs(ctx: Context) -> None:
     Path("htmlcov/index.html").touch(exist_ok=True)
     if CI:
         os.environ["DEPLOY"] = "true"
-    with _material_insiders():
-        ctx.run(
-            tools.mkdocs.build(strict=True, verbose=True),
-            title=_pyprefix("Building documentation"),
-        )
+    ctx.run(
+        tools.mkdocs.build(strict=True, verbose=True),
+        title=_pyprefix("Building documentation"),
+    )
 
 
 @duty(nofail=PY_VERSION == PY_DEV)
@@ -224,15 +207,15 @@ def check_types(ctx: Context) -> None:
     make check-types
     ```
 
-    Run type-checking on the code with [Mypy](https://mypy.readthedocs.io/).
+    Run type-checking on the code with [ty](https://astral.sh/ty/).
 
-    The configuration for Mypy is located at `config/mypy.ini`.
+    The configuration for ty is located at `config/ty.toml`.
 
     If you cannot or don't know how to fix a typing error in your code,
     as a last resort you can ignore this specific error with a comment:
 
     ```python title="src/your_package/module.py"
-    print("a code line that triggers a Mypy warning")  # type: ignore[ID]
+    print("a code line that triggers a ty warning")  # ty: ignore[ID]
     ```
 
     ...where ID is the name of the warning.
@@ -245,14 +228,14 @@ def check_types(ctx: Context) -> None:
         ```console
         $ make check-types
         ✗ Checking types (1)
-        > mypy --config-file=config/mypy.ini src/ tests/ scripts/
-        src/your_package/module.py:2:1: Item "None" of "Data | None" has no attribute "value" [union-attr]
+        > ty check --config=config/ty.toml src/ tests/ scripts/
+        t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing on object of type `Data | None`
         ```
 
         Now add a comment to ignore this warning.
 
         ```python title="src/your_package/module.py"
-        result = data_dict.get(key, None).value  # type: ignore[union-attr]
+        result = data_dict.get(key, None).value  # ty: ignore[possibly-missing-attribute]
         ```
 
         ```console
@@ -260,9 +243,10 @@ def check_types(ctx: Context) -> None:
         ✓ Checking types
         ```
     """
-    os.environ["FORCE_COLOR"] = "1"
+    """Check that the code is correctly typed."""
+    py = f"{sys.version_info.major}.{sys.version_info.minor}"
     ctx.run(
-        tools.mypy(*PY_SRC_LIST, config_file="config/mypy.ini"),
+        tools.ty.check(*PY_SRC_LIST, color=True, error_on_warning=True, python_version=py),
         title=_pyprefix("Type-checking"),
     )
 
@@ -327,12 +311,11 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
         host: The host to serve the docs from.
         port: The port to serve the docs on.
     """
-    with _material_insiders():
-        ctx.run(
-            tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
-            title="Serving documentation",
-            capture=False,
-        )
+    ctx.run(
+        tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
+        title="Serving documentation",
+        capture=False,
+    )
 
 
 @duty
@@ -346,10 +329,7 @@ def docs_deploy(ctx: Context) -> None:
     Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
     """
     os.environ["DEPLOY"] = "true"
-    with _material_insiders() as insiders:
-        if not insiders:
-            ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
-        ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
+    ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
 
 
 @duty

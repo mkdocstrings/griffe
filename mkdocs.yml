@@ -307,10 +307,7 @@ plugins:
       try_it_out.md: playground.md
       reference/griffe.md: reference/api.md
       code_of_conduct.md: code-of-conduct.md
-- group:
-    enabled: !ENV [MATERIAL_INSIDERS, false]
-    plugins:
-    - typeset
+- typeset
 
 extra:
   social:

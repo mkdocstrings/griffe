@@ -87,7 +87,7 @@ def _yield_public_objects(
                 yield member
             if member.is_class and not modulelevel:
                 yield from _yield_public_objects(
-                    member,  # type: ignore[arg-type]
+                    member,  # ty: ignore[invalid-argument-type]
                     modules=modules,
                     modulelevel=False,
                     inherited=inherited,

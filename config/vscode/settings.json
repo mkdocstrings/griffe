@@ -4,9 +4,6 @@
         "**/.venvs*/**": true,
         "**/venv*/**": true
     },
-    "mypy-type-checker.args": [
-        "--config-file=config/mypy.ini"
-    ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [

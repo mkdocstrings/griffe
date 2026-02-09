@@ -253,7 +253,7 @@ def clean() -> None:
     for path in paths_to_clean:
         _shell(f"rm -rf {path}")
 
-    cache_dirs = [".cache", ".pytest_cache", ".mypy_cache", ".ruff_cache", "__pycache__"]
+    cache_dirs = {".cache", ".pytest_cache", ".ruff_cache", "__pycache__"}
     for dirpath in Path().rglob("*/"):
         if dirpath.parts[0] not in (".venv", ".venvs") and dirpath.name in cache_dirs:
             shutil.rmtree(dirpath, ignore_errors=True)
@@ -304,14 +304,14 @@ def main(args: list[str]) -> int:
             if not args:
                 print("make: run: missing command", file=sys.stderr)
                 return 1
-            multirun(*args)  # ty: ignore[missing-argument]
+            multirun(*args)
             return 0
 
         if cmd == "allrun":
             if not args:
                 print("make: run: missing command", file=sys.stderr)
                 return 1
-            allrun(*args)  # ty: ignore[missing-argument]
+            allrun(*args)
             return 0
 
         if cmd.startswith("3."):
