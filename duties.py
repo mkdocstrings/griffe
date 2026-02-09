@@ -401,7 +401,7 @@ def publish(ctx: Context) -> None:
     """
     if not Path("dist").exists():
         ctx.run("false", title="No distribution files found")
-    dists = [str(dist) for dist in Path("dist").iterdir()]
+    dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".tar.gz", ".whl")]
     ctx.run(
         tools.twine.upload(*dists, skip_existing=True),
         title="Publishing source and wheel distributions to PyPI",
