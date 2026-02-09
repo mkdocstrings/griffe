@@ -177,7 +177,7 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
     with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
         breaking = list(find_breaking_changes(old_package, new_package))
     assert len(breaking) == len(expected_breakages)
-    for breakage, expected_kind in zip(breaking, expected_breakages):
+    for breakage, expected_kind in zip(breaking, expected_breakages, strict=False):
         assert breakage.kind is expected_kind
     # Check with aliases.
     import_a = "from ._mod_a import a\n__all__ = ['a']"
@@ -187,7 +187,7 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
         with temporary_visited_package("package_new", new_modules) as new_package:
             breaking = list(find_breaking_changes(old_package, new_package))
     assert len(breaking) == len(expected_breakages)
-    for breakage, expected_kind in zip(breaking, expected_breakages):
+    for breakage, expected_kind in zip(breaking, expected_breakages, strict=False):
         assert breakage.kind is expected_kind
 
 

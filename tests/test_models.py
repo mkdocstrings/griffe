@@ -190,7 +190,11 @@ def test_dataclass_parameter_kinds(code: str) -> None:
     """
     code = f"from dataclasses import dataclass, field, KW_ONLY\n\n{dedent(code)}"
     with temporary_visited_package("package", {"__init__.py": code}) as module:
-        for dataclass_param, regular_param in zip(module["Dataclass"].parameters, module["Class"].parameters):
+        for dataclass_param, regular_param in zip(
+            module["Dataclass"].parameters,
+            module["Class"].parameters,
+            strict=False,
+        ):
             assert dataclass_param == regular_param
 
 

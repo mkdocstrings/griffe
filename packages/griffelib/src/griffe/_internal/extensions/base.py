@@ -8,7 +8,7 @@ import sys
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import isclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 from griffe._internal.agents.nodes.ast import ast_children, ast_kind
 from griffe._internal.exceptions import ExtensionNotLoadedError
@@ -435,7 +435,7 @@ class Extension:
         """
 
 
-LoadableExtensionType = Union[str, dict[str, Any], Extension, type[Extension]]
+LoadableExtensionType = str | dict[str, Any] | Extension | type[Extension]
 """All the types that can be passed to `load_extensions`."""
 
 

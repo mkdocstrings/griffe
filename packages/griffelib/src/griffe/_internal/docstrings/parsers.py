@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Literal, Union
+from typing import TYPE_CHECKING, Any, Literal
 
 from griffe._internal.docstrings.auto import AutoOptions, parse_auto
 from griffe._internal.docstrings.google import GoogleOptions, parse_google
@@ -13,12 +13,14 @@ from griffe._internal.docstrings.sphinx import SphinxOptions, parse_sphinx
 from griffe._internal.enumerations import Parser
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griffe._internal.models import Docstring
 
 
 DocstringStyle = Literal["google", "numpy", "sphinx", "auto"]
 """The supported docstring styles (literal values of the Parser enumeration)."""
-DocstringOptions = Union[GoogleOptions, NumpyOptions, SphinxOptions, AutoOptions]
+DocstringOptions = GoogleOptions | NumpyOptions | SphinxOptions | AutoOptions
 """The options for each docstring style."""
 
 

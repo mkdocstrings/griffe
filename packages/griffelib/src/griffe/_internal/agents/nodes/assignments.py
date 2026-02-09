@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import ast
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def _get_attribute_name(node: ast.Attribute) -> str:

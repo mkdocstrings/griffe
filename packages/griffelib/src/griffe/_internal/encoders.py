@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path, PosixPath, WindowsPath
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from griffe._internal import expressions
 from griffe._internal.enumerations import Kind, ParameterKind, TypeParameterKind
@@ -25,6 +25,9 @@ from griffe._internal.models import (
     TypeParameter,
     TypeParameters,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 _json_encoder_map: dict[type, Callable[[Any], Any]] = {
     Path: str,

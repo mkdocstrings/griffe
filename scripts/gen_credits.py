@@ -10,7 +10,6 @@ from importlib.metadata import distributions
 from itertools import chain
 from pathlib import Path
 from textwrap import dedent
-from typing import Union
 
 from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
@@ -29,7 +28,7 @@ project = pyproject["project"]
 project_name = project["name"]
 devdeps = [dep for group in pyproject["dependency-groups"].values() for dep in group if not dep.startswith("-e")]
 
-PackageMetadata = dict[str, Union[str, Iterable[str]]]
+PackageMetadata = dict[str, str | Iterable[str]]
 Metadata = dict[str, PackageMetadata]
 
 
@@ -55,11 +54,7 @@ def _extra_marker(req: Requirement) -> str | None:
     if not req.marker:
         return None
     try:
-        return next(
-            marker[2].value
-            for marker in req.marker._markers
-            if getattr(marker[0], "value", None) == "extra"
-        )
+        return next(marker[2].value for marker in req.marker._markers if getattr(marker[0], "value", None) == "extra")
     except StopIteration:
         return None
 

@@ -20,12 +20,12 @@ import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Callable
+from typing import IO, TYPE_CHECKING, Any
 
 import colorama
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
     from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.enumerations import ExplanationStyle, Parser

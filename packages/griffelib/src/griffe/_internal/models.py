@@ -9,7 +9,7 @@ from contextlib import suppress
 from dataclasses import asdict
 from pathlib import Path
 from textwrap import dedent
-from typing import TYPE_CHECKING, Any, Callable, Literal, Union, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from griffe._internal.c3linear import c3linear_merge
 from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle, parse
@@ -20,7 +20,7 @@ from griffe._internal.logger import logger
 from griffe._internal.mixins import ObjectAliasMixin
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
     from griffe._internal.collections import LinesCollection, ModulesCollection
     from griffe._internal.docstrings.models import DocstringSection
@@ -1924,7 +1924,7 @@ class Alias(ObjectAliasMixin):
         See also: [`Function`][griffe.Function],
         [`Class`][griffe.Class].
         """
-        return cast("Union[Class, Function]", self.target).decorators
+        return cast("Class | Function", self.target).decorators
 
     @property
     def imports_future_annotations(self) -> bool:
@@ -1979,11 +1979,11 @@ class Alias(ObjectAliasMixin):
     @property
     def overloads(self) -> dict[str, list[Function]] | list[Function] | None:
         """The overloaded signatures declared in this class/module or for this function."""
-        return cast("Union[Module, Class, Function]", self.final_target).overloads
+        return cast("Module | Class | Function", self.final_target).overloads
 
     @overloads.setter
     def overloads(self, overloads: list[Function] | None) -> None:
-        cast("Union[Module, Class, Function]", self.final_target).overloads = overloads  # ty:ignore[invalid-assignment]
+        cast("Module | Class | Function", self.final_target).overloads = overloads  # ty:ignore[invalid-assignment]
 
     @property
     def parameters(self) -> Parameters:
@@ -1993,7 +1993,7 @@ class Alias(ObjectAliasMixin):
         and therefore is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return cast("Union[Class, Function]", self.final_target).parameters
+        return cast("Class | Function", self.final_target).parameters
 
     @property
     def returns(self) -> str | Expr | None:
@@ -2017,7 +2017,7 @@ class Alias(ObjectAliasMixin):
     @property
     def value(self) -> str | Expr | None:
         """The attribute or type alias value."""
-        return cast("Union[Attribute, TypeAlias]", self.final_target).value
+        return cast("Attribute | TypeAlias", self.final_target).value
 
     @value.setter
     def value(self, value: str | Expr | None) -> None:
@@ -2055,7 +2055,7 @@ class Alias(ObjectAliasMixin):
         Returns:
             A string representation of the class/function signature.
         """
-        return cast("Union[Class, Function]", self.final_target).signature(return_type=return_type, name=name)
+        return cast("Class | Function", self.final_target).signature(return_type=return_type, name=name)
 
     # SPECIFIC ALIAS METHOD AND PROPERTIES -----------------
     # These methods and properties do not exist on targets,

@@ -1589,7 +1589,7 @@ def test_parse_returns_multiple_items(
     assert len(sections) == 1
     assert len(sections[0].value) == len(expected)
 
-    for annotated, expected_ in zip(sections[0].value, expected):
+    for annotated, expected_ in zip(sections[0].value, expected, strict=False):
         assert annotated.name == expected_.name
         assert str(annotated.annotation) == str(expected_.annotation)
         assert annotated.description == expected_.description
@@ -1660,7 +1660,7 @@ def test_parse_yields_multiple_items(
     assert len(sections) == 1
     assert len(sections[0].value) == len(expected)
 
-    for annotated, expected_ in zip(sections[0].value, expected):
+    for annotated, expected_ in zip(sections[0].value, expected, strict=False):
         assert annotated.name == expected_.name
         assert str(annotated.annotation) == str(expected_.annotation)
         assert annotated.description == expected_.description
@@ -1731,7 +1731,7 @@ def test_parse_receives_multiple_items(
     assert len(sections) == 1
     assert len(sections[0].value) == len(expected)
 
-    for annotated, expected_ in zip(sections[0].value, expected):
+    for annotated, expected_ in zip(sections[0].value, expected, strict=False):
         assert annotated.name == expected_.name
         assert str(annotated.annotation) == str(expected_.annotation)
         assert annotated.description == expected_.description

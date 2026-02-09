@@ -9,7 +9,7 @@ from __future__ import annotations
 from contextlib import suppress
 from dataclasses import dataclass, field
 from inspect import cleandoc
-from typing import TYPE_CHECKING, Any, Callable, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict
 
 from griffe._internal.docstrings.models import (
     DocstringAttribute,
@@ -26,6 +26,8 @@ from griffe._internal.docstrings.models import (
 from griffe._internal.docstrings.utils import docstring_warning, parse_docstring_annotation
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griffe._internal.expressions import Expr
     from griffe._internal.models import Docstring
 

@@ -7,10 +7,10 @@ import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Callable, Iterator
 
 
 PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.10 3.11 3.12 3.13 3.14 3.15").split()

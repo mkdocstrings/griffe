@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import pytest
 
 from griffe import ModulesCollection, temporary_inspected_module, temporary_visited_module
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griffe import Class
 
 

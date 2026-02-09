@@ -42,7 +42,7 @@ def _expr_args(expr: Expr) -> dict[str, str | Expr]:
                     var = collection[argument.value.canonical_path]  # ty:ignore[unresolved-attribute]
                     args.update(_expr_args(var.value))
     elif isinstance(expr, ExprDict):
-        args.update({ast.literal_eval(str(key)): value for key, value in zip(expr.keys, expr.values)})
+        args.update({ast.literal_eval(str(key)): value for key, value in zip(expr.keys, expr.values, strict=False)})
     return args
 
 

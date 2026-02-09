@@ -395,7 +395,7 @@ class ExprCompare(Expr):
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         precedence = _get_precedence(self)
         yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
-        for op, comp in zip(self.operators, self.comparators):
+        for op, comp in zip(self.operators, self.comparators, strict=False):
             yield f" {op} "
             yield from _yield(comp, flat=flat, outer_precedence=precedence)
 
@@ -452,7 +452,7 @@ class ExprDict(Expr):
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _join(
-            (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
+            (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values, strict=False)),
             ", ",
             flat=flat,
         )

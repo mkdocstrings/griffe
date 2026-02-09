@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Protocol, Union
+from typing import TYPE_CHECKING, Any, Protocol
 
 from griffe import (
     Attribute,
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 
-ParentType = Union[Module, Class, Function, Attribute, None]
+ParentType = Module | Class | Function | Attribute | None
 ParseResultType = tuple[list[DocstringSection], list[str]]
 
 
