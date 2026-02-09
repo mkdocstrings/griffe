@@ -5,6 +5,45 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.0.0](https://github.com/mkdocstrings/griffe/releases/tag/2.0.0) - 2026-02-09
+
+<small>[Compare with 1.15.0](https://github.com/mkdocstrings/griffe/compare/1.15.0...2.0.0)</small>
+
+### Breaking Changes
+
+This version removes previously deprecated API:
+
+- `ExportedName`: *Public object was removed*
+- `infer_docstring_style(options)`: *Parameter was removed*
+- `parse_auto(options)`: *Parameter was removed*
+- `parse_google(options)`: *Parameter was removed*
+- `parse_numpy(options)`: *Parameter was removed*
+- `parse_sphinx(options)`: *Parameter was removed*
+- `assert_git_repo`: *Public object was removed*
+- `get_latest_tag`: *Public object was removed*
+- `get_repo_root`: *Public object was removed*
+- `tmp_worktree`: *Public object was removed*
+
+### Features
+
+- Support merging overload annotations into implementation ([584cdb5](https://github.com/mkdocstrings/griffe/commit/584cdb52c93d4cdc02f2093f545c6c780491357e) by Timothée Mazzucotelli). [Issue-442](https://github.com/mkdocstrings/griffe/issues/442), [PR-443](https://github.com/mkdocstrings/griffe/pull/443)
+- Add support for PEP 750 template strings ([59266a9](https://github.com/mkdocstrings/griffe/commit/59266a9efadd3264b4a0da4b01792703097f5834) by ellie). [PR-440](https://github.com/mkdocstrings/griffe/pull/440)
+
+### Bug Fixes
+
+- Keep newlines in parameter (and other multiline directives) descriptions in Sphinx docstrings ([1fde0d2](https://github.com/mkdocstrings/griffe/commit/1fde0d2317c9098055ab313c8a0a992032194830) by Timothée Mazzucotelli). [Issue-mkdocstrings-808](https://github.com/mkdocstrings/mkdocstrings/issues/808), [PR-438](https://github.com/mkdocstrings/griffe/pull/438)
+
+### Code Refactoring
+
+- Make `griffe` imports lazy in CLI ([4772456](https://github.com/mkdocstrings/griffe/commit/4772456ec728a415c52041c542ed3fd28a95b981) by Timothée Mazzucotelli).
+- Split to `griffe`, `griffecli` and `griffelib` uv workspaces ([162c31c](https://github.com/mkdocstrings/griffe/commit/162c31c230d22eb87cea4ec38ed4778bbe990103) by Bartosz Sławecki). [Issue-408](https://github.com/mkdocstrings/griffe/issues/408), [PR-434](https://github.com/mkdocstrings/griffe/pull/434), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Remove deprecated code ([dcb075e](https://github.com/mkdocstrings/griffe/commit/dcb075e278319a523e87fd0ae3ca5d21537d665f) by Bartosz Sławecki). [PR-433](https://github.com/mkdocstrings/griffe/pull/433), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+
+### Build
+
+- Declare tag pattern for uv-dynamic-versioning (no `v` prefix) ([c869c97](https://github.com/mkdocstrings/griffe/commit/c869c971244dfff8a5596033a9c49b5ecc9f70a1) by Timothée Mazzucotelli). [Upstream-issue](https://github.com/ninoseki/uv-dynamic-versioning/issues/83)
+- Change build system to hatchling ([09b0682](https://github.com/mkdocstrings/griffe/commit/09b0682078614f317858b4047f2d55e1245ccb2d) by Bartosz Sławecki). [PR-430](https://github.com/mkdocstrings/griffe/pull/430)
+
 ## [1.15.0](https://github.com/mkdocstrings/griffe/releases/tag/1.15.0) - 2025-11-10
 
 <small>[Compare with 1.14.0](https://github.com/mkdocstrings/griffe/compare/1.14.0...1.15.0)</small>
