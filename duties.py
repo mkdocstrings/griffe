@@ -252,6 +252,7 @@ def check_types(ctx: Context) -> None:
             color=True,
             python_version=py,
         ),
+        title=_pyprefix("Type-checking"),
     )
 
 
