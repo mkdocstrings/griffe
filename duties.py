@@ -167,7 +167,7 @@ def check_quality(ctx: Context) -> None:
     ```
     """
     ctx.run(
-        tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml"),
+        tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", color=True),
         title=_pyprefix("Checking code quality"),
     )
 
