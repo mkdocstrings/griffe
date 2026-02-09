@@ -43,7 +43,7 @@ Griffe can be used as a Python library. For example, the [Python handler](https:
 
 ```console exec="1" source="console" result="json" title="Serializing as JSON" id="griffe-dump"
 $ export FORCE_COLOR=1  # markdown-exec: hide
-$ griffe dump griffe -ssrc -r 2>/dev/null | head -n29
+$ griffe dump griffe -s packages/griffelib/src -r 2>/dev/null | head -29
 ```
 
 </div>
