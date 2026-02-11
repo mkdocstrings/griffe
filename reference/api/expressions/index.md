@@ -66,7 +66,7 @@ Returns:
 
 - `Expr | None` – A string or resovable name or expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def get_expression(
@@ -185,7 +185,7 @@ Returns:
 
 - `Expr | None` – A string or resovable name or expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def safe_get_expression(
@@ -221,7 +221,7 @@ def safe_get_expression(
             path: Path | str = parent.relative_filepath
         except ValueError:
             path = "<in-memory>"
-        lineno = node.lineno  # type: ignore[union-attr]
+        lineno = node.lineno  # ty:ignore[unresolved-attribute]
         error_str = f"{error.__class__.__name__}: {error}"
         message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
         getattr(logger, log_level.value)(message)
@@ -328,7 +328,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -354,7 +354,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -388,7 +388,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
@@ -425,7 +425,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -580,7 +580,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -602,7 +602,7 @@ Parameters:
 
   (`ExprName`) – The expression name to append.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def append(self, value: ExprName) -> None:
@@ -634,7 +634,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -668,7 +668,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -693,7 +693,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> ExprName | ExprAttribute:
@@ -844,7 +844,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -870,7 +870,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -904,7 +904,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -932,7 +932,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -1077,7 +1077,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -1103,7 +1103,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1137,7 +1137,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -1163,7 +1163,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -1308,7 +1308,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -1334,7 +1334,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1368,7 +1368,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -1392,7 +1392,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -1550,7 +1550,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -1576,7 +1576,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1610,13 +1610,13 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     precedence = _get_precedence(self)
     yield from _yield(self.left, flat=flat, outer_precedence=precedence, is_left=True)
-    for op, comp in zip(self.operators, self.comparators):
+    for op, comp in zip(self.operators, self.comparators, strict=False):
         yield f" {op} "
         yield from _yield(comp, flat=flat, outer_precedence=precedence)
 ```
@@ -1635,7 +1635,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -1803,7 +1803,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -1829,7 +1829,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1863,7 +1863,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -1892,7 +1892,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -2028,7 +2028,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -2054,7 +2054,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2088,7 +2088,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
@@ -2109,7 +2109,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -2257,7 +2257,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -2283,7 +2283,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2317,13 +2317,13 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "{"
     yield from _join(
-        (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values)),
+        (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values, strict=False)),
         ", ",
         flat=flat,
     )
@@ -2344,7 +2344,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -2502,7 +2502,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -2528,7 +2528,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2562,7 +2562,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -2589,7 +2589,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -2725,7 +2725,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -2751,7 +2751,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2785,7 +2785,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -2806,7 +2806,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -2942,7 +2942,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -2968,7 +2968,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3002,7 +3002,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -3026,7 +3026,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -3173,7 +3173,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -3199,7 +3199,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3233,7 +3233,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -3256,7 +3256,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -3412,7 +3412,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -3438,7 +3438,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3472,7 +3472,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -3507,7 +3507,227 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
+```
+
+## ExprInterpolation
+
+```
+ExprInterpolation(value: str | Expr)
+```
+
+Bases: `Expr`
+
+```
+              flowchart TD
+              griffe.ExprInterpolation[ExprInterpolation]
+              griffe._internal.expressions.Expr[Expr]
+
+                              griffe._internal.expressions.Expr --> griffe.ExprInterpolation
+                
+
+
+              click griffe.ExprInterpolation href "" "griffe.ExprInterpolation"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
+```
+
+Template string interpolation like `{name}`.
+
+Methods:
+
+- **`__iter__`** – Iterate on the expression syntax and elements.
+- **`as_dict`** – Return the expression as a dictionary.
+- **`iterate`** – Iterate on the expression elements.
+- **`modernize`** – Modernize the expression.
+
+Attributes:
+
+- **`canonical_name`** (`str`) – Name of the expressed name/attribute/parameter.
+- **`canonical_path`** (`str`) – Path of the expressed name/attribute.
+- **`classname`** (`str`) – The expression class name.
+- **`is_classvar`** (`bool`) – Whether this attribute is annotated with ClassVar.
+- **`is_generator`** (`bool`) – Whether this expression is a generator.
+- **`is_iterator`** (`bool`) – Whether this expression is an iterator.
+- **`is_tuple`** (`bool`) – Whether this expression is a tuple.
+- **`path`** (`str`) – Path of the expressed name/attribute.
+- **`value`** (`str | Expr`) – Interpolated value.
+
+### canonical_name
+
+```
+canonical_name: str
+```
+
+Name of the expressed name/attribute/parameter.
+
+### canonical_path
+
+```
+canonical_path: str
+```
+
+Path of the expressed name/attribute.
+
+### classname
+
+```
+classname: str
+```
+
+The expression class name.
+
+### is_classvar
+
+```
+is_classvar: bool
+```
+
+Whether this attribute is annotated with `ClassVar`.
+
+### is_generator
+
+```
+is_generator: bool
+```
+
+Whether this expression is a generator.
+
+### is_iterator
+
+```
+is_iterator: bool
+```
+
+Whether this expression is an iterator.
+
+### is_tuple
+
+```
+is_tuple: bool
+```
+
+Whether this expression is a tuple.
+
+### path
+
+```
+path: str
+```
+
+Path of the expressed name/attribute.
+
+### value
+
+```
+value: str | Expr
+```
+
+Interpolated value.
+
+### __iter__
+
+```
+__iter__() -> Iterator[str | Expr]
+```
+
+Iterate on the expression syntax and elements.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+```
+
+Return the expression as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Configuration options (none available yet).
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
+
+### iterate
+
+```
+iterate(*, flat: bool = True) -> Iterator[str | Expr]
+```
+
+Iterate on the expression elements.
+
+Parameters:
+
+- #### **`flat`**
+
+  (`bool`, default: `True` ) – Expressions are trees. When flat is false, this method iterates only on the first layer of the tree. To iterate on all the subparts of the expression, you have to do so recursively. It allows to handle each subpart specifically (for example subscripts, attribute, etc.), without them getting rendered as strings. On the contrary, when flat is true, the whole tree is flattened as a sequence of strings and instances of Names.
+
+Yields:
+
+- `str | Expr` – Strings and names when flat, strings and expressions otherwise.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "{"
+    # Prevent parentheses from being added, avoiding `{(1 + 1)}`
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+    yield "}"
+```
+
+### modernize
+
+```
+modernize() -> Expr
+```
+
+Modernize the expression.
+
+For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+Returns:
+
+- `Expr` – A modernized expression.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -3643,7 +3863,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -3669,7 +3889,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3703,7 +3923,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -3726,7 +3946,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -3884,7 +4104,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -3910,7 +4130,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3944,7 +4164,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -3967,7 +4187,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -4103,7 +4323,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -4129,7 +4349,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4163,7 +4383,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -4185,7 +4405,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -4321,7 +4541,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -4347,7 +4567,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4381,7 +4601,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -4403,7 +4623,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -4550,7 +4770,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -4576,7 +4796,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4610,7 +4830,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -4661,7 +4881,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -4797,7 +5017,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -4823,7 +5043,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4857,7 +5077,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -4880,7 +5100,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -5027,7 +5247,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -5053,7 +5273,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -5087,7 +5307,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -5112,7 +5332,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -5325,7 +5545,7 @@ __eq__(other: object) -> bool
 
 Two name expressions are equal if they have the same `name` value (`parent` is ignored).
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __eq__(self, other: object) -> bool:
@@ -5343,7 +5563,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -5369,7 +5589,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -5403,7 +5623,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[ExprName]:  # noqa: ARG002
@@ -5424,7 +5644,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> ExprName:
@@ -5564,7 +5784,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -5590,7 +5810,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -5624,7 +5844,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -5647,7 +5867,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -5815,7 +6035,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -5841,7 +6061,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -5875,7 +6095,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:  # noqa: ARG002
@@ -5912,7 +6132,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -6048,7 +6268,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -6074,7 +6294,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -6108,7 +6328,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -6131,7 +6351,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -6278,7 +6498,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -6304,7 +6524,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -6338,7 +6558,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -6363,7 +6583,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -6521,7 +6741,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -6547,7 +6767,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -6581,7 +6801,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -6609,7 +6829,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -6754,7 +6974,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -6780,7 +7000,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -6814,7 +7034,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -6839,12 +7059,12 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> ExprBinOp | ExprSubscript:
     if self.canonical_path == "typing.Union":
-        return self._to_binop(self.slice.elements, op="|")  # type: ignore[union-attr]
+        return self._to_binop(self.slice.elements, op="|")  # ty:ignore[unresolved-attribute]
     if self.canonical_path == "typing.Optional":
         left = self.slice if isinstance(self.slice, str) else self.slice.modernize()
         return ExprBinOp(left=left, operator="|", right="None")
@@ -6852,6 +7072,225 @@ def modernize(self) -> ExprBinOp | ExprSubscript:
         left=self.left if isinstance(self.left, str) else self.left.modernize(),
         slice=self.slice if isinstance(self.slice, str) else self.slice.modernize(),
     )
+```
+
+## ExprTemplateStr
+
+```
+ExprTemplateStr(values: Sequence[str | Expr])
+```
+
+Bases: `Expr`
+
+```
+              flowchart TD
+              griffe.ExprTemplateStr[ExprTemplateStr]
+              griffe._internal.expressions.Expr[Expr]
+
+                              griffe._internal.expressions.Expr --> griffe.ExprTemplateStr
+                
+
+
+              click griffe.ExprTemplateStr href "" "griffe.ExprTemplateStr"
+              click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
+```
+
+Template strings like `t"a {name}"`.
+
+Methods:
+
+- **`__iter__`** – Iterate on the expression syntax and elements.
+- **`as_dict`** – Return the expression as a dictionary.
+- **`iterate`** – Iterate on the expression elements.
+- **`modernize`** – Modernize the expression.
+
+Attributes:
+
+- **`canonical_name`** (`str`) – Name of the expressed name/attribute/parameter.
+- **`canonical_path`** (`str`) – Path of the expressed name/attribute.
+- **`classname`** (`str`) – The expression class name.
+- **`is_classvar`** (`bool`) – Whether this attribute is annotated with ClassVar.
+- **`is_generator`** (`bool`) – Whether this expression is a generator.
+- **`is_iterator`** (`bool`) – Whether this expression is an iterator.
+- **`is_tuple`** (`bool`) – Whether this expression is a tuple.
+- **`path`** (`str`) – Path of the expressed name/attribute.
+- **`values`** (`Sequence[str | Expr]`) – Joined values.
+
+### canonical_name
+
+```
+canonical_name: str
+```
+
+Name of the expressed name/attribute/parameter.
+
+### canonical_path
+
+```
+canonical_path: str
+```
+
+Path of the expressed name/attribute.
+
+### classname
+
+```
+classname: str
+```
+
+The expression class name.
+
+### is_classvar
+
+```
+is_classvar: bool
+```
+
+Whether this attribute is annotated with `ClassVar`.
+
+### is_generator
+
+```
+is_generator: bool
+```
+
+Whether this expression is a generator.
+
+### is_iterator
+
+```
+is_iterator: bool
+```
+
+Whether this expression is an iterator.
+
+### is_tuple
+
+```
+is_tuple: bool
+```
+
+Whether this expression is a tuple.
+
+### path
+
+```
+path: str
+```
+
+Path of the expressed name/attribute.
+
+### values
+
+```
+values: Sequence[str | Expr]
+```
+
+Joined values.
+
+### __iter__
+
+```
+__iter__() -> Iterator[str | Expr]
+```
+
+Iterate on the expression syntax and elements.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def __iter__(self) -> Iterator[str | Expr]:
+    """Iterate on the expression syntax and elements."""
+    yield from self.iterate(flat=False)
+```
+
+### as_dict
+
+```
+as_dict(**kwargs: Any) -> dict[str, Any]
+```
+
+Return the expression as a dictionary.
+
+Parameters:
+
+- #### **`**kwargs`**
+
+  (`Any`, default: `{}` ) – Configuration options (none available yet).
+
+Returns:
+
+- `dict[str, Any]` – A dictionary.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def as_dict(self, **kwargs: Any) -> dict[str, Any]:
+    """Return the expression as a dictionary.
+
+    Parameters:
+        **kwargs: Configuration options (none available yet).
+
+
+    Returns:
+        A dictionary.
+    """
+    return _expr_as_dict(self, **kwargs)
+```
+
+### iterate
+
+```
+iterate(*, flat: bool = True) -> Iterator[str | Expr]
+```
+
+Iterate on the expression elements.
+
+Parameters:
+
+- #### **`flat`**
+
+  (`bool`, default: `True` ) – Expressions are trees. When flat is false, this method iterates only on the first layer of the tree. To iterate on all the subparts of the expression, you have to do so recursively. It allows to handle each subpart specifically (for example subscripts, attribute, etc.), without them getting rendered as strings. On the contrary, when flat is true, the whole tree is flattened as a sequence of strings and instances of Names.
+
+Yields:
+
+- `str | Expr` – Strings and names when flat, strings and expressions otherwise.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    yield "t'"
+    yield from _join(self.values, "", flat=flat)
+    yield "'"
+```
+
+### modernize
+
+```
+modernize() -> Expr
+```
+
+Modernize the expression.
+
+For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+Returns:
+
+- `Expr` – A modernized expression.
+
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
+
+```
+def modernize(self) -> Expr:
+    """Modernize the expression.
+
+    For example, use PEP 604 type unions `|` instead of `typing.Union`.
+
+    Returns:
+        A modernized expression.
+    """
+    return self
 ```
 
 ## ExprTuple
@@ -6987,7 +7426,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -7013,7 +7452,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -7047,7 +7486,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -7074,7 +7513,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> ExprTuple:
@@ -7215,7 +7654,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -7241,7 +7680,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -7275,7 +7714,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -7299,7 +7738,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -7435,7 +7874,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -7461,7 +7900,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -7495,7 +7934,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -7519,7 +7958,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:
@@ -7655,7 +8094,7 @@ __iter__() -> Iterator[str | Expr]
 
 Iterate on the expression syntax and elements.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def __iter__(self) -> Iterator[str | Expr]:
@@ -7681,7 +8120,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -7715,7 +8154,7 @@ Yields:
 
 - `str | Expr` – Strings and names when flat, strings and expressions otherwise.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
@@ -7737,7 +8176,7 @@ Returns:
 
 - `Expr` – A modernized expression.
 
-Source code in `src/griffe/_internal/expressions.py`
+Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def modernize(self) -> Expr:

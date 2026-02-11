@@ -1,6 +1,6 @@
 # Serializing APIs
 
-Griffe can be used to load API data and output it as JSON on standard output or in writable files. An example of what real data looks like can be found here: [Griffe's full JSON dump](../../../griffe.json). We also provide a [JSON schema](../../../schema.json).
+Griffe can be used to load API data and output it as JSON on standard output or in writable files. An example of what real data looks like can be found here: [Griffe's full JSON dump](https://mkdocstrings.github.io/griffe/griffe.json). We also provide a [JSON schema](https://mkdocstrings.github.io/griffe/schema.json).
 
 ## Command-line
 
@@ -48,11 +48,11 @@ $ griffe dump griffe -o './dumps/{package}.json'
 
 By default, Griffe will search in `sys.path`, so if you installed it through *pipx*, there are few chances it will find your packages. To explicitly specify search paths, use the `-s, --search <PATH>` option. You can use it multiple times. You can also add the search paths to the `PYTHONPATH` environment variable. If Griffe can't find the packages, it will fail with a `ModuleNotFoundError`.
 
-See all the options for the `dump` command in the [CLI reference](../../../reference/cli/).
+See all the options for the `dump` command in the [CLI reference](https://mkdocstrings.github.io/griffe/reference/cli/index.md).
 
 ## Python API
 
-If you have read through the [Navigating](../navigating/) chapter, you know about our six data models for modules, classes, functions, attributes, type aliases and aliases. Each one of these model provide the two following methods:
+If you have read through the [Navigating](https://mkdocstrings.github.io/griffe/guide/users/navigating/index.md) chapter, you know about our six data models for modules, classes, functions, attributes, type aliases and aliases. Each one of these model provide the two following methods:
 
 - as_json, which allows to serialize an object into JSON,
 - from_json, which allows loading JSON back into a model instance.
@@ -65,7 +65,7 @@ When serializing an object, by default the JSON will only contain the fields req
 
 ## Schema
 
-For anything automated, we suggest relying on our [JSON schema](../../../schema.json).
+For anything automated, we suggest relying on our [JSON schema](https://mkdocstrings.github.io/griffe/schema.json).
 
 When serializing multiple packages with the `dump` command, you get a map with package names as keys. Map values are the serialized objects (modules, classes, functions, etc.). They are maps too, with field names and values as key-value pairs.
 
@@ -104,8 +104,8 @@ For example:
 
 The `members` value, truncated here, just repeats the pattern: it's an array of maps. We use an array for members instead of a map to preserve order, which could be important to downstream tools.
 
-The other fields do not require explanations, except maybe for expressions. You will sometimes notice deeply nested structures with `cls` keys. These are serialized Griffe [expressions](../../../reference/api/expressions/). They represent actual code.
+The other fields do not require explanations, except maybe for expressions. You will sometimes notice deeply nested structures with `cls` keys. These are serialized Griffe [expressions](https://mkdocstrings.github.io/griffe/reference/api/expressions/index.md). They represent actual code.
 
 ## Next steps
 
-That's it! There is not much to say about serialization. We are interested in getting your feedback regarding serialization as we didn't see it being used a lot. Next you might be interested in learning how to [check](../checking/) or [extend](../extending/) your API data.
+That's it! There is not much to say about serialization. We are interested in getting your feedback regarding serialization as we didn't see it being used a lot. Next you might be interested in learning how to [check](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md) or [extend](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md) your API data.

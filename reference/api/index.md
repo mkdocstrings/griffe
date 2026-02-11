@@ -1,24 +1,16 @@
 # griffe
 
-Griffe package.
+Griffe library package.
 
 Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API.
 
-The entirety of the public API is exposed here, in the top-level `griffe` module.
+The entirety of the library API is exposed here, in the top-level `griffe` module.
 
 All messages written to standard output or error are logged using the `logging` module. Our logger's name is set to `"griffe"` and is public (you can rely on it). You can obtain the logger from the standard `logging` module: `logging.getLogger("griffe")`. Actual logging messages are not part of the public API (they might change without notice).
 
 Raised exceptions throughout the package are part of the public API (you can rely on them). Their actual messages are not part of the public API (they might change without notice).
 
 The following paragraphs will help you discover the package's content.
-
-### CLI entrypoints
-
-Griffe provides a command-line interface (CLI) to interact with the package. The CLI entrypoints can be called from Python code.
-
-- griffe.main: Run the main program.
-- griffe.check: Check for API breaking changes in two versions of the same package.
-- griffe.dump: Load packages data and dump it as JSON.
 
 ### Loaders
 

@@ -36,7 +36,7 @@ Examples:
 ...     print(breakage.explain(style=style), file=sys.stderr)
 ```
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def find_breaking_changes(
@@ -163,7 +163,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -249,7 +249,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -288,7 +288,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -490,7 +490,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -576,7 +576,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -615,7 +615,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -689,7 +689,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -775,7 +775,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -814,7 +814,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -888,7 +888,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -974,7 +974,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -1013,7 +1013,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -1087,7 +1087,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -1173,7 +1173,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -1212,7 +1212,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -1286,7 +1286,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -1372,7 +1372,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -1411,7 +1411,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -1485,7 +1485,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -1571,7 +1571,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -1610,7 +1610,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -1684,7 +1684,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -1770,7 +1770,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -1809,7 +1809,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -1883,7 +1883,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -1969,7 +1969,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -2008,7 +2008,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -2082,7 +2082,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -2168,7 +2168,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -2207,7 +2207,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -2281,7 +2281,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -2367,7 +2367,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -2406,7 +2406,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -2480,7 +2480,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -2566,7 +2566,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -2605,7 +2605,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:
@@ -2679,7 +2679,7 @@ Attributes:
 - **`obj`** – The object related to the breakage.
 - **`old_value`** – The old value.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def __init__(self, obj: Object, old_value: Any, new_value: Any, details: str = "") -> None:
@@ -2765,7 +2765,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -2804,7 +2804,7 @@ Returns:
 
 - `str` – An explanation.
 
-Source code in `src/griffe/_internal/diff.py`
+Source code in `packages/griffelib/src/griffe/_internal/diff.py`
 
 ```
 def explain(self, style: ExplanationStyle = ExplanationStyle.ONE_LINE) -> str:

@@ -124,7 +124,7 @@ Attributes:
 
 - **`alias`** (`Alias`) – The alias that triggered the error.
 
-Source code in `src/griffe/_internal/exceptions.py`
+Source code in `packages/griffelib/src/griffe/_internal/exceptions.py`
 
 ```
 def __init__(self, alias: Alias) -> None:
@@ -138,7 +138,7 @@ def __init__(self, alias: Alias) -> None:
 
     message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
     try:
-        filepath = alias.parent.relative_filepath  # type: ignore[union-attr]
+        filepath = alias.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
     except BuiltinModuleError:
         pass
     else:
@@ -187,7 +187,7 @@ Attributes:
 
 - **`chain`** (`list[str]`) – The chain of aliases that created the cycle.
 
-Source code in `src/griffe/_internal/exceptions.py`
+Source code in `packages/griffelib/src/griffe/_internal/exceptions.py`
 
 ```
 def __init__(self, chain: list[str]) -> None:

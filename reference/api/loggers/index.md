@@ -56,7 +56,7 @@ Returns:
 
 - `Logger` – The logger.
 
-Source code in `src/griffe/_internal/logger.py`
+Source code in `packages/griffelib/src/griffe/_internal/logger.py`
 
 ```
 def get_logger(name: str = "griffe") -> Logger:
@@ -81,7 +81,7 @@ Methods:
 
 - **`disable`** – Temporarily disable logging.
 
-Source code in `src/griffe/_internal/logger.py`
+Source code in `packages/griffelib/src/griffe/_internal/logger.py`
 
 ```
 def __init__(self, name: str) -> None:
@@ -97,7 +97,7 @@ disable() -> Iterator[None]
 
 Temporarily disable logging.
 
-Source code in `src/griffe/_internal/logger.py`
+Source code in `packages/griffelib/src/griffe/_internal/logger.py`
 
 ```
 @contextmanager
@@ -222,7 +222,7 @@ Parameters:
 
   (`Callable[[str], Any]`) – A function accepting a name as parameter and returning a logger.
 
-Source code in `src/griffe/_internal/logger.py`
+Source code in `packages/griffelib/src/griffe/_internal/logger.py`
 
 ```
 def patch_loggers(get_logger_func: Callable[[str], Any]) -> None:

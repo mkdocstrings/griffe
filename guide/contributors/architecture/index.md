@@ -11,9 +11,9 @@ This document describes how the project is architectured, both regarding boilerp
 📁 config/ # (5)!
 📁 docs/ # (6)!
 📁 htmlcov/ # (7)!
-📁 scripts/ # (8)!
-📁 site/ # (9)!
-📁 src/ # (10)!
+📁 packages/ # (8)!
+📁 scripts/ # (9)!
+📁 site/ # (10)!
 📁 tests/ # (11)!
  .copier-answers.yml # (12)!
  .envrc # (13)!
@@ -74,9 +74,9 @@ This document describes how the project is architectured, both regarding boilerp
    📁 vscode/ # (1)!
     coverage.ini
     git-changelog.toml
-    mypy.ini
     pytest.ini
     ruff.toml
+    ty.toml
    ```
 
    1. ```
@@ -233,7 +233,6 @@ This document describes how the project is architectured, both regarding boilerp
           expressions.md
           extensions.md
           finder.md
-          git.md
           helpers.md
           loaders.md
           loggers.md
@@ -254,7 +253,102 @@ This document describes how the project is architectured, both regarding boilerp
              type_alias.md
             ```
 
-1. HTML report for Python code coverage (git-ignored), integrated in the [Coverage report](../coverage/) page. See make coverage task.
+1. HTML report for Python code coverage (git-ignored), integrated in the [Coverage report](https://mkdocstrings.github.io/griffe/guide/contributors/coverage/index.md) page. See make coverage task.
+
+1. ```
+   📁 griffecli/ # (1)!
+   📁 griffelib/ # (2)!
+   ```
+
+   1. ```
+      📁 src/ # (1)!
+       pyproject.toml
+      ```
+      1. ```
+         📁 griffecli/ # (1)!
+         ```
+         1. ```
+            📁 _internal/ # (1)!
+             __init__.py
+             __main__.py
+            ```
+            1. ```
+                __init__.py
+                cli.py
+               ```
+   1. ```
+      📁 src/ # (1)!
+       pyproject.toml
+      ```
+      1. ```
+         📁 griffe/ # (1)!
+         ```
+         1. ```
+            📁 _internal/ # (1)!
+             __init__.py
+             __main__.py
+            ```
+            1. Our internal API, hidden from users. See [Program structure](#program-structure).
+
+               ```
+               📁 agents/ # (1)!
+               📁 docstrings/ # (2)!
+               📁 extensions/ # (3)!
+                __init__.py
+                c3linear.py
+                collections.py
+                debug.py
+                diff.py
+                encoders.py
+                enumerations.py
+                exceptions.py
+                expressions.py
+                finder.py
+                git.py
+                importer.py
+                loader.py
+                logger.py
+                merger.py
+                mixins.py
+                models.py
+                py.typed
+                stats.py
+                tests.py
+               ```
+
+               1. ```
+                  📁 nodes/ # (1)!
+                   __init__.py
+                   inspector.py
+                   visitor.py
+                  ```
+                  1. ```
+                      __init__.py
+                      assignments.py
+                      ast.py
+                      docstrings.py
+                      exports.py
+                      imports.py
+                      parameters.py
+                      runtime.py
+                      values.py
+                     ```
+               1. ```
+                   __init__.py
+                   auto.py
+                   google.py
+                   models.py
+                   numpy.py
+                   parsers.py
+                   sphinx.py
+                   utils.py
+                  ```
+               1. ```
+                   __init__.py
+                   base.py
+                   dataclasses.py
+                   unpack_typeddict.py
+                  ```
 
 1. Our different scripts. See [Scripts, configuration](#scripts-configuration).
 
@@ -263,90 +357,11 @@ This document describes how the project is architectured, both regarding boilerp
     gen_griffe_json.py
     gen_structure_docs.py
     get_version.py
-    griffe_exts.py
     make
     make.py
    ```
 
 1. Documentation site, built with `make run mkdocs build` (git-ignored).
-
-1. The source of our Python package(s). See [Sources](#sources) and [Program structure](#program-structure).
-
-   ```
-   📁 griffe/ # (1)!
-   ```
-
-   1. Our public API, exposed to users. See [Program structure](#program-structure).
-
-      ```
-      📁 _internal/ # (1)!
-       __init__.py
-       __main__.py
-       py.typed
-      ```
-
-      1. Our internal API, hidden from users. See [Program structure](#program-structure).
-
-         ```
-         📁 agents/ # (1)!
-         📁 docstrings/ # (2)!
-         📁 extensions/ # (3)!
-          __init__.py
-          c3linear.py
-          cli.py
-          collections.py
-          debug.py
-          diff.py
-          encoders.py
-          enumerations.py
-          exceptions.py
-          expressions.py
-          finder.py
-          git.py
-          importer.py
-          loader.py
-          logger.py
-          merger.py
-          mixins.py
-          models.py
-          py.typed
-          stats.py
-          tests.py
-         ```
-
-         1. ```
-            📁 nodes/ # (1)!
-             __init__.py
-             inspector.py
-             visitor.py
-            ```
-            1. ```
-                __init__.py
-                assignments.py
-                ast.py
-                docstrings.py
-                exports.py
-                imports.py
-                parameters.py
-                runtime.py
-                values.py
-               ```
-         1. ```
-             __init__.py
-             auto.py
-             google.py
-             models.py
-             numpy.py
-             parsers.py
-             sphinx.py
-             utils.py
-            ```
-         1. ```
-             __init__.py
-             base.py
-             dataclasses.py
-             unpack_typeddict.py
-            ```
 
 1. Our test suite. See [Tests](#tests).
 
@@ -395,9 +410,9 @@ This document describes how the project is architectured, both regarding boilerp
 
 1. The answers file generated by [Copier](https://copier.readthedocs.io/en/stable/). See [Boilerplate](#boilerplate).
 
-1. The environment configuration, automatically sourced by [direnv](https://direnv.net/). See [commands](../commands/).
+1. The environment configuration, automatically sourced by [direnv](https://direnv.net/). See [commands](https://mkdocstrings.github.io/griffe/guide/contributors/commands/index.md).
 
-1. A dummy makefile, only there for auto-completion. See [commands](../commands/).
+1. A dummy makefile, only there for auto-completion. See [commands](https://mkdocstrings.github.io/griffe/guide/contributors/commands/index.md).
 
 1. Our project tasks, written with [duty](https://pawamoy.github.io/duty). See Tasks.
 
@@ -417,7 +432,7 @@ copier update --trust --skip-answered
 
 ## Scripts, configuration
 
-We have a few scripts that let us manage the various maintenance aspects for this project. The entry-point is the `make` script located in the `scripts` folder. It doesn't need any dependency to be installed to run. See [Management commands](../commands/) for more information.
+We have a few scripts that let us manage the various maintenance aspects for this project. The entry-point is the `make` script located in the `scripts` folder. It doesn't need any dependency to be installed to run. See [Management commands](https://mkdocstrings.github.io/griffe/guide/contributors/commands/index.md) for more information.
 
 The `make` script can also invoke what we call "tasks". Tasks need our development dependencies to be installed to run. These tasks are written in the `duties.py` file, and the development dependencies are listed in `devdeps.txt`.
 
@@ -425,19 +440,28 @@ The tools used in tasks have their configuration files stored in the `config` fo
 
 ## Sources
 
-Sources are located in the `src` folder, following the [src-layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). We use [PDM-Backend](https://backend.pdm-project.org/) to build source and wheel distributions, and configure it in `pyproject.toml` to search for packages in the `src` folder.
+Sources are located in the `packages/` subfolders, following the [src-layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). We use [Hatch](https://hatch.pypa.io/latest/) to build source and wheel distributions, and configure it in `pyproject.toml`.
 
 ## Tests
 
-Our test suite is located in the `tests` folder. It is located outside of the sources as to not pollute distributions (it would be very wrong to publish a `tests` package as part of our distributions, since this name is extremely common), or worse, the public API. The `tests` folder is however included in our source distributions (`.tar.gz`), alongside most of our metadata and configuration files. Check out `pyproject.toml` to get the full list of files included in our source distributions.
+Our test suite is located in the `tests` folder. It is located outside of the sources as to not pollute distributions (it would be very wrong to publish a `tests` package as part of our distributions, since this name is extremely common), or worse, the public API. The `tests` folder is however included in our source distributions (`.tar.gz`), alongside most of our metadata and configuration files. Check out our `pyproject.toml` files to get the full list of files included in our source distributions for every individual package within the `packages/` folder.
 
 The test suite is based on [pytest](https://docs.pytest.org/en/8.2.x/). Test modules reflect our internal API structure, and except for a few test modules that test specific aspects of our API, each test module tests the logic from the corresponding module in the internal API. For example, `test_finder.py` tests code of the `griffe._internal.finder` internal module, while `test_functions` tests our ability to extract correct information from function signatures, statically. The general rule of thumb when writing new tests is to mirror the internal API. If a test touches to many aspects of the loading process, it can be added to the `test_loader` test module.
 
 ## Program structure
 
-The internal API is contained within the `src/griffe/_internal` folder. The top-level `griffe/__init__.py` module exposes all the public API, by importing the internal objects from various submodules of `griffe._internal`.
+Griffe is split into two pieces: the library and the CLI.
 
-Users then import `griffe` directly, or import objects from it.
+Each of them has an internal API contained within an `_internal` folder:
+
+- `packages/griffelib/src/griffe/_internal` for the library,
+- `packages/griffecli/src/griffecli/_internal` for the CLI.
+
+Griffe can be installed in library-only mode, which means that the CLI package from `packages/griffecli` is not present. Library-only mode can be preferred if the user does not utilize the CLI functionality of Griffe and does not want to incorporate its dependencies.
+
+The top-level `packages/griffelib/src/griffe/__init__.py` module exposes all the public API available: it always re-exports internal objects from various submodules of `griffe._internal` and, if the CLI is installed, it re-exports the public API of `griffecli` as well.
+
+Users then import `griffe` directly, or import objects from it. If they don't have `griffecli` installed, they cannot import the CLI-related functionality, such as griffecli.check.
 
 We'll be honest: our code organization is not the most elegant, but it works Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
@@ -448,13 +472,6 @@ The following sections are generated automatically by iterating on the modules o
 ### CLI entrypoint
 
 #### `griffe.__main__`
-
-Entry-point module, in case you use `python -m griffe`.
-
-Why does this file exist, and why `__main__`? For more info, read:
-
-- <https://www.python.org/dev/peps/pep-0338/>
-- <https://docs.python.org/3/using/cmdline.html#cmdoption-m>
 
 ### Public API
 
@@ -535,17 +552,6 @@ This module contains a single function, `c3linear_merge`. The function is generi
 - Copyright (c) 2019 Vitaly R. Samigullin
 - Adapted from <https://github.com/pilosus/c3linear>
 - Adapted from <https://github.com/tristanlatr/pydocspec>
-
-xml version="1.0" encoding="UTF-8" standalone="no"?
-
-#### `cli.py`
-
-This module contains all CLI-related things. Why does this file exist, and why not put this in `__main__`?
-
-We might be tempted to import things from `__main__` later, but that will cause problems; the code will get executed twice:
-
-- When we run `python -m griffe`, Python will execute `__main__.py` as a script. That means there won't be any `griffe.__main__` in `sys.modules`.
-- When you import `__main__` it will get executed again (as a module) because there's no `griffe.__main__` in `sys.modules`.
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
@@ -681,8 +687,8 @@ Note: It might be possible to replace a good part of this module's logic with ut
 ModuleSpec(
     name='griffe.agents',
     loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa5f34e8110>,
-    origin='/media/data/dev/griffe/src/griffe/agents/__init__.py',
-    submodule_search_locations=['/media/data/dev/griffe/src/griffe/agents'],
+    origin='/media/data/dev/griffelib/packages/griffe/src/griffe/agents/__init__.py',
+    submodule_search_locations=['/media/data/dev/griffelib/packages/griffe/src/griffe/agents'],
 )
 ```
 

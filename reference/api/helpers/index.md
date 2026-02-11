@@ -65,7 +65,7 @@ Yields:
 - **`module_name`** ( `str` ) – The module name, as to dynamically import it.
 - **`module_path`** ( `Path` ) – The module path.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 @contextmanager
@@ -124,7 +124,7 @@ Yields:
 
 - `TmpPackage` – A temporary package.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 @contextmanager
@@ -163,7 +163,7 @@ def temporary_pypackage(
         package_path.mkdir(**mkdir_kwargs)
         if init:
             package_path.joinpath("__init__.py").touch()
-        for module_name, module_contents in modules.items():  # type: ignore[union-attr]
+        for module_name, module_contents in modules.items():  # ty:ignore[possibly-missing-attribute]
             current_path = package_path
             for part in Path(module_name).parts:
                 if part.endswith((".py", ".pyi")):
@@ -232,7 +232,7 @@ Yields:
 
 - `Module` – The visited module.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 @contextmanager
@@ -374,7 +374,7 @@ Yields:
 
 - `Module` – A module.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 @contextmanager
@@ -428,7 +428,7 @@ def temporary_visited_package(
     """
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
-        yield load(  # type: ignore[misc]
+        yield load(
             tmp_package.name,
             search_paths=[tmp_package.tmpdir, *search_paths],
             extensions=extensions,
@@ -506,7 +506,7 @@ Yields:
 
 - `Module` – The inspected module.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 @contextmanager
@@ -654,7 +654,7 @@ Yields:
 
 - `Module` – A module.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 @contextmanager
@@ -709,7 +709,7 @@ def temporary_inspected_package(
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         try:
-            yield load(  # type: ignore[misc]
+            yield load(
                 tmp_package.name,
                 search_paths=[tmp_package.tmpdir, *search_paths],
                 extensions=extensions,
@@ -759,7 +759,7 @@ Returns:
 
 - `Object` – The top or leaf object.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 def vtree(*objects: Object, return_leaf: bool = False) -> Object:
@@ -807,7 +807,7 @@ Returns:
 
 - `Object` – The first given object, with all the other objects as members of it.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 def htree(*objects: Object) -> Object:
@@ -865,7 +865,7 @@ Returns:
 
 - `Module` – The top or leaf module.
 
-Source code in `src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/tests.py`
 
 ```
 def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = False) -> Module:
@@ -885,7 +885,7 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
     parts = path.split(".")
     modules = [Module(name, filepath=Path(*parts[:index], "__init__.py")) for index, name in enumerate(parts)]
     if not leaf_package:
-        filepath = modules[-1].filepath.with_stem(parts[-1])  # type: ignore[union-attr]
+        filepath = modules[-1].filepath.with_stem(parts[-1])  # ty:ignore[possibly-missing-attribute]
         modules[-1]._filepath = filepath
-    return vtree(*modules, return_leaf=return_leaf)  # type: ignore[return-value]
+    return vtree(*modules, return_leaf=return_leaf)  # ty:ignore[invalid-return-type]
 ```

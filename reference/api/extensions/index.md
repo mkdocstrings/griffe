@@ -20,7 +20,7 @@ Returns:
 
 - `Extensions` – An extensions container.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def load_extensions(*exts: LoadableExtensionType) -> Extensions:
@@ -37,7 +37,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
     for extension in exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):
-            extensions.add(*ext)
+            extensions.add(*ext)  # ty:ignore[invalid-argument-type]
         else:
             extensions.add(ext)
 
@@ -49,7 +49,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
         if type(ext) is DataclassesExtension:
             break
     else:
-        extensions.add(*_load_extension("dataclasses"))  # type: ignore[misc]
+        extensions.add(*_load_extension("dataclasses"))  # ty:ignore[not-iterable]
 
     return extensions
 ```
@@ -103,7 +103,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def generic_inspect(self, node: ObjectNode) -> None:
@@ -131,7 +131,7 @@ Parameters:
 
   (`AST`) – The node to visit the children of.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def generic_visit(self, node: ast.AST) -> None:
@@ -158,7 +158,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def inspect(self, node: ObjectNode) -> None:
@@ -198,7 +198,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_alias(self, *, alias: Alias, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -251,7 +251,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_alias_instance(
@@ -307,7 +307,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_attribute(self, *, attr: Attribute, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -360,7 +360,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_attribute_instance(
@@ -413,7 +413,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_attribute_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -454,7 +454,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_class(self, *, cls: Class, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -507,7 +507,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_class_instance(
@@ -569,7 +569,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_class_members(
@@ -622,7 +622,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_class_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -663,7 +663,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_function(self, *, func: Function, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -716,7 +716,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_function_instance(
@@ -769,7 +769,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_function_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -818,7 +818,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_instance(
@@ -880,7 +880,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_members(self, *, node: ast.AST | ObjectNode, obj: Object, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -927,7 +927,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_module(self, *, mod: Module, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -980,7 +980,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_module_instance(
@@ -1042,7 +1042,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_module_members(
@@ -1095,7 +1095,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_module_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -1127,7 +1127,7 @@ Parameters:
 
   (`AST | ObjectNode`) – The currently visited node.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -1166,7 +1166,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_object(self, *, obj: Object, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -1211,7 +1211,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_package(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -1226,9 +1226,6 @@ def on_package(self, *, pkg: Module, loader: GriffeLoader, **kwargs: Any) -> Non
         loader: The loader currently in use.
         **kwargs: For forward-compatibility.
     """
-    # YORE: Bump 2: Remove block.
-    if hasattr(self, "on_package_loaded"):
-        self.on_package_loaded(pkg=pkg, loader=loader, **kwargs)
 ```
 
 ### on_type_alias
@@ -1262,7 +1259,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_type_alias(self, *, type_alias: TypeAlias, loader: GriffeLoader, **kwargs: Any) -> None:
@@ -1315,7 +1312,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_type_alias_instance(
@@ -1368,7 +1365,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – For forward-compatibility.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def on_type_alias_node(self, *, node: ast.AST | ObjectNode, agent: Visitor | Inspector, **kwargs: Any) -> None:
@@ -1395,7 +1392,7 @@ Parameters:
 
   (`AST`) – The node to visit.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def visit(self, node: ast.AST) -> None:
@@ -1428,7 +1425,7 @@ Methods:
 - **`add`** – Add extensions to this container.
 - **`call`** – Call the extension hook for the given event.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def __init__(self, *extensions: Extension) -> None:
@@ -1455,7 +1452,7 @@ Parameters:
 
   (`Extension`, default: `()` ) – The extensions to add.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def add(self, *extensions: Extension) -> None:
@@ -1486,7 +1483,7 @@ Parameters:
 
   (`Any`, default: `{}` ) – Arguments passed to the hook.
 
-Source code in `src/griffe/_internal/extensions/base.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
 ```
 def call(self, event: str, **kwargs: Any) -> None:
@@ -1497,12 +1494,7 @@ def call(self, event: str, **kwargs: Any) -> None:
         **kwargs: Arguments passed to the hook.
     """
     for extension in self._extensions:
-        # YORE: Bump 2: Replace block with line 5.
-        if event == "on_alias" and getattr(extension, "__old_on_alias", False):
-            with suppress(TypeError):
-                getattr(extension, event)(**kwargs)
-        else:
-            getattr(extension, event, self._noop)(**kwargs)
+        getattr(extension, event, self._noop)(**kwargs)
 ```
 
 ## **Types**
@@ -1510,9 +1502,9 @@ def call(self, event: str, **kwargs: Any) -> None:
 ## LoadableExtensionType
 
 ```
-LoadableExtensionType = Union[
-    str, dict[str, Any], Extension, type[Extension]
-]
+LoadableExtensionType = (
+    str | dict[str, Any] | Extension | type[Extension]
+)
 ```
 
 All the types that can be passed to `load_extensions`.
@@ -1569,7 +1561,7 @@ Parameters:
 
   (`Module`) – The loaded package.
 
-Source code in `src/griffe/_internal/extensions/dataclasses.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/dataclasses.py`
 
 ```
 def on_package(self, *, pkg: Module, **kwargs: Any) -> None:  # noqa: ARG002
@@ -1613,7 +1605,7 @@ on_class(*, cls: Class, **kwargs: Any) -> None
 
 Add an `__init__` method to `TypedDict` classes if missing.
 
-Source code in `src/griffe/_internal/extensions/unpack_typeddict.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/unpack_typeddict.py`
 
 ```
 def on_class(self, *, cls: Class, **kwargs: Any) -> None:  # noqa: ARG002
@@ -1652,7 +1644,7 @@ on_function(*, func: Function, **kwargs: Any) -> None
 
 Expand `**kwargs: Unpack[TypedDict]` in function signatures.
 
-Source code in `src/griffe/_internal/extensions/unpack_typeddict.py`
+Source code in `packages/griffelib/src/griffe/_internal/extensions/unpack_typeddict.py`
 
 ```
 def on_function(self, *, func: Function, **kwargs: Any) -> None:  # noqa: ARG002
@@ -1665,12 +1657,12 @@ def on_function(self, *, func: Function, **kwargs: Any) -> None:  # noqa: ARG002
                 "typing.Annotated",
                 "typing_extensions.Annotated",
             }:
-                annotation = annotation.slice.elements[0]  # type: ignore[union-attr]
+                annotation = annotation.slice.elements[0]
             if isinstance(annotation, ExprSubscript) and annotation.canonical_path in {
                 "typing.Unpack",
                 "typing_extensions.Unpack",
             }:
-                slice_path = annotation.slice.canonical_path  # type: ignore[union-attr]
+                slice_path = annotation.slice.canonical_path
                 typed_dict = func.modules_collection[slice_path]
                 break
     else:

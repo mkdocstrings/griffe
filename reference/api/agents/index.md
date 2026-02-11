@@ -71,7 +71,7 @@ Returns:
 
 - `Module` – The module, with its members populated.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit(
@@ -198,7 +198,7 @@ Returns:
 
 - `Module` – The module, with its members populated.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect(
@@ -358,7 +358,7 @@ Attributes:
 - **`parent`** (`Module | None`) – An optional parent for the final module object.
 - **`type_guarded`** (`bool`) – Whether the current code branch is type-guarded.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def __init__(
@@ -403,7 +403,7 @@ def __init__(
     self.parent: Module | None = parent
     """An optional parent for the final module object."""
 
-    self.current: Module | Class = None  # type: ignore[assignment]
+    self.current: Module | Class = None
     """The current object being visited."""
 
     self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
@@ -538,7 +538,7 @@ Returns:
 
 - `set[str]` – A set of labels.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def decorators_to_labels(self, decorators: list[Decorator]) -> set[str]:
@@ -574,7 +574,7 @@ Parameters:
 
   (`AST`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def generic_visit(self, node: ast.AST) -> None:
@@ -608,7 +608,7 @@ Returns:
 - **`base_property`** ( `str | None` ) – The property for which the setter/deleted is set.
 - **`property_function`** ( `str | None` ) – Either "setter" or "deleter".
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def get_base_property(self, decorators: list[Decorator], function: Function) -> str | None:
@@ -650,7 +650,7 @@ Returns:
 
 - `Module` – A module instance.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def get_module(self) -> Module:
@@ -689,7 +689,7 @@ Parameters:
 
   (`str | Expr | None`, default: `None` ) – A potential annotation.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def handle_attribute(
@@ -723,7 +723,7 @@ def handle_attribute(
 
         if isinstance(annotation, Expr) and annotation.is_classvar:
             # Explicit `ClassVar`: class attribute only.
-            annotation = annotation.slice  # type: ignore[attr-defined]
+            annotation = annotation.slice  # ty:ignore[unresolved-attribute]
             labels.add("class-attribute")
         elif node.value:
             # Attribute assigned at class-level: available in instances as well.
@@ -740,7 +740,7 @@ def handle_attribute(
             names = get_instance_names(node)
         except KeyError:  # Unsupported nodes, like subscript.
             return
-        parent = parent.parent  # type: ignore[assignment]
+        parent = parent.parent
         if parent is None:
             return
         labels.add("instance-attribute")
@@ -764,7 +764,7 @@ def handle_attribute(
         if name in parent.members:
             # Assigning multiple times.
             # TODO: Might be better to inspect.
-            if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # type: ignore[union-attr]
+            if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # ty:ignore[unresolved-attribute]
                 continue  # Prefer "no-exception" case.
 
             existing_member = parent.members[name]
@@ -774,8 +774,8 @@ def handle_attribute(
                 if existing_member.docstring and not docstring:
                     docstring = existing_member.docstring
                 with suppress(AttributeError):
-                    if existing_member.annotation and not annotation:  # type: ignore[union-attr]
-                        annotation = existing_member.annotation  # type: ignore[union-attr]
+                    if existing_member.annotation and not annotation:  # ty:ignore[possibly-missing-attribute]
+                        annotation = existing_member.annotation  # ty:ignore[possibly-missing-attribute]
 
         attribute = Attribute(
             name=name,
@@ -794,7 +794,7 @@ def handle_attribute(
             with suppress(AttributeError):
                 parent.exports = [
                     name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
-                    for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
+                    for name in safe_get__all__(node, self.current)  # ty:ignore[invalid-argument-type]
                 ]
         self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
         self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
@@ -821,7 +821,7 @@ Parameters:
 
   (`set | None`, default: `None` ) – Labels to add to the data object.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: set | None = None) -> None:
@@ -908,7 +908,7 @@ def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: 
     if overload:
         self.current.overloads[function.name].append(function)
     elif property_function:
-        base_property: Attribute = self.current.members[node.name]  # type: ignore[assignment]
+        base_property: Attribute = self.current.members[node.name]  # ty:ignore[invalid-assignment]
         if property_function == "setter":
             base_property.setter = function
             base_property.labels.add("writable")
@@ -926,9 +926,9 @@ def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: 
     self.extensions.call("on_instance", node=node, obj=function, agent=self)
     self.extensions.call("on_function_instance", node=node, func=function, agent=self)
     if self.current.kind is Kind.CLASS and function.name == "__init__":
-        self.current = function  # type: ignore[assignment]
+        self.current = function  # ty:ignore[invalid-assignment]
         self.generic_visit(node)
-        self.current = self.current.parent  # type: ignore[assignment]
+        self.current = self.current.parent  # ty:ignore[invalid-assignment]
 ```
 
 ### visit
@@ -945,7 +945,7 @@ Parameters:
 
   (`AST`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit(self, node: ast.AST) -> None:
@@ -971,7 +971,7 @@ Parameters:
 
   (`AnnAssign`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_annassign(self, node: ast.AnnAssign) -> None:
@@ -997,7 +997,7 @@ Parameters:
 
   (`Assign`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_assign(self, node: ast.Assign) -> None:
@@ -1023,7 +1023,7 @@ Parameters:
 
   (`AsyncFunctionDef`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_asyncfunctiondef(self, node: ast.AsyncFunctionDef) -> None:
@@ -1049,7 +1049,7 @@ Parameters:
 
   (`AugAssign`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_augassign(self, node: ast.AugAssign) -> None:
@@ -1060,16 +1060,16 @@ def visit_augassign(self, node: ast.AugAssign) -> None:
     """
     with suppress(AttributeError):
         all_augment = (
-            node.target.id == "__all__"  # type: ignore[union-attr]
+            node.target.id == "__all__"  # ty:ignore[possibly-missing-attribute]
             and self.current.is_module
             and isinstance(node.op, ast.Add)
         )
         if all_augment:
             # We assume `exports` is not `None` at this point.
-            self.current.exports.extend(  # type: ignore[union-attr]
+            self.current.exports.extend(  # ty:ignore[possibly-missing-attribute]
                 [
                     name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
-                    for name in safe_get__all__(node, self.current)  # type: ignore[arg-type]
+                    for name in safe_get__all__(node, self.current)  # ty:ignore[invalid-argument-type]
                 ],
             )
 ```
@@ -1088,7 +1088,7 @@ Parameters:
 
   (`ClassDef`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_classdef(self, node: ast.ClassDef) -> None:
@@ -1106,7 +1106,7 @@ def visit_classdef(self, node: ast.ClassDef) -> None:
         lineno = node.decorator_list[0].lineno
         decorators.extend(
             Decorator(
-                safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # type: ignore[arg-type]
+                safe_get_expression(decorator_node, parent=self.current, parse_strings=False),  # ty:ignore[invalid-argument-type]
                 lineno=decorator_node.lineno,
                 endlineno=decorator_node.end_lineno,
             )
@@ -1128,7 +1128,7 @@ def visit_classdef(self, node: ast.ClassDef) -> None:
         docstring=self._get_docstring(node),
         decorators=decorators,
         type_parameters=TypeParameters(*self._get_type_parameters(node, scope=node.name)),
-        bases=bases,  # type: ignore[arg-type]
+        bases=bases,  # ty:ignore[invalid-argument-type]
         keywords=keywords,
         runtime=not self.type_guarded,
         analysis="static",
@@ -1142,7 +1142,7 @@ def visit_classdef(self, node: ast.ClassDef) -> None:
     self.generic_visit(node)
     self.extensions.call("on_members", node=node, obj=class_, agent=self)
     self.extensions.call("on_class_members", node=node, cls=class_, agent=self)
-    self.current = self.current.parent  # type: ignore[assignment]
+    self.current = self.current.parent  # ty:ignore[invalid-assignment]
 ```
 
 ### visit_functiondef
@@ -1159,7 +1159,7 @@ Parameters:
 
   (`FunctionDef`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_functiondef(self, node: ast.FunctionDef) -> None:
@@ -1185,7 +1185,7 @@ Parameters:
 
   (`If`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_if(self, node: ast.If) -> None:
@@ -1194,7 +1194,7 @@ def visit_if(self, node: ast.If) -> None:
     Parameters:
         node: The node to visit.
     """
-    if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # type: ignore[attr-defined]
+    if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # ty:ignore[unresolved-attribute]
         condition = safe_get_condition(node.test, parent=self.current, log_level=None)
         if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
             self.type_guarded = True
@@ -1216,7 +1216,7 @@ Parameters:
 
   (`Import`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_import(self, node: ast.Import) -> None:
@@ -1255,7 +1255,7 @@ Parameters:
 
   (`ImportFrom`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_importfrom(self, node: ast.ImportFrom) -> None:
@@ -1309,7 +1309,7 @@ Parameters:
 
   (`Module`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_module(self, node: ast.Module) -> None:
@@ -1350,7 +1350,7 @@ Parameters:
 
   (`TypeAlias`) – The node to visit.
 
-Source code in `src/griffe/_internal/agents/visitor.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
 def visit_typealias(self, node: ast.TypeAlias) -> None:
@@ -1478,7 +1478,7 @@ Attributes:
 - **`modules_collection`** (`ModulesCollection`) – A collection of modules.
 - **`parent`** (`Module | None`) – An optional parent for the final module object.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def __init__(
@@ -1518,7 +1518,7 @@ def __init__(
     self.parent: Module | None = parent
     """An optional parent for the final module object."""
 
-    self.current: Module | Class = None  # type: ignore[assignment]
+    self.current: Module | Class = None
     """The current object being inspected."""
 
     self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
@@ -1628,7 +1628,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def generic_inspect(self, node: ObjectNode) -> None:
@@ -1691,7 +1691,7 @@ Returns:
 
 - `Module` – A module instance.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def get_module(self, import_paths: Sequence[str | Path] | None = None) -> Module:
@@ -1763,7 +1763,7 @@ Parameters:
 
   (`str | Expr | None`, default: `None` ) – A potential annotation.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def handle_attribute(self, node: ObjectNode, annotation: str | Expr | None = None) -> None:
@@ -1787,7 +1787,7 @@ def handle_attribute(self, node: ObjectNode, annotation: str | Expr | None = Non
     elif parent.kind is Kind.FUNCTION:
         if parent.name != "__init__":
             return
-        parent = parent.parent  # type: ignore[assignment]
+        parent = parent.parent
         labels.add("instance-attribute")
 
     try:
@@ -1807,10 +1807,10 @@ def handle_attribute(self, node: ObjectNode, annotation: str | Expr | None = Non
         analysis="dynamic",
     )
     attribute.labels |= labels
-    parent.set_member(node.name, attribute)
+    parent.set_member(node.name, attribute)  # ty:ignore[possibly-missing-attribute]
 
     if node.name == "__all__":
-        parent.exports = list(node.obj)
+        parent.exports = list(node.obj)  # ty:ignore[invalid-assignment]
     self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
     self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
 ```
@@ -1835,7 +1835,7 @@ Parameters:
 
   (`set | None`, default: `None` ) – Labels to add to the data object.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def handle_function(self, node: ObjectNode, labels: set | None = None) -> None:
@@ -1919,7 +1919,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect(self, node: ObjectNode) -> None:
@@ -1945,7 +1945,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_attribute(self, node: ObjectNode) -> None:
@@ -1971,7 +1971,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_builtin_function(self, node: ObjectNode) -> None:
@@ -1997,7 +1997,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_builtin_method(self, node: ObjectNode) -> None:
@@ -2023,7 +2023,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_cached_property(self, node: ObjectNode) -> None:
@@ -2049,7 +2049,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_class(self, node: ObjectNode) -> None:
@@ -2084,7 +2084,7 @@ def inspect_class(self, node: ObjectNode) -> None:
     self.generic_inspect(node)
     self.extensions.call("on_members", node=node, obj=class_, agent=self)
     self.extensions.call("on_class_members", node=node, cls=class_, agent=self)
-    self.current = self.current.parent  # type: ignore[assignment]
+    self.current = self.current.parent  # ty:ignore[invalid-assignment]
 ```
 
 ### inspect_classmethod
@@ -2101,7 +2101,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_classmethod(self, node: ObjectNode) -> None:
@@ -2127,7 +2127,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_coroutine(self, node: ObjectNode) -> None:
@@ -2153,7 +2153,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_function(self, node: ObjectNode) -> None:
@@ -2179,7 +2179,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_getset_descriptor(self, node: ObjectNode) -> None:
@@ -2205,7 +2205,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_method(self, node: ObjectNode) -> None:
@@ -2231,7 +2231,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_method_descriptor(self, node: ObjectNode) -> None:
@@ -2257,7 +2257,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_module(self, node: ObjectNode) -> None:
@@ -2298,7 +2298,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_property(self, node: ObjectNode) -> None:
@@ -2324,7 +2324,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_staticmethod(self, node: ObjectNode) -> None:
@@ -2350,7 +2350,7 @@ Parameters:
 
   (`ObjectNode`) – The node to inspect.
 
-Source code in `src/griffe/_internal/agents/inspector.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
 def inspect_type_alias(self, node: ObjectNode) -> None:
@@ -2399,7 +2399,7 @@ Yields:
 
 - `None` – Nothing.
 
-Source code in `src/griffe/_internal/importer.py`
+Source code in `packages/griffelib/src/griffe/_internal/importer.py`
 
 ```
 @contextmanager
@@ -2480,7 +2480,7 @@ Returns:
 
 - `Any` – The imported object.
 
-Source code in `src/griffe/_internal/importer.py`
+Source code in `packages/griffelib/src/griffe/_internal/importer.py`
 
 ```
 def dynamic_import(import_path: str, import_paths: Sequence[str | Path] | None = None) -> Any:
@@ -2623,7 +2623,7 @@ Attributes:
 - **`parent_is_class`** (`bool`) – Whether the object of this node's parent is a class.
 - **`path`** (`str`) – The object's (Python) path.
 
-Source code in `src/griffe/_internal/agents/nodes/runtime.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/runtime.py`
 
 ```
 def __init__(self, obj: Any, name: str, parent: ObjectNode | None = None) -> None:
@@ -3091,7 +3091,7 @@ Returns:
 
 - `str` – The node kind.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_kind(node: AST) -> str:
@@ -3124,7 +3124,7 @@ Yields:
 
 - `AST` – The node children.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_children(node: AST) -> Iterator[AST]:
@@ -3142,12 +3142,12 @@ def ast_children(node: AST) -> Iterator[AST]:
         except AttributeError:
             continue
         if isinstance(field, AST):
-            field.parent = node  # type: ignore[attr-defined]
+            field.parent = node
             yield field
         elif isinstance(field, list):
             for child in field:
                 if isinstance(child, AST):
-                    child.parent = node  # type: ignore[attr-defined]
+                    child.parent = node
                     yield child
 ```
 
@@ -3169,7 +3169,7 @@ Yields:
 
 - `AST` – The previous siblings.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_previous_siblings(node: AST) -> Iterator[AST]:
@@ -3181,7 +3181,7 @@ def ast_previous_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The previous siblings.
     """
-    for sibling in ast_children(node.parent):  # type: ignore[attr-defined]
+    for sibling in ast_children(node.parent):  # ty:ignore[unresolved-attribute]
         if sibling is not node:
             yield sibling
         else:
@@ -3206,7 +3206,7 @@ Yields:
 
 - `AST` – The next siblings.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_next_siblings(node: AST) -> Iterator[AST]:
@@ -3218,7 +3218,7 @@ def ast_next_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The next siblings.
     """
-    siblings = ast_children(node.parent)  # type: ignore[attr-defined]
+    siblings = ast_children(node.parent)  # ty:ignore[unresolved-attribute]
     for sibling in siblings:
         if sibling is node:
             break
@@ -3243,7 +3243,7 @@ Yields:
 
 - `AST` – The siblings.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_siblings(node: AST) -> Iterator[AST]:
@@ -3255,7 +3255,7 @@ def ast_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The siblings.
     """
-    siblings = ast_children(node.parent)  # type: ignore[attr-defined]
+    siblings = ast_children(node.parent)  # ty:ignore[unresolved-attribute]
     for sibling in siblings:
         if sibling is not node:
             yield sibling
@@ -3286,7 +3286,7 @@ Returns:
 
 - `AST` – The sibling.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_previous(node: AST) -> AST:
@@ -3330,7 +3330,7 @@ Returns:
 
 - `AST` – The sibling.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_next(node: AST) -> AST:
@@ -3373,7 +3373,7 @@ Returns:
 
 - `AST` – The child.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_first_child(node: AST) -> AST:
@@ -3416,7 +3416,7 @@ Returns:
 
 - `AST` – The child.
 
-Source code in `src/griffe/_internal/agents/nodes/ast.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/ast.py`
 
 ```
 def ast_last_child(node: AST) -> AST:
@@ -3462,7 +3462,7 @@ Returns:
 
 - `tuple[str | None, int | None, int | None]` – A tuple with the value and line numbers of the docstring.
 
-Source code in `src/griffe/_internal/agents/nodes/docstrings.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/docstrings.py`
 
 ```
 def get_docstring(
@@ -3482,8 +3482,8 @@ def get_docstring(
     # TODO: Possible optimization using a type map.
     if isinstance(node, ast.Expr):
         doc = node.value
-    elif not strict and node.body and isinstance(node.body, list) and isinstance(node.body[0], ast.Expr):  # type: ignore[attr-defined]
-        doc = node.body[0].value  # type: ignore[attr-defined]
+    elif not strict and node.body and isinstance(node.body, list) and isinstance(node.body[0], ast.Expr):  # ty:ignore[unresolved-attribute]
+        doc = node.body[0].value  # ty:ignore[unresolved-attribute]
     else:
         return None, None, None
     if isinstance(doc, ast.Constant) and isinstance(doc.value, str):
@@ -3509,7 +3509,7 @@ Returns:
 
 - `str` – A list of names.
 
-Source code in `src/griffe/_internal/agents/nodes/assignments.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/assignments.py`
 
 ```
 def get_name(node: ast.AST) -> str:
@@ -3542,7 +3542,7 @@ Returns:
 
 - `list[str]` – A list of names.
 
-Source code in `src/griffe/_internal/agents/nodes/assignments.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/assignments.py`
 
 ```
 def get_names(node: ast.AST) -> list[str]:
@@ -3575,7 +3575,7 @@ Returns:
 
 - `list[str]` – A list of names.
 
-Source code in `src/griffe/_internal/agents/nodes/assignments.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/assignments.py`
 
 ```
 def get_instance_names(node: ast.AST) -> list[str]:
@@ -3614,7 +3614,7 @@ Returns:
 
 - `list[str | ExprName]` – A set of names.
 
-Source code in `src/griffe/_internal/agents/nodes/exports.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/exports.py`
 
 ```
 def get__all__(node: ast.Assign | ast.AnnAssign | ast.AugAssign, parent: Module) -> list[str | ExprName]:
@@ -3662,7 +3662,7 @@ Returns:
 
 - `list[str | ExprName]` – A list of strings or resolvable names.
 
-Source code in `src/griffe/_internal/agents/nodes/exports.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/exports.py`
 
 ```
 def safe_get__all__(
@@ -3722,7 +3722,7 @@ Returns:
 
 - `str` – The absolute import path.
 
-Source code in `src/griffe/_internal/agents/nodes/imports.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/imports.py`
 
 ```
 def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: Module) -> str:
@@ -3740,7 +3740,7 @@ def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: 
     if (level > 0 and current_module.is_package) or current_module.is_subpackage:
         level -= 1
     while level > 0 and current_module.parent is not None:
-        current_module = current_module.parent  # type: ignore[assignment]
+        current_module = current_module.parent  # ty:ignore[invalid-assignment]
         level -= 1
     base = current_module.path + "." if node.level > 0 else ""
     node_module = node.module + "." if node.module else ""
@@ -3753,7 +3753,7 @@ def relative_to_absolute(node: ast.ImportFrom, name: ast.alias, current_module: 
 get_parameters(node: arguments) -> ParametersType
 ```
 
-Source code in `src/griffe/_internal/agents/nodes/parameters.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/parameters.py`
 
 ```
 def get_parameters(node: ast.arguments) -> ParametersType:
@@ -3842,7 +3842,7 @@ Returns:
 
 - `str | None` – The representing code for the node.
 
-Source code in `src/griffe/_internal/agents/nodes/values.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/values.py`
 
 ```
 def get_value(node: ast.AST | None) -> str | None:
@@ -3883,7 +3883,7 @@ Returns:
 
 - `str | None` – The representing code for the node.
 
-Source code in `src/griffe/_internal/agents/nodes/values.py`
+Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/values.py`
 
 ```
 def safe_get_value(node: ast.AST | None, filepath: str | Path | None = None) -> str | None:
@@ -3901,41 +3901,8 @@ def safe_get_value(node: ast.AST | None, filepath: str | Path | None = None) -> 
     except Exception as error:  # noqa: BLE001
         message = f"Failed to represent node {node}"
         if filepath:
-            message += f" at {filepath}:{node.lineno}"  # type: ignore[union-attr]
+            message += f" at {filepath}:{node.lineno}"  # ty:ignore[unresolved-attribute]
         message += f": {error}"
         logger.exception(message)
         return None
 ```
-
-## **Deprecated API**
-
-## ExportedName
-
-```
-ExportedName(name: str, parent: Module)
-```
-
-Deprecated. An intermediate class to store names.
-
-The get\_\_all\_\_ function now returns instances of ExprName instead.
-
-Attributes:
-
-- **`name`** (`str`) – The exported name.
-- **`parent`** (`Module`) – The parent module.
-
-### name
-
-```
-name: str
-```
-
-The exported name.
-
-### parent
-
-```
-parent: Module
-```
-
-The parent module.

@@ -18,7 +18,7 @@ griffe dump my_package
 griffe check my_package --against 1.0
 ```
 
-Both commands accept a `-h`, `--help` argument to show all the available options. For a complete reference of the command line interface, see [Reference / Command line interface](../reference/cli/).
+Both commands accept a `-h`, `--help` argument to show all the available options. For a complete reference of the command line interface, see [Reference / Command line interface](https://mkdocstrings.github.io/griffe/reference/cli/index.md).
 
 ## Python library
 
@@ -54,6 +54,6 @@ import griffe
 my_package_v2_1 = griffe.load_git("my_package", ref="2.1")
 ```
 
-For more advanced usage, see our guide on [loading and navigating data](../guide/users/loading/).
+For more advanced usage, see our guide on [loading and navigating data](https://mkdocstrings.github.io/griffe/guide/users/loading/index.md).
 
-For a complete reference of the application programming interface, see [Reference / Python API](../reference/api/).
+For a complete reference of the application programming interface, see [Reference / Python API](https://mkdocstrings.github.io/griffe/reference/api/index.md).

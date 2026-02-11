@@ -36,7 +36,7 @@ Our recommendation — Communicate your public API, verify what you can.
 
 Take the time to learn about and use ways to declare, communicate and deprecate your public API. Your users will have an easier time using your library. On the maintenance side, you won't get bug reports for uses that are not supported, or you will be able to quickly close them by pointing at the documentation explaining what your public API is, or why something was deprecated, for how long, and how to upgrade.
 
-Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](../../checking/) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
+Automate verifications around your public API with tools like Griffe. Currently Griffe doesn't support checking CLI configuration options, logger names or raised exceptions. If you have the capacity to, verify these manually before each release. [Griffe checks](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md) and [API rules enforcement](#ensuring-api-rules) are a very good starting point.
 
 ## Conventions
 
@@ -89,7 +89,7 @@ class ThisOtherClass:
 
 Here, even though `this_other_function` and `ThisOtherClass` are *not* prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
 
-Declaring `__all__` has another beneficial effect: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](../python-code/#avoid-wildcard-imports).
+Declaring `__all__` has another beneficial effect: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](https://mkdocstrings.github.io/griffe/guide/users/recommendations/python-code/#avoid-wildcard-imports).
 
 By declaring `__all__`, your public API becomes explicit, and explicit is better than implicit. But `__all__` only works for module-level objects. Within classes, you will still have to rely on the underscore prefix convention to mark methods or attributes as internal/private.
 
@@ -132,7 +132,7 @@ ______________________________________________________________________
 
 Our recommendation — Use the underscore prefix and `__all__` conventions.
 
-Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](../python-code/#avoid-wildcard-imports). We still provide the [`griffe-public-redundant-aliases`](https://mkdocstrings.github.io/griffe-public-redundant-aliases/) and [`griffe-public-wildcard-imports`](https://mkdocstrings.github.io/griffe-public-wildcard-imports/) extensions for those who would still like to rely on these conventions.
+Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](https://mkdocstrings.github.io/griffe/guide/users/recommendations/python-code/#avoid-wildcard-imports). We still provide the [`griffe-public-redundant-aliases`](https://mkdocstrings.github.io/griffe-public-redundant-aliases/) and [`griffe-public-wildcard-imports`](https://mkdocstrings.github.io/griffe-public-wildcard-imports/) extensions for those who would still like to rely on these conventions.
 
 Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
 
@@ -409,7 +409,7 @@ Absolutely avoid using `__name__` as logger name in private modules. If your mod
 
 ## Documentation
 
-Obviously, your public API should be documented. Each object should have a docstring that explains why the object is useful and how it is used. More on that in our [docstrings recommendations](../docstrings/). Docstrings work well for offline documentation; we recommend exposing your public API online too, for example with [MkDocs](https://www.mkdocs.org/) and [mkdocstrings' Python handler](https://mkdocstrings.github.io/python/), or with other SSGs (Static Site Generators). Prefer a tool that is able to create a [Sphinx-like](https://sphobjinv.readthedocs.io/en/stable/syntax.html) inventory of objects (an `objects.inv` file) that will allow other projects to easily cross-reference your API from their own documentation. Make sure each and every object of your public API is documented in your web docs and therefore added to the objects inventory (and maybe that nothing else is added to this inventory as "public API").
+Obviously, your public API should be documented. Each object should have a docstring that explains why the object is useful and how it is used. More on that in our [docstrings recommendations](https://mkdocstrings.github.io/griffe/guide/users/recommendations/docstrings/index.md). Docstrings work well for offline documentation; we recommend exposing your public API online too, for example with [MkDocs](https://www.mkdocs.org/) and [mkdocstrings' Python handler](https://mkdocstrings.github.io/python/), or with other SSGs (Static Site Generators). Prefer a tool that is able to create a [Sphinx-like](https://sphobjinv.readthedocs.io/en/stable/syntax.html) inventory of objects (an `objects.inv` file) that will allow other projects to easily cross-reference your API from their own documentation. Make sure each and every object of your public API is documented in your web docs and therefore added to the objects inventory (and maybe that nothing else is added to this inventory as "public API").
 
 Our recommendation — Document your public API extensively.
 
@@ -544,7 +544,7 @@ Our CLI framework of choice is [Cappa](https://pypi.org/project/cappa/).
 
 With time, the code base of your project evolves. You add features, you fix bugs, and you generally reorganize code. Some of these changes might make your project's public API incompatible with previous versions. In that case, you usually have to "deprecate" previous usage in favor of the new usage. That means you have to support both, and emit deprecation warnings when old usage is detected.
 
-There are many different ways of deprecating previous usage of code, which depend on the change itself. We invite you to read our [Checking APIs](../../checking/) chapter, which describes all the API changes Griffe is able to detect, and provides hints on how to allow deprecation periods for each kind of change.
+There are many different ways of deprecating previous usage of code, which depend on the change itself. We invite you to read our [Checking APIs](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md) chapter, which describes all the API changes Griffe is able to detect, and provides hints on how to allow deprecation periods for each kind of change.
 
 In addition to emitting deprecation warnings, you should also update the docstrings and documentation for the old usage to point at the new usage, add "deprecated" labels where possible, and mark objects as deprecated when possible.
 

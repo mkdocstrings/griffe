@@ -48,7 +48,7 @@ If you are unsure about how to fix or ignore a warning, just let the continuous 
 
 ## Breaking changes and deprecations
 
-Breaking changes should generally be avoided. If we decide to add a breaking change anyway, we should first allow a deprecation period. To deprecate parts of the API, check [Griffe's hints on how to deprecate things](../../users/checking/).
+Breaking changes should generally be avoided. If we decide to add a breaking change anyway, we should first allow a deprecation period. To deprecate parts of the API, check [Griffe's hints on how to deprecate things](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md).
 
 Use make check-api to check if there are any breaking changes. All of them should allow deprecation periods. Run this command again until no breaking changes are detected.
 
@@ -56,10 +56,10 @@ Deprecated code should also be marked as legacy code. We use [Yore](https://pawa
 
 Examples:
 
-Remove function when we bump to 2.0
+Remove function when we bump to 5.0
 
 ```
-# YORE: Bump 2: Remove block.
+# YORE: Bump 5: Remove block.
 def deprecated_function():
     ...
 ```
@@ -158,7 +158,7 @@ If this seems all too complicated, you can push or force-push each new commit, a
 
 Occasional or even regular contributors don't *have* to read this, but can anyway if they are interested in our release process.
 
-Once we are ready for a new release (a few bugfixes and/or features merged in the main branch), maintainers should update the changelog. If our [commit message convention](./#commit-message-convention) was properly followed, the changelog can be automatically updated from the messages in the Git history with make changelog. This task updates the changelog in place to add a new version entry.
+Once we are ready for a new release (a few bugfixes and/or features merged in the main branch), maintainers should update the changelog. If our [commit message convention](https://mkdocstrings.github.io/griffe/guide/contributors/workflow/#commit-message-convention) was properly followed, the changelog can be automatically updated from the messages in the Git history with make changelog. This task updates the changelog in place to add a new version entry.
 
 Once the changelog is updated, maintainers should review the new version entry, to:
 

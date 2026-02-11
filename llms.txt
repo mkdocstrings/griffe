@@ -42,7 +42,6 @@
 - [Expressions](https://mkdocstrings.github.io/griffe/reference/api/expressions/index.md)
 - [Extensions](https://mkdocstrings.github.io/griffe/reference/api/extensions/index.md)
 - [Finder](https://mkdocstrings.github.io/griffe/reference/api/finder/index.md)
-- [Git utilities](https://mkdocstrings.github.io/griffe/reference/api/git/index.md)
 - [Helpers](https://mkdocstrings.github.io/griffe/reference/api/helpers/index.md)
 - [Loaders](https://mkdocstrings.github.io/griffe/reference/api/loaders/index.md)
 - [Loggers](https://mkdocstrings.github.io/griffe/reference/api/loggers/index.md)

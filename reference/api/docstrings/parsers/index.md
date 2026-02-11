@@ -32,7 +32,7 @@ Returns:
 
 - `list[DocstringSection]` – A list of docstring sections.
 
-Source code in `src/griffe/_internal/docstrings/parsers.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/parsers.py`
 
 ```
 def parse(
@@ -69,7 +69,6 @@ parse_auto(
     | None = None,
     default: Parser | DocstringStyle | None = None,
     per_style_options: PerStyleOptions | None = None,
-    **options: Any,
 ) -> list[DocstringSection]
 ```
 
@@ -99,15 +98,11 @@ Parameters:
 
   (`PerStyleOptions | None`, default: `None` ) – Additional parsing options per style.
 
-- ### **`**options`**
-
-  (`Any`, default: `{}` ) – Deprecated. Use per_style_options instead.
-
 Returns:
 
 - `list[DocstringSection]` – A list of docstring sections.
 
-Source code in `src/griffe/_internal/docstrings/auto.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/auto.py`
 
 ```
 def parse_auto(
@@ -117,8 +112,6 @@ def parse_auto(
     style_order: list[Parser] | list[DocstringStyle] | None = None,
     default: Parser | DocstringStyle | None = None,
     per_style_options: PerStyleOptions | None = None,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a docstring by automatically detecting the style it uses.
 
@@ -131,21 +124,13 @@ def parse_auto(
         style_order: The order of the styles to try when inferring the parser.
         default: The default parser to use if the inference fails.
         per_style_options: Additional parsing options per style.
-        **options: Deprecated. Use `per_style_options` instead.
 
     Returns:
         A list of docstring sections.
     """
     from griffe._internal.docstrings.parsers import parse  # noqa: PLC0415
 
-    # YORE: Bump 2: Replace block with `per_style_options = per_style_options or {}`.
-    if options:
-        if per_style_options:
-            raise ValueError("Cannot use both `options` and `per_style_options`.")
-        warn("`**options` are deprecated. Use `per_style_options` instead.", DeprecationWarning, stacklevel=2)
-        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[assignment]
-    elif not per_style_options:
-        per_style_options = {}
+    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
 
     style, sections = infer_docstring_style(
         docstring,
@@ -155,7 +140,7 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # type: ignore[arg-type,typeddict-item,union-attr]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, possibly-missing-attribute]
     return sections
 ```
 
@@ -175,7 +160,6 @@ parse_google(
     warn_unknown_params: bool = True,
     warn_missing_types: bool = True,
     warnings: bool = True,
-    **options: Any,
 ) -> list[DocstringSection]
 ```
 
@@ -229,15 +213,11 @@ Parameters:
 
   (`bool`, default: `True` ) – Whether to log warnings at all.
 
-- ### **`**options`**
-
-  (`Any`, default: `{}` ) – Swallowing keyword arguments for backward-compatibility.
-
 Returns:
 
 - `list[DocstringSection]` – A list of docstring sections.
 
-Source code in `src/griffe/_internal/docstrings/google.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/google.py`
 
 ````
 def parse_google(
@@ -253,8 +233,6 @@ def parse_google(
     warn_unknown_params: bool = True,
     warn_missing_types: bool = True,
     warnings: bool = True,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Google-style docstring.
 
@@ -282,7 +260,6 @@ def parse_google(
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warn_missing_types: Warn about missing types/annotations for parameters, return values, etc.
         warnings: Whether to log warnings at all.
-        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.
@@ -292,10 +269,6 @@ def parse_google(
 
     in_code_block = False
     lines = docstring.lines
-
-    # YORE: Bump 2: Remove block.
-    if options:
-        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
 
     options = {
         "ignore_init_summary": ignore_init_summary,
@@ -378,7 +351,7 @@ def parse_google(
                         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                     current_section = []
                 reader = _section_reader[_section_kind[admonition_type.lower()]]
-                section, offset = reader(docstring, offset=offset + 1, **options)  # type: ignore[operator]
+                section, offset = reader(docstring, offset=offset + 1, **options)
                 if section:
                     section.title = title
                     sections.append(section)
@@ -437,7 +410,6 @@ parse_numpy(
     warn_unknown_params: bool = True,
     warn_missing_types: bool = True,
     warnings: bool = True,
-    **options: Any,
 ) -> list[DocstringSection]
 ```
 
@@ -471,15 +443,11 @@ Parameters:
 
   (`bool`, default: `True` ) – Whether to log warnings at all.
 
-- ### **`**options`**
-
-  (`Any`, default: `{}` ) – Swallowing keyword arguments for backward-compatibility.
-
 Returns:
 
 - `list[DocstringSection]` – A list of docstring sections.
 
-Source code in `src/griffe/_internal/docstrings/numpy.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/numpy.py`
 
 ````
 def parse_numpy(
@@ -490,8 +458,6 @@ def parse_numpy(
     warn_unknown_params: bool = True,
     warn_missing_types: bool = True,
     warnings: bool = True,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Numpydoc-style docstring.
 
@@ -505,7 +471,6 @@ def parse_numpy(
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warn_missing_types: Warn about missing types/annotations for parameters, return values, etc.
         warnings: Whether to log warnings at all.
-        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.
@@ -516,10 +481,6 @@ def parse_numpy(
 
     in_code_block = False
     lines = docstring.lines
-
-    # YORE: Bump 2: Remove block.
-    if options:
-        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
 
     options = {
         "trim_doctest_flags": trim_doctest_flags,
@@ -577,7 +538,7 @@ def parse_numpy(
             if line_lower in _section_kind:
                 admonition_title = ""
                 reader = _section_reader[_section_kind[line_lower]]
-                section, offset = reader(docstring, offset=offset + 2, **options)  # type: ignore[operator]
+                section, offset = reader(docstring, offset=offset + 2, **options)
                 if section:
                     sections.append(section)
 
@@ -606,7 +567,6 @@ parse_sphinx(
     *,
     warn_unknown_params: bool = True,
     warnings: bool = True,
-    **options: Any,
 ) -> list[DocstringSection]
 ```
 
@@ -626,15 +586,11 @@ Parameters:
 
   (`bool`, default: `True` ) – Whether to log warnings at all.
 
-- ### **`**options`**
-
-  (`Any`, default: `{}` ) – Swallowing keyword arguments for backward-compatibility.
-
 Returns:
 
 - `list[DocstringSection]` – A list of docstring sections.
 
-Source code in `src/griffe/_internal/docstrings/sphinx.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/sphinx.py`
 
 ```
 def parse_sphinx(
@@ -642,8 +598,6 @@ def parse_sphinx(
     *,
     warn_unknown_params: bool = True,
     warnings: bool = True,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
 
@@ -651,16 +605,11 @@ def parse_sphinx(
         docstring: The docstring to parse.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
         warnings: Whether to log warnings at all.
-        **options: Swallowing keyword arguments for backward-compatibility.
 
     Returns:
         A list of docstring sections.
     """
     parsed_values = _ParsedValues()
-
-    # YORE: Bump 2: Remove block.
-    if options:
-        warn("Passing additional options is deprecated, these options are ignored.", DeprecationWarning, stacklevel=2)
 
     options = {
         "warn_unknown_params": warn_unknown_params,
@@ -700,9 +649,12 @@ The supported docstring styles (literal values of the Parser enumeration).
 ## DocstringOptions
 
 ```
-DocstringOptions = Union[
-    GoogleOptions, NumpyOptions, SphinxOptions, AutoOptions
-]
+DocstringOptions = (
+    GoogleOptions
+    | NumpyOptions
+    | SphinxOptions
+    | AutoOptions
+)
 ```
 
 The options for each docstring style.
@@ -1041,7 +993,7 @@ Returns:
 
 - `str | Expr` – The string unchanged, or a new name or expression.
 
-Source code in `src/griffe/_internal/docstrings/utils.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/utils.py`
 
 ```
 def parse_docstring_annotation(
@@ -1065,10 +1017,10 @@ def parse_docstring_annotation(
         SyntaxError,  # Annotation contains syntax errors.
     ):
         code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-        if code.body:  # type: ignore[attr-defined]
+        if code.body:  # ty:ignore[unresolved-attribute]
             name_or_expr = safe_get_annotation(
-                code.body,  # type: ignore[attr-defined]
-                parent=docstring.parent,  # type: ignore[arg-type]
+                code.body,  # ty:ignore[unresolved-attribute]
+                parent=docstring.parent,
                 log_level=log_level,
             )
             return name_or_expr or annotation
@@ -1108,7 +1060,7 @@ Returns:
 
 - `None` – A function used to log parsing warnings if name was passed, else none.
 
-Source code in `src/griffe/_internal/docstrings/utils.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/utils.py`
 
 ```
 def docstring_warning(
@@ -1132,11 +1084,11 @@ def docstring_warning(
 
     def warn(docstring: Docstring, offset: int, message: str, log_level: LogLevel = LogLevel.warning) -> None:
         try:
-            prefix = docstring.parent.relative_filepath  # type: ignore[union-attr]
+            prefix = docstring.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
         except (AttributeError, ValueError):
             prefix = "<module>"
         except BuiltinModuleError:
-            prefix = f"<module: {docstring.parent.module.name}>"  # type: ignore[union-attr]
+            prefix = f"<module: {docstring.parent.module.name}>"  # ty:ignore[possibly-missing-attribute]
         log = getattr(logger, log_level.value)
         log(f"{prefix}:{(docstring.lineno or 0) + offset}: {message}")
 
@@ -1165,7 +1117,6 @@ infer_docstring_style(
     | None = None,
     default: Parser | DocstringStyle | None = None,
     per_style_options: PerStyleOptions | None = None,
-    **options: Any,
 ) -> tuple[Parser | None, list[DocstringSection] | None]
 ```
 
@@ -1199,15 +1150,11 @@ Parameters:
 
   (`PerStyleOptions | None`, default: `None` ) – Additional parsing options per style.
 
-- ### **`**options`**
-
-  (`Any`, default: `{}` ) – Deprecated. Use per_style_options instead.
-
 Returns:
 
 - `tuple[Parser | None, list[DocstringSection] | None]` – The inferred parser, and optionally parsed sections (when method is 'max_sections').
 
-Source code in `src/griffe/_internal/docstrings/auto.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/auto.py`
 
 ```
 def infer_docstring_style(
@@ -1217,8 +1164,6 @@ def infer_docstring_style(
     style_order: list[Parser] | list[DocstringStyle] | None = None,
     default: Parser | DocstringStyle | None = None,
     per_style_options: PerStyleOptions | None = None,
-    # YORE: Bump 2: Remove line.
-    **options: Any,
 ) -> tuple[Parser | None, list[DocstringSection] | None]:
     """Infer the parser to use for the docstring.
 
@@ -1238,21 +1183,13 @@ def infer_docstring_style(
         style_order: The order of the styles to try when inferring the parser.
         default: The default parser to use if the inference fails.
         per_style_options: Additional parsing options per style.
-        **options: Deprecated. Use `per_style_options` instead.
 
     Returns:
         The inferred parser, and optionally parsed sections (when method is 'max_sections').
     """
     from griffe._internal.docstrings.parsers import parsers  # noqa: PLC0415
 
-    # YORE: Bump 2: Replace block with `per_style_options = per_style_options or {}`.
-    if options:
-        if per_style_options:
-            raise ValueError("Cannot use both `options` and `per_style_options`.")
-        warn("`**options` is deprecated. Use `per_style_options` instead.", DeprecationWarning, stacklevel=2)
-        per_style_options = {"google": options, "numpy": options, "sphinx": options}  # type: ignore[assignment]
-    elif not per_style_options:
-        per_style_options = {}
+    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
 
     style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
 
@@ -1269,7 +1206,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # type: ignore[arg-type,union-attr]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[possibly-missing-attribute]
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:

@@ -12,4 +12,4 @@ This extension replaces docstrings of inherited methods with cross-references to
 
 whereas the docstring of `bar.Parent.do_something` will be unaffected.
 
-This is contrast to the official [`inherited-docstrings`](../../official/inherited-docstrings/) extension which simply attaches the docstring of the parent method to the subclass method, which means that modifying the subclass method docstring also modifies the parent method docstring (it's the same object).
+This is contrast to the official [`inherited-docstrings`](https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/index.md) extension which simply attaches the docstring of the parent method to the subclass method, which means that modifying the subclass method docstring also modifies the parent method docstring (it's the same object).

@@ -34,6 +34,42 @@ uv add griffe
 
 [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
+## Install as a library only
+
+If you only need the library for API introspection and analysis without the CLI tool, you can install `griffelib`:
+
+```
+pip install griffelib
+```
+
+[pip](https://pip.pypa.io/en/stable/) is the main package installer for Python.
+
+```
+pdm add griffelib
+```
+
+[PDM](https://pdm-project.org/en/latest/) is an all-in-one solution for Python project management.
+
+```
+poetry add griffelib
+```
+
+[Poetry](https://python-poetry.org/) is an all-in-one solution for Python project management.
+
+```
+rye add griffelib
+```
+
+[Rye](https://rye.astral.sh/) is an all-in-one solution for Python project management, written in Rust.
+
+```
+uv add griffelib
+```
+
+[uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
+
+This installs the `griffe` package as usual, but without the CLI program and its dependencies.
+
 ## Install as a tool only
 
 ```
@@ -59,3 +95,17 @@ uv tool install griffe
 ```
 
 [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
+
+## Running Griffe
+
+Once installed, you can run Griffe using the `griffe` command:
+
+```
+$ griffe check mypackage
+```
+
+Or as a Python module:
+
+```
+$ python -m griffe check mypackage
+```

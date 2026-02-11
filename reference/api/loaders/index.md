@@ -127,7 +127,7 @@ Returns:
 
 - `Object | Alias` – A Griffe object.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ````
 def load(
@@ -344,7 +344,7 @@ Returns:
 
 - `Object | Alias` – A Griffe object.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ````
 def load_git(
@@ -524,7 +524,7 @@ Parameters:
 
   (`bool`, default: `False` ) – When false, only try to resolve an alias if it is explicitly exported.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def load_pypi(
@@ -729,7 +729,7 @@ Attributes:
 - **`modules_collection`** (`ModulesCollection`) – Collection of modules.
 - **`store_source`** (`bool`) – Whether to store source code in the lines collection.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def __init__(
@@ -892,7 +892,7 @@ Parameters:
 
   (`set | None`, default: `None` ) – Used to avoid infinite recursion.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def expand_exports(self, module: Module, seen: set | None = None) -> None:
@@ -966,7 +966,7 @@ Parameters:
 
   (`set | None`, default: `None` ) – Used to avoid infinite recursion.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def expand_wildcards(
@@ -994,8 +994,8 @@ def expand_wildcards(
     # while also keeping track of the members representing wildcard import, to remove them later.
     for member in obj.members.values():
         # Handle a wildcard.
-        if member.is_alias and member.wildcard:  # type: ignore[union-attr]
-            package = member.wildcard.split(".", 1)[0]  # type: ignore[union-attr]
+        if member.is_alias and member.wildcard:  # ty:ignore[possibly-missing-attribute]
+            package = member.wildcard.split(".", 1)[0]  # ty:ignore[possibly-missing-attribute]
             not_loaded = obj.package.path != package and package not in self.modules_collection
 
             # Try loading the (unknown) package containing the wildcard importe module (if allowed to).
@@ -1010,7 +1010,7 @@ def expand_wildcards(
 
             # Try getting the module from which every public object is imported.
             try:
-                target = self.modules_collection.get_member(member.target_path)  # type: ignore[union-attr]
+                target = self.modules_collection.get_member(member.target_path)  # ty:ignore[possibly-missing-attribute]
             except KeyError:
                 logger.debug(
                     "Could not expand wildcard import %s in %s: %s not found in modules collection",
@@ -1029,12 +1029,12 @@ def expand_wildcards(
                     continue
 
             # Collect every imported object.
-            expanded.extend(self._expand_wildcard(member))  # type: ignore[arg-type]
+            expanded.extend(self._expand_wildcard(member))  # ty:ignore[invalid-argument-type]
             to_remove.append(member.name)
 
         # Recurse in unseen submodules.
         elif not member.is_alias and member.is_module and member.path not in seen:
-            self.expand_wildcards(member, external=external, seen=seen)  # type: ignore[arg-type]
+            self.expand_wildcards(member, external=external, seen=seen)  # ty:ignore[invalid-argument-type]
 
     # Then we remove the members representing wildcard imports.
     for name in to_remove:
@@ -1054,7 +1054,7 @@ def expand_wildcards(
         if already_present:
             old_member = obj.get_member(new_member.name)
             old_lineno = old_member.alias_lineno if old_member.is_alias else old_member.lineno
-            overwrite = alias_lineno > (old_lineno or 0)  # type: ignore[operator]
+            overwrite = alias_lineno > (old_lineno or 0)
 
         # 1. If the expanded member is an alias with a target path equal to its own path, we stop.
         #    This situation can arise because of Griffe's mishandling of (abusive) wildcard imports.
@@ -1068,7 +1068,7 @@ def expand_wildcards(
                 new_member,
                 lineno=alias_lineno,
                 endlineno=alias_endlineno,
-                parent=obj,  # type: ignore[arg-type]
+                parent=obj,  # ty:ignore[invalid-argument-type]
                 wildcard_imported=True,
             )
             # Special case: we avoid overwriting a submodule with an alias.
@@ -1084,8 +1084,6 @@ def expand_wildcards(
 
             # Everything went right (supposedly), we add the alias as a member of the current object.
             obj.set_member(new_member.name, alias)
-            # YORE: Bump 2: Remove line.
-            self.extensions.call("on_wildcard_expansion", alias=alias, loader=self)
 ```
 
 ### load
@@ -1139,7 +1137,7 @@ Returns:
 
 - `Object | Alias` – A Griffe object.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def load(
@@ -1187,7 +1185,7 @@ def load(
     logger.debug("Searching path(s) for %s", objspec)
     try:
         obj_path, package = self.finder.find_spec(
-            objspec,  # type: ignore[arg-type]
+            objspec,  # ty:ignore[invalid-argument-type]
             try_relative_path=try_relative_path,
             find_stubs_package=find_stubs_package,
         )
@@ -1266,7 +1264,7 @@ Returns:
 
 - `tuple[set[str], int]` – The unresolved aliases and the number of iterations done.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def resolve_aliases(
@@ -1287,7 +1285,7 @@ def resolve_aliases(
         The unresolved aliases and the number of iterations done.
     """
     if max_iterations is None:
-        max_iterations = float("inf")  # type: ignore[assignment]
+        max_iterations = float("inf")  # ty:ignore[invalid-assignment]
     prev_unresolved: set[str] = set()
     unresolved: set[str] = set("0")  # Init to enter loop.
     iteration = 0
@@ -1302,7 +1300,7 @@ def resolve_aliases(
         self.expand_wildcards(wildcards_module, external=external)
 
     load_failures: set[str] = set()
-    while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # type: ignore[operator]
+    while unresolved and unresolved != prev_unresolved and iteration < max_iterations:  # ty:ignore[unsupported-operator]
         prev_unresolved = unresolved - {"0"}
         unresolved = set()
         resolved: set[str] = set()
@@ -1367,7 +1365,7 @@ Returns:
 
 - `tuple[set[str], set[str]]` – Both sets of resolved and unresolved aliases.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def resolve_module_aliases(
@@ -1401,7 +1399,7 @@ def resolve_module_aliases(
     for member in obj.members.values():
         # Handle aliases.
         if member.is_alias:
-            if member.wildcard or member.resolved:  # type: ignore[union-attr]
+            if member.wildcard or member.resolved:  # ty:ignore[possibly-missing-attribute]
                 continue
             if not implicit and not member.is_exported:
                 continue
@@ -1410,7 +1408,7 @@ def resolve_module_aliases(
             # from an external package, and decide if we should load that package
             # to allow the alias to be resolved at the next iteration (maybe).
             try:
-                member.resolve_target()  # type: ignore[union-attr]
+                member.resolve_target()  # ty:ignore[possibly-missing-attribute]
             except AliasResolutionError as error:
                 target = error.alias.target_path
                 unresolved.add(member.path)
@@ -1431,7 +1429,7 @@ def resolve_module_aliases(
             except CyclicAliasError as error:
                 logger.debug(str(error))
             else:
-                logger.debug("Alias %s was resolved to %s", member.path, member.final_target.path)  # type: ignore[union-attr]
+                logger.debug("Alias %s was resolved to %s", member.path, member.final_target.path)  # ty:ignore[possibly-missing-attribute]
                 resolved.add(member.path)
 
         # Recurse into unseen modules and classes.
@@ -1461,7 +1459,7 @@ Returns:
 
 - `Stats` – Some statistics.
 
-Source code in `src/griffe/_internal/loader.py`
+Source code in `packages/griffelib/src/griffe/_internal/loader.py`
 
 ```
 def stats(self) -> Stats:
@@ -1526,7 +1524,7 @@ Attributes:
 - **`is_collection`** – Marked as collection to distinguish from objects.
 - **`members`** (`dict[str, Module]`) – Members (modules) of the collection.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __init__(self) -> None:
@@ -1569,7 +1567,7 @@ __bool__() -> bool
 
 A modules collection is always true-ish.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1585,7 +1583,7 @@ __contains__(item: Any) -> bool
 
 Check if a module is in the collection.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __contains__(self, item: Any) -> bool:
@@ -1619,7 +1617,7 @@ Examples:
 >>> del griffe_object[("path", "to", "qux")]
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def __delitem__(self, key: str | Sequence[str]) -> None:
@@ -1643,11 +1641,11 @@ def __delitem__(self, key: str | Sequence[str]) -> None:
     if len(parts) == 1:
         name = parts[0]
         try:
-            del self.members[name]  # type: ignore[attr-defined]
+            del self.members[name]  # ty:ignore[unresolved-attribute]
         except KeyError:
-            del self.inherited_members[name]  # type: ignore[attr-defined]
+            del self.inherited_members[name]  # ty:ignore[unresolved-attribute]
     else:
-        del self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+        del self.all_members[parts[0]][parts[1:]]  # ty:ignore[unresolved-attribute]
 ```
 
 ### __getitem__
@@ -1676,7 +1674,7 @@ Examples:
 >>> qux = griffe_object[("path", "to", "qux")]
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def __getitem__(self, key: str | Sequence[str]) -> Any:
@@ -1698,8 +1696,8 @@ def __getitem__(self, key: str | Sequence[str]) -> Any:
     """
     parts = _get_parts(key)
     if len(parts) == 1:
-        return self.all_members[parts[0]]  # type: ignore[attr-defined]
-    return self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+        return self.all_members[parts[0]]  # ty:ignore[unresolved-attribute]
+    return self.all_members[parts[0]][parts[1:]]  # ty:ignore[unresolved-attribute]
 ```
 
 ### __setitem__
@@ -1732,7 +1730,7 @@ Examples:
 >>> griffe_object[("path", "to", "qux")] = qux
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
@@ -1753,13 +1751,13 @@ def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
     parts = _get_parts(key)
     if len(parts) == 1:
         name = parts[0]
-        self.members[name] = value  # type: ignore[attr-defined]
-        if self.is_collection:  # type: ignore[attr-defined]
-            value._modules_collection = self  # type: ignore[union-attr]
+        self.members[name] = value  # ty:ignore[unresolved-attribute]
+        if self.is_collection:  # ty:ignore[unresolved-attribute]
+            value._modules_collection = self  # ty:ignore[invalid-assignment]
         else:
-            value.parent = self  # type: ignore[assignment]
+            value.parent = self  # ty:ignore[invalid-assignment]
     else:
-        self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
+        self.members[parts[0]][parts[1:]] = value  # ty:ignore[unresolved-attribute]
 ```
 
 ### del_member
@@ -1788,7 +1786,7 @@ Examples:
 >>> griffe_object.del_member(("path", "to", "qux"))
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def del_member(self, key: str | Sequence[str]) -> None:
@@ -1811,9 +1809,9 @@ def del_member(self, key: str | Sequence[str]) -> None:
     parts = _get_parts(key)
     if len(parts) == 1:
         name = parts[0]
-        del self.members[name]  # type: ignore[attr-defined]
+        del self.members[name]  # ty:ignore[unresolved-attribute]
     else:
-        self.members[parts[0]].del_member(parts[1:])  # type: ignore[attr-defined]
+        self.members[parts[0]].del_member(parts[1:])  # ty:ignore[unresolved-attribute]
 ```
 
 ### get_member
@@ -1842,7 +1840,7 @@ Examples:
 >>> bar = griffe_object[("path", "to", "bar")]
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def get_member(self, key: str | Sequence[str]) -> Any:
@@ -1864,8 +1862,8 @@ def get_member(self, key: str | Sequence[str]) -> Any:
     """
     parts = _get_parts(key)
     if len(parts) == 1:
-        return self.members[parts[0]]  # type: ignore[attr-defined]
-    return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
+        return self.members[parts[0]]  # ty:ignore[unresolved-attribute]
+    return self.members[parts[0]].get_member(parts[1:])  # ty:ignore[unresolved-attribute]
 ```
 
 ### set_member
@@ -1898,7 +1896,7 @@ Examples:
 >>> griffe_object.set_member(("path", "to", "qux"), qux)
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
@@ -1920,8 +1918,8 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
     parts = _get_parts(key)
     if len(parts) == 1:
         name = parts[0]
-        if name in self.members:  # type: ignore[attr-defined]
-            member = self.members[name]  # type: ignore[attr-defined]
+        if name in self.members:  # ty:ignore[unresolved-attribute]
+            member = self.members[name]  # ty:ignore[unresolved-attribute]
             if not member.is_alias:
                 # When reassigning a module to an existing one,
                 # try to merge them as one regular and one stubs module
@@ -1932,17 +1930,17 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # type: ignore[arg-type]
+                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value
-        self.members[name] = value  # type: ignore[attr-defined]
-        if self.is_collection:  # type: ignore[attr-defined]
-            value._modules_collection = self  # type: ignore[union-attr]
+        self.members[name] = value  # ty:ignore[unresolved-attribute]
+        if self.is_collection:  # ty:ignore[unresolved-attribute]
+            value._modules_collection = self  # ty:ignore[invalid-assignment]
         else:
-            value.parent = self  # type: ignore[assignment]
+            value.parent = self  # ty:ignore[invalid-assignment]
     else:
-        self.members[parts[0]].set_member(parts[1:], value)  # type: ignore[attr-defined]
+        self.members[parts[0]].set_member(parts[1:], value)  # ty:ignore[unresolved-attribute]
 ```
 
 ## LinesCollection
@@ -1965,7 +1963,7 @@ Methods:
 - **`keys`** – Return the collection keys.
 - **`values`** – Return the collection values.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __init__(self) -> None:
@@ -1981,7 +1979,7 @@ __bool__() -> bool
 
 A lines collection is always true-ish.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1997,7 +1995,7 @@ __contains__(item: Path) -> bool
 
 Check if a file path is in the collection.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __contains__(self, item: Path) -> bool:
@@ -2013,7 +2011,7 @@ __getitem__(key: Path) -> list[str]
 
 Get the lines of a file path.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __getitem__(self, key: Path) -> list[str]:
@@ -2029,7 +2027,7 @@ __setitem__(key: Path, value: list[str]) -> None
 
 Set the lines of a file path.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def __setitem__(self, key: Path, value: list[str]) -> None:
@@ -2049,7 +2047,7 @@ Returns:
 
 - `ItemsView` – The collection items.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def items(self) -> ItemsView:
@@ -2073,7 +2071,7 @@ Returns:
 
 - `KeysView` – The collection keys.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def keys(self) -> KeysView:
@@ -2097,7 +2095,7 @@ Returns:
 
 - `ValuesView` – The collection values.
 
-Source code in `src/griffe/_internal/collections.py`
+Source code in `packages/griffelib/src/griffe/_internal/collections.py`
 
 ```
 def values(self) -> ValuesView:
@@ -2140,7 +2138,7 @@ Attributes:
 - **`time_spent_serializing`** – Time spent serializing objects.
 - **`time_spent_visiting`** – Time spent visiting modules.
 
-Source code in `src/griffe/_internal/stats.py`
+Source code in `packages/griffelib/src/griffe/_internal/stats.py`
 
 ```
 def __init__(self, loader: GriffeLoader) -> None:
@@ -2280,7 +2278,7 @@ Returns:
 
 - `str` – Text stats.
 
-Source code in `src/griffe/_internal/stats.py`
+Source code in `packages/griffelib/src/griffe/_internal/stats.py`
 
 ```
 def as_text(self) -> str:
@@ -2386,7 +2384,7 @@ Returns:
 
 - `Module` – The regular module.
 
-Source code in `src/griffe/_internal/merger.py`
+Source code in `packages/griffelib/src/griffe/_internal/merger.py`
 
 ```
 def merge_stubs(mod1: Module, mod2: Module) -> Module:
@@ -2403,10 +2401,10 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
         The regular module.
     """
     logger.debug("Trying to merge %s and %s", mod1.filepath, mod2.filepath)
-    if mod1.filepath.suffix == ".pyi":  # type: ignore[union-attr]
+    if mod1.filepath.suffix == ".pyi":  # ty:ignore[possibly-missing-attribute]
         stubs = mod1
         module = mod2
-    elif mod2.filepath.suffix == ".pyi":  # type: ignore[union-attr]
+    elif mod2.filepath.suffix == ".pyi":  # ty:ignore[possibly-missing-attribute]
         stubs = mod2
         module = mod1
     else:

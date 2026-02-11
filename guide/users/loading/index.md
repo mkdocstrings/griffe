@@ -26,7 +26,7 @@ Griffe will load the whole package anyway, but return the specified object direc
 my_method = my_package["MyClass.my_method"]
 ```
 
-The [Navigating](../navigating/) topic will show you all the ways Griffe objects can be navigated.
+The [Navigating](https://mkdocstrings.github.io/griffe/guide/users/navigating/index.md) topic will show you all the ways Griffe objects can be navigated.
 
 Finally, you can even load packages or modules by passing absolute or relative file paths. This is useful when the module or package is not installed within the current Python environment and therefore cannot be found in the default search paths (see [Search paths](#search-paths) below).
 
@@ -110,9 +110,9 @@ Forcing inspection can be useful when your code is highly dynamic, and static an
 - dynamic analysis will potentially consume more resources (CPU, RAM) since it executes code
 - dynamic analysis will sometimes give you less precise or incomplete information
 - it's possible to write Griffe extensions that will *statically handle* the highly dynamic parts of your code (like custom decorators) that Griffe doesn't understand by default
-- if really needed, it's possible to [handle only a subset of objects with dynamic analysis](../how-to/selectively-inspect/), while the rest is loaded with static analysis, again thanks to Griffe extensions
+- if really needed, it's possible to [handle only a subset of objects with dynamic analysis](https://mkdocstrings.github.io/griffe/guide/users/how-to/selectively-inspect/index.md), while the rest is loaded with static analysis, again thanks to Griffe extensions
 
-The [Extending](../extending/) topic will explain how to write and use extensions for Griffe.
+The [Extending](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md) topic will explain how to write and use extensions for Griffe.
 
 ## Disallowing dynamic analysis
 
@@ -187,7 +187,7 @@ my_package["my_function"].resolved  # True
 my_package["my_function"].target is my_package["my_module.my_function"]  # True
 ```
 
-The [Navigating](../navigating/) topic will tell you more about aliases and how they behave.
+The [Navigating](https://mkdocstrings.github.io/griffe/guide/users/navigating/index.md) topic will tell you more about aliases and how they behave.
 
 ### Modules collection
 
@@ -228,7 +228,7 @@ Traceback (most recent call last):
     resolved = self.modules_collection.get_member(self.target_path)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "griffe/_internal/mixins.py", line 84, in get_member
-    return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
+    return self.members[parts[0]].get_member(parts[1:])
            ~~~~~~~~~~~~^^^^^^^^^^
 KeyError: 'package1'
 
@@ -361,8 +361,8 @@ You can globally change how Griffe obtains the source information with the follo
 - `GRIFFE_GIT_SERVICE`: Griffe infers the service by looking at the remote URL. If the remote URL contains a known service name, Griffe will use it as service. You can otherwise explicitly set the service using this environment variable. Example: `GRIFFE_GIT_SERVICE=codeberg`.
 - `GRIFFE_GIT_COMMIT_HASH`: Griffe gets the commit hash by running a Git command. If you prefer using another commit hash, you can set it using this environment variable. Example: `GRIFFE_GIT_COMMIT_HASH=77f928aeab857cb45564462a4f849c2df2cca99a`.
 
-For more complex cases, see [How to programmatically set the correct Git information or source link on objects](../how-to/set-git-info/).
+For more complex cases, see [How to programmatically set the correct Git information or source link on objects](https://mkdocstrings.github.io/griffe/guide/users/how-to/set-git-info/index.md).
 
 ## Next steps
 
-Now that the API is loaded, you can start [navigating it](../navigating/), [serializing it](../serializing/) or [checking for API breaking changes](../checking/). If you find out that the API data is incorrect or incomplete, you might want to learn how to [extend it](../extending/).
+Now that the API is loaded, you can start [navigating it](https://mkdocstrings.github.io/griffe/guide/users/navigating/index.md), [serializing it](https://mkdocstrings.github.io/griffe/guide/users/serializing/index.md) or [checking for API breaking changes](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md). If you find out that the API data is incorrect or incomplete, you might want to learn how to [extend it](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md).

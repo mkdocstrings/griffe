@@ -61,7 +61,7 @@ Attributes:
 - **`source`** (`str`) – The original, uncleaned value of the docstring as written in the source.
 - **`value`** (`str`) – The original value of the docstring, cleaned by inspect.cleandoc.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def __init__(
@@ -234,7 +234,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def as_dict(
@@ -289,7 +289,7 @@ Returns:
 
 - `list[DocstringSection]` – The parsed docstring as a list of sections.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def parse(
@@ -530,7 +530,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`str`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: str, title: str | None = None) -> None:
@@ -576,7 +576,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -602,7 +602,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -671,7 +671,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringParameter]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringParameter], title: str | None = None) -> None:
@@ -717,7 +717,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -743,7 +743,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -816,7 +816,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringParameter]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringParameter], title: str | None = None) -> None:
@@ -862,7 +862,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -888,7 +888,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -957,7 +957,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringTypeParameter]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringTypeParameter], title: str | None = None) -> None:
@@ -1003,7 +1003,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1029,7 +1029,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1097,7 +1097,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringRaise]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringRaise], title: str | None = None) -> None:
@@ -1143,7 +1143,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1169,7 +1169,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1237,7 +1237,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringWarn]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringWarn], title: str | None = None) -> None:
@@ -1283,7 +1283,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1309,7 +1309,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1377,7 +1377,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringReturn]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringReturn], title: str | None = None) -> None:
@@ -1423,7 +1423,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1449,7 +1449,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1517,7 +1517,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringYield]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringYield], title: str | None = None) -> None:
@@ -1563,7 +1563,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1589,7 +1589,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1657,7 +1657,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringReceive]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringReceive], title: str | None = None) -> None:
@@ -1703,7 +1703,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1729,7 +1729,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1798,7 +1798,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[tuple[Literal[text, examples], str]]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -1848,7 +1848,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -1874,7 +1874,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1943,7 +1943,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringAttribute]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringAttribute], title: str | None = None) -> None:
@@ -1989,7 +1989,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2015,7 +2015,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2083,7 +2083,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringFunction]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringFunction], title: str | None = None) -> None:
@@ -2129,7 +2129,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2155,7 +2155,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2223,7 +2223,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringClass]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringClass], title: str | None = None) -> None:
@@ -2269,7 +2269,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2295,7 +2295,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2364,7 +2364,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringTypeAlias]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringTypeAlias], title: str | None = None) -> None:
@@ -2410,7 +2410,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2436,7 +2436,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2504,7 +2504,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`list[DocstringModule]`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, value: list[DocstringModule], title: str | None = None) -> None:
@@ -2550,7 +2550,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2576,7 +2576,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2648,7 +2648,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`DocstringDeprecated`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, version: str, text: str, title: str | None = None) -> None:
@@ -2697,7 +2697,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2723,7 +2723,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2795,7 +2795,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`DocstringAdmonition`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, kind: str, text: str, title: str | None = None) -> None:
@@ -2844,7 +2844,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -2870,7 +2870,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -2942,7 +2942,7 @@ Attributes:
 - **`description`** (`str`) – The element description.
 - **`kind`** (`str | Expr | None`) – The kind of this admonition.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
@@ -3008,7 +3008,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -3073,7 +3073,7 @@ Attributes:
 - **`description`** (`str`) – The element description.
 - **`version`** (`str`) – The version of this deprecation.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
@@ -3131,7 +3131,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -3195,7 +3195,7 @@ Attributes:
 - **`annotation`** (`str | Expr | None`) – The element annotation.
 - **`description`** (`str`) – The element description.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
@@ -3245,7 +3245,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -3309,7 +3309,7 @@ Attributes:
 - **`annotation`** (`str | Expr | None`) – The element annotation.
 - **`description`** (`str`) – The element description.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
@@ -3359,7 +3359,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -3439,7 +3439,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -3515,7 +3515,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3595,7 +3595,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -3671,7 +3671,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3751,7 +3751,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -3827,7 +3827,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -3908,7 +3908,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -3992,7 +3992,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4075,7 +4075,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -4175,7 +4175,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4255,7 +4255,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -4331,7 +4331,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4412,7 +4412,7 @@ Attributes:
 - **`signature`** (`str | Expr | None`) – The function signature.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -4496,7 +4496,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4577,7 +4577,7 @@ Attributes:
 - **`signature`** (`str | Expr | None`) – The class signature.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -4661,7 +4661,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4741,7 +4741,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -4817,7 +4817,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -4897,7 +4897,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -4973,7 +4973,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -5024,7 +5024,7 @@ Attributes:
 - **`annotation`** (`str | Expr | None`) – The element annotation.
 - **`description`** (`str`) – The element description.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, *, description: str, annotation: str | Expr | None = None) -> None:
@@ -5074,7 +5074,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
@@ -5150,7 +5150,7 @@ Attributes:
 - **`name`** (`str`) – The element name.
 - **`value`** (`str | Expr | None`) – The element value, if any
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(
@@ -5226,7 +5226,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -5269,7 +5269,7 @@ Attributes:
 - **`title`** (`str | None`) – The section title.
 - **`value`** (`Any`) – The section value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __init__(self, title: str | None = None) -> None:
@@ -5316,7 +5316,7 @@ __bool__() -> bool
 
 Whether this section has a true-ish value.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -5342,7 +5342,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/docstrings/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/docstrings/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:

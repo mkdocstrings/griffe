@@ -847,4 +847,4 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 
 ## Next steps
 
-If you are using a third-party library to mark objects as public, or if you follow conventions different than the one Griffe understands, you might get false-positives, or breaking changes could go undetected. In that case, you might be interested in [extending](../extending/) how Griffe loads API data to support these third-party libraries or other conventions.
+If you are using a third-party library to mark objects as public, or if you follow conventions different than the one Griffe understands, you might get false-positives, or breaking changes could go undetected. In that case, you might be interested in [extending](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md) how Griffe loads API data to support these third-party libraries or other conventions.

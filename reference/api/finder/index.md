@@ -35,7 +35,7 @@ Attributes:
 - **`extensions_set`** (`set[str]`) – Set of extensions supported by the finder.
 - **`search_paths`** (`list[Path]`) – The finder search paths.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def __init__(self, search_paths: Sequence[str | Path] | None = None) -> None:
@@ -105,7 +105,7 @@ Parameters:
 
   (`Path`) – The path to append.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def append_search_path(self, path: Path) -> None:
@@ -144,7 +144,7 @@ Returns:
 
 - `Package | NamespacePackage` – A package or namespace package wrapper.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def find_package(self, module_name: str) -> Package | NamespacePackage:
@@ -233,7 +233,7 @@ Returns:
 
 - `tuple[str, Package | NamespacePackage]` – The name of the module, and an instance representing its (namespace) package.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def find_spec(
@@ -317,7 +317,7 @@ def find_spec(
         return module_name, package
 
     # Return either one.
-    return module_name, package or stubs  # type: ignore[return-value]
+    return module_name, package or stubs  # ty:ignore[invalid-return-type]
 ```
 
 ### insert_search_path
@@ -340,7 +340,7 @@ Parameters:
 
   (`Path`) – The path to insert.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def insert_search_path(self, position: int, path: Path) -> None:
@@ -383,7 +383,7 @@ Yields:
 - **`name_parts`** ( `tuple[str, ...]` ) – The parts of a submodule name.
 - **`filepath`** ( `Path` ) – A submodule filepath.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def iter_submodules(
@@ -471,7 +471,7 @@ Returns:
 
 - `list[NamePartsAndPathType]` – A list of tuples containing the parts of the submodule name and its path.
 
-Source code in `src/griffe/_internal/finder.py`
+Source code in `packages/griffelib/src/griffe/_internal/finder.py`
 
 ```
 def submodules(self, module: Module) -> list[NamePartsAndPathType]:

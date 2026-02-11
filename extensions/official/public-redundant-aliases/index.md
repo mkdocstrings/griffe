@@ -7,4 +7,4 @@
 
 ______________________________________________________________________
 
-This extension marks every object that was imported with a redundant alias as public. See our documentation on the [redundant aliases convention](../../../guide/users/recommendations/public-apis/#redundant-aliases).
+This extension marks every object that was imported with a redundant alias as public. See our documentation on the [redundant aliases convention](https://mkdocstrings.github.io/griffe/guide/users/recommendations/public-apis/#redundant-aliases).

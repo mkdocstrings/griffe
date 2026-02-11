@@ -69,4 +69,4 @@ The setup command will install all the Python dependencies required to work on t
 
 ## IDE setup
 
-If you work in VSCode, we provide [a command to configure VSCode](../commands/#vscode) for the project.
+If you work in VSCode, we provide [a command to configure VSCode](https://mkdocstrings.github.io/griffe/guide/contributors/commands/#vscode) for the project.

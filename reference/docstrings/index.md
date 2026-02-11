@@ -476,6 +476,15 @@ Warnings names are resolved using the function's scope.
 
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
 
+Warnings section are not Warning admonitions!
+
+To create a warning admonition/callout, use the singular form:
+
+```
+Warning:
+    This is a warning.
+```
+
 #### Yields
 
 - Multiple items allowed

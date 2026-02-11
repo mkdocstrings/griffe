@@ -1,6 +1,6 @@
 # Docstrings
 
-Here are explanations on what docstrings are, and a few recommendations on how to write them. This guide uses the [Google-style](../../../../reference/docstrings/#google-style), because that is our preferred and recommended style, but you can also use any other supported style. Skip to the [Styles](#styles) section to learn about the existing docstring styles. We invite you to read their own style guides as they are full of examples and good advice.
+Here are explanations on what docstrings are, and a few recommendations on how to write them. This guide uses the [Google-style](https://mkdocstrings.github.io/griffe/reference/docstrings/#google-style), because that is our preferred and recommended style, but you can also use any other supported style. Skip to the [Styles](#styles) section to learn about the existing docstring styles. We invite you to read their own style guides as they are full of examples and good advice.
 
 ## Definition
 
@@ -60,7 +60,7 @@ Docstrings can be written for modules, classes, functions, attributes, and type 
 
 To compensate for the lack of structure in natural languages, docstring "styles" emerged. A docstring style is a micro-format for docstrings, allowing to structure the information by following a specific format. With the most popular Google and Numpydoc styles, information in docstrings is decomposed into **sections** of different kinds, for example "parameter" sections or "return" sections. Some kinds of section then support documenting multiple items, or support a single block of markup. For example, we can document multiple parameters in "parameter" sections, but a "note" section is only composed of a text block.
 
-Structuring the information in sections and items allows documentation-related tools to extract and provide this information in a structured way, by parsing the docstrings according to the style they follow. Griffe has parsers for [Google-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings), [Numpydoc-style](https://numpydoc.readthedocs.io/en/latest/format.html), and [Sphinx-style](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html) docstrings. See the complete reference for these parsers and styles in the [Docstrings reference](../../../../reference/docstrings/). We recommend that you read the style guides mentioned here as they are full of examples and good advice too.
+Structuring the information in sections and items allows documentation-related tools to extract and provide this information in a structured way, by parsing the docstrings according to the style they follow. Griffe has parsers for [Google-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings), [Numpydoc-style](https://numpydoc.readthedocs.io/en/latest/format.html), and [Sphinx-style](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html) docstrings. See the complete reference for these parsers and styles in the [Docstrings reference](https://mkdocstrings.github.io/griffe/reference/docstrings/index.md). We recommend that you read the style guides mentioned here as they are full of examples and good advice too.
 
 Google-style
 
@@ -160,7 +160,7 @@ Functions:
 """
 ```
 
-Do the same thing for every other module of the package, except if you are [hiding your module layout](../public-apis/#module-layout).
+Do the same thing for every other module of the package, except if you are [hiding your module layout](https://mkdocstrings.github.io/griffe/guide/users/recommendations/public-apis/#module-layout).
 
 ## Classes, methods, properties
 
@@ -290,7 +290,7 @@ Note:
 """ # (1)!
 ```
 
-1. Our `Note` section here is parsed as an admonition. See [Google-style admonitions](../../../../reference/docstrings/#google-admonitions) for reference.
+1. Our `Note` section here is parsed as an admonition. See [Google-style admonitions](https://mkdocstrings.github.io/griffe/reference/docstrings/#google-admonitions) for reference.
 
 Class and instance attributes can be documented the same way:
 
@@ -347,4 +347,4 @@ def negotiate_return_to_the_spirit_chest():
 
 ## Going further
 
-There are more sections and more features to discover and use. For a complete reference on docstring styles syntax, see our [reference](../../../../reference/docstrings/).
+There are more sections and more features to discover and use. For a complete reference on docstring styles syntax, see our [reference](https://mkdocstrings.github.io/griffe/reference/docstrings/index.md).

@@ -7,4 +7,4 @@
 
 ______________________________________________________________________
 
-This extension marks every object that was imported with a wildcard import as public. See our documentation on the [wildcard imports convention](../../../guide/users/recommendations/public-apis/#wildcard-imports).
+This extension marks every object that was imported with a wildcard import as public. See our documentation on the [wildcard imports convention](https://mkdocstrings.github.io/griffe/guide/users/recommendations/public-apis/#wildcard-imports).

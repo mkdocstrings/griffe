@@ -22,7 +22,7 @@ Returns:
 
 - `int` – An exit code.
 
-Source code in `src/griffe/_internal/cli.py`
+Source code in `packages/griffecli/src/griffecli/_internal/cli.py`
 
 ```
 def main(args: list[str] | None = None) -> int:
@@ -137,7 +137,7 @@ Returns:
 
 - `int` – 0 for success, 1 for failure.
 
-Source code in `src/griffe/_internal/cli.py`
+Source code in `packages/griffecli/src/griffecli/_internal/cli.py`
 
 ```
 def check(
@@ -173,6 +173,14 @@ def check(
     Returns:
         `0` for success, `1` for failure.
     """
+    from griffe._internal.diff import find_breaking_changes  # noqa: PLC0415
+    from griffe._internal.enumerations import ExplanationStyle  # noqa: PLC0415
+    from griffe._internal.exceptions import ExtensionError, GitError  # noqa: PLC0415
+    from griffe._internal.extensions.base import load_extensions  # noqa: PLC0415
+    from griffe._internal.git import _get_latest_tag, _get_repo_root  # noqa: PLC0415
+    from griffe._internal.loader import load, load_git, load_pypi  # noqa: PLC0415
+    from griffe._internal.logger import logger  # noqa: PLC0415
+
     # Prepare options.
     search_paths = list(search_paths) if search_paths else []
     if append_sys_path:
@@ -385,7 +393,7 @@ Returns:
 
 - `int` – 0 for success, 1 for failure.
 
-Source code in `src/griffe/_internal/cli.py`
+Source code in `packages/griffecli/src/griffecli/_internal/cli.py`
 
 ```
 def dump(
@@ -431,6 +439,11 @@ def dump(
     Returns:
         `0` for success, `1` for failure.
     """
+    from griffe._internal.encoders import JSONEncoder  # noqa: PLC0415
+    from griffe._internal.exceptions import ExtensionError  # noqa: PLC0415
+    from griffe._internal.extensions.base import load_extensions  # noqa: PLC0415
+    from griffe._internal.logger import logger  # noqa: PLC0415
+
     # Prepare options.
     per_package_output = False
     if isinstance(output, str) and output.format(package="package") != output:
@@ -468,7 +481,7 @@ def dump(
     if per_package_output:
         for package_name, data in data_packages.items():
             serialized = data.as_json(indent=2, full=full, sort_keys=True)
-            _print_data(serialized, output.format(package=package_name))  # type: ignore[union-attr]
+            _print_data(serialized, output.format(package=package_name))  # ty:ignore[possibly-missing-attribute]
     else:
         serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full, sort_keys=True)
         _print_data(serialized, output)
@@ -496,7 +509,7 @@ Returns:
 
 - `ArgumentParser` – An argparse parser.
 
-Source code in `src/griffe/_internal/cli.py`
+Source code in `packages/griffecli/src/griffecli/_internal/cli.py`
 
 ```
 def get_parser() -> argparse.ArgumentParser:
@@ -505,6 +518,9 @@ def get_parser() -> argparse.ArgumentParser:
     Returns:
         An argparse parser.
     """
+    from griffe._internal import debug  # noqa: PLC0415
+    from griffe._internal.enumerations import ExplanationStyle, Parser  # noqa: PLC0415
+
     usage = "%(prog)s [GLOBAL_OPTS...] COMMAND [COMMAND_OPTS...]"
     description = "Signatures for entire Python programs. "
     "Extract the structure, the frame, the skeleton of your project, "

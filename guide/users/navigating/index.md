@@ -9,7 +9,7 @@ Griffe loads API data into data models. These models provide various attributes 
 - Type Alias, representing Python type aliases;
 - Alias, representing indirections such as imported objects or class members inherited from parent classes.
 
-When [loading an object](../loading/), Griffe will give you back an instance of one of these models. A few examples:
+When [loading an object](https://mkdocstrings.github.io/griffe/guide/users/loading/index.md), Griffe will give you back an instance of one of these models. A few examples:
 
 ```
 >>> import griffe
@@ -31,7 +31,7 @@ However deep the object is, Griffe loads the entire package. It means that in al
 
 ## Moving up: parents
 
-Each object holds a reference to its parent (except for the top-level module, for which the parent is `None`). Shortcuts are provided to climb up directly to the parent module, or the top-level package. As we have seen in the [Loading chapter](../loading/), Griffe stores all loaded modules in a modules collection; this collection can be accessed too, through the modules_collection attribute.
+Each object holds a reference to its parent (except for the top-level module, for which the parent is `None`). Shortcuts are provided to climb up directly to the parent module, or the top-level package. As we have seen in the [Loading chapter](https://mkdocstrings.github.io/griffe/guide/users/loading/index.md), Griffe stores all loaded modules in a modules collection; this collection can be accessed too, through the modules_collection attribute.
 
 ## Moving down: members
 
@@ -337,7 +337,7 @@ Each object has an optional docstring attached to it. To check whether it has on
 
 Docstrings provide their cleaned-up value (de-indented string, stripped from leading and trailing newlines), as well as their starting and ending line numbers with lineno and endlineno.
 
-Docstrings can be parsed against several [docstring-styles](../../../reference/docstrings/), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
+Docstrings can be parsed against several [docstring-styles](https://mkdocstrings.github.io/griffe/reference/docstrings/index.md), which are micro-formats that allow documenting things such as parameters, returned values, raised exceptions, etc..
 
 When loading a package, it is possible to specify the docstring style to attach to every docstring (see the `docstring_parser` parameter of griffe.load). Accessing the parsed field of a docstring will use this style to parse the docstring and return a list of docstring sections. Each section has a `value` whose shape depends on the section kind. For example, parameter sections have a list of parameter representations as value, while a text section only has a string as value.
 
@@ -439,9 +439,9 @@ Output Clear
 
 Ultimately, these expressions are what allow downstream tools such as [mkdocstrings' Python handler](https://mkdocstrings.github.io/python) to render cross-references to every object it knows of, coming from the current code base or loaded from object inventories (objects.inv files).
 
-During static analysis, these expressions also allow analyzing decorators, dataclass fields, and many more things in great detail, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](../extending/).
+During static analysis, these expressions also allow analyzing decorators, dataclass fields, and many more things in great detail, and in a robust manner, to build third-party libraries support in the form of [Griffe extensions](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md).
 
-To learn more about expressions, read their [API reference](../../../reference/api/expressions/).
+To learn more about expressions, read their [API reference](https://mkdocstrings.github.io/griffe/reference/api/expressions/index.md).
 
 ### Modernization
 
@@ -462,4 +462,4 @@ Modernizations applied:
 
 ## Next steps
 
-In this chapter we saw many of the fields that compose our models, and how and why to use them. Now you might be interested in [extending](../extending/) or [serializing](../serializing/) the API data, or [checking for API breaking changes](../checking/).
+In this chapter we saw many of the fields that compose our models, and how and why to use them. Now you might be interested in [extending](https://mkdocstrings.github.io/griffe/guide/users/extending/index.md) or [serializing](https://mkdocstrings.github.io/griffe/guide/users/serializing/index.md) the API data, or [checking for API breaking changes](https://mkdocstrings.github.io/griffe/guide/users/checking/index.md).

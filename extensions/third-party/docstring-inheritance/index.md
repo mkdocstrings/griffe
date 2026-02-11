@@ -6,7 +6,7 @@
 
 ______________________________________________________________________
 
-`docstring-inheritance` is a Python package that allows to avoid writing and maintaining duplicated Python docstrings. The typical usage is to enable the inheritance of the docstrings from a base class such that its derived classes fully or partially inherit the docstrings. It provides a Griffe extension and recommends to use it alongside the official [`inherited-docstrings`](../../official/inherited-docstrings/) extension in MkDocs:
+`docstring-inheritance` is a Python package that allows to avoid writing and maintaining duplicated Python docstrings. The typical usage is to enable the inheritance of the docstrings from a base class such that its derived classes fully or partially inherit the docstrings. It provides a Griffe extension and recommends to use it alongside the official [`inherited-docstrings`](https://mkdocstrings.github.io/griffe/extensions/official/inherited-docstrings/index.md) extension in MkDocs:
 
 ```
 plugins:

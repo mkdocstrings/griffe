@@ -62,7 +62,7 @@ Attributes:
 
 - **`full`** (`bool`) – Whether to dump full data or base data.
 
-Source code in `src/griffe/_internal/encoders.py`
+Source code in `packages/griffelib/src/griffe/_internal/encoders.py`
 
 ```
 def __init__(
@@ -114,10 +114,10 @@ Returns:
 
 - `Any` – A serializable representation.
 
-Source code in `src/griffe/_internal/encoders.py`
+Source code in `packages/griffelib/src/griffe/_internal/encoders.py`
 
 ```
-def default(self, obj: Any) -> Any:
+def default(self, obj: Any) -> Any:  # ty:ignore[invalid-method-override]
     """Return a serializable representation of the given object.
 
     Parameters:
@@ -170,7 +170,7 @@ Returns:
 
 - `dict[str, Any] | Object | Alias | Parameter | TypeParameter | str | Expr` – An instance of a data class.
 
-Source code in `src/griffe/_internal/encoders.py`
+Source code in `packages/griffelib/src/griffe/_internal/encoders.py`
 
 ```
 def json_decoder(

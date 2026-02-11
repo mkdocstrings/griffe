@@ -160,7 +160,7 @@ Attributes:
 - **`type_aliases`** (`dict[str, TypeAlias]`) – The type alias members.
 - **`type_parameters`** (`TypeParameters`) – The object type parameters.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def __init__(
@@ -942,7 +942,7 @@ __bool__() -> bool
 
 An object is always true-ish.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def __bool__(self) -> bool:
@@ -976,7 +976,7 @@ Examples:
 >>> del griffe_object[("path", "to", "qux")]
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def __delitem__(self, key: str | Sequence[str]) -> None:
@@ -1000,11 +1000,11 @@ def __delitem__(self, key: str | Sequence[str]) -> None:
     if len(parts) == 1:
         name = parts[0]
         try:
-            del self.members[name]  # type: ignore[attr-defined]
+            del self.members[name]  # ty:ignore[unresolved-attribute]
         except KeyError:
-            del self.inherited_members[name]  # type: ignore[attr-defined]
+            del self.inherited_members[name]  # ty:ignore[unresolved-attribute]
     else:
-        del self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+        del self.all_members[parts[0]][parts[1:]]  # ty:ignore[unresolved-attribute]
 ```
 
 ## __getitem__
@@ -1033,7 +1033,7 @@ Examples:
 >>> qux = griffe_object[("path", "to", "qux")]
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def __getitem__(self, key: str | Sequence[str]) -> Any:
@@ -1055,8 +1055,8 @@ def __getitem__(self, key: str | Sequence[str]) -> Any:
     """
     parts = _get_parts(key)
     if len(parts) == 1:
-        return self.all_members[parts[0]]  # type: ignore[attr-defined]
-    return self.all_members[parts[0]][parts[1:]]  # type: ignore[attr-defined]
+        return self.all_members[parts[0]]  # ty:ignore[unresolved-attribute]
+    return self.all_members[parts[0]][parts[1:]]  # ty:ignore[unresolved-attribute]
 ```
 
 ## __len__
@@ -1067,7 +1067,7 @@ __len__() -> int
 
 The number of members in this object, recursively.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def __len__(self) -> int:
@@ -1105,7 +1105,7 @@ Examples:
 >>> griffe_object[("path", "to", "qux")] = qux
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
@@ -1126,13 +1126,13 @@ def __setitem__(self, key: str | Sequence[str], value: Object | Alias) -> None:
     parts = _get_parts(key)
     if len(parts) == 1:
         name = parts[0]
-        self.members[name] = value  # type: ignore[attr-defined]
-        if self.is_collection:  # type: ignore[attr-defined]
-            value._modules_collection = self  # type: ignore[union-attr]
+        self.members[name] = value  # ty:ignore[unresolved-attribute]
+        if self.is_collection:  # ty:ignore[unresolved-attribute]
+            value._modules_collection = self  # ty:ignore[invalid-assignment]
         else:
-            value.parent = self  # type: ignore[assignment]
+            value.parent = self  # ty:ignore[invalid-assignment]
     else:
-        self.members[parts[0]][parts[1:]] = value  # type: ignore[attr-defined]
+        self.members[parts[0]][parts[1:]] = value  # ty:ignore[unresolved-attribute]
 ```
 
 ## as_dict
@@ -1155,7 +1155,7 @@ Returns:
 
 - `dict[str, Any]` – A dictionary.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def as_dict(self, **kwargs: Any) -> dict[str, Any]:
@@ -1197,7 +1197,7 @@ Returns:
 
 - `str` – A JSON string.
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def as_json(self, *, full: bool = False, **kwargs: Any) -> str:
@@ -1241,7 +1241,7 @@ Examples:
 >>> griffe_object.del_member(("path", "to", "qux"))
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def del_member(self, key: str | Sequence[str]) -> None:
@@ -1264,9 +1264,9 @@ def del_member(self, key: str | Sequence[str]) -> None:
     parts = _get_parts(key)
     if len(parts) == 1:
         name = parts[0]
-        del self.members[name]  # type: ignore[attr-defined]
+        del self.members[name]  # ty:ignore[unresolved-attribute]
     else:
-        self.members[parts[0]].del_member(parts[1:])  # type: ignore[attr-defined]
+        self.members[parts[0]].del_member(parts[1:])  # ty:ignore[unresolved-attribute]
 ```
 
 ## filter_members
@@ -1291,7 +1291,7 @@ Returns:
 
 - `dict[str, Object | Alias]` – A dictionary of members.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def filter_members(self, *predicates: Callable[[Object | Alias], bool]) -> dict[str, Object | Alias]:
@@ -1339,7 +1339,7 @@ Raises:
 
 - `TypeError` – When the json_string does not represent and object of the class from which this classmethod has been called.
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 @classmethod
@@ -1392,7 +1392,7 @@ Examples:
 >>> bar = griffe_object[("path", "to", "bar")]
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def get_member(self, key: str | Sequence[str]) -> Any:
@@ -1414,8 +1414,8 @@ def get_member(self, key: str | Sequence[str]) -> Any:
     """
     parts = _get_parts(key)
     if len(parts) == 1:
-        return self.members[parts[0]]  # type: ignore[attr-defined]
-    return self.members[parts[0]].get_member(parts[1:])  # type: ignore[attr-defined]
+        return self.members[parts[0]]  # ty:ignore[unresolved-attribute]
+    return self.members[parts[0]].get_member(parts[1:])  # ty:ignore[unresolved-attribute]
 ```
 
 ## has_labels
@@ -1438,7 +1438,7 @@ Returns:
 
 - `bool` – True or False.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def has_labels(self, *labels: str) -> bool:
@@ -1479,7 +1479,7 @@ Returns:
 
 - `bool` – True or False.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def is_kind(self, kind: str | Kind | set[str | Kind]) -> bool:
@@ -1520,7 +1520,7 @@ Return a list of classes in order corresponding to Python's MRO.
 
 See also: bases, resolved_bases.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def mro(self) -> list[Class]:
@@ -1554,7 +1554,7 @@ Returns:
 
 - `str` – The resolved name.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def resolve(self, name: str) -> str:
@@ -1586,7 +1586,7 @@ def resolve(self, name: str) -> str:
     # Name is a member of this object.
     if name in self.members:
         if self.members[name].is_alias:
-            return self.members[name].target_path  # type: ignore[union-attr]
+            return self.members[name].target_path  # ty:ignore[possibly-missing-attribute]
         return self.members[name].path
 
     # Name unknown and no more parent scope, could be a built-in.
@@ -1631,7 +1631,7 @@ Examples:
 >>> griffe_object.set_member(("path", "to", "qux"), qux)
 ```
 
-Source code in `src/griffe/_internal/mixins.py`
+Source code in `packages/griffelib/src/griffe/_internal/mixins.py`
 
 ```
 def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
@@ -1653,8 +1653,8 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
     parts = _get_parts(key)
     if len(parts) == 1:
         name = parts[0]
-        if name in self.members:  # type: ignore[attr-defined]
-            member = self.members[name]  # type: ignore[attr-defined]
+        if name in self.members:  # ty:ignore[unresolved-attribute]
+            member = self.members[name]  # ty:ignore[unresolved-attribute]
             if not member.is_alias:
                 # When reassigning a module to an existing one,
                 # try to merge them as one regular and one stubs module
@@ -1665,17 +1665,17 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # type: ignore[arg-type]
+                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value
-        self.members[name] = value  # type: ignore[attr-defined]
-        if self.is_collection:  # type: ignore[attr-defined]
-            value._modules_collection = self  # type: ignore[union-attr]
+        self.members[name] = value  # ty:ignore[unresolved-attribute]
+        if self.is_collection:  # ty:ignore[unresolved-attribute]
+            value._modules_collection = self  # ty:ignore[invalid-assignment]
         else:
-            value.parent = self  # type: ignore[assignment]
+            value.parent = self  # ty:ignore[invalid-assignment]
     else:
-        self.members[parts[0]].set_member(parts[1:], value)  # type: ignore[attr-defined]
+        self.members[parts[0]].set_member(parts[1:], value)  # ty:ignore[unresolved-attribute]
 ```
 
 ## signature
@@ -1702,7 +1702,7 @@ Returns:
 
 - `str` – A string representation of the class signature.
 
-Source code in `src/griffe/_internal/models.py`
+Source code in `packages/griffelib/src/griffe/_internal/models.py`
 
 ```
 def signature(self, *, return_type: bool = False, name: str | None = None) -> str:
@@ -1743,7 +1743,7 @@ Returns:
 
 - `list[_T]` – The merged list of items.
 
-Source code in `src/griffe/_internal/c3linear.py`
+Source code in `packages/griffelib/src/griffe/_internal/c3linear.py`
 
 ```
 def c3linear_merge(*lists: list[_T]) -> list[_T]:
@@ -1756,7 +1756,7 @@ def c3linear_merge(*lists: list[_T]) -> list[_T]:
         The merged list of items.
     """
     result: list[_T] = []
-    linearizations = _DependencyList(*lists)  # type: ignore[arg-type]
+    linearizations = _DependencyList(*lists)  # ty:ignore[invalid-argument-type]
 
     while True:
         if linearizations.exhausted:
@@ -1764,7 +1764,7 @@ def c3linear_merge(*lists: list[_T]) -> list[_T]:
 
         for head in linearizations.heads:
             if head and (head not in linearizations.tails):
-                result.append(head)  # type: ignore[arg-type]
+                result.append(head)
                 linearizations.remove(head)
 
                 # Once candidate is found, continue iteration
