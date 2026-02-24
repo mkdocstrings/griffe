@@ -368,7 +368,7 @@ def build(ctx: Context) -> None:
     """
     ctx.run(
         ["uv", "build", "--all"],
-        title="Building package source and wheel distributions",
+        title="Building distributions",
         pty=PTY,
     )
 
@@ -389,7 +389,7 @@ def publish(ctx: Context) -> None:
     dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".tar.gz", ".whl")]
     ctx.run(
         tools.twine.upload(*dists, skip_existing=True),
-        title="Publishing source and wheel distributions to PyPI",
+        title="Publishing distributions to PyPI",
         pty=PTY,
     )
 
