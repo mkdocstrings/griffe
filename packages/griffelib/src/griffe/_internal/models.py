@@ -1627,6 +1627,10 @@ class Alias(ObjectAliasMixin):
         """The target type parameters."""
         return self.final_target.type_parameters
 
+    @type_parameters.setter
+    def type_parameters(self, type_parameters: TypeParameters) -> None:
+        self.final_target.type_parameters = type_parameters
+
     @property
     def labels(self) -> set[str]:
         """The target labels (`property`, `dataclass`, etc.).
