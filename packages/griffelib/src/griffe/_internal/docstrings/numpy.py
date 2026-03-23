@@ -367,7 +367,7 @@ def _read_type_parameters_section(
             # try to use the bound from the signature
             for name in names:
                 with suppress(AttributeError, KeyError):
-                    bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[possibly-missing-attribute]
+                    bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[unresolved-attribute]
                     break
         else:
             bound = parse_docstring_annotation(bound, docstring, log_level=LogLevel.debug)
@@ -375,15 +375,15 @@ def _read_type_parameters_section(
         if default is None:
             for name in names:
                 with suppress(AttributeError, KeyError):
-                    default = docstring.parent.type_parameters[name].default  # ty:ignore[possibly-missing-attribute]
+                    default = docstring.parent.type_parameters[name].default  # ty:ignore[unresolved-attribute]
                     break
 
         if warn_unknown_params:
             with suppress(AttributeError):  # for parameters sections in objects without parameters
-                type_params = docstring.parent.type_parameters  # ty:ignore[possibly-missing-attribute]
+                type_params = docstring.parent.type_parameters  # ty:ignore[unresolved-attribute]
                 for name in names:
                     if name not in type_params:
-                        message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind} signature"  # ty:ignore[possibly-missing-attribute]
+                        message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind} signature"  # ty:ignore[unresolved-attribute]
                         for starred_name in (f"*{name}", f"**{name}"):
                             if starred_name in type_params:
                                 message += f". Did you mean '{starred_name}'?"
@@ -458,9 +458,9 @@ def _read_returns_section(
         if annotation is None:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
-                if docstring.parent.is_function:  # ty:ignore[possibly-missing-attribute]
+                if docstring.parent.is_function:  # ty:ignore[unresolved-attribute]
                     annotation = docstring.parent.returns  # ty:ignore[unresolved-attribute]
-                elif docstring.parent.is_attribute:  # ty:ignore[possibly-missing-attribute]
+                elif docstring.parent.is_attribute:  # ty:ignore[unresolved-attribute]
                     annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
                 else:
                     raise ValueError

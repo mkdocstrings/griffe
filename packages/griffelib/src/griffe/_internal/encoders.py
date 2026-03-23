@@ -197,7 +197,7 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute | TypeAlias, paren
 def _load_module(obj_dict: dict[str, Any]) -> Module:
     filepath = obj_dict.get("filepath")
     if filepath is not None:
-        filepath = [*map(Path, filepath)] if isinstance(filepath, list) else Path(filepath)
+        filepath = [*map(Path, filepath)] if isinstance(filepath, list) else Path(filepath)  # ty:ignore[invalid-argument-type]
     module = Module(
         name=obj_dict["name"],
         filepath=filepath,

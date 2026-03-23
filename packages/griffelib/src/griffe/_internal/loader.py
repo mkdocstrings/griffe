@@ -79,7 +79,7 @@ class GriffeLoader:
         """Loaded Griffe extensions."""
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """Selected docstring parser."""
-        self.docstring_options: DocstringOptions = docstring_options or {}
+        self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
         """Configured parsing options."""
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         """Collection of source code lines."""
@@ -356,8 +356,8 @@ class GriffeLoader:
         # while also keeping track of the members representing wildcard import, to remove them later.
         for member in obj.members.values():
             # Handle a wildcard.
-            if member.is_alias and member.wildcard:  # ty:ignore[possibly-missing-attribute]
-                package = member.wildcard.split(".", 1)[0]  # ty:ignore[possibly-missing-attribute]
+            if member.is_alias and member.wildcard:  # ty:ignore[unresolved-attribute]
+                package = member.wildcard.split(".", 1)[0]  # ty:ignore[unresolved-attribute]
                 not_loaded = obj.package.path != package and package not in self.modules_collection
 
                 # Try loading the (unknown) package containing the wildcard importe module (if allowed to).
@@ -372,7 +372,7 @@ class GriffeLoader:
 
                 # Try getting the module from which every public object is imported.
                 try:
-                    target = self.modules_collection.get_member(member.target_path)  # ty:ignore[possibly-missing-attribute]
+                    target = self.modules_collection.get_member(member.target_path)  # ty:ignore[unresolved-attribute]
                 except KeyError:
                     logger.debug(
                         "Could not expand wildcard import %s in %s: %s not found in modules collection",
@@ -478,7 +478,7 @@ class GriffeLoader:
         for member in obj.members.values():
             # Handle aliases.
             if member.is_alias:
-                if member.wildcard or member.resolved:  # ty:ignore[possibly-missing-attribute]
+                if member.wildcard or member.resolved:  # ty:ignore[unresolved-attribute]
                     continue
                 if not implicit and not member.is_exported:
                     continue
@@ -487,7 +487,7 @@ class GriffeLoader:
                 # from an external package, and decide if we should load that package
                 # to allow the alias to be resolved at the next iteration (maybe).
                 try:
-                    member.resolve_target()  # ty:ignore[possibly-missing-attribute]
+                    member.resolve_target()  # ty:ignore[unresolved-attribute]
                 except AliasResolutionError as error:
                     target = error.alias.target_path
                     unresolved.add(member.path)
@@ -508,7 +508,7 @@ class GriffeLoader:
                 except CyclicAliasError as error:
                     logger.debug(str(error))
                 else:
-                    logger.debug("Alias %s was resolved to %s", member.path, member.final_target.path)  # ty:ignore[possibly-missing-attribute]
+                    logger.debug("Alias %s was resolved to %s", member.path, member.final_target.path)  # ty:ignore[unresolved-attribute]
                     resolved.add(member.path)
 
             # Recurse into unseen modules and classes.

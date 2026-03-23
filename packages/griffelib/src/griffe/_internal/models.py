@@ -120,7 +120,7 @@ class Docstring:
         [`parse`][griffe.Docstring.parse].
         """
 
-        self.parser_options: DocstringOptions = parser_options or {}
+        self.parser_options: DocstringOptions = parser_options or {}  # ty:ignore[invalid-assignment]
         """The configured parsing options.
 
         See also: [`parser`][griffe.Docstring.parser],
@@ -1223,7 +1223,7 @@ class Object(ObjectAliasMixin):
         # Name is a member of this object.
         if name in self.members:
             if self.members[name].is_alias:
-                return self.members[name].target_path  # ty:ignore[possibly-missing-attribute]
+                return self.members[name].target_path  # ty:ignore[unresolved-attribute]
             return self.members[name].path
 
         # Name unknown and no more parent scope, could be a built-in.
@@ -1487,13 +1487,13 @@ class Alias(ObjectAliasMixin):
 
         See also: [`canonical_path`][griffe.Alias.canonical_path].
         """
-        return f"{self.parent.path}.{self.name}"  # ty:ignore[possibly-missing-attribute]
+        return f"{self.parent.path}.{self.name}"  # ty:ignore[unresolved-attribute]
 
     @property
     def modules_collection(self) -> ModulesCollection:
         """The modules collection attached to the alias parents."""
         # No need to forward to the target.
-        return self.parent.modules_collection  # ty:ignore[possibly-missing-attribute]
+        return self.parent.modules_collection  # ty:ignore[unresolved-attribute]
 
     @property
     def members(self) -> dict[str, Object | Alias]:
@@ -2112,7 +2112,7 @@ class Alias(ObjectAliasMixin):
             if target.path in paths_seen:
                 raise CyclicAliasError([*paths_seen, target.path])
             paths_seen[target.path] = None
-            target = target.target
+            target = target.target  # ty:ignore[unresolved-attribute]
         return target  # ty:ignore[invalid-return-type]
 
     def resolve_target(self) -> None:
@@ -2166,7 +2166,7 @@ class Alias(ObjectAliasMixin):
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
-            self._target.aliases[self.path] = self  # ty:ignore[possibly-missing-attribute]
+            self._target.aliases[self.path] = self   # ty:ignore[unresolved-attribute]
 
     @property
     def resolved(self) -> bool:
@@ -2273,7 +2273,7 @@ class Module(Object):
         return (
             "annotations" in self.members
             and self.members["annotations"].is_alias
-            and self.members["annotations"].target_path == "__future__.annotations"  # ty:ignore[possibly-missing-attribute]
+            and self.members["annotations"].target_path == "__future__.annotations"  # ty:ignore[unresolved-attribute]
         )
 
     @property
@@ -2404,7 +2404,7 @@ class Class(Object):
         do not use when producing Griffe trees!
         """
         try:
-            return self.all_members["__init__"].parameters  # ty:ignore[possibly-missing-attribute]
+            return self.all_members["__init__"].parameters  # ty:ignore[unresolved-attribute]
         except KeyError:
             return Parameters()
 

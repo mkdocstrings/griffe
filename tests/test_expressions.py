@@ -158,7 +158,7 @@ def test_modernizing_idempotence(code: str) -> None:
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
     expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
-    modernized = expression.modernize()  # ty:ignore[possibly-missing-attribute]
+    modernized = expression.modernize()  # ty:ignore[unresolved-attribute]
     assert expression == modernized
     assert str(expression) == str(modernized)
 

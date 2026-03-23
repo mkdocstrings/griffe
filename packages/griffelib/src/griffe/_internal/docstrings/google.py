@@ -311,20 +311,20 @@ def _read_type_parameters_section(
             name = name_with_bound
             # try to use the annotation from the signature
             try:
-                bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[possibly-missing-attribute]
+                bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[unresolved-attribute]
             except (AttributeError, KeyError):
                 bound = None
 
         try:
-            default = docstring.parent.type_parameters[name].default  # ty:ignore[possibly-missing-attribute]
+            default = docstring.parent.type_parameters[name].default  # ty:ignore[unresolved-attribute]
         except (AttributeError, KeyError):
             default = None
 
         if warn_unknown_params:
             with suppress(AttributeError):  # for type parameters sections in objects without type parameters
-                type_params = docstring.parent.type_parameters  # ty:ignore[possibly-missing-attribute]
+                type_params = docstring.parent.type_parameters  # ty:ignore[unresolved-attribute]
                 if name not in type_params:
-                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # ty:ignore[possibly-missing-attribute]
+                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # ty:ignore[unresolved-attribute]
                     for starred_name in (f"*{name}", f"**{name}"):
                         if starred_name in type_params:
                             message += f". Did you mean '{starred_name}'?"

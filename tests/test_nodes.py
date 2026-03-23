@@ -231,7 +231,7 @@ def test_default_value_from_nodes(default: str) -> None:
     module_defs = f"def f(x={default}):\n    return x"
     with temporary_visited_module(module_defs) as module:
         assert "f" in module.members
-        params = module.members["f"].parameters  # ty:ignore[possibly-missing-attribute]
+        params = module.members["f"].parameters  # ty:ignore[unresolved-attribute]
         assert len(params) == 1
         assert str(params[0].default) == default
 

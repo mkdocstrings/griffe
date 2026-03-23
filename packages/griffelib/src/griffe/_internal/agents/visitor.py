@@ -176,13 +176,13 @@ class Visitor:
         self.parent: Module | None = parent
         """An optional parent for the final module object."""
 
-        self.current: Module | Class = None
+        self.current: Module | Class = None  # ty:ignore[invalid-assignment]
         """The current object being visited."""
 
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
-        self.docstring_options: DocstringOptions = docstring_options or {}
+        self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
         """The docstring parsing options."""
 
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
@@ -231,7 +231,7 @@ class Visitor:
                         member=scope,
                     ),
                 )
-                for type_param in node.type_params  # ty:ignore[possibly-missing-attribute,unused-ignore-comment,unused-ignore-comment]
+                for type_param in node.type_params  # ty:ignore[unresolved-attribute,unused-ignore-comment,unused-ignore-comment]
             ]
     else:
 
@@ -692,8 +692,8 @@ class Visitor:
                     if existing_member.docstring and not docstring:
                         docstring = existing_member.docstring
                     with suppress(AttributeError):
-                        if existing_member.annotation and not annotation:  # ty:ignore[possibly-missing-attribute]
-                            annotation = existing_member.annotation  # ty:ignore[possibly-missing-attribute]
+                        if existing_member.annotation and not annotation:  # ty:ignore[unresolved-attribute]
+                            annotation = existing_member.annotation  # ty:ignore[unresolved-attribute]
 
             attribute = Attribute(
                 name=name,
@@ -741,13 +741,13 @@ class Visitor:
         """
         with suppress(AttributeError):
             all_augment = (
-                node.target.id == "__all__"  # ty:ignore[possibly-missing-attribute]
+                node.target.id == "__all__"  # ty:ignore[unresolved-attribute]
                 and self.current.is_module
                 and isinstance(node.op, ast.Add)
             )
             if all_augment:
                 # We assume `exports` is not `None` at this point.
-                self.current.exports.extend(  # ty:ignore[possibly-missing-attribute]
+                self.current.exports.extend(  # ty:ignore[unresolved-attribute]
                     [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
                         for name in safe_get__all__(node, self.current)  # ty:ignore[invalid-argument-type]

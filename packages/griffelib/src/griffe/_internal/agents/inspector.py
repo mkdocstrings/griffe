@@ -156,13 +156,13 @@ class Inspector:
         self.parent: Module | None = parent
         """An optional parent for the final module object."""
 
-        self.current: Module | Class = None
+        self.current: Module | Class = None  # ty:ignore[invalid-assignment]
         """The current object being inspected."""
 
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
-        self.docstring_options: DocstringOptions = docstring_options or {}
+        self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
         """The docstring parsing options."""
 
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
@@ -581,7 +581,7 @@ class Inspector:
             analysis="dynamic",
         )
         attribute.labels |= labels
-        parent.set_member(node.name, attribute)  # ty:ignore[possibly-missing-attribute]
+        parent.set_member(node.name, attribute)  # ty:ignore[unresolved-attribute]
 
         if node.name == "__all__":
             parent.exports = list(node.obj)  # ty:ignore[invalid-assignment]

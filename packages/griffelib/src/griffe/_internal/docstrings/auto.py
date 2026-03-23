@@ -162,7 +162,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[possibly-missing-attribute]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[unresolved-attribute]
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:
@@ -220,5 +220,5 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, possibly-missing-attribute]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, unresolved-attribute]
     return sections

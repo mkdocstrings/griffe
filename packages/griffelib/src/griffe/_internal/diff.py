@@ -131,19 +131,19 @@ class Breakage:
     @property
     def _filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.filepath  # ty:ignore[invalid-return-type, possibly-missing-attribute]
+            return self.obj.parent.filepath  # ty:ignore[invalid-return-type, unresolved-attribute]
         return self.obj.filepath  # ty:ignore[invalid-return-type]
 
     @property
     def _relative_filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
+            return self.obj.parent.relative_filepath  # ty:ignore[unresolved-attribute]
         return self.obj.relative_filepath
 
     @property
     def _relative_package_filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.relative_package_filepath  # ty:ignore[possibly-missing-attribute]
+            return self.obj.parent.relative_package_filepath  # ty:ignore[unresolved-attribute]
         return self.obj.relative_package_filepath
 
     @property
@@ -167,7 +167,7 @@ class Breakage:
     @property
     def _module_path(self) -> str:
         if self.obj.is_alias:
-            return self.obj.parent.module.path  # ty:ignore[possibly-missing-attribute]
+            return self.obj.parent.module.path  # ty:ignore[unresolved-attribute]
         return self.obj.module.path
 
     @property
@@ -182,7 +182,7 @@ class Breakage:
         if self.kind is BreakageKind.OBJECT_REMOVED and self._relative_filepath != self._location:
             return 0
         if self.obj.is_alias:
-            return self.obj.alias_lineno or 0  # ty:ignore[possibly-missing-attribute]
+            return self.obj.alias_lineno or 0  # ty:ignore[unresolved-attribute]
         return self.obj.lineno or 0
 
     def _format_location(self, *, colors: bool = True) -> str:
@@ -566,8 +566,8 @@ def _alias_incompatibilities(
     seen_paths: set[str],
 ) -> Iterable[Breakage]:
     try:
-        old_member = old_obj.target if old_obj.is_alias else old_obj  # ty:ignore[possibly-missing-attribute]
-        new_member = new_obj.target if new_obj.is_alias else new_obj  # ty:ignore[possibly-missing-attribute]
+        old_member = old_obj.target if old_obj.is_alias else old_obj  # ty:ignore[unresolved-attribute]
+        new_member = new_obj.target if new_obj.is_alias else new_obj  # ty:ignore[unresolved-attribute]
     except AliasResolutionError:
         logger.debug("API check: %s | %s: skip alias with unknown target", old_obj.path, new_obj.path)
         return

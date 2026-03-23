@@ -769,15 +769,15 @@ class ExprName(Expr):  # noqa: PLW1641
     def resolved(self) -> Module | Class | None:
         """The resolved object this name refers to."""
         try:
-            return self.parent.modules_collection[self.parent.resolve(self.name)]  # ty:ignore[possibly-missing-attribute]
+            return self.parent.modules_collection[self.parent.resolve(self.name)]  # ty:ignore[unresolved-attribute]
         except Exception:  # noqa: BLE001
-            return self.parent.resolved[self.name]  # ty:ignore[not-subscriptable, possibly-missing-attribute]
+            return self.parent.resolved[self.name]  # ty:ignore[not-subscriptable, unresolved-attribute]
 
     @property
     def is_enum_class(self) -> bool:
         """Whether this name resolves to an enumeration class."""
         try:
-            bases = self.resolved.bases  # ty:ignore[possibly-missing-attribute]
+            bases = self.resolved.bases  # ty:ignore[unresolved-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -789,7 +789,7 @@ class ExprName(Expr):  # noqa: PLW1641
     def is_enum_instance(self) -> bool:
         """Whether this name resolves to an enumeration instance."""
         try:
-            return self.parent.is_enum_class  # ty:ignore[possibly-missing-attribute]
+            return self.parent.is_enum_class  # ty:ignore[unresolved-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -797,7 +797,7 @@ class ExprName(Expr):  # noqa: PLW1641
     def is_enum_value(self) -> bool:
         """Whether this name resolves to an enumeration value."""
         try:
-            return self.name == "value" and self.parent.is_enum_instance  # ty:ignore[possibly-missing-attribute]
+            return self.name == "value" and self.parent.is_enum_instance  # ty:ignore[unresolved-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -1108,7 +1108,7 @@ _precedence_map = {
 
 
 def _get_precedence(expr: Expr) -> _OperatorPrecedence:
-    return _precedence_map.get(type(expr), lambda _: _OperatorPrecedence.NONE)(expr)
+    return _precedence_map.get(type(expr), lambda _: _OperatorPrecedence.NONE)(expr)  # ty:ignore[no-matching-overload]
 
 
 def _build_attribute(node: ast.Attribute, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1126,14 +1126,14 @@ def _build_attribute(node: ast.Attribute, parent: Module | Class, **kwargs: Any)
 def _build_binop(node: ast.BinOp, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprBinOp(
         _build(node.left, parent, **kwargs),
-        _binary_op_map[type(node.op)],
+        _binary_op_map[type(node.op)],  # ty:ignore[invalid-argument-type]
         _build(node.right, parent, **kwargs),
     )
 
 
 def _build_boolop(node: ast.BoolOp, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprBoolOp(
-        _bool_op_map[type(node.op)],
+        _bool_op_map[type(node.op)],  # ty:ignore[invalid-argument-type]
         [_build(value, parent, **kwargs) for value in node.values],
     )
 
@@ -1148,7 +1148,7 @@ def _build_call(node: ast.Call, parent: Module | Class, **kwargs: Any) -> Expr:
 def _build_compare(node: ast.Compare, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprCompare(
         _build(node.left, parent, **kwargs),
-        [_compare_op_map[type(op)] for op in node.ops],
+        [_compare_op_map[type(op)] for op in node.ops],  # ty:ignore[invalid-argument-type]
         [_build(comp, parent, **kwargs) for comp in node.comparators],
     )
 
@@ -1198,7 +1198,7 @@ def _build_constant(
                 )
             else:
                 return _build(parsed.body, parent, **kwargs)  # ty:ignore[unresolved-attribute]
-    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
+    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)  # ty:ignore[no-matching-overload]
 
 
 def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1351,7 +1351,7 @@ def _build_tuple(
 
 
 def _build_unaryop(node: ast.UnaryOp, parent: Module | Class, **kwargs: Any) -> Expr:
-    return ExprUnaryOp(_unary_op_map[type(node.op)], _build(node.operand, parent, **kwargs))
+    return ExprUnaryOp(_unary_op_map[type(node.op)], _build(node.operand, parent, **kwargs))  # ty:ignore[invalid-argument-type]
 
 
 def _build_yield(node: ast.Yield, parent: Module | Class, **kwargs: Any) -> Expr:
