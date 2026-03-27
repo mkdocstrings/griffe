@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.2](https://github.com/mkdocstrings/griffe/releases/tag/2.0.2) - 2026-03-27
+
+[Compare with 2.0.1](https://github.com/mkdocstrings/griffe/compare/2.0.1...2.0.2)
+
+### Build
+
+- Add py.typed marker to packages ([ce46ba3](https://github.com/mkdocstrings/griffe/commit/ce46ba314810e46c5168cfab220254908640d6e3) by Timothée Mazzucotelli).
+
+## [2.0.1](https://github.com/mkdocstrings/griffe/releases/tag/2.0.1) - 2026-03-23
+
+[Compare with 2.0.0](https://github.com/mkdocstrings/griffe/compare/2.0.0...2.0.1)
+
+### Bug Fixes
+
+- Allow setting type parameters through aliases ([75c1236](https://github.com/mkdocstrings/griffe/commit/75c1236078bdb38ccaf95330d3c635f8db3806b7) by Timothée Mazzucotelli). [Issue-449](https://github.com/mkdocstrings/griffe/issues/449)
+
 ## [2.0.0](https://github.com/mkdocstrings/griffe/releases/tag/2.0.0) - 2026-02-09
 
 [Compare with 1.15.0](https://github.com/mkdocstrings/griffe/compare/1.15.0...2.0.0)

@@ -140,7 +140,7 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, possibly-missing-attribute]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, unresolved-attribute]
     return sections
 ```
 
@@ -1084,11 +1084,11 @@ def docstring_warning(
 
     def warn(docstring: Docstring, offset: int, message: str, log_level: LogLevel = LogLevel.warning) -> None:
         try:
-            prefix = docstring.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
+            prefix = docstring.parent.relative_filepath  # ty:ignore[unresolved-attribute]
         except (AttributeError, ValueError):
             prefix = "<module>"
         except BuiltinModuleError:
-            prefix = f"<module: {docstring.parent.module.name}>"  # ty:ignore[possibly-missing-attribute]
+            prefix = f"<module: {docstring.parent.module.name}>"  # ty:ignore[unresolved-attribute]
         log = getattr(logger, log_level.value)
         log(f"{prefix}:{(docstring.lineno or 0) + offset}: {message}")
 
@@ -1206,7 +1206,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[possibly-missing-attribute]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[unresolved-attribute]
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:

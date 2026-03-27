@@ -110,7 +110,7 @@ def __init__(
     [`parse`][griffe.Docstring.parse].
     """
 
-    self.parser_options: DocstringOptions = parser_options or {}
+    self.parser_options: DocstringOptions = parser_options or {}  # ty:ignore[invalid-assignment]
     """The configured parsing options.
 
     See also: [`parser`][griffe.Docstring.parser],

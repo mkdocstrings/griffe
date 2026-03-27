@@ -163,7 +163,7 @@ def temporary_pypackage(
         package_path.mkdir(**mkdir_kwargs)
         if init:
             package_path.joinpath("__init__.py").touch()
-        for module_name, module_contents in modules.items():  # ty:ignore[possibly-missing-attribute]
+        for module_name, module_contents in modules.items():  # ty:ignore[unresolved-attribute]
             current_path = package_path
             for part in Path(module_name).parts:
                 if part.endswith((".py", ".pyi")):
@@ -885,7 +885,7 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
     parts = path.split(".")
     modules = [Module(name, filepath=Path(*parts[:index], "__init__.py")) for index, name in enumerate(parts)]
     if not leaf_package:
-        filepath = modules[-1].filepath.with_stem(parts[-1])  # ty:ignore[possibly-missing-attribute]
+        filepath = modules[-1].filepath.with_stem(parts[-1])  # ty:ignore[unresolved-attribute]
         modules[-1]._filepath = filepath
     return vtree(*modules, return_leaf=return_leaf)  # ty:ignore[invalid-return-type]
 ```

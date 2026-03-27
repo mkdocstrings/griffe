@@ -138,7 +138,7 @@ def __init__(self, alias: Alias) -> None:
 
     message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
     try:
-        filepath = alias.parent.relative_filepath  # ty:ignore[possibly-missing-attribute]
+        filepath = alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
     except BuiltinModuleError:
         pass
     else:

@@ -1586,7 +1586,7 @@ def resolve(self, name: str) -> str:
     # Name is a member of this object.
     if name in self.members:
         if self.members[name].is_alias:
-            return self.members[name].target_path  # ty:ignore[possibly-missing-attribute]
+            return self.members[name].target_path  # ty:ignore[unresolved-attribute]
         return self.members[name].path
 
     # Name unknown and no more parent scope, could be a built-in.

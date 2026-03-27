@@ -271,6 +271,7 @@ This document describes how the project is architectured, both regarding boilerp
             📁 _internal/ # (1)!
              __init__.py
              __main__.py
+             py.typed
             ```
             1. ```
                 __init__.py
@@ -287,6 +288,7 @@ This document describes how the project is architectured, both regarding boilerp
             📁 _internal/ # (1)!
              __init__.py
              __main__.py
+             py.typed
             ```
             1. Our internal API, hidden from users. See [Program structure](#program-structure).
 
@@ -311,7 +313,6 @@ This document describes how the project is architectured, both regarding boilerp
                 merger.py
                 mixins.py
                 models.py
-                py.typed
                 stats.py
                 tests.py
                ```
