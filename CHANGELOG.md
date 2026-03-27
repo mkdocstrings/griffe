@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.0.2](https://github.com/mkdocstrings/griffe/releases/tag/2.0.2) - 2026-03-27
+
+<small>[Compare with 2.0.1](https://github.com/mkdocstrings/griffe/compare/2.0.1...2.0.2)</small>
+
+### Build
+
+- Add py.typed marker to packages ([ce46ba3](https://github.com/mkdocstrings/griffe/commit/ce46ba314810e46c5168cfab220254908640d6e3) by Timothée Mazzucotelli).
+
 ## [2.0.1](https://github.com/mkdocstrings/griffe/releases/tag/2.0.1) - 2026-03-23
 
 <small>[Compare with 2.0.0](https://github.com/mkdocstrings/griffe/compare/2.0.0...2.0.1)</small>
