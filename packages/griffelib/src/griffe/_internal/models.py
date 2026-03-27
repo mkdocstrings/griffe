@@ -2166,7 +2166,7 @@ class Alias(ObjectAliasMixin):
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
-            self._target.aliases[self.path] = self   # ty:ignore[unresolved-attribute]
+            self._target.aliases[self.path] = self  # ty:ignore[unresolved-attribute]
 
     @property
     def resolved(self) -> bool:
