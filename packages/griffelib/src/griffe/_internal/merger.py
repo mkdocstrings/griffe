@@ -63,7 +63,14 @@ def _merge_stubs_overloads(obj: Module | Class, stubs: Module | Class) -> None:
     for function_name, overloads in list(stubs.overloads.items()):
         if overloads:
             with suppress(KeyError):
-                _merge_overload_annotations(obj.get_member(function_name), overloads)
+                if (func := obj.get_member(function_name)).is_function:
+                    _merge_overload_annotations(func, overloads)
+                else:
+                    logger.debug(
+                        "Cannot merge overload annotations into (non-function) %s %r",
+                        func.kind.value.lower(),
+                        func.path,
+                    )
         del stubs.overloads[function_name]
 
 
