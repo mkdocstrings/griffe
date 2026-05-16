@@ -54,6 +54,23 @@ syntax_examples = [
     "f'a {round(key, 2)} {z}'",
     # YORE: EOL 3.13: Replace line with `"t'a {round(key, 2)} {z}'",`.
     *(["t'a {round(key, 2)} {z}'"] if sys.version_info >= (3, 14) else []),
+    # f-strings with quote characters in literal parts (gh-444).
+    'f"it\'s {x}"',                               # ' only → " delimiter
+    'f"don\'t {x} won\'t {y}"',                   # multiple ' → " delimiter
+    "f'say \"hello\" to {x}'",                    # " only → ' delimiter
+    "f'\"quoted\" and \"re-quoted\" {x}'",         # multiple " → ' delimiter
+    "f'''it's \"complicated\" {x}'''",             # both → triple-' delimiter
+    "f'''she said \"it's fine\" to {x}'''",        # both, different parts → triple-'
+    # YORE: EOL 3.13: Remove block.
+    *(
+        [
+            't"it\'s {x}"',
+            "t'say \"hello\" to {x}'",
+            "t'''it's \"complicated\" {x}'''",
+        ]
+        if sys.version_info >= (3, 14)
+        else []
+    ),
     # Slices.
     "o[x]",
     "o[x, y]",
