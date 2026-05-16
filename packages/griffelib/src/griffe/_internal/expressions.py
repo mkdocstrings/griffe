@@ -614,7 +614,7 @@ class ExprJoinedStr(Expr):
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         quote, escaped_parts = _fstring_choose_quote(self.values)
         yield f"f{quote}"
-        for value, escaped in zip(self.values, escaped_parts):
+        for value, escaped in zip(self.values, escaped_parts, strict=True):
             if isinstance(value, str):
                 yield escaped
             else:
@@ -986,7 +986,7 @@ class ExprTemplateStr(Expr):
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         quote, escaped_parts = _fstring_choose_quote(self.values)
         yield f"t{quote}"
-        for value, escaped in zip(self.values, escaped_parts):
+        for value, escaped in zip(self.values, escaped_parts, strict=True):
             if isinstance(value, str):
                 yield escaped
             else:
