@@ -188,16 +188,18 @@ def test_meson_python_file_handling(tmp_path: Path) -> None:
     Parameters:
         tmp_path: Pytest fixture.
     """
+    # meson-python puts compiled modules under <build>/src/<package>; create that structure.
+    build_dir = tmp_path / "build"
+    (build_dir / "src" / "griffe").mkdir(parents=True)
     pth_file = tmp_path / "_whatever_editable_loader.py"
     pth_file.write_text(
-        # The path in argument 2 suffixed with src must exist, so we pass `packages/griffelib`.
-        "hello=1\ninstall({'griffe', 'hello'}, 'packages/griffelib', ['/tmp/ninja'], False)",
+        f"hello=1\ninstall({{'griffe', 'hello'}}, {str(build_dir)!r}, ['/tmp/ninja'], False)",
         encoding="utf8",
     )
     search_paths = _handle_editable_module(pth_file)
     assert all(sp.always_scan_for == "griffe" for sp in search_paths)
     paths = [sp.path for sp in search_paths]
-    assert paths == [Path("packages/griffelib/src")]
+    assert paths == [build_dir / "src"]
 
 
 @pytest.mark.parametrize(
