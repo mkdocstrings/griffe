@@ -95,7 +95,7 @@ def temporary_pypackage(
     """
     modules = modules or {}
     if isinstance(modules, list):
-        modules = dict.fromkeys(modules, "")
+        modules = dict.fromkeys(modules, "")  # ty:ignore[invalid-assignment]
     mkdir_kwargs = {"parents": True, "exist_ok": True}
     with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpdirpath = Path(tmpdir)
@@ -168,7 +168,7 @@ def temporary_visited_package(
     """
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
-        yield load(
+        yield load(  # ty:ignore[invalid-yield]
             tmp_package.name,
             search_paths=[tmp_package.tmpdir, *search_paths],
             extensions=extensions,
@@ -237,7 +237,7 @@ def temporary_inspected_package(
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         try:
-            yield load(
+            yield load(  # ty:ignore[invalid-yield]
                 tmp_package.name,
                 search_paths=[tmp_package.tmpdir, *search_paths],
                 extensions=extensions,

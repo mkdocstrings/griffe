@@ -72,7 +72,7 @@ def parse_docstring_annotation(
         if code.body:  # ty:ignore[unresolved-attribute]
             name_or_expr = safe_get_annotation(
                 code.body,  # ty:ignore[unresolved-attribute]
-                parent=docstring.parent,
+                parent=docstring.parent,  # ty:ignore[invalid-argument-type]
                 log_level=log_level,
             )
             return name_or_expr or annotation
