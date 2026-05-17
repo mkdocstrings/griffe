@@ -575,11 +575,7 @@ def _fstring_choose_quote(values: Sequence[str | Expr]) -> tuple[str, list[str]]
         if isinstance(value, str):
             fstring_parts.append((value.replace("{", "{{").replace("}", "}}"), True))
         else:
-            rendered = "".join(
-                p if isinstance(p, str) else p.name
-                for p in value.iterate(flat=True)
-            )
-            fstring_parts.append((rendered, False))
+            fstring_parts.append((str(value), False))
 
     quote_types: list[str] = list(_FSTRING_ALL_QUOTES)
     escaped_parts: list[str] = []
