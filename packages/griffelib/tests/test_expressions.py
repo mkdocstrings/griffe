@@ -261,7 +261,7 @@ def test_fstring_quote_selection(code: str, expected: str) -> None:
     Regression test for https://github.com/mkdocstrings/griffe/issues/444.
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == expected
 
 
@@ -280,7 +280,7 @@ def test_tstring_quote_selection(code: str, expected: str) -> None:
     Regression test for https://github.com/mkdocstrings/griffe/issues/444.
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == expected
 
 
