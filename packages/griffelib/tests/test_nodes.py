@@ -61,7 +61,7 @@ syntax_examples = [
     "f'\"quoted\" and \"re-quoted\" {x}'",         # multiple " → ' delimiter
     "f'''it's \"complicated\" {x}'''",             # both → triple-' delimiter
     "f'''she said \"it's fine\" to {x}'''",        # both, different parts → triple-'
-    # YORE: EOL 3.13: Remove block.
+    # YORE: EOL 3.13: Replace block with lines 2-4.
     *(
         [
             't"it\'s {x}"',
