@@ -115,6 +115,30 @@ jobs:
 
 The last step will fail the workflow if any breaking change is found.
 
+### Azure Pipelines {#ci-azdo}
+
+Here is a quick example on how to use Griffe in an Azure Pipeline as it can be instructed to generated [task logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands):
+
+```yaml
+jobs:
+  - name: check-api
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - checkout: self 
+        fetchDepth: 0  # We the need the full Git history.
+      - task: CmdLine@2
+        inputs:
+          script: pip install --user uvx
+      - task: CmdLine@2
+        inputs:
+          # The following command will compare current changes to latest tag.
+          script: | 
+            uvx griffe check --search src --format azdo your_package_name
+            
+```
+The last step will fail the workflow if any breaking change is found.
+
 ## Detected breakages
 
 In this section, we will describe the breakages that Griffe detects, giving some code examples and hints on how to properly communicate breakages with deprecation messages before actually releasing them.
