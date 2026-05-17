@@ -180,7 +180,7 @@ class Docstring:
         Returns:
             The parsed docstring as a list of sections.
         """
-        return parse(self, parser or self.parser, **(options or self.parser_options))
+        return parse(self, parser or self.parser, **(options or self.parser_options))  # ty:ignore[invalid-argument-type]
 
     def as_dict(
         self,
@@ -2152,7 +2152,7 @@ class Alias(ObjectAliasMixin):
         try:
             resolved = self.modules_collection.get_member(self.target_path)
         except KeyError as error:
-            raise AliasResolutionError(self) from error
+            raise AliasResolutionError(self) from error  # ty:ignore[invalid-argument-type]
         if resolved is self:
             raise CyclicAliasError([self.target_path])
         if resolved.is_alias and not resolved.resolved:
@@ -2404,7 +2404,7 @@ class Class(Object):
         do not use when producing Griffe trees!
         """
         try:
-            return self.all_members["__init__"].parameters  # ty:ignore[unresolved-attribute]
+            return self.all_members["__init__"].parameters  # ty:ignore[unresolved-attribute,invalid-return-type]
         except KeyError:
             return Parameters()
 

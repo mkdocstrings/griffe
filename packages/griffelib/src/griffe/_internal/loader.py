@@ -531,7 +531,7 @@ class GriffeLoader:
         Returns:
             Some statistics.
         """
-        stats = Stats(self)
+        stats = Stats(self)  # ty:ignore[invalid-argument-type]
         stats.time_spent_visiting = self._time_stats["time_spent_visiting"]
         stats.time_spent_inspecting = self._time_stats["time_spent_inspecting"]
         return stats
