@@ -162,7 +162,7 @@ class Inspector:
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
-        self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
+        self.docstring_options: DocstringOptions = docstring_options or {}
         """The docstring parsing options."""
 
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
@@ -706,15 +706,20 @@ def _convert_type_to_annotation(obj: Any, *, parent: Module | Class, member: str
     if origin is None:
         return _convert_object_to_annotation(obj, parent=parent, member=member)
 
-    args: Sequence[str | Expr | None] = [
-        _convert_type_to_annotation(arg, parent=parent, member=member) for arg in typing.get_args(obj)
+    args: list[str | Expr] = [
+        annotation
+        for arg in typing.get_args(obj)
+        if (annotation := _convert_type_to_annotation(arg, parent=parent, member=member)) is not None
     ]
 
+    def reduce(left: str | Expr, right: str | Expr) -> ExprBinOp:
+        return ExprBinOp(left, "|", right)
+
     if origin is types.UnionType:
-        return functools.reduce(lambda left, right: ExprBinOp(left, "|", right), args)
+        return functools.reduce(reduce, args)
 
     origin = _convert_type_to_annotation(origin, parent=parent, member=member)
     if origin is None:
         return None
 
-    return ExprSubscript(origin, ExprTuple(args, implicit=True))  # ty:ignore[invalid-argument-type]
+    return ExprSubscript(origin, ExprTuple(args, implicit=True))

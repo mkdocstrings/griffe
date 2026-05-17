@@ -182,7 +182,7 @@ class Visitor:
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """The docstring parser to use."""
 
-        self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
+        self.docstring_options: DocstringOptions = docstring_options or {}
         """The docstring parsing options."""
 
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()

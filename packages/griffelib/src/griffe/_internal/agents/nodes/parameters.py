@@ -40,7 +40,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
     arg: ast.arg
     kind: ParameterKind
     arg_default: ast.AST | None
-    for (arg, kind), arg_default in args_kinds_defaults:
+    for (arg, kind), arg_default in args_kinds_defaults:  # ty:ignore[invalid-assignment,not-iterable]
         parameters.append((arg.arg, arg.annotation, kind, arg_default))
 
     if node.vararg:
@@ -65,7 +65,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
     )
     kwarg: ast.arg
     kwarg_default: ast.AST | None
-    for kwarg, kwarg_default in kwargs_defaults:
+    for kwarg, kwarg_default in kwargs_defaults:  # ty:ignore[invalid-assignment]
         parameters.append(
             (kwarg.arg, kwarg.annotation, ParameterKind.keyword_only, kwarg_default),
         )

@@ -79,7 +79,7 @@ class GriffeLoader:
         """Loaded Griffe extensions."""
         self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
         """Selected docstring parser."""
-        self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
+        self.docstring_options: DocstringOptions = docstring_options or {}
         """Configured parsing options."""
         self.lines_collection: LinesCollection = lines_collection or LinesCollection()
         """Collection of source code lines."""
