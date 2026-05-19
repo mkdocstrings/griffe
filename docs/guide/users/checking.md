@@ -117,7 +117,7 @@ The last step will fail the workflow if any breaking change is found.
 
 ### Azure Pipelines {#ci-azdo}
 
-Here is a quick example on how to use Griffe in an Azure Pipeline as it can be instructed to generated [task logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands):
+Here is a quick example on how to use Griffe in an Azure Pipeline as it is capable to use Azure DevOps [task logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands) similar to github actions:
 
 ```yaml
 jobs:
