@@ -137,6 +137,7 @@ jobs:
             uvx griffe check --search src --format azdo your_package_name
             
 ```
+
 The last step will fail the workflow if any breaking change is found.
 
 ## Detected breakages
