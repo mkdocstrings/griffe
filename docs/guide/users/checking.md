@@ -129,12 +129,12 @@ jobs:
         fetchDepth: 0  # We the need the full Git history.
       - task: CmdLine@2
         inputs:
-          script: pip install --user uvx
+          script: pip install --user griffe
       - task: CmdLine@2
         inputs:
           # The following command will compare current changes to latest tag.
           script: | 
-            uvx griffe check --search src --format azdo your_package_name
+            griffe check --search src --format azdo your_package_name
             
 ```
 
