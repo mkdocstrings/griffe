@@ -751,7 +751,7 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 - **CLI**: `-f azdo`
 - **API**: `check(..., style="azdo")` / `check(..., style=ExplanationStyle.AZURE_DEVOPS)`
 
-Similar to the github workflow syntax, griff also is capable of using the task logging command syntax used by Azure Pipelines as part of the Azure DevOps Services.
+Similarly to the GitHub workflow syntax, Griffe is also capable of using the task logging command syntax used by Azure Pipelines as part of the Azure DevOps Services.
 
 When running `griffe check` in CI, warnings are displayed in the warnings panel of your pipeline.
 
