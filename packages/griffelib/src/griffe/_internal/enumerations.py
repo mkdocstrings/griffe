@@ -117,6 +117,8 @@ class ExplanationStyle(str, Enum):
     """Explanations in Markdown, adapted to changelogs."""
     GITHUB = "github"
     """Explanation as GitHub workflow commands warnings, adapted to CI."""
+    AZURE_DEVOPS = "azdo"
+    """Explanations as Azure DevOps / Azure Pipelines logging commands."""
 
 
 class BreakageKind(str, Enum):

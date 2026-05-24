@@ -280,6 +280,28 @@ class Breakage:
             return f"{explanation}: {change}"
         return explanation
 
+    def _explain_azdo(self) -> str:
+        location = f"sourcepath={self._location},linenumber={self._lineno}"
+        title = f"title={self._format_title(colors=False)}"
+        explanation = f"###vso[task.logissue type=warning;{location},{title}]{self.kind.value}"
+        old = self._format_old_value(colors=False)
+        if old and old != "unset":
+            old = f"`{old}`"
+        new = self._format_new_value(colors=False)
+        if new and new != "unset":
+            new = f"`{new}`"
+        if old and new:
+            change = f"{old} -> {new}"
+        elif old:
+            change = old
+        elif new:
+            change = new
+        else:
+            change = ""
+        if change:
+            return f"{explanation}: {change}"
+        return explanation
+
 
 class ParameterMovedBreakage(Breakage):
     """Specific breakage class for moved parameters."""
