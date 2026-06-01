@@ -737,7 +737,7 @@ See previous tips for types in docstrings.
 
 ## Numpydoc-style
 
-Numpydoc docstrings, see [Numpydoc's documentation][numpydoc]
+Numpydoc docstrings, see [Numpydoc's documentation][numpydoc].
 
 ### Syntax {#numpydoc-syntax}
 

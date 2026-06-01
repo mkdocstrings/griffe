@@ -125,7 +125,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - checkout: self 
+  - checkout: self
     fetchDepth: 0  # We the need the full Git history.
   - task: CmdLine@2
     inputs:
@@ -133,7 +133,7 @@ jobs:
   - task: CmdLine@2
     inputs:
       # The following command will compare current changes to latest tag.
-      script: | 
+      script: |
         griffe check --search src --format azdo your_package_name
 ```
 
