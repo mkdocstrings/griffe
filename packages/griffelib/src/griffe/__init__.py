@@ -331,6 +331,18 @@ from griffe._internal.extensions.dataclasses import DataclassesExtension
 from griffe._internal.extensions.unpack_typeddict import UnpackTypedDictExtension
 from griffe._internal.finder import ModuleFinder, NamePartsAndPathType, NamePartsType, NamespacePackage, Package
 from griffe._internal.git import GitInfo, KnownGitService
+from griffe._internal.helpers import (
+    TmpPackage,
+    htree,
+    module_vtree,
+    temporary_inspected_module,
+    temporary_inspected_package,
+    temporary_pyfile,
+    temporary_pypackage,
+    temporary_visited_module,
+    temporary_visited_package,
+    vtree,
+)
 from griffe._internal.importer import dynamic_import, sys_path
 from griffe._internal.loader import GriffeLoader, load, load_git, load_pypi
 from griffe._internal.logger import Logger, get_logger, logger, patch_loggers
@@ -358,18 +370,6 @@ from griffe._internal.models import (
     TypeParameters,
 )
 from griffe._internal.stats import Stats
-from griffe._internal.tests import (
-    TmpPackage,
-    htree,
-    module_vtree,
-    temporary_inspected_module,
-    temporary_inspected_package,
-    temporary_pyfile,
-    temporary_pypackage,
-    temporary_visited_module,
-    temporary_visited_package,
-    vtree,
-)
 
 # Regenerate this list with the following Python snippet:
 # import griffe
