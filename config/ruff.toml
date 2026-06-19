@@ -4,7 +4,7 @@ output-format = "concise"
 
 [lint]
 exclude = [
-    "tests/fixtures/*.py",
+    "packages/*/tests/fixtures/*.py",
 ]
 select = ["ALL"]
 ignore = [
@@ -65,11 +65,11 @@ logger-objects = ["griffe.logger"]
     "INP001",  # File is part of an implicit namespace package
     "T201",  # Print statement
 ]
-"tests/test_git.py" = [
+"packages/griffelib/tests/test_git.py" = [
     "S603",  # `subprocess` call: check for execution of untrusted input
     "S607",  # Starting a process with a partial executable path
 ]
-"tests/**.py" = [
+"packages/*/tests/**.py" = [
     "ARG005",  # Unused lambda argument
     "FBT001",  # Boolean positional arg in function definition
     "PLC1901",  # a == "" can be simplified to not a
@@ -91,7 +91,7 @@ convention = "google"
 
 [format]
 exclude = [
-    "tests/fixtures/*.py",
+    "packages/*/tests/fixtures/*.py",
 ]
 docstring-code-format = true
 docstring-code-line-length = 80

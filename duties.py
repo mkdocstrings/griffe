@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from duty.context import Context
 
 
-PY_SRC_PATHS = (Path(_) for _ in ("packages/griffecli/src", "packages/griffelib/src", "tests", "duties.py", "scripts"))
+PY_SRC_PATHS = (Path(_) for _ in ("packages", "duties.py", "scripts"))
 PY_SRC_LIST = tuple(str(_) for _ in PY_SRC_PATHS)
 PY_SRC = " ".join(PY_SRC_LIST)
 CI = os.environ.get("CI", "0") in {"1", "true", "yes", ""}
@@ -41,7 +41,7 @@ def _pyprefix(title: str) -> str:
 def _get_changelog_version() -> str:
     changelog_version_re = re.compile(r"^## \[(\d+\.\d+\.\d+)\].*$")
     with Path(__file__).parent.joinpath("CHANGELOG.md").open("r", encoding="utf8") as file:
-        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty:ignore[invalid-argument-type,unresolved-attribute]
+        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty:ignore[unresolved-attribute]
 
 
 @duty
@@ -460,7 +460,6 @@ def test(ctx: Context, *cli_args: str) -> None:
     os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
     ctx.run(
         tools.pytest(
-            "tests",
             config_file="config/pytest.ini",
             color="yes",
         ).add_args("-n", "auto", *cli_args),

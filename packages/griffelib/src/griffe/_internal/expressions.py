@@ -759,7 +759,7 @@ class ExprName(Expr):  # noqa: PLW1641
             return f"{self.parent.canonical_path}.{self.name}"
         if isinstance(self.parent, str):
             return f"{self.parent}.{self.name}"
-        parent = self.parent.members.get(self.member, self.parent)  # ty:ignore[no-matching-overload]
+        parent = self.parent.members.get(self.member, self.parent)
         try:
             return parent.resolve(self.name)
         except NameResolutionError:
@@ -1108,7 +1108,7 @@ _precedence_map = {
 
 
 def _get_precedence(expr: Expr) -> _OperatorPrecedence:
-    return _precedence_map.get(type(expr), lambda _: _OperatorPrecedence.NONE)(expr)  # ty:ignore[no-matching-overload]
+    return _precedence_map.get(type(expr), lambda _: _OperatorPrecedence.NONE)(expr)
 
 
 def _build_attribute(node: ast.Attribute, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1198,7 +1198,7 @@ def _build_constant(
                 )
             else:
                 return _build(parsed.body, parent, **kwargs)  # ty:ignore[unresolved-attribute]
-    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)  # ty:ignore[no-matching-overload]
+    return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
 def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expr:
