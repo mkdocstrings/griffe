@@ -816,6 +816,7 @@ def _read_examples_section(
                 current_text.append(line)
 
         elif in_code_example:
+            line = line.lstrip()
             if trim_doctest_flags:
                 line = _RE_DOCTEST_FLAGS.sub("", line)  # noqa: PLW2901
                 line = _RE_DOCTEST_BLANKLINE.sub("", line)  # noqa: PLW2901
@@ -828,15 +829,15 @@ def _read_examples_section(
         elif in_code_block:
             current_text.append(line)
 
-        elif line.startswith(">>>"):
+        elif (lstripped := line.lstrip()).startswith(">>>"):
             if current_text:
                 sub_sections.append((DocstringSectionKind.text, "\n".join(current_text).rstrip("\n")))
                 current_text = []
             in_code_example = True
 
             if trim_doctest_flags:
-                line = _RE_DOCTEST_FLAGS.sub("", line)  # noqa: PLW2901
-            current_example.append(line)
+                lstripped = _RE_DOCTEST_FLAGS.sub("", lstripped)  # noqa: PLW2901
+            current_example.append(lstripped)
 
         else:
             current_text.append(line)

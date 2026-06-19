@@ -786,6 +786,39 @@ def test_examples_section(parse_numpy: ParserType) -> None:
     assert examples.value[3][1].startswith(">>> a = 0  # doctest: +SKIP")
 
 
+def test_indented_examples_section(parse_numpy: ParserType) -> None:
+    """Parse examples of differing indentation levels.
+
+    Authors might indent ``>>>`` lines as a way of highlighting code
+    examples. The parser should be able to handle these cases correctly.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+    """
+    # NOTE in this example that only the first example is indented.
+    # Both examples should still be parsed
+    docstring = """
+        Examples
+        --------
+        Create an object:
+            >>> obj = MyClass()
+            >>> obj.method()
+
+        Chain multiple calls:
+        >>> result = (
+        ...     MyClass()
+        ...     .method()
+        ... )
+    """
+
+    sections, _ = parse_numpy(docstring)
+    assert len(sections) == 1
+    examples = [v[1] for v in sections[0].value if v[0] is DocstringSectionKind.examples]
+    assert len(examples) == 2
+    assert examples[0] == ">>> obj = MyClass()\n>>> obj.method()"
+    assert examples[1] == ">>> result = (\n...     MyClass()\n...     .method()\n... )"
+
+
 def test_examples_section_when_followed_by_named_section(parse_numpy: ParserType) -> None:
     """Parse examples section followed by another section.
 
