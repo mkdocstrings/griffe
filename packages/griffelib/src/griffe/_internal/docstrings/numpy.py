@@ -836,7 +836,7 @@ def _read_examples_section(
             in_code_example = True
 
             if trim_doctest_flags:
-                lstripped = _RE_DOCTEST_FLAGS.sub("", lstripped)  # noqa: PLW2901
+                lstripped = _RE_DOCTEST_FLAGS.sub("", lstripped)
             current_example.append(lstripped)
 
         else:
