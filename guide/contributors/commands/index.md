@@ -1293,7 +1293,6 @@ os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
 os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
 ctx.run(
     tools.pytest(
-        "tests",
         config_file="config/pytest.ini",
         color="yes",
     ).add_args("-n", "auto", *cli_args),

@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.1.0](https://github.com/mkdocstrings/griffe/releases/tag/2.1.0) - 2026-06-19
+
+[Compare with 2.0.2](https://github.com/mkdocstrings/griffe/compare/2.0.2...2.1.0)
+
+### Build
+
+- Add tests to source distributions for `griffecli` and `griffelib` packages. [Issue-452](https://github.com/mkdocstrings/griffe/issues/452)
+
+### Features
+
+- Add logging format for Azure Devops ([82526e4](https://github.com/mkdocstrings/griffe/commit/82526e487946f838c2521e531ef8716dd12d4eea) by Carsten Igel). [PR-457](https://github.com/mkdocstrings/griffe/pull/457), Co-authored-by: Timothée Mazzucotelli [dev@pawamoy.fr](mailto:dev@pawamoy.fr)
+
+### Bug Fixes
+
+- Rename tests module to avoid exclusion by packagers ([5b3e392](https://github.com/mkdocstrings/griffe/commit/5b3e392006da98d5f23ba0e808393038be6014d8) by Timothée Mazzucotelli). [Issue-461](https://github.com/mkdocstrings/griffe/issues/461)
+- Don't try merging overload annotations into non-function objects ([1b6b053](https://github.com/mkdocstrings/griffe/commit/1b6b053dc4cfdc4381a9dc4b0676b7946e55951e) by Timothée Mazzucotelli). [Issue-451](https://github.com/mkdocstrings/griffe/discussions/451)
+
 ## [2.0.2](https://github.com/mkdocstrings/griffe/releases/tag/2.0.2) - 2026-03-27
 
 [Compare with 2.0.1](https://github.com/mkdocstrings/griffe/compare/2.0.1...2.0.2)

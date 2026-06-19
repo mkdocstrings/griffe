@@ -5,7 +5,7 @@
 ## logger
 
 ```
-logger: Logger = _get()
+logger: Logger = Logger._get()
 ```
 
 Our global logger, used throughout the library.

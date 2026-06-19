@@ -203,7 +203,7 @@ See also: value.
 ### value
 
 ```
-value: str = cleandoc(rstrip())
+value: str = inspect.cleandoc(value.rstrip())
 ```
 
 The original value of the docstring, cleaned by `inspect.cleandoc`.
@@ -547,7 +547,7 @@ def __init__(self, value: str, title: str | None = None) -> None:
 ### kind
 
 ```
-kind: DocstringSectionKind = text
+kind: DocstringSectionKind = DocstringSectionKind.text
 ```
 
 The section kind.
@@ -688,7 +688,7 @@ def __init__(self, value: list[DocstringParameter], title: str | None = None) ->
 ### kind
 
 ```
-kind: DocstringSectionKind = parameters
+kind: DocstringSectionKind = DocstringSectionKind.parameters
 ```
 
 The section kind.
@@ -833,7 +833,9 @@ def __init__(self, value: list[DocstringParameter], title: str | None = None) ->
 ### kind
 
 ```
-kind: DocstringSectionKind = other_parameters
+kind: DocstringSectionKind = (
+    DocstringSectionKind.other_parameters
+)
 ```
 
 The section kind.
@@ -974,7 +976,9 @@ def __init__(self, value: list[DocstringTypeParameter], title: str | None = None
 ### kind
 
 ```
-kind: DocstringSectionKind = type_parameters
+kind: DocstringSectionKind = (
+    DocstringSectionKind.type_parameters
+)
 ```
 
 The section kind.
@@ -1114,7 +1118,7 @@ def __init__(self, value: list[DocstringRaise], title: str | None = None) -> Non
 ### kind
 
 ```
-kind: DocstringSectionKind = raises
+kind: DocstringSectionKind = DocstringSectionKind.raises
 ```
 
 The section kind.
@@ -1254,7 +1258,7 @@ def __init__(self, value: list[DocstringWarn], title: str | None = None) -> None
 ### kind
 
 ```
-kind: DocstringSectionKind = warns
+kind: DocstringSectionKind = DocstringSectionKind.warns
 ```
 
 The section kind.
@@ -1394,7 +1398,7 @@ def __init__(self, value: list[DocstringReturn], title: str | None = None) -> No
 ### kind
 
 ```
-kind: DocstringSectionKind = returns
+kind: DocstringSectionKind = DocstringSectionKind.returns
 ```
 
 The section kind.
@@ -1534,7 +1538,7 @@ def __init__(self, value: list[DocstringYield], title: str | None = None) -> Non
 ### kind
 
 ```
-kind: DocstringSectionKind = yields
+kind: DocstringSectionKind = DocstringSectionKind.yields
 ```
 
 The section kind.
@@ -1674,7 +1678,7 @@ def __init__(self, value: list[DocstringReceive], title: str | None = None) -> N
 ### kind
 
 ```
-kind: DocstringSectionKind = receives
+kind: DocstringSectionKind = DocstringSectionKind.receives
 ```
 
 The section kind.
@@ -1819,7 +1823,7 @@ def __init__(
 ### kind
 
 ```
-kind: DocstringSectionKind = examples
+kind: DocstringSectionKind = DocstringSectionKind.examples
 ```
 
 The section kind.
@@ -1960,7 +1964,7 @@ def __init__(self, value: list[DocstringAttribute], title: str | None = None) ->
 ### kind
 
 ```
-kind: DocstringSectionKind = attributes
+kind: DocstringSectionKind = DocstringSectionKind.attributes
 ```
 
 The section kind.
@@ -2100,7 +2104,7 @@ def __init__(self, value: list[DocstringFunction], title: str | None = None) -> 
 ### kind
 
 ```
-kind: DocstringSectionKind = functions
+kind: DocstringSectionKind = DocstringSectionKind.functions
 ```
 
 The section kind.
@@ -2240,7 +2244,7 @@ def __init__(self, value: list[DocstringClass], title: str | None = None) -> Non
 ### kind
 
 ```
-kind: DocstringSectionKind = classes
+kind: DocstringSectionKind = DocstringSectionKind.classes
 ```
 
 The section kind.
@@ -2381,7 +2385,9 @@ def __init__(self, value: list[DocstringTypeAlias], title: str | None = None) ->
 ### kind
 
 ```
-kind: DocstringSectionKind = type_aliases
+kind: DocstringSectionKind = (
+    DocstringSectionKind.type_aliases
+)
 ```
 
 The section kind.
@@ -2521,7 +2527,7 @@ def __init__(self, value: list[DocstringModule], title: str | None = None) -> No
 ### kind
 
 ```
-kind: DocstringSectionKind = modules
+kind: DocstringSectionKind = DocstringSectionKind.modules
 ```
 
 The section kind.
@@ -2666,7 +2672,7 @@ def __init__(self, version: str, text: str, title: str | None = None) -> None:
 ### kind
 
 ```
-kind: DocstringSectionKind = deprecated
+kind: DocstringSectionKind = DocstringSectionKind.deprecated
 ```
 
 The section kind.
@@ -2813,7 +2819,7 @@ def __init__(self, kind: str, text: str, title: str | None = None) -> None:
 ### kind
 
 ```
-kind: DocstringSectionKind = admonition
+kind: DocstringSectionKind = DocstringSectionKind.admonition
 ```
 
 The section kind.

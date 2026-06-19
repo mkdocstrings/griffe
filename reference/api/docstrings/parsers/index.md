@@ -956,10 +956,10 @@ Sphinx-style docstrings parser.
 parsers: dict[
     Parser, Callable[[Docstring], list[DocstringSection]]
 ] = {
-    auto: parse_auto,
-    google: parse_google,
-    sphinx: parse_sphinx,
-    numpy: parse_numpy,
+    Parser.auto: parse_auto,
+    Parser.google: parse_google,
+    Parser.sphinx: parse_sphinx,
+    Parser.numpy: parse_numpy,
 }
 ```
 

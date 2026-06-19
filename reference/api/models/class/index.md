@@ -655,7 +655,7 @@ The class keywords arguments.
 ## kind
 
 ```
-kind = CLASS
+kind = Kind.CLASS
 ```
 
 The object kind.

@@ -638,7 +638,7 @@ Returns:
 ## kind
 
 ```
-kind = FUNCTION
+kind = Kind.FUNCTION
 ```
 
 The object kind.
@@ -2212,7 +2212,12 @@ Variadic positional parameter.
 
 ```
 ParametersType = list[
-    tuple[str, AST | None, ParameterKind, str | AST | None]
+    tuple[
+        str,
+        ast.AST | None,
+        ParameterKind,
+        str | ast.AST | None,
+    ]
 ]
 ```
 

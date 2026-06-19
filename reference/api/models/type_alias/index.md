@@ -596,7 +596,7 @@ Returns:
 ### kind
 
 ```
-kind = TYPE_ALIAS
+kind = Kind.TYPE_ALIAS
 ```
 
 The object kind.

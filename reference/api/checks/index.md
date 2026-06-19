@@ -532,7 +532,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = ATTRIBUTE_CHANGED_TYPE
+kind: BreakageKind = BreakageKind.ATTRIBUTE_CHANGED_TYPE
 ```
 
 The kind of breakage.
@@ -731,7 +731,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = ATTRIBUTE_CHANGED_VALUE
+kind: BreakageKind = BreakageKind.ATTRIBUTE_CHANGED_VALUE
 ```
 
 The kind of breakage.
@@ -930,7 +930,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = CLASS_REMOVED_BASE
+kind: BreakageKind = BreakageKind.CLASS_REMOVED_BASE
 ```
 
 The kind of breakage.
@@ -1129,7 +1129,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = OBJECT_CHANGED_KIND
+kind: BreakageKind = BreakageKind.OBJECT_CHANGED_KIND
 ```
 
 The kind of breakage.
@@ -1328,7 +1328,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = OBJECT_REMOVED
+kind: BreakageKind = BreakageKind.OBJECT_REMOVED
 ```
 
 The kind of breakage.
@@ -1527,7 +1527,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = PARAMETER_ADDED_REQUIRED
+kind: BreakageKind = BreakageKind.PARAMETER_ADDED_REQUIRED
 ```
 
 The kind of breakage.
@@ -1726,7 +1726,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = PARAMETER_CHANGED_DEFAULT
+kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_DEFAULT
 ```
 
 The kind of breakage.
@@ -1925,7 +1925,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = PARAMETER_CHANGED_KIND
+kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_KIND
 ```
 
 The kind of breakage.
@@ -2124,7 +2124,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = PARAMETER_CHANGED_REQUIRED
+kind: BreakageKind = BreakageKind.PARAMETER_CHANGED_REQUIRED
 ```
 
 The kind of breakage.
@@ -2323,7 +2323,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = PARAMETER_MOVED
+kind: BreakageKind = BreakageKind.PARAMETER_MOVED
 ```
 
 The kind of breakage.
@@ -2522,7 +2522,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = PARAMETER_REMOVED
+kind: BreakageKind = BreakageKind.PARAMETER_REMOVED
 ```
 
 The kind of breakage.
@@ -2721,7 +2721,7 @@ Some details about the breakage.
 ### kind
 
 ```
-kind: BreakageKind = RETURN_CHANGED_TYPE
+kind: BreakageKind = BreakageKind.RETURN_CHANGED_TYPE
 ```
 
 The kind of breakage.

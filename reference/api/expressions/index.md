@@ -6006,7 +6006,7 @@ Whether this expression is a tuple.
 ### kind
 
 ```
-kind: ParameterKind = positional_or_keyword
+kind: ParameterKind = ParameterKind.positional_or_keyword
 ```
 
 Parameter kind.

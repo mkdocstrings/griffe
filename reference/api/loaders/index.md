@@ -909,7 +909,7 @@ def expand_exports(self, module: Module, seen: set | None = None) -> None:
     if module.exports is None:
         return
 
-    expanded = []
+    expanded: list[str | ExprName] = []
     for export in module.exports:
         # It's a name: we resolve it, get the module it comes from,
         # recurse into it, and add its exports to the current ones.
@@ -1054,7 +1054,7 @@ def expand_wildcards(
         if already_present:
             old_member = obj.get_member(new_member.name)
             old_lineno = old_member.alias_lineno if old_member.is_alias else old_member.lineno
-            overwrite = alias_lineno > (old_lineno or 0)
+            overwrite = (alias_lineno or 0) > (old_lineno or 0)
 
         # 1. If the expanded member is an alias with a target path equal to its own path, we stop.
         #    This situation can arise because of Griffe's mishandling of (abusive) wildcard imports.
@@ -2200,11 +2200,11 @@ def __init__(self, loader: GriffeLoader) -> None:
 
 ```
 by_kind = {
-    MODULE: 0,
-    CLASS: 0,
-    FUNCTION: 0,
-    ATTRIBUTE: 0,
-    TYPE_ALIAS: 0,
+    Kind.MODULE: 0,
+    Kind.CLASS: 0,
+    Kind.FUNCTION: 0,
+    Kind.ATTRIBUTE: 0,
+    Kind.TYPE_ALIAS: 0,
 }
 ```
 
@@ -2213,7 +2213,10 @@ Number of objects by kind.
 ### lines
 
 ```
-lines = sum((len(lines)) for lines in (values()))
+lines = sum(
+    (len(lines))
+    for lines in (loader.lines_collection.values())
+)
 ```
 
 Total number of lines.

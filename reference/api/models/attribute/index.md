@@ -626,7 +626,7 @@ Returns:
 ## kind
 
 ```
-kind = ATTRIBUTE
+kind = Kind.ATTRIBUTE
 ```
 
 The object kind.

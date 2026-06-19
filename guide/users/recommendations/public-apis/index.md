@@ -479,8 +479,6 @@ ______________________________________________________________________
 
 The second user of your CLI as API is... you again. When you write tests for your CLI, you import your entrypoints and call them by passing CLI options and arguments, maybe asserting the exit code raised with a `SystemExit` or the standard output/error thanks to [pytest's capture fixtures](https://docs.pytest.org/en/6.2.x/capture.html). Some simplified examples from our own test suite:
 
-tests/test_cli.py
-
 ```
 import pytest
 import griffe

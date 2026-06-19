@@ -592,7 +592,7 @@ Returns:
 ## kind
 
 ```
-kind = MODULE
+kind = Kind.MODULE
 ```
 
 The object kind.
