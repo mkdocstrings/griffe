@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 
 import pytest
 from jsonschema import ValidationError, validate
@@ -91,7 +92,10 @@ def test_minimal_light_data_is_enough(symbol: str) -> None:
 
 # YORE: EOL 3.12: Remove block.
 # YORE: EOL 3.11: Remove line.
-@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")
+@pytest.mark.skipif(
+    sys.version_info < (3, 12),
+    reason="Python less than 3.12 does not have PEP 695 generics",
+)
 def test_encoding_pep695_generics_without_defaults() -> None:
     """Test serialization and de-serialization of PEP 695 generics without defaults.
 
@@ -159,6 +163,10 @@ def _validate(obj: dict, schema: dict) -> None:
         raise
 
 
+@pytest.mark.skipif(
+    not Path("docs", "schema.json").exists(),
+    reason="schema.json not available",
+)
 def test_json_schema() -> None:
     """Assert that our serialized data matches our JSON schema."""
     loader = GriffeLoader()
@@ -172,7 +180,14 @@ def test_json_schema() -> None:
 
 # YORE: EOL 3.12: Remove block.
 # YORE: EOL 3.11: Remove line.
-@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 generics")
+@pytest.mark.skipif(
+    sys.version_info < (3, 12),
+    reason="Python less than 3.12 does not have PEP 695 generics",
+)
+@pytest.mark.skipif(
+    not Path("docs", "schema.json").exists(),
+    reason="schema.json not available",
+)
 def test_json_schema_for_pep695_generics_without_defaults() -> None:
     """Assert that serialized PEP 695 generics without defaults match our JSON schema.
 
@@ -193,6 +208,10 @@ def test_json_schema_for_pep695_generics_without_defaults() -> None:
 
 # YORE: EOL 3.12: Remove line.
 @pytest.mark.skipif(sys.version_info < (3, 13), reason="Python less than 3.13 does not have defaults in PEP 695 generics")  # fmt: skip
+@pytest.mark.skipif(
+    not Path("docs", "schema.json").exists(),
+    reason="schema.json not available",
+)
 def test_json_schema_for_pep695_generics() -> None:
     """Assert that serialized PEP 695 generics with defaults match our JSON schema.
 

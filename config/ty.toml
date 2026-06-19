@@ -1,5 +1,5 @@
 [src]
-exclude = ["tests/fixtures"]
+exclude = ["packages/*/tests/fixtures"]
 
 [terminal]
 error-on-warning = true

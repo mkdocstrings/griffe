@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -14,15 +16,38 @@ from griffe import (
     GriffeLoader,
     ObjectNode,
     load_extensions,
+    sys_path,
     temporary_visited_module,
     temporary_visited_package,
 )
-from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
+from griffe._internal.models import (
+    Attribute,
+    Class,
+    Function,
+    Module,
+    Object,
+    TypeAlias,
+)
 
 if TYPE_CHECKING:
     import ast
+    from collections.abc import Iterator
 
     from griffe import Attribute, Class, Function, Module, Object, ObjectNode, TypeAlias
+
+
+PACKAGE_ROOT = Path(__file__).parent.parent.parent
+
+
+@contextmanager
+def cd(path: str | Path) -> Iterator[None]:
+    """Change directory to `path` and restore the previous directory on exit."""
+    old_path = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old_path)
 
 
 class AnalysisEventsTest(Extension):  # noqa: D101
@@ -101,17 +126,20 @@ class AnalysisEventsTest(Extension):  # noqa: D101
         # With class.
         AnalysisEventsTest,
         # With absolute paths (esp. important to test for Windows).
-        Path("tests/test_extensions/test_base.py").absolute().as_posix(),
-        Path("tests/test_extensions/test_base.py:AnalysisEventsTest").absolute().as_posix(),
+        PACKAGE_ROOT.joinpath("tests/test_extensions/test_base.py").absolute().as_posix(),
+        PACKAGE_ROOT.joinpath("tests/test_extensions/test_base.py:AnalysisEventsTest").absolute().as_posix(),
     ],
 )
-def test_loading_extensions(extension: str | dict[str, dict[str, Any]] | Extension | type[Extension]) -> None:
+def test_loading_extensions(
+    extension: str | dict[str, dict[str, Any]] | Extension | type[Extension],
+) -> None:
     """Test the extensions loading mechanisms.
 
     Parameters:
         extension: Extension specification (parametrized).
     """
-    extensions = load_extensions(extension)
+    with cd(PACKAGE_ROOT), sys_path(PACKAGE_ROOT, *sys.path):
+        extensions = load_extensions(extension)
     loaded: AnalysisEventsTest = extensions._extensions[0]  # ty:ignore[invalid-assignment]
     # We cannot use isinstance here,
     # because loading from a filepath drops the parent `tests` package,
@@ -157,7 +185,10 @@ def test_analysis_events_without_type_aliases() -> None:
 
 
 # YORE: EOL 3.11: Remove line.
-@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 type aliases")
+@pytest.mark.skipif(
+    sys.version_info < (3, 12),
+    reason="Python less than 3.12 does not have PEP 695 type aliases",
+)
 def test_analysis_events() -> None:
     """Test analysis events triggering."""
     extension = AnalysisEventsTest()
@@ -259,7 +290,10 @@ def test_load_events_without_type_aliases() -> None:
 
 
 # YORE: EOL 3.11: Remove line.
-@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 type aliases")
+@pytest.mark.skipif(
+    sys.version_info < (3, 12),
+    reason="Python less than 3.12 does not have PEP 695 type aliases",
+)
 def test_load_events() -> None:
     """Test load events triggering."""
     extension = LoadEventsTest()

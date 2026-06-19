@@ -41,7 +41,6 @@
                 "-vvv",
                 "--no-cov",
                 "--dist=no",
-                "tests",
                 "-k=${input:tests_selection}"
             ]
         }
