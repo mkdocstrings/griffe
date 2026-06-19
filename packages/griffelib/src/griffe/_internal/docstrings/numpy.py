@@ -816,7 +816,7 @@ def _read_examples_section(
                 current_text.append(line)
 
         elif in_code_example:
-            line = line.lstrip()
+            line = line.lstrip()  # noqa: PLW2901
             if trim_doctest_flags:
                 line = _RE_DOCTEST_FLAGS.sub("", line)  # noqa: PLW2901
                 line = _RE_DOCTEST_BLANKLINE.sub("", line)  # noqa: PLW2901
