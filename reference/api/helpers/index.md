@@ -65,7 +65,7 @@ Yields:
 - **`module_name`** ( `str` ) – The module name, as to dynamically import it.
 - **`module_path`** ( `Path` ) – The module path.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -124,7 +124,7 @@ Yields:
 
 - `TmpPackage` – A temporary package.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -154,7 +154,7 @@ def temporary_pypackage(
     """
     modules = modules or {}
     if isinstance(modules, list):
-        modules = dict.fromkeys(modules, "")
+        modules = dict.fromkeys(modules, "")  # ty:ignore[invalid-assignment]
     mkdir_kwargs = {"parents": True, "exist_ok": True}
     with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpdirpath = Path(tmpdir)
@@ -232,7 +232,7 @@ Yields:
 
 - `Module` – The visited module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -374,7 +374,7 @@ Yields:
 
 - `Module` – A module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -428,7 +428,7 @@ def temporary_visited_package(
     """
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
-        yield load(
+        yield load(  # ty:ignore[invalid-yield]
             tmp_package.name,
             search_paths=[tmp_package.tmpdir, *search_paths],
             extensions=extensions,
@@ -506,7 +506,7 @@ Yields:
 
 - `Module` – The inspected module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -654,7 +654,7 @@ Yields:
 
 - `Module` – A module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -709,7 +709,7 @@ def temporary_inspected_package(
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         try:
-            yield load(
+            yield load(  # ty:ignore[invalid-yield]
                 tmp_package.name,
                 search_paths=[tmp_package.tmpdir, *search_paths],
                 extensions=extensions,
@@ -759,7 +759,7 @@ Returns:
 
 - `Object` – The top or leaf object.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 def vtree(*objects: Object, return_leaf: bool = False) -> Object:
@@ -807,7 +807,7 @@ Returns:
 
 - `Object` – The first given object, with all the other objects as members of it.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 def htree(*objects: Object) -> Object:
@@ -865,7 +865,7 @@ Returns:
 
 - `Module` – The top or leaf module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = False) -> Module:

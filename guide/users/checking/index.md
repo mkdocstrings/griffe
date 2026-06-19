@@ -117,6 +117,30 @@ jobs:
 
 The last step will fail the workflow if any breaking change is found.
 
+### Azure Pipelines
+
+Here is a quick example on how to use Griffe in an Azure Pipeline. Griffe can format its output using Azure DevOps [task logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands), similar to GitHub Actions messages:
+
+```
+jobs:
+- name: check-api
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - checkout: self
+    fetchDepth: 0  # We the need the full Git history.
+  - task: CmdLine@2
+    inputs:
+      script: pip install --user griffe
+  - task: CmdLine@2
+    inputs:
+      # The following command will compare current changes to latest tag.
+      script: |
+        griffe check --search src --format azdo your_package_name
+```
+
+The last step will fail the workflow if any breaking change is found.
+
 ## Detected breakages
 
 In this section, we will describe the breakages that Griffe detects, giving some code examples and hints on how to properly communicate breakages with deprecation messages before actually releasing them.
@@ -844,6 +868,15 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 ::warning file=src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
 ::warning file=src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
 ```
+
+### Azure DevOps / Azure Pipelines
+
+- **CLI**: `-f azdo`
+- **API**: `check(..., style="azdo")` / `check(..., style=ExplanationStyle.AZURE_DEVOPS)`
+
+Similarly to the GitHub workflow syntax, Griffe is capable of using the task logging command syntax used by Azure Pipelines as part of the Azure DevOps Services.
+
+When running `griffe check` in CI, warnings are displayed in the warnings panel of your pipeline.
 
 ## Next steps
 

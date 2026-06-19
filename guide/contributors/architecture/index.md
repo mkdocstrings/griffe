@@ -8,26 +8,27 @@ This document describes how the project is architectured, both regarding boilerp
 📁 .venv/ # (2)!
 📁 .venvs/ # (3)!
 📁 .vscode/ # (4)!
-📁 config/ # (5)!
-📁 docs/ # (6)!
-📁 htmlcov/ # (7)!
-📁 packages/ # (8)!
-📁 scripts/ # (9)!
-📁 site/ # (10)!
-📁 tests/ # (11)!
- .copier-answers.yml # (12)!
- .envrc # (13)!
+📁 .zed/ # (5)!
+📁 config/ # (6)!
+📁 docs/ # (7)!
+📁 htmlcov/ # (8)!
+📁 packages/ # (9)!
+📁 scripts/ # (10)!
+📁 site/ # (11)!
+📁 tests/ # (12)!
+ .copier-answers.yml # (13)!
+ .envrc # (14)!
  .gitignore
  CHANGELOG.md
  CODE_OF_CONDUCT.md
  CONTRIBUTING.md
  LICENSE
- Makefile # (14)!
+ Makefile # (15)!
  README.md
- duties.py # (15)!
+ duties.py # (16)!
  logo.svg
- mkdocs.yml # (16)!
- pyproject.toml # (17)!
+ mkdocs.yml # (17)!
+ pyproject.toml # (18)!
  uv.lock
 ```
 
@@ -66,6 +67,11 @@ This document describes how the project is architectured, both regarding boilerp
     settings.json
     targets.log
     tasks.json
+   ```
+
+1. ```
+    debug.json
+    settings.json
    ```
 
 1. Contains our tooling configuration. See [Scripts, configuration](#scripts-configuration).
@@ -262,11 +268,13 @@ This document describes how the project is architectured, both regarding boilerp
 
    1. ```
       📁 src/ # (1)!
+      📁 tests/ # (2)!
        pyproject.toml
       ```
       1. ```
          📁 griffecli/ # (1)!
          ```
+
          1. ```
             📁 _internal/ # (1)!
              __init__.py
@@ -277,8 +285,11 @@ This document describes how the project is architectured, both regarding boilerp
                 __init__.py
                 cli.py
                ```
+
+      1. `tree`
    1. ```
       📁 src/ # (1)!
+      📁 tests/ # (2)!
        pyproject.toml
       ```
       1. ```
@@ -307,6 +318,7 @@ This document describes how the project is architectured, both regarding boilerp
                 expressions.py
                 finder.py
                 git.py
+                helpers.py
                 importer.py
                 loader.py
                 logger.py
@@ -314,7 +326,6 @@ This document describes how the project is architectured, both regarding boilerp
                 mixins.py
                 models.py
                 stats.py
-                tests.py
                ```
 
                1. ```
@@ -350,6 +361,12 @@ This document describes how the project is architectured, both regarding boilerp
                    dataclasses.py
                    unpack_typeddict.py
                   ```
+      1. ```
+         📁 test_docstrings/ # (1)!
+         📁 test_extensions/ # (2)!
+         ```
+         1. `tree`
+         1. `tree`
 
 1. Our different scripts. See [Scripts, configuration](#scripts-configuration).
 
@@ -701,6 +718,12 @@ This module contains Git utilities, used by our load_git function, which in turn
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
+#### `helpers.py`
+
+This module contains helpers. They simplify programmatic use of Griffe, for example to load data from strings or to create temporary packages. They are particularly useful for our own tests suite.
+
+xml version="1.0" encoding="UTF-8" standalone="no"?
+
 #### `importer.py`
 
 This module contains utilities to dynamically import objects. These utilities are used by our Inspector to dynamically import objects specified as Python paths, like `package.module.Class.method`.
@@ -742,11 +765,5 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 #### `stats.py`
 
 This module contains utilities to compute loading statistics, like time spent visiting modules statically or dynamically.
-
-xml version="1.0" encoding="UTF-8" standalone="no"?
-
-#### `tests.py`
-
-This module contains helpers. They simplify programmatic use of Griffe, for example to load data from strings or to create temporary packages. They are particularly useful for our own tests suite.
 
 xml version="1.0" encoding="UTF-8" standalone="no"?

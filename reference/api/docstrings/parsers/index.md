@@ -130,7 +130,7 @@ def parse_auto(
     """
     from griffe._internal.docstrings.parsers import parse  # noqa: PLC0415
 
-    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
+    per_style_options = per_style_options or {}
 
     style, sections = infer_docstring_style(
         docstring,
@@ -140,7 +140,7 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, unresolved-attribute]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload]
     return sections
 ```
 
@@ -1020,7 +1020,7 @@ def parse_docstring_annotation(
         if code.body:  # ty:ignore[unresolved-attribute]
             name_or_expr = safe_get_annotation(
                 code.body,  # ty:ignore[unresolved-attribute]
-                parent=docstring.parent,
+                parent=docstring.parent,  # ty:ignore[invalid-argument-type]
                 log_level=log_level,
             )
             return name_or_expr or annotation
@@ -1189,7 +1189,7 @@ def infer_docstring_style(
     """
     from griffe._internal.docstrings.parsers import parsers  # noqa: PLC0415
 
-    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
+    per_style_options = per_style_options or {}
 
     style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
 
@@ -1206,7 +1206,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[unresolved-attribute]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:

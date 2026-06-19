@@ -1471,6 +1471,30 @@ jobs:
 
 The last step will fail the workflow if any breaking change is found.
 
+### Azure Pipelines
+
+Here is a quick example on how to use Griffe in an Azure Pipeline. Griffe can format its output using Azure DevOps [task logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands), similar to GitHub Actions messages:
+
+```
+jobs:
+- name: check-api
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - checkout: self
+    fetchDepth: 0  # We the need the full Git history.
+  - task: CmdLine@2
+    inputs:
+      script: pip install --user griffe
+  - task: CmdLine@2
+    inputs:
+      # The following command will compare current changes to latest tag.
+      script: |
+        griffe check --search src --format azdo your_package_name
+```
+
+The last step will fail the workflow if any breaking change is found.
+
 ## Detected breakages
 
 In this section, we will describe the breakages that Griffe detects, giving some code examples and hints on how to properly communicate breakages with deprecation messages before actually releasing them.
@@ -2198,6 +2222,15 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 ::warning file=src/griffe/finder.py,line=75,title=NamespacePackage.name::Attribute value was changed: `name` -> unset
 ::warning file=src/griffe/finder.py,line=77,title=NamespacePackage.path::Attribute value was changed: `path` -> unset
 ```
+
+### Azure DevOps / Azure Pipelines
+
+- **CLI**: `-f azdo`
+- **API**: `check(..., style="azdo")` / `check(..., style=ExplanationStyle.AZURE_DEVOPS)`
+
+Similarly to the GitHub workflow syntax, Griffe is capable of using the task logging command syntax used by Azure Pipelines as part of the Azure DevOps Services.
+
+When running `griffe check` in CI, warnings are displayed in the warnings panel of your pipeline.
 
 ## Next steps
 
@@ -5659,7 +5692,7 @@ See previous tips for types in docstrings.
 
 ## Numpydoc-style
 
-Numpydoc docstrings, see [Numpydoc's documentation](https://numpydoc.readthedocs.io/en/latest/format.html)
+Numpydoc docstrings, see [Numpydoc's documentation](https://numpydoc.readthedocs.io/en/latest/format.html).
 
 ### Syntax
 
@@ -6972,7 +7005,7 @@ def __init__(
     self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
     """The docstring parser to use."""
 
-    self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
+    self.docstring_options: DocstringOptions = docstring_options or {}
     """The docstring parsing options."""
 
     self.lines_collection: LinesCollection = lines_collection or LinesCollection()
@@ -8087,7 +8120,7 @@ def __init__(
     self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
     """The docstring parser to use."""
 
-    self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
+    self.docstring_options: DocstringOptions = docstring_options or {}
     """The docstring parsing options."""
 
     self.lines_collection: LinesCollection = lines_collection or LinesCollection()
@@ -10344,7 +10377,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
     arg: ast.arg
     kind: ParameterKind
     arg_default: ast.AST | None
-    for (arg, kind), arg_default in args_kinds_defaults:
+    for (arg, kind), arg_default in args_kinds_defaults:  # ty:ignore[invalid-assignment,not-iterable]
         parameters.append((arg.arg, arg.annotation, kind, arg_default))
 
     if node.vararg:
@@ -10369,7 +10402,7 @@ def get_parameters(node: ast.arguments) -> ParametersType:
     )
     kwarg: ast.arg
     kwarg_default: ast.AST | None
-    for kwarg, kwarg_default in kwargs_defaults:
+    for kwarg, kwarg_default in kwargs_defaults:  # ty:ignore[invalid-assignment]
         parameters.append(
             (kwarg.arg, kwarg.annotation, ParameterKind.keyword_only, kwarg_default),
         )
@@ -10554,10 +10587,19 @@ Enumeration of the possible styles for explanations.
 
 Attributes:
 
+- **`AZURE_DEVOPS`** – Explanations as Azure DevOps / Azure Pipelines logging commands.
 - **`GITHUB`** – Explanation as GitHub workflow commands warnings, adapted to CI.
 - **`MARKDOWN`** – Explanations in Markdown, adapted to changelogs.
 - **`ONE_LINE`** – Explanations on one-line.
 - **`VERBOSE`** – Explanations on multiple lines.
+
+### AZURE_DEVOPS
+
+```
+AZURE_DEVOPS = 'azdo'
+```
+
+Explanations as Azure DevOps / Azure Pipelines logging commands.
 
 ### GITHUB
 
@@ -24894,7 +24936,7 @@ Yields:
 - **`module_name`** ( `str` ) – The module name, as to dynamically import it.
 - **`module_path`** ( `Path` ) – The module path.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -24953,7 +24995,7 @@ Yields:
 
 - `TmpPackage` – A temporary package.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -24983,7 +25025,7 @@ def temporary_pypackage(
     """
     modules = modules or {}
     if isinstance(modules, list):
-        modules = dict.fromkeys(modules, "")
+        modules = dict.fromkeys(modules, "")  # ty:ignore[invalid-assignment]
     mkdir_kwargs = {"parents": True, "exist_ok": True}
     with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpdirpath = Path(tmpdir)
@@ -25061,7 +25103,7 @@ Yields:
 
 - `Module` – The visited module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -25203,7 +25245,7 @@ Yields:
 
 - `Module` – A module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -25257,7 +25299,7 @@ def temporary_visited_package(
     """
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
-        yield load(
+        yield load(  # ty:ignore[invalid-yield]
             tmp_package.name,
             search_paths=[tmp_package.tmpdir, *search_paths],
             extensions=extensions,
@@ -25335,7 +25377,7 @@ Yields:
 
 - `Module` – The inspected module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -25483,7 +25525,7 @@ Yields:
 
 - `Module` – A module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 @contextmanager
@@ -25538,7 +25580,7 @@ def temporary_inspected_package(
     search_paths = sys.path if search_sys_path else []
     with temporary_pypackage(package, modules, init=init, inits=inits) as tmp_package:
         try:
-            yield load(
+            yield load(  # ty:ignore[invalid-yield]
                 tmp_package.name,
                 search_paths=[tmp_package.tmpdir, *search_paths],
                 extensions=extensions,
@@ -25588,7 +25630,7 @@ Returns:
 
 - `Object` – The top or leaf object.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 def vtree(*objects: Object, return_leaf: bool = False) -> Object:
@@ -25636,7 +25678,7 @@ Returns:
 
 - `Object` – The first given object, with all the other objects as members of it.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 def htree(*objects: Object) -> Object:
@@ -25694,7 +25736,7 @@ Returns:
 
 - `Module` – The top or leaf module.
 
-Source code in `packages/griffelib/src/griffe/_internal/tests.py`
+Source code in `packages/griffelib/src/griffe/_internal/helpers.py`
 
 ```
 def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = False) -> Module:
@@ -26482,7 +26524,7 @@ def __init__(
     """Loaded Griffe extensions."""
     self.docstring_parser: DocstringStyle | Parser | None = docstring_parser
     """Selected docstring parser."""
-    self.docstring_options: DocstringOptions = docstring_options or {}  # ty:ignore[invalid-assignment]
+    self.docstring_options: DocstringOptions = docstring_options or {}
     """Configured parsing options."""
     self.lines_collection: LinesCollection = lines_collection or LinesCollection()
     """Collection of source code lines."""
@@ -32310,7 +32352,7 @@ def __init__(
     [`parse`][griffe.Docstring.parse].
     """
 
-    self.parser_options: DocstringOptions = parser_options or {}  # ty:ignore[invalid-assignment]
+    self.parser_options: DocstringOptions = parser_options or {}
     """The configured parsing options.
 
     See also: [`parser`][griffe.Docstring.parser],
@@ -37696,7 +37738,7 @@ def parse_auto(
     """
     from griffe._internal.docstrings.parsers import parse  # noqa: PLC0415
 
-    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
+    per_style_options = per_style_options or {}
 
     style, sections = infer_docstring_style(
         docstring,
@@ -37706,7 +37748,7 @@ def parse_auto(
         per_style_options=per_style_options,
     )
     if sections is None:
-        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload, unresolved-attribute]
+        return parse(docstring, style, **per_style_options.get(style, {}))  # ty:ignore[no-matching-overload]
     return sections
 ```
 
@@ -38586,7 +38628,7 @@ def parse_docstring_annotation(
         if code.body:  # ty:ignore[unresolved-attribute]
             name_or_expr = safe_get_annotation(
                 code.body,  # ty:ignore[unresolved-attribute]
-                parent=docstring.parent,
+                parent=docstring.parent,  # ty:ignore[invalid-argument-type]
                 log_level=log_level,
             )
             return name_or_expr or annotation
@@ -38755,7 +38797,7 @@ def infer_docstring_style(
     """
     from griffe._internal.docstrings.parsers import parsers  # noqa: PLC0415
 
-    per_style_options = per_style_options or {}  # ty:ignore[invalid-assignment]
+    per_style_options = per_style_options or {}
 
     style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
 
@@ -38772,7 +38814,7 @@ def infer_docstring_style(
     if method == "max_sections":
         style_sections = {}
         for style in style_order:
-            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))  # ty:ignore[unresolved-attribute]
+            style_sections[style] = parsers[style](docstring, **per_style_options.get(style, {}))
         style_lengths = {style: len(section) for style, section in style_sections.items()}
         max_sections = max(style_lengths.values())
         for style in style_order:
@@ -50104,26 +50146,27 @@ This document describes how the project is architectured, both regarding boilerp
 📁 .venv/ # (2)!
 📁 .venvs/ # (3)!
 📁 .vscode/ # (4)!
-📁 config/ # (5)!
-📁 docs/ # (6)!
-📁 htmlcov/ # (7)!
-📁 packages/ # (8)!
-📁 scripts/ # (9)!
-📁 site/ # (10)!
-📁 tests/ # (11)!
- .copier-answers.yml # (12)!
- .envrc # (13)!
+📁 .zed/ # (5)!
+📁 config/ # (6)!
+📁 docs/ # (7)!
+📁 htmlcov/ # (8)!
+📁 packages/ # (9)!
+📁 scripts/ # (10)!
+📁 site/ # (11)!
+📁 tests/ # (12)!
+ .copier-answers.yml # (13)!
+ .envrc # (14)!
  .gitignore
  CHANGELOG.md
  CODE_OF_CONDUCT.md
  CONTRIBUTING.md
  LICENSE
- Makefile # (14)!
+ Makefile # (15)!
  README.md
- duties.py # (15)!
+ duties.py # (16)!
  logo.svg
- mkdocs.yml # (16)!
- pyproject.toml # (17)!
+ mkdocs.yml # (17)!
+ pyproject.toml # (18)!
  uv.lock
 ```
 
@@ -50162,6 +50205,11 @@ This document describes how the project is architectured, both regarding boilerp
     settings.json
     targets.log
     tasks.json
+   ```
+
+1. ```
+    debug.json
+    settings.json
    ```
 
 1. Contains our tooling configuration. See [Scripts, configuration](#scripts-configuration).
@@ -50358,11 +50406,13 @@ This document describes how the project is architectured, both regarding boilerp
 
    1. ```
       📁 src/ # (1)!
+      📁 tests/ # (2)!
        pyproject.toml
       ```
       1. ```
          📁 griffecli/ # (1)!
          ```
+
          1. ```
             📁 _internal/ # (1)!
              __init__.py
@@ -50373,8 +50423,11 @@ This document describes how the project is architectured, both regarding boilerp
                 __init__.py
                 cli.py
                ```
+
+      1. `tree`
    1. ```
       📁 src/ # (1)!
+      📁 tests/ # (2)!
        pyproject.toml
       ```
       1. ```
@@ -50403,6 +50456,7 @@ This document describes how the project is architectured, both regarding boilerp
                 expressions.py
                 finder.py
                 git.py
+                helpers.py
                 importer.py
                 loader.py
                 logger.py
@@ -50410,7 +50464,6 @@ This document describes how the project is architectured, both regarding boilerp
                 mixins.py
                 models.py
                 stats.py
-                tests.py
                ```
 
                1. ```
@@ -50446,6 +50499,12 @@ This document describes how the project is architectured, both regarding boilerp
                    dataclasses.py
                    unpack_typeddict.py
                   ```
+      1. ```
+         📁 test_docstrings/ # (1)!
+         📁 test_extensions/ # (2)!
+         ```
+         1. `tree`
+         1. `tree`
 
 1. Our different scripts. See [Scripts, configuration](#scripts-configuration).
 
@@ -50797,6 +50856,12 @@ This module contains Git utilities, used by our load_git function, which in turn
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
+#### `helpers.py`
+
+This module contains helpers. They simplify programmatic use of Griffe, for example to load data from strings or to create temporary packages. They are particularly useful for our own tests suite.
+
+xml version="1.0" encoding="UTF-8" standalone="no"?
+
 #### `importer.py`
 
 This module contains utilities to dynamically import objects. These utilities are used by our Inspector to dynamically import objects specified as Python paths, like `package.module.Class.method`.
@@ -50838,12 +50903,6 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 #### `stats.py`
 
 This module contains utilities to compute loading statistics, like time spent visiting modules statically or dynamically.
-
-xml version="1.0" encoding="UTF-8" standalone="no"?
-
-#### `tests.py`
-
-This module contains helpers. They simplify programmatic use of Griffe, for example to load data from strings or to create temporary packages. They are particularly useful for our own tests suite.
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
@@ -52637,49 +52696,49 @@ These projects were used to build *griffe*. **Thank you!**
 | Project                                                                                                          | Summary                                                                                                                                                                    | Version (accepted) | Version (last resolved) | License                                                        |
 | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ----------------------- | -------------------------------------------------------------- |
 | [ansimarkup](https://pypi.org/project/ansimarkup/)                                                               | Produce colored terminal text with an xml-like markup                                                                                                                      | `~=1.4`            | `1.5.0`                 | Revised BSD License                                            |
-| [attrs](https://pypi.org/project/attrs/)                                                                         | Classes Without Boilerplate                                                                                                                                                | `>=22.2.0`         | `25.4.0`                | MIT                                                            |
+| [attrs](https://pypi.org/project/attrs/)                                                                         | Classes Without Boilerplate                                                                                                                                                | `>=22.2.0`         | `26.1.0`                | MIT                                                            |
 | [babel](https://pypi.org/project/babel/)                                                                         | Internationalization utilities                                                                                                                                             | `>=2.10`           | `2.18.0`                | BSD-3-Clause                                                   |
-| [backrefs](https://pypi.org/project/backrefs/)                                                                   | A wrapper around re and regex that adds additional back references.                                                                                                        | `>=5.7.post1`      | `6.2`                   | MIT                                                            |
+| [backrefs](https://pypi.org/project/backrefs/)                                                                   | A wrapper around re and regex that adds additional back references.                                                                                                        | `>=5.7.post1`      | `7.0`                   | MIT                                                            |
 | [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)                                                       | Screen-scraping library                                                                                                                                                    | `>=4.12`           | `4.14.3`                | MIT License                                                    |
-| [build](https://pypi.org/project/build/)                                                                         | A simple, correct Python build frontend                                                                                                                                    | `>=1.2`            | `1.4.0`                 | MIT                                                            |
+| [build](https://pypi.org/project/build/)                                                                         | A simple, correct Python build frontend                                                                                                                                    | `>=1.2`            | `1.5.0`                 | MIT                                                            |
 | [cappa](https://pypi.org/project/cappa/)                                                                         | Declarative CLI argument parser.                                                                                                                                           | `>=0.29`           | `0.31.0`                | ?                                                              |
-| [certifi](https://pypi.org/project/certifi/)                                                                     | Python package for providing Mozilla's CA Bundle.                                                                                                                          | `>=2017.4.17`      | `2026.2.25`             | MPL-2.0                                                        |
-| [cffi](https://pypi.org/project/cffi/)                                                                           | Foreign Function Interface for Python calling C code.                                                                                                                      | `>=1.14`           | `2.0.0`                 | MIT                                                            |
-| [charset-normalizer](https://pypi.org/project/charset-normalizer/)                                               | The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.                                                                    | `>=2, <4`          | `3.4.5`                 | MIT                                                            |
-| [click](https://pypi.org/project/click/)                                                                         | Composable command line interface toolkit                                                                                                                                  | `>=7.0`            | `8.3.1`                 | BSD-3-Clause                                                   |
+| [certifi](https://pypi.org/project/certifi/)                                                                     | Python package for providing Mozilla's CA Bundle.                                                                                                                          | `>=2023.5.7`       | `2026.4.22`             | MPL-2.0                                                        |
+| [cffi](https://pypi.org/project/cffi/)                                                                           | Foreign Function Interface for Python calling C code.                                                                                                                      | `>=2.0.0`          | `2.0.0`                 | MIT                                                            |
+| [charset-normalizer](https://pypi.org/project/charset-normalizer/)                                               | The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.                                                                    | `>=2, <4`          | `3.4.7`                 | MIT                                                            |
+| [click](https://pypi.org/project/click/)                                                                         | Composable command line interface toolkit                                                                                                                                  | `>=7.0`            | `8.4.0`                 | BSD-3-Clause                                                   |
 | [code2flow](https://pypi.org/project/code2flow/)                                                                 | Visualize your source code as DOT flowcharts                                                                                                                               | `>=2.5`            | `2.5.1`                 | MIT                                                            |
 | [colorama](https://pypi.org/project/colorama/)                                                                   | Cross-platform colored terminal text.                                                                                                                                      | `>=0.4`            | `0.4.6`                 | BSD License                                                    |
-| [coverage](https://pypi.org/project/coverage/)                                                                   | Code coverage measurement for Python                                                                                                                                       | `>=7.10.6`         | `7.13.4`                | Apache-2.0                                                     |
-| [cryptography](https://pypi.org/project/cryptography/)                                                           | cryptography is a package which provides cryptographic recipes and primitives to Python developers.                                                                        | `>=2.0`            | `46.0.5`                | Apache-2.0 OR BSD-3-Clause                                     |
+| [coverage](https://pypi.org/project/coverage/)                                                                   | Code coverage measurement for Python                                                                                                                                       | `>=7.10.6`         | `7.14.0`                | Apache-2.0                                                     |
+| [cryptography](https://pypi.org/project/cryptography/)                                                           | cryptography is a package which provides cryptographic recipes and primitives to Python developers.                                                                        | `>=2.0`            | `48.0.0`                | Apache-2.0 OR BSD-3-Clause                                     |
 | [csscompressor](https://pypi.org/project/csscompressor/)                                                         | A python port of YUI CSS Compressor                                                                                                                                        | `>=0.9.5`          | `0.9.5`                 | BSD                                                            |
 | [docutils](https://pypi.org/project/docutils/)                                                                   | Docutils -- Python Documentation Utilities                                                                                                                                 | `>=0.21.2`         | `0.22.4`                | Public Domain + BSD License + GNU General Public License (GPL) |
 | [duty](https://pypi.org/project/duty/)                                                                           | A simple task runner.                                                                                                                                                      | `>=1.6`            | `1.9.0`                 | ISC                                                            |
 | [execnet](https://pypi.org/project/execnet/)                                                                     | execnet: rapid multi-Python deployment                                                                                                                                     | `>=2.1`            | `2.1.2`                 | MIT                                                            |
 | [failprint](https://pypi.org/project/failprint/)                                                                 | Run a command, print its output only if it fails.                                                                                                                          | `>=1.0.5`          | `1.1.0`                 | ISC                                                            |
 | [ghp-import](https://pypi.org/project/ghp-import/)                                                               | Copy your docs directly to the gh-pages branch.                                                                                                                            | `>=1.0`            | `2.1.0`                 | Apache Software License                                        |
-| [git-changelog](https://pypi.org/project/git-changelog/)                                                         | Automatic Changelog generator using Jinja2 templates.                                                                                                                      | `>=2.5`            | `2.9.0`                 | ISC                                                            |
+| [git-changelog](https://pypi.org/project/git-changelog/)                                                         | Automatic Changelog generator using Jinja2 templates.                                                                                                                      | `>=2.5`            | `2.9.4`                 | ISC                                                            |
 | [gitdb](https://pypi.org/project/gitdb/)                                                                         | Git Object Database                                                                                                                                                        | `>=4.0.1, <5`      | `4.0.12`                | BSD License                                                    |
-| [GitPython](https://pypi.org/project/GitPython/)                                                                 | GitPython is a Python library used to interact with Git repositories                                                                                                       | `>=3.1.44`         | `3.1.46`                | BSD-3-Clause                                                   |
+| [GitPython](https://pypi.org/project/GitPython/)                                                                 | GitPython is a Python library used to interact with Git repositories                                                                                                       | `>=3.1.44`         | `3.1.50`                | BSD-3-Clause                                                   |
 | [griffe-inherited-docstrings](https://pypi.org/project/griffe-inherited-docstrings/)                             | Griffe extension for inheriting docstrings.                                                                                                                                | `>=1.1.2`          | `1.1.3`                 | ISC                                                            |
 | [griffelib](https://pypi.org/project/griffelib/)                                                                 | Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API. | `>=2.0`            | `2.0.1.dev8+g862a8918`  | ISC                                                            |
 | [htmlmin2](https://pypi.org/project/htmlmin2/)                                                                   | An HTML Minifier                                                                                                                                                           | `>=0.1.13`         | `0.1.13`                | BSD                                                            |
 | [humanize](https://pypi.org/project/humanize/)                                                                   | Python humanize utilities                                                                                                                                                  | `>=4.9`            | `4.15.0`                | MIT                                                            |
 | [id](https://pypi.org/project/id/)                                                                               | A tool for generating OIDC identities                                                                                                                                      |                    | `1.6.1`                 | Apache Software License                                        |
-| [idna](https://pypi.org/project/idna/)                                                                           | Internationalized Domain Names in Applications (IDNA)                                                                                                                      | `>=2.5, <4`        | `3.11`                  | BSD-3-Clause                                                   |
+| [idna](https://pypi.org/project/idna/)                                                                           | Internationalized Domain Names in Applications (IDNA)                                                                                                                      | `>=2.5, <4`        | `3.15`                  | BSD-3-Clause                                                   |
 | [iniconfig](https://pypi.org/project/iniconfig/)                                                                 | brain-dead simple config-ini parsing                                                                                                                                       | `>=1.0.1`          | `2.3.0`                 | MIT                                                            |
 | [jaraco.classes](https://pypi.org/project/jaraco.classes/)                                                       | Utility functions for Python class constructs                                                                                                                              |                    | `3.4.0`                 | MIT License                                                    |
-| [jaraco.context](https://pypi.org/project/jaraco.context/)                                                       | Useful decorators and context managers                                                                                                                                     |                    | `6.1.1`                 | MIT                                                            |
-| [jaraco.functools](https://pypi.org/project/jaraco.functools/)                                                   | Functools like those found in stdlib                                                                                                                                       |                    | `4.4.0`                 | MIT                                                            |
+| [jaraco.context](https://pypi.org/project/jaraco.context/)                                                       | Useful decorators and context managers                                                                                                                                     |                    | `6.1.2`                 | MIT                                                            |
+| [jaraco.functools](https://pypi.org/project/jaraco.functools/)                                                   | Functools like those found in stdlib                                                                                                                                       |                    | `4.5.0`                 | MIT                                                            |
 | [jeepney](https://pypi.org/project/jeepney/)                                                                     | Low-level, pure Python DBus protocol wrapper.                                                                                                                              | `>=0.4.2`          | `0.9.0`                 | MIT                                                            |
 | [Jinja2](https://pypi.org/project/Jinja2/)                                                                       | A very fast and expressive template engine.                                                                                                                                | `>=3.1`            | `3.1.6`                 | BSD License                                                    |
 | [jsmin](https://pypi.org/project/jsmin/)                                                                         | JavaScript minifier.                                                                                                                                                       | `>=3.0.1`          | `3.0.1`                 | MIT License                                                    |
-| [jsonschema](https://pypi.org/project/jsonschema/)                                                               | An implementation of JSON Schema validation for Python                                                                                                                     | `>=4.17`           | `4.26.0`                | MIT                                                            |
+| [jsonschema](https://pypi.org/project/jsonschema/)                                                               | An implementation of JSON Schema validation for Python                                                                                                                     | `>=4.18`           | `4.26.0`                | MIT                                                            |
 | [jsonschema-specifications](https://pypi.org/project/jsonschema-specifications/)                                 | The JSON Schema meta-schemas and vocabularies, exposed as a Registry                                                                                                       | `>=2023.03.6`      | `2025.9.1`              | MIT                                                            |
 | [keyring](https://pypi.org/project/keyring/)                                                                     | Store and access your passwords safely.                                                                                                                                    | `>=21.2.0`         | `25.7.0`                | MIT                                                            |
-| [Markdown](https://pypi.org/project/Markdown/)                                                                   | Python implementation of John Gruber's Markdown.                                                                                                                           | `>=3.6`            | `3.10.2`                | BSD-3-Clause                                                   |
+| [Markdown](https://pypi.org/project/Markdown/)                                                                   | Python implementation of John Gruber's Markdown.                                                                                                                           | `>=3.2`            | `3.10.2`                | BSD-3-Clause                                                   |
 | [markdown-callouts](https://pypi.org/project/markdown-callouts/)                                                 | Markdown extension: a classier syntax for admonitions                                                                                                                      | `>=0.4`            | `0.4.0`                 | MIT                                                            |
 | [markdown-exec](https://pypi.org/project/markdown-exec/)                                                         | Utilities to execute code blocks in Markdown files.                                                                                                                        | `>=1.8`            | `1.12.1`                | ISC                                                            |
-| [markdown-it-py](https://pypi.org/project/markdown-it-py/)                                                       | Python port of markdown-it. Markdown parsing, done right!                                                                                                                  | `>=1.0.0, <4.0.0`  | `3.0.0`                 | MIT License                                                    |
+| [markdown-it-py](https://pypi.org/project/markdown-it-py/)                                                       | Python port of markdown-it. Markdown parsing, done right!                                                                                                                  | `>=2.2.0`          | `3.0.0`                 | MIT License                                                    |
 | [markdownify](https://pypi.org/project/markdownify/)                                                             | Convert HTML to markdown.                                                                                                                                                  | `>=0.14`           | `1.2.2`                 | MIT License                                                    |
 | [MarkupSafe](https://pypi.org/project/MarkupSafe/)                                                               | Safely add untrusted strings to HTML/XML markup.                                                                                                                           | `>=1.1`            | `3.0.3`                 | BSD-3-Clause                                                   |
 | [mdformat](https://pypi.org/project/mdformat/)                                                                   | CommonMark compliant Markdown formatter                                                                                                                                    | `>=0.7.21`         | `0.7.22`                | MIT License                                                    |
@@ -52689,64 +52748,66 @@ These projects were used to build *griffe*. **Thank you!**
 | [mkdocs](https://pypi.org/project/mkdocs/)                                                                       | Project documentation with Markdown.                                                                                                                                       | `>=1.6`            | `1.6.1`                 | BSD-2-Clause                                                   |
 | [mkdocs-autorefs](https://pypi.org/project/mkdocs-autorefs/)                                                     | Automatically link across pages in MkDocs.                                                                                                                                 | `>=1.4`            | `1.4.4`                 | ISC                                                            |
 | [mkdocs-coverage](https://pypi.org/project/mkdocs-coverage/)                                                     | MkDocs plugin to integrate your coverage HTML report into your site.                                                                                                       | `>=1.0`            | `2.0.0`                 | ISC                                                            |
-| [mkdocs-gen-files](https://pypi.org/project/mkdocs-gen-files/)                                                   | MkDocs plugin to programmatically generate documentation pages during the build                                                                                            | `>=0.5`            | `0.6.0`                 | MIT                                                            |
+| [mkdocs-gen-files](https://pypi.org/project/mkdocs-gen-files/)                                                   | MkDocs plugin to programmatically generate documentation pages during the build                                                                                            | `>=0.5`            | `0.6.1`                 | MIT                                                            |
 | [mkdocs-get-deps](https://pypi.org/project/mkdocs-get-deps/)                                                     | An extra command for MkDocs that infers required PyPI packages from `plugins` in mkdocs.yml                                                                                | `>=0.2.0`          | `0.2.2`                 | MIT                                                            |
-| [mkdocs-git-revision-date-localized-plugin](https://pypi.org/project/mkdocs-git-revision-date-localized-plugin/) | Mkdocs plugin that enables displaying the localized date of the last git modification of a markdown file.                                                                  | `>=1.2`            | `1.5.1`                 | MIT                                                            |
+| [mkdocs-git-revision-date-localized-plugin](https://pypi.org/project/mkdocs-git-revision-date-localized-plugin/) | Mkdocs plugin that enables displaying the localized date of the last git modification of a markdown file.                                                                  | `>=1.2`            | `1.5.2`                 | MIT                                                            |
 | [mkdocs-llmstxt](https://pypi.org/project/mkdocs-llmstxt/)                                                       | MkDocs plugin to generate an /llms.txt file.                                                                                                                               | `>=0.2`            | `0.5.0`                 | ISC                                                            |
-| [mkdocs-material](https://pypi.org/project/mkdocs-material/)                                                     | Documentation that simply works                                                                                                                                            | `>=9.5`            | `9.7.5`                 | MIT                                                            |
+| [mkdocs-material](https://pypi.org/project/mkdocs-material/)                                                     | Documentation that simply works                                                                                                                                            | `>=9.5`            | `9.7.6`                 | MIT                                                            |
 | [mkdocs-material-extensions](https://pypi.org/project/mkdocs-material-extensions/)                               | Extension pack for Python Markdown and MkDocs Material.                                                                                                                    | `>=1.3`            | `1.3.1`                 | MIT                                                            |
 | [mkdocs-minify-plugin](https://pypi.org/project/mkdocs-minify-plugin/)                                           | An MkDocs plugin to minify HTML, JS or CSS files prior to being written to disk                                                                                            | `>=0.8`            | `0.8.0`                 | MIT                                                            |
-| [mkdocs-redirects](https://pypi.org/project/mkdocs-redirects/)                                                   | A MkDocs plugin for dynamic page redirects to prevent broken links                                                                                                         | `>=1.2`            | `1.2.2`                 | MIT                                                            |
-| [mkdocs-section-index](https://pypi.org/project/mkdocs-section-index/)                                           | MkDocs plugin to allow clickable sections that lead to an index page                                                                                                       | `>=0.3`            | `0.3.10`                | MIT                                                            |
-| [mkdocstrings](https://pypi.org/project/mkdocstrings/)                                                           | Automatic documentation from sources, for MkDocs.                                                                                                                          | `>=0.29`           | `1.0.3`                 | ISC                                                            |
+| [mkdocs-redirects](https://pypi.org/project/mkdocs-redirects/)                                                   | A MkDocs plugin for dynamic page redirects to prevent broken links                                                                                                         | `>=1.2`            | `1.2.3`                 | MIT                                                            |
+| [mkdocs-section-index](https://pypi.org/project/mkdocs-section-index/)                                           | MkDocs plugin to allow clickable sections that lead to an index page                                                                                                       | `>=0.3`            | `0.3.12`                | MIT                                                            |
+| [mkdocstrings](https://pypi.org/project/mkdocstrings/)                                                           | Automatic documentation from sources, for MkDocs.                                                                                                                          | `>=0.29`           | `1.0.4`                 | ISC                                                            |
 | [mkdocstrings-python](https://pypi.org/project/mkdocstrings-python/)                                             | A Python handler for mkdocstrings.                                                                                                                                         | `>=1.16.2`         | `2.0.3`                 | ISC                                                            |
-| [more-itertools](https://pypi.org/project/more-itertools/)                                                       | More routines for operating on iterables, beyond itertools                                                                                                                 |                    | `10.8.0`                | MIT                                                            |
-| [nh3](https://pypi.org/project/nh3/)                                                                             | Python binding to Ammonia HTML sanitizer Rust crate                                                                                                                        | `>=0.2.14`         | `0.3.3`                 | MIT                                                            |
-| [packaging](https://pypi.org/project/packaging/)                                                                 | Core utilities for Python packages                                                                                                                                         | `>=24.1`           | `26.0`                  | Apache-2.0 OR BSD-2-Clause                                     |
+| [more-itertools](https://pypi.org/project/more-itertools/)                                                       | More routines for operating on iterables, beyond itertools                                                                                                                 |                    | `11.0.2`                | MIT                                                            |
+| [nh3](https://pypi.org/project/nh3/)                                                                             | Python binding to Ammonia HTML sanitizer Rust crate                                                                                                                        | `>=0.2.14`         | `0.3.5`                 | MIT                                                            |
+| [packaging](https://pypi.org/project/packaging/)                                                                 | Core utilities for Python packages                                                                                                                                         | `>=24.1`           | `26.2`                  | Apache-2.0 OR BSD-2-Clause                                     |
 | [paginate](https://pypi.org/project/paginate/)                                                                   | Divides large result sets into pages for easier browsing                                                                                                                   | `>=0.5`            | `0.5.7`                 | MIT                                                            |
-| [pathspec](https://pypi.org/project/pathspec/)                                                                   | Utility library for gitignore style pattern matching of file paths.                                                                                                        | `>=0.11.1`         | `1.0.4`                 | Mozilla Public License 2.0 (MPL 2.0)                           |
-| [platformdirs](https://pypi.org/project/platformdirs/)                                                           | A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`.                                                                         | `>=4.4`            | `4.9.4`                 | MIT                                                            |
+| [pathspec](https://pypi.org/project/pathspec/)                                                                   | Utility library for gitignore style pattern matching of file paths.                                                                                                        | `>=0.11.1`         | `1.1.1`                 | Mozilla Public License 2.0 (MPL 2.0)                           |
+| [platformdirs](https://pypi.org/project/platformdirs/)                                                           | A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`.                                                                         | `>=2.2.0`          | `4.9.6`                 | MIT                                                            |
 | [pluggy](https://pypi.org/project/pluggy/)                                                                       | plugin and hook calling mechanisms for python                                                                                                                              | `>=1.2`            | `1.6.0`                 | MIT                                                            |
+| [properdocs](https://pypi.org/project/properdocs/)                                                               | Project documentation with Markdown.                                                                                                                                       | `>=1.6.5`          | `1.6.7`                 | BSD-2-Clause                                                   |
 | [ptyprocess](https://pypi.org/project/ptyprocess/)                                                               | Run a subprocess in a pseudo terminal                                                                                                                                      | `~=0.6`            | `0.7.0`                 | ISC License (ISCL)                                             |
 | [pycparser](https://pypi.org/project/pycparser/)                                                                 | C parser in Python                                                                                                                                                         |                    | `3.0`                   | BSD-3-Clause                                                   |
-| [pydeps](https://pypi.org/project/pydeps/)                                                                       | Display module dependencies                                                                                                                                                | `>=1.12`           | `3.0.2`                 | BSD                                                            |
-| [Pygments](https://pypi.org/project/Pygments/)                                                                   | Pygments is a syntax highlighting package written in Python.                                                                                                               | `>=2.16`           | `2.19.2`                | BSD-2-Clause                                                   |
+| [pydeps](https://pypi.org/project/pydeps/)                                                                       | Display module dependencies                                                                                                                                                | `>=1.12`           | `3.0.6`                 | BSD-2-Clause                                                   |
+| [Pygments](https://pypi.org/project/Pygments/)                                                                   | Pygments is a syntax highlighting package written in Python.                                                                                                               | `>=2.16`           | `2.20.0`                | BSD-2-Clause                                                   |
 | [pygments-ansi-color](https://pypi.org/project/pygments-ansi-color/)                                             |                                                                                                                                                                            | `>=0.3`            | `0.3.0`                 | Apache Software License                                        |
-| [pymdown-extensions](https://pypi.org/project/pymdown-extensions/)                                               | Extension pack for Python Markdown.                                                                                                                                        | `>=9`              | `10.21`                 | MIT                                                            |
+| [pymdown-extensions](https://pypi.org/project/pymdown-extensions/)                                               | Extension pack for Python Markdown.                                                                                                                                        | `>=9`              | `10.21.3`               | MIT                                                            |
 | [pyproject_hooks](https://pypi.org/project/pyproject_hooks/)                                                     | Wrappers to call pyproject.toml-based build backend hooks.                                                                                                                 |                    | `1.2.0`                 | MIT License                                                    |
 | [pysource-codegen](https://pypi.org/project/pysource-codegen/)                                                   | generate random python code to test linter/formatter/and other tools                                                                                                       | `>=0.7`            | `0.7.1`                 | MIT                                                            |
 | [pysource-minimize](https://pypi.org/project/pysource-minimize/)                                                 | minimize python source code                                                                                                                                                | `>=0.10`           | `0.10.1`                | MIT                                                            |
-| [pytest](https://pypi.org/project/pytest/)                                                                       | pytest: simple powerful testing with Python                                                                                                                                | `>=8.2`            | `9.0.2`                 | MIT                                                            |
-| [pytest-cov](https://pypi.org/project/pytest-cov/)                                                               | Pytest plugin for measuring coverage.                                                                                                                                      | `>=5.0`            | `7.0.0`                 | MIT                                                            |
+| [pytest](https://pypi.org/project/pytest/)                                                                       | pytest: simple powerful testing with Python                                                                                                                                | `>=8.2`            | `9.0.3`                 | MIT                                                            |
+| [pytest-cov](https://pypi.org/project/pytest-cov/)                                                               | Pytest plugin for measuring coverage.                                                                                                                                      | `>=5.0`            | `7.1.0`                 | MIT                                                            |
 | [pytest-gitconfig](https://pypi.org/project/pytest-gitconfig/)                                                   | Provide a Git config sandbox for testing                                                                                                                                   | `>=0.8.0`          | `0.9.0`                 | MIT                                                            |
-| [pytest-randomly](https://pypi.org/project/pytest-randomly/)                                                     | Pytest plugin to randomly order tests and control random.seed.                                                                                                             | `>=3.15`           | `4.0.1`                 | MIT                                                            |
+| [pytest-randomly](https://pypi.org/project/pytest-randomly/)                                                     | Pytest plugin to randomly order tests and control random.seed.                                                                                                             | `>=3.15`           | `4.1.0`                 | MIT                                                            |
 | [pytest-xdist](https://pypi.org/project/pytest-xdist/)                                                           | pytest xdist plugin for distributed testing, most importantly across multiple CPUs                                                                                         | `>=3.6`            | `3.8.0`                 | MIT                                                            |
 | [python-dateutil](https://pypi.org/project/python-dateutil/)                                                     | Extensions to the standard Python datetime module                                                                                                                          | `>=2.8.1`          | `2.9.0.post0`           | BSD License + Apache Software License                          |
 | [PyYAML](https://pypi.org/project/PyYAML/)                                                                       | YAML parser and emitter for Python                                                                                                                                         |                    | `6.0.3`                 | MIT                                                            |
 | [pyyaml_env_tag](https://pypi.org/project/pyyaml_env_tag/)                                                       | A custom YAML tag for referencing environment variables in YAML files.                                                                                                     | `>=0.1`            | `1.1`                   | MIT                                                            |
 | [readme_renderer](https://pypi.org/project/readme_renderer/)                                                     | readme_renderer is a library for rendering readme descriptions for Warehouse                                                                                               | `>=35.0`           | `44.0`                  | Apache License, Version 2.0                                    |
 | [referencing](https://pypi.org/project/referencing/)                                                             | JSON Referencing + Python                                                                                                                                                  | `>=0.28.4`         | `0.37.0`                | MIT                                                            |
-| [requests](https://pypi.org/project/requests/)                                                                   | Python HTTP for Humans.                                                                                                                                                    | `>=2.30`           | `2.32.5`                | Apache-2.0                                                     |
+| [requests](https://pypi.org/project/requests/)                                                                   | Python HTTP for Humans.                                                                                                                                                    | `>=2.30`           | `2.34.2`                | Apache-2.0                                                     |
 | [requests-toolbelt](https://pypi.org/project/requests-toolbelt/)                                                 | A utility belt for advanced users of python-requests                                                                                                                       | `>=0.8.0, !=0.9.0` | `1.0.0`                 | Apache 2.0                                                     |
 | [rfc3986](https://pypi.org/project/rfc3986/)                                                                     | Validating URI References per RFC 3986                                                                                                                                     | `>=1.4.0`          | `2.0.0`                 | Apache 2.0                                                     |
-| [rich](https://pypi.org/project/rich/)                                                                           | Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal                                                                            | `>=12.0.0`         | `14.3.3`                | MIT                                                            |
+| [rich](https://pypi.org/project/rich/)                                                                           | Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal                                                                            | `>=12.0.0`         | `15.0.0`                | MIT                                                            |
 | [rpds-py](https://pypi.org/project/rpds-py/)                                                                     | Python bindings to Rust's persistent data structures (rpds)                                                                                                                | `>=0.25.0`         | `0.30.0`                | MIT                                                            |
-| [ruff](https://pypi.org/project/ruff/)                                                                           | An extremely fast Python linter and code formatter, written in Rust.                                                                                                       | `>=0.4`            | `0.15.6`                | MIT License                                                    |
+| [ruff](https://pypi.org/project/ruff/)                                                                           | An extremely fast Python linter and code formatter, written in Rust.                                                                                                       | `>=0.4`            | `0.15.13`               | MIT                                                            |
 | [SecretStorage](https://pypi.org/project/SecretStorage/)                                                         | Python bindings to FreeDesktop.org Secret Service API                                                                                                                      | `>=3.2`            | `3.5.0`                 | BSD-3-Clause                                                   |
 | [semver](https://pypi.org/project/semver/)                                                                       | Python helper for Semantic Versioning (<https://semver.org>)                                                                                                               | `>=3.0`            | `3.0.4`                 | BSD License                                                    |
 | [six](https://pypi.org/project/six/)                                                                             | Python 2 and 3 compatibility utilities                                                                                                                                     | `>=1.15, <2`       | `1.17.0`                | MIT                                                            |
 | [smmap](https://pypi.org/project/smmap/)                                                                         | A pure Python implementation of a sliding window memory map manager                                                                                                        | `>=3.0.1, <6`      | `5.0.3`                 | BSD-3-Clause                                                   |
-| [soupsieve](https://pypi.org/project/soupsieve/)                                                                 | A modern CSS selector implementation for Beautiful Soup.                                                                                                                   | `>=1.6.1`          | `2.8.3`                 | MIT                                                            |
+| [soupsieve](https://pypi.org/project/soupsieve/)                                                                 | A modern CSS selector implementation for Beautiful Soup.                                                                                                                   | `>=1.6.1`          | `2.8.4`                 | MIT                                                            |
 | [stdlib-list](https://pypi.org/project/stdlib-list/)                                                             | A list of Python Standard Libraries (2.7 through 3.14).                                                                                                                    |                    | `0.12.0`                | MIT License                                                    |
+| [tomli](https://pypi.org/project/tomli/)                                                                         | A lil' TOML parser                                                                                                                                                         | `>=2.0`            | `2.4.1`                 | MIT                                                            |
 | [twine](https://pypi.org/project/twine/)                                                                         | Collection of utilities for publishing packages on PyPI                                                                                                                    | `>=5.1`            | `6.2.0`                 | Apache-2.0                                                     |
-| [ty](https://pypi.org/project/ty/)                                                                               | An extremely fast Python type checker, written in Rust.                                                                                                                    | `>=0.0.14`         | `0.0.23`                | MIT License                                                    |
+| [ty](https://pypi.org/project/ty/)                                                                               | An extremely fast Python type checker, written in Rust.                                                                                                                    | `>=0.0.14`         | `0.0.37`                | MIT License                                                    |
 | [type-lens](https://pypi.org/project/type-lens/)                                                                 | type-lens is a Python template project designed to simplify the setup of a new project.                                                                                    | `>=0.2.5`          | `0.2.6`                 | MIT                                                            |
-| [types-Markdown](https://pypi.org/project/types-Markdown/)                                                       | Typing stubs for Markdown                                                                                                                                                  | `>=3.6`            | `3.10.2.20260211`       | Apache-2.0                                                     |
-| [types-PyYAML](https://pypi.org/project/types-PyYAML/)                                                           | Typing stubs for PyYAML                                                                                                                                                    | `>=6.0`            | `6.0.12.20250915`       | Apache-2.0                                                     |
-| [typing_extensions](https://pypi.org/project/typing_extensions/)                                                 | Backported and Experimental Type Hints for Python 3.9+                                                                                                                     | `>=4.9`            | `4.15.0`                | PSF-2.0                                                        |
-| [urllib3](https://pypi.org/project/urllib3/)                                                                     | HTTP library with thread-safe connection pooling, file post, and more.                                                                                                     | `>=1.26.0`         | `2.6.3`                 | MIT                                                            |
+| [types-Markdown](https://pypi.org/project/types-Markdown/)                                                       | Typing stubs for Markdown                                                                                                                                                  | `>=3.6`            | `3.10.2.20260508`       | Apache-2.0                                                     |
+| [types-PyYAML](https://pypi.org/project/types-PyYAML/)                                                           | Typing stubs for PyYAML                                                                                                                                                    | `>=6.0`            | `6.0.12.20260510`       | Apache-2.0                                                     |
+| [typing_extensions](https://pypi.org/project/typing_extensions/)                                                 | Backported and Experimental Type Hints for Python 3.9+                                                                                                                     | `>=4.0`            | `4.15.0`                | PSF-2.0                                                        |
+| [urllib3](https://pypi.org/project/urllib3/)                                                                     | HTTP library with thread-safe connection pooling, file post, and more.                                                                                                     | `>=1.26, <3`       | `2.7.0`                 | MIT                                                            |
 | [watchdog](https://pypi.org/project/watchdog/)                                                                   | Filesystem events monitoring                                                                                                                                               | `>=2.0`            | `6.0.0`                 | Apache-2.0                                                     |
-| [wcwidth](https://pypi.org/project/wcwidth/)                                                                     | Measures the displayed width of unicode strings in a terminal                                                                                                              | `>=0.2.13`         | `0.6.0`                 | MIT                                                            |
+| [wcwidth](https://pypi.org/project/wcwidth/)                                                                     | Measures the displayed width of unicode strings in a terminal                                                                                                              | `>=0.2.13`         | `0.7.0`                 | MIT                                                            |
 | [yore](https://pypi.org/project/yore/)                                                                           | Manage legacy code with comments.                                                                                                                                          | `>=0.3.3`          | `0.4.7`                 | ISC                                                            |
 
 **[More credits from the author](http://pawamoy.github.io/credits/)**

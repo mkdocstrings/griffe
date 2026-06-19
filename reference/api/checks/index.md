@@ -82,10 +82,19 @@ Enumeration of the possible styles for explanations.
 
 Attributes:
 
+- **`AZURE_DEVOPS`** – Explanations as Azure DevOps / Azure Pipelines logging commands.
 - **`GITHUB`** – Explanation as GitHub workflow commands warnings, adapted to CI.
 - **`MARKDOWN`** – Explanations in Markdown, adapted to changelogs.
 - **`ONE_LINE`** – Explanations on one-line.
 - **`VERBOSE`** – Explanations on multiple lines.
+
+### AZURE_DEVOPS
+
+```
+AZURE_DEVOPS = 'azdo'
+```
+
+Explanations as Azure DevOps / Azure Pipelines logging commands.
 
 ### GITHUB
 

@@ -749,7 +749,7 @@ See previous tips for types in docstrings.
 
 ## Numpydoc-style
 
-Numpydoc docstrings, see [Numpydoc's documentation](https://numpydoc.readthedocs.io/en/latest/format.html)
+Numpydoc docstrings, see [Numpydoc's documentation](https://numpydoc.readthedocs.io/en/latest/format.html).
 
 ### Syntax
 
