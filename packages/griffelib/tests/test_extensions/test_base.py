@@ -20,14 +20,7 @@ from griffe import (
     temporary_visited_module,
     temporary_visited_package,
 )
-from griffe._internal.models import (
-    Attribute,
-    Class,
-    Function,
-    Module,
-    Object,
-    TypeAlias,
-)
+from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 if TYPE_CHECKING:
     import ast
@@ -130,9 +123,7 @@ class AnalysisEventsTest(Extension):  # noqa: D101
         PACKAGE_ROOT.joinpath("tests/test_extensions/test_base.py:AnalysisEventsTest").absolute().as_posix(),
     ],
 )
-def test_loading_extensions(
-    extension: str | dict[str, dict[str, Any]] | Extension | type[Extension],
-) -> None:
+def test_loading_extensions(extension: str | dict[str, dict[str, Any]] | Extension | type[Extension]) -> None:
     """Test the extensions loading mechanisms.
 
     Parameters:
@@ -185,10 +176,7 @@ def test_analysis_events_without_type_aliases() -> None:
 
 
 # YORE: EOL 3.11: Remove line.
-@pytest.mark.skipif(
-    sys.version_info < (3, 12),
-    reason="Python less than 3.12 does not have PEP 695 type aliases",
-)
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 type aliases")
 def test_analysis_events() -> None:
     """Test analysis events triggering."""
     extension = AnalysisEventsTest()
@@ -290,10 +278,7 @@ def test_load_events_without_type_aliases() -> None:
 
 
 # YORE: EOL 3.11: Remove line.
-@pytest.mark.skipif(
-    sys.version_info < (3, 12),
-    reason="Python less than 3.12 does not have PEP 695 type aliases",
-)
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="Python less than 3.12 does not have PEP 695 type aliases")
 def test_load_events() -> None:
     """Test load events triggering."""
     extension = LoadEventsTest()

@@ -13,13 +13,7 @@ from griffe._internal.finder import _handle_editable_module, _handle_pth_file
 
 
 @pytest.mark.parametrize(
-    (
-        "pypackage",
-        "module",
-        "add_to_search_path",
-        "expected_top_name",
-        "expected_top_path",
-    ),
+    ("pypackage", "module", "add_to_search_path", "expected_top_name", "expected_top_path"),
     [
         (("a", ["b.py"]), "a/b.py", True, "a", "a/__init__.py"),
         (("a", ["b.py"]), "a/b.py", False, "a", "a/__init__.py"),
@@ -44,9 +38,7 @@ def test_find_module_with_path(
         expected_top_path: Expected top module path (parametrized).
     """
     with temporary_pypackage(*pypackage) as tmp_package:
-        finder = ModuleFinder(
-            search_paths=[tmp_package.tmpdir] if add_to_search_path else None,
-        )
+        finder = ModuleFinder(search_paths=[tmp_package.tmpdir] if add_to_search_path else None)
         _, package = finder.find_spec(tmp_package.tmpdir / module)
         assert package.name == expected_top_name
         if isinstance(package, NamespacePackage):
@@ -72,14 +64,8 @@ def test_find_pkg_style_namespace_packages(statement: str) -> None:
         temporary_pypackage("namespace/package1") as tmp_package1,
         temporary_pypackage("namespace/package2") as tmp_package2,
     ):
-        tmp_package1.path.parent.joinpath("__init__.py").write_text(
-            statement,
-            encoding="utf8",
-        )
-        tmp_package2.path.parent.joinpath("__init__.py").write_text(
-            statement,
-            encoding="utf8",
-        )
+        tmp_package1.path.parent.joinpath("__init__.py").write_text(statement, encoding="utf8")
+        tmp_package2.path.parent.joinpath("__init__.py").write_text(statement, encoding="utf8")
         finder = ModuleFinder(search_paths=[tmp_package1.tmpdir, tmp_package2.tmpdir])
         _, package = finder.find_spec("namespace")
         assert package.name == "namespace"
@@ -131,10 +117,7 @@ def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
     assert paths == [Path("tests")]
 
 
-@pytest.mark.parametrize(
-    "editable_file_name",
-    ["__editables_whatever.py", "_editable_impl_whatever.py"],
-)
+@pytest.mark.parametrize("editable_file_name", ["__editables_whatever.py", "_editable_impl_whatever.py"])
 def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> None:
     """Assert editable modules by `editables` are handled.
 
@@ -142,10 +125,7 @@ def test_editables_file_handling(tmp_path: Path, editable_file_name: str) -> Non
         tmp_path: Pytest fixture.
     """
     pth_file = tmp_path / editable_file_name
-    pth_file.write_text(
-        "hello\nF.map_module('griffe', 'packages/griffelib/src/griffe/__init__.py')",
-        encoding="utf8",
-    )
+    pth_file.write_text("hello\nF.map_module('griffe', 'packages/griffelib/src/griffe/__init__.py')", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("packages/griffelib/src")]
 
@@ -159,19 +139,13 @@ def test_setuptools_file_handling(tmp_path: Path, annotation: str) -> None:
         annotation: The type annotation of the MAPPING variable.
     """
     pth_file = tmp_path / "__editable__whatever.py"
-    pth_file.write_text(
-        f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}",
-        encoding="utf8",
-    )
+    pth_file.write_text(f"hello\nMAPPING{annotation} = {{'griffe': 'src/griffe'}}", encoding="utf8")
     paths = [sp.path for sp in _handle_editable_module(pth_file)]
     assert paths == [Path("src")]
 
 
 @pytest.mark.parametrize("annotation", ["", ": dict[str, str]"])
-def test_setuptools_file_handling_multiple_paths(
-    tmp_path: Path,
-    annotation: str,
-) -> None:
+def test_setuptools_file_handling_multiple_paths(tmp_path: Path, annotation: str) -> None:
     """Assert editable modules by `setuptools` are handled when multiple packages are installed in the same editable.
 
     Parameters:
@@ -208,10 +182,7 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     assert paths == [Path("/path/to/whatever")]
 
 
-@pytest.mark.skipif(
-    not Path("packages", "griffelib").exists(),
-    reason="not running from monorepo root",
-)
+@pytest.mark.skipif(not Path("packages", "griffelib").exists(), reason="not running from monorepo root")
 def test_meson_python_file_handling(tmp_path: Path) -> None:
     """Assert editable modules by `meson-python` are handled.
 
@@ -288,18 +259,10 @@ def test_finding_stubs_packages(
 
     if expect == "none":
         with pytest.raises(ModuleNotFoundError):
-            finder.find_spec(
-                "package",
-                try_relative_path=False,
-                find_stubs_package=find_stubs,
-            )
+            finder.find_spec("package", try_relative_path=False, find_stubs_package=find_stubs)
         return
 
-    name, result = finder.find_spec(
-        "package",
-        try_relative_path=False,
-        find_stubs_package=find_stubs,
-    )
+    name, result = finder.find_spec("package", try_relative_path=False, find_stubs_package=find_stubs)
     assert name == "package"
 
     if expect == "both":
@@ -329,12 +292,7 @@ def test_scanning_package_and_module_with_same_names(namespace_package: bool) ->
         namespace_package: Whether the temporary package is a namespace one.
     """
     init = not namespace_package
-    with temporary_pypackage(
-        "pkg",
-        ["pkg/mod.py", "mod/mod.py"],
-        init=init,
-        inits=init,
-    ) as tmp_package:
+    with temporary_pypackage("pkg", ["pkg/mod.py", "mod/mod.py"], init=init, inits=init) as tmp_package:
         # Here we must make sure that all paths are relative
         # to correctly assert the finder's behavior,
         # so we pass `.` and actually enter the temporary directory.
@@ -347,22 +305,14 @@ def test_scanning_package_and_module_with_same_names(namespace_package: bool) ->
             found = [path for _, path in finder.submodules(Module("pkg", filepath=filepath))]
         finally:
             os.chdir(old)
-        check = (
-            path / "pkg/mod.py",
-            path / "mod/mod.py",
-        )
+        check = (path / "pkg/mod.py", path / "mod/mod.py")
         for mod in check:
             assert mod in found
 
 
 def test_not_finding_namespace_package_twice() -> None:
     """Deduplicate paths when finding namespace packages."""
-    with temporary_pypackage(
-        "pkg",
-        ["pkg/mod.py", "mod/mod.py"],
-        init=False,
-        inits=False,
-    ) as tmp_package:
+    with temporary_pypackage("pkg", ["pkg/mod.py", "mod/mod.py"], init=False, inits=False) as tmp_package:
         old = Path.cwd()
         os.chdir(tmp_package.tmpdir)
         try:
