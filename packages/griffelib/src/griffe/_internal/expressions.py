@@ -452,7 +452,7 @@ class ExprDict(Expr):
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
         yield from _join(
-            (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values, strict=False)),
+            (("**", value) if key is None else (key, ": ", value) for key, value in zip(self.keys, self.values, strict=False)),
             ", ",
             flat=flat,
         )
