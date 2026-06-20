@@ -1324,6 +1324,10 @@ def _build_subscript(
         if isinstance(left, (ExprAttribute, ExprName)) and left.canonical_path in {
             "typing.Literal",
             "typing_extensions.Literal",
+            # A `Literal` that could not be resolved (e.g. used without an
+            # import) keeps its bare name as canonical path. Its string members
+            # are literal strings, not forward references, so keep their quotes.
+            "Literal",
         }:
             literal_strings = True
         slice_expr = _build(

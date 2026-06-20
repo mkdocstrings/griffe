@@ -61,6 +61,26 @@ def test_full_expressions(annotation: str) -> None:
         assert str(module["x"].annotation) == annotation
 
 
+@pytest.mark.parametrize(
+    "annotation",
+    [
+        "Literal['a-b']",
+        "Literal['a', 'b']",
+        "Literal['hello world']",
+    ],
+)
+def test_unresolved_literal_keeps_string_quotes(annotation: str) -> None:
+    """Assert string members of an unresolved `Literal` keep their quotes.
+
+    An unresolved `Literal` (used without an import) must still treat its
+    members as literal strings rather than forward references, otherwise
+    `Literal['a-b']` is mis-parsed as `Literal[a - b]`.
+    """
+    code = f"x: {annotation}"
+    with temporary_visited_module(code) as module:
+        assert str(module["x"].annotation) == annotation
+
+
 def test_resolving_full_names() -> None:
     """Assert expressions are correctly transformed to their fully-resolved form."""
     with temporary_visited_module(
