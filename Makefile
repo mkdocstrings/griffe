@@ -5,7 +5,7 @@
 default: help
 	@echo
 	@echo 'Enable direnv in your shell to use the `make` command: `direnv allow`'
-	@echo 'Or use `python scripts/make ARGS` to run the commands/tasks directly.'
+	@echo 'Or use `python3 scripts/make ARGS` to run the commands/tasks directly.'
 
 .DEFAULT_GOAL: default
 
@@ -32,4 +32,4 @@ actions = \
 
 .PHONY: $(actions)
 $(actions):
-	@python scripts/make "$@"
+	@python3 scripts/make "$@"
