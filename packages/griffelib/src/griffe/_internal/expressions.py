@@ -566,6 +566,43 @@ class ExprInterpolation(Expr):
         yield "}"
 
 
+_FSTRING_ALL_QUOTES = ("'", '"', "'''", '"""')
+_FSTRING_MULTI_QUOTES = ('"""', "'''")
+
+
+def _fstring_choose_quote(values: Sequence[str | Expr]) -> tuple[str, list[str]]:
+    # Follows ast.unparse's visit_JoinedStr quote-selection algorithm.
+    # Pre-render all parts: literals get brace-doubled, expressions get flattened.
+    fstring_parts: list[tuple[str, bool]] = []
+    for value in values:
+        if isinstance(value, str):
+            fstring_parts.append((value.replace("{", "{{").replace("}", "}}"), True))
+        else:
+            fstring_parts.append((str(value), False))
+
+    quote_types: list[str] = list(_FSTRING_ALL_QUOTES)
+    escaped_parts: list[str] = []
+
+    for raw, is_constant in fstring_parts:
+        if is_constant:
+            escaped = (
+                raw.replace("\\", "\\\\")
+                .replace("\r", "\\r")
+                .replace("\0", "\\x00")
+                .replace("\n", "\\n")
+                .replace("\t", "\\t")
+            )
+            quote_types = [q for q in quote_types if q not in escaped] or quote_types
+            escaped_parts.append(escaped)
+        else:
+            if "\n" in raw:
+                quote_types = [q for q in quote_types if q in _FSTRING_MULTI_QUOTES] or quote_types
+            quote_types = [q for q in quote_types if q not in raw] or quote_types
+            escaped_parts.append(raw)
+
+    return quote_types[0], escaped_parts
+
+
 @dataclass(eq=True, slots=True)
 class ExprJoinedStr(Expr):
     """Joined strings like `f"a {b} c"`."""
@@ -574,9 +611,14 @@ class ExprJoinedStr(Expr):
     """Joined values."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield "f'"
-        yield from _join(self.values, "", flat=flat)
-        yield "'"
+        quote, escaped_parts = _fstring_choose_quote(self.values)
+        yield f"f{quote}"
+        for value, escaped in zip(self.values, escaped_parts, strict=True):
+            if isinstance(value, str):
+                yield escaped
+            else:
+                yield from _yield(value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+        yield quote
 
 
 @dataclass(eq=True, slots=True)
@@ -941,9 +983,14 @@ class ExprTemplateStr(Expr):
     """Joined values."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        yield "t'"
-        yield from _join(self.values, "", flat=flat)
-        yield "'"
+        quote, escaped_parts = _fstring_choose_quote(self.values)
+        yield f"t{quote}"
+        for value, escaped in zip(self.values, escaped_parts, strict=True):
+            if isinstance(value, str):
+                yield escaped
+            else:
+                yield from _yield(value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+        yield quote
 
 
 @dataclass(eq=True, slots=True)
@@ -1179,7 +1226,7 @@ def _build_constant(
         if in_joined_str and not in_formatted_str:
             # We're in a f-string, not in a formatted value, don't keep quotes.
             return node.value
-        if parse_strings and not literal_strings:
+        if parse_strings and not literal_strings and not in_formatted_str:
             # We're in a place where a string could be a type annotation
             # (and not in a Literal[...] type annotation).
             # We parse the string and build from the resulting nodes again.
