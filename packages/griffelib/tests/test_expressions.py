@@ -238,10 +238,10 @@ def test_resolving_type_parameters() -> None:
     [
         # Single quotes only in literal parts → double-quote delimiter.
         ('f"it\'s {x}"', 'f"it\'s {x}"'),
-        ('f"don\'t {x} won\'t {y}"', 'f"don\'t {x} won\'t {y}"'),
+        ("f\"don't {x} won't {y}\"", "f\"don't {x} won't {y}\""),
         # Double quotes only in literal parts → single-quote delimiter.
         ("f'say \"hello\" to {x}'", "f'say \"hello\" to {x}'"),
-        ("f'\"open\" and \"close\" around {x}'", "f'\"open\" and \"close\" around {x}'"),
+        ('f\'"open" and "close" around {x}\'', 'f\'"open" and "close" around {x}\''),
         # Both quote types in literal parts → triple-single-quote delimiter.
         (r"""f'it\'s "complicated" {x}'""", "f'''it's \"complicated\" {x}'''"),
         (r"""f'she said "it\'s fine" to {x}'""", "f'''she said \"it's fine\" to {x}'''"),
@@ -251,8 +251,8 @@ def test_resolving_type_parameters() -> None:
         ("f'{{opening}} {x} {{closing}}'", "f'{{opening}} {x} {{closing}}'"),
         # String literals inside f-string expressions are never type annotations.
         # The expression content drives delimiter choice (single → use double outer).
-        ("f'{print(\"1\")}'", 'f"{print(\'1\')}"'),
-        ("f'{x + \"hello\"}'", 'f"{x + \'hello\'}"'),
+        ("f'{print(\"1\")}'", "f\"{print('1')}\""),
+        ("f'{x + \"hello\"}'", "f\"{x + 'hello'}\""),
     ],
 )
 def test_fstring_quote_selection(code: str, expected: str) -> None:
