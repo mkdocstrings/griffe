@@ -243,7 +243,6 @@ def check_types(ctx: Context) -> None:
         ✓ Checking types
         ```
     """
-    """Check that the code is correctly typed."""
     py = f"{sys.version_info.major}.{sys.version_info.minor}"
     ctx.run(
         tools.ty.check(
