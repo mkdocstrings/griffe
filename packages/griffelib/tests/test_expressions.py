@@ -241,3 +241,22 @@ def test_render_dict_comprehension() -> None:
         """,
     ) as module:
         assert str(module["d"].value) == "{k: v for k, v in items if k}"
+
+
+def test_render_dict_with_unpacking() -> None:
+    """Assert dictionaries using `**`-unpacking are rendered correctly.
+
+    The AST marks an unpacked value with a `None` key, which must render as
+    `**value` rather than as a literal `None` key. A genuine `None` literal key
+    (an `ast.Constant`, not the AST's unpacking marker) must be preserved.
+    """
+    with temporary_visited_module(
+        """
+        a = {**base, "x": 1}
+        b = {**d1, **d2}
+        c = {None: 1, "y": 2}
+        """,
+    ) as module:
+        assert str(module["a"].value) == "{**base, 'x': 1}"
+        assert str(module["b"].value) == "{**d1, **d2}"
+        assert str(module["c"].value) == "{None: 1, 'y': 2}"
