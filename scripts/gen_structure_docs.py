@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 from code2flow import code2flow, engine, model
 
-engine.logging = MagicMock()  # ty:ignore[invalid-assignment]
+engine.logging = MagicMock()
 
 
 model.TRUNK_COLOR = "#fca311"  # ty:ignore[invalid-assignment]
