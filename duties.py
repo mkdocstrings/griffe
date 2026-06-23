@@ -128,7 +128,7 @@ def check_quality(ctx: Context) -> None:
 
     ...where ID is the identifier of the rule you want to ignore for this line.
 
-    Examples:
+    Example:
         ```python title="src/your_package/module.py"
         import subprocess
         ```
@@ -220,7 +220,7 @@ def check_types(ctx: Context) -> None:
 
     ...where ID is the name of the warning.
 
-    Examples:
+    Example:
         ```python title="src/your_package/module.py"
         result = data_dict.get(key, None).value
         ```
