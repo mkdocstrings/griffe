@@ -52,8 +52,20 @@ syntax_examples = [
     "call(something=something)",
     # Strings.
     "f'a {round(key, 2)} {z}'",
-    # YORE: EOL 3.13: Replace line with `"t'a {round(key, 2)} {z}'",`.
+    'f"it\'s {x}"',  # ' only -> " delimiter
+    "f\"don't {x} won't {y}\"",  # multiple ' -> " delimiter
+    "f'say \"hello\" to {x}'",  # " only -> ' delimiter
+    'f\'"quoted" and "re-quoted" {x}\'',  # multiple " -> ' delimiter
+    "f'''it's \"complicated\" {x}'''",  # both -> triple-' delimiter
+    "f'''she said \"it's fine\" to {x}'''",  # both, different parts -> triple-'
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
     *(["t'a {round(key, 2)} {z}'"] if sys.version_info >= (3, 14) else []),
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(['t"it\'s {x}"'] if sys.version_info >= (3, 14) else []),
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(["t'say \"hello\" to {x}'"] if sys.version_info >= (3, 14) else []),
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(["t'''it's \"complicated\" {x}'''"] if sys.version_info >= (3, 14) else []),
     # Slices.
     "o[x]",
     "o[x, y]",

@@ -233,6 +233,57 @@ def test_resolving_type_parameters() -> None:
         assert module["C.func"].parameters["arg2"].annotation.canonical_path == "Y"
 
 
+@pytest.mark.parametrize(
+    ("code", "expected"),
+    [
+        # Single quotes only in literal parts → double-quote delimiter.
+        ('f"it\'s {x}"', 'f"it\'s {x}"'),
+        ("f\"don't {x} won't {y}\"", "f\"don't {x} won't {y}\""),
+        # Double quotes only in literal parts → single-quote delimiter.
+        ("f'say \"hello\" to {x}'", "f'say \"hello\" to {x}'"),
+        ('f\'"open" and "close" around {x}\'', 'f\'"open" and "close" around {x}\''),
+        # Both quote types in literal parts → triple-single-quote delimiter.
+        (r"""f'it\'s "complicated" {x}'""", "f'''it's \"complicated\" {x}'''"),
+        (r"""f'she said "it\'s fine" to {x}'""", "f'''she said \"it's fine\" to {x}'''"),
+        (r"""f'can\'t stop, won\'t stop: "the {x} motto"'""", "f'''can't stop, won't stop: \"the {x} motto\"'''"),
+        # Literal braces must be doubled ({{/}}) in the output.
+        ("f'{a} {{b}}'", "f'{a} {{b}}'"),
+        ("f'{{opening}} {x} {{closing}}'", "f'{{opening}} {x} {{closing}}'"),
+        # String literals inside f-string expressions are never type annotations.
+        # The expression content drives delimiter choice (single → use double outer).
+        ("f'{print(\"1\")}'", "f\"{print('1')}\""),
+        ("f'{x + \"hello\"}'", "f\"{x + 'hello'}\""),
+    ],
+)
+def test_fstring_quote_selection(code: str, expected: str) -> None:
+    """ExprJoinedStr produces valid Python source for f-strings with tricky quote content.
+
+    Regression test for https://github.com/mkdocstrings/griffe/issues/444.
+    """
+    top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
+    assert str(expression) == expected
+
+
+@pytest.mark.skipif(sys.version_info < (3, 14), reason="t-strings require Python 3.14+")
+@pytest.mark.parametrize(
+    ("code", "expected"),
+    [
+        ('t"it\'s {x}"', 't"it\'s {x}"'),
+        ("t'say \"hello\" to {x}'", "t'say \"hello\" to {x}'"),
+        (r"""t'it\'s "complicated" {x}'""", "t'''it's \"complicated\" {x}'''"),
+    ],
+)
+def test_tstring_quote_selection(code: str, expected: str) -> None:
+    """ExprTemplateStr produces valid Python source for t-strings with tricky quote content.
+
+    Regression test for https://github.com/mkdocstrings/griffe/issues/444.
+    """
+    top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
+    assert str(expression) == expected
+
+
 def test_render_dict_comprehension() -> None:
     """Assert dict comprehensions are rendered correctly."""
     with temporary_visited_module(
