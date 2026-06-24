@@ -73,6 +73,7 @@ def test_find_pkg_style_namespace_packages(statement: str) -> None:
         assert package.path == [tmp_package1.path.parent, tmp_package2.path.parent]
 
 
+@pytest.mark.skipif(not Path("packages").exists(), reason="not running from monorepo root")
 def test_pth_file_handling(tmp_path: Path) -> None:
     """Assert .pth files are correctly handled.
 
@@ -88,15 +89,16 @@ def test_pth_file_handling(tmp_path: Path) -> None:
             import thing
             import\tthing
             /doesnotexist
-            tests
+            packages/griffelib/tests
             """,
         ),
         encoding="utf8",
     )
     paths = [sp.path for sp in _handle_pth_file(pth_file)]
-    assert paths == [Path("tests")]
+    assert paths == [Path("packages/griffelib/tests")]
 
 
+@pytest.mark.skipif(not Path("packages").exists(), reason="not running from monorepo root")
 def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
     """Assert .pth files are correctly handled.
 
@@ -108,13 +110,13 @@ def test_pth_file_handling_with_semi_colon(tmp_path: Path) -> None:
         dedent(
             """
             # comment
-            import thing; import\tthing; /doesnotexist; tests
+            import thing; import\tthing; /doesnotexist; packages/griffelib/tests
             """,
         ),
         encoding="utf8",
     )
     paths = [sp.path for sp in _handle_pth_file(pth_file)]
-    assert paths == [Path("tests")]
+    assert paths == [Path("packages/griffelib/tests")]
 
 
 @pytest.mark.parametrize("editable_file_name", ["__editables_whatever.py", "_editable_impl_whatever.py"])
@@ -182,7 +184,7 @@ def test_scikit_build_core_file_handling(tmp_path: Path) -> None:
     assert paths == [Path("/path/to/whatever")]
 
 
-@pytest.mark.skipif(not Path("packages", "griffelib").exists(), reason="not running from monorepo root")
+@pytest.mark.skipif(not Path("packages").exists(), reason="not running from monorepo root")
 def test_meson_python_file_handling(tmp_path: Path) -> None:
     """Assert editable modules by `meson-python` are handled.
 
