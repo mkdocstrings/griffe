@@ -459,6 +459,7 @@ def test(ctx: Context, *cli_args: str) -> None:
     os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
     ctx.run(
         tools.pytest(
+            rootdir=".",
             config_file="config/pytest.ini",
             color="yes",
         ).add_args("-n", "auto", *cli_args),
