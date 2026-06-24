@@ -1,0 +1,1 @@
+"""Tests suite for `griffecli`."""
