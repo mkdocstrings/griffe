@@ -1003,6 +1003,14 @@ class ExprTuple(Expr):
     """Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+        if self.implicit and not self.elements:
+            # An empty tuple is always written as `()` and cannot be implicit.
+            # This arises in annotations like `tuple[()]`, where the AST represents
+            # the subscript slice as an empty Tuple node, but the parentheses must
+            # be preserved to produce valid Python (`tuple[]` is a SyntaxError).
+            yield "("
+            yield ")"
+            return
         if not self.implicit:
             yield "("
         yield from _join(self.elements, ", ", flat=flat)
