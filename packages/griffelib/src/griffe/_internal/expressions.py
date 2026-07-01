@@ -468,16 +468,20 @@ class ExprDictComp(Expr):
 
     key: str | Expr
     """Target key."""
-    value: str | Expr
+    value: str | Expr | None
     """Target value."""
     generators: Sequence[Expr]
     """Generators iterated on."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
-        yield from _yield(self.key, flat=flat)
-        yield ": "
-        yield from _yield(self.value, flat=flat)
+        if self.value:
+            yield from _yield(self.key, flat=flat)
+            yield ": "
+            yield from _yield(self.value, flat=flat)
+        else:
+            yield "**"
+            yield from _yield(self.key, flat=flat)
         yield " "
         yield from _join(self.generators, " ", flat=flat)
         yield "}"
@@ -1261,7 +1265,7 @@ def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expr:
 def _build_dictcomp(node: ast.DictComp, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprDictComp(
         _build(node.key, parent, **kwargs),
-        _build(node.value, parent, **kwargs),
+        None if node.value is None else _build(node.value, parent, **kwargs),
         [_build(gen, parent, **kwargs) for gen in node.generators],
     )
 
