@@ -311,3 +311,14 @@ def test_render_dict_with_unpacking() -> None:
         assert str(module["a"].value) == "{**base, 'x': 1}"
         assert str(module["b"].value) == "{**d1, **d2}"
         assert str(module["c"].value) == "{None: 1, 'y': 2}"
+
+
+@pytest.mark.skipif(sys.version_info < (3, 15), reason="Unpackings in Comprehensions require Python 3.15+")
+def test_render_dict_comprehension_with_unpacking() -> None:
+    """Docstring stub."""
+    with temporary_visited_module(
+        """
+        a = {**d for d in dicts}
+        """,
+    ) as module:
+        assert str(module["a"].value) == "{**d for d in dicts}"
