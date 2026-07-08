@@ -1147,7 +1147,7 @@ _precedence_map = {
     ExprVarKeyword: lambda _: _OperatorPrecedence.STARRED,
     ExprYield: lambda _: _OperatorPrecedence.YIELD,
     ExprYieldFrom: lambda _: _OperatorPrecedence.YIELD,
-    # These are not standalone, they appear in specific contexts where precendence is not a concern.
+    # These are not standalone, they appear in specific contexts where precedence is not a concern.
     # NOTE: `for ... in ... if` part, not the whole `[...]`.
     ExprComprehension: lambda _: _OperatorPrecedence.NONE,
     ExprExtSlice: lambda _: _OperatorPrecedence.NONE,
