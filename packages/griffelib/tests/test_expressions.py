@@ -332,3 +332,14 @@ def test_empty_tuple_annotation_str() -> None:
         assert not module["f2"].returns.slice.implicit
         assert str(module["f1"].returns) == "tuple[()]"
         assert str(module["f2"].returns) == "Tuple[()]"
+
+
+@pytest.mark.skipif(sys.version_info < (3, 15), reason="Unpackings in Comprehensions require Python 3.15+")
+def test_render_dict_comprehension_with_unpacking() -> None:
+    """Docstring stub."""
+    with temporary_visited_module(
+        """
+        a = {**d for d in dicts}
+        """,
+    ) as module:
+        assert str(module["a"].value) == "{**d for d in dicts}"

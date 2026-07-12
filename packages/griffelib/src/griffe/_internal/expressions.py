@@ -468,16 +468,20 @@ class ExprDictComp(Expr):
 
     key: str | Expr
     """Target key."""
-    value: str | Expr
+    value: str | Expr | None
     """Target value."""
     generators: Sequence[Expr]
     """Generators iterated on."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "{"
-        yield from _yield(self.key, flat=flat)
-        yield ": "
-        yield from _yield(self.value, flat=flat)
+        if self.value:
+            yield from _yield(self.key, flat=flat)
+            yield ": "
+            yield from _yield(self.value, flat=flat)
+        else:
+            yield "**"
+            yield from _yield(self.key, flat=flat)
         yield " "
         yield from _join(self.generators, " ", flat=flat)
         yield "}"
@@ -1153,7 +1157,7 @@ _precedence_map = {
     ExprVarKeyword: lambda _: _OperatorPrecedence.STARRED,
     ExprYield: lambda _: _OperatorPrecedence.YIELD,
     ExprYieldFrom: lambda _: _OperatorPrecedence.YIELD,
-    # These are not standalone, they appear in specific contexts where precendence is not a concern.
+    # These are not standalone, they appear in specific contexts where precedence is not a concern.
     # NOTE: `for ... in ... if` part, not the whole `[...]`.
     ExprComprehension: lambda _: _OperatorPrecedence.NONE,
     ExprExtSlice: lambda _: _OperatorPrecedence.NONE,
@@ -1267,7 +1271,7 @@ def _build_dict(node: ast.Dict, parent: Module | Class, **kwargs: Any) -> Expr:
 def _build_dictcomp(node: ast.DictComp, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprDictComp(
         _build(node.key, parent, **kwargs),
-        _build(node.value, parent, **kwargs),
+        None if node.value is None else _build(node.value, parent, **kwargs),
         [_build(gen, parent, **kwargs) for gen in node.generators],
     )
 
