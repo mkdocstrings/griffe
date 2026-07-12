@@ -1003,13 +1003,11 @@ class ExprTuple(Expr):
     """Whether the tuple is implicit (e.g. without parentheses in a subscript's slice)."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-        if self.implicit and not self.elements:
-            # An empty tuple is always written as `()` and cannot be implicit.
-            # This arises in annotations like `tuple[()]`, where the AST represents
-            # the subscript slice as an empty Tuple node, but the parentheses must
-            # be preserved to produce valid Python (`tuple[]` is a SyntaxError).
-            yield "("
-            yield ")"
+        # We fixed `_build_tuple` to make sure we never build
+        # implicit tuples with no elements, but since users might load
+        # data built with previous Griffe versions, we must be defensive here.
+        if not self.elements:
+            yield "()"
             return
         if not self.implicit:
             yield "("
@@ -1405,7 +1403,12 @@ def _build_tuple(
     compr_target: bool = False,
     **kwargs: Any,
 ) -> Expr:
-    return ExprTuple([_build(el, parent, **kwargs) for el in node.elts], implicit=subscript_slice or compr_target)
+    # An empty tuple is always written as `()` and cannot be implicit.
+    # This arises in annotations like `tuple[()]`, where the AST represents
+    # the subscript slice as an empty Tuple node, but the parentheses must
+    # be preserved to produce valid Python (`tuple[]` is a SyntaxError).
+    implicit = (subscript_slice or compr_target) if node.elts else False
+    return ExprTuple([_build(el, parent, **kwargs) for el in node.elts], implicit=implicit)
 
 
 def _build_unaryop(node: ast.UnaryOp, parent: Module | Class, **kwargs: Any) -> Expr:

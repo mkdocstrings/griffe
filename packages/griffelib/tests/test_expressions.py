@@ -316,9 +316,9 @@ def test_render_dict_with_unpacking() -> None:
 def test_empty_tuple_annotation_str() -> None:
     """Check that empty-tuple annotations round-trip correctly.
 
-    ``tuple[()]`` is a valid annotation for a zero-element tuple.
-    Its string representation must remain ``tuple[()]``, not the
-    invalid ``tuple[]``.
+    `tuple[()]` is a valid annotation for a zero-element tuple.
+    Its string representation must remain `tuple[()]`, not the
+    invalid `tuple[]`.
     """
     with temporary_visited_module(
         """
@@ -328,5 +328,7 @@ def test_empty_tuple_annotation_str() -> None:
         def f2() -> Tuple[()]: ...
         """,
     ) as module:
+        assert not module["f1"].returns.slice.implicit
+        assert not module["f2"].returns.slice.implicit
         assert str(module["f1"].returns) == "tuple[()]"
         assert str(module["f2"].returns) == "Tuple[()]"
