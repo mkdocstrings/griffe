@@ -313,6 +313,27 @@ def test_render_dict_with_unpacking() -> None:
         assert str(module["c"].value) == "{None: 1, 'y': 2}"
 
 
+def test_empty_tuple_annotation_str() -> None:
+    """Check that empty-tuple annotations round-trip correctly.
+
+    `tuple[()]` is a valid annotation for a zero-element tuple.
+    Its string representation must remain `tuple[()]`, not the
+    invalid `tuple[]`.
+    """
+    with temporary_visited_module(
+        """
+        from typing import Tuple
+
+        def f1() -> tuple[()]: ...
+        def f2() -> Tuple[()]: ...
+        """,
+    ) as module:
+        assert not module["f1"].returns.slice.implicit
+        assert not module["f2"].returns.slice.implicit
+        assert str(module["f1"].returns) == "tuple[()]"
+        assert str(module["f2"].returns) == "Tuple[()]"
+
+
 @pytest.mark.skipif(sys.version_info < (3, 15), reason="Unpackings in Comprehensions require Python 3.15+")
 def test_render_dict_comprehension_with_unpacking() -> None:
     """Docstring stub."""
