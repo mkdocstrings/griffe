@@ -724,7 +724,6 @@ class ExprVarPositional(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "*"
-        # Starred values are bitwise-or expressions in the grammar, e.g. `f(*a | b)`.
         yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.BIT_OR, is_left=True)
 
 
@@ -737,7 +736,6 @@ class ExprVarKeyword(Expr):
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield "**"
-        # Double-starred values are bitwise-or expressions in the grammar, e.g. `f(**a | b)`.
         yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.BIT_OR, is_left=True)
 
 
@@ -1209,7 +1207,6 @@ _precedence_map = {
     ExprIfExp: lambda _: _OperatorPrecedence.IF_ELSE,
     ExprNamedExpr: lambda _: _OperatorPrecedence.ASSIGN,
     ExprLambda: lambda _: _OperatorPrecedence.LAMBDA,
-    # Atomic (like Ruff categorizes it) since it now yields its own parentheses.
     ExprGeneratorExp: lambda _: _OperatorPrecedence.ATOMIC,
     ExprVarPositional: lambda _: _OperatorPrecedence.STARRED,
     ExprVarKeyword: lambda _: _OperatorPrecedence.STARRED,

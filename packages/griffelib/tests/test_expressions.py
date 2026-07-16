@@ -147,23 +147,24 @@ _expression_contexts = [
 ]
 
 
+@pytest.mark.parametrize("shape", _expression_shapes)
 @pytest.mark.parametrize("context", _expression_contexts)
-def test_expressions_stay_valid_and_equivalent(context: str) -> None:
+def test_expressions_stay_valid_and_equivalent(shape: str, context: str) -> None:
     """Stringified expressions must re-parse as valid, semantically-equivalent Python.
 
     Parameters:
-        context: A code template embedding each expression shape (parametrized).
+        shape: An expression to embed in each code context.
+        context: A code template embedding the expression.
     """
-    for shape in _expression_shapes:
-        code = context % shape
-        try:
-            original = ast.parse(code, mode="eval")
-        except SyntaxError:
-            continue
-        expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
-        rendered = str(expression)
-        reparsed = ast.parse(rendered, mode="eval")  # Output must be valid Python.
-        assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+    code = context % shape
+    try:
+        original = ast.parse(code, mode="eval")
+    except SyntaxError:
+        pytest.skip("shape is invalid in this context")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")  # Output must be valid Python.
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
 
 
 def test_length_one_tuple_as_string() -> None:
