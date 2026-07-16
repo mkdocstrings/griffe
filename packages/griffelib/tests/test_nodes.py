@@ -66,33 +66,76 @@ syntax_examples = [
     *(["t'say \"hello\" to {x}'"] if sys.version_info >= (3, 14) else []),
     # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
     *(["t'''it's \"complicated\" {x}'''"] if sys.version_info >= (3, 14) else []),
+    # Formatted values: conversions and format specifiers.
+    "f'{x!r}'",
+    "f'{x!s}'",
+    "f'{x!a}'",
+    "f'{x:>10}'",
+    "f'{x:{width}}'",
+    "f'{x!r:>{width}}'",
+    "f'a {x:%Y-%m-%d} b'",
+    "f'{(x := 1)}'",
+    "f'{ {1: 2}}'",
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(["t'{x!r}'"] if sys.version_info >= (3, 14) else []),
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(["t'{x!s:>{width}}'"] if sys.version_info >= (3, 14) else []),
     # Slices.
     "o[x]",
     "o[x, y]",
     "o[x:y]",
     "o[x:y, z]",
     "o[x, y(z)]",
+    "o[(a, b):y]",
+    "o[a + b:]",
     # Walrus operator.
     "a if (a := b) else c",
+    "{(a := 1): 2}",
+    "{1: (a := 2)}",
+    "[a for a in b if (c := a)]",
     # Starred.
     "a(*b, **c)",
+    "a(*b | c)",
     # Structs.
     "(a, b, c)",
     "{a, b, c}",
     "{a: b, c: d}",
+    "{a + b: c + d for a, b in e}",
     "[a, b, c]",
+    "[a + b for a in c]",
+    # Generator expressions.
+    "(a + b for a in c)",
+    "a(b for b in c)",
+    "sum((a for a in b), c)",
+    "[(a for a in b), c]",
+    "{1: (a for a in b)}",
+    "(a for a in b if (c := a))",
     # Yields.
     "yield",
     "yield a",
+    "yield a + b",
     "yield from a",
     # Lambdas.
     "lambda a: a",
     "lambda a, b: a",
     "lambda *a, **b: a",
     "lambda a, b=0: a",
+    "lambda a=b + c: a",
     "lambda a, /, b, c: a",
     "lambda a, *, b, c: a",
     "lambda a, /, b, *, c: a",
+    "lambda a, /: a",
+    "lambda a, b, /: a",
+    "lambda a, /, *args: args",
+    "lambda a, /, **kwargs: kwargs",
+    "lambda a, /, *, b: b",
+    "lambda a, /, b=0, *args, c=1, **kwargs: a",
+    "lambda *args, b: b",
+    "lambda *args, b=0: b",
+    # Calls with expression-level arguments.
+    "call(a=b + c)",
+    # Attribute access on integer literals.
+    "(1).bit_length()",
 ]
 
 
