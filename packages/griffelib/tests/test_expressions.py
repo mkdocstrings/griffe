@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-from griffe import Module, Parser, get_expression, temporary_visited_module
+from griffe import ExprAwait, Module, Parser, get_expression, temporary_visited_module
 from tests.test_nodes import syntax_examples
 
 
@@ -86,6 +86,31 @@ def test_expressions(code: str) -> None:
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
     expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == code
+
+
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        ("await dependency()", "await dependency()"),
+        ("(await dependency()).attr", "(await dependency()).attr"),
+        ("(await dependency())()", "(await dependency())()"),
+        ("await dependency() ** exponent", "await dependency() ** exponent"),
+        ("-await dependency()", "-await dependency()"),
+        ("await (dependency() ** exponent)", "await (dependency() ** exponent)"),
+        ("await (await dependency())", "await (await dependency())"),
+        ("await (left + right)", "await (left + right)"),
+    ],
+)
+def test_await_expression(source: str, expected: str) -> None:
+    """Build Await expressions with their correct precedence."""
+    node = ast.parse(source, mode="eval").body
+    expression = get_expression(node, parent=Module("module"))
+    rendered = str(expression)
+
+    if isinstance(node, ast.Await):
+        assert isinstance(expression, ExprAwait)
+    assert rendered == expected
+    assert ast.dump(ast.parse(rendered, mode="eval").body) == ast.dump(node)
 
 
 def test_length_one_tuple_as_string() -> None:

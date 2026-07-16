@@ -1045,6 +1045,18 @@ class ExprUnaryOp(Expr):
 
 
 @dataclass(eq=True, slots=True)
+class ExprAwait(Expr):
+    """Await expressions like `await call()`."""
+
+    value: str | Expr
+    """Awaited value."""
+
+    def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+        yield "await "
+        yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.CALL_ATTRIBUTE)
+
+
+@dataclass(eq=True, slots=True)
 class ExprYield(Expr):
     """Yield statements like `yield a`."""
 
@@ -1111,7 +1123,6 @@ _compare_op_map = {
     ast.NotIn: "not in",
 }
 
-# TODO: Support `ast.Await`.
 _precedence_map = {
     # Literals and names.
     ExprName: lambda _: _OperatorPrecedence.ATOMIC,
@@ -1130,6 +1141,7 @@ _precedence_map = {
     ExprAttribute: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
     ExprSubscript: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
     ExprCall: lambda _: _OperatorPrecedence.CALL_ATTRIBUTE,
+    ExprAwait: lambda _: _OperatorPrecedence.AWAIT,
     ExprUnaryOp: lambda e: {"not": _OperatorPrecedence.NOT}.get(e.operator, _OperatorPrecedence.POS_NEG_BIT_NOT),
     ExprBinOp: lambda e: {
         "**": _OperatorPrecedence.EXPONENT,
@@ -1181,6 +1193,10 @@ def _build_attribute(node: ast.Attribute, parent: Module | Class, **kwargs: Any)
     if isinstance(left, str):
         return ExprAttribute([left, ExprName(node.attr, "str")])
     return ExprAttribute([left, ExprName(node.attr)])
+
+
+def _build_await(node: ast.Await, parent: Module | Class, **kwargs: Any) -> Expr:
+    return ExprAwait(_build(node.value, parent, **kwargs))
 
 
 def _build_binop(node: ast.BinOp, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1433,6 +1449,7 @@ class _BuildCallable(Protocol):
 
 _node_map: dict[type, _BuildCallable] = {
     ast.Attribute: _build_attribute,
+    ast.Await: _build_await,
     ast.BinOp: _build_binop,
     ast.BoolOp: _build_boolop,
     ast.Call: _build_call,

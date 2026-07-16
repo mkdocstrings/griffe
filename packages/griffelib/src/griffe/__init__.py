@@ -277,6 +277,7 @@ from griffe._internal.exceptions import (
 from griffe._internal.expressions import (
     Expr,
     ExprAttribute,
+    ExprAwait,
     ExprBinOp,
     ExprBoolOp,
     ExprCall,
@@ -433,6 +434,7 @@ __all__ = [
     "ExplanationStyle",
     "Expr",
     "ExprAttribute",
+    "ExprAwait",
     "ExprBinOp",
     "ExprBoolOp",
     "ExprCall",
