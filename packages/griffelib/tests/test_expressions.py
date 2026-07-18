@@ -113,6 +113,85 @@ def test_await_expression(source: str, expected: str) -> None:
     assert ast.dump(ast.parse(rendered, mode="eval").body) == ast.dump(node)
 
 
+# Expressions from each precedence level, and contexts embedding them.
+# Not all combinations are valid Python: invalid ones are skipped.
+_expression_shapes = [
+    "x",
+    "a.b",
+    "'s'",
+    "x + 1",
+    "a | b",
+    "-x",
+    "not x",
+    "a or b",
+    "a < b",
+    "x ** 2",
+    "a if b else c",
+    "lambda: 1",
+    "(w := 1)",
+    "(g for g in y)",
+    "[g for g in y]",
+    "{g: g for g in y}",
+    "f(1)",
+    "o[1]",
+    "(1, 2)",
+    "[1, 2]",
+    "{1: 2}",
+    "{1, 2}",
+    "f'{x!r}'",
+    "f'{x:>{width}}'",
+]
+_expression_contexts = [
+    "f(%s)",
+    "f(%s, 1)",
+    "f(a=%s)",
+    "f(*%s)",
+    "f(**%s)",
+    "[%s, 1]",
+    "{%s, 1}",
+    "(%s, 1)",
+    "{%s: 1}",
+    "{1: %s}",
+    "o[%s]",
+    "o[%s:1]",
+    "o[1:%s]",
+    "o[1:1:%s]",
+    "[%s for u in y]",
+    "[u for u in %s]",
+    "[u for u in y if %s]",
+    "(%s for u in y)",
+    "lambda p=%s: p",
+    "%s + 1",
+    "-%s",
+    "%s.m",
+    "%s()",
+    "%s if c else d",
+    "f'{%s}'",
+    "f'{v:{%s}}'",
+    "[(nv := %s)]",
+]
+
+
+@pytest.mark.parametrize("shape", _expression_shapes)
+@pytest.mark.parametrize("context", _expression_contexts)
+def test_expressions_stay_valid_and_equivalent(shape: str, context: str) -> None:
+    """Stringified expressions must re-parse as valid, semantically-equivalent Python.
+
+    Parameters:
+        shape: An expression to embed in each code context.
+        context: A code template embedding the expression.
+    """
+    code = context % shape
+    try:
+        original = ast.parse(code, mode="eval")
+    except SyntaxError:
+        pytest.skip("shape is invalid in this context")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")  # Output must be valid Python.
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
 def test_length_one_tuple_as_string() -> None:
     """Length-1 tuples must have a trailing comma."""
     code = "x = ('a',)"
@@ -288,6 +367,47 @@ def test_fstring_quote_selection(code: str, expected: str) -> None:
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
     expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == expected
+
+
+def test_fstring_conversions_and_format_specs() -> None:
+    """Conversion flags and format specifiers must be preserved.
+
+    Regression test: they used to be dropped entirely (`f"{x!r:>10}"` rendered as `f'{x}'`).
+    """
+    with temporary_visited_module(
+        """
+        a = f"{x!r}"
+        b = f"{x:>10}"
+        c = f"{x:{width}.{precision}}"
+        d = f"{x!a:>{width}}"
+        e = f"{x:%Y-%m-%d}"
+
+        def func(param=f"{x!r:>3}"): ...
+        """,
+    ) as module:
+        assert str(module["a"].value) == "f'{x!r}'"
+        assert str(module["b"].value) == "f'{x:>10}'"
+        assert str(module["c"].value) == "f'{x:{width}.{precision}}'"
+        assert str(module["d"].value) == "f'{x!a:>{width}}'"
+        assert str(module["e"].value) == "f'{x:%Y-%m-%d}'"
+        assert str(module["func"].parameters["param"].default) == "f'{x!r:>3}'"
+
+
+@pytest.mark.skipif(sys.version_info < (3, 14), reason="t-strings require Python 3.14+")
+def test_tstring_conversions_and_format_specs() -> None:
+    """Same as f-strings: t-string interpolations must keep conversions, specs and quotes."""
+    with temporary_visited_module(
+        """
+        a = t"{x!r}"
+        b = t"{x:>10}"
+        c = t"{x!s:>{width}}"
+        d = t"{'quoted'}"
+        """,
+    ) as module:
+        assert str(module["a"].value) == "t'{x!r}'"
+        assert str(module["b"].value) == "t'{x:>10}'"
+        assert str(module["c"].value) == "t'{x!s:>{width}}'"
+        assert str(module["d"].value) == "t\"{'quoted'}\""
 
 
 @pytest.mark.skipif(sys.version_info < (3, 14), reason="t-strings require Python 3.14+")
