@@ -164,7 +164,13 @@ class Expr:
     """Base class for expressions."""
 
     def __str__(self) -> str:
-        return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # ty:ignore[unresolved-attribute]
+        rendered = "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # ty:ignore[unresolved-attribute]
+        # A top-level named expression (walrus) is invalid Python without surrounding
+        # parentheses, e.g. as an attribute value or a parameter default. Nested occurrences
+        # are parenthesized by their enclosing context, but the top level has none.
+        if isinstance(self, ExprNamedExpr):
+            return f"({rendered})"
+        return rendered
 
     def __iter__(self) -> Iterator[str | Expr]:
         """Iterate on the expression syntax and elements."""

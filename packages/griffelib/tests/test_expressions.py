@@ -142,6 +142,7 @@ _expression_shapes = [
     "f'{x:>{width}}'",
 ]
 _expression_contexts = [
+    "%s",
     "f(%s)",
     "f(%s, 1)",
     "f(a=%s)",
@@ -197,6 +198,18 @@ def test_length_one_tuple_as_string() -> None:
     code = "x = ('a',)"
     with temporary_visited_module(code) as module:
         assert str(module["x"].value) == "('a',)"
+
+
+def test_top_level_named_expression_keeps_parentheses() -> None:
+    """A top-level named expression (walrus) must keep its surrounding parentheses.
+
+    Without them, the rendered string is invalid Python as an attribute value
+    or a parameter default (e.g. `x = n := 1` is a syntax error).
+    """
+    code = "x = (n := 1)\ndef f(a=(b := compute())): ...\n"
+    with temporary_visited_module(code) as module:
+        assert str(module["x"].value) == "(n := 1)"
+        assert str(module["f"].parameters["a"].default) == "(b := compute())"
 
 
 @pytest.mark.parametrize(
