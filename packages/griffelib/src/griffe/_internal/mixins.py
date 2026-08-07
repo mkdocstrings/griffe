@@ -408,9 +408,10 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         if self.is_private:
             return False
 
-        # TODO: In a future version, we will support two conventions regarding imports:
-        # - `from a import x as x` marks `x` as public.
-        # - `from a import *` marks all wildcard imported objects as public.
+        # Imported objects are private by default.
+        # The two following conventions are supported through Griffe extensions:
+        # - `from a import x as x` marks `x` as public (griffe-public-redundant-alias)
+        # - `from a import *` marks all wildcard imported objects as public (griffe-public-wildcard-import)
         if self.is_imported:  # noqa: SIM103
             return False
 
