@@ -134,7 +134,7 @@ class Visitor:
     Visitors iterate on AST nodes to extract data from them.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         module_name: str,
         filepath: Path,

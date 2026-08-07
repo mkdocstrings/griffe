@@ -202,6 +202,7 @@ _service_to_url = {
 
 
 def _get_source_link(
+    *,
     service: KnownGitService,
     remote_url: str,
     commit_hash: str,
@@ -268,4 +269,11 @@ class GitInfo:
         Returns:
             The source link, or None if unknown.
         """
-        return _get_source_link(self.service, self.remote_url, self.commit_hash, filepath, lineno, endlineno)
+        return _get_source_link(
+            service=self.service,
+            remote_url=self.remote_url,
+            commit_hash=self.commit_hash,
+            filepath=filepath,
+            lineno=lineno,
+            endlineno=endlineno,
+        )

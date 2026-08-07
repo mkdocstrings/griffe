@@ -119,7 +119,7 @@ class Inspector:
     Inspectors iterate on objects members to extract data from them.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         module_name: str,
         filepath: Path | None,

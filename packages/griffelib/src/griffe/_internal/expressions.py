@@ -133,7 +133,7 @@ def _join(
 def _field_as_dict(
     element: str | bool | Expr | list[str | Expr] | None,  # noqa: FBT001
     **kwargs: Any,
-) -> str | bool | None | list | dict:
+) -> str | bool | list | dict | None:
     if isinstance(element, Expr):
         return _expr_as_dict(element, **kwargs)
     if isinstance(element, list):

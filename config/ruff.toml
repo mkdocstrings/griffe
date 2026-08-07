@@ -71,6 +71,8 @@ logger-objects = ["griffe.logger"]
 ]
 "packages/*/tests/**.py" = [
     "ARG005",  # Unused lambda argument
+    "D100",  # Missing module docstring
+    "D104",  # Missing package docstring
     "FBT001",  # Boolean positional arg in function definition
     "PLC1901",  # a == "" can be simplified to not a
     "PLR2004",  # Magic value used in comparison
