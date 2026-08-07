@@ -1311,3 +1311,16 @@ def test_disabled_warnings(parse_sphinx: ParserType) -> None:
     assert warnings
     _, warnings = parse_sphinx(docstring, warnings=False)
     assert not warnings
+
+
+def test_disabled_missing_type_warnings(parse_sphinx: ParserType) -> None:
+    """Assert missing type warnings can be disabled.
+
+    Parameters:
+        parse_sphinx: Fixture parser.
+    """
+    docstring = ":return: A value."
+    _, warnings = parse_sphinx(docstring, warn_missing_types=True)
+    assert warnings
+    _, warnings = parse_sphinx(docstring, warn_missing_types=False)
+    assert not warnings
