@@ -5,6 +5,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.2.0](https://github.com/mkdocstrings/griffe/releases/tag/2.2.0) - 2026-08-16
+
+<small>[Compare with 2.1.0](https://github.com/mkdocstrings/griffe/compare/2.1.0...2.2.0)</small>
+
+### Features
+
+- Support `await` expressions ([6b3caab](https://github.com/mkdocstrings/griffe/commit/6b3caab7ce4fdcb1c9386937dad17510d35a3321) by Vincent Gao). [PR-479](https://github.com/mkdocstrings/griffe/pull/479)
+- Support unpacking in dict comprehensions ([2d39391](https://github.com/mkdocstrings/griffe/commit/2d39391cb135febadf339bdea91c1113b74da145) by mushitoriami). [PR-475](https://github.com/mkdocstrings/griffe/pull/475)
+
+### Bug Fixes
+
+- Forward `warn_missing_types` to Sphinx return section reader ([a15e782](https://github.com/mkdocstrings/griffe/commit/a15e782ed0793e06d22105beb016c10cfe0ed4b0) by Timothée Mazzucotelli). [Issue-mkdocstrings-python-337](https://github.com/mkdocstrings/python/issues/337)
+- Make stringified expressions valid and faithful Python ([eb85f0d](https://github.com/mkdocstrings/griffe/commit/eb85f0dd8bf49f4a2400bf03face646d8f533a7c) by Vincent Gao). [PR-478](https://github.com/mkdocstrings/griffe/pull/478)
+- Empty tuples can never be implicit ([82e728d](https://github.com/mkdocstrings/griffe/commit/82e728dc758f9635d2e500c13caa795b48e36d8a) by Vincent Gao). [PR-474](https://github.com/mkdocstrings/griffe/pull/474), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Render f-strings and t-strings with correct quote delimiters ([90e28d4](https://github.com/mkdocstrings/griffe/commit/90e28d45ffc998434895c0f73af608cb12f0d6dd) by Bartosz Sławecki). [Issue-444](https://github.com/mkdocstrings/griffe/issues/444), [PR-455](https://github.com/mkdocstrings/griffe/pull/455)
+- Detect basic admonitions 'example', 'note' and 'warning' in Google/Numpy docstrings when inferring style ([f30306f](https://github.com/mkdocstrings/griffe/commit/f30306fa703741f976fc49576ddf95cf29ba998b) by Timothée Mazzucotelli).
+- Render dict `**`-unpacking as `**value` instead of `None: value` ([74ddbbf](https://github.com/mkdocstrings/griffe/commit/74ddbbf22f49e1fb789ac754e3fff41a0ac2f152) by Vincent Gao). [PR-467](https://github.com/mkdocstrings/griffe/pull/467)
+
 ## [2.1.0](https://github.com/mkdocstrings/griffe/releases/tag/2.1.0) - 2026-06-19
 
 <small>[Compare with 2.0.2](https://github.com/mkdocstrings/griffe/compare/2.0.2...2.1.0)</small>
