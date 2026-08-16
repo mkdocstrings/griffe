@@ -25,7 +25,7 @@ import griffe
 
 
 class MyDecorator(griffe.Extension):
-    """An extension to suport my decorator."""
+    """An extension to support my decorator."""
 ```
 
 Now we can declare the on_instance hook, which receives any kind of Griffe object (Module, Class, Function, Attribute, TypeAlias), or we could use a kind-specific hook such as on_module_instance, on_class_instance, on_function_instance, on_attribute_instance and on_type_alias_instance. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
@@ -37,7 +37,7 @@ import griffe
 
 
 class MyDecorator(griffe.Extension):
-    """An extension to suport my decorator."""
+    """An extension to support my decorator."""
 
     def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         ...
@@ -50,7 +50,7 @@ import griffe
 
 
 class MyDecorator(griffe.Extension):
-    """An extension to suport my decorator."""
+    """An extension to support my decorator."""
 
     def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         for decorator in func.decorators:

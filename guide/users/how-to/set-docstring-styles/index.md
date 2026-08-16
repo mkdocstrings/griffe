@@ -1,6 +1,6 @@
 # Setting the right docstring style for every docstring
 
-Griffe attaches the specified docstring style and parsing options to each object in the tree of the package(s) you load. If your package(s) use several docstring styles, some of these objects will have the wrong style attached to them. This is problematic because other Griffe extensions rely on this attached style to parse docstrings and modify them. We plan to alleviate this limitation in the future (see [issue-340](https://github.com/mkdocstrings/griffe/issues/340)), but the most robust thing you can do is to make sure each object has the *right style* attached, as easly as possible, so that other extensions can work without issue.
+Griffe attaches the specified docstring style and parsing options to each object in the tree of the package(s) you load. If your package(s) use several docstring styles, some of these objects will have the wrong style attached to them. This is problematic because other Griffe extensions rely on this attached style to parse docstrings and modify them. We plan to alleviate this limitation in the future (see [issue-340](https://github.com/mkdocstrings/griffe/issues/340)), but the most robust thing you can do is to make sure each object has the *right style* attached, as easily as possible, so that other extensions can work without issue.
 
 There are currently two ways to make sure objects have the right docstring style attached as early as possible:
 

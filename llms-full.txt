@@ -38,8 +38,8 @@ $ griffe dump griffe -s packages/griffelib/src -r 2>/dev/null | head -29
   "griffe": {
     "analysis": "static",
     "docstring": {
-      "endlineno": 155,
-      "lineno": 5,
+      "endlineno": 171,
+      "lineno": 21,
       "value": "Griffe library package.\n\nSignatures for entire Python programs.\nExtract the structure, the frame, the skeleton of your project,\nto generate API documentation or find breaking changes in your API.\n\nThe entirety of the library API is exposed here, in the top-level `griffe` module.\n\nAll messages written to standard output or error are logged using the `logging` module.\nOur logger's name is set to `\"griffe\"` and is public (you can rely on it).\nYou can obtain the logger from the standard `logging` module: `logging.getLogger(\"griffe\")`.\nActual logging messages are not part of the public API (they might change without notice).\n\nRaised exceptions throughout the package are part of the public API (you can rely on them).\nTheir actual messages are not part of the public API (they might change without notice).\n\nThe following paragraphs will help you discover the package's content.\n\n## Loaders\n\nTo load API data, Griffe provides several high-level functions.\n\n- [`griffe.load`][]: Load and return a Griffe object.\n- [`griffe.load_git`][]: Load and return a module from a specific Git reference.\n- [`griffe.load_pypi`][]: Load and return a module from a specific package version downloaded using pip.\n\n## Models\n\nThe data loaded by Griffe is represented by several classes.\n\n- [`griffe.Module`][]: The class representing a Python module.\n- [`griffe.Class`][]: The class representing a Python class.\n- [`griffe.Function`][]: The class representing a Python function or method.\n- [`griffe.Attribute`][]: The class representing a Python attribute.\n- [`griffe.Alias`][]: This class represents an alias, or indirection, to an object declared in another module.\n\nAdditional classes are available to represent other concepts.\n\n- [`griffe.Decorator`][]: This class represents a decorator.\n- [`griffe.Parameters`][]: This class is a container for parameters.\n- [`griffe.Parameter`][]: This class represent a function parameter.\n\n## Agents\n\nGriffe is able to analyze code both statically and dynamically, using the following \"agents\".\nHowever most of the time you will only need to use the loaders above.\n\n- [`griffe.visit`][]: Parse and visit a module file.\n- [`griffe.inspect`][]: Inspect a module.\n\n## Serializers\n\nGriffe can serizalize data to dictionary and JSON.\n\n- [`griffe.Object.as_json`][griffe.Object.as_json]\n- [`griffe.Object.from_json`][griffe.Object.from_json]\n- [`griffe.JSONEncoder`][]: JSON encoder for Griffe objects.\n- [`griffe.json_decoder`][]: JSON decoder for Griffe objects.\n\n## API checks\n\nGriffe can compare two versions of the same package to find breaking changes.\n\n- [`griffe.find_breaking_changes`][]: Find breaking changes between two versions of the same API.\n- [`griffe.Breakage`][]: Breakage classes can explain what broke from a version to another.\n\n## Extensions\n\nGriffe supports extensions. You can create your own extension by subclassing the `griffe.Extension` class.\n\n- [`griffe.load_extensions`][]: Load configured extensions.\n- [`griffe.Extension`][]: Base class for Griffe extensions.\n\n## Docstrings\n\nGriffe can parse docstrings into structured data.\n\nMain class:\n\n- [`griffe.Docstring`][]: This class represents docstrings.\n\nDocstring section and element classes all start with `Docstring`.\n\nDocstring parsers:\n\n- [`griffe.parse`][]: Parse the docstring.\n- [`griffe.parse_auto`][]: Parse a docstring by automatically detecting the style it uses.\n- [`griffe.parse_google`][]: Parse a Google-style docstring.\n- [`griffe.parse_numpy`][]: Parse a Numpydoc-style docstring.\n- [`griffe.parse_sphinx`][]: Parse a Sphinx-style docstring.\n\n## Exceptions\n\nGriffe uses several exceptions to signal errors.\n\n- [`griffe.GriffeError`][]: The base exception for all Griffe errors.\n- [`griffe.LoadingError`][]: Exception for loading errors.\n- [`griffe.NameResolutionError`][]: Exception for names that cannot be resolved in a object scope.\n- [`griffe.UnhandledEditableModuleError`][]: Exception for unhandled editables modules, when searching modules.\n- [`griffe.UnimportableModuleError`][]: Exception for modules that cannot be imported.\n- [`griffe.AliasResolutionError`][]: Exception for aliases that cannot be resolved.\n- [`griffe.CyclicAliasError`][]: Exception raised when a cycle is detected in aliases.\n- [`griffe.LastNodeError`][]: Exception raised when trying to access a next or previous node.\n- [`griffe.RootNodeError`][]: Exception raised when trying to use siblings properties on a root node.\n- [`griffe.BuiltinModuleError`][]: Exception raised when trying to access the filepath of a builtin module.\n- [`griffe.ExtensionError`][]: Base class for errors raised by extensions.\n- [`griffe.ExtensionNotLoadedError`][]: Exception raised when an extension could not be loaded.\n- [`griffe.GitError`][]: Exception raised for errors related to Git.\n\n# Expressions\n\nGriffe stores snippets of code (attribute values, decorators, base class, type annotations) as expressions.\nExpressions are basically abstract syntax trees (AST) with a few differences compared to the nodes returned by [`ast`][].\nGriffe provides a few helpers to extract expressions from regular AST nodes.\n\n- [`griffe.get_annotation`][]: Get a type annotation as expression.\n- [`griffe.get_base_class`][]: Get a base class as expression.\n- [`griffe.get_class_keyword`][]: Get a class keyword as expression.\n- [`griffe.get_condition`][]: Get a condition as expression.\n- [`griffe.get_expression`][]: Get an expression from an AST node.\n- [`griffe.safe_get_annotation`][]: Get a type annotation as expression, safely (returns `None` on error).\n- [`griffe.safe_get_base_class`][]: Get a base class as expression, safely (returns `None` on error).\n- [`griffe.safe_get_class_keyword`][]: Get a class keyword as expression, safely (returns `None` on error).\n- [`griffe.safe_get_condition`][]: Get a condition as expression, safely (returns `None` on error).\n- [`griffe.safe_get_expression`][]: Get an expression from an AST node, safely (returns `None` on error).\n\nThe base class for expressions.\n\n- [`griffe.Expr`][]\n\nExpression classes all start with `Expr`.\n\n# Loggers\n\nIf you want to log messages from extensions, get a logger with `get_logger`.\nThe `logger` attribute is used by Griffe itself. You can use it to temporarily disable Griffe logging.\n\n- [`griffe.logger`][]: Our global logger, used throughout the library.\n- [`griffe.get_logger`][]: Create and return a new logger instance.\n\n# Helpers\n\nTo test your Griffe extensions, or to load API data from code in memory, Griffe provides the following helpers.\n\n- [`griffe.temporary_pyfile`][]: Create a Python file containing the given code in a temporary directory.\n- [`griffe.temporary_pypackage`][]: Create a package containing the given modules in a temporary directory.\n- [`griffe.temporary_visited_module`][]: Create and visit a temporary module with the given code.\n- [`griffe.temporary_visited_package`][]: Create and visit a temporary package.\n- [`griffe.temporary_inspected_module`][]: Create and inspect a temporary module with the given code.\n- [`griffe.temporary_inspected_package`][]: Create and inspect a temporary package."
     },
     "exports": [
@@ -865,13 +865,13 @@ To access an object's members, there are a few options:
 
 The same way members are accessed, they can also be set:
 
-- Dictionary-like item assignment: `markdown["thing"] = ...`, also supporting dotted-paths and string tuples. This will (re)assign only regular members: inherited members (classes only) are re-computed everytime they are accessed.
+- Dictionary-like item assignment: `markdown["thing"] = ...`, also supporting dotted-paths and string tuples. This will (re)assign only regular members: inherited members (classes only) are re-computed every time they are accessed.
 - Safer method for extensions: `markdown.set_member("thing", ...)`, also supporting dotted-paths and string tuples.
 - Regular member assignment: `markdown.members["thing"] = ...`. **This is not recommended, as the assigned member's `parent` attribute will not be automatically updated.**
 
 ...and deleted:
 
-- Dictionary-like item deletion: `del markdown["thing"]`, also supporting dotted-paths and string tuples. This will delete only regular members: inherited members (classes only) are re-computed everytime they are accessed.
+- Dictionary-like item deletion: `del markdown["thing"]`, also supporting dotted-paths and string tuples. This will delete only regular members: inherited members (classes only) are re-computed every time they are accessed.
 - Safer method for extensions: `markdown.del_member("thing")`, also supporting dotted-paths and string tuples.
 - Regular member deletion: `del markdown.members["thing"]`. **This is not recommended, as the aliases attribute of other objects in the tree will not be automatically updated.**
 
@@ -879,7 +879,7 @@ The same way members are accessed, they can also be set:
 
 Griffe supports class inheritance, both when visiting and inspecting modules.
 
-To access members of a class that are inherited from base classes, use the inherited_members attribute. Everytime you access inherited members, the base classes of the given class will be resolved, then the MRO (Method Resolution Order) will be computed for these base classes, and a dictionary of inherited members will be built. Make sure to store the result in a variable to avoid re-computing it everytime (you are responsible for the caching part). Also make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
+To access members of a class that are inherited from base classes, use the inherited_members attribute. Every time you access inherited members, the base classes of the given class will be resolved, then the MRO (Method Resolution Order) will be computed for these base classes, and a dictionary of inherited members will be built. Make sure to store the result in a variable to avoid re-computing it every time (you are responsible for the caching part). Also make sure to only access `inherited_members` once everything is loaded by Griffe, to avoid computing things too early. Don't try to access inherited members in extensions, while visiting or inspecting modules.
 
 Inherited members are aliases that point at the corresponding members in parent classes. These aliases will have their inherited attribute set to true.
 
@@ -3300,7 +3300,7 @@ Automate verifications around your public API with tools like Griffe. Currently 
 
 ## Conventions
 
-Python does not provide any standard way to declare public APIs. However we do have official recommendations and a few conventions.
+Python does not provide any way to *enforce* public APIs: users can always import and use internal objects if they really want to. However, Python *does* specify a standard way to *declare* public APIs: the `__all__` attribute (see below), which is complemented by official recommendations and a few conventions.
 
 ### Underscore prefix
 
@@ -3322,14 +3322,20 @@ from elsewhere import something
 
 Even though `something` doesn't start with an underscore, it was imported so it is not considered public.
 
+Note that this exception comes from [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) ("imported names should always be considered an implementation detail") and from the conventions used by type checkers, not from the language reference: the latter states that when `__all__` is not defined, the set of public names includes *all* names found in the module's namespace which do not begin with an underscore, imported ones included.
+
 ### `__all__` list
 
-There is another convention that lets you do the opposite: explicitly mark objects as public. This convention uses the `__all__` module-level attribute, which is a list of strings containing the names of the public objects.
+Python also provides a mechanism that lets you do the opposite: explicitly mark objects as public. This mechanism uses the `__all__` module-level attribute, which is a list of strings containing the names of the public objects.
+
+Contrary to popular belief, `__all__` is not merely a convention, nor just a way to control wildcard imports: it is actually specified in [the Python language reference](https://docs.python.org/3/reference/simple_stmts.html#the-import-statement) as *the* mechanism that determines the public names of a module:
+
+> The public names defined by a module are determined by checking the module's namespace for a variable named `__all__`; if defined, it must be a sequence of strings which are names defined or imported by that module. [...] The names given in `__all__` are all considered public and are required to exist. If `__all__` is not defined, the set of public names includes all names found in the module's namespace which do not begin with an underscore character (`'_'`). `__all__` should contain the entire public API. It is intended to avoid accidentally exporting items that are not part of the API (such as library modules which were imported and used within the module).
 
 package/module.py
 
 ```
-__all__ [
+__all__ = [
     "this_function",
     "ThisClass",
 ]
@@ -3349,7 +3355,7 @@ class ThisOtherClass:
 
 Here, even though `this_other_function` and `ThisOtherClass` are *not* prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
 
-Declaring `__all__` has another beneficial effect: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](https://mkdocstrings.github.io/griffe/guide/users/recommendations/python-code/#avoid-wildcard-imports).
+Declaring `__all__` has a beneficial side-effect, which is often mistaken for its primary purpose: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](https://mkdocstrings.github.io/griffe/guide/users/recommendations/python-code/#avoid-wildcard-imports).
 
 By declaring `__all__`, your public API becomes explicit, and explicit is better than implicit. But `__all__` only works for module-level objects. Within classes, you will still have to rely on the underscore prefix convention to mark methods or attributes as internal/private.
 
@@ -3394,7 +3400,7 @@ Our recommendation — Use the underscore prefix and `__all__` conventions.
 
 Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](https://mkdocstrings.github.io/griffe/guide/users/recommendations/python-code/#avoid-wildcard-imports). We still provide the [`griffe-public-redundant-aliases`](https://mkdocstrings.github.io/griffe-public-redundant-aliases/) and [`griffe-public-wildcard-imports`](https://mkdocstrings.github.io/griffe-public-wildcard-imports/) extensions for those who would still like to rely on these conventions.
 
-Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
+Our recommendation matches the language reference (quoted above) as well as [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
 
 > To better support introspection, modules should explicitly declare the names in their public API using the `__all__` attribute. Setting `__all__` to an empty list indicates that the module has no public API.
 >
@@ -3479,7 +3485,7 @@ Such changes sometimes go unnoticed before the breaking change is released, beca
 
 What if we could make this easier?
 
-By hiding your module layout from your public API, you're removing all these pain points at once. Any object can freely move around without ever impacting users. Maintainers do not need to set deprecation periods where old and new uses are supported, or bump the major part of their semantic version when they stop supporting the old use. Hiding the module layout also removes the ambiguity of whether a submodule is considered public or not: [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) doesn't mention anything about it, and it doesn't look like the `__all__` convention expects developers to list their submodules too. In the end it looks like submodules are only subject to the underscore prefix convention.
+By hiding your module layout from your public API, you're removing all these pain points at once. Any object can freely move around without ever impacting users. Maintainers do not need to set deprecation periods where old and new uses are supported, or bump the major part of their semantic version when they stop supporting the old use. Hiding the module layout also removes the ambiguity of whether a submodule is considered public or not: [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) doesn't mention anything about it, and it doesn't look like the `__all__` mechanism expects developers to list their submodules too. In the end it looks like submodules are only subject to the underscore prefix convention.
 
 So, how do we hide the module layout from the public API?
 
@@ -3502,7 +3508,7 @@ from my_package._combat import Combat
 from my_package._exploration import navigate
 from my_package._sorcery import cast_spell
 
-__all__ [
+__all__ = [
     "Combat",
     "navigate",
     "cast_spell",
@@ -3585,7 +3591,7 @@ Here the `Hello` class is exposed in both `my_package.module` and `my_package`.
 my_package/module.py
 
 ```
-__all__ ["Hello"]
+__all__ = ["Hello"]
 
 class Hello:
     ...
@@ -3604,7 +3610,7 @@ Here the `Hello` class is only exposed in `my_package.module`.
 my_package/module.py
 
 ```
-__all__ ["Hello"]
+__all__ = ["Hello"]
 
 class Hello:
     ...
@@ -4540,7 +4546,7 @@ class InspectSpecificObjects(griffe.Extension):
 
 # Setting the right docstring style for every docstring
 
-Griffe attaches the specified docstring style and parsing options to each object in the tree of the package(s) you load. If your package(s) use several docstring styles, some of these objects will have the wrong style attached to them. This is problematic because other Griffe extensions rely on this attached style to parse docstrings and modify them. We plan to alleviate this limitation in the future (see [issue-340](https://github.com/mkdocstrings/griffe/issues/340)), but the most robust thing you can do is to make sure each object has the *right style* attached, as easly as possible, so that other extensions can work without issue.
+Griffe attaches the specified docstring style and parsing options to each object in the tree of the package(s) you load. If your package(s) use several docstring styles, some of these objects will have the wrong style attached to them. This is problematic because other Griffe extensions rely on this attached style to parse docstrings and modify them. We plan to alleviate this limitation in the future (see [issue-340](https://github.com/mkdocstrings/griffe/issues/340)), but the most robust thing you can do is to make sure each object has the *right style* attached, as easily as possible, so that other extensions can work without issue.
 
 There are currently two ways to make sure objects have the right docstring style attached as early as possible:
 
@@ -4818,7 +4824,7 @@ import griffe
 
 
 class MyDecorator(griffe.Extension):
-    """An extension to suport my decorator."""
+    """An extension to support my decorator."""
 ```
 
 Now we can declare the on_instance hook, which receives any kind of Griffe object (Module, Class, Function, Attribute, TypeAlias), or we could use a kind-specific hook such as on_module_instance, on_class_instance, on_function_instance, on_attribute_instance and on_type_alias_instance. For example, if you know your decorator is only ever used on class declarations, it would make sense to use `on_class_instance`.
@@ -4830,7 +4836,7 @@ import griffe
 
 
 class MyDecorator(griffe.Extension):
-    """An extension to suport my decorator."""
+    """An extension to support my decorator."""
 
     def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         ...
@@ -4843,7 +4849,7 @@ import griffe
 
 
 class MyDecorator(griffe.Extension):
-    """An extension to suport my decorator."""
+    """An extension to support my decorator."""
 
     def on_function_instance(self, *, func: griffe.Function, **kwargs) -> None:
         for decorator in func.decorators:
@@ -6955,7 +6961,7 @@ Attributes:
 Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
-def __init__(
+def __init__(  # noqa: PLR0917
     self,
     module_name: str,
     filepath: Path,
@@ -8075,7 +8081,7 @@ Attributes:
 Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
-def __init__(
+def __init__(  # noqa: PLR0917
     self,
     module_name: str,
     filepath: Path | None,
@@ -15058,7 +15064,12 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     precedence = _get_precedence(self)
-    yield from _yield(self.values[0], flat=flat, outer_precedence=precedence, is_left=True)
+    first = self.values[0]
+    if isinstance(first, str) and first.isdigit():
+        # Integer literals need parentheses: `1.bit_length()` is a syntax error.
+        yield f"({first})"
+    else:
+        yield from _yield(first, flat=flat, outer_precedence=precedence, is_left=True)
     for value in self.values[1:]:
         yield "."
         yield from _yield(value, flat=flat, outer_precedence=precedence)
@@ -16255,12 +16266,14 @@ def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     if self.is_async:
         yield "async "
     yield "for "
-    yield from _yield(self.target, flat=flat)
+    yield from _yield(self.target, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield " in "
-    yield from _yield(self.iterable, flat=flat)
-    if self.conditions:
+    # The iterable and conditions are disjunctions in the grammar:
+    # lambdas, conditionals and walrus assignments need parentheses there.
+    yield from _yield(self.iterable, flat=flat, outer_precedence=_OperatorPrecedence.OR, is_left=True)
+    for condition in self.conditions:
         yield " if "
-        yield from _join(self.conditions, " if ", flat=flat)
+        yield from _yield(condition, flat=flat, outer_precedence=_OperatorPrecedence.OR, is_left=True)
 ```
 
 ### modernize
@@ -16707,10 +16720,16 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "{"
+    # Walrus assignments and yields need parentheses in keys and values,
+    # e.g. `{1: (x := 2)}`.
     yield from _join(
-        (("None" if key is None else key, ": ", value) for key, value in zip(self.keys, self.values, strict=False)),
+        (
+            ("**", value) if key is None else (key, ": ", value)
+            for key, value in zip(self.keys, self.values, strict=False)
+        ),
         ", ",
         flat=flat,
+        outer_precedence=_OperatorPrecedence.STARRED,
     )
     yield "}"
 ```
@@ -16748,7 +16767,7 @@ def modernize(self) -> Expr:
 ```
 ExprDictComp(
     key: str | Expr,
-    value: str | Expr,
+    value: str | Expr | None,
     generators: Sequence[Expr],
 )
 ```
@@ -16789,7 +16808,7 @@ Attributes:
 - **`is_tuple`** (`bool`) – Whether this expression is a tuple.
 - **`key`** (`str | Expr`) – Target key.
 - **`path`** (`str`) – Path of the expressed name/attribute.
-- **`value`** (`str | Expr`) – Target value.
+- **`value`** (`str | Expr | None`) – Target value.
 
 ### canonical_name
 
@@ -16874,7 +16893,7 @@ Path of the expressed name/attribute.
 ### value
 
 ```
-value: str | Expr
+value: str | Expr | None
 ```
 
 Target value.
@@ -16952,9 +16971,13 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "{"
-    yield from _yield(self.key, flat=flat)
-    yield ": "
-    yield from _yield(self.value, flat=flat)
+    if self.value:
+        yield from _yield(self.key, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+        yield ": "
+        yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+    else:
+        yield "**"
+        yield from _yield(self.key, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield " "
     yield from _join(self.generators, " ", flat=flat)
     yield "}"
@@ -17208,7 +17231,11 @@ def modernize(self) -> Expr:
 ## ExprFormatted
 
 ```
-ExprFormatted(value: str | Expr)
+ExprFormatted(
+    value: str | Expr,
+    conversion: str | None = None,
+    format_spec: Sequence[str | Expr] | None = None,
+)
 ```
 
 Bases: `Expr`
@@ -17240,6 +17267,8 @@ Attributes:
 - **`canonical_name`** (`str`) – Name of the expressed name/attribute/parameter.
 - **`canonical_path`** (`str`) – Path of the expressed name/attribute.
 - **`classname`** (`str`) – The expression class name.
+- **`conversion`** (`str | None`) – Conversion flag (s, r or a), without the leading exclamation mark.
+- **`format_spec`** (`Sequence[str | Expr] | None`) – Format specifier parts: literal strings and interpolated expressions.
 - **`is_classvar`** (`bool`) – Whether this attribute is annotated with ClassVar.
 - **`is_generator`** (`bool`) – Whether this expression is a generator.
 - **`is_iterator`** (`bool`) – Whether this expression is an iterator.
@@ -17270,6 +17299,22 @@ classname: str
 ```
 
 The expression class name.
+
+### conversion
+
+```
+conversion: str | None = None
+```
+
+Conversion flag (`s`, `r` or `a`), without the leading exclamation mark.
+
+### format_spec
+
+```
+format_spec: Sequence[str | Expr] | None = None
+```
+
+Format specifier parts: literal strings and interpolated expressions.
 
 ### is_classvar
 
@@ -17391,10 +17436,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-    yield "{"
-    # Prevent parentheses from being added, avoiding `{(1 + 1)}`
-    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
-    yield "}"
+    yield from _iterate_format_parts(self.value, self.conversion, self.format_spec, flat=flat)
 ```
 
 ### modernize
@@ -17429,7 +17471,9 @@ def modernize(self) -> Expr:
 
 ```
 ExprGeneratorExp(
-    element: str | Expr, generators: Sequence[Expr]
+    element: str | Expr,
+    generators: Sequence[Expr],
+    implicit: bool = False,
 )
 ```
 
@@ -17448,7 +17492,7 @@ Bases: `Expr`
               click griffe._internal.expressions.Expr href "" "griffe._internal.expressions.Expr"
 ```
 
-Generator expressions like `a for b in c for d in e`.
+Generator expressions like `(a for b in c for d in e)`.
 
 Methods:
 
@@ -17464,6 +17508,7 @@ Attributes:
 - **`classname`** (`str`) – The expression class name.
 - **`element`** (`str | Expr`) – Yielded element.
 - **`generators`** (`Sequence[Expr]`) – Generators iterated on.
+- **`implicit`** (`bool`) – Whether the generator's parentheses are implicit (as the sole argument of a call).
 - **`is_classvar`** (`bool`) – Whether this attribute is annotated with ClassVar.
 - **`is_generator`** (`bool`) – Whether this expression is a generator.
 - **`is_iterator`** (`bool`) – Whether this expression is an iterator.
@@ -17509,6 +17554,14 @@ generators: Sequence[Expr]
 ```
 
 Generators iterated on.
+
+### implicit
+
+```
+implicit: bool = False
+```
+
+Whether the generator's parentheses are implicit (as the sole argument of a call).
 
 ### is_classvar
 
@@ -17622,9 +17675,15 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-    yield from _yield(self.element, flat=flat)
+    # Generator expressions require parentheses everywhere
+    # except as the sole argument of a call, e.g. `f(a for a in b)`.
+    if not self.implicit:
+        yield "("
+    yield from _yield(self.element, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield " "
     yield from _join(self.generators, " ", flat=flat)
+    if not self.implicit:
+        yield ")"
 ```
 
 ### modernize
@@ -17909,7 +17968,11 @@ def modernize(self) -> Expr:
 ## ExprInterpolation
 
 ```
-ExprInterpolation(value: str | Expr)
+ExprInterpolation(
+    value: str | Expr,
+    conversion: str | None = None,
+    format_spec: Sequence[str | Expr] | None = None,
+)
 ```
 
 Bases: `Expr`
@@ -17941,6 +18004,8 @@ Attributes:
 - **`canonical_name`** (`str`) – Name of the expressed name/attribute/parameter.
 - **`canonical_path`** (`str`) – Path of the expressed name/attribute.
 - **`classname`** (`str`) – The expression class name.
+- **`conversion`** (`str | None`) – Conversion flag (s, r or a), without the leading exclamation mark.
+- **`format_spec`** (`Sequence[str | Expr] | None`) – Format specifier parts: literal strings and interpolated expressions.
 - **`is_classvar`** (`bool`) – Whether this attribute is annotated with ClassVar.
 - **`is_generator`** (`bool`) – Whether this expression is a generator.
 - **`is_iterator`** (`bool`) – Whether this expression is an iterator.
@@ -17971,6 +18036,22 @@ classname: str
 ```
 
 The expression class name.
+
+### conversion
+
+```
+conversion: str | None = None
+```
+
+Conversion flag (`s`, `r` or `a`), without the leading exclamation mark.
+
+### format_spec
+
+```
+format_spec: Sequence[str | Expr] | None = None
+```
+
+Format specifier parts: literal strings and interpolated expressions.
 
 ### is_classvar
 
@@ -18092,10 +18173,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-    yield "{"
-    # Prevent parentheses from being added, avoiding `{(1 + 1)}`
-    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
-    yield "}"
+    yield from _iterate_format_parts(self.value, self.conversion, self.format_spec, flat=flat)
 ```
 
 ### modernize
@@ -18312,9 +18390,14 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-    yield "f'"
-    yield from _join(self.values, "", flat=flat)
-    yield "'"
+    quote, escaped_parts = _fstring_choose_quote(self.values)
+    yield f"f{quote}"
+    for value, escaped in zip(self.values, escaped_parts, strict=True):
+        if isinstance(value, str):
+            yield escaped
+        else:
+            yield from _yield(value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+    yield quote
 ```
 
 ### modernize
@@ -18555,7 +18638,8 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield self.name
     yield "="
-    yield from _yield(self.value, flat=flat)
+    # Walrus assignments and yields need parentheses, e.g. `f(a=(b := c))`.
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
 ```
 
 ### modernize
@@ -18773,7 +18857,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "*"
-    yield from _yield(self.value, flat=flat)
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.BIT_OR, is_left=True)
 ```
 
 ### modernize
@@ -18991,7 +19075,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "**"
-    yield from _yield(self.value, flat=flat)
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.BIT_OR, is_left=True)
 ```
 
 ### modernize
@@ -19220,33 +19304,35 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     pos_only = False
-    pos_or_kw = False
-    kw_only = False
-    length = len(self.parameters)
+    star = False
     yield "lambda"
-    if length:
+    if self.parameters:
         yield " "
-    for index, parameter in enumerate(self.parameters, 1):
+    for index, parameter in enumerate(self.parameters):
+        if index:
+            yield ", "
         if parameter.kind is ParameterKind.positional_only:
             pos_only = True
-        elif parameter.kind is ParameterKind.var_positional:
+        elif pos_only:
+            # End of the positional-only section.
+            pos_only = False
+            yield "/, "
+        if parameter.kind is ParameterKind.var_positional:
+            star = True
             yield "*"
         elif parameter.kind is ParameterKind.var_keyword:
             yield "**"
-        elif parameter.kind is ParameterKind.positional_or_keyword and not pos_or_kw:
-            pos_or_kw = True
-        elif parameter.kind is ParameterKind.keyword_only and not kw_only:
-            kw_only = True
+        elif parameter.kind is ParameterKind.keyword_only and not star:
+            # `*args` also starts the keyword-only section.
+            star = True
             yield "*, "
-        if parameter.kind is not ParameterKind.positional_only and pos_only:
-            pos_only = False
-            yield "/, "
         yield parameter.name
         if parameter.default and parameter.kind not in (ParameterKind.var_positional, ParameterKind.var_keyword):
             yield "="
-            yield from _yield(parameter.default, flat=flat)
-        if index < length:
-            yield ", "
+            yield from _yield(parameter.default, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
+    if pos_only:
+        # All parameters are positional-only.
+        yield ", /"
     yield ": "
     # Body of lambda should not have parentheses, avoiding `lambda: a.b`
     yield from _yield(self.body, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
@@ -19697,7 +19783,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "["
-    yield from _yield(self.element, flat=flat)
+    yield from _yield(self.element, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield " "
     yield from _join(self.generators, " ", flat=flat)
     yield "]"
@@ -20233,9 +20319,10 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-    yield from _yield(self.target, flat=flat)
+    yield from _yield(self.target, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield " := "
-    yield from _yield(self.value, flat=flat)
+    # Nested walrus assignments and yields need parentheses, e.g. `a := (b := c)`.
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
 ```
 
 ### modernize
@@ -20948,7 +21035,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "{"
-    yield from _yield(self.element, flat=flat)
+    yield from _yield(self.element, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield " "
     yield from _join(self.generators, " ", flat=flat)
     yield "}"
@@ -21190,14 +21277,15 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    # Walrus assignments need parentheses in slice bounds, e.g. `a[(b := c):]`.
     if self.lower is not None:
-        yield from _yield(self.lower, flat=flat)
+        yield from _yield(self.lower, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
     yield ":"
     if self.upper is not None:
-        yield from _yield(self.upper, flat=flat)
+        yield from _yield(self.upper, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
     if self.step is not None:
         yield ":"
-        yield from _yield(self.step, flat=flat)
+        yield from _yield(self.step, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
 ```
 
 ### modernize
@@ -21645,9 +21733,14 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
-    yield "t'"
-    yield from _join(self.values, "", flat=flat)
-    yield "'"
+    quote, escaped_parts = _fstring_choose_quote(self.values)
+    yield f"t{quote}"
+    for value, escaped in zip(self.values, escaped_parts, strict=True):
+        if isinstance(value, str):
+            yield escaped
+        else:
+            yield from _yield(value, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
+    yield quote
 ```
 
 ### modernize
@@ -21875,6 +21968,12 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+    # We fixed `_build_tuple` to make sure we never build
+    # implicit tuples with no elements, but since users might load
+    # data built with previous Griffe versions, we must be defensive here.
+    if not self.elements:
+        yield "()"
+        return
     if not self.implicit:
         yield "("
     yield from _join(self.elements, ", ", flat=flat)
@@ -22326,7 +22425,7 @@ def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "yield"
     if self.value is not None:
         yield " "
-        yield from _yield(self.value, flat=flat)
+        yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
 ```
 
 ### modernize
@@ -22544,7 +22643,7 @@ Source code in `packages/griffelib/src/griffe/_internal/expressions.py`
 ```
 def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
     yield "yield from "
-    yield from _yield(self.value, flat=flat)
+    yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
 ```
 
 ### modernize
@@ -22614,7 +22713,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
     for extension in exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):
-            extensions.add(*ext)  # ty:ignore[invalid-argument-type]
+            extensions.add(*ext)
         else:
             extensions.add(ext)
 
@@ -25023,7 +25122,7 @@ def temporary_pypackage(
     """
     modules = modules or {}
     if isinstance(modules, list):
-        modules = dict.fromkeys(modules, "")  # ty:ignore[invalid-assignment]
+        modules = dict.fromkeys(modules, "")
     mkdir_kwargs = {"parents": True, "exist_ok": True}
     with tempfile.TemporaryDirectory(prefix=_TMPDIR_PREFIX) as tmpdir:
         tmpdirpath = Path(tmpdir)
@@ -27975,8 +28074,7 @@ Number of objects by kind.
 
 ```
 lines = sum(
-    (len(lines))
-    for lines in (loader.lines_collection.values())
+    len(lines) for lines in loader.lines_collection.values()
 )
 ```
 
@@ -32025,7 +32123,14 @@ def get_source_link(self, filepath: str | Path, lineno: int, endlineno: int) -> 
     Returns:
         The source link, or None if unknown.
     """
-    return _get_source_link(self.service, self.remote_url, self.commit_hash, filepath, lineno, endlineno)
+    return _get_source_link(
+        service=self.service,
+        remote_url=self.remote_url,
+        commit_hash=self.commit_hash,
+        filepath=filepath,
+        lineno=lineno,
+        endlineno=endlineno,
+    )
 ```
 
 # Serializers
@@ -38181,6 +38286,7 @@ parse_sphinx(
     docstring: Docstring,
     *,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
 ) -> list[DocstringSection]
 ```
@@ -38197,6 +38303,10 @@ Parameters:
 
   (`bool`, default: `True` ) – Warn about documented parameters not appearing in the signature.
 
+- ### **`warn_missing_types`**
+
+  (`bool`, default: `True` ) – Warn about missing types or annotations.
+
 - ### **`warnings`**
 
   (`bool`, default: `True` ) – Whether to log warnings at all.
@@ -38212,6 +38322,7 @@ def parse_sphinx(
     docstring: Docstring,
     *,
     warn_unknown_params: bool = True,
+    warn_missing_types: bool = True,
     warnings: bool = True,
 ) -> list[DocstringSection]:
     """Parse a Sphinx-style docstring.
@@ -38219,6 +38330,7 @@ def parse_sphinx(
     Parameters:
         docstring: The docstring to parse.
         warn_unknown_params: Warn about documented parameters not appearing in the signature.
+        warn_missing_types: Warn about missing types or annotations.
         warnings: Whether to log warnings at all.
 
     Returns:
@@ -38228,6 +38340,7 @@ def parse_sphinx(
 
     options = {
         "warn_unknown_params": warn_unknown_params,
+        "warn_missing_types": warn_missing_types,
         "warnings": warnings,
     }
 
@@ -38399,7 +38512,10 @@ Parameters:
 
 ```
 SphinxOptions(
-    *, warn_unknown_params: bool = ..., warnings: bool = ...
+    *,
+    warn_unknown_params: bool = ...,
+    warn_missing_types: bool = ...,
+    warnings: bool = ...,
 )
 ```
 
@@ -38421,6 +38537,10 @@ Parameters:
 - ### **`warn_unknown_params`**
 
   (`bool`, default: `...` ) – Whether to warn about unknown parameters.
+
+- ### **`warn_missing_types`**
+
+  (`bool`, default: `...` ) – Whether to warn about missing types or annotations.
 
 - ### **`warnings`**
 
@@ -49689,7 +49809,7 @@ def __init__(self, uid: int, name: str, capacity: int = 10, available: bool = Tr
 
 Additional metadata like `ClassVar`, the `init` and `kw_only` parameters, or the `KW_ONLY` sentinel are also recognized and will update the `__init__` method signature accordingly.
 
-**This extension is enabled by default.** It is always added last. If you need to give it a higher priority, you can explictly enable it to change its position in the list of extensions (it will run only once):
+**This extension is enabled by default.** It is always added last. If you need to give it a higher priority, you can explicitly enable it to change its position in the list of extensions (it will run only once):
 
 ```
 $ griffe dump -e dataclasses,other my_package
@@ -50221,6 +50341,7 @@ This document describes how the project is architectured, both regarding boilerp
 1. ```
     debug.json
     settings.json
+    tasks.json
    ```
 
 1. Contains our tooling configuration. See [Scripts, configuration](#scripts-configuration).
@@ -50639,75 +50760,77 @@ The following sections are generated automatically by iterating on the modules o
 
 #### `griffe.__main__`
 
+SPDX-License-Identifier: ISC
+
 ### Public API
 
 #### `griffe`
 
-This top-level module imports all public names from the package, and exposes them as public objects. We have tests to make sure no object is forgotten in this list.
+SPDX-License-Identifier: ISC
 
 ### Internal API
 
-The internal API layout doesn't follow any particular paradigm: we simply organize code in different modules, depending on what the code is used for.
+SPDX-License-Identifier: ISC
 
 #### `agents`
 
-These modules contain the different agents that are able to extract data.
+SPDX-License-Identifier: ISC
 
 ##### `inspector.py`
 
-This module contains our dynamic analysis agent, capable of inspecting modules and objects in memory, at runtime.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `nodes`
 
-These submodules contain utilities for working with AST and object nodes.
+SPDX-License-Identifier: ISC
 
 ###### `assignments.py`
 
-This module contains utilities for extracting information from assignment nodes.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `ast.py`
 
-This module contains utilities for navigating AST nodes.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `docstrings.py`
 
-This module contains utilities for extracting docstrings from nodes.
+SPDX-License-Identifier: ISC
 
 ###### `exports.py`
 
-This module contains utilities for extracting exports from `__all__` assignments.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `imports.py`
 
-This module contains utilities for working with imports and relative imports.
+SPDX-License-Identifier: ISC
 
 ###### `parameters.py`
 
-This module contains utilities for extracting information from parameter nodes.
+SPDX-License-Identifier: ISC
 
 ###### `runtime.py`
 
-This module contains utilities for extracting information from runtime objects.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `values.py`
 
-This module contains utilities for extracting attribute values.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `visitor.py`
 
-This module contains our static analysis agent, capable of parsing and visiting sources, statically.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
@@ -50723,196 +50846,163 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `collections.py`
 
-This module contains collection-related classes, which are used throughout the API.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `debug.py`
 
-This module is here to help users report bugs. It provides a function to print environment information, which is called from the public `griffe.debug` module (when called with `python -m griffe.debug`) or thanks to the `--debug-info` CLI flag.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `diff.py`
 
-This module exports "breaking changes" related utilities. The logic here is to iterate on objects and their members recursively, to yield found breaking changes.
-
-The breakage class definitions might sound a bit verbose, but declaring them this way helps with (de)serialization, which we don't use yet, but could use in the future.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `docstrings`
 
-These submodules define models and parsers for docstrings.
+SPDX-License-Identifier: ISC
 
 ##### `auto.py`
 
-This module defines functions to parse docstrings by guessing their style.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `google.py`
 
-This module defines functions to parse Google-style docstrings into structured data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `models.py`
 
-This module contains the models for storing docstrings structured data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `numpy.py`
 
-This module defines functions to parse Numpy-style docstrings into structured data.
-
-Based on <https://numpydoc.readthedocs.io/en/latest/format.html>, it seems Numpydoc is a superset of RST. Since fully parsing RST is a non-goal of this project, some things are stripped from the Numpydoc specification.
-
-Rejected as non particularly Pythonic or useful as sections:
-
-- See also: this section feels too subjective (specially crafted as a standard for Numpy itself), and there are may ways to reference related items in a docstring, depending on the chosen markup.
-
-Rejected as naturally handled by the user-chosen markup:
-
-- Warnings: this is just markup.
-- Notes: again, just markup.
-- References: again, just markup.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `parsers.py`
 
-This module imports all the defined parsers and provides a generic function to parse docstrings.
+SPDX-License-Identifier: ISC
 
 ##### `sphinx.py`
 
-This module defines functions to parse Sphinx docstrings into structured data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `utils.py`
 
-This module contains utilities for docstrings parsers.
+SPDX-License-Identifier: ISC
 
 #### `encoders.py`
 
-This module contains data encoders/serializers and decoders/deserializers. We only support JSON for now, but might want to add more formats in the future.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `enumerations.py`
 
-This module contains all the enumerations of the package.
+SPDX-License-Identifier: ISC
 
 #### `exceptions.py`
 
-This module contains all the exceptions specific to Griffe.
+SPDX-License-Identifier: ISC
 
 #### `expressions.py`
 
-This module contains the data classes that represent resolvable names and expressions. First we declare data classes for each kind of expression, mostly corresponding to Python's AST nodes. Then we declare builder methods, that iterate AST nodes and build the corresponding data classes, and two utilities `_yield` and `_join` to help iterate on expressions. Finally we declare a few public helpers to safely get expressions from AST nodes in different scenarios.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `extensions`
 
-These submodules contain our extension system, as well as built-in extensions.
+SPDX-License-Identifier: ISC
 
 ##### `base.py`
 
-This module contains the base class for extensions and the functions to load them.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `dataclasses.py`
 
-Built-in extension adding support for dataclasses.
-
-This extension re-creates `__init__` methods of dataclasses during static analysis.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `unpack_typeddict.py`
 
-Todo
-
-Support `extra_items=type`. TODO: Support `closed=True/False`.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `finder.py`
 
-This module contains the code allowing to find modules.
-
-Note: It might be possible to replace a good part of this module's logic with utilities from `importlib` (however the util in question is private):
-
-```
->>> from importlib.util import _find_spec
->>> _find_spec("griffe.agents", _find_spec("griffe", None).submodule_search_locations)
-ModuleSpec(
-    name='griffe.agents',
-    loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa5f34e8110>,
-    origin='/media/data/dev/griffelib/packages/griffe/src/griffe/agents/__init__.py',
-    submodule_search_locations=['/media/data/dev/griffelib/packages/griffe/src/griffe/agents'],
-)
-```
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `git.py`
 
-This module contains Git utilities, used by our load_git function, which in turn is used to load the API for different snapshots of a Git repository and find breaking changes between them.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `helpers.py`
 
-This module contains helpers. They simplify programmatic use of Griffe, for example to load data from strings or to create temporary packages. They are particularly useful for our own tests suite.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `importer.py`
 
-This module contains utilities to dynamically import objects. These utilities are used by our Inspector to dynamically import objects specified as Python paths, like `package.module.Class.method`.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `loader.py`
 
-This module contains all the logic for loading API data from sources or compiled modules.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `logger.py`
 
-This module contains the logger used throughout Griffe. The logger is actually a wrapper around the standard Python logger. We wrap it so that it is easier for other downstream libraries to patch it. For example, mkdocstrings-python patches the logger to relocate it as a child of `mkdocs.plugins` so that it fits in the MkDocs logging configuration.
-
-We use a single, global logger because our public API is exposed in a single module, `griffe`. Extensions however should use their own logger, which is why we provide the `get_logger` function.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `merger.py`
 
-This module contains utilities to merge stubs data and concrete data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `mixins.py`
 
-This module contains some mixins classes that hold shared methods of the different kinds of objects, and aliases.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `models.py`
 
-This module contains our models definitions, to represent Python objects (and other aspects of Python APIs)... in Python.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `stats.py`
 
-This module contains utilities to compute loading statistics, like time spent visiting modules statically or dynamically.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
@@ -51265,7 +51355,9 @@ This command configures the [VSCode editor](https://code.visualstudio.com/) by c
 - `settings.json`, for various editor settings like linting tools and their configuration
 - `tasks.json`, for running tasks directly from VSCode's interface
 
-Warning: These files will be overwritten every time the command is run.
+Warning
+
+These files will be overwritten every time the command is run.
 
 Source code in `scripts/make.py`
 
@@ -51566,7 +51658,7 @@ print("a code line that triggers a Ruff warning")  # noqa: ID
 
 ...where ID is the identifier of the rule you want to ignore for this line.
 
-Example:
+Example
 
 src/your_package/module.py
 
@@ -51574,156 +51666,143 @@ src/your_package/module.py
 import subprocess
 ```
 
-````
-```console
+```
 $ make check-quality
 ✗ Checking code quality (1)
 > ruff check --config=config/ruff.toml src/ tests/ scripts/
 src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
-````
+```
 
 Now add a comment to ignore this warning.
 
-```python title="src/your_package/module.py"
+src/your_package/module.py
+
+```
 import subprocess  # noqa: S404
 ```
 
-```console
+```
 $ make check-quality
 ✓ Checking code quality
 ```
 
 You can disable multiple different warnings on a single line by separating them with commas, for example `# noqa: D300,D301`.
 
-```
-
-You can disable a warning globally by adding its ID
-into the list in `config/ruff.toml`.
+You can disable a warning globally by adding its ID into the list in `config/ruff.toml`.
 
 You can also disable warnings per file, like so:
 
 config/ruff.toml
 
 ```
-
-[per-file-ignores] "src/your_package/your_module.py" = [ "T201", # Print statement ]
-
-```
-
-
-Source code in `duties.py`
-
-```
-
-@duty(nofail=PY_VERSION == PY_DEV) def check_quality(ctx: Context) -> None: """Check the code quality.
-
-````
-```bash
-make check-quality
-```
-
-Check the code quality using [Ruff](https://astral.sh/ruff).
-
-The configuration for Ruff is located at `config/ruff.toml`.
-In this file, you can deactivate rules or activate others to customize your analysis.
-Rule identifiers always start with one or more capital letters, like `D`, `S` or `BLK`,
-then followed by a number.
-
-You can ignore a rule on a specific code line by appending
-a `noqa` comment ("no quality analysis/assurance"):
-
-```python title="src/your_package/module.py"
-print("a code line that triggers a Ruff warning")  # noqa: ID
-```
-
-...where ID is the identifier of the rule you want to ignore for this line.
-
-Example:
-    ```python title="src/your_package/module.py"
-    import subprocess
-    ```
-
-    ```console
-    $ make check-quality
-    ✗ Checking code quality (1)
-    > ruff check --config=config/ruff.toml src/ tests/ scripts/
-    src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
-    ```
-
-    Now add a comment to ignore this warning.
-
-    ```python title="src/your_package/module.py"
-    import subprocess  # noqa: S404
-    ```
-
-    ```console
-    $ make check-quality
-    ✓ Checking code quality
-    ```
-
-    You can disable multiple different warnings on a single line
-    by separating them with commas, for example `# noqa: D300,D301`.
-
-You can disable a warning globally by adding its ID
-into the list in `config/ruff.toml`.
-
-You can also disable warnings per file, like so:
-
-```toml title="config/ruff.toml"
 [per-file-ignores]
 "src/your_package/your_module.py" = [
     "T201",  # Print statement
 ]
 ```
-"""
-ctx.run(
-    tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", color=True),
-    title=_pyprefix("Checking code quality"),
-)
-````
 
-```
+Source code in `duties.py`
+
+````
+@duty(nofail=PY_VERSION == PY_DEV)
+def check_quality(ctx: Context) -> None:
+    """Check the code quality.
+
+    ```bash
+    make check-quality
+    ```
+
+    Check the code quality using [Ruff](https://astral.sh/ruff).
+
+    The configuration for Ruff is located at `config/ruff.toml`.
+    In this file, you can deactivate rules or activate others to customize your analysis.
+    Rule identifiers always start with one or more capital letters, like `D`, `S` or `BLK`,
+    then followed by a number.
+
+    You can ignore a rule on a specific code line by appending
+    a `noqa` comment ("no quality analysis/assurance"):
+
+    ```python title="src/your_package/module.py"
+    print("a code line that triggers a Ruff warning")  # noqa: ID
+    ```
+
+    ...where ID is the identifier of the rule you want to ignore for this line.
+
+    Example:
+        ```python title="src/your_package/module.py"
+        import subprocess
+        ```
+
+        ```console
+        $ make check-quality
+        ✗ Checking code quality (1)
+        > ruff check --config=config/ruff.toml src/ tests/ scripts/
+        src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
+        ```
+
+        Now add a comment to ignore this warning.
+
+        ```python title="src/your_package/module.py"
+        import subprocess  # noqa: S404
+        ```
+
+        ```console
+        $ make check-quality
+        ✓ Checking code quality
+        ```
+
+        You can disable multiple different warnings on a single line
+        by separating them with commas, for example `# noqa: D300,D301`.
+
+    You can disable a warning globally by adding its ID
+    into the list in `config/ruff.toml`.
+
+    You can also disable warnings per file, like so:
+
+    ```toml title="config/ruff.toml"
+    [per-file-ignores]
+    "src/your_package/your_module.py" = [
+        "T201",  # Print statement
+    ]
+    ```
+    """
+    ctx.run(
+        tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", color=True),
+        title=_pyprefix("Checking code quality"),
+    )
+````
 
 ### `check-types`
 
 Check that the code is correctly typed.
 
 ```
-
 make check-types
-
 ```
 
 Run type-checking on the code with [ty](https://astral.sh/ty/).
 
 The configuration for ty is located at `config/ty.toml`.
 
-If you cannot or don't know how to fix a typing error in your code,
-as a last resort you can ignore this specific error with a comment:
+If you cannot or don't know how to fix a typing error in your code, as a last resort you can ignore this specific error with a comment:
 
 src/your_package/module.py
 
 ```
-
-print("a code line that triggers a ty warning") # ty:ignore[ID]
-
+print("a code line that triggers a ty warning")  # ty:ignore[ID]
 ```
 
 ...where ID is the name of the warning.
 
-Example:
+Example
 
 src/your_package/module.py
 
 ```
-
 result = data_dict.get(key, None).value
-
 ```
 
 ```
-
-```console
 $ make check-types
 ✗ Checking types (1)
 > ty check --config=config/ty.toml src/ tests/ scripts/
@@ -51732,246 +51811,204 @@ t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing 
 
 Now add a comment to ignore this warning.
 
-```python title="src/your_package/module.py"
+src/your_package/module.py
+
+```
 result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
 ```
 
-```console
+```
 $ make check-types
 ✓ Checking types
 ```
 
-```
-
-
 Source code in `duties.py`
 
-```
-
-@duty(nofail=PY_VERSION == PY_DEV) def check_types(ctx: Context) -> None: """Check that the code is correctly typed.
-
 ````
-```bash
-make check-types
-```
+@duty(nofail=PY_VERSION == PY_DEV)
+def check_types(ctx: Context) -> None:
+    """Check that the code is correctly typed.
 
-Run type-checking on the code with [ty](https://astral.sh/ty/).
-
-The configuration for ty is located at `config/ty.toml`.
-
-If you cannot or don't know how to fix a typing error in your code,
-as a last resort you can ignore this specific error with a comment:
-
-```python title="src/your_package/module.py"
-print("a code line that triggers a ty warning")  # ty:ignore[ID]
-```
-
-...where ID is the name of the warning.
-
-Example:
-    ```python title="src/your_package/module.py"
-    result = data_dict.get(key, None).value
+    ```bash
+    make check-types
     ```
 
-    ```console
-    $ make check-types
-    ✗ Checking types (1)
-    > ty check --config=config/ty.toml src/ tests/ scripts/
-    t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing on object of type `Data | None`
-    ```
+    Run type-checking on the code with [ty](https://astral.sh/ty/).
 
-    Now add a comment to ignore this warning.
+    The configuration for ty is located at `config/ty.toml`.
+
+    If you cannot or don't know how to fix a typing error in your code,
+    as a last resort you can ignore this specific error with a comment:
 
     ```python title="src/your_package/module.py"
-    result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
+    print("a code line that triggers a ty warning")  # ty:ignore[ID]
     ```
 
-    ```console
-    $ make check-types
-    ✓ Checking types
-    ```
-"""
-"""Check that the code is correctly typed."""
-py = f"{sys.version_info.major}.{sys.version_info.minor}"
-ctx.run(
-    tools.ty.check(
-        *PY_SRC_LIST,
-        config_file="config/ty.toml",
-        color=True,
-        python_version=py,
-    ),
-    title=_pyprefix("Type-checking"),
-)
+    ...where ID is the name of the warning.
+
+    Example:
+        ```python title="src/your_package/module.py"
+        result = data_dict.get(key, None).value
+        ```
+
+        ```console
+        $ make check-types
+        ✗ Checking types (1)
+        > ty check --config=config/ty.toml src/ tests/ scripts/
+        t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing on object of type `Data | None`
+        ```
+
+        Now add a comment to ignore this warning.
+
+        ```python title="src/your_package/module.py"
+        result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
+        ```
+
+        ```console
+        $ make check-types
+        ✓ Checking types
+        ```
+    """
+    py = f"{sys.version_info.major}.{sys.version_info.minor}"
+    ctx.run(
+        tools.ty.check(
+            *PY_SRC_LIST,
+            config_file="config/ty.toml",
+            color=True,
+            python_version=py,
+        ),
+        title=_pyprefix("Type-checking"),
+    )
 ````
-
-```
 
 ### `coverage`
 
 Report coverage as text and HTML.
 
 ```
-
 make coverage
-
 ```
 
-Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
-then generate an HTML report into the `htmlcov` directory,
-and print a text report in the console.
-
+Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/), then generate an HTML report into the `htmlcov` directory, and print a text report in the console.
 
 Source code in `duties.py`
 
-```
-
-@duty(silent=True, aliases=["cov"]) def coverage(ctx: Context) -> None: """Report coverage as text and HTML.
-
 ````
-```bash
-make coverage
-```
+@duty(silent=True, aliases=["cov"])
+def coverage(ctx: Context) -> None:
+    """Report coverage as text and HTML.
 
-Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
-then generate an HTML report into the `htmlcov` directory,
-and print a text report in the console.
-"""
-ctx.run(tools.coverage.combine(), nofail=True)
-ctx.run(tools.coverage.report(rcfile="config/coverage.ini"), capture=False)
-ctx.run(tools.coverage.html(rcfile="config/coverage.ini"))
+    ```bash
+    make coverage
+    ```
+
+    Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
+    then generate an HTML report into the `htmlcov` directory,
+    and print a text report in the console.
+    """
+    ctx.run(tools.coverage.combine(), nofail=True)
+    ctx.run(tools.coverage.report(rcfile="config/coverage.ini"), capture=False)
+    ctx.run(tools.coverage.html(rcfile="config/coverage.ini"))
 ````
-
-```
 
 ### `docs`
 
 Serve the documentation (localhost:8000).
 
 ```
-
 make docs
-
 ```
 
 This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
 
 Parameters:
 
-- **`*cli_args`**
-  (`str`, default:
-  `()`
-  )
-  –
-  Additional MkDocs CLI arguments.
-- **`host`**
-  (`str`, default:
-  `'127.0.0.1'`
-  )
-  –
-  The host to serve the docs from.
-- **`port`**
-  (`int`, default:
-  `8000`
-  )
-  –
-  The port to serve the docs on.
-
+- **`*cli_args`** (`str`, default: `()` ) – Additional MkDocs CLI arguments.
+- **`host`** (`str`, default: `'127.0.0.1'` ) – The host to serve the docs from.
+- **`port`** (`int`, default: `8000` ) – The port to serve the docs on.
 
 Source code in `duties.py`
 
-```
-
-@duty def docs(ctx: Context, \*cli_args: str, host: str = "127.0.0.1", port: int = 8000) -> None: """Serve the documentation (localhost:8000).
-
 ````
-```bash
-make docs
-```
+@duty
+def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000) -> None:
+    """Serve the documentation (localhost:8000).
 
-This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
+    ```bash
+    make docs
+    ```
 
-Parameters:
-    *cli_args: Additional MkDocs CLI arguments.
-    host: The host to serve the docs from.
-    port: The port to serve the docs on.
-"""
-ctx.run(
-    tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
-    title="Serving documentation",
-    capture=False,
-)
+    This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
+
+    Parameters:
+        *cli_args: Additional MkDocs CLI arguments.
+        host: The host to serve the docs from.
+        port: The port to serve the docs on.
+    """
+    ctx.run(
+        tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
+        title="Serving documentation",
+        capture=False,
+    )
 ````
-
-```
 
 ### `docs-deploy`
 
 Deploy the documentation to GitHub pages.
 
 ```
-
 make docs-deploy
-
 ```
 
 Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
-
 
 Source code in `duties.py`
 
-```
-
-@duty def docs_deploy(ctx: Context) -> None: """Deploy the documentation to GitHub pages.
-
 ````
-```bash
-make docs-deploy
-```
+@duty
+def docs_deploy(ctx: Context) -> None:
+    """Deploy the documentation to GitHub pages.
 
-Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
-"""
-os.environ["DEPLOY"] = "true"
-ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
+    ```bash
+    make docs-deploy
+    ```
+
+    Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
+    """
+    os.environ["DEPLOY"] = "true"
+    ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
 ````
-
-```
 
 ### `format`
 
 Run formatting tools on the code.
 
 ```
-
 make format
-
 ```
 
-Format the code with [Ruff](https://astral.sh/ruff).
-This command will also automatically fix some coding issues when possible.
-
+Format the code with [Ruff](https://astral.sh/ruff). This command will also automatically fix some coding issues when possible.
 
 Source code in `duties.py`
 
-```
-
-@duty def format(ctx: Context) -> None: """Run formatting tools on the code.
-
 ````
-```bash
-make format
-```
+@duty
+def format(ctx: Context) -> None:
+    """Run formatting tools on the code.
 
-Format the code with [Ruff](https://astral.sh/ruff).
-This command will also automatically fix some coding issues when possible.
-"""
-ctx.run(
-    tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", fix_only=True, exit_zero=True),
-    title="Auto-fixing code",
-)
-ctx.run(tools.ruff.format(*PY_SRC_LIST, config="config/ruff.toml"), title="Formatting code")
+    ```bash
+    make format
+    ```
+
+    Format the code with [Ruff](https://astral.sh/ruff).
+    This command will also automatically fix some coding issues when possible.
+    """
+    ctx.run(
+        tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", fix_only=True, exit_zero=True),
+        title="Auto-fixing code",
+    )
+    ctx.run(tools.ruff.format(*PY_SRC_LIST, config="config/ruff.toml"), title="Formatting code")
 ````
-
-```
 
 ### `fuzz`
 
@@ -51979,85 +52016,66 @@ Fuzz Griffe against generated Python code.
 
 Parameters:
 
-- **`ctx`**
-  (`Context`)
-  –
-  The context instance (passed automatically).
-- **`size`**
-  (`int`, default:
-  `20`
-  )
-  –
-  The size of the case set (number of cases to test).
-- **`seeds`**
-  (`_Seeds`, default:
-  `_Seeds()`
-  )
-  –
-  Seeds to test or exclude (comma-separated integers).
-- **`min_seed`**
-  (`int`, default:
-  `0`
-  )
-  –
-  Minimum value for the seeds range.
-- **`max_seed`**
-  (`int`, default:
-  `1000000`
-  )
-  –
-  Maximum value for the seeds range.
-
+- **`ctx`** (`Context`) – The context instance (passed automatically).
+- **`size`** (`int`, default: `20` ) – The size of the case set (number of cases to test).
+- **`seeds`** (`_Seeds`, default: `_Seeds()` ) – Seeds to test or exclude (comma-separated integers).
+- **`min_seed`** (`int`, default: `0` ) – Minimum value for the seeds range.
+- **`max_seed`** (`int`, default: `1000000` ) – Maximum value for the seeds range.
 
 Source code in `duties.py`
 
 ```
+@duty
+def fuzz(
+    ctx: Context,
+    *,
+    size: int = 20,
+    min_seed: int = 0,
+    max_seed: int = 1_000_000,
+    seeds: _Seeds = _Seeds(),  # noqa: B008
+) -> None:
+    """Fuzz Griffe against generated Python code.
 
-@duty def fuzz( ctx: Context, \*, size: int = 20, min_seed: int = 0, max_seed: int = 1_000_000, seeds: \_Seeds = \_Seeds(), # noqa: B008 ) -> None: """Fuzz Griffe against generated Python code.
+    Parameters:
+        ctx: The context instance (passed automatically).
+        size: The size of the case set (number of cases to test).
+        seeds: Seeds to test or exclude (comma-separated integers).
+        min_seed: Minimum value for the seeds range.
+        max_seed: Maximum value for the seeds range.
+    """
+    from griffe import visit  # noqa: PLC0415
 
-```
-Parameters:
-    ctx: The context instance (passed automatically).
-    size: The size of the case set (number of cases to test).
-    seeds: Seeds to test or exclude (comma-separated integers).
-    min_seed: Minimum value for the seeds range.
-    max_seed: Maximum value for the seeds range.
-"""
-from griffe import visit  # noqa: PLC0415
+    warnings.simplefilter("ignore", SyntaxWarning)
 
-warnings.simplefilter("ignore", SyntaxWarning)
-
-def fails(code: str, filepath: Path) -> bool:
-    try:
-        visit(filepath.stem, filepath=filepath, code=code)
-    except Exception:  # noqa: BLE001
-        return True
-    return False
-
-def test_seed(seed: int, revisit: bool = False) -> bool:  # noqa: FBT001,FBT002
-    filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
-    if filepath.exists():
-        if revisit:
-            code = filepath.read_text()
-        else:
+    def fails(code: str, filepath: Path) -> bool:
+        try:
+            visit(filepath.stem, filepath=filepath, code=code)
+        except Exception:  # noqa: BLE001
             return True
-    else:
-        code = generate(seed)
-        filepath.write_text(code)
-
-    if fails(code, filepath):
-        new_code = minimize(code, partial(fails, filepath=filepath))
-        if code != new_code:
-            filepath.write_text(new_code)
         return False
-    return True
 
-revisit = bool(seeds)
-seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # ty:ignore[invalid-assignment]
-for seed in seeds:
-    ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")
-```
+    def test_seed(seed: int, revisit: bool = False) -> bool:  # noqa: FBT001,FBT002
+        filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
+        if filepath.exists():
+            if revisit:
+                code = filepath.read_text()
+            else:
+                return True
+        else:
+            code = generate(seed)
+            filepath.write_text(code)
 
+        if fails(code, filepath):
+            new_code = minimize(code, partial(fails, filepath=filepath))
+            if code != new_code:
+                filepath.write_text(new_code)
+            return False
+        return True
+
+    revisit = bool(seeds)
+    seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # ty:ignore[invalid-assignment]
+    for seed in seeds:
+        ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")
 ```
 
 ### `publish`
@@ -52065,49 +52083,41 @@ for seed in seeds:
 Publish source and wheel distributions to PyPI.
 
 ```
-
 make publish
-
 ```
 
-Publish the source and wheel distributions of your project to PyPI
-using [Twine](https://twine.readthedocs.io/).
-
+Publish the source and wheel distributions of your project to PyPI using [Twine](https://twine.readthedocs.io/).
 
 Source code in `duties.py`
 
-```
-
-@duty def publish(ctx: Context) -> None: """Publish source and wheel distributions to PyPI.
-
 ````
-```bash
-make publish
-```
+@duty
+def publish(ctx: Context) -> None:
+    """Publish source and wheel distributions to PyPI.
 
-Publish the source and wheel distributions of your project to PyPI
-using [Twine](https://twine.readthedocs.io/).
-"""
-if not Path("dist").exists():
-    ctx.run("false", title="No distribution files found")
-dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".gz", ".whl")]
-ctx.run(
-    tools.twine.upload(*dists, skip_existing=True),
-    title="Publishing distributions to PyPI",
-    pty=PTY,
-)
+    ```bash
+    make publish
+    ```
+
+    Publish the source and wheel distributions of your project to PyPI
+    using [Twine](https://twine.readthedocs.io/).
+    """
+    if not Path("dist").exists():
+        ctx.run("false", title="No distribution files found")
+    dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".gz", ".whl")]
+    ctx.run(
+        tools.twine.upload(*dists, skip_existing=True),
+        title="Publishing distributions to PyPI",
+        pty=PTY,
+    )
 ````
-
-```
 
 ### `release`
 
 Release a new version of the project.
 
 ```
-
 make release [version=VERSION]
-
 ```
 
 This task will:
@@ -52122,104 +52132,84 @@ This task will:
 
 Parameters:
 
-- **`version`**
-  (`str`, default:
-  `''`
-  )
-  –
-  The new version number to use. If not provided, you will be prompted for it.
-
+- **`version`** (`str`, default: `''` ) – The new version number to use. If not provided, you will be prompted for it.
 
 Source code in `duties.py`
 
-```
-
-@duty(post=["build", "publish", "docs-deploy"]) def release(ctx: Context, version: str = "") -> None: """Release a new version of the project.
-
 ````
-```bash
-make release [version=VERSION]
-```
+@duty(post=["build", "publish", "docs-deploy"])
+def release(ctx: Context, version: str = "") -> None:
+    """Release a new version of the project.
 
-This task will:
+    ```bash
+    make release [version=VERSION]
+    ```
 
-- Stage changes to `pyproject.toml` and `CHANGELOG.md`
-- Commit the changes with a message like `chore: Prepare release 1.0.0`
-- Tag the commit with the new version number
-- Push the commit and the tag to the remote repository
-- Build source and wheel distributions
-- Publish the distributions to PyPI
-- Deploy the documentation to GitHub pages
+    This task will:
 
-Parameters:
-    version: The new version number to use. If not provided, you will be prompted for it.
-"""
-if not (version := (version or input("> Version to release: ")).strip()):
-    ctx.run("false", title="A version must be provided")
-ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
-ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
-ctx.run(f"git tag -m '' -a {version}", title="Tagging commit", pty=PTY)
-ctx.run("git push", title="Pushing commits", pty=False)
-ctx.run("git push --tags", title="Pushing tags", pty=False)
+    - Stage changes to `pyproject.toml` and `CHANGELOG.md`
+    - Commit the changes with a message like `chore: Prepare release 1.0.0`
+    - Tag the commit with the new version number
+    - Push the commit and the tag to the remote repository
+    - Build source and wheel distributions
+    - Publish the distributions to PyPI
+    - Deploy the documentation to GitHub pages
+
+    Parameters:
+        version: The new version number to use. If not provided, you will be prompted for it.
+    """
+    if not (version := (version or input("> Version to release: ")).strip()):
+        ctx.run("false", title="A version must be provided")
+    ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
+    ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
+    ctx.run(f"git tag -m '' -a {version}", title="Tagging commit", pty=PTY)
+    ctx.run("git push", title="Pushing commits", pty=False)
+    ctx.run("git push --tags", title="Pushing tags", pty=False)
 ````
-
-```
 
 ### `test`
 
 Run the test suite.
 
 ```
-
 make test
-
 ```
 
-Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
-Code source coverage is computed thanks to
-[coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+Run the test suite with [Pytest](https://docs.pytest.org/) and plugins. Code source coverage is computed thanks to [coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
 
 Parameters:
 
-- **`*cli_args`**
-  (`str`, default:
-  `()`
-  )
-  –
-  Additional Pytest CLI arguments.
-
+- **`*cli_args`** (`str`, default: `()` ) – Additional Pytest CLI arguments.
 
 Source code in `duties.py`
 
-```
-
-@duty(nofail=PY_VERSION == PY_DEV) def test(ctx: Context, \*cli_args: str) -> None: """Run the test suite.
-
 ````
-```bash
-make test
-```
+@duty(nofail=PY_VERSION == PY_DEV)
+def test(ctx: Context, *cli_args: str) -> None:
+    """Run the test suite.
 
-Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
-Code source coverage is computed thanks to
-[coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+    ```bash
+    make test
+    ```
 
-Parameters:
-    *cli_args: Additional Pytest CLI arguments.
-"""
-os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
-os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
-ctx.run(
-    tools.pytest(
-        config_file="config/pytest.ini",
-        color="yes",
-    ).add_args("-n", "auto", *cli_args),
-    title=_pyprefix("Running tests"),
-)
+    Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
+    Code source coverage is computed thanks to
+    [coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+
+    Parameters:
+        *cli_args: Additional Pytest CLI arguments.
+    """
+    os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
+    os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
+    ctx.run(
+        tools.pytest(
+            rootdir=".",
+            config_file="config/pytest.ini",
+            color="yes",
+        ).add_args("-n", "auto", *cli_args),
+        title=_pyprefix("Running tests"),
+    )
 ````
-
-```
-```
 
 # Environment setup
 
@@ -52707,48 +52697,48 @@ These projects were used to build *griffe*. **Thank you!**
 | [ansimarkup](https://pypi.org/project/ansimarkup/)                                                               | Produce colored terminal text with an xml-like markup                                                                                                                      | `~=1.4`            | `1.5.0`                 | Revised BSD License                                            |
 | [attrs](https://pypi.org/project/attrs/)                                                                         | Classes Without Boilerplate                                                                                                                                                | `>=22.2.0`         | `26.1.0`                | MIT                                                            |
 | [babel](https://pypi.org/project/babel/)                                                                         | Internationalization utilities                                                                                                                                             | `>=2.10`           | `2.18.0`                | BSD-3-Clause                                                   |
-| [backrefs](https://pypi.org/project/backrefs/)                                                                   | A wrapper around re and regex that adds additional back references.                                                                                                        | `>=5.7.post1`      | `7.0`                   | MIT                                                            |
+| [backrefs](https://pypi.org/project/backrefs/)                                                                   | A wrapper around re and regex that adds additional back references.                                                                                                        | `>=5.7.post1`      | `8.0`                   | MIT                                                            |
 | [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)                                                       | Screen-scraping library                                                                                                                                                    | `>=4.12`           | `4.15.0`                | MIT License                                                    |
 | [build](https://pypi.org/project/build/)                                                                         | A simple, correct Python build frontend                                                                                                                                    | `>=1.2`            | `1.5.0`                 | MIT                                                            |
-| [cappa](https://pypi.org/project/cappa/)                                                                         | Declarative CLI argument parser.                                                                                                                                           | `>=0.29`           | `0.32.1`                | ?                                                              |
-| [certifi](https://pypi.org/project/certifi/)                                                                     | Python package for providing Mozilla's CA Bundle.                                                                                                                          | `>=2023.5.7`       | `2026.6.17`             | MPL-2.0                                                        |
-| [cffi](https://pypi.org/project/cffi/)                                                                           | Foreign Function Interface for Python calling C code.                                                                                                                      | `>=2.0.0`          | `2.0.0`                 | MIT                                                            |
-| [charset-normalizer](https://pypi.org/project/charset-normalizer/)                                               | The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.                                                                    | `>=2, <4`          | `3.4.7`                 | MIT                                                            |
-| [click](https://pypi.org/project/click/)                                                                         | Composable command line interface toolkit                                                                                                                                  | `>=7.0`            | `8.4.1`                 | BSD-3-Clause                                                   |
+| [cappa](https://pypi.org/project/cappa/)                                                                         | Declarative CLI argument parser.                                                                                                                                           | `>=0.29`           | `0.32.2`                | ?                                                              |
+| [certifi](https://pypi.org/project/certifi/)                                                                     | Python package for providing Mozilla's CA Bundle.                                                                                                                          | `>=2023.5.7`       | `2026.7.22`             | MPL-2.0                                                        |
+| [cffi](https://pypi.org/project/cffi/)                                                                           | Foreign Function Interface for Python calling C code.                                                                                                                      | `>=2.0.0`          | `2.1.1`                 | MIT-0                                                          |
+| [charset-normalizer](https://pypi.org/project/charset-normalizer/)                                               | The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.                                                                    | `>=2, <4`          | `3.5.1`                 | MIT                                                            |
+| [click](https://pypi.org/project/click/)                                                                         | Composable command line interface toolkit                                                                                                                                  | `>=7.0`            | `8.4.2`                 | BSD-3-Clause                                                   |
 | [code2flow](https://pypi.org/project/code2flow/)                                                                 | Visualize your source code as DOT flowcharts                                                                                                                               | `>=2.5`            | `2.5.1`                 | MIT                                                            |
-| [colorama](https://pypi.org/project/colorama/)                                                                   | Cross-platform colored terminal text.                                                                                                                                      | `>=0.4`            | `0.4.6`                 | BSD License                                                    |
-| [coverage](https://pypi.org/project/coverage/)                                                                   | Code coverage measurement for Python                                                                                                                                       | `>=7.10.6`         | `7.14.1`                | Apache-2.0                                                     |
-| [cryptography](https://pypi.org/project/cryptography/)                                                           | cryptography is a package which provides cryptographic recipes and primitives to Python developers.                                                                        | `>=2.0`            | `49.0.0`                | Apache-2.0 OR BSD-3-Clause                                     |
+| [colorama](https://pypi.org/project/colorama/)                                                                   | Cross-platform colored terminal text.                                                                                                                                      |                    | `0.4.6`                 | BSD License                                                    |
+| [coverage](https://pypi.org/project/coverage/)                                                                   | Code coverage measurement for Python                                                                                                                                       | `>=7.10.6`         | `7.15.4`                | Apache-2.0                                                     |
+| [cryptography](https://pypi.org/project/cryptography/)                                                           | cryptography is a package which provides cryptographic recipes and primitives to Python developers.                                                                        | `>=2.0`            | `50.0.0`                | Apache-2.0 OR BSD-3-Clause                                     |
 | [csscompressor](https://pypi.org/project/csscompressor/)                                                         | A python port of YUI CSS Compressor                                                                                                                                        | `>=0.9.5`          | `0.9.5`                 | BSD                                                            |
 | [docutils](https://pypi.org/project/docutils/)                                                                   | Docutils -- Python Documentation Utilities                                                                                                                                 | `>=0.21.2`         | `0.23`                  | Public Domain + BSD License + GNU General Public License (GPL) |
 | [duty](https://pypi.org/project/duty/)                                                                           | A simple task runner.                                                                                                                                                      | `>=1.6`            | `1.9.0`                 | ISC                                                            |
 | [execnet](https://pypi.org/project/execnet/)                                                                     | execnet: rapid multi-Python deployment                                                                                                                                     | `>=2.1`            | `2.1.2`                 | MIT                                                            |
 | [failprint](https://pypi.org/project/failprint/)                                                                 | Run a command, print its output only if it fails.                                                                                                                          | `>=1.0.5`          | `1.1.0`                 | ISC                                                            |
 | [ghp-import](https://pypi.org/project/ghp-import/)                                                               | Copy your docs directly to the gh-pages branch.                                                                                                                            | `>=1.0`            | `2.1.0`                 | Apache Software License                                        |
-| [git-changelog](https://pypi.org/project/git-changelog/)                                                         | Automatic Changelog generator using Jinja2 templates.                                                                                                                      | `>=2.5`            | `2.9.4`                 | ISC                                                            |
+| [git-changelog](https://pypi.org/project/git-changelog/)                                                         | Automatic Changelog generator using Jinja2 templates.                                                                                                                      | `>=2.5`            | `2.9.6`                 | ISC                                                            |
 | [gitdb](https://pypi.org/project/gitdb/)                                                                         | Git Object Database                                                                                                                                                        | `>=4.0.1, <5`      | `4.0.12`                | BSD License                                                    |
-| [GitPython](https://pypi.org/project/GitPython/)                                                                 | GitPython is a Python library used to interact with Git repositories                                                                                                       | `>=3.1.44`         | `3.1.50`                | BSD-3-Clause                                                   |
+| [GitPython](https://pypi.org/project/GitPython/)                                                                 | GitPython is a Python library used to interact with Git repositories                                                                                                       | `>=3.1.44`         | `3.1.59`                | BSD-3-Clause                                                   |
 | [griffe-inherited-docstrings](https://pypi.org/project/griffe-inherited-docstrings/)                             | Griffe extension for inheriting docstrings.                                                                                                                                | `>=1.1.2`          | `1.1.3`                 | ISC                                                            |
 | [griffelib](https://pypi.org/project/griffelib/)                                                                 | Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API. | `>=2.0`            | `2.0.1.dev8+g862a8918`  | ISC                                                            |
 | [htmlmin2](https://pypi.org/project/htmlmin2/)                                                                   | An HTML Minifier                                                                                                                                                           | `>=0.1.13`         | `0.1.13`                | BSD                                                            |
-| [humanize](https://pypi.org/project/humanize/)                                                                   | Python humanize utilities                                                                                                                                                  | `>=4.9`            | `4.15.0`                | MIT                                                            |
+| [humanize](https://pypi.org/project/humanize/)                                                                   | Python humanize utilities                                                                                                                                                  | `>=4.9`            | `4.16.0`                | MIT                                                            |
 | [id](https://pypi.org/project/id/)                                                                               | A tool for generating OIDC identities                                                                                                                                      |                    | `1.6.1`                 | Apache Software License                                        |
 | [idna](https://pypi.org/project/idna/)                                                                           | Internationalized Domain Names in Applications (IDNA)                                                                                                                      | `>=2.5, <4`        | `3.18`                  | BSD-3-Clause                                                   |
 | [iniconfig](https://pypi.org/project/iniconfig/)                                                                 | brain-dead simple config-ini parsing                                                                                                                                       | `>=1.0.1`          | `2.3.0`                 | MIT                                                            |
 | [jaraco.classes](https://pypi.org/project/jaraco.classes/)                                                       | Utility functions for Python class constructs                                                                                                                              |                    | `3.4.0`                 | MIT License                                                    |
 | [jaraco.context](https://pypi.org/project/jaraco.context/)                                                       | Useful decorators and context managers                                                                                                                                     |                    | `6.1.2`                 | MIT                                                            |
-| [jaraco.functools](https://pypi.org/project/jaraco.functools/)                                                   | Functools like those found in stdlib                                                                                                                                       |                    | `4.5.0`                 | MIT                                                            |
+| [jaraco.functools](https://pypi.org/project/jaraco.functools/)                                                   | Functools like those found in stdlib                                                                                                                                       |                    | `4.6.0`                 | MIT                                                            |
 | [jeepney](https://pypi.org/project/jeepney/)                                                                     | Low-level, pure Python DBus protocol wrapper.                                                                                                                              | `>=0.4.2`          | `0.9.0`                 | MIT                                                            |
 | [Jinja2](https://pypi.org/project/Jinja2/)                                                                       | A very fast and expressive template engine.                                                                                                                                | `>=3.1`            | `3.1.6`                 | BSD License                                                    |
 | [jsmin](https://pypi.org/project/jsmin/)                                                                         | JavaScript minifier.                                                                                                                                                       | `>=3.0.1`          | `3.0.1`                 | MIT License                                                    |
 | [jsonschema](https://pypi.org/project/jsonschema/)                                                               | An implementation of JSON Schema validation for Python                                                                                                                     | `>=4.18`           | `4.26.0`                | MIT                                                            |
 | [jsonschema-specifications](https://pypi.org/project/jsonschema-specifications/)                                 | The JSON Schema meta-schemas and vocabularies, exposed as a Registry                                                                                                       | `>=2023.03.6`      | `2025.9.1`              | MIT                                                            |
 | [keyring](https://pypi.org/project/keyring/)                                                                     | Store and access your passwords safely.                                                                                                                                    | `>=21.2.0`         | `25.7.0`                | MIT                                                            |
-| [Markdown](https://pypi.org/project/Markdown/)                                                                   | Python implementation of John Gruber's Markdown.                                                                                                                           | `>=3.2`            | `3.10.2`                | BSD-3-Clause                                                   |
+| [Markdown](https://pypi.org/project/Markdown/)                                                                   | Python implementation of John Gruber's Markdown.                                                                                                                           | `>=3.2`            | `3.10.3`                | BSD-3-Clause                                                   |
 | [markdown-callouts](https://pypi.org/project/markdown-callouts/)                                                 | Markdown extension: a classier syntax for admonitions                                                                                                                      | `>=0.4`            | `0.4.0`                 | MIT                                                            |
-| [markdown-exec](https://pypi.org/project/markdown-exec/)                                                         | Utilities to execute code blocks in Markdown files.                                                                                                                        | `>=1.8`            | `1.12.1`                | ISC                                                            |
+| [markdown-exec](https://pypi.org/project/markdown-exec/)                                                         | Utilities to execute code blocks in Markdown files.                                                                                                                        | `>=1.8`            | `1.12.3`                | ISC                                                            |
 | [markdown-it-py](https://pypi.org/project/markdown-it-py/)                                                       | Python port of markdown-it. Markdown parsing, done right!                                                                                                                  | `>=2.2.0`          | `3.0.0`                 | MIT License                                                    |
-| [markdownify](https://pypi.org/project/markdownify/)                                                             | Convert HTML to markdown.                                                                                                                                                  | `>=0.14`           | `1.2.2`                 | MIT License                                                    |
+| [markdownify](https://pypi.org/project/markdownify/)                                                             | Convert HTML to markdown.                                                                                                                                                  | `>=0.14`           | `1.2.3`                 | MIT License                                                    |
 | [MarkupSafe](https://pypi.org/project/MarkupSafe/)                                                               | Safely add untrusted strings to HTML/XML markup.                                                                                                                           | `>=1.1`            | `3.0.3`                 | BSD-3-Clause                                                   |
 | [mdformat](https://pypi.org/project/mdformat/)                                                                   | CommonMark compliant Markdown formatter                                                                                                                                    | `>=0.7.21`         | `0.7.22`                | MIT License                                                    |
 | [mdformat_tables](https://pypi.org/project/mdformat_tables/)                                                     | An mdformat plugin for rendering tables.                                                                                                                                   | `>=1.0`            | `1.0.0`                 | MIT License                                                    |
@@ -52761,27 +52751,27 @@ These projects were used to build *griffe*. **Thank you!**
 | [mkdocs-get-deps](https://pypi.org/project/mkdocs-get-deps/)                                                     | An extra command for MkDocs that infers required PyPI packages from `plugins` in mkdocs.yml                                                                                | `>=0.2.0`          | `0.2.2`                 | MIT                                                            |
 | [mkdocs-git-revision-date-localized-plugin](https://pypi.org/project/mkdocs-git-revision-date-localized-plugin/) | Mkdocs plugin that enables displaying the localized date of the last git modification of a markdown file.                                                                  | `>=1.2`            | `1.5.3`                 | MIT                                                            |
 | [mkdocs-llmstxt](https://pypi.org/project/mkdocs-llmstxt/)                                                       | MkDocs plugin to generate an /llms.txt file.                                                                                                                               | `>=0.2`            | `0.5.0`                 | ISC                                                            |
-| [mkdocs-material](https://pypi.org/project/mkdocs-material/)                                                     | Documentation that simply works                                                                                                                                            | `>=9.5`            | `9.7.6`                 | MIT                                                            |
+| [mkdocs-material](https://pypi.org/project/mkdocs-material/)                                                     | Documentation that simply works                                                                                                                                            | `>=9.5`            | `9.7.7`                 | MIT                                                            |
 | [mkdocs-material-extensions](https://pypi.org/project/mkdocs-material-extensions/)                               | Extension pack for Python Markdown and MkDocs Material.                                                                                                                    | `>=1.3`            | `1.3.1`                 | MIT                                                            |
 | [mkdocs-minify-plugin](https://pypi.org/project/mkdocs-minify-plugin/)                                           | An MkDocs plugin to minify HTML, JS or CSS files prior to being written to disk                                                                                            | `>=0.8`            | `0.8.0`                 | MIT                                                            |
 | [mkdocs-redirects](https://pypi.org/project/mkdocs-redirects/)                                                   | A MkDocs plugin for dynamic page redirects to prevent broken links                                                                                                         | `>=1.2`            | `1.2.3`                 | MIT                                                            |
 | [mkdocs-section-index](https://pypi.org/project/mkdocs-section-index/)                                           | MkDocs plugin to allow clickable sections that lead to an index page                                                                                                       | `>=0.3`            | `0.3.12`                | MIT                                                            |
-| [mkdocstrings](https://pypi.org/project/mkdocstrings/)                                                           | Automatic documentation from sources, for MkDocs.                                                                                                                          | `>=0.29`           | `1.0.4`                 | ISC                                                            |
+| [mkdocstrings](https://pypi.org/project/mkdocstrings/)                                                           | Automatic documentation from sources, for MkDocs.                                                                                                                          | `>=0.29`           | `1.0.6`                 | ISC                                                            |
 | [mkdocstrings-python](https://pypi.org/project/mkdocstrings-python/)                                             | A Python handler for mkdocstrings.                                                                                                                                         | `>=1.16.2`         | `2.0.5`                 | ISC                                                            |
 | [more-itertools](https://pypi.org/project/more-itertools/)                                                       | More routines for operating on iterables, beyond itertools                                                                                                                 |                    | `11.1.0`                | MIT                                                            |
-| [nh3](https://pypi.org/project/nh3/)                                                                             | Python binding to Ammonia HTML sanitizer Rust crate                                                                                                                        | `>=0.2.14`         | `0.3.5`                 | MIT                                                            |
-| [packaging](https://pypi.org/project/packaging/)                                                                 | Core utilities for Python packages                                                                                                                                         | `>=24.1`           | `26.2`                  | Apache-2.0 OR BSD-2-Clause                                     |
+| [nh3](https://pypi.org/project/nh3/)                                                                             | Python binding to Ammonia HTML sanitizer Rust crate                                                                                                                        | `>=0.2.14`         | `0.3.6`                 | MIT                                                            |
+| [packaging](https://pypi.org/project/packaging/)                                                                 | Core utilities for Python packages                                                                                                                                         | `>=24.1`           | `26.3`                  | Apache-2.0 OR BSD-2-Clause                                     |
 | [paginate](https://pypi.org/project/paginate/)                                                                   | Divides large result sets into pages for easier browsing                                                                                                                   | `>=0.5`            | `0.5.7`                 | MIT                                                            |
 | [pathspec](https://pypi.org/project/pathspec/)                                                                   | Utility library for gitignore style pattern matching of file paths.                                                                                                        | `>=0.11.1`         | `1.1.1`                 | Mozilla Public License 2.0 (MPL 2.0)                           |
-| [platformdirs](https://pypi.org/project/platformdirs/)                                                           | A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`.                                                                         | `>=2.2.0`          | `4.10.0`                | MIT                                                            |
+| [platformdirs](https://pypi.org/project/platformdirs/)                                                           | A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`.                                                                         | `>=4.4`            | `4.11.3`                | MIT                                                            |
 | [pluggy](https://pypi.org/project/pluggy/)                                                                       | plugin and hook calling mechanisms for python                                                                                                                              | `>=1.5, <2`        | `1.6.0`                 | MIT                                                            |
 | [properdocs](https://pypi.org/project/properdocs/)                                                               | Project documentation with Markdown.                                                                                                                                       | `>=1.6.5`          | `1.6.7`                 | BSD-2-Clause                                                   |
 | [ptyprocess](https://pypi.org/project/ptyprocess/)                                                               | Run a subprocess in a pseudo terminal                                                                                                                                      | `~=0.6`            | `0.7.0`                 | ISC License (ISCL)                                             |
 | [pycparser](https://pypi.org/project/pycparser/)                                                                 | C parser in Python                                                                                                                                                         |                    | `3.0`                   | BSD-3-Clause                                                   |
-| [pydeps](https://pypi.org/project/pydeps/)                                                                       | Display module dependencies                                                                                                                                                | `>=1.12`           | `3.0.6`                 | BSD-2-Clause                                                   |
+| [pydeps](https://pypi.org/project/pydeps/)                                                                       | Display module dependencies                                                                                                                                                | `>=1.12`           | `3.0.7`                 | BSD-2-Clause                                                   |
 | [Pygments](https://pypi.org/project/Pygments/)                                                                   | Pygments is a syntax highlighting package written in Python.                                                                                                               | `>=2.16`           | `2.20.0`                | BSD-2-Clause                                                   |
 | [pygments-ansi-color](https://pypi.org/project/pygments-ansi-color/)                                             |                                                                                                                                                                            | `>=0.3`            | `0.3.0`                 | Apache Software License                                        |
-| [pymdown-extensions](https://pypi.org/project/pymdown-extensions/)                                               | Extension pack for Python Markdown.                                                                                                                                        | `>=9`              | `10.21.3`               | MIT                                                            |
+| [pymdown-extensions](https://pypi.org/project/pymdown-extensions/)                                               | Extension pack for Python Markdown.                                                                                                                                        | `>=10.2`           | `11.0.1`                | MIT                                                            |
 | [pyproject_hooks](https://pypi.org/project/pyproject_hooks/)                                                     | Wrappers to call pyproject.toml-based build backend hooks.                                                                                                                 |                    | `1.2.0`                 | MIT License                                                    |
 | [pysource-codegen](https://pypi.org/project/pysource-codegen/)                                                   | generate random python code to test linter/formatter/and other tools                                                                                                       | `>=0.7`            | `0.7.1`                 | MIT                                                            |
 | [pysource-minimize](https://pypi.org/project/pysource-minimize/)                                                 | minimize python source code                                                                                                                                                | `>=0.10`           | `0.10.1`                | MIT                                                            |
@@ -52791,31 +52781,31 @@ These projects were used to build *griffe*. **Thank you!**
 | [pytest-randomly](https://pypi.org/project/pytest-randomly/)                                                     | Pytest plugin to randomly order tests and control random.seed.                                                                                                             | `>=3.15`           | `4.1.0`                 | MIT                                                            |
 | [pytest-xdist](https://pypi.org/project/pytest-xdist/)                                                           | pytest xdist plugin for distributed testing, most importantly across multiple CPUs                                                                                         | `>=3.6`            | `3.8.0`                 | MIT                                                            |
 | [python-dateutil](https://pypi.org/project/python-dateutil/)                                                     | Extensions to the standard Python datetime module                                                                                                                          | `>=2.8.1`          | `2.9.0.post0`           | BSD License + Apache Software License                          |
-| [PyYAML](https://pypi.org/project/PyYAML/)                                                                       | YAML parser and emitter for Python                                                                                                                                         |                    | `6.0.3`                 | MIT                                                            |
+| [PyYAML](https://pypi.org/project/PyYAML/)                                                                       | YAML parser and emitter for Python                                                                                                                                         | `>=5.1`            | `6.0.3`                 | MIT                                                            |
 | [pyyaml_env_tag](https://pypi.org/project/pyyaml_env_tag/)                                                       | A custom YAML tag for referencing environment variables in YAML files.                                                                                                     | `>=0.1`            | `1.1`                   | MIT                                                            |
 | [readme_renderer](https://pypi.org/project/readme_renderer/)                                                     | readme_renderer is a library for rendering readme descriptions for Warehouse                                                                                               | `>=35.0`           | `45.0`                  | Apache-2.0                                                     |
 | [referencing](https://pypi.org/project/referencing/)                                                             | JSON Referencing + Python                                                                                                                                                  | `>=0.28.4`         | `0.37.0`                | MIT                                                            |
 | [requests](https://pypi.org/project/requests/)                                                                   | Python HTTP for Humans.                                                                                                                                                    | `>=2.30`           | `2.34.2`                | Apache-2.0                                                     |
 | [requests-toolbelt](https://pypi.org/project/requests-toolbelt/)                                                 | A utility belt for advanced users of python-requests                                                                                                                       | `>=0.8.0, !=0.9.0` | `1.0.0`                 | Apache 2.0                                                     |
 | [rfc3986](https://pypi.org/project/rfc3986/)                                                                     | Validating URI References per RFC 3986                                                                                                                                     | `>=1.4.0`          | `2.0.0`                 | Apache 2.0                                                     |
-| [rich](https://pypi.org/project/rich/)                                                                           | Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal                                                                            | `>=12.0.0`         | `15.0.0`                | MIT                                                            |
-| [rpds-py](https://pypi.org/project/rpds-py/)                                                                     | Python bindings to Rust's persistent data structures (rpds)                                                                                                                | `>=0.25.0`         | `2026.5.1`              | MIT                                                            |
-| [ruff](https://pypi.org/project/ruff/)                                                                           | An extremely fast Python linter and code formatter, written in Rust.                                                                                                       | `>=0.4`            | `0.15.18`               | MIT                                                            |
+| [rich](https://pypi.org/project/rich/)                                                                           | Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal                                                                            | `>=12.1.0`         | `15.0.0`                | MIT                                                            |
+| [rpds-py](https://pypi.org/project/rpds-py/)                                                                     | Python bindings to Rust's persistent data structures (rpds)                                                                                                                | `>=0.25.0`         | `2026.6.3`              | MIT                                                            |
+| [ruff](https://pypi.org/project/ruff/)                                                                           | An extremely fast Python linter and code formatter, written in Rust.                                                                                                       | `>=0.4`            | `0.16.3`                | MIT                                                            |
 | [SecretStorage](https://pypi.org/project/SecretStorage/)                                                         | Python bindings to FreeDesktop.org Secret Service API                                                                                                                      | `>=3.2`            | `3.5.0`                 | BSD-3-Clause                                                   |
 | [semver](https://pypi.org/project/semver/)                                                                       | Python helper for Semantic Versioning (<https://semver.org>)                                                                                                               | `>=3.0`            | `3.0.4`                 | BSD License                                                    |
 | [six](https://pypi.org/project/six/)                                                                             | Python 2 and 3 compatibility utilities                                                                                                                                     | `>=1.15, <2`       | `1.17.0`                | MIT                                                            |
 | [smmap](https://pypi.org/project/smmap/)                                                                         | A pure Python implementation of a sliding window memory map manager                                                                                                        | `>=3.0.1, <6`      | `5.0.3`                 | BSD-3-Clause                                                   |
-| [soupsieve](https://pypi.org/project/soupsieve/)                                                                 | A modern CSS selector implementation for Beautiful Soup.                                                                                                                   | `>=1.6.1`          | `2.8.4`                 | MIT                                                            |
+| [soupsieve](https://pypi.org/project/soupsieve/)                                                                 | A modern CSS selector implementation for Beautiful Soup.                                                                                                                   | `>=1.6.1`          | `2.9.2`                 | MIT                                                            |
 | [stdlib-list](https://pypi.org/project/stdlib-list/)                                                             | A list of Python Standard Libraries (2.7 through 3.14).                                                                                                                    |                    | `0.12.0`                | MIT License                                                    |
-| [twine](https://pypi.org/project/twine/)                                                                         | Collection of utilities for publishing packages on PyPI                                                                                                                    | `>=5.1`            | `6.2.0`                 | Apache-2.0                                                     |
-| [ty](https://pypi.org/project/ty/)                                                                               | An extremely fast Python type checker, written in Rust.                                                                                                                    | `>=0.0.14`         | `0.0.51`                | MIT License                                                    |
+| [twine](https://pypi.org/project/twine/)                                                                         | Collection of utilities for publishing packages on PyPI                                                                                                                    | `>=5.1`            | `7.0.0`                 | Apache-2.0                                                     |
+| [ty](https://pypi.org/project/ty/)                                                                               | An extremely fast Python type checker, written in Rust.                                                                                                                    | `>=0.0.14`         | `0.0.72`                | MIT License                                                    |
 | [type-lens](https://pypi.org/project/type-lens/)                                                                 | type-lens is a Python template project designed to simplify the setup of a new project.                                                                                    | `>=0.2.5`          | `0.2.6`                 | MIT                                                            |
-| [types-Markdown](https://pypi.org/project/types-Markdown/)                                                       | Typing stubs for Markdown                                                                                                                                                  | `>=3.6`            | `3.10.2.20260518`       | Apache-2.0                                                     |
-| [types-PyYAML](https://pypi.org/project/types-PyYAML/)                                                           | Typing stubs for PyYAML                                                                                                                                                    | `>=6.0`            | `6.0.12.20260518`       | Apache-2.0                                                     |
-| [typing_extensions](https://pypi.org/project/typing_extensions/)                                                 | Backported and Experimental Type Hints for Python 3.9+                                                                                                                     | `>=4.4.0`          | `4.15.0`                | PSF-2.0                                                        |
-| [urllib3](https://pypi.org/project/urllib3/)                                                                     | HTTP library with thread-safe connection pooling, file post, and more.                                                                                                     | `>=1.26, <3`       | `2.7.0`                 | MIT                                                            |
+| [types-Markdown](https://pypi.org/project/types-Markdown/)                                                       | Typing stubs for Markdown                                                                                                                                                  | `>=3.6`            | `3.10.2.20260712`       | Apache-2.0                                                     |
+| [types-PyYAML](https://pypi.org/project/types-PyYAML/)                                                           | Typing stubs for PyYAML                                                                                                                                                    | `>=6.0`            | `6.0.12.20260815`       | Apache-2.0                                                     |
+| [typing_extensions](https://pypi.org/project/typing_extensions/)                                                 | Backported and Experimental Type Hints for Python 3.9+                                                                                                                     | `>=4.12.0`         | `4.16.0`                | PSF-2.0                                                        |
+| [urllib3](https://pypi.org/project/urllib3/)                                                                     | HTTP library with thread-safe connection pooling, file post, and more.                                                                                                     | `>=1.26.0`         | `2.7.0`                 | MIT                                                            |
 | [watchdog](https://pypi.org/project/watchdog/)                                                                   | Filesystem events monitoring                                                                                                                                               | `>=2.0`            | `6.0.0`                 | Apache-2.0                                                     |
-| [wcwidth](https://pypi.org/project/wcwidth/)                                                                     | Measures the displayed width of unicode strings in a terminal                                                                                                              | `>=0.2.13`         | `0.8.1`                 | MIT                                                            |
+| [wcwidth](https://pypi.org/project/wcwidth/)                                                                     | Measures the displayed width of unicode strings in a terminal                                                                                                              | `>=0.2.13`         | `0.8.2`                 | MIT                                                            |
 | [yore](https://pypi.org/project/yore/)                                                                           | Manage legacy code with comments.                                                                                                                                          | `>=0.3.3`          | `0.4.7`                 | ISC                                                            |
 
 **[More credits from the author](http://pawamoy.github.io/credits/)**
@@ -52825,6 +52815,24 @@ These projects were used to build *griffe*. **Thank you!**
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [2.2.0](https://github.com/mkdocstrings/griffe/releases/tag/2.2.0) - 2026-08-16
+
+[Compare with 2.1.0](https://github.com/mkdocstrings/griffe/compare/2.1.0...2.2.0)
+
+### Features
+
+- Support `await` expressions ([6b3caab](https://github.com/mkdocstrings/griffe/commit/6b3caab7ce4fdcb1c9386937dad17510d35a3321) by Vincent Gao). [PR-479](https://github.com/mkdocstrings/griffe/pull/479)
+- Support unpacking in dict comprehensions ([2d39391](https://github.com/mkdocstrings/griffe/commit/2d39391cb135febadf339bdea91c1113b74da145) by mushitoriami). [PR-475](https://github.com/mkdocstrings/griffe/pull/475)
+
+### Bug Fixes
+
+- Forward `warn_missing_types` to Sphinx return section reader ([a15e782](https://github.com/mkdocstrings/griffe/commit/a15e782ed0793e06d22105beb016c10cfe0ed4b0) by Timothée Mazzucotelli). [Issue-mkdocstrings-python-337](https://github.com/mkdocstrings/python/issues/337)
+- Make stringified expressions valid and faithful Python ([eb85f0d](https://github.com/mkdocstrings/griffe/commit/eb85f0dd8bf49f4a2400bf03face646d8f533a7c) by Vincent Gao). [PR-478](https://github.com/mkdocstrings/griffe/pull/478)
+- Empty tuples can never be implicit ([82e728d](https://github.com/mkdocstrings/griffe/commit/82e728dc758f9635d2e500c13caa795b48e36d8a) by Vincent Gao). [PR-474](https://github.com/mkdocstrings/griffe/pull/474), Co-authored-by: Timothée Mazzucotelli [dev@pawamoy.fr](mailto:dev@pawamoy.fr)
+- Render f-strings and t-strings with correct quote delimiters ([90e28d4](https://github.com/mkdocstrings/griffe/commit/90e28d45ffc998434895c0f73af608cb12f0d6dd) by Bartosz Sławecki). [Issue-444](https://github.com/mkdocstrings/griffe/issues/444), [PR-455](https://github.com/mkdocstrings/griffe/pull/455)
+- Detect basic admonitions 'example', 'note' and 'warning' in Google/Numpy docstrings when inferring style ([f30306f](https://github.com/mkdocstrings/griffe/commit/f30306fa703741f976fc49576ddf95cf29ba998b) by Timothée Mazzucotelli).
+- Render dict `**`-unpacking as `**value` instead of `None: value` ([74ddbbf](https://github.com/mkdocstrings/griffe/commit/74ddbbf22f49e1fb789ac754e3fff41a0ac2f152) by Vincent Gao). [PR-467](https://github.com/mkdocstrings/griffe/pull/467)
 
 ## [2.1.0](https://github.com/mkdocstrings/griffe/releases/tag/2.1.0) - 2026-06-19
 

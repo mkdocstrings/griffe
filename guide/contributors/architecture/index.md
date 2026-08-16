@@ -71,6 +71,7 @@ This document describes how the project is architectured, both regarding boilerp
 1. ```
     debug.json
     settings.json
+    tasks.json
    ```
 
 1. Contains our tooling configuration. See [Scripts, configuration](#scripts-configuration).
@@ -489,75 +490,77 @@ The following sections are generated automatically by iterating on the modules o
 
 #### `griffe.__main__`
 
+SPDX-License-Identifier: ISC
+
 ### Public API
 
 #### `griffe`
 
-This top-level module imports all public names from the package, and exposes them as public objects. We have tests to make sure no object is forgotten in this list.
+SPDX-License-Identifier: ISC
 
 ### Internal API
 
-The internal API layout doesn't follow any particular paradigm: we simply organize code in different modules, depending on what the code is used for.
+SPDX-License-Identifier: ISC
 
 #### `agents`
 
-These modules contain the different agents that are able to extract data.
+SPDX-License-Identifier: ISC
 
 ##### `inspector.py`
 
-This module contains our dynamic analysis agent, capable of inspecting modules and objects in memory, at runtime.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `nodes`
 
-These submodules contain utilities for working with AST and object nodes.
+SPDX-License-Identifier: ISC
 
 ###### `assignments.py`
 
-This module contains utilities for extracting information from assignment nodes.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `ast.py`
 
-This module contains utilities for navigating AST nodes.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `docstrings.py`
 
-This module contains utilities for extracting docstrings from nodes.
+SPDX-License-Identifier: ISC
 
 ###### `exports.py`
 
-This module contains utilities for extracting exports from `__all__` assignments.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `imports.py`
 
-This module contains utilities for working with imports and relative imports.
+SPDX-License-Identifier: ISC
 
 ###### `parameters.py`
 
-This module contains utilities for extracting information from parameter nodes.
+SPDX-License-Identifier: ISC
 
 ###### `runtime.py`
 
-This module contains utilities for extracting information from runtime objects.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ###### `values.py`
 
-This module contains utilities for extracting attribute values.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `visitor.py`
 
-This module contains our static analysis agent, capable of parsing and visiting sources, statically.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
@@ -573,195 +576,162 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `collections.py`
 
-This module contains collection-related classes, which are used throughout the API.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `debug.py`
 
-This module is here to help users report bugs. It provides a function to print environment information, which is called from the public `griffe.debug` module (when called with `python -m griffe.debug`) or thanks to the `--debug-info` CLI flag.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `diff.py`
 
-This module exports "breaking changes" related utilities. The logic here is to iterate on objects and their members recursively, to yield found breaking changes.
-
-The breakage class definitions might sound a bit verbose, but declaring them this way helps with (de)serialization, which we don't use yet, but could use in the future.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `docstrings`
 
-These submodules define models and parsers for docstrings.
+SPDX-License-Identifier: ISC
 
 ##### `auto.py`
 
-This module defines functions to parse docstrings by guessing their style.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `google.py`
 
-This module defines functions to parse Google-style docstrings into structured data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `models.py`
 
-This module contains the models for storing docstrings structured data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `numpy.py`
 
-This module defines functions to parse Numpy-style docstrings into structured data.
-
-Based on <https://numpydoc.readthedocs.io/en/latest/format.html>, it seems Numpydoc is a superset of RST. Since fully parsing RST is a non-goal of this project, some things are stripped from the Numpydoc specification.
-
-Rejected as non particularly Pythonic or useful as sections:
-
-- See also: this section feels too subjective (specially crafted as a standard for Numpy itself), and there are may ways to reference related items in a docstring, depending on the chosen markup.
-
-Rejected as naturally handled by the user-chosen markup:
-
-- Warnings: this is just markup.
-- Notes: again, just markup.
-- References: again, just markup.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `parsers.py`
 
-This module imports all the defined parsers and provides a generic function to parse docstrings.
+SPDX-License-Identifier: ISC
 
 ##### `sphinx.py`
 
-This module defines functions to parse Sphinx docstrings into structured data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `utils.py`
 
-This module contains utilities for docstrings parsers.
+SPDX-License-Identifier: ISC
 
 #### `encoders.py`
 
-This module contains data encoders/serializers and decoders/deserializers. We only support JSON for now, but might want to add more formats in the future.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `enumerations.py`
 
-This module contains all the enumerations of the package.
+SPDX-License-Identifier: ISC
 
 #### `exceptions.py`
 
-This module contains all the exceptions specific to Griffe.
+SPDX-License-Identifier: ISC
 
 #### `expressions.py`
 
-This module contains the data classes that represent resolvable names and expressions. First we declare data classes for each kind of expression, mostly corresponding to Python's AST nodes. Then we declare builder methods, that iterate AST nodes and build the corresponding data classes, and two utilities `_yield` and `_join` to help iterate on expressions. Finally we declare a few public helpers to safely get expressions from AST nodes in different scenarios.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `extensions`
 
-These submodules contain our extension system, as well as built-in extensions.
+SPDX-License-Identifier: ISC
 
 ##### `base.py`
 
-This module contains the base class for extensions and the functions to load them.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `dataclasses.py`
 
-Built-in extension adding support for dataclasses.
-
-This extension re-creates `__init__` methods of dataclasses during static analysis.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 ##### `unpack_typeddict.py`
 
-Todo
-
-Support `extra_items=type`. TODO: Support `closed=True/False`.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `finder.py`
 
-This module contains the code allowing to find modules.
-
-Note: It might be possible to replace a good part of this module's logic with utilities from `importlib` (however the util in question is private):
-
-```
->>> from importlib.util import _find_spec
->>> _find_spec("griffe.agents", _find_spec("griffe", None).submodule_search_locations)
-ModuleSpec(
-    name='griffe.agents',
-    loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa5f34e8110>,
-    origin='/media/data/dev/griffelib/packages/griffe/src/griffe/agents/__init__.py',
-    submodule_search_locations=['/media/data/dev/griffelib/packages/griffe/src/griffe/agents'],
-)
-```
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `git.py`
 
-This module contains Git utilities, used by our load_git function, which in turn is used to load the API for different snapshots of a Git repository and find breaking changes between them.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `helpers.py`
 
-This module contains helpers. They simplify programmatic use of Griffe, for example to load data from strings or to create temporary packages. They are particularly useful for our own tests suite.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `importer.py`
 
-This module contains utilities to dynamically import objects. These utilities are used by our Inspector to dynamically import objects specified as Python paths, like `package.module.Class.method`.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `loader.py`
 
-This module contains all the logic for loading API data from sources or compiled modules.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `logger.py`
 
-This module contains the logger used throughout Griffe. The logger is actually a wrapper around the standard Python logger. We wrap it so that it is easier for other downstream libraries to patch it. For example, mkdocstrings-python patches the logger to relocate it as a child of `mkdocs.plugins` so that it fits in the MkDocs logging configuration.
-
-We use a single, global logger because our public API is exposed in a single module, `griffe`. Extensions however should use their own logger, which is why we provide the `get_logger` function.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `merger.py`
 
-This module contains utilities to merge stubs data and concrete data.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `mixins.py`
 
-This module contains some mixins classes that hold shared methods of the different kinds of objects, and aliases.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `models.py`
 
-This module contains our models definitions, to represent Python objects (and other aspects of Python APIs)... in Python.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `stats.py`
 
-This module contains utilities to compute loading statistics, like time spent visiting modules statically or dynamically.
+SPDX-License-Identifier: ISC
 
 xml version="1.0" encoding="UTF-8" standalone="no"?

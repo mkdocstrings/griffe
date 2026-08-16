@@ -361,7 +361,7 @@ Attributes:
 Source code in `packages/griffelib/src/griffe/_internal/agents/visitor.py`
 
 ```
-def __init__(
+def __init__(  # noqa: PLR0917
     self,
     module_name: str,
     filepath: Path,
@@ -1481,7 +1481,7 @@ Attributes:
 Source code in `packages/griffelib/src/griffe/_internal/agents/inspector.py`
 
 ```
-def __init__(
+def __init__(  # noqa: PLR0917
     self,
     module_name: str,
     filepath: Path | None,

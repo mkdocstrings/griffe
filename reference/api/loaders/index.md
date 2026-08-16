@@ -2214,8 +2214,7 @@ Number of objects by kind.
 
 ```
 lines = sum(
-    (len(lines))
-    for lines in (loader.lines_collection.values())
+    len(lines) for lines in loader.lines_collection.values()
 )
 ```
 

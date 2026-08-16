@@ -37,7 +37,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
     for extension in exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):
-            extensions.add(*ext)  # ty:ignore[invalid-argument-type]
+            extensions.add(*ext)
         else:
             extensions.add(ext)
 

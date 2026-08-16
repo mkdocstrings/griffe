@@ -25,7 +25,7 @@ def __init__(self, uid: int, name: str, capacity: int = 10, available: bool = Tr
 
 Additional metadata like `ClassVar`, the `init` and `kw_only` parameters, or the `KW_ONLY` sentinel are also recognized and will update the `__init__` method signature accordingly.
 
-**This extension is enabled by default.** It is always added last. If you need to give it a higher priority, you can explictly enable it to change its position in the list of extensions (it will run only once):
+**This extension is enabled by default.** It is always added last. If you need to give it a higher priority, you can explicitly enable it to change its position in the list of extensions (it will run only once):
 
 ```
 $ griffe dump -e dataclasses,other my_package

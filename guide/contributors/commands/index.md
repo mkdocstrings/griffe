@@ -347,7 +347,9 @@ This command configures the [VSCode editor](https://code.visualstudio.com/) by c
 - `settings.json`, for various editor settings like linting tools and their configuration
 - `tasks.json`, for running tasks directly from VSCode's interface
 
-Warning: These files will be overwritten every time the command is run.
+Warning
+
+These files will be overwritten every time the command is run.
 
 Source code in `scripts/make.py`
 
@@ -648,7 +650,7 @@ print("a code line that triggers a Ruff warning")  # noqa: ID
 
 ...where ID is the identifier of the rule you want to ignore for this line.
 
-Example:
+Example
 
 src/your_package/module.py
 
@@ -656,156 +658,143 @@ src/your_package/module.py
 import subprocess
 ```
 
-````
-```console
+```
 $ make check-quality
 ✗ Checking code quality (1)
 > ruff check --config=config/ruff.toml src/ tests/ scripts/
 src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
-````
+```
 
 Now add a comment to ignore this warning.
 
-```python title="src/your_package/module.py"
+src/your_package/module.py
+
+```
 import subprocess  # noqa: S404
 ```
 
-```console
+```
 $ make check-quality
 ✓ Checking code quality
 ```
 
 You can disable multiple different warnings on a single line by separating them with commas, for example `# noqa: D300,D301`.
 
-```
-
-You can disable a warning globally by adding its ID
-into the list in `config/ruff.toml`.
+You can disable a warning globally by adding its ID into the list in `config/ruff.toml`.
 
 You can also disable warnings per file, like so:
 
 config/ruff.toml
 
 ```
-
-[per-file-ignores] "src/your_package/your_module.py" = [ "T201", # Print statement ]
-
-```
-
-
-Source code in `duties.py`
-
-```
-
-@duty(nofail=PY_VERSION == PY_DEV) def check_quality(ctx: Context) -> None: """Check the code quality.
-
-````
-```bash
-make check-quality
-```
-
-Check the code quality using [Ruff](https://astral.sh/ruff).
-
-The configuration for Ruff is located at `config/ruff.toml`.
-In this file, you can deactivate rules or activate others to customize your analysis.
-Rule identifiers always start with one or more capital letters, like `D`, `S` or `BLK`,
-then followed by a number.
-
-You can ignore a rule on a specific code line by appending
-a `noqa` comment ("no quality analysis/assurance"):
-
-```python title="src/your_package/module.py"
-print("a code line that triggers a Ruff warning")  # noqa: ID
-```
-
-...where ID is the identifier of the rule you want to ignore for this line.
-
-Example:
-    ```python title="src/your_package/module.py"
-    import subprocess
-    ```
-
-    ```console
-    $ make check-quality
-    ✗ Checking code quality (1)
-    > ruff check --config=config/ruff.toml src/ tests/ scripts/
-    src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
-    ```
-
-    Now add a comment to ignore this warning.
-
-    ```python title="src/your_package/module.py"
-    import subprocess  # noqa: S404
-    ```
-
-    ```console
-    $ make check-quality
-    ✓ Checking code quality
-    ```
-
-    You can disable multiple different warnings on a single line
-    by separating them with commas, for example `# noqa: D300,D301`.
-
-You can disable a warning globally by adding its ID
-into the list in `config/ruff.toml`.
-
-You can also disable warnings per file, like so:
-
-```toml title="config/ruff.toml"
 [per-file-ignores]
 "src/your_package/your_module.py" = [
     "T201",  # Print statement
 ]
 ```
-"""
-ctx.run(
-    tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", color=True),
-    title=_pyprefix("Checking code quality"),
-)
-````
 
-```
+Source code in `duties.py`
+
+````
+@duty(nofail=PY_VERSION == PY_DEV)
+def check_quality(ctx: Context) -> None:
+    """Check the code quality.
+
+    ```bash
+    make check-quality
+    ```
+
+    Check the code quality using [Ruff](https://astral.sh/ruff).
+
+    The configuration for Ruff is located at `config/ruff.toml`.
+    In this file, you can deactivate rules or activate others to customize your analysis.
+    Rule identifiers always start with one or more capital letters, like `D`, `S` or `BLK`,
+    then followed by a number.
+
+    You can ignore a rule on a specific code line by appending
+    a `noqa` comment ("no quality analysis/assurance"):
+
+    ```python title="src/your_package/module.py"
+    print("a code line that triggers a Ruff warning")  # noqa: ID
+    ```
+
+    ...where ID is the identifier of the rule you want to ignore for this line.
+
+    Example:
+        ```python title="src/your_package/module.py"
+        import subprocess
+        ```
+
+        ```console
+        $ make check-quality
+        ✗ Checking code quality (1)
+        > ruff check --config=config/ruff.toml src/ tests/ scripts/
+        src/your_package/module.py:2:1: S404 Consider possible security implications associated with subprocess module.
+        ```
+
+        Now add a comment to ignore this warning.
+
+        ```python title="src/your_package/module.py"
+        import subprocess  # noqa: S404
+        ```
+
+        ```console
+        $ make check-quality
+        ✓ Checking code quality
+        ```
+
+        You can disable multiple different warnings on a single line
+        by separating them with commas, for example `# noqa: D300,D301`.
+
+    You can disable a warning globally by adding its ID
+    into the list in `config/ruff.toml`.
+
+    You can also disable warnings per file, like so:
+
+    ```toml title="config/ruff.toml"
+    [per-file-ignores]
+    "src/your_package/your_module.py" = [
+        "T201",  # Print statement
+    ]
+    ```
+    """
+    ctx.run(
+        tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", color=True),
+        title=_pyprefix("Checking code quality"),
+    )
+````
 
 ### `check-types`
 
 Check that the code is correctly typed.
 
 ```
-
 make check-types
-
 ```
 
 Run type-checking on the code with [ty](https://astral.sh/ty/).
 
 The configuration for ty is located at `config/ty.toml`.
 
-If you cannot or don't know how to fix a typing error in your code,
-as a last resort you can ignore this specific error with a comment:
+If you cannot or don't know how to fix a typing error in your code, as a last resort you can ignore this specific error with a comment:
 
 src/your_package/module.py
 
 ```
-
-print("a code line that triggers a ty warning") # ty:ignore[ID]
-
+print("a code line that triggers a ty warning")  # ty:ignore[ID]
 ```
 
 ...where ID is the name of the warning.
 
-Example:
+Example
 
 src/your_package/module.py
 
 ```
-
 result = data_dict.get(key, None).value
-
 ```
 
 ```
-
-```console
 $ make check-types
 ✗ Checking types (1)
 > ty check --config=config/ty.toml src/ tests/ scripts/
@@ -814,246 +803,204 @@ t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing 
 
 Now add a comment to ignore this warning.
 
-```python title="src/your_package/module.py"
+src/your_package/module.py
+
+```
 result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
 ```
 
-```console
+```
 $ make check-types
 ✓ Checking types
 ```
 
-```
-
-
 Source code in `duties.py`
 
-```
-
-@duty(nofail=PY_VERSION == PY_DEV) def check_types(ctx: Context) -> None: """Check that the code is correctly typed.
-
 ````
-```bash
-make check-types
-```
+@duty(nofail=PY_VERSION == PY_DEV)
+def check_types(ctx: Context) -> None:
+    """Check that the code is correctly typed.
 
-Run type-checking on the code with [ty](https://astral.sh/ty/).
-
-The configuration for ty is located at `config/ty.toml`.
-
-If you cannot or don't know how to fix a typing error in your code,
-as a last resort you can ignore this specific error with a comment:
-
-```python title="src/your_package/module.py"
-print("a code line that triggers a ty warning")  # ty:ignore[ID]
-```
-
-...where ID is the name of the warning.
-
-Example:
-    ```python title="src/your_package/module.py"
-    result = data_dict.get(key, None).value
+    ```bash
+    make check-types
     ```
 
-    ```console
-    $ make check-types
-    ✗ Checking types (1)
-    > ty check --config=config/ty.toml src/ tests/ scripts/
-    t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing on object of type `Data | None`
-    ```
+    Run type-checking on the code with [ty](https://astral.sh/ty/).
 
-    Now add a comment to ignore this warning.
+    The configuration for ty is located at `config/ty.toml`.
+
+    If you cannot or don't know how to fix a typing error in your code,
+    as a last resort you can ignore this specific error with a comment:
 
     ```python title="src/your_package/module.py"
-    result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
+    print("a code line that triggers a ty warning")  # ty:ignore[ID]
     ```
 
-    ```console
-    $ make check-types
-    ✓ Checking types
-    ```
-"""
-"""Check that the code is correctly typed."""
-py = f"{sys.version_info.major}.{sys.version_info.minor}"
-ctx.run(
-    tools.ty.check(
-        *PY_SRC_LIST,
-        config_file="config/ty.toml",
-        color=True,
-        python_version=py,
-    ),
-    title=_pyprefix("Type-checking"),
-)
+    ...where ID is the name of the warning.
+
+    Example:
+        ```python title="src/your_package/module.py"
+        result = data_dict.get(key, None).value
+        ```
+
+        ```console
+        $ make check-types
+        ✗ Checking types (1)
+        > ty check --config=config/ty.toml src/ tests/ scripts/
+        t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing on object of type `Data | None`
+        ```
+
+        Now add a comment to ignore this warning.
+
+        ```python title="src/your_package/module.py"
+        result = data_dict.get(key, None).value  # ty:ignore[possibly-missing-attribute]
+        ```
+
+        ```console
+        $ make check-types
+        ✓ Checking types
+        ```
+    """
+    py = f"{sys.version_info.major}.{sys.version_info.minor}"
+    ctx.run(
+        tools.ty.check(
+            *PY_SRC_LIST,
+            config_file="config/ty.toml",
+            color=True,
+            python_version=py,
+        ),
+        title=_pyprefix("Type-checking"),
+    )
 ````
-
-```
 
 ### `coverage`
 
 Report coverage as text and HTML.
 
 ```
-
 make coverage
-
 ```
 
-Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
-then generate an HTML report into the `htmlcov` directory,
-and print a text report in the console.
-
+Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/), then generate an HTML report into the `htmlcov` directory, and print a text report in the console.
 
 Source code in `duties.py`
 
-```
-
-@duty(silent=True, aliases=["cov"]) def coverage(ctx: Context) -> None: """Report coverage as text and HTML.
-
 ````
-```bash
-make coverage
-```
+@duty(silent=True, aliases=["cov"])
+def coverage(ctx: Context) -> None:
+    """Report coverage as text and HTML.
 
-Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
-then generate an HTML report into the `htmlcov` directory,
-and print a text report in the console.
-"""
-ctx.run(tools.coverage.combine(), nofail=True)
-ctx.run(tools.coverage.report(rcfile="config/coverage.ini"), capture=False)
-ctx.run(tools.coverage.html(rcfile="config/coverage.ini"))
+    ```bash
+    make coverage
+    ```
+
+    Combine coverage data from multiple test runs with [Coverage.py](https://coverage.readthedocs.io/),
+    then generate an HTML report into the `htmlcov` directory,
+    and print a text report in the console.
+    """
+    ctx.run(tools.coverage.combine(), nofail=True)
+    ctx.run(tools.coverage.report(rcfile="config/coverage.ini"), capture=False)
+    ctx.run(tools.coverage.html(rcfile="config/coverage.ini"))
 ````
-
-```
 
 ### `docs`
 
 Serve the documentation (localhost:8000).
 
 ```
-
 make docs
-
 ```
 
 This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
 
 Parameters:
 
-- **`*cli_args`**
-  (`str`, default:
-  `()`
-  )
-  –
-  Additional MkDocs CLI arguments.
-- **`host`**
-  (`str`, default:
-  `'127.0.0.1'`
-  )
-  –
-  The host to serve the docs from.
-- **`port`**
-  (`int`, default:
-  `8000`
-  )
-  –
-  The port to serve the docs on.
-
+- **`*cli_args`** (`str`, default: `()` ) – Additional MkDocs CLI arguments.
+- **`host`** (`str`, default: `'127.0.0.1'` ) – The host to serve the docs from.
+- **`port`** (`int`, default: `8000` ) – The port to serve the docs on.
 
 Source code in `duties.py`
 
-```
-
-@duty def docs(ctx: Context, \*cli_args: str, host: str = "127.0.0.1", port: int = 8000) -> None: """Serve the documentation (localhost:8000).
-
 ````
-```bash
-make docs
-```
+@duty
+def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000) -> None:
+    """Serve the documentation (localhost:8000).
 
-This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
+    ```bash
+    make docs
+    ```
 
-Parameters:
-    *cli_args: Additional MkDocs CLI arguments.
-    host: The host to serve the docs from.
-    port: The port to serve the docs on.
-"""
-ctx.run(
-    tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
-    title="Serving documentation",
-    capture=False,
-)
+    This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
+
+    Parameters:
+        *cli_args: Additional MkDocs CLI arguments.
+        host: The host to serve the docs from.
+        port: The port to serve the docs on.
+    """
+    ctx.run(
+        tools.mkdocs.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
+        title="Serving documentation",
+        capture=False,
+    )
 ````
-
-```
 
 ### `docs-deploy`
 
 Deploy the documentation to GitHub pages.
 
 ```
-
 make docs-deploy
-
 ```
 
 Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
-
 
 Source code in `duties.py`
 
-```
-
-@duty def docs_deploy(ctx: Context) -> None: """Deploy the documentation to GitHub pages.
-
 ````
-```bash
-make docs-deploy
-```
+@duty
+def docs_deploy(ctx: Context) -> None:
+    """Deploy the documentation to GitHub pages.
 
-Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
-"""
-os.environ["DEPLOY"] = "true"
-ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
+    ```bash
+    make docs-deploy
+    ```
+
+    Use [MkDocs](https://www.mkdocs.org/) to build and deploy the documentation to GitHub pages.
+    """
+    os.environ["DEPLOY"] = "true"
+    ctx.run(tools.mkdocs.gh_deploy(force=True), title="Deploying documentation")
 ````
-
-```
 
 ### `format`
 
 Run formatting tools on the code.
 
 ```
-
 make format
-
 ```
 
-Format the code with [Ruff](https://astral.sh/ruff).
-This command will also automatically fix some coding issues when possible.
-
+Format the code with [Ruff](https://astral.sh/ruff). This command will also automatically fix some coding issues when possible.
 
 Source code in `duties.py`
 
-```
-
-@duty def format(ctx: Context) -> None: """Run formatting tools on the code.
-
 ````
-```bash
-make format
-```
+@duty
+def format(ctx: Context) -> None:
+    """Run formatting tools on the code.
 
-Format the code with [Ruff](https://astral.sh/ruff).
-This command will also automatically fix some coding issues when possible.
-"""
-ctx.run(
-    tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", fix_only=True, exit_zero=True),
-    title="Auto-fixing code",
-)
-ctx.run(tools.ruff.format(*PY_SRC_LIST, config="config/ruff.toml"), title="Formatting code")
+    ```bash
+    make format
+    ```
+
+    Format the code with [Ruff](https://astral.sh/ruff).
+    This command will also automatically fix some coding issues when possible.
+    """
+    ctx.run(
+        tools.ruff.check(*PY_SRC_LIST, config="config/ruff.toml", fix_only=True, exit_zero=True),
+        title="Auto-fixing code",
+    )
+    ctx.run(tools.ruff.format(*PY_SRC_LIST, config="config/ruff.toml"), title="Formatting code")
 ````
-
-```
 
 ### `fuzz`
 
@@ -1061,85 +1008,66 @@ Fuzz Griffe against generated Python code.
 
 Parameters:
 
-- **`ctx`**
-  (`Context`)
-  –
-  The context instance (passed automatically).
-- **`size`**
-  (`int`, default:
-  `20`
-  )
-  –
-  The size of the case set (number of cases to test).
-- **`seeds`**
-  (`_Seeds`, default:
-  `_Seeds()`
-  )
-  –
-  Seeds to test or exclude (comma-separated integers).
-- **`min_seed`**
-  (`int`, default:
-  `0`
-  )
-  –
-  Minimum value for the seeds range.
-- **`max_seed`**
-  (`int`, default:
-  `1000000`
-  )
-  –
-  Maximum value for the seeds range.
-
+- **`ctx`** (`Context`) – The context instance (passed automatically).
+- **`size`** (`int`, default: `20` ) – The size of the case set (number of cases to test).
+- **`seeds`** (`_Seeds`, default: `_Seeds()` ) – Seeds to test or exclude (comma-separated integers).
+- **`min_seed`** (`int`, default: `0` ) – Minimum value for the seeds range.
+- **`max_seed`** (`int`, default: `1000000` ) – Maximum value for the seeds range.
 
 Source code in `duties.py`
 
 ```
+@duty
+def fuzz(
+    ctx: Context,
+    *,
+    size: int = 20,
+    min_seed: int = 0,
+    max_seed: int = 1_000_000,
+    seeds: _Seeds = _Seeds(),  # noqa: B008
+) -> None:
+    """Fuzz Griffe against generated Python code.
 
-@duty def fuzz( ctx: Context, \*, size: int = 20, min_seed: int = 0, max_seed: int = 1_000_000, seeds: \_Seeds = \_Seeds(), # noqa: B008 ) -> None: """Fuzz Griffe against generated Python code.
+    Parameters:
+        ctx: The context instance (passed automatically).
+        size: The size of the case set (number of cases to test).
+        seeds: Seeds to test or exclude (comma-separated integers).
+        min_seed: Minimum value for the seeds range.
+        max_seed: Maximum value for the seeds range.
+    """
+    from griffe import visit  # noqa: PLC0415
 
-```
-Parameters:
-    ctx: The context instance (passed automatically).
-    size: The size of the case set (number of cases to test).
-    seeds: Seeds to test or exclude (comma-separated integers).
-    min_seed: Minimum value for the seeds range.
-    max_seed: Maximum value for the seeds range.
-"""
-from griffe import visit  # noqa: PLC0415
+    warnings.simplefilter("ignore", SyntaxWarning)
 
-warnings.simplefilter("ignore", SyntaxWarning)
-
-def fails(code: str, filepath: Path) -> bool:
-    try:
-        visit(filepath.stem, filepath=filepath, code=code)
-    except Exception:  # noqa: BLE001
-        return True
-    return False
-
-def test_seed(seed: int, revisit: bool = False) -> bool:  # noqa: FBT001,FBT002
-    filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
-    if filepath.exists():
-        if revisit:
-            code = filepath.read_text()
-        else:
+    def fails(code: str, filepath: Path) -> bool:
+        try:
+            visit(filepath.stem, filepath=filepath, code=code)
+        except Exception:  # noqa: BLE001
             return True
-    else:
-        code = generate(seed)
-        filepath.write_text(code)
-
-    if fails(code, filepath):
-        new_code = minimize(code, partial(fails, filepath=filepath))
-        if code != new_code:
-            filepath.write_text(new_code)
         return False
-    return True
 
-revisit = bool(seeds)
-seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # ty:ignore[invalid-assignment]
-for seed in seeds:
-    ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")
-```
+    def test_seed(seed: int, revisit: bool = False) -> bool:  # noqa: FBT001,FBT002
+        filepath = Path(gettempdir(), f"fuzz_{seed}_{sys.version_info.minor}.py")
+        if filepath.exists():
+            if revisit:
+                code = filepath.read_text()
+            else:
+                return True
+        else:
+            code = generate(seed)
+            filepath.write_text(code)
 
+        if fails(code, filepath):
+            new_code = minimize(code, partial(fails, filepath=filepath))
+            if code != new_code:
+                filepath.write_text(new_code)
+            return False
+        return True
+
+    revisit = bool(seeds)
+    seeds = seeds or sample(range(min_seed, max_seed + 1), size)  # ty:ignore[invalid-assignment]
+    for seed in seeds:
+        ctx.run(test_seed, args=[seed, revisit], title=f"Visiting code generated with seed {seed}")
 ```
 
 ### `publish`
@@ -1147,49 +1075,41 @@ for seed in seeds:
 Publish source and wheel distributions to PyPI.
 
 ```
-
 make publish
-
 ```
 
-Publish the source and wheel distributions of your project to PyPI
-using [Twine](https://twine.readthedocs.io/).
-
+Publish the source and wheel distributions of your project to PyPI using [Twine](https://twine.readthedocs.io/).
 
 Source code in `duties.py`
 
-```
-
-@duty def publish(ctx: Context) -> None: """Publish source and wheel distributions to PyPI.
-
 ````
-```bash
-make publish
-```
+@duty
+def publish(ctx: Context) -> None:
+    """Publish source and wheel distributions to PyPI.
 
-Publish the source and wheel distributions of your project to PyPI
-using [Twine](https://twine.readthedocs.io/).
-"""
-if not Path("dist").exists():
-    ctx.run("false", title="No distribution files found")
-dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".gz", ".whl")]
-ctx.run(
-    tools.twine.upload(*dists, skip_existing=True),
-    title="Publishing distributions to PyPI",
-    pty=PTY,
-)
+    ```bash
+    make publish
+    ```
+
+    Publish the source and wheel distributions of your project to PyPI
+    using [Twine](https://twine.readthedocs.io/).
+    """
+    if not Path("dist").exists():
+        ctx.run("false", title="No distribution files found")
+    dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".gz", ".whl")]
+    ctx.run(
+        tools.twine.upload(*dists, skip_existing=True),
+        title="Publishing distributions to PyPI",
+        pty=PTY,
+    )
 ````
-
-```
 
 ### `release`
 
 Release a new version of the project.
 
 ```
-
 make release [version=VERSION]
-
 ```
 
 This task will:
@@ -1204,101 +1124,81 @@ This task will:
 
 Parameters:
 
-- **`version`**
-  (`str`, default:
-  `''`
-  )
-  –
-  The new version number to use. If not provided, you will be prompted for it.
-
+- **`version`** (`str`, default: `''` ) – The new version number to use. If not provided, you will be prompted for it.
 
 Source code in `duties.py`
 
-```
-
-@duty(post=["build", "publish", "docs-deploy"]) def release(ctx: Context, version: str = "") -> None: """Release a new version of the project.
-
 ````
-```bash
-make release [version=VERSION]
-```
+@duty(post=["build", "publish", "docs-deploy"])
+def release(ctx: Context, version: str = "") -> None:
+    """Release a new version of the project.
 
-This task will:
+    ```bash
+    make release [version=VERSION]
+    ```
 
-- Stage changes to `pyproject.toml` and `CHANGELOG.md`
-- Commit the changes with a message like `chore: Prepare release 1.0.0`
-- Tag the commit with the new version number
-- Push the commit and the tag to the remote repository
-- Build source and wheel distributions
-- Publish the distributions to PyPI
-- Deploy the documentation to GitHub pages
+    This task will:
 
-Parameters:
-    version: The new version number to use. If not provided, you will be prompted for it.
-"""
-if not (version := (version or input("> Version to release: ")).strip()):
-    ctx.run("false", title="A version must be provided")
-ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
-ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
-ctx.run(f"git tag -m '' -a {version}", title="Tagging commit", pty=PTY)
-ctx.run("git push", title="Pushing commits", pty=False)
-ctx.run("git push --tags", title="Pushing tags", pty=False)
+    - Stage changes to `pyproject.toml` and `CHANGELOG.md`
+    - Commit the changes with a message like `chore: Prepare release 1.0.0`
+    - Tag the commit with the new version number
+    - Push the commit and the tag to the remote repository
+    - Build source and wheel distributions
+    - Publish the distributions to PyPI
+    - Deploy the documentation to GitHub pages
+
+    Parameters:
+        version: The new version number to use. If not provided, you will be prompted for it.
+    """
+    if not (version := (version or input("> Version to release: ")).strip()):
+        ctx.run("false", title="A version must be provided")
+    ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
+    ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
+    ctx.run(f"git tag -m '' -a {version}", title="Tagging commit", pty=PTY)
+    ctx.run("git push", title="Pushing commits", pty=False)
+    ctx.run("git push --tags", title="Pushing tags", pty=False)
 ````
-
-```
 
 ### `test`
 
 Run the test suite.
 
 ```
-
 make test
-
 ```
 
-Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
-Code source coverage is computed thanks to
-[coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+Run the test suite with [Pytest](https://docs.pytest.org/) and plugins. Code source coverage is computed thanks to [coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
 
 Parameters:
 
-- **`*cli_args`**
-  (`str`, default:
-  `()`
-  )
-  –
-  Additional Pytest CLI arguments.
-
+- **`*cli_args`** (`str`, default: `()` ) – Additional Pytest CLI arguments.
 
 Source code in `duties.py`
 
-```
-
-@duty(nofail=PY_VERSION == PY_DEV) def test(ctx: Context, \*cli_args: str) -> None: """Run the test suite.
-
 ````
-```bash
-make test
-```
+@duty(nofail=PY_VERSION == PY_DEV)
+def test(ctx: Context, *cli_args: str) -> None:
+    """Run the test suite.
 
-Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
-Code source coverage is computed thanks to
-[coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+    ```bash
+    make test
+    ```
 
-Parameters:
-    *cli_args: Additional Pytest CLI arguments.
-"""
-os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
-os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
-ctx.run(
-    tools.pytest(
-        config_file="config/pytest.ini",
-        color="yes",
-    ).add_args("-n", "auto", *cli_args),
-    title=_pyprefix("Running tests"),
-)
+    Run the test suite with [Pytest](https://docs.pytest.org/) and plugins.
+    Code source coverage is computed thanks to
+    [coveragepy](https://coverage.readthedocs.io/en/coverage-5.1/).
+
+    Parameters:
+        *cli_args: Additional Pytest CLI arguments.
+    """
+    os.environ["COVERAGE_FILE"] = f".coverage.{PY_VERSION}"
+    os.environ["PYTHONWARNDEFAULTENCODING"] = "1"
+    ctx.run(
+        tools.pytest(
+            rootdir=".",
+            config_file="config/pytest.ini",
+            color="yes",
+        ).add_args("-n", "auto", *cli_args),
+        title=_pyprefix("Running tests"),
+    )
 ````
-
-```
-```
