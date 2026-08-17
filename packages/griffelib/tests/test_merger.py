@@ -18,7 +18,8 @@
 
 from __future__ import annotations
 
-from griffe import temporary_visited_package
+from griffe import Class, Docstring, Function, temporary_visited_package
+from griffe._internal.merger import _merge_stubs_docstring, _merge_stubs_overloads
 
 
 def test_dont_trigger_alias_resolution_when_merging_stubs() -> None:
@@ -111,3 +112,47 @@ def test_merge_overload_annotations() -> None:
         func = pkg["mod.func"]
         assert str(func.parameters["x"].annotation) == "int | float"
         assert str(func.returns) == "int | float"
+
+
+def test_merge_stubs_docstring_overwrites_dynamic_placeholder() -> None:
+    """Assert that a stub docstring overwrites a dynamically-analyzed placeholder docstring."""
+    obj = Function("func", analysis="dynamic")
+    obj.docstring = Docstring("func(self) -> double", parent=obj)
+    stubs = Function("func")
+    stubs.docstring = Docstring("The real, human-written documentation.", parent=stubs)
+
+    _merge_stubs_docstring(obj, stubs)
+
+    assert obj.docstring is not None
+    assert obj.docstring.value == "The real, human-written documentation."
+
+
+def test_merge_stubs_docstring_preserves_static_docstring() -> None:
+    """Assert that a statically-analyzed object's genuine docstring is not overwritten."""
+    obj = Function("func", analysis="static")
+    obj.docstring = Docstring("The original, human-written documentation.", parent=obj)
+    stubs = Function("func")
+    stubs.docstring = Docstring("A different stub docstring.", parent=stubs)
+
+    _merge_stubs_docstring(obj, stubs)
+
+    assert obj.docstring is not None
+    assert obj.docstring.value == "The original, human-written documentation."
+
+
+def test_merge_stubs_overloads_propagates_docstring_to_dynamic_base() -> None:
+    """Assert that an overload-only stub method's docstring is applied to the base dynamic function."""
+    base_function = Function("func", analysis="dynamic")
+    base_function.docstring = Docstring("func(self) -> double", parent=base_function)
+    class_ = Class("Klass")
+    class_.set_member("func", base_function)
+
+    overload = Function("func")
+    overload.docstring = Docstring("The real, human-written documentation.", parent=overload)
+    stubs_class = Class("Klass")
+    stubs_class.overloads["func"] = [overload]
+
+    _merge_stubs_overloads(class_, stubs_class)
+
+    assert class_["func"].docstring is not None
+    assert class_["func"].docstring.value == "The real, human-written documentation."

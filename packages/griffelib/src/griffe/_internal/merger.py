@@ -66,7 +66,7 @@ def _merge_type_alias_stubs(type_alias: TypeAlias, stubs: TypeAlias) -> None:
 
 
 def _merge_stubs_docstring(obj: Object, stubs: Object) -> None:
-    if not obj.docstring and stubs.docstring:
+    if stubs.docstring and (not obj.docstring or getattr(obj, "analysis", None) == "dynamic"):
         obj.docstring = stubs.docstring
 
 
@@ -100,6 +100,11 @@ def _merge_annotations(annotations: Sequence[Expr]) -> Expr | None:
 
 def _merge_overload_annotations(function: Function, overloads: list[Function]) -> None:
     function.overloads = overloads
+    if not function.docstring or getattr(function, "analysis", None) == "dynamic":
+        for overload in overloads:
+            if overload.docstring:
+                function.docstring = overload.docstring
+                break
     for parameter in function.parameters:
         if parameter.annotation is None:
             seen = set()
