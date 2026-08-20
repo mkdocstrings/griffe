@@ -24,25 +24,33 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from mkdocstrings import Inventory
 
 import griffe
-import griffecli
+
+try:
+    import griffecli
+except ModuleNotFoundError:
+    griffecli = None
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
     from types import ModuleType
 
+    from mkdocstrings import Inventory
 
-TESTED_MODULES = (griffe, griffecli)
+
+TESTED_MODULES = (griffe, griffecli) if griffecli else (griffe,)
 _test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
 
 
 @pytest.fixture(name="inventory", scope="module")
 def _fixture_inventory() -> Inventory:
+    pytest.importorskip("mkdocstrings")
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
         pytest.skip("The objects inventory is not available.")
+    from mkdocstrings import Inventory
+
     with inventory_file.open("rb") as file:
         return Inventory.parse_sphinx(file)
 
