@@ -118,6 +118,6 @@ def test_load_git_errors(git_repo: Path) -> None:
 def test_git_failures(tmp_path: Path) -> None:
     """Test failures to use Git."""
     pytest.importorskip("griffecli")
-    from griffe import check
+    from griffe import check  # noqa: PLC0415
 
     assert check(tmp_path) == 2

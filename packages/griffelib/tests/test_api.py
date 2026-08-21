@@ -45,14 +45,13 @@ _test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
 
 @pytest.fixture(name="inventory", scope="module")
 def _fixture_inventory() -> Inventory:
-    pytest.importorskip("mkdocstrings")
+    mkdocstrings = pytest.importorskip("mkdocstrings")
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
         pytest.skip("The objects inventory is not available.")
-    from mkdocstrings import Inventory
 
     with inventory_file.open("rb") as file:
-        return Inventory.parse_sphinx(file)
+        return mkdocstrings.Inventory.parse_sphinx(file)
 
 
 def _load_modules(*modules: ModuleType) -> griffe.GriffeLoader:
