@@ -55,11 +55,15 @@ def _fixture_inventory() -> Inventory:
 
 
 def _load_modules(*modules: ModuleType) -> griffe.GriffeLoader:
+    extensions = ["unpack_typeddict"]
+    try:
+        import griffe_inherited_docstrings  # noqa: F401, PLC0415
+
+        extensions.append("griffe_inherited_docstrings")
+    except ImportError:
+        pass
     loader = griffe.GriffeLoader(
-        extensions=griffe.load_extensions(
-            "griffe_inherited_docstrings",
-            "unpack_typeddict",
-        ),
+        extensions=griffe.load_extensions(*extensions),
     )
     for module in modules:
         loader.load(module.__name__)
