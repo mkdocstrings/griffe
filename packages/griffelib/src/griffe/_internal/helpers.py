@@ -151,6 +151,7 @@ def temporary_visited_package(
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
     search_sys_path: bool = False,
+    prefer_stubs_docs: bool = False,
 ) -> Iterator[Module]:
     """Create and visit a temporary package.
 
@@ -178,6 +179,9 @@ def temporary_visited_package(
             or the origin module (for example when `ast` imports from `_ast`).
         resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
         search_sys_path: Whether to search the system paths for the package.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
 
     Yields:
         A module.
@@ -198,6 +202,7 @@ def temporary_visited_package(
             resolve_external=resolve_external,
             resolve_implicit=resolve_implicit,
             force_inspection=False,
+            prefer_stubs_docs=prefer_stubs_docs,
         )
 
 
@@ -219,6 +224,7 @@ def temporary_inspected_package(
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
     search_sys_path: bool = False,
+    prefer_stubs_docs: bool = False,
 ) -> Iterator[Module]:
     """Create and inspect a temporary package.
 
@@ -246,6 +252,9 @@ def temporary_inspected_package(
             or the origin module (for example when `ast` imports from `_ast`).
         resolve_implicit: When false, only try to resolve an alias if it is explicitly exported.
         search_sys_path: Whether to search the system paths for the package.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
 
     Yields:
         A module.
@@ -267,6 +276,7 @@ def temporary_inspected_package(
                 resolve_external=resolve_external,
                 resolve_implicit=resolve_implicit,
                 force_inspection=True,
+                prefer_stubs_docs=prefer_stubs_docs,
             )
         finally:
             for name in tuple(sys.modules.keys()):

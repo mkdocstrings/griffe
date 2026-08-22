@@ -31,21 +31,21 @@ if TYPE_CHECKING:
     from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
 
 
-def _merge_module_stubs(module: Module, stubs: Module) -> None:
-    _merge_stubs_docstring(module, stubs)
+def _merge_module_stubs(module: Module, stubs: Module, *, psd: bool = False) -> None:
+    _merge_stubs_docstring(module, stubs, psd=psd)
     _merge_stubs_overloads(module, stubs)
-    _merge_stubs_members(module, stubs)
+    _merge_stubs_members(module, stubs, psd=psd)
 
 
-def _merge_class_stubs(class_: Class, stubs: Class) -> None:
-    _merge_stubs_docstring(class_, stubs)
+def _merge_class_stubs(class_: Class, stubs: Class, *, psd: bool = False) -> None:
+    _merge_stubs_docstring(class_, stubs, psd=psd)
     _merge_stubs_overloads(class_, stubs)
     _merge_stubs_type_parameters(class_, stubs)
-    _merge_stubs_members(class_, stubs)
+    _merge_stubs_members(class_, stubs, psd=psd)
 
 
-def _merge_function_stubs(function: Function, stubs: Function) -> None:
-    _merge_stubs_docstring(function, stubs)
+def _merge_function_stubs(function: Function, stubs: Function, *, psd: bool = False) -> None:
+    _merge_stubs_docstring(function, stubs, psd=psd)
     for parameter in stubs.parameters:
         with suppress(KeyError):
             function.parameters[parameter.name].annotation = parameter.annotation
@@ -53,20 +53,20 @@ def _merge_function_stubs(function: Function, stubs: Function) -> None:
     _merge_stubs_type_parameters(function, stubs)
 
 
-def _merge_attribute_stubs(attribute: Attribute, stubs: Attribute) -> None:
-    _merge_stubs_docstring(attribute, stubs)
+def _merge_attribute_stubs(attribute: Attribute, stubs: Attribute, *, psd: bool = False) -> None:
+    _merge_stubs_docstring(attribute, stubs, psd=psd)
     attribute.annotation = stubs.annotation
     if stubs.value not in (None, "..."):
         attribute.value = stubs.value
 
 
-def _merge_type_alias_stubs(type_alias: TypeAlias, stubs: TypeAlias) -> None:
-    _merge_stubs_docstring(type_alias, stubs)
+def _merge_type_alias_stubs(type_alias: TypeAlias, stubs: TypeAlias, *, psd: bool = False) -> None:
+    _merge_stubs_docstring(type_alias, stubs, psd=psd)
     _merge_stubs_type_parameters(type_alias, stubs)
 
 
-def _merge_stubs_docstring(obj: Object, stubs: Object) -> None:
-    if not obj.docstring and stubs.docstring:
+def _merge_stubs_docstring(obj: Object, stubs: Object, *, psd: bool = False) -> None:
+    if (psd or not obj.docstring) and stubs.docstring:
         obj.docstring = stubs.docstring
 
 
@@ -123,7 +123,7 @@ def _merge_overload_annotations(function: Function, overloads: list[Function]) -
         function.returns = _merge_annotations(return_annotations)
 
 
-def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
+def _merge_stubs_members(obj: Module | Class, stubs: Module | Class, *, psd: bool = False) -> None:
     # Merge imports to later know if objects coming from the stubs were imported.
     obj.imports.update(stubs.imports)
 
@@ -153,26 +153,29 @@ def _merge_stubs_members(obj: Module | Class, stubs: Module | Class) -> None:
                     )
                     obj.set_member(stub_member.name, stub_member)
                 elif obj_member.is_module:
-                    _merge_module_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
+                    _merge_module_stubs(obj_member, stub_member, psd=psd)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_class:
-                    _merge_class_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
+                    _merge_class_stubs(obj_member, stub_member, psd=psd)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_function:
-                    _merge_function_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
+                    _merge_function_stubs(obj_member, stub_member, psd=psd)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_attribute:
-                    _merge_attribute_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
+                    _merge_attribute_stubs(obj_member, stub_member, psd=psd)  # ty:ignore[invalid-argument-type]
                 elif obj_member.is_type_alias:
-                    _merge_type_alias_stubs(obj_member, stub_member)  # ty:ignore[invalid-argument-type]
+                    _merge_type_alias_stubs(obj_member, stub_member, psd=psd)  # ty:ignore[invalid-argument-type]
         else:
             stub_member.runtime = False
             obj.set_member(member_name, stub_member)
 
 
-def merge_stubs(mod1: Module, mod2: Module) -> Module:
+def merge_stubs(mod1: Module, mod2: Module, *, prefer_stubs_docs: bool = False) -> Module:
     """Merge stubs into a module.
 
     Parameters:
         mod1: A regular module or stubs module.
         mod2: A regular module or stubs module.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
 
     Raises:
         ValueError: When both modules are regular modules (no stubs is passed).
@@ -189,5 +192,5 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
         module = mod1
     else:
         raise ValueError("cannot merge regular (non-stubs) modules together")
-    _merge_module_stubs(module, stubs)
+    _merge_module_stubs(module, stubs, psd=prefer_stubs_docs)
     return module

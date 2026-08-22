@@ -84,6 +84,10 @@ class ModulesCollection(GetMembersMixin, SetMembersMixin, DelMembersMixin):
     is_collection = True
     """Marked as collection to distinguish from objects."""
 
+    # "Prefer stubs docstrings": we store it here
+    # to be able to access it in `SetMembersMixin.set_member`.
+    _psd: bool = False
+
     def __init__(self) -> None:
         """Initialize the collection."""
         self.members: dict[str, Module] = {}

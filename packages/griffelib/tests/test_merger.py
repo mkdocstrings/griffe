@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from griffe import temporary_visited_package
 
 
@@ -111,3 +113,21 @@ def test_merge_overload_annotations() -> None:
         func = pkg["mod.func"]
         assert str(func.parameters["x"].annotation) == "int | float"
         assert str(func.returns) == "int | float"
+
+
+@pytest.mark.parametrize(
+    ("psd", "expected"),
+    [(True, "Stubs"), (False, "Source")],
+)
+def test_prefer_stubs_docstrings(psd: bool, expected: str) -> None:
+    """The "prefer stubs docstrings" option is respected."""
+    with temporary_visited_package(
+        "package",
+        {
+            "mod.py": "def func():\n    '''Source'''",
+            "mod.pyi": "def func():\n    '''Stubs'''",
+        },
+        prefer_stubs_docs=psd,
+    ) as pkg:
+        func = pkg["mod.func"]
+        assert func.docstring.value == expected
