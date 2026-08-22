@@ -24,35 +24,46 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from mkdocstrings import Inventory
 
 import griffe
-import griffecli
+
+try:
+    import griffecli
+except ModuleNotFoundError:
+    griffecli = None
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
     from types import ModuleType
 
+    from mkdocstrings import Inventory
 
-TESTED_MODULES = (griffe, griffecli)
+
+TESTED_MODULES = (griffe, griffecli) if griffecli else (griffe,)
 _test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
 
 
 @pytest.fixture(name="inventory", scope="module")
 def _fixture_inventory() -> Inventory:
+    mkdocstrings = pytest.importorskip("mkdocstrings")
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
         pytest.skip("The objects inventory is not available.")
+
     with inventory_file.open("rb") as file:
-        return Inventory.parse_sphinx(file)
+        return mkdocstrings.Inventory.parse_sphinx(file)
 
 
 def _load_modules(*modules: ModuleType) -> griffe.GriffeLoader:
+    extensions = ["unpack_typeddict"]
+    try:
+        import griffe_inherited_docstrings  # noqa: F401, PLC0415
+
+        extensions.append("griffe_inherited_docstrings")
+    except ImportError:
+        pass
     loader = griffe.GriffeLoader(
-        extensions=griffe.load_extensions(
-            "griffe_inherited_docstrings",
-            "unpack_typeddict",
-        ),
+        extensions=griffe.load_extensions(*extensions),
     )
     for module in modules:
         loader.load(module.__name__)

@@ -41,6 +41,9 @@ classifiers = [
 # to download and inspect packages from PyPI.
 pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]
 
+[dependency-groups]
+dev = ["pytest>=8.2", "pytest-gitconfig>=0.8.0", "jsonschema>=4.18"]
+
 [tool.uv-dynamic-versioning]
 pattern = '(?P<base>\d+\.\d+\.\d+)'
 
