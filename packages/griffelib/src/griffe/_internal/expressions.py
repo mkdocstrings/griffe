@@ -27,7 +27,7 @@ import sys
 from dataclasses import dataclass
 from dataclasses import fields as getfields
 from enum import IntEnum, auto
-from functools import partial
+from functools import cache, partial
 from typing import TYPE_CHECKING, Any, Protocol
 
 from griffe._internal.agents.nodes.parameters import get_parameters
@@ -157,11 +157,19 @@ def _field_as_dict(
     return element
 
 
+@cache
+def _serializable_expression_fields(expression_class: type[Expr]) -> tuple[str, ...]:
+    return tuple(
+        field.name
+        for field in sorted(getfields(expression_class), key=lambda field: field.name)
+        if field.name != "parent"
+    )
+
+
 def _expr_as_dict(expression: Expr, **kwargs: Any) -> dict[str, Any]:
     fields = {
-        field.name: _field_as_dict(getattr(expression, field.name), **kwargs)
-        for field in sorted(getfields(expression), key=lambda f: f.name)
-        if field.name != "parent"
+        field_name: _field_as_dict(getattr(expression, field_name), **kwargs)
+        for field_name in _serializable_expression_fields(type(expression))
     }
     fields["cls"] = expression.classname
     return fields
