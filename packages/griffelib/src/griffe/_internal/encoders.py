@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path, PosixPath, WindowsPath
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from griffe._internal import expressions
 from griffe._internal.enumerations import Kind, ParameterKind, TypeParameterKind
@@ -44,6 +44,14 @@ from griffe._internal.models import (
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+_expression_class_map: dict[str, type[expressions.Expr]] = {
+    name: value
+    for name, value in vars(expressions).items()
+    if isinstance(value, type) and issubclass(value, expressions.Expr)
+}
+_parameter_kinds = frozenset(ParameterKind.__members__.values())
+_type_parameter_kinds = frozenset(TypeParameterKind.__members__.values())
 
 _json_encoder_map: dict[type, Callable[[Any], Any]] = {
     Path: str,
@@ -117,7 +125,7 @@ def _load_decorators(obj_dict: dict) -> list[Decorator]:
 
 def _load_expression(expression: dict) -> expressions.Expr:
     # The expression class name is stored in the `cls` key-value.
-    cls = getattr(expressions, expression.pop("cls"))
+    cls = _expression_class_map[expression.pop("cls")]
     expr = cls(**expression)
 
     # For attributes, we need to re-attach names (`values`) together,
@@ -127,9 +135,9 @@ def _load_expression(expression: dict) -> expressions.Expr:
     # as `(a or b)` is not a name and wouldn't allow to resolve `c`.
     if cls is expressions.ExprAttribute:
         previous = None
-        for value in expr.values:
+        for value in cast("expressions.ExprAttribute", expr).values:
             if previous is not None:
-                value.parent = previous
+                cast("expressions.ExprName", value).parent = previous
             if isinstance(value, expressions.ExprName):
                 previous = value
     return expr
@@ -377,13 +385,11 @@ def json_decoder(
     # Load objects and parameters.
     if "kind" in obj_dict:
         kind = obj_dict["kind"]
-        if kind in _loader_map:
-            return _loader_map[kind](obj_dict)
-        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
-        if kind in ParameterKind.__members__.values():
+        if loader := _loader_map.get(kind):
+            return loader(obj_dict)
+        if kind in _parameter_kinds:
             return _load_parameter(obj_dict)
-        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
-        if kind in TypeParameterKind.__members__.values():
+        if kind in _type_parameter_kinds:
             return _load_type_parameter(obj_dict)
 
     # Return dict as is.
