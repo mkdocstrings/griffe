@@ -105,8 +105,14 @@ _RE_DOCTEST_BLANKLINE: Pattern = re.compile(r"^\s*<BLANKLINE>\s*$")
 _RE_DOCTEST_FLAGS: Pattern = re.compile(r"(\s*#\s*doctest:.+)$")
 
 
-def _read_block_items(docstring: Docstring, *, offset: int, warnings: bool = True, **options: Any) -> _ItemsBlock:  # noqa: ARG001
-    lines = docstring.lines
+def _read_block_items(
+    lines: list[str],
+    docstring: Docstring,
+    *,
+    offset: int,
+    warnings: bool = True,
+    **options: Any,  # noqa: ARG001
+) -> _ItemsBlock:
     if offset >= len(lines):
         return [], offset
 
@@ -169,8 +175,12 @@ def _read_block_items(docstring: Docstring, *, offset: int, warnings: bool = Tru
     return items, new_offset - 1
 
 
-def _read_block(docstring: Docstring, *, offset: int, **options: Any) -> tuple[str, int]:  # noqa: ARG001
-    lines = docstring.lines
+def _read_block(
+    lines: list[str],
+    *,
+    offset: int,
+    **options: Any,  # noqa: ARG001
+) -> tuple[str, int]:
     if offset >= len(lines):
         return "", offset - 1
 
@@ -201,6 +211,7 @@ def _read_block(docstring: Docstring, *, offset: int, **options: Any) -> tuple[s
 
 
 def _read_parameters(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -212,7 +223,7 @@ def _read_parameters(
     parameters = []
     annotation: str | Expr | None
 
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     # TODO: Use `get_name_annotation_description` here too?
     for line_number, param_lines in block:
@@ -270,27 +281,30 @@ def _read_parameters(
 
 
 def _read_parameters_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset=offset, **options)
+    parameters, new_offset = _read_parameters(lines, docstring, offset=offset, **options)
     return DocstringSectionParameters(parameters), new_offset
 
 
 def _read_other_parameters_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
     warn_unknown_params: bool = True,  # noqa: ARG001
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset=offset, warn_unknown_params=False, **options)
+    parameters, new_offset = _read_parameters(lines, docstring, offset=offset, warn_unknown_params=False, **options)
     return DocstringSectionOtherParameters(parameters), new_offset
 
 
 def _read_type_parameters_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -300,7 +314,7 @@ def _read_type_parameters_section(
     type_parameters = []
     bound: str | Expr | None
 
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
 
     for line_number, type_param_lines in block:
         # check the presence of a name and description, separated by a colon
@@ -360,6 +374,7 @@ def _read_type_parameters_section(
 
 
 def _read_attributes_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -367,7 +382,7 @@ def _read_attributes_section(
     **options: Any,
 ) -> tuple[DocstringSectionAttributes | None, int]:
     attributes = []
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     annotation: str | Expr | None = None
     for line_number, attr_lines in block:
@@ -402,6 +417,7 @@ def _read_attributes_section(
 
 
 def _read_functions_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -409,7 +425,7 @@ def _read_functions_section(
     **options: Any,
 ) -> tuple[DocstringSectionFunctions | None, int]:
     functions = []
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     signature: str | Expr | None = None
     for line_number, func_lines in block:
@@ -439,6 +455,7 @@ def _read_functions_section(
 
 
 def _read_classes_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -446,7 +463,7 @@ def _read_classes_section(
     **options: Any,
 ) -> tuple[DocstringSectionClasses | None, int]:
     classes = []
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     signature: str | Expr | None = None
     for line_number, class_lines in block:
@@ -476,13 +493,14 @@ def _read_classes_section(
 
 
 def _read_type_aliases_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionTypeAliases | None, int]:
     type_aliases = []
-    block, new_offset = _read_block_items(docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
 
     for line_number, type_alias_lines in block:
         try:
@@ -501,6 +519,7 @@ def _read_type_aliases_section(
 
 
 def _read_modules_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -508,7 +527,7 @@ def _read_modules_section(
     **options: Any,
 ) -> tuple[DocstringSectionModules | None, int]:
     modules = []
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, module_lines in block:
         try:
@@ -529,6 +548,7 @@ def _read_modules_section(
 
 
 def _read_raises_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -536,7 +556,7 @@ def _read_raises_section(
     **options: Any,
 ) -> tuple[DocstringSectionRaises | None, int]:
     exceptions = []
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     annotation: str | Expr
     for line_number, exception_lines in block:
@@ -560,6 +580,7 @@ def _read_raises_section(
 
 
 def _read_warns_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -567,7 +588,7 @@ def _read_warns_section(
     **options: Any,
 ) -> tuple[DocstringSectionWarns | None, int]:
     warns = []
-    block, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, warning_lines in block:
         try:
@@ -588,6 +609,7 @@ def _read_warns_section(
 
 
 def _read_block_items_maybe(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -595,8 +617,8 @@ def _read_block_items_maybe(
     **options: Any,
 ) -> _ItemsBlock:
     if multiple:
-        return _read_block_items(docstring, offset=offset, **options)
-    one_block, new_offset = _read_block(docstring, offset=offset, **options)
+        return _read_block_items(lines, docstring, offset=offset, **options)
+    one_block, new_offset = _read_block(lines, offset=offset, **options)
     return [(new_offset, one_block.splitlines())], new_offset
 
 
@@ -651,6 +673,7 @@ def _annotation_from_parent(
 
 
 def _read_returns_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -663,6 +686,7 @@ def _read_returns_section(
     returns = []
 
     block, new_offset = _read_block_items_maybe(
+        lines,
         docstring,
         offset=offset,
         multiple=returns_multiple_items,
@@ -697,6 +721,7 @@ def _read_returns_section(
 
 
 def _read_yields_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -709,6 +734,7 @@ def _read_yields_section(
     yields = []
 
     block, new_offset = _read_block_items_maybe(
+        lines,
         docstring,
         offset=offset,
         multiple=returns_multiple_items,
@@ -743,6 +769,7 @@ def _read_yields_section(
 
 
 def _read_receives_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -755,6 +782,7 @@ def _read_receives_section(
     receives = []
 
     block, new_offset = _read_block_items_maybe(
+        lines,
         docstring,
         offset=offset,
         multiple=receives_multiple_items,
@@ -789,13 +817,14 @@ def _read_receives_section(
 
 
 def _read_examples_section(
-    docstring: Docstring,
+    lines: list[str],
+    docstring: Docstring,  # noqa: ARG001
     *,
     offset: int,
     trim_doctest_flags: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionExamples | None, int]:
-    text, new_offset = _read_block(docstring, offset=offset, **options)
+    text, new_offset = _read_block(lines, offset=offset, **options)
 
     sub_sections: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = []
     in_code_example = False
@@ -848,7 +877,7 @@ def _read_examples_section(
 
 
 def _is_empty_line(line: str) -> bool:
-    return not line.strip()
+    return not line or line.isspace()
 
 
 _section_reader = {
@@ -969,18 +998,19 @@ def parse_google(
     offset = 2 if ignore_summary else 0
 
     while offset < len(lines):
-        line_lower = lines[offset].lower()
+        line = lines[offset]
+        is_code_fence = line.lstrip(" ").startswith("```")
 
         if in_code_block:
-            if line_lower.lstrip(" ").startswith("```"):
+            if is_code_fence:
                 in_code_block = False
-            current_section.append(lines[offset])
+            current_section.append(line)
 
-        elif line_lower.lstrip(" ").startswith("```"):
+        elif is_code_fence:
             in_code_block = True
-            current_section.append(lines[offset])
+            current_section.append(line)
 
-        elif match := _RE_ADMONITION.match(lines[offset]):
+        elif ":" in line and (match := _RE_ADMONITION.match(line)):
             groups = match.groupdict()
             title = groups["title"]
             admonition_type = groups["type"]
@@ -1025,13 +1055,13 @@ def parse_google(
                         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                     current_section = []
                 reader = _section_reader[_section_kind[admonition_type.lower()]]
-                section, offset = reader(docstring, offset=offset + 1, **options)
+                section, offset = reader(lines, docstring, offset=offset + 1, **options)
                 if section:
                     section.title = title
                     sections.append(section)
 
             else:
-                contents, offset = _read_block(docstring, offset=offset + 1)
+                contents, offset = _read_block(lines, offset=offset + 1)
                 if contents:
                     if current_section:
                         if any(current_section):
@@ -1045,7 +1075,7 @@ def parse_google(
                     with suppress(IndexError):
                         current_section.append(lines[offset])
         else:
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         offset += 1
 

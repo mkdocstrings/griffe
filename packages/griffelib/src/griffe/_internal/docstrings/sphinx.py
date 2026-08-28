@@ -63,7 +63,11 @@ class _FieldType:
     """Maps directive names to parser functions."""
 
     names: frozenset[str]
-    reader: Callable[[Docstring, int, _ParsedValues], int]
+    reader: Callable[..., int]
+    prefixes: tuple[str, ...] = field(init=False, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "prefixes", tuple(f":{name}" for name in self.names))
 
     def matches(self, line: str) -> bool:
         """Check if a line matches the field type.
@@ -74,7 +78,7 @@ class _FieldType:
         Returns:
             True if the line matches the field type, False otherwise.
         """
-        return any(line.startswith(f":{name}") for name in self.names)
+        return line.startswith(self.prefixes)
 
 
 @dataclass
@@ -144,10 +148,15 @@ def parse_sphinx(
 
     while curr_line_index < len(lines):
         line = lines[curr_line_index]
+        if not line.startswith(":"):
+            parsed_values.description.append(line)
+            curr_line_index += 1
+            continue
+
         for field_type in _field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
-                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values, **options)
+                curr_line_index = field_type.reader(lines, docstring, curr_line_index, parsed_values, **options)
                 break
         else:
             parsed_values.description.append(line)
@@ -158,6 +167,7 @@ def parse_sphinx(
 
 
 def _read_parameter(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -166,7 +176,7 @@ def _read_parameter(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -263,6 +273,7 @@ def _determine_param_annotation(
 
 
 def _read_parameter_type(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -270,7 +281,7 @@ def _read_parameter_type(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
     param_type_str = _consolidate_descriptive_type(parsed_directive.value.strip())
@@ -294,6 +305,7 @@ def _read_parameter_type(
 
 
 def _read_attribute(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -301,7 +313,7 @@ def _read_attribute(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -341,6 +353,7 @@ def _read_attribute(
 
 
 def _read_attribute_type(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -348,7 +361,7 @@ def _read_attribute_type(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
     attribute_type = _consolidate_descriptive_type(parsed_directive.value.strip())
@@ -371,6 +384,7 @@ def _read_attribute_type(
 
 
 def _read_exception(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -378,7 +392,7 @@ def _read_exception(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -392,6 +406,7 @@ def _read_exception(
 
 
 def _read_return(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -400,7 +415,7 @@ def _read_return(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -426,6 +441,7 @@ def _read_return(
 
 
 def _read_return_type(
+    lines: list[str],
     docstring: Docstring,
     offset: int,
     parsed_values: _ParsedValues,
@@ -433,7 +449,7 @@ def _read_return_type(
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> int:
-    parsed_directive = _parse_directive(docstring, offset, warnings=warnings)
+    parsed_directive = _parse_directive(lines, docstring, offset, warnings=warnings)
     if parsed_directive.invalid:
         return parsed_directive.next_index
 
@@ -462,8 +478,14 @@ def _parsed_values_to_sections(parsed_values: _ParsedValues) -> list[DocstringSe
     return result
 
 
-def _parse_directive(docstring: Docstring, offset: int, *, warnings: bool = True) -> _ParsedDirective:
-    line, next_index = _consolidate_continuation_lines(docstring.lines, offset)
+def _parse_directive(
+    lines: list[str],
+    docstring: Docstring,
+    offset: int,
+    *,
+    warnings: bool = True,
+) -> _ParsedDirective:
+    line, next_index = _consolidate_continuation_lines(lines, offset)
     try:
         _, directive, value = line.split(":", 2)
     except ValueError:

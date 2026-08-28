@@ -105,21 +105,21 @@ _section_kind = {
 
 
 def _is_empty_line(line: str) -> bool:
-    return not line.strip()
+    return not line or line.isspace()
 
 
 def _is_dash_line(line: str) -> bool:
-    return not _is_empty_line(line) and _is_empty_line(line.replace("-", ""))
+    return "-" in line and _is_empty_line(line.replace("-", ""))
 
 
 def _read_block_items(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
     warnings: bool = True,
     **options: Any,  # noqa: ARG001
 ) -> tuple[list[list[str]], int]:
-    lines = docstring.lines
     if offset >= len(lines):
         return [], offset
 
@@ -174,8 +174,12 @@ def _read_block_items(
     return items, new_offset - 1
 
 
-def _read_block(docstring: Docstring, *, offset: int, **options: Any) -> tuple[str, int]:  # noqa: ARG001
-    lines = docstring.lines
+def _read_block(
+    lines: list[str],
+    *,
+    offset: int,
+    **options: Any,  # noqa: ARG001
+) -> tuple[str, int]:
     if offset >= len(lines):
         return "", offset
 
@@ -237,6 +241,7 @@ _RE_DOCTEST_FLAGS: Pattern = re.compile(r"(\s*#\s*doctest:.+)$")
 
 
 def _read_parameters(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -248,7 +253,7 @@ def _read_parameters(
     parameters: list[DocstringParameter] = []
     annotation: str | Expr | None
 
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
 
     for item in items:
         match = _RE_PARAMETER.match(item[0])
@@ -311,13 +316,14 @@ def _read_parameters(
 
 
 def _read_parameters_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
     warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionParameters | None, int]:
-    parameters, new_offset = _read_parameters(docstring, offset=offset, warnings=warnings, **options)
+    parameters, new_offset = _read_parameters(lines, docstring, offset=offset, warnings=warnings, **options)
     if parameters:
         return DocstringSectionParameters(parameters), new_offset
     if warnings:
@@ -326,6 +332,7 @@ def _read_parameters_section(
 
 
 def _read_other_parameters_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -334,6 +341,7 @@ def _read_other_parameters_section(
     **options: Any,
 ) -> tuple[DocstringSectionOtherParameters | None, int]:
     parameters, new_offset = _read_parameters(
+        lines,
         docstring,
         offset=offset,
         warn_unknown_params=False,
@@ -348,6 +356,7 @@ def _read_other_parameters_section(
 
 
 def _read_type_parameters_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -357,7 +366,7 @@ def _read_type_parameters_section(
     type_parameters: list[DocstringTypeParameter] = []
     bound: str | Expr | None
 
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
 
     for item in items:
         match = _RE_PARAMETER.match(item[0])
@@ -418,6 +427,7 @@ def _read_type_parameters_section(
 
 
 def _read_deprecated_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -427,7 +437,7 @@ def _read_deprecated_section(
     # deprecated
     # SINCE_VERSION
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -444,6 +454,7 @@ def _read_deprecated_section(
 
 
 def _read_returns_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -452,7 +463,7 @@ def _read_returns_section(
 ) -> tuple[DocstringSectionReturns | None, int]:
     # (NAME : )?TYPE
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -503,6 +514,7 @@ def _read_returns_section(
 
 
 def _read_yields_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -512,7 +524,7 @@ def _read_yields_section(
     # yields
     # (NAME : )?TYPE
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -554,6 +566,7 @@ def _read_yields_section(
 
 
 def _read_receives_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -563,7 +576,7 @@ def _read_receives_section(
     # receives
     # (NAME : )?TYPE
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -601,6 +614,7 @@ def _read_receives_section(
 
 
 def _read_raises_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -610,7 +624,7 @@ def _read_raises_section(
     # raises
     # EXCEPTION
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -626,6 +640,7 @@ def _read_raises_section(
 
 
 def _read_warns_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -635,7 +650,7 @@ def _read_warns_section(
     # warns
     # WARNING
     #     TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -651,6 +666,7 @@ def _read_warns_section(
 
 
 def _read_attributes_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -660,7 +676,7 @@ def _read_attributes_section(
     # attributes (for classes)
     # NAME( : TYPE)?
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -690,6 +706,7 @@ def _read_attributes_section(
 
 
 def _read_functions_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -698,7 +715,7 @@ def _read_functions_section(
 ) -> tuple[DocstringSectionFunctions | None, int]:
     # SIGNATURE
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -722,6 +739,7 @@ def _read_functions_section(
 
 
 def _read_classes_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -730,7 +748,7 @@ def _read_classes_section(
 ) -> tuple[DocstringSectionClasses | None, int]:
     # SIGNATURE
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -754,12 +772,13 @@ def _read_classes_section(
 
 
 def _read_type_aliases_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
     **options: Any,
 ) -> tuple[DocstringSectionTypeAliases | None, int]:
-    items, new_offset = _read_block_items(docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
 
     if not items:
         docstring_warning(docstring, new_offset, f"Empty type aliases section at line {offset}")
@@ -774,6 +793,7 @@ def _read_type_aliases_section(
 
 
 def _read_modules_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -782,7 +802,7 @@ def _read_modules_section(
 ) -> tuple[DocstringSectionModules | None, int]:
     # NAME
     #    TEXT?
-    items, new_offset = _read_block_items(docstring, offset=offset, warnings=warnings, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
         if warnings:
@@ -806,6 +826,7 @@ def _read_modules_section(
 
 
 def _read_examples_section(
+    lines: list[str],
     docstring: Docstring,
     *,
     offset: int,
@@ -813,7 +834,7 @@ def _read_examples_section(
     warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionExamples | None, int]:
-    text, new_offset = _read_block(docstring, offset=offset, warnings=warnings, **options)
+    text, new_offset = _read_block(lines, offset=offset, warnings=warnings, **options)
 
     sub_sections: list[tuple[Literal[DocstringSectionKind.text, DocstringSectionKind.examples], str]] = []
     in_code_example = False
@@ -975,28 +996,29 @@ def parse_numpy(
     offset = 2 if ignore_summary else 0
 
     while offset < len(lines):
-        line_lower = lines[offset].lower()
+        line = lines[offset]
+        is_code_fence = line.lstrip(" ").startswith("```")
 
         # Code blocks can contain dash lines that we must not interpret.
         if in_code_block:
             # End of code block.
-            if line_lower.lstrip(" ").startswith("```"):
+            if is_code_fence:
                 in_code_block = False
             # Lines in code block must not be interpreted in any way.
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         # Start of code block.
-        elif line_lower.lstrip(" ").startswith("```"):
+        elif is_code_fence:
             in_code_block = True
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         # Dash lines after empty lines lose their meaning.
-        elif _is_empty_line(lines[offset]):
+        elif _is_empty_line(line):
             current_section.append("")
 
         # End of the docstring, wrap up.
         elif offset == len(lines) - 1:
-            current_section.append(lines[offset])
+            current_section.append(line)
             _append_section(sections, current_section, admonition_title)
             admonition_title = ""
             current_section = []
@@ -1006,23 +1028,24 @@ def parse_numpy(
             # Finish reading current section.
             _append_section(sections, current_section, admonition_title)
             current_section = []
+            line_lower = line.lower()
 
             # Start parsing new (known) section.
             if line_lower in _section_kind:
                 admonition_title = ""
                 reader = _section_reader[_section_kind[line_lower]]
-                section, offset = reader(docstring, offset=offset + 2, **options)
+                section, offset = reader(lines, docstring, offset=offset + 2, **options)
                 if section:
                     sections.append(section)
 
             # Start parsing admonition.
             else:
-                admonition_title = lines[offset]
+                admonition_title = line
                 offset += 1  # Skip next dash line.
 
         # Regular line.
         else:
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         offset += 1
 
