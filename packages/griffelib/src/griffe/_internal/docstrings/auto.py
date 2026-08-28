@@ -44,7 +44,7 @@ DocstringDetectionMethod = Literal["heuristics", "max_sections"]
 """The supported methods to infer docstring styles."""
 
 
-_patterns = {
+_pattern_templates = {
     Parser.google: (
         r"\n[ \t]*{0}:([ \t]+.+)?\n[ \t]+.+",
         [
@@ -122,6 +122,14 @@ _patterns = {
     ),
 }
 
+_patterns = {
+    style: re.compile(
+        pattern.format(f"(?:{'|'.join(map(re.escape, replacements))})"),
+        re.IGNORECASE | re.MULTILINE,
+    )
+    for style, (pattern, replacements) in _pattern_templates.items()
+}
+
 
 class PerStyleOptions(TypedDict, total=False):
     """Per-style options for docstring parsing."""
@@ -168,15 +176,14 @@ def infer_docstring_style(
 
     per_style_options = per_style_options or {}
 
-    style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
+    if not style_order:
+        style_order = _default_style_order
+    else:
+        style_order = [Parser(style) if isinstance(style, str) else style for style in style_order]
 
     if method == "heuristics":
         for style in style_order:
-            pattern, replacements = _patterns[style]
-            patterns = [
-                re.compile(pattern.format(replacement), re.IGNORECASE | re.MULTILINE) for replacement in replacements
-            ]
-            if any(pattern.search(docstring.value) for pattern in patterns):
+            if _patterns[style].search(docstring.value):
                 return style, None
         return default if default is None or isinstance(default, Parser) else Parser(default), None
 
