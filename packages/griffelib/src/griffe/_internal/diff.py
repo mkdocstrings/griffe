@@ -620,13 +620,14 @@ def _member_incompatibilities(
     seen_paths: set[str] | None = None,
 ) -> Iterator[Breakage]:
     seen_paths = set() if seen_paths is None else seen_paths
+    new_members = new_obj.all_members
     for name, old_member in old_obj.all_members.items():
         if not old_member.is_public:
             logger.debug("API check: %s.%s: skip non-public object", old_obj.path, name)
             continue
         logger.debug("API check: %s.%s", old_obj.path, name)
         try:
-            new_member = new_obj.all_members[name]
+            new_member = new_members[name]
         except KeyError:
             if (not old_member.is_alias and old_member.is_module) or old_member.is_public:
                 yield ObjectRemovedBreakage(old_member, old_member, None)  # ty:ignore[invalid-argument-type]
