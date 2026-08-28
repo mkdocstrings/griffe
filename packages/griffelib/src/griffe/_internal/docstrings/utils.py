@@ -18,9 +18,10 @@
 
 from __future__ import annotations
 
-from ast import PyCF_ONLY_AST
+from ast import Expression, PyCF_ONLY_AST
 from contextlib import suppress
-from typing import TYPE_CHECKING
+from functools import lru_cache
+from typing import TYPE_CHECKING, cast
 
 from griffe._internal.enumerations import LogLevel
 from griffe._internal.exceptions import BuiltinModuleError
@@ -64,6 +65,14 @@ def docstring_warning(
     warn(docstring, offset, message, log_level)
 
 
+@lru_cache(maxsize=512)
+def _compile_docstring_annotation(annotation: str) -> Expression | None:
+    try:
+        return cast("Expression", compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2))
+    except SyntaxError:
+        return None
+
+
 def parse_docstring_annotation(
     annotation: str,
     docstring: Docstring,
@@ -80,14 +89,10 @@ def parse_docstring_annotation(
     Returns:
         The string unchanged, or a new name or expression.
     """
-    with suppress(
-        AttributeError,  # Docstring has no parent that can be used to resolve names.
-        SyntaxError,  # Annotation contains syntax errors.
-    ):
-        code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-        if code.body:  # ty:ignore[unresolved-attribute]
+    with suppress(AttributeError):  # Docstring has no parent that can be used to resolve names.
+        if (code := _compile_docstring_annotation(annotation)) and code.body:
             name_or_expr = safe_get_annotation(
-                code.body,  # ty:ignore[unresolved-attribute]
+                code.body,
                 parent=docstring.parent,  # ty:ignore[invalid-argument-type]
                 log_level=log_level,
             )
