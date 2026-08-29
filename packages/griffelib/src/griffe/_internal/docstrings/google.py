@@ -309,23 +309,25 @@ def _read_type_parameters_section(
     *,
     offset: int,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionTypeParameters | None, int]:
     type_parameters = []
     bound: str | Expr | None
 
-    block, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, type_param_lines in block:
         # check the presence of a name and description, separated by a colon
         try:
             name_with_bound, description = type_param_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'name: description' pair from '{type_param_lines[0]}'",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'name: description' pair from '{type_param_lines[0]}'",
+                )
             continue
 
         description = "\n".join([description.lstrip(), *type_param_lines[1:]]).rstrip("\n")
@@ -350,7 +352,7 @@ def _read_type_parameters_section(
         except (AttributeError, KeyError):
             default = None
 
-        if warn_unknown_params:
+        if warnings and warn_unknown_params:
             with suppress(AttributeError):  # for type parameters sections in objects without type parameters
                 type_params = docstring.parent.type_parameters  # ty:ignore[unresolved-attribute]
                 if name not in type_params:
@@ -497,20 +499,22 @@ def _read_type_aliases_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionTypeAliases | None, int]:
     type_aliases = []
-    block, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
+    block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     for line_number, type_alias_lines in block:
         try:
             name, description = type_alias_lines[0].split(":", 1)
         except ValueError:
-            docstring_warning(
-                docstring,
-                line_number,
-                f"Failed to get 'name: description' pair from '{type_alias_lines[0]}'",
-            )
+            if warnings:
+                docstring_warning(
+                    docstring,
+                    line_number,
+                    f"Failed to get 'name: description' pair from '{type_alias_lines[0]}'",
+                )
             continue
         description = "\n".join([description.lstrip(), *type_alias_lines[1:]]).rstrip("\n")
         type_aliases.append(DocstringTypeAlias(name=name, description=description))
@@ -614,10 +618,11 @@ def _read_block_items_maybe(
     *,
     offset: int,
     multiple: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> _ItemsBlock:
     if multiple:
-        return _read_block_items(lines, docstring, offset=offset, **options)
+        return _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
     one_block, new_offset = _read_block(lines, offset=offset, **options)
     return [(new_offset, one_block.splitlines())], new_offset
 
@@ -690,6 +695,7 @@ def _read_returns_section(
         docstring,
         offset=offset,
         multiple=returns_multiple_items,
+        warnings=warnings,
         **options,
     )
 
@@ -700,6 +706,7 @@ def _read_returns_section(
                 line_number,
                 return_lines,
                 named=returns_named_value,
+                warnings=warnings,
             )
         except ValueError:
             continue
@@ -738,6 +745,7 @@ def _read_yields_section(
         docstring,
         offset=offset,
         multiple=returns_multiple_items,
+        warnings=warnings,
         **options,
     )
 
@@ -748,6 +756,7 @@ def _read_yields_section(
                 line_number,
                 yield_lines,
                 named=returns_named_value,
+                warnings=warnings,
             )
         except ValueError:
             continue
@@ -786,6 +795,7 @@ def _read_receives_section(
         docstring,
         offset=offset,
         multiple=receives_multiple_items,
+        warnings=warnings,
         **options,
     )
 
@@ -796,6 +806,7 @@ def _read_receives_section(
                 line_number,
                 receive_lines,
                 named=receives_named_value,
+                warnings=warnings,
             )
         except ValueError:
             continue

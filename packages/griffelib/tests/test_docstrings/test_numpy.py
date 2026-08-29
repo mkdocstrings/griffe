@@ -1371,17 +1371,38 @@ def test_parsing_choices(parse_numpy: ParserType) -> None:
 
 # =============================================================================================
 # Warnings
-def test_disabled_warnings(parse_numpy: ParserType) -> None:
-    """Assert warnings are disabled.
-
-    Parameters:
-        parse_numpy: Fixture parser.
-    """
-    docstring = """
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        """
         Parameters
         ----------
         x :
             X value.
+        """,
+        """
+        Parameters
+        ----------
+        x : int
+          Confusing indentation.
+        """,
+        """
+        Type Parameters
+        ---------------
+        !!!
+        """,
+        """
+        Type Aliases
+        ------------
+        """,
+    ],
+)
+def test_disabled_warnings(parse_numpy: ParserType, docstring: str) -> None:
+    """Assert warnings are disabled.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+        docstring: A docstring that triggers a parser warning.
     """
     _, warnings = parse_numpy(docstring, warnings=True)
     assert warnings

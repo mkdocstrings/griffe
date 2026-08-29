@@ -253,7 +253,7 @@ def _read_parameters(
     parameters: list[DocstringParameter] = []
     annotation: str | Expr | None
 
-    items, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     for item in items:
         match = _RE_PARAMETER.match(item[0])
@@ -361,17 +361,19 @@ def _read_type_parameters_section(
     *,
     offset: int,
     warn_unknown_params: bool = True,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionTypeParameters | None, int]:
     type_parameters: list[DocstringTypeParameter] = []
     bound: str | Expr | None
 
-    items, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     for item in items:
         match = _RE_PARAMETER.match(item[0])
         if not match:
-            docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
+            if warnings:
+                docstring_warning(docstring, new_offset, f"Could not parse line '{item[0]}'")
             continue
 
         names = match.group("names").split(", ")
@@ -403,7 +405,7 @@ def _read_type_parameters_section(
                     default = docstring.parent.type_parameters[name].default  # ty:ignore[unresolved-attribute]
                     break
 
-        if warn_unknown_params:
+        if warnings and warn_unknown_params:
             with suppress(AttributeError):  # for parameters sections in objects without parameters
                 type_params = docstring.parent.type_parameters  # ty:ignore[unresolved-attribute]
                 for name in names:
@@ -422,7 +424,8 @@ def _read_type_parameters_section(
     if type_parameters:
         return DocstringSectionTypeParameters(type_parameters), new_offset
 
-    docstring_warning(docstring, new_offset, f"Empty type parameters section at line {offset}")
+    if warnings:
+        docstring_warning(docstring, new_offset, f"Empty type parameters section at line {offset}")
     return None, new_offset
 
 
@@ -776,12 +779,14 @@ def _read_type_aliases_section(
     docstring: Docstring,
     *,
     offset: int,
+    warnings: bool = True,
     **options: Any,
 ) -> tuple[DocstringSectionTypeAliases | None, int]:
-    items, new_offset = _read_block_items(lines, docstring, offset=offset, **options)
+    items, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
     if not items:
-        docstring_warning(docstring, new_offset, f"Empty type aliases section at line {offset}")
+        if warnings:
+            docstring_warning(docstring, new_offset, f"Empty type aliases section at line {offset}")
         return None, new_offset
 
     type_aliases = []

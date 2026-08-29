@@ -299,7 +299,7 @@ def _read_parameter_type(
     if param is not None:
         if param.annotation is None:
             param.annotation = param_type
-        else:
+        elif warnings:
             docstring_warning(docstring, 0, f"Duplicate parameter information for '{param_name}'")
     return parsed_directive.next_index
 

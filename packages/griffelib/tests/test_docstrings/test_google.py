@@ -1931,15 +1931,44 @@ def test_reading_property_type_in_summary(parse_google: ParserType) -> None:
 
 # =============================================================================================
 # Warnings
-def test_disabled_warnings(parse_google: ParserType) -> None:
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        """
+        Parameters:
+            x: X value.
+        """,
+        """
+        Type Parameters:
+            T without a description
+        """,
+        """
+        Type Aliases:
+            Alias without a description
+        """,
+        """
+        Returns:
+            int: Return value.
+              Confusing indentation.
+        """,
+        """
+        Yields:
+            int: Yielded value.
+              Confusing indentation.
+        """,
+        """
+        Receives:
+            int: Received value.
+              Confusing indentation.
+        """,
+    ],
+)
+def test_disabled_warnings(parse_google: ParserType, docstring: str) -> None:
     """Assert warnings are disabled.
 
     Parameters:
         parse_google: Fixture parser.
-    """
-    docstring = """
-        Parameters:
-            x: X value.
+        docstring: A docstring that triggers a parser warning.
     """
     _, warnings = parse_google(docstring, warnings=True)
     assert warnings

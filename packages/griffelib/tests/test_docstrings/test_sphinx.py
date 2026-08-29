@@ -1316,13 +1316,23 @@ def test_parse__properties_return_type(parse_sphinx: ParserType) -> None:
 
 # =============================================================================================
 # Warnings
-def test_disabled_warnings(parse_sphinx: ParserType) -> None:
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        ":param x: X value.",
+        """
+        :param int x: X value.
+        :type x: str
+        """,
+    ],
+)
+def test_disabled_warnings(parse_sphinx: ParserType, docstring: str) -> None:
     """Assert warnings are disabled.
 
     Parameters:
         parse_sphinx: Fixture parser.
+        docstring: A docstring that triggers a parser warning.
     """
-    docstring = ":param x: X value."
     _, warnings = parse_sphinx(docstring, warnings=True)
     assert warnings
     _, warnings = parse_sphinx(docstring, warnings=False)
