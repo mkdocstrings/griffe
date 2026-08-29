@@ -531,10 +531,11 @@ def _iterate_format_parts(
     format_spec: Sequence[str | Expr] | None,
     *,
     flat: bool = True,
+    separate_braces: bool = True,
 ) -> Iterator[str | Expr]:
     # Shared by `ExprFormatted` and `ExprInterpolation`.
     yield "{"
-    if str(value).startswith("{"):
+    if separate_braces and str(value).startswith("{"):
         # Separate braces, `{{` would be read as an escaped brace, e.g. `f"{ {1: 2}}"`.
         yield " "
     # Lambdas and walrus assignments need parentheses:
@@ -548,6 +549,16 @@ def _iterate_format_parts(
             if isinstance(part, str):
                 # Literal braces must be doubled, as in literal f-string parts.
                 yield part.replace("{", "{{").replace("}", "}}")
+            elif flat and isinstance(part, (ExprFormatted, ExprInterpolation)):
+                # Nested format fields already have their own braces; adding a separating
+                # space here changes the JoinedStr shape when their value starts with `{`.
+                yield from _iterate_format_parts(
+                    part.value,
+                    part.conversion,
+                    part.format_spec,
+                    flat=True,
+                    separate_braces=False,
+                )
             else:
                 yield from _yield(part, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
     yield "}"
