@@ -38,6 +38,47 @@ from griffe import (
 )
 
 
+def test_full_serialization_caches_paths_per_module_and_call(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Cache module paths during one serialization without retaining stale values."""
+    package_path = tmp_path / "package" / "__init__.py"
+    module = Module("package", filepath=package_path)
+    module.set_member("function", Function("function"))
+    submodule = Module("submodule", filepath=tmp_path / "package" / "submodule.py")
+    submodule.set_member("function", Function("function"))
+    module.set_member("submodule", submodule)
+
+    calls = {"package": 0, "cwd": 0}
+    relative_package_filepath = Object.relative_package_filepath
+    relative_filepath = Object.relative_filepath
+
+    def get_relative_package_filepath(self: Object) -> Path:
+        calls["package"] += 1
+        return relative_package_filepath.__get__(self, type(self))
+
+    def get_relative_filepath(self: Object) -> Path:
+        calls["cwd"] += 1
+        return relative_filepath.__get__(self, type(self))
+
+    monkeypatch.setattr(Object, "relative_package_filepath", property(get_relative_package_filepath))
+    monkeypatch.setattr(Object, "relative_filepath", property(get_relative_filepath))
+
+    first = json.loads(module.as_json(full=True))
+    assert calls == {"package": 2, "cwd": 2}
+
+    module._filepath = tmp_path / "other" / "__init__.py"
+    submodule._filepath = tmp_path / "other" / "submodule.py"
+    second = json.loads(module.as_json(full=True))
+    assert calls == {"package": 4, "cwd": 4}
+    assert first["relative_package_filepath"] != second["relative_package_filepath"]
+    assert (
+        first["members"]["submodule"]["relative_package_filepath"]
+        != second["members"]["submodule"]["relative_package_filepath"]
+    )
+
+
 def test_minimal_data_is_enough() -> None:
     """Test serialization and de-serialization.
 

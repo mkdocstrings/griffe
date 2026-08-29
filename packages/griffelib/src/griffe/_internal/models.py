@@ -22,6 +22,7 @@ from __future__ import annotations
 import inspect
 from collections import defaultdict
 from contextlib import suppress
+from contextvars import ContextVar
 from dataclasses import asdict
 from pathlib import Path
 from textwrap import dedent
@@ -45,6 +46,45 @@ if TYPE_CHECKING:
 
 
 from functools import cached_property
+
+
+class _ModuleSerializationContext:
+    """Values shared by objects serialized from the same module."""
+
+    __slots__ = (
+        "_source_filepaths",
+        "filepath",
+        "git_info",
+        "module",
+        "relative_filepath",
+        "relative_package_filepath",
+    )
+
+    def __init__(self, module: Module) -> None:
+        self.module = module
+        self.filepath = module.filepath
+        self.git_info = module.git_info
+        self.relative_package_filepath = module.relative_package_filepath
+        try:
+            self.relative_filepath: Path | None = module.relative_filepath
+        except ValueError:
+            self.relative_filepath = None
+        self._source_filepaths: dict[Path, Path] = {}
+
+    def relative_source_filepath(self, filepath: Path, repository: Path) -> Path:
+        """Return the module file path relative to a Git repository."""
+        try:
+            return self._source_filepaths[repository]
+        except KeyError:
+            relative_filepath = filepath.relative_to(repository)
+            self._source_filepaths[repository] = relative_filepath
+            return relative_filepath
+
+
+_module_serialization_context: ContextVar[_ModuleSerializationContext | None] = ContextVar(
+    "_module_serialization_context",
+    default=None,
+)
 
 
 class Decorator:
@@ -753,13 +793,25 @@ class Object(ObjectAliasMixin):
     @property
     def source_link(self) -> str | None:
         """Source link for this object, if available."""
+        return self._get_source_link()
+
+    def _get_source_link(self, context: _ModuleSerializationContext | None = None) -> str | None:
         if self._source_link is not None:
             return self._source_link
         with suppress(BuiltinModuleError, ValueError):
-            if (git_info := self.git_info) and isinstance(self.filepath, Path):
+            if context is None:
+                git_info = self.git_info
+                filepath = self.filepath
+            else:
+                git_info = self._git_info or context.git_info
+                filepath = context.filepath
+            if git_info and isinstance(filepath, Path):
                 # We don't use `self.relative_filepath` because it is computed
                 # relative to the current working directory, which isn't what we want.
-                filepath = self.filepath.relative_to(git_info.repository)
+                if context is None:
+                    filepath = filepath.relative_to(git_info.repository)
+                else:
+                    filepath = context.relative_source_filepath(filepath, git_info.repository)
                 if self.lineno is not None and self.endlineno is not None:
                     self._source_link = git_info.get_source_link(filepath, self.lineno, self.endlineno)
         return self._source_link
@@ -1265,6 +1317,13 @@ class Object(ObjectAliasMixin):
         Returns:
             A dictionary.
         """
+        current_context = _module_serialization_context.get()
+        context = current_context
+        if full and (context is None or self.kind is Kind.MODULE):
+            module = cast("Module", self) if self.kind is Kind.MODULE else self.module
+            if context is None or context.module is not module:
+                context = _ModuleSerializationContext(module)
+
         base: dict[str, Any] = {
             "kind": self.kind,
             "name": self.name,
@@ -1290,7 +1349,12 @@ class Object(ObjectAliasMixin):
         if self.labels:
             base["labels"] = self.labels
         if self.members:
-            base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
+            context_token = _module_serialization_context.set(context) if context is not current_context else None
+            try:
+                base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
+            finally:
+                if context_token is not None:
+                    _module_serialization_context.reset(context_token)
         if self.analysis:
             base["analysis"] = self.analysis
         if self._git_info is not None:
@@ -1299,12 +1363,12 @@ class Object(ObjectAliasMixin):
             base["source_link"] = self._source_link
         # TODO: Include `self.extra`?
 
-        if full:
+        if full and context is not None:
             base.update(
                 {
                     "path": self.path,
-                    "filepath": self.filepath,
-                    "relative_package_filepath": self.relative_package_filepath,
+                    "filepath": context.filepath,
+                    "relative_package_filepath": context.relative_package_filepath,
                     "is_public": self.is_public,
                     "is_deprecated": self.is_deprecated,
                     "is_private": self.is_private,
@@ -1331,10 +1395,10 @@ class Object(ObjectAliasMixin):
                 },
             )
 
-            with suppress(ValueError):
-                base["relative_filepath"] = self.relative_filepath
+            if context.relative_filepath is not None:
+                base["relative_filepath"] = context.relative_filepath
 
-            if "source_link" not in base and (source_link := self.source_link) is not None:
+            if "source_link" not in base and (source_link := self._get_source_link(context)) is not None:
                 base["source_link"] = source_link
 
         return base
