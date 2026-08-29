@@ -19,13 +19,8 @@
 from __future__ import annotations
 
 import ast
-from itertools import zip_longest
-from typing import TYPE_CHECKING
 
 from griffe._internal.enumerations import ParameterKind
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
 
 ParametersType = list[tuple[str, ast.AST | None, ParameterKind, str | ast.AST | None]]
 """Type alias for the list of parameters of a function."""
@@ -34,31 +29,28 @@ ParametersType = list[tuple[str, ast.AST | None, ParameterKind, str | ast.AST | 
 def get_parameters(node: ast.arguments) -> ParametersType:
     parameters: ParametersType = []
 
-    # TODO: Probably some optimizations to do here.
-    args_kinds_defaults: Iterable = reversed(
-        (
-            *zip_longest(
-                reversed(
-                    (
-                        *zip_longest(
-                            node.posonlyargs,
-                            [],
-                            fillvalue=ParameterKind.positional_only,
-                        ),
-                        *zip_longest(node.args, [], fillvalue=ParameterKind.positional_or_keyword),
-                    ),
-                ),
-                reversed(node.defaults),
-                fillvalue=None,
-            ),
-        ),
-    )
-    arg: ast.arg
-    kind: ParameterKind
-    arg_default: ast.AST | None
-    for (arg, kind), arg_default in args_kinds_defaults:  # ty:ignore[invalid-assignment,not-iterable]
-        parameters.append((arg.arg, arg.annotation, kind, arg_default))
+    # Python stores positional-only and positional-or-keyword arguments in separate lists,
+    # but stores their defaults together. The defaults are right-aligned with the combined
+    # positional parameters, so `default_offset` is the index of the first parameter with
+    # a default value.
+    positional_count = len(node.posonlyargs) + len(node.args)
+    default_offset = positional_count - len(node.defaults)
 
+    # Keep one index across both positional argument lists to preserve that alignment.
+    index = 0
+
+    for arg in node.posonlyargs:
+        default = node.defaults[index - default_offset] if index >= default_offset else None
+        parameters.append((arg.arg, arg.annotation, ParameterKind.positional_only, default))
+        index += 1
+
+    for arg in node.args:
+        default = node.defaults[index - default_offset] if index >= default_offset else None
+        parameters.append((arg.arg, arg.annotation, ParameterKind.positional_or_keyword, default))
+        index += 1
+
+    # Variadic positional parameters have no AST default. Use an empty tuple as their
+    # implicit default so they are not treated as required parameters later on.
     if node.vararg:
         parameters.append(
             (
@@ -69,23 +61,14 @@ def get_parameters(node: ast.arguments) -> ParametersType:
             ),
         )
 
-    # TODO: Probably some optimizations to do here.
-    kwargs_defaults: Iterable = reversed(
-        (
-            *zip_longest(
-                reversed(node.kwonlyargs),
-                reversed(node.kw_defaults),
-                fillvalue=None,
-            ),
-        ),
-    )
-    kwarg: ast.arg
-    kwarg_default: ast.AST | None
-    for kwarg, kwarg_default in kwargs_defaults:  # ty:ignore[invalid-assignment]
+    # Unlike positional defaults, keyword-only defaults are stored one-to-one with their
+    # arguments. A `None` entry means that the keyword-only parameter is required.
+    for kwarg, kwarg_default in zip(node.kwonlyargs, node.kw_defaults, strict=False):
         parameters.append(
             (kwarg.arg, kwarg.annotation, ParameterKind.keyword_only, kwarg_default),
         )
 
+    # Likewise, use an empty mapping as the implicit default for variadic keyword arguments.
     if node.kwarg:
         parameters.append(
             (
