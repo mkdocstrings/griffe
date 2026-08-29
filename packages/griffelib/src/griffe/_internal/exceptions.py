@@ -56,14 +56,21 @@ class AliasResolutionError(GriffeError):
         self.alias: Alias = alias
         """The alias that triggered the error."""
 
-        message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
+        self._detailed_message: str | None = None
+        super().__init__(f"Could not resolve alias {alias.path} pointing at {self.alias.target_path}")
+
+    def _format_message(self) -> str:
+        message = super().__str__()
         try:
-            filepath = alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
+            filepath = self.alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
         except BuiltinModuleError:
-            pass
-        else:
-            message += f" (in {filepath}:{alias.alias_lineno})"
-        super().__init__(message)
+            return message
+        return message + f" (in {filepath}:{self.alias.alias_lineno})"
+
+    def __str__(self) -> str:
+        if self._detailed_message is None:
+            self._detailed_message = self._format_message()
+        return self._detailed_message
 
 
 class CyclicAliasError(GriffeError):

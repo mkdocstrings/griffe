@@ -21,10 +21,16 @@ from __future__ import annotations
 import sys
 from copy import deepcopy
 from textwrap import dedent
+from typing import TYPE_CHECKING
 
 import pytest
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 from griffe import (
+    Alias,
+    AliasResolutionError,
     Attribute,
     Class,
     Docstring,
@@ -44,6 +50,21 @@ from griffe import (
     temporary_visited_module,
     temporary_visited_package,
 )
+
+
+def test_lazy_alias_resolution_error_message(tmp_path: Path) -> None:
+    """Build detailed alias-resolution messages only when rendered."""
+    module = Module("module", filepath=tmp_path / "module.py")
+    alias = Alias("alias", "missing.target", parent=module)
+    summary = "Could not resolve alias module.alias pointing at missing.target"
+    expected = f"Could not resolve alias module.alias pointing at missing.target (in {module.relative_filepath}:None)"
+
+    error = AliasResolutionError(alias)
+    assert error.args == (summary,)
+    assert error._detailed_message is None
+    assert str(error) == expected
+    assert error.args == (summary,)
+    assert error._detailed_message == expected
 
 
 def test_submodule_exports() -> None:

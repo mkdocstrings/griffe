@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from griffe import (
+    AliasResolutionError,
     ExprName,
     GriffeLoader,
     temporary_inspected_package,
@@ -32,6 +33,22 @@ from griffe import (
     temporary_pypackage,
     temporary_visited_package,
 )
+
+
+def test_resolve_aliases_defers_caught_error_messages(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Do not format alias errors that the resolver catches internally."""
+    with temporary_pypackage("package", {"__init__.py": "from missing import value"}) as package:
+        loader = GriffeLoader(search_paths=[package.tmpdir])
+        loader.load("package")
+
+        def fail_if_formatted(_error: AliasResolutionError) -> str:
+            raise AssertionError("caught alias-resolution error was formatted")
+
+        monkeypatch.setattr(AliasResolutionError, "_format_message", fail_if_formatted)
+        unresolved, _ = loader.resolve_aliases(implicit=True, external=False)
+
+    assert unresolved == {"package.value"}
+
 
 if TYPE_CHECKING:
     from pathlib import Path
