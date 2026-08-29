@@ -29,6 +29,7 @@ import pytest
 from griffe import (
     Alias,
     Extension,
+    Extensions,
     GriffeLoader,
     ObjectNode,
     load_extensions,
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
     import ast
     from collections.abc import Iterator
 
-    from griffe import Attribute, Class, Function, Module, Object, ObjectNode, TypeAlias
+    from griffe import Attribute, Class, Function, Object, ObjectNode, TypeAlias
 
 
 PACKAGE_ROOT = Path(__file__).parent.parent.parent
@@ -260,6 +261,23 @@ class LoadEventsTest(Extension):  # noqa: D101
 
     def on_type_alias(self, *, type_alias: TypeAlias, loader: GriffeLoader, **kwargs: Any) -> None:  # noqa: ARG002,D102
         self.records.append("on_type_alias")
+
+
+def test_has_hooks_after_adding_extensions() -> None:
+    """Discover hooks from extensions added to the container."""
+    extensions = Extensions()
+    module = Module("module")
+    loader = GriffeLoader(extensions=extensions)
+
+    extensions.call("on_package", pkg=module, loader=loader)
+    assert not extensions.has_hooks("on_package")
+
+    extension = LoadEventsTest()
+    extensions.add(extension)
+    extensions.call("on_package", pkg=module, loader=loader)
+
+    assert extensions.has_hooks("on_package")
+    assert extension.records == ["on_package"]
 
 
 # YORE: EOL 3.11: Remove block.

@@ -40,6 +40,8 @@ if TYPE_CHECKING:
     from griffe._internal.loader import GriffeLoader
     from griffe._internal.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
 
+_missing = object()
+
 
 class Extension:
     """Base class for Griffe extensions."""
@@ -475,6 +477,23 @@ class Extensions:
         """
         for extension in extensions:
             self._extensions.append(extension)
+
+    def has_hooks(self, *events: str) -> bool:
+        """Whether any extension implements one of the given events.
+
+        Parameters:
+            *events: The extension events to check.
+
+        Returns:
+            Whether at least one hook is implemented.
+        """
+        for event in events:
+            base_callback = getattr(Extension, event, _missing)
+            for extension in self._extensions:
+                callback = getattr(extension, event, _missing)
+                if callback is not _missing and getattr(callback, "__func__", callback) is not base_callback:
+                    return True
+        return False
 
     def _noop(self, **kwargs: Any) -> None:
         """No-op method for extension hooks."""

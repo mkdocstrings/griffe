@@ -56,6 +56,16 @@ if TYPE_CHECKING:
     from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.enumerations import Parser
 
+_load_events = (
+    "on_alias",
+    "on_object",
+    "on_module",
+    "on_class",
+    "on_function",
+    "on_attribute",
+    "on_type_alias",
+)
+
 
 class GriffeLoader:
     """The Griffe loader, allowing to load data from modules."""
@@ -247,7 +257,8 @@ class GriffeLoader:
         obj = self.modules_collection.get_member(obj_path)
         self.extensions.call("on_package", pkg=module, loader=self)
         self.extensions.call("on_module", mod=module, loader=self)
-        self._fire_load_events(module)
+        if self.extensions.has_hooks(*_load_events):
+            self._fire_load_events(module)
         return obj
 
     def resolve_aliases(
