@@ -514,14 +514,20 @@ def _class_incompatibilities(
 
 # TODO: Check decorators? Maybe resolved by extensions and/or dynamic analysis.
 def _function_incompatibilities(old_function: Function, new_function: Function) -> Iterator[Breakage]:
-    new_param_names = [param.name for param in new_function.parameters]
+    new_params = {}
+    for index, param in enumerate(new_function.parameters):
+        # Keep the first parameter with a given name, matching the behavior of `Parameters.__getitem__`.
+        new_params.setdefault(param.name, (index, param))
+    old_param_names = {param.name for param in old_function.parameters}
     param_kinds = {param.kind for param in new_function.parameters}
     has_variadic_args = ParameterKind.var_positional in param_kinds
     has_variadic_kwargs = ParameterKind.var_keyword in param_kinds
 
     for old_index, old_param in enumerate(old_function.parameters):
         # Check if the parameter was removed.
-        if old_param.name not in new_function.parameters:
+        try:
+            new_index, new_param = new_params[old_param.name]
+        except KeyError:
             swallowed = (
                 (old_param.kind is ParameterKind.keyword_only and has_variadic_kwargs)
                 or (old_param.kind is ParameterKind.positional_only and has_variadic_args)
@@ -532,16 +538,13 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
             continue
 
         # Check if the parameter became required.
-        new_param = new_function.parameters[old_param.name]
         if new_param.required and not old_param.required:
             yield ParameterChangedRequiredBreakage(new_function, old_param, new_param)
 
         # Check if the parameter was moved.
-        if old_param.kind in _POSITIONAL and new_param.kind in _POSITIONAL:
-            new_index = new_param_names.index(old_param.name)
-            if new_index != old_index:
-                details = f"position: from {old_index} to {new_index} ({new_index - old_index:+})"
-                yield ParameterMovedBreakage(new_function, old_param, new_param, details=details)
+        if old_param.kind in _POSITIONAL and new_param.kind in _POSITIONAL and new_index != old_index:
+            details = f"position: from {old_index} to {new_index} ({new_index - old_index:+})"
+            yield ParameterMovedBreakage(new_function, old_param, new_param, details=details)
 
         # Check if the parameter changed kind.
         if old_param.kind is not new_param.kind:
@@ -581,7 +584,7 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
 
     # Check if required parameters were added.
     for new_param in new_function.parameters:
-        if new_param.name not in old_function.parameters and new_param.required:
+        if new_param.name not in old_param_names and new_param.required:
             yield ParameterAddedRequiredBreakage(new_function, None, new_param)
 
     if not _returns_are_compatible(old_function, new_function):
