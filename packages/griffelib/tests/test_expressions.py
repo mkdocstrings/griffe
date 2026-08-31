@@ -208,6 +208,16 @@ def test_expressions_stay_valid_and_equivalent(shape: str, context: str) -> None
     assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
 
 
+def test_nested_container_format_spec_is_roundtrip_safe() -> None:
+    """Container replacement fields in format specs must preserve the source AST."""
+    code = "f'{value:{{1, 2}}}'"
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
 def test_length_one_tuple_as_string() -> None:
     """Length-1 tuples must have a trailing comma."""
     code = "x = ('a',)"
