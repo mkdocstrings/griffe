@@ -25,11 +25,7 @@ from contextlib import suppress
 from typing import TYPE_CHECKING, Final
 
 from griffe._internal.agents.nodes.assignments import get_instance_names, get_names
-from griffe._internal.agents.nodes.ast import (
-    ast_children,
-    ast_kind,
-    ast_next,
-)
+from griffe._internal.agents.nodes.ast import ast_children, ast_next
 from griffe._internal.agents.nodes.docstrings import get_docstring
 from griffe._internal.agents.nodes.exports import safe_get__all__
 from griffe._internal.agents.nodes.imports import relative_to_absolute
@@ -63,6 +59,7 @@ from griffe._internal.models import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
 
     from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
@@ -290,7 +287,7 @@ class Visitor:
             node: The node to visit.
         """
         self._visited_nodes.append(node)
-        getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
+        self._visitor.get(type(node), type(self).generic_visit)(self, node)
 
     def generic_visit(self, node: ast.AST) -> None:
         """Extend the base generic visit with extensions.
@@ -793,3 +790,20 @@ class Visitor:
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
+
+    _visitor: dict[type[ast.AST], Callable] = {  # noqa: RUF012
+        ast.Module: visit_module,
+        ast.ClassDef: visit_classdef,
+        ast.FunctionDef: visit_functiondef,
+        ast.AsyncFunctionDef: visit_asyncfunctiondef,
+        ast.Import: visit_import,
+        ast.ImportFrom: visit_importfrom,
+        ast.Assign: visit_assign,
+        ast.AnnAssign: visit_annassign,
+        ast.AugAssign: visit_augassign,
+        ast.If: visit_if,
+    }
+
+    # YORE: EOL 3.11: Replace block with line 1.
+    if sys.version_info >= (3, 12):
+        _visitor[ast.TypeAlias] = visit_typealias
