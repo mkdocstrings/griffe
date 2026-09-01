@@ -20,11 +20,20 @@ from __future__ import annotations
 
 import logging
 import sys
-from ast import PyCF_ONLY_AST
+import weakref
+from ast import AST, Add, Name, PyCF_ONLY_AST
 
 import pytest
 
-from griffe import Expr, ExprName, module_vtree, relative_to_absolute, temporary_visited_module
+from griffe import (
+    Expr,
+    ExprName,
+    ast_children,
+    module_vtree,
+    relative_to_absolute,
+    temporary_visited_module,
+)
+from griffe._internal.agents import visitor as visitor_module
 
 syntax_examples = [
     # Operations.
@@ -153,6 +162,34 @@ syntax_examples = [
     # Attribute access on integer literals.
     "(1).bit_length()",
 ]
+
+
+def test_shared_ast_nodes_do_not_retain_parent_trees() -> None:
+    """Shared AST operator/context instances must not keep parsed trees alive."""
+    expression = compile("left + right", filename="<test>", mode="eval", flags=PyCF_ONLY_AST).body  # ty:ignore[unresolved-attribute]
+    children = list(ast_children(expression))
+
+    assert any(isinstance(child, Name) and child.parent is expression for child in children)  # ty:ignore[unresolved-attribute]
+    assert any(isinstance(child, Add) and not hasattr(child, "parent") for child in children)
+    assert all(isinstance(child, AST) for child in children)
+
+
+def test_visitor_releases_ast_without_cyclic_gc(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A completed static analysis must not leave parent cycles behind."""
+    references: list[weakref.ReferenceType[AST]] = []
+    builtin_compile = compile
+
+    def capture_ast(*args: object, **kwargs: object) -> AST:
+        node = builtin_compile(*args, **kwargs)  # ty:ignore[no-matching-overload]
+        references.append(weakref.ref(node))
+        return node
+
+    monkeypatch.setattr(visitor_module, "compile", capture_ast, raising=False)
+    with temporary_visited_module("value = left + right"):
+        pass
+
+    assert references
+    assert all(reference() is None for reference in references)
 
 
 @pytest.mark.parametrize(

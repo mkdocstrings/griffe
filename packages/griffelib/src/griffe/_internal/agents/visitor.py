@@ -210,6 +210,8 @@ class Visitor:
         self.type_guarded: bool = False
         """Whether the current code branch is type-guarded."""
 
+        self._visited_nodes: list[ast.AST] = []
+
     def _get_docstring(self, node: ast.AST, *, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
         if value is None:
@@ -267,11 +269,19 @@ class Visitor:
         Returns:
             A module instance.
         """
+        self._visited_nodes.clear()
         # Optimization: equivalent to `ast.parse`, but with `optimize=1` to remove assert statements.
         # TODO: With options, could use `optimize=2` to remove docstrings.
         top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
-        self.visit(top_node)
-        return self.current.module
+        try:
+            self.visit(top_node)
+            return self.current.module
+        finally:
+            # Parent links are only needed during analysis. Detach them once the
+            # visit is over so parsed trees can be freed without cyclic GC.
+            for node in self._visited_nodes:
+                vars(node).pop("parent", None)
+            self._visited_nodes.clear()
 
     def visit(self, node: ast.AST) -> None:
         """Extend the base visit with extensions.
@@ -279,6 +289,7 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
+        self._visited_nodes.append(node)
         getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
 
     def generic_visit(self, node: ast.AST) -> None:
