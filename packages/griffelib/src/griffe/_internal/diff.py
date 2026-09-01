@@ -25,6 +25,7 @@
 from __future__ import annotations
 
 import contextlib
+from logging import DEBUG
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -624,11 +625,14 @@ def _member_incompatibilities(
 ) -> Iterator[Breakage]:
     seen_paths = set() if seen_paths is None else seen_paths
     new_members = new_obj.all_members
+    debug = logger.isEnabledFor(DEBUG)
     for name, old_member in old_obj.all_members.items():
         if not old_member.is_public:
-            logger.debug("API check: %s.%s: skip non-public object", old_obj.path, name)
+            if debug:
+                logger.debug("API check: %s.%s: skip non-public object", old_obj.path, name)
             continue
-        logger.debug("API check: %s.%s", old_obj.path, name)
+        if debug:
+            logger.debug("API check: %s.%s", old_obj.path, name)
         try:
             new_member = new_members[name]
         except KeyError:
