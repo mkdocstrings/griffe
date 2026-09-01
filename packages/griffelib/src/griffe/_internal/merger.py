@@ -44,7 +44,7 @@ def _merge_class_stubs(class_: Class, stubs: Class, *, psd: bool = False) -> Non
     _merge_stubs_members(class_, stubs, psd=psd)
 
 
-def _merge_function_stubs(function: Function, stubs: Function) -> None:
+def _merge_function_stubs(function: Function, stubs: Function, *, psd: bool = False) -> None:
     _merge_stubs_docstring(function, stubs, psd=psd)
     parameters: dict[str, Parameter] = {}
     for parameter in function.parameters:
