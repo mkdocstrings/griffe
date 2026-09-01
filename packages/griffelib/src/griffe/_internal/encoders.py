@@ -234,9 +234,11 @@ def _load_module(obj_dict: dict[str, Any]) -> Module:
     for module_member in members:
         module.set_member(module_member.name, module_member)
         _attach_parent_to_exprs(module_member, module)
-    module.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        module.labels.update(labels)
     module.exports = obj_dict.get("exports")
-    module.imports = obj_dict.get("imports", {})
+    if imports := obj_dict.get("imports"):
+        module.imports = imports
     module.deprecated = obj_dict.get("deprecated")
     module.public = obj_dict.get("public")
     module.source_link = obj_dict.get("source_link")
@@ -262,8 +264,10 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
     for class_member in members:
         class_.set_member(class_member.name, class_member)
         _attach_parent_to_exprs(class_member, class_)
-    class_.labels |= set(obj_dict.get("labels", ()))
-    class_.imports = obj_dict.get("imports", {})
+    if labels := obj_dict.get("labels"):
+        class_.labels.update(labels)
+    if imports := obj_dict.get("imports"):
+        class_.imports = imports
     class_.deprecated = obj_dict.get("deprecated")
     class_.public = obj_dict.get("public")
     class_.source_link = obj_dict.get("source_link")
@@ -286,7 +290,8 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         runtime=obj_dict.get("runtime", True),
         analysis=obj_dict.get("analysis"),
     )
-    function.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        function.labels.update(labels)
     function.deprecated = obj_dict.get("deprecated")
     function.public = obj_dict.get("public")
     function.source_link = obj_dict.get("source_link")
@@ -305,7 +310,8 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
         annotation=obj_dict.get("annotation"),
         analysis=obj_dict.get("analysis"),
     )
-    attribute.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        attribute.labels.update(labels)
     attribute.runtime = obj_dict.get("runtime", True)
     attribute.deprecated = obj_dict.get("deprecated")
     attribute.public = obj_dict.get("public")
@@ -340,7 +346,8 @@ def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:
         docstring=_load_docstring(obj_dict),
         analysis=obj_dict.get("analysis"),
     )
-    type_alias.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        type_alias.labels.update(labels)
     type_alias.runtime = obj_dict.get("runtime", True)
     type_alias.deprecated = obj_dict.get("deprecated")
     type_alias.public = obj_dict.get("public")

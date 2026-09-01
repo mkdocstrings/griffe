@@ -491,8 +491,7 @@ class Inspector:
         lineno, endlineno = self._get_linenos(node)
 
         obj: Attribute | Function
-        labels = labels or set()
-        if "property" in labels:
+        if labels and "property" in labels:
             obj = Attribute(
                 name=node.name,
                 value=None,
@@ -515,7 +514,8 @@ class Inspector:
                 endlineno=endlineno,
                 analysis="dynamic",
             )
-        obj.labels |= labels
+        if labels:
+            obj.labels.update(labels)
         self.current.set_member(node.name, obj)
         self.extensions.call("on_instance", node=node, obj=obj, agent=self)
         if obj.is_attribute:
@@ -596,7 +596,7 @@ class Inspector:
             docstring=docstring,
             analysis="dynamic",
         )
-        attribute.labels |= labels
+        attribute.labels.update(labels)
         parent.set_member(node.name, attribute)  # ty:ignore[unresolved-attribute]
 
         if node.name == "__all__":

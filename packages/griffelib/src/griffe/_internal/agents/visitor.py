@@ -363,7 +363,8 @@ class Visitor:
             runtime=not self.type_guarded,
             analysis="static",
         )
-        class_.labels |= self.decorators_to_labels(decorators)
+        if decorators and (labels := self.decorators_to_labels(decorators)):
+            class_.labels.update(labels)
 
         self.current.set_member(node.name, class_)
         self.current = class_
@@ -426,8 +427,6 @@ class Visitor:
         self.extensions.call("on_node", node=node, agent=self)
         self.extensions.call("on_function_node", node=node, agent=self)
 
-        labels = labels or set()
-
         # Handle decorators.
         decorators = []
         overload = False
@@ -447,9 +446,13 @@ class Visitor:
         else:
             lineno = node.lineno
 
-        labels |= self.decorators_to_labels(decorators)
+        if decorators and (decorator_labels := self.decorators_to_labels(decorators)):
+            if labels:
+                labels.update(decorator_labels)
+            else:
+                labels = decorator_labels
 
-        if "property" in labels:
+        if labels and "property" in labels:
             attribute = Attribute(
                 name=node.name,
                 value=None,
@@ -460,7 +463,7 @@ class Visitor:
                 runtime=not self.type_guarded,
                 analysis="static",
             )
-            attribute.labels |= labels
+            attribute.labels.update(labels)
             self.current.set_member(node.name, attribute)
             self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
             self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
@@ -513,7 +516,8 @@ class Visitor:
                 function.overloads = self.current.overloads[function.name]
                 del self.current.overloads[function.name]
 
-        function.labels |= labels
+        if labels:
+            function.labels.update(labels)
 
         self.extensions.call("on_instance", node=node, obj=function, agent=self)
         self.extensions.call("on_function_instance", node=node, func=function, agent=self)
@@ -729,7 +733,7 @@ class Visitor:
                 runtime=not self.type_guarded,
                 analysis="static",
             )
-            attribute.labels |= labels
+            attribute.labels.update(labels)
             parent.set_member(name, attribute)
 
             if name == "__all__":
