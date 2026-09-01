@@ -345,7 +345,9 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
     @property
     def is_imported(self) -> bool:
         """Whether this object/alias was imported from another module."""
-        return bool(self.parent) and self.name in self.parent.imports  # ty:ignore[unresolved-attribute]
+        if not (parent := self.parent):  # ty:ignore[unresolved-attribute]
+            return False
+        return self.name in parent.imports  # ty:ignore[unresolved-attribute]
 
     @property
     def is_exported(self) -> bool:
