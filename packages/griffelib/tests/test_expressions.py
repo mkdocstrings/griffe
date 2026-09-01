@@ -218,6 +218,24 @@ def test_nested_container_format_spec_is_roundtrip_safe() -> None:
     assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
 
 
+@pytest.mark.parametrize(
+    "code",
+    [
+        "o[[(x, y)]]",
+        "o[f((x, y))]",
+        "o[[(x, y) for x in xs for y in ys]]",
+        "[(x, y) for [x, (y, z)] in values]",
+    ],
+)
+def test_nested_tuples_keep_parentheses_in_implicit_contexts(code: str) -> None:
+    """Tuple context flags must only affect the immediate tuple node."""
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
 def test_length_one_tuple_as_string() -> None:
     """Length-1 tuples must have a trailing comma."""
     code = "x = ('a',)"

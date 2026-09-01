@@ -1628,6 +1628,11 @@ if sys.version_info >= (3, 14):
 
 
 def _build(node: ast.AST, parent: Module | Class, /, **kwargs: Any) -> Expr:
+    # Tuple context flags apply only to the immediate node. Letting them flow through a nested list, call or
+    # comprehension drops required tuple parentheses and can change the AST or produce invalid Python.
+    if not isinstance(node, ast.Tuple):
+        kwargs.pop("subscript_slice", None)
+        kwargs.pop("compr_target", None)
     return _node_map[type(node)](node, parent, **kwargs)
 
 
