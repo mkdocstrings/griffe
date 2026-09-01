@@ -258,6 +258,9 @@ class GitInfo:
     def from_package(cls, package: Module) -> GitInfo | None:
         """Create a GitInfo instance from a Griffe package.
 
+        Parameters:
+            package: The package to create Git information for.
+
         Returns:
             The GitInfo instance, or None if unknown.
         """
