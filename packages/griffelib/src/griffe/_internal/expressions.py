@@ -1315,9 +1315,17 @@ def _build_compare(node: ast.Compare, parent: Module | Class, **kwargs: Any) -> 
     )
 
 
+def _build_implicit_tuple(node: ast.AST, parent: Module | Class, **kwargs: Any) -> str | Expr:
+    expression = _build(node, parent, **kwargs)
+    # Empty tuples cannot be implicit: omitting their parentheses produces invalid Python.
+    if isinstance(expression, ExprTuple) and expression.elements:
+        expression.implicit = True
+    return expression
+
+
 def _build_comprehension(node: ast.comprehension, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprComprehension(
-        _build(node.target, parent, compr_target=True, **kwargs),
+        _build_implicit_tuple(node.target, parent, **kwargs),
         _build(node.iter, parent, **kwargs),
         [_build(condition, parent, **kwargs) for condition in node.ifs],
         is_async=bool(node.is_async),
@@ -1483,15 +1491,7 @@ def _build_setcomp(node: ast.SetComp, parent: Module | Class, **kwargs: Any) -> 
     return ExprSetComp(_build(node.elt, parent, **kwargs), [_build(gen, parent, **kwargs) for gen in node.generators])
 
 
-def _build_slice(
-    node: ast.Slice,
-    parent: Module | Class,
-    *,
-    subscript_slice: bool = False,  # noqa: ARG001
-    **kwargs: Any,
-) -> Expr:
-    # Note: `subscript_slice` is intentionally consumed here so that it doesn't propagate
-    # to the slice bounds, where tuples require their parentheses, e.g. `o[(1, 2):]`.
+def _build_slice(node: ast.Slice, parent: Module | Class, **kwargs: Any) -> Expr:
     return ExprSlice(
         None if node.lower is None else _build(node.lower, parent, **kwargs),
         None if node.upper is None else _build(node.upper, parent, **kwargs),
@@ -1509,7 +1509,6 @@ def _build_subscript(
     *,
     parse_strings: bool = False,
     literal_strings: bool = False,
-    subscript_slice: bool = False,  # noqa: ARG001
     **kwargs: Any,
 ) -> Expr:
     left = _build(node.value, parent, **kwargs)
@@ -1519,33 +1518,20 @@ def _build_subscript(
             "typing_extensions.Literal",
         }:
             literal_strings = True
-        slice_expr = _build(
+        slice_expr = _build_implicit_tuple(
             node.slice,
             parent,
             parse_strings=True,
             literal_strings=literal_strings,
-            subscript_slice=True,
             **kwargs,
         )
     else:
-        slice_expr = _build(node.slice, parent, subscript_slice=True, **kwargs)
+        slice_expr = _build_implicit_tuple(node.slice, parent, **kwargs)
     return ExprSubscript(left, slice_expr)
 
 
-def _build_tuple(
-    node: ast.Tuple,
-    parent: Module | Class,
-    *,
-    subscript_slice: bool = False,
-    compr_target: bool = False,
-    **kwargs: Any,
-) -> Expr:
-    # An empty tuple is always written as `()` and cannot be implicit.
-    # This arises in annotations like `tuple[()]`, where the AST represents
-    # the subscript slice as an empty Tuple node, but the parentheses must
-    # be preserved to produce valid Python (`tuple[]` is a SyntaxError).
-    implicit = (subscript_slice or compr_target) if node.elts else False
-    return ExprTuple([_build(el, parent, **kwargs) for el in node.elts], implicit=implicit)
+def _build_tuple(node: ast.Tuple, parent: Module | Class, **kwargs: Any) -> Expr:
+    return ExprTuple([_build(el, parent, **kwargs) for el in node.elts])
 
 
 def _build_unaryop(node: ast.UnaryOp, parent: Module | Class, **kwargs: Any) -> Expr:
@@ -1628,11 +1614,6 @@ if sys.version_info >= (3, 14):
 
 
 def _build(node: ast.AST, parent: Module | Class, /, **kwargs: Any) -> Expr:
-    # Tuple context flags apply only to the immediate node. Letting them flow through a nested list, call or
-    # comprehension drops required tuple parentheses and can change the AST or produce invalid Python.
-    if not isinstance(node, ast.Tuple):
-        kwargs.pop("subscript_slice", None)
-        kwargs.pop("compr_target", None)
     return _node_map[type(node)](node, parent, **kwargs)
 
 

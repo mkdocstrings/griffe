@@ -228,12 +228,65 @@ def test_nested_container_format_spec_is_roundtrip_safe() -> None:
     ],
 )
 def test_nested_tuples_keep_parentheses_in_implicit_contexts(code: str) -> None:
-    """Tuple context flags must only affect the immediate tuple node."""
+    """Implicit-tuple contexts must only affect the immediate tuple node."""
     original = ast.parse(code, mode="eval")
     expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
     rendered = str(expression)
     reparsed = ast.parse(rendered, mode="eval")
     assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
+@pytest.mark.parametrize(
+    ("code", "expected"),
+    [
+        ("o[{(x, y)}]", "o[{(x, y)}]"),
+        ("o[{(x, y): value}]", "o[{(x, y): value}]"),
+        ("o[{(x, y): value for value in values}]", "o[{(x, y): value for value in values}]"),
+        ("o[{(x, y) for value in values}]", "o[{(x, y) for value in values}]"),
+        ("o[p[(x, y)]]", "o[p[x, y]]"),
+        ("o[p[(x, y):]]", "o[p[(x, y):]]"),
+        ("o[f(arg=(x, y))]", "o[f(arg=(x, y))]"),
+        ("o[((x, y)).attribute]", "o[(x, y).attribute]"),
+        ("o[(x, y) + z]", "o[(x, y) + z]"),
+        ("o[not (x, y)]", "o[not (x, y)]"),
+        ("o[(x, y) and z]", "o[(x, y) and z]"),
+        ("o[(x, y) == z]", "o[(x, y) == z]"),
+        ("o[(x, y) if condition else z]", "o[(x, y) if condition else z]"),
+        ("o[lambda: (x, y)]", "o[lambda: (x, y)]"),
+        ("o[(item := (x, y))]", "o[item := (x, y)]"),
+        ("o[f'{(x, y)}']", "o[f'{(x, y)}']"),
+        ("o[((x, y) for value in values)]", "o[((x, y) for value in values)]"),
+        ("o[await (x, y)]", "o[await (x, y)]"),
+        ("[(x, y) for (x, (y, z)) in values]", "[(x, y) for x, (y, z) in values]"),
+    ],
+)
+def test_only_root_tuples_are_implicit_in_tuple_contexts(code: str, expected: str) -> None:
+    """Only a tuple at the root of a subscript slice or comprehension target is implicit."""
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    assert rendered == expected
+    assert ast.dump(ast.parse(rendered, mode="eval")) == ast.dump(original)
+
+
+@pytest.mark.parametrize(
+    ("code", "expected"),
+    [
+        ('o["x, y"]', "o[x, y]"),
+        ('o["x,"]', "o[x,]"),
+        ('o["()"]', "o[()]"),
+        ('o[["x, y"]]', "o[[(x, y)]]"),
+        ('o[f("x, y")]', "o[f((x, y))]"),
+        ('o[p["x, y"]]', "o[p[x, y]]"),
+        ('o[p[["x, y"]]]', "o[p[[(x, y)]]]"),
+        ('typing.Literal["x, y"]', "typing.Literal['x, y']"),
+    ],
+)
+def test_parsed_string_tuples_respect_tuple_contexts(code: str, expected: str) -> None:
+    """Parsed strings inherit only their immediate tuple context."""
+    node = ast.parse(code, mode="eval")
+    expression = get_expression(node.body, parent=Module("module"), parse_strings=True)
+    assert str(expression) == expected
 
 
 def test_length_one_tuple_as_string() -> None:
