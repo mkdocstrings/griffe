@@ -1,14 +1,36 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains utilities for navigating AST nodes.
 
 from __future__ import annotations
 
-from ast import AST
+from ast import AST, boolop, cmpop, expr_context, operator, unaryop
 from typing import TYPE_CHECKING
 
 from griffe._internal.exceptions import LastNodeError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
+
+# CPython reuses instances of these context/operator nodes across ASTs.  Attaching
+# a parent to one of them therefore keeps the most recently visited AST alive
+# through the singleton, and gives the node an inherently incorrect parent.
+_SHARED_AST_NODE_TYPES = (expr_context, operator, unaryop, boolop, cmpop)
 
 
 def ast_kind(node: AST) -> str:
@@ -38,12 +60,18 @@ def ast_children(node: AST) -> Iterator[AST]:
         except AttributeError:
             continue
         if isinstance(field, AST):
-            field.parent = node
+            if isinstance(field, _SHARED_AST_NODE_TYPES):
+                vars(field).pop("parent", None)
+            else:
+                field.parent = node
             yield field
         elif isinstance(field, list):
             for child in field:
                 if isinstance(child, AST):
-                    child.parent = node
+                    if isinstance(child, _SHARED_AST_NODE_TYPES):
+                        vars(child).pop("parent", None)
+                    else:
+                        child.parent = node
                     yield child
 
 

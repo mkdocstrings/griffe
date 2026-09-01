@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains data encoders/serializers and decoders/deserializers.
 # We only support JSON for now, but might want to add more formats in the future.
 
@@ -5,7 +21,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path, PosixPath, WindowsPath
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from griffe._internal import expressions
 from griffe._internal.enumerations import Kind, ParameterKind, TypeParameterKind
@@ -28,6 +44,14 @@ from griffe._internal.models import (
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+_expression_class_map: dict[str, type[expressions.Expr]] = {
+    name: value
+    for name, value in vars(expressions).items()
+    if isinstance(value, type) and issubclass(value, expressions.Expr)
+}
+_parameter_kinds = frozenset(ParameterKind.__members__.values())
+_type_parameter_kinds = frozenset(TypeParameterKind.__members__.values())
 
 _json_encoder_map: dict[type, Callable[[Any], Any]] = {
     Path: str,
@@ -101,7 +125,7 @@ def _load_decorators(obj_dict: dict) -> list[Decorator]:
 
 def _load_expression(expression: dict) -> expressions.Expr:
     # The expression class name is stored in the `cls` key-value.
-    cls = getattr(expressions, expression.pop("cls"))
+    cls = _expression_class_map[expression.pop("cls")]
     expr = cls(**expression)
 
     # For attributes, we need to re-attach names (`values`) together,
@@ -111,9 +135,9 @@ def _load_expression(expression: dict) -> expressions.Expr:
     # as `(a or b)` is not a name and wouldn't allow to resolve `c`.
     if cls is expressions.ExprAttribute:
         previous = None
-        for value in expr.values:
+        for value in cast("expressions.ExprAttribute", expr).values:
             if previous is not None:
-                value.parent = previous
+                cast("expressions.ExprName", value).parent = previous
             if isinstance(value, expressions.ExprName):
                 previous = value
     return expr
@@ -197,7 +221,7 @@ def _attach_parent_to_exprs(obj: Class | Function | Attribute | TypeAlias, paren
 def _load_module(obj_dict: dict[str, Any]) -> Module:
     filepath = obj_dict.get("filepath")
     if filepath is not None:
-        filepath: Path | list[Path] = [*map(Path, filepath)] if isinstance(filepath, list) else Path(filepath)  # ty:ignore[invalid-argument-type,invalid-assignment]
+        filepath: Path | list[Path] = [*map(Path, filepath)] if isinstance(filepath, list) else Path(filepath)
     module = Module(
         name=obj_dict["name"],
         filepath=filepath,
@@ -210,9 +234,11 @@ def _load_module(obj_dict: dict[str, Any]) -> Module:
     for module_member in members:
         module.set_member(module_member.name, module_member)
         _attach_parent_to_exprs(module_member, module)
-    module.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        module.labels.update(labels)
     module.exports = obj_dict.get("exports")
-    module.imports = obj_dict.get("imports", {})
+    if imports := obj_dict.get("imports"):
+        module.imports = imports
     module.deprecated = obj_dict.get("deprecated")
     module.public = obj_dict.get("public")
     module.source_link = obj_dict.get("source_link")
@@ -238,8 +264,10 @@ def _load_class(obj_dict: dict[str, Any]) -> Class:
     for class_member in members:
         class_.set_member(class_member.name, class_member)
         _attach_parent_to_exprs(class_member, class_)
-    class_.labels |= set(obj_dict.get("labels", ()))
-    class_.imports = obj_dict.get("imports", {})
+    if labels := obj_dict.get("labels"):
+        class_.labels.update(labels)
+    if imports := obj_dict.get("imports"):
+        class_.imports = imports
     class_.deprecated = obj_dict.get("deprecated")
     class_.public = obj_dict.get("public")
     class_.source_link = obj_dict.get("source_link")
@@ -262,7 +290,8 @@ def _load_function(obj_dict: dict[str, Any]) -> Function:
         runtime=obj_dict.get("runtime", True),
         analysis=obj_dict.get("analysis"),
     )
-    function.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        function.labels.update(labels)
     function.deprecated = obj_dict.get("deprecated")
     function.public = obj_dict.get("public")
     function.source_link = obj_dict.get("source_link")
@@ -281,7 +310,8 @@ def _load_attribute(obj_dict: dict[str, Any]) -> Attribute:
         annotation=obj_dict.get("annotation"),
         analysis=obj_dict.get("analysis"),
     )
-    attribute.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        attribute.labels.update(labels)
     attribute.runtime = obj_dict.get("runtime", True)
     attribute.deprecated = obj_dict.get("deprecated")
     attribute.public = obj_dict.get("public")
@@ -316,7 +346,8 @@ def _load_type_alias(obj_dict: dict[str, Any]) -> TypeAlias:
         docstring=_load_docstring(obj_dict),
         analysis=obj_dict.get("analysis"),
     )
-    type_alias.labels |= set(obj_dict.get("labels", ()))
+    if labels := obj_dict.get("labels"):
+        type_alias.labels.update(labels)
     type_alias.runtime = obj_dict.get("runtime", True)
     type_alias.deprecated = obj_dict.get("deprecated")
     type_alias.public = obj_dict.get("public")
@@ -361,13 +392,11 @@ def json_decoder(
     # Load objects and parameters.
     if "kind" in obj_dict:
         kind = obj_dict["kind"]
-        if kind in _loader_map:
-            return _loader_map[kind](obj_dict)
-        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
-        if kind in ParameterKind.__members__.values():
+        if loader := _loader_map.get(kind):
+            return loader(obj_dict)
+        if kind in _parameter_kinds:
             return _load_parameter(obj_dict)
-        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
-        if kind in TypeParameterKind.__members__.values():
+        if kind in _type_parameter_kinds:
             return _load_type_parameter(obj_dict)
 
     # Return dict as is.

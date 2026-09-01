@@ -1,4 +1,20 @@
-"""Tests for our own API exposition."""
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Tests for our own API exposition.
 
 from __future__ import annotations
 
@@ -8,35 +24,46 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from mkdocstrings import Inventory
 
 import griffe
-import griffecli
+
+try:
+    import griffecli
+except ModuleNotFoundError:
+    griffecli = None
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
     from types import ModuleType
 
+    from mkdocstrings import Inventory
 
-TESTED_MODULES = (griffe, griffecli)
+
+TESTED_MODULES = (griffe, griffecli) if griffecli else (griffe,)
 _test_all_modules = pytest.mark.parametrize("tested_module", TESTED_MODULES)
 
 
 @pytest.fixture(name="inventory", scope="module")
 def _fixture_inventory() -> Inventory:
+    mkdocstrings = pytest.importorskip("mkdocstrings")
     inventory_file = Path(__file__).parent.parent / "site" / "objects.inv"
     if not inventory_file.exists():
         pytest.skip("The objects inventory is not available.")
+
     with inventory_file.open("rb") as file:
-        return Inventory.parse_sphinx(file)
+        return mkdocstrings.Inventory.parse_sphinx(file)
 
 
 def _load_modules(*modules: ModuleType) -> griffe.GriffeLoader:
+    extensions = ["unpack_typeddict"]
+    try:
+        import griffe_inherited_docstrings  # noqa: F401, PLC0415
+
+        extensions.append("griffe_inherited_docstrings")
+    except ImportError:
+        pass
     loader = griffe.GriffeLoader(
-        extensions=griffe.load_extensions(
-            "griffe_inherited_docstrings",
-            "unpack_typeddict",
-        ),
+        extensions=griffe.load_extensions(*extensions),
     )
     for module in modules:
         loader.load(module.__name__)

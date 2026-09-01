@@ -39,7 +39,7 @@ Besides, logging and exception messages simply cannot allow deprecation periods 
 
 ## Conventions
 
-Python does not provide any standard way to declare public APIs. However we do have official recommendations and a few conventions.
+Python does not provide any way to *enforce* public APIs: users can always import and use internal objects if they really want to. However, Python *does* specify a standard way to *declare* public APIs: the `__all__` attribute (see below), which is complemented by official recommendations and a few conventions.
 
 ### Underscore prefix
 
@@ -61,12 +61,18 @@ from elsewhere import something
 
 Even though `something` doesn't start with an underscore, it was imported so it is not considered public.
 
+Note that this exception comes from [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) ("imported names should always be considered an implementation detail") and from the conventions used by type checkers, not from the language reference: the latter states that when `__all__` is not defined, the set of public names includes *all* names found in the module's namespace which do not begin with an underscore, imported ones included.
+
 ### `__all__` list
 
-There is another convention that lets you do the opposite: explicitly mark objects as public. This convention uses the `__all__` module-level attribute, which is a list of strings containing the names of the public objects.
+Python also provides a mechanism that lets you do the opposite: explicitly mark objects as public. This mechanism uses the `__all__` module-level attribute, which is a list of strings containing the names of the public objects.
+
+Contrary to popular belief, `__all__` is not merely a convention, nor just a way to control wildcard imports: it is actually specified in [the Python language reference](https://docs.python.org/3/reference/simple_stmts.html#the-import-statement) as *the* mechanism that determines the public names of a module:
+
+> The public names defined by a module are determined by checking the module's namespace for a variable named `__all__`; if defined, it must be a sequence of strings which are names defined or imported by that module. [...] The names given in `__all__` are all considered public and are required to exist. If `__all__` is not defined, the set of public names includes all names found in the module's namespace which do not begin with an underscore character (`'_'`). `__all__` should contain the entire public API. It is intended to avoid accidentally exporting items that are not part of the API (such as library modules which were imported and used within the module).
 
 ```python title="package/module.py"
-__all__ [
+__all__ = [
     "this_function",
     "ThisClass",
 ]
@@ -86,7 +92,7 @@ class ThisOtherClass:
 
 Here, even though `this_other_function` and `ThisOtherClass` are *not* prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
 
-Declaring `__all__` has another beneficial effect: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](python-code.md#avoid-wildcard-imports).
+Declaring `__all__` has a beneficial side-effect, which is often mistaken for its primary purpose: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](python-code.md#avoid-wildcard-imports).
 
 By declaring `__all__`, your public API becomes explicit, and explicit is better than implicit. But `__all__` only works for module-level objects. Within classes, you will still have to rely on the underscore prefix convention to mark methods or attributes as internal/private.
 
@@ -126,7 +132,7 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 > GRIFFE: **Our recommendation — Use the underscore prefix and `__all__` conventions.**
 > Use both the underscore prefix convention for consistent naming at module and class levels, and the `__all__` convention for declaring your public API. We do not recommend using the redundant aliases convention, because it doesn't provide any information at runtime. We do not recommend the wildcard import convention either, for the same reason and [for additional reasons mentioned here](python-code.md#avoid-wildcard-imports). We still provide the [`griffe-public-redundant-aliases`](https://mkdocstrings.github.io/griffe-public-redundant-aliases/) and [`griffe-public-wildcard-imports`](https://mkdocstrings.github.io/griffe-public-wildcard-imports/) extensions for those who would still like to rely on these conventions.
 >
-> Our recommendation matches [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
+> Our recommendation matches the language reference (quoted above) as well as [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces):
 >
 > > To better support introspection, modules should explicitly declare the names in their public API using the `__all__` attribute. Setting `__all__` to an empty list indicates that the module has no public API.
 >
@@ -202,7 +208,7 @@ Such changes sometimes go unnoticed before the breaking change is released, beca
 
 What if we could make this easier?
 
-By hiding your module layout from your public API, you're removing all these pain points at once. Any object can freely move around without ever impacting users. Maintainers do not need to set deprecation periods where old and new uses are supported, or bump the major part of their semantic version when they stop supporting the old use. Hiding the module layout also removes the ambiguity of whether a submodule is considered public or not: [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) doesn't mention anything about it, and it doesn't look like the `__all__` convention expects developers to list their submodules too. In the end it looks like submodules are only subject to the underscore prefix convention.
+By hiding your module layout from your public API, you're removing all these pain points at once. Any object can freely move around without ever impacting users. Maintainers do not need to set deprecation periods where old and new uses are supported, or bump the major part of their semantic version when they stop supporting the old use. Hiding the module layout also removes the ambiguity of whether a submodule is considered public or not: [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) doesn't mention anything about it, and it doesn't look like the `__all__` mechanism expects developers to list their submodules too. In the end it looks like submodules are only subject to the underscore prefix convention.
 
 So, how do we hide the module layout from the public API?
 
@@ -223,7 +229,7 @@ from my_package._combat import Combat
 from my_package._exploration import navigate
 from my_package._sorcery import cast_spell
 
-__all__ [
+__all__ = [
     "Combat",
     "navigate",
     "cast_spell",
@@ -303,7 +309,7 @@ my_package/
     Here the `Hello` class is exposed in both `my_package.module` and `my_package`.
 
     ```python title="my_package/module.py"
-    __all__ ["Hello"]
+    __all__ = ["Hello"]
 
     class Hello:
         ...
@@ -319,7 +325,7 @@ my_package/
     Here the `Hello` class is only exposed in `my_package.module`.
 
     ```python title="my_package/module.py"
-    __all__ ["Hello"]
+    __all__ = ["Hello"]
 
     class Hello:
         ...

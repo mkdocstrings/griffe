@@ -1,14 +1,39 @@
-"""Test nodes utilities."""
+# SPDX-License-Identifier: ISC
+#
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Test nodes utilities.
 
 from __future__ import annotations
 
 import logging
 import sys
-from ast import PyCF_ONLY_AST
+import weakref
+from ast import AST, Add, Name, PyCF_ONLY_AST
 
 import pytest
 
-from griffe import Expr, ExprName, module_vtree, relative_to_absolute, temporary_visited_module
+from griffe import (
+    Expr,
+    ExprName,
+    ast_children,
+    module_vtree,
+    relative_to_absolute,
+    temporary_visited_module,
+)
+from griffe._internal.agents import visitor as visitor_module
 
 syntax_examples = [
     # Operations.
@@ -66,34 +91,105 @@ syntax_examples = [
     *(["t'say \"hello\" to {x}'"] if sys.version_info >= (3, 14) else []),
     # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
     *(["t'''it's \"complicated\" {x}'''"] if sys.version_info >= (3, 14) else []),
+    # Formatted values: conversions and format specifiers.
+    "f'{x!r}'",
+    "f'{x!s}'",
+    "f'{x!a}'",
+    "f'{x:>10}'",
+    "f'{x:{width}}'",
+    "f'{x!r:>{width}}'",
+    "f'a {x:%Y-%m-%d} b'",
+    "f'{(x := 1)}'",
+    "f'{ {1: 2}}'",
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(["t'{x!r}'"] if sys.version_info >= (3, 14) else []),
+    # YORE: EOL 3.13: Regex-replace `\*\(\[(.+)\].+\),` with `\1,` within line.
+    *(["t'{x!s:>{width}}'"] if sys.version_info >= (3, 14) else []),
     # Slices.
     "o[x]",
     "o[x, y]",
     "o[x:y]",
     "o[x:y, z]",
     "o[x, y(z)]",
+    "o[(a, b):y]",
+    "o[a + b:]",
     # Walrus operator.
     "a if (a := b) else c",
+    "{(a := 1): 2}",
+    "{1: (a := 2)}",
+    "[a for a in b if (c := a)]",
     # Starred.
     "a(*b, **c)",
+    "a(*b | c)",
     # Structs.
     "(a, b, c)",
     "{a, b, c}",
     "{a: b, c: d}",
+    "{a + b: c + d for a, b in e}",
     "[a, b, c]",
+    "[a + b for a in c]",
+    # Generator expressions.
+    "(a + b for a in c)",
+    "a(b for b in c)",
+    "sum((a for a in b), c)",
+    "[(a for a in b), c]",
+    "{1: (a for a in b)}",
+    "(a for a in b if (c := a))",
     # Yields.
     "yield",
     "yield a",
+    "yield a + b",
     "yield from a",
     # Lambdas.
     "lambda a: a",
     "lambda a, b: a",
     "lambda *a, **b: a",
     "lambda a, b=0: a",
+    "lambda a=b + c: a",
     "lambda a, /, b, c: a",
     "lambda a, *, b, c: a",
     "lambda a, /, b, *, c: a",
+    "lambda a, /: a",
+    "lambda a, b, /: a",
+    "lambda a, /, *args: args",
+    "lambda a, /, **kwargs: kwargs",
+    "lambda a, /, *, b: b",
+    "lambda a, /, b=0, *args, c=1, **kwargs: a",
+    "lambda *args, b: b",
+    "lambda *args, b=0: b",
+    # Calls with expression-level arguments.
+    "call(a=b + c)",
+    # Attribute access on integer literals.
+    "(1).bit_length()",
 ]
+
+
+def test_shared_ast_nodes_do_not_retain_parent_trees() -> None:
+    """Shared AST operator/context instances must not keep parsed trees alive."""
+    expression = compile("left + right", filename="<test>", mode="eval", flags=PyCF_ONLY_AST).body  # ty:ignore[unresolved-attribute]
+    children = list(ast_children(expression))
+
+    assert any(isinstance(child, Name) and child.parent is expression for child in children)  # ty:ignore[unresolved-attribute]
+    assert any(isinstance(child, Add) and not hasattr(child, "parent") for child in children)
+    assert all(isinstance(child, AST) for child in children)
+
+
+def test_visitor_releases_ast_without_cyclic_gc(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A completed static analysis must not leave parent cycles behind."""
+    references: list[weakref.ReferenceType[AST]] = []
+    builtin_compile = compile
+
+    def capture_ast(*args: object, **kwargs: object) -> AST:
+        node = builtin_compile(*args, **kwargs)  # ty:ignore[no-matching-overload]
+        references.append(weakref.ref(node))
+        return node
+
+    monkeypatch.setattr(visitor_module, "compile", capture_ast, raising=False)
+    with temporary_visited_module("value = left + right"):
+        pass
+
+    assert references
+    assert all(reference() is None for reference in references)
 
 
 @pytest.mark.parametrize(

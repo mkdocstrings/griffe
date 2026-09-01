@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module defines functions to parse docstrings by guessing their style.
 
 from __future__ import annotations
@@ -28,7 +44,7 @@ DocstringDetectionMethod = Literal["heuristics", "max_sections"]
 """The supported methods to infer docstring styles."""
 
 
-_patterns = {
+_pattern_templates = {
     Parser.google: (
         r"\n[ \t]*{0}:([ \t]+.+)?\n[ \t]+.+",
         [
@@ -106,6 +122,14 @@ _patterns = {
     ),
 }
 
+_patterns = {
+    style: re.compile(
+        pattern.format(f"(?:{'|'.join(map(re.escape, replacements))})"),
+        re.IGNORECASE | re.MULTILINE,
+    )
+    for style, (pattern, replacements) in _pattern_templates.items()
+}
+
 
 class PerStyleOptions(TypedDict, total=False):
     """Per-style options for docstring parsing."""
@@ -152,15 +176,14 @@ def infer_docstring_style(
 
     per_style_options = per_style_options or {}
 
-    style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
+    if not style_order:
+        style_order = _default_style_order
+    else:
+        style_order = [Parser(style) if isinstance(style, str) else style for style in style_order]
 
     if method == "heuristics":
         for style in style_order:
-            pattern, replacements = _patterns[style]
-            patterns = [
-                re.compile(pattern.format(replacement), re.IGNORECASE | re.MULTILINE) for replacement in replacements
-            ]
-            if any(pattern.search(docstring.value) for pattern in patterns):
+            if _patterns[style].search(docstring.value):
                 return style, None
         return default if default is None or isinstance(default, Parser) else Parser(default), None
 

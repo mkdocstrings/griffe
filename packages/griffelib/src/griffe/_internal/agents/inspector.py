@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains our dynamic analysis agent,
 # capable of inspecting modules and objects in memory, at runtime.
 
@@ -119,7 +135,7 @@ class Inspector:
     Inspectors iterate on objects members to extract data from them.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         module_name: str,
         filepath: Path | None,
@@ -475,8 +491,7 @@ class Inspector:
         lineno, endlineno = self._get_linenos(node)
 
         obj: Attribute | Function
-        labels = labels or set()
-        if "property" in labels:
+        if labels and "property" in labels:
             obj = Attribute(
                 name=node.name,
                 value=None,
@@ -499,7 +514,8 @@ class Inspector:
                 endlineno=endlineno,
                 analysis="dynamic",
             )
-        obj.labels |= labels
+        if labels:
+            obj.labels.update(labels)
         self.current.set_member(node.name, obj)
         self.extensions.call("on_instance", node=node, obj=obj, agent=self)
         if obj.is_attribute:
@@ -580,7 +596,7 @@ class Inspector:
             docstring=docstring,
             analysis="dynamic",
         )
-        attribute.labels |= labels
+        attribute.labels.update(labels)
         parent.set_member(node.name, attribute)  # ty:ignore[unresolved-attribute]
 
         if node.name == "__all__":

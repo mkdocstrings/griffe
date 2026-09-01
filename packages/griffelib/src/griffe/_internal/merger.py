@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains utilities to merge stubs data and concrete data.
 
 from __future__ import annotations
@@ -12,7 +28,7 @@ from griffe._internal.logger import logger
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from griffe._internal.models import Attribute, Class, Function, Module, Object, TypeAlias
+    from griffe._internal.models import Attribute, Class, Function, Module, Object, Parameter, TypeAlias
 
 
 def _merge_module_stubs(module: Module, stubs: Module, *, psd: bool = False) -> None:
@@ -28,11 +44,14 @@ def _merge_class_stubs(class_: Class, stubs: Class, *, psd: bool = False) -> Non
     _merge_stubs_members(class_, stubs, psd=psd)
 
 
-def _merge_function_stubs(function: Function, stubs: Function, *, psd: bool = False) -> None:
+def _merge_function_stubs(function: Function, stubs: Function) -> None:
     _merge_stubs_docstring(function, stubs, psd=psd)
+    parameters: dict[str, Parameter] = {}
+    for parameter in function.parameters:
+        parameters.setdefault(parameter.name, parameter)
     for parameter in stubs.parameters:
         with suppress(KeyError):
-            function.parameters[parameter.name].annotation = parameter.annotation
+            parameters[parameter.name].annotation = parameter.annotation
     function.returns = stubs.returns
     _merge_stubs_type_parameters(function, stubs)
 
@@ -84,13 +103,19 @@ def _merge_annotations(annotations: Sequence[Expr]) -> Expr | None:
 
 def _merge_overload_annotations(function: Function, overloads: list[Function]) -> None:
     function.overloads = overloads
+    overload_parameters: list[dict[str, Parameter]] = []
+    for overload in overloads:
+        parameters: dict[str, Parameter] = {}
+        for parameter in overload.parameters:
+            parameters.setdefault(parameter.name, parameter)
+        overload_parameters.append(parameters)
     for parameter in function.parameters:
         if parameter.annotation is None:
             seen = set()
             annotations = []
-            for overload in overloads:
+            for parameters in overload_parameters:
                 with suppress(KeyError):
-                    annotation = overload.parameters[parameter.name].annotation
+                    annotation = parameters[parameter.name].annotation
                     str_annotation = str(annotation)
                     if isinstance(annotation, Expr) and str_annotation not in seen:
                         annotations.append(annotation)

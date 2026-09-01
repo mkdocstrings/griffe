@@ -1,4 +1,20 @@
-"""Tests for the `loader` module."""
+# SPDX-License-Identifier: ISC
+#
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Tests for the `loader` module.
 
 from __future__ import annotations
 
@@ -9,13 +25,43 @@ from typing import TYPE_CHECKING
 import pytest
 
 from griffe import (
+    AliasResolutionError,
     ExprName,
+    Extensions,
     GriffeLoader,
     temporary_inspected_package,
     temporary_pyfile,
     temporary_pypackage,
     temporary_visited_package,
 )
+
+
+def test_skip_load_event_traversal_without_hooks(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Do not traverse loaded objects when no extension implements load-event hooks."""
+    with temporary_pypackage("package", {"__init__.py": "def function(): ..."}) as package:
+        loader = GriffeLoader(extensions=Extensions(), search_paths=[package.tmpdir])
+
+        def fail_if_called(_module: object) -> None:
+            raise AssertionError("load events were fired without hooks")
+
+        monkeypatch.setattr(loader, "_fire_load_events", fail_if_called)
+        loader.load("package")
+
+
+def test_resolve_aliases_defers_caught_error_messages(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Do not format alias errors that the resolver catches internally."""
+    with temporary_pypackage("package", {"__init__.py": "from missing import value"}) as package:
+        loader = GriffeLoader(search_paths=[package.tmpdir])
+        loader.load("package")
+
+        def fail_if_formatted(_error: AliasResolutionError) -> str:
+            raise AssertionError("caught alias-resolution error was formatted")
+
+        monkeypatch.setattr(AliasResolutionError, "_format_message", fail_if_formatted)
+        unresolved, _ = loader.resolve_aliases(implicit=True, external=False)
+
+    assert unresolved == {"package.value"}
+
 
 if TYPE_CHECKING:
     from pathlib import Path

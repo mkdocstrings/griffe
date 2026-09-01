@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains all the exceptions specific to Griffe.
 
 from __future__ import annotations
@@ -40,14 +56,21 @@ class AliasResolutionError(GriffeError):
         self.alias: Alias = alias
         """The alias that triggered the error."""
 
-        message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
+        self._detailed_message: str | None = None
+        super().__init__(f"Could not resolve alias {alias.path} pointing at {self.alias.target_path}")
+
+    def _format_message(self) -> str:
+        message = super().__str__()
         try:
-            filepath = alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
+            filepath = self.alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
         except BuiltinModuleError:
-            pass
-        else:
-            message += f" (in {filepath}:{alias.alias_lineno})"
-        super().__init__(message)
+            return message
+        return message + f" (in {filepath}:{self.alias.alias_lineno})"
+
+    def __str__(self) -> str:
+        if self._detailed_message is None:
+            self._detailed_message = self._format_message()
+        return self._detailed_message
 
 
 class CyclicAliasError(GriffeError):

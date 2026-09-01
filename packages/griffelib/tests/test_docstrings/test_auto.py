@@ -1,8 +1,11 @@
 # SPDX-License-Identifier: ISC
+
 # Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
 # copyright notice and this permission notice appear in all copies.
+
 # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -11,20 +14,23 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-# Configuration for the pytest test suite.
-
 from __future__ import annotations
-
-from typing import TYPE_CHECKING
 
 import pytest
 
-if TYPE_CHECKING:
-    from pytest_gitconfig import GitConfig
+from griffe import Docstring, Parser, infer_docstring_style
 
 
-@pytest.fixture(name="gitconfig", scope="session")
-def _default_gitconfig(default_gitconfig: GitConfig) -> GitConfig:
-    default_gitconfig.set({"user.name": "My Name"})
-    default_gitconfig.set({"user.email": "my@email.com"})
-    return default_gitconfig
+@pytest.mark.parametrize(
+    ("style", "value"),
+    [
+        (Parser.google, "Summary.\n\nArgs:\n    value: Description."),
+        (Parser.numpy, "Summary.\n\nParameters\n----------\nvalue : str"),
+        (Parser.sphinx, "Summary.\n\n:param value: Description.\nMore details."),
+    ],
+)
+def test_infer_docstring_style(style: Parser, value: str) -> None:
+    """Infer each supported docstring style with its combined pattern."""
+    inferred_style, sections = infer_docstring_style(Docstring(value))
+    assert inferred_style is style
+    assert sections is None

@@ -1,4 +1,20 @@
-"""Test names and expressions methods."""
+# SPDX-License-Identifier: ISC
+#
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Test names and expressions methods.
 
 from __future__ import annotations
 
@@ -7,7 +23,7 @@ import sys
 
 import pytest
 
-from griffe import Module, Parser, get_expression, temporary_visited_module
+from griffe import ExprAwait, Module, Parser, get_expression, temporary_visited_module
 from tests.test_nodes import syntax_examples
 
 
@@ -86,6 +102,191 @@ def test_expressions(code: str) -> None:
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
     expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == code
+
+
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        ("await dependency()", "await dependency()"),
+        ("(await dependency()).attr", "(await dependency()).attr"),
+        ("(await dependency())()", "(await dependency())()"),
+        ("await dependency() ** exponent", "await dependency() ** exponent"),
+        ("-await dependency()", "-await dependency()"),
+        ("await (dependency() ** exponent)", "await (dependency() ** exponent)"),
+        ("await (await dependency())", "await (await dependency())"),
+        ("await (left + right)", "await (left + right)"),
+    ],
+)
+def test_await_expression(source: str, expected: str) -> None:
+    """Build Await expressions with their correct precedence."""
+    node = ast.parse(source, mode="eval").body
+    expression = get_expression(node, parent=Module("module"))
+    rendered = str(expression)
+
+    if isinstance(node, ast.Await):
+        assert isinstance(expression, ExprAwait)
+    assert rendered == expected
+    assert ast.dump(ast.parse(rendered, mode="eval").body) == ast.dump(node)
+
+
+# Expressions from each precedence level, and contexts embedding them.
+# Not all combinations are valid Python: invalid ones are skipped.
+_expression_shapes = [
+    "x",
+    "a.b",
+    "'s'",
+    "x + 1",
+    "a | b",
+    "-x",
+    "not x",
+    "a or b",
+    "a < b",
+    "x ** 2",
+    "a if b else c",
+    "lambda: 1",
+    "(w := 1)",
+    "(g for g in y)",
+    "[g for g in y]",
+    "{g: g for g in y}",
+    "f(1)",
+    "o[1]",
+    "(1, 2)",
+    "[1, 2]",
+    "{1: 2}",
+    "{1, 2}",
+    "f'{x!r}'",
+    "f'{x:>{width}}'",
+]
+_expression_contexts = [
+    "f(%s)",
+    "f(%s, 1)",
+    "f(a=%s)",
+    "f(*%s)",
+    "f(**%s)",
+    "[%s, 1]",
+    "{%s, 1}",
+    "(%s, 1)",
+    "{%s: 1}",
+    "{1: %s}",
+    "o[%s]",
+    "o[%s:1]",
+    "o[1:%s]",
+    "o[1:1:%s]",
+    "[%s for u in y]",
+    "[u for u in %s]",
+    "[u for u in y if %s]",
+    "(%s for u in y)",
+    "lambda p=%s: p",
+    "%s + 1",
+    "-%s",
+    "%s.m",
+    "%s()",
+    "%s if c else d",
+    "f'{%s}'",
+    "f'{v:{%s}}'",
+    "[(nv := %s)]",
+]
+
+
+@pytest.mark.parametrize("shape", _expression_shapes)
+@pytest.mark.parametrize("context", _expression_contexts)
+def test_expressions_stay_valid_and_equivalent(shape: str, context: str) -> None:
+    """Stringified expressions must re-parse as valid, semantically-equivalent Python.
+
+    Parameters:
+        shape: An expression to embed in each code context.
+        context: A code template embedding the expression.
+    """
+    code = context % shape
+    try:
+        original = ast.parse(code, mode="eval")
+    except SyntaxError:
+        pytest.skip("shape is invalid in this context")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")  # Output must be valid Python.
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
+def test_nested_container_format_spec_is_roundtrip_safe() -> None:
+    """Container replacement fields in format specs must preserve the source AST."""
+    code = "f'{value:{{1, 2}}}'"
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        "o[[(x, y)]]",
+        "o[f((x, y))]",
+        "o[[(x, y) for x in xs for y in ys]]",
+        "[(x, y) for [x, (y, z)] in values]",
+    ],
+)
+def test_nested_tuples_keep_parentheses_in_implicit_contexts(code: str) -> None:
+    """Implicit-tuple contexts must only affect the immediate tuple node."""
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
+@pytest.mark.parametrize(
+    ("code", "expected"),
+    [
+        ("o[{(x, y)}]", "o[{(x, y)}]"),
+        ("o[{(x, y): value}]", "o[{(x, y): value}]"),
+        ("o[{(x, y): value for value in values}]", "o[{(x, y): value for value in values}]"),
+        ("o[{(x, y) for value in values}]", "o[{(x, y) for value in values}]"),
+        ("o[p[(x, y)]]", "o[p[x, y]]"),
+        ("o[p[(x, y):]]", "o[p[(x, y):]]"),
+        ("o[f(arg=(x, y))]", "o[f(arg=(x, y))]"),
+        ("o[((x, y)).attribute]", "o[(x, y).attribute]"),
+        ("o[(x, y) + z]", "o[(x, y) + z]"),
+        ("o[not (x, y)]", "o[not (x, y)]"),
+        ("o[(x, y) and z]", "o[(x, y) and z]"),
+        ("o[(x, y) == z]", "o[(x, y) == z]"),
+        ("o[(x, y) if condition else z]", "o[(x, y) if condition else z]"),
+        ("o[lambda: (x, y)]", "o[lambda: (x, y)]"),
+        ("o[(item := (x, y))]", "o[item := (x, y)]"),
+        ("o[f'{(x, y)}']", "o[f'{(x, y)}']"),
+        ("o[((x, y) for value in values)]", "o[((x, y) for value in values)]"),
+        ("o[await (x, y)]", "o[await (x, y)]"),
+        ("[(x, y) for (x, (y, z)) in values]", "[(x, y) for x, (y, z) in values]"),
+    ],
+)
+def test_only_root_tuples_are_implicit_in_tuple_contexts(code: str, expected: str) -> None:
+    """Only a tuple at the root of a subscript slice or comprehension target is implicit."""
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    assert rendered == expected
+    assert ast.dump(ast.parse(rendered, mode="eval")) == ast.dump(original)
+
+
+@pytest.mark.parametrize(
+    ("code", "expected"),
+    [
+        ('o["x, y"]', "o[x, y]"),
+        ('o["x,"]', "o[x,]"),
+        ('o["()"]', "o[()]"),
+        ('o[["x, y"]]', "o[[(x, y)]]"),
+        ('o[f("x, y")]', "o[f((x, y))]"),
+        ('o[p["x, y"]]', "o[p[x, y]]"),
+        ('o[p[["x, y"]]]', "o[p[[(x, y)]]]"),
+        ('typing.Literal["x, y"]', "typing.Literal['x, y']"),
+    ],
+)
+def test_parsed_string_tuples_respect_tuple_contexts(code: str, expected: str) -> None:
+    """Parsed strings inherit only their immediate tuple context."""
+    node = ast.parse(code, mode="eval")
+    expression = get_expression(node.body, parent=Module("module"), parse_strings=True)
+    assert str(expression) == expected
 
 
 def test_length_one_tuple_as_string() -> None:
@@ -263,6 +464,47 @@ def test_fstring_quote_selection(code: str, expected: str) -> None:
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
     expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
     assert str(expression) == expected
+
+
+def test_fstring_conversions_and_format_specs() -> None:
+    """Conversion flags and format specifiers must be preserved.
+
+    Regression test: they used to be dropped entirely (`f"{x!r:>10}"` rendered as `f'{x}'`).
+    """
+    with temporary_visited_module(
+        """
+        a = f"{x!r}"
+        b = f"{x:>10}"
+        c = f"{x:{width}.{precision}}"
+        d = f"{x!a:>{width}}"
+        e = f"{x:%Y-%m-%d}"
+
+        def func(param=f"{x!r:>3}"): ...
+        """,
+    ) as module:
+        assert str(module["a"].value) == "f'{x!r}'"
+        assert str(module["b"].value) == "f'{x:>10}'"
+        assert str(module["c"].value) == "f'{x:{width}.{precision}}'"
+        assert str(module["d"].value) == "f'{x!a:>{width}}'"
+        assert str(module["e"].value) == "f'{x:%Y-%m-%d}'"
+        assert str(module["func"].parameters["param"].default) == "f'{x!r:>3}'"
+
+
+@pytest.mark.skipif(sys.version_info < (3, 14), reason="t-strings require Python 3.14+")
+def test_tstring_conversions_and_format_specs() -> None:
+    """Same as f-strings: t-string interpolations must keep conversions, specs and quotes."""
+    with temporary_visited_module(
+        """
+        a = t"{x!r}"
+        b = t"{x:>10}"
+        c = t"{x!s:>{width}}"
+        d = t"{'quoted'}"
+        """,
+    ) as module:
+        assert str(module["a"].value) == "t'{x!r}'"
+        assert str(module["b"].value) == "t'{x:>10}'"
+        assert str(module["c"].value) == "t'{x!s:>{width}}'"
+        assert str(module["d"].value) == "t\"{'quoted'}\""
 
 
 @pytest.mark.skipif(sys.version_info < (3, 14), reason="t-strings require Python 3.14+")

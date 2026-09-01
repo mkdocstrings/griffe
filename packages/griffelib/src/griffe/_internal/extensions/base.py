@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains the base class for extensions
 # and the functions to load them.
 
@@ -23,6 +39,8 @@ if TYPE_CHECKING:
     from griffe._internal.agents.visitor import Visitor
     from griffe._internal.loader import GriffeLoader
     from griffe._internal.models import Alias, Attribute, Class, Function, Module, Object, TypeAlias
+
+_missing = object()
 
 
 class Extension:
@@ -460,6 +478,23 @@ class Extensions:
         for extension in extensions:
             self._extensions.append(extension)
 
+    def has_hooks(self, *events: str) -> bool:
+        """Whether any extension implements one of the given events.
+
+        Parameters:
+            *events: The extension events to check.
+
+        Returns:
+            Whether at least one hook is implemented.
+        """
+        for event in events:
+            base_callback = getattr(Extension, event, _missing)
+            for extension in self._extensions:
+                callback = getattr(extension, event, _missing)
+                if callback is not _missing and getattr(callback, "__func__", callback) is not base_callback:
+                    return True
+        return False
+
     def _noop(self, **kwargs: Any) -> None:
         """No-op method for extension hooks."""
 
@@ -597,7 +632,7 @@ def load_extensions(*exts: LoadableExtensionType) -> Extensions:
     for extension in exts:
         ext = _load_extension(extension)
         if isinstance(ext, list):
-            extensions.add(*ext)  # ty:ignore[invalid-argument-type]
+            extensions.add(*ext)
         else:
             extensions.add(ext)
 

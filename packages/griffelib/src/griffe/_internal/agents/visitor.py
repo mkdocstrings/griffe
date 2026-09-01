@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains our static analysis agent,
 # capable of parsing and visiting sources, statically.
 
@@ -9,11 +25,7 @@ from contextlib import suppress
 from typing import TYPE_CHECKING, Final
 
 from griffe._internal.agents.nodes.assignments import get_instance_names, get_names
-from griffe._internal.agents.nodes.ast import (
-    ast_children,
-    ast_kind,
-    ast_next,
-)
+from griffe._internal.agents.nodes.ast import ast_children, ast_next
 from griffe._internal.agents.nodes.docstrings import get_docstring
 from griffe._internal.agents.nodes.exports import safe_get__all__
 from griffe._internal.agents.nodes.imports import relative_to_absolute
@@ -47,6 +59,7 @@ from griffe._internal.models import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
 
     from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
@@ -134,7 +147,7 @@ class Visitor:
     Visitors iterate on AST nodes to extract data from them.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         module_name: str,
         filepath: Path,
@@ -194,6 +207,8 @@ class Visitor:
         self.type_guarded: bool = False
         """Whether the current code branch is type-guarded."""
 
+        self._visited_nodes: list[ast.AST] = []
+
     def _get_docstring(self, node: ast.AST, *, strict: bool = False) -> Docstring | None:
         value, lineno, endlineno = get_docstring(node, strict=strict)
         if value is None:
@@ -251,11 +266,19 @@ class Visitor:
         Returns:
             A module instance.
         """
+        self._visited_nodes.clear()
         # Optimization: equivalent to `ast.parse`, but with `optimize=1` to remove assert statements.
         # TODO: With options, could use `optimize=2` to remove docstrings.
         top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
-        self.visit(top_node)
-        return self.current.module
+        try:
+            self.visit(top_node)
+            return self.current.module
+        finally:
+            # Parent links are only needed during analysis. Detach them once the
+            # visit is over so parsed trees can be freed without cyclic GC.
+            for node in self._visited_nodes:
+                vars(node).pop("parent", None)
+            self._visited_nodes.clear()
 
     def visit(self, node: ast.AST) -> None:
         """Extend the base visit with extensions.
@@ -263,7 +286,8 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
+        self._visited_nodes.append(node)
+        self._visitor.get(type(node), type(self).generic_visit)(self, node)
 
     def generic_visit(self, node: ast.AST) -> None:
         """Extend the base generic visit with extensions.
@@ -339,7 +363,8 @@ class Visitor:
             runtime=not self.type_guarded,
             analysis="static",
         )
-        class_.labels |= self.decorators_to_labels(decorators)
+        if decorators and (labels := self.decorators_to_labels(decorators)):
+            class_.labels.update(labels)
 
         self.current.set_member(node.name, class_)
         self.current = class_
@@ -402,8 +427,6 @@ class Visitor:
         self.extensions.call("on_node", node=node, agent=self)
         self.extensions.call("on_function_node", node=node, agent=self)
 
-        labels = labels or set()
-
         # Handle decorators.
         decorators = []
         overload = False
@@ -423,9 +446,13 @@ class Visitor:
         else:
             lineno = node.lineno
 
-        labels |= self.decorators_to_labels(decorators)
+        if decorators and (decorator_labels := self.decorators_to_labels(decorators)):
+            if labels:
+                labels.update(decorator_labels)
+            else:
+                labels = decorator_labels
 
-        if "property" in labels:
+        if labels and "property" in labels:
             attribute = Attribute(
                 name=node.name,
                 value=None,
@@ -436,7 +463,7 @@ class Visitor:
                 runtime=not self.type_guarded,
                 analysis="static",
             )
-            attribute.labels |= labels
+            attribute.labels.update(labels)
             self.current.set_member(node.name, attribute)
             self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
             self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
@@ -489,7 +516,8 @@ class Visitor:
                 function.overloads = self.current.overloads[function.name]
                 del self.current.overloads[function.name]
 
-        function.labels |= labels
+        if labels:
+            function.labels.update(labels)
 
         self.extensions.call("on_instance", node=node, obj=function, agent=self)
         self.extensions.call("on_function_instance", node=node, func=function, agent=self)
@@ -705,7 +733,7 @@ class Visitor:
                 runtime=not self.type_guarded,
                 analysis="static",
             )
-            attribute.labels |= labels
+            attribute.labels.update(labels)
             parent.set_member(name, attribute)
 
             if name == "__all__":
@@ -766,3 +794,20 @@ class Visitor:
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
+
+    _visitor: dict[type[ast.AST], Callable] = {  # noqa: RUF012
+        ast.Module: visit_module,
+        ast.ClassDef: visit_classdef,
+        ast.FunctionDef: visit_functiondef,
+        ast.AsyncFunctionDef: visit_asyncfunctiondef,
+        ast.Import: visit_import,
+        ast.ImportFrom: visit_importfrom,
+        ast.Assign: visit_assign,
+        ast.AnnAssign: visit_annassign,
+        ast.AugAssign: visit_augassign,
+        ast.If: visit_if,
+    }
+
+    # YORE: EOL 3.11: Replace block with line 1.
+    if sys.version_info >= (3, 12):
+        _visitor[ast.TypeAlias] = visit_typealias

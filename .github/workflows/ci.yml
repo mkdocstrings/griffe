@@ -51,7 +51,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         fetch-tags: true
@@ -60,12 +60,12 @@ jobs:
       uses: ts-graphviz/setup-graphviz@v2
 
     - name: Setup Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Setup uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v10.0.1
       with:
         enable-cache: true
         cache-dependency-glob: pyproject.toml
@@ -86,7 +86,7 @@ jobs:
       run: make check-api
 
     - name: Store objects inventory for tests
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13' }}
       with:
         name: objects.inv
@@ -123,19 +123,19 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         fetch-tags: true
 
     - name: Setup Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
 
     - name: Setup uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v10.0.1
       with:
         enable-cache: true
         cache-dependency-glob: pyproject.toml
@@ -147,7 +147,7 @@ jobs:
       run: make setup
 
     - name: Download objects inventory
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: objects.inv
         path: site/

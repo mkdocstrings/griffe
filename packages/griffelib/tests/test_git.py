@@ -1,4 +1,20 @@
-"""Tests for creating a griffe Module from specific commits in a git repository."""
+# SPDX-License-Identifier: ISC
+#
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Tests for creating a griffe Module from specific commits in a git repository.
 
 from __future__ import annotations
 
@@ -8,7 +24,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from griffe import Module, check, load_git
+from griffe import Module, load_git
 from tests import FIXTURES_DIR
 
 if TYPE_CHECKING:
@@ -101,4 +117,7 @@ def test_load_git_errors(git_repo: Path) -> None:
 
 def test_git_failures(tmp_path: Path) -> None:
     """Test failures to use Git."""
+    pytest.importorskip("griffecli")
+    from griffe import check  # noqa: PLC0415
+
     assert check(tmp_path) == 2

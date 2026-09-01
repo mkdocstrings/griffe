@@ -1,4 +1,20 @@
-"""Tests for the [Numpy-style parser][griffe.docstrings.numpy]."""
+# SPDX-License-Identifier: ISC
+#
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Tests for the [Numpy-style parser][griffe.docstrings.numpy].
 
 from __future__ import annotations
 
@@ -1355,17 +1371,38 @@ def test_parsing_choices(parse_numpy: ParserType) -> None:
 
 # =============================================================================================
 # Warnings
-def test_disabled_warnings(parse_numpy: ParserType) -> None:
-    """Assert warnings are disabled.
-
-    Parameters:
-        parse_numpy: Fixture parser.
-    """
-    docstring = """
+@pytest.mark.parametrize(
+    "docstring",
+    [
+        """
         Parameters
         ----------
         x :
             X value.
+        """,
+        """
+        Parameters
+        ----------
+        x : int
+          Confusing indentation.
+        """,
+        """
+        Type Parameters
+        ---------------
+        !!!
+        """,
+        """
+        Type Aliases
+        ------------
+        """,
+    ],
+)
+def test_disabled_warnings(parse_numpy: ParserType, docstring: str) -> None:
+    """Assert warnings are disabled.
+
+    Parameters:
+        parse_numpy: Fixture parser.
+        docstring: A docstring that triggers a parser warning.
     """
     _, warnings = parse_numpy(docstring, warnings=True)
     assert warnings

@@ -1,3 +1,19 @@
+# SPDX-License-Identifier: ISC
+
+# Copyright (c) 2021, Timothée Mazzucotelli and contributors
+
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 # This module contains Git utilities, used by our [`load_git`][griffe.load_git] function,
 # which in turn is used to load the API for different snapshots of a Git repository
 # and find breaking changes between them.
@@ -202,6 +218,7 @@ _service_to_url = {
 
 
 def _get_source_link(
+    *,
     service: KnownGitService,
     remote_url: str,
     commit_hash: str,
@@ -241,6 +258,9 @@ class GitInfo:
     def from_package(cls, package: Module) -> GitInfo | None:
         """Create a GitInfo instance from a Griffe package.
 
+        Parameters:
+            package: The package to create Git information for.
+
         Returns:
             The GitInfo instance, or None if unknown.
         """
@@ -268,4 +288,11 @@ class GitInfo:
         Returns:
             The source link, or None if unknown.
         """
-        return _get_source_link(self.service, self.remote_url, self.commit_hash, filepath, lineno, endlineno)
+        return _get_source_link(
+            service=self.service,
+            remote_url=self.remote_url,
+            commit_hash=self.commit_hash,
+            filepath=filepath,
+            lineno=lineno,
+            endlineno=endlineno,
+        )
