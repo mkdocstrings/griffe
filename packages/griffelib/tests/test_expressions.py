@@ -218,6 +218,16 @@ def test_nested_container_format_spec_is_roundtrip_safe() -> None:
     assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
 
 
+def test_standalone_named_expression_is_roundtrip_safe() -> None:
+    """Standalone named expressions must retain their required parentheses."""
+    code = "(value := 1)"
+    original = ast.parse(code, mode="eval")
+    expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    rendered = str(expression)
+    reparsed = ast.parse(rendered, mode="eval")
+    assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
+
+
 @pytest.mark.parametrize(
     "code",
     [
