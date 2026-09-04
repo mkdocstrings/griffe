@@ -20,6 +20,8 @@ from __future__ import annotations
 
 import json
 import sys
+import warnings
+from itertools import pairwise
 from typing import TYPE_CHECKING
 
 import pytest
@@ -32,6 +34,7 @@ from griffe._internal import loader as loader_module
 from griffecli._internal import cli
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
 
@@ -102,40 +105,45 @@ def test_show_debug_info(capsys: pytest.CaptureFixture) -> None:
     assert "packages" in captured
 
 
+@pytest.mark.parametrize("versions", [("1.0", "2.0"), ("1.0", "2.0", "3.0")])
 def test_diff_command(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture,
+    versions: tuple[str, ...],
 ) -> None:
-    """Dispatch the diff command with its version and output arguments."""
+    """Dispatch the diff command for each consecutive pair of versions."""
     loaded_refs: list[str] = []
+    batch_count = 0
     package_module = Module("package")
-    atomic_path = tmp_path / "atomic.json"
     history_path = tmp_path / "diff.json"
 
     monkeypatch.setattr(git_module, "_get_repo_root", lambda _package: tmp_path)
 
     def load_git(_package: str | Path, *, ref: str, **_kwargs: object) -> Module:
+        assert _kwargs["store_git_info"] is False
+        warnings.warn("Warning from historical syntax", SyntaxWarning, stacklevel=2)
         loaded_refs.append(ref)
         return package_module
 
     monkeypatch.setattr(loader_module, "load_git", load_git)
 
-    def write_api_diff(
-        _old_obj: object,
-        _new_obj: object,
+    def write_api_diffs(
+        snapshots: Iterable[tuple[str, object]],
         *,
-        old_version: str,
-        new_version: str,
         directory: str | Path,
-    ) -> tuple[Path, Path]:
-        assert old_version == "1.0"
-        assert new_version == "2.0"
+    ) -> tuple[list[Path], Path]:
+        nonlocal batch_count
+        batch_count += 1
         assert directory == tmp_path
-        return atomic_path, history_path
+        snapshot_versions = [version for version, _ in snapshots]
+        return [tmp_path / f"{old}--{new}.json" for old, new in pairwise(snapshot_versions)], history_path
 
-    monkeypatch.setattr(api_history_module, "write_api_diff", write_api_diff)
+    monkeypatch.setattr(api_history_module, "write_api_diffs", write_api_diffs)
 
-    assert cli.main(["diff", "package", "1.0", "2.0", "-o", str(tmp_path)]) == 0
-    assert loaded_refs == ["1.0", "2.0"]
-    assert capsys.readouterr().out == f"Wrote {atomic_path}\nUpdated {history_path}\n"
+    assert cli.main(["diff", "package", *versions, "-o", str(tmp_path)]) == 0
+    expected_pairs = list(pairwise(versions))
+    assert loaded_refs == list(versions)
+    assert batch_count == 1
+    expected_output = "".join(f"Snapshotting {old} -> {new}\n" for old, new in expected_pairs)
+    assert capsys.readouterr().out == f"{expected_output}Updated {history_path}\n"

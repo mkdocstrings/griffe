@@ -99,17 +99,20 @@ for breaking_change in griffe.find_breaking_changes(my_pkg_v1, my_pkg_v2):
 
 ## Recording API history
 
-Use `griffe diff` to record every supported change between two Git versions, rather than only reporting current breakages:
+Use `griffe diff` to record every supported change between successive Git versions, rather than only reporting current breakages. Pass two or more references in chronological order:
 
 ```console
-$ griffe diff mypackage 1.0.0 1.1.0
-Wrote .apidiff/atomic/mypackage--1.0.0--1.1.0.json
+$ griffe diff mypackage 1.0.0 1.1.0 1.2.0
+Snapshotting 1.0.0 -> 1.1.0
+Snapshotting 1.1.0 -> 1.2.0
 Updated .apidiff/diff.json
 ```
 
-The two versions are both Git references and the version labels stored in the output. Search paths and loading options work as they do for `griffe check`; for example, a `src` layout can use `griffe diff -s src mypackage 1.0.0 1.1.0`.
+Each version is both a Git reference and the version label stored in the output. Griffe compares each adjacent pair, so the example computes `1.0.0 → 1.1.0` followed by `1.1.0 → 1.2.0`. Search paths and loading options work as they do for `griffe check`; for example, a `src` layout can use `griffe diff -s src mypackage 1.0.0 1.1.0`.
 
-Each command writes one independent, version-to-version record under `.apidiff/atomic/`, then rebuilds `.apidiff/diff.json` from every atomic record. The consolidated file contains a chronological event list for each changed object and current lifecycle fields:
+Each pair produces one independent, version-to-version record under `.apidiff/atomic/`. Once every pair has been diffed, the command rebuilds `.apidiff/diff.json` once from all atomic records. Atomic records contain each changed public binding as well as its changes: a binding pairs the path users import with the canonical path where its target is defined. This lets consolidation recognize the same public symbol when either path moves.
+
+The consolidated file contains one entry per logical public symbol with a recorded event or location transition. It records the symbol's lifecycle, chronological events, and every public and canonical location it occupied:
 
 ```json
 {
@@ -117,9 +120,28 @@ Each command writes one independent, version-to-version record under `.apidiff/a
   "deprecated": null,
   "removed": null,
   "exists": true,
+  "public_path": "mypackage.Thing",
+  "canonical_path": "mypackage._internal.Thing",
+  "public_locations": [
+    {
+      "path": "mypackage.Thing",
+      "added_in": "1.1.0",
+      "removed_in": null,
+      "is_alias": true
+    }
+  ],
+  "canonical_locations": [
+    {
+      "path": "mypackage._internal.Thing",
+      "since": "1.1.0",
+      "until": null
+    }
+  ],
   "events": []
 }
 ```
+
+An `added` or location start value of `null` means the name was already public in the first recorded version, so its true introduction version is unknown. A `paths` index maps every historical public and canonical path back to its symbol entry. Private objects do not enter the history until a name exposing them appears in a public namespace, and moving an implementation between private modules does not count as a public addition or removal.
 
 Atomic records for each package must form one linear chain: `1.0.0 → 1.1.0`, then `1.1.0 → 1.2.0`, and so on. Griffe rejects forks, merges, cycles, and disconnected version histories because they do not define one unambiguous latest API.
 

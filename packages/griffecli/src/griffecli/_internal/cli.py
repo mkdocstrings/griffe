@@ -34,6 +34,7 @@ import logging
 import os
 import re
 import sys
+import warnings
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any
@@ -41,12 +42,13 @@ from typing import IO, TYPE_CHECKING, Any
 import colorama
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Callable, Iterator, Sequence
 
     from griffe._internal.docstrings.parsers import DocstringOptions, DocstringStyle
     from griffe._internal.enumerations import ExplanationStyle, Parser
     from griffe._internal.extensions.base import Extension, Extensions
     from griffe._internal.loader import GriffeLoader
+    from griffe._internal.models import Alias, Object
 
 
 DEFAULT_LOG_LEVEL = os.getenv("GRIFFE_LOG_LEVEL", "INFO").upper()
@@ -353,11 +355,16 @@ def get_parser() -> argparse.ArgumentParser:
     add_common_options(check_parser)
 
     # ========= DIFF PARSER ========= #
-    diff_parser = add_subparser("diff", "Record all API changes between two versions.")
+    diff_parser = add_subparser("diff", "Record all API changes between successive versions.")
     diff_options = diff_parser.add_argument_group(title="Diff options")
     diff_options.add_argument("package", metavar="PACKAGE", help="Package to find, load and compare, as path.")
-    diff_options.add_argument("old_version", metavar="OLD_VERSION", help="Older Git reference and version label.")
-    diff_options.add_argument("new_version", metavar="NEW_VERSION", help="Newer Git reference and version label.")
+    diff_options.add_argument("old_version", metavar="VERSION", help="First Git reference and version label.")
+    diff_options.add_argument(
+        "new_version",
+        metavar="VERSION",
+        nargs="+",
+        help="One or more subsequent Git references and version labels, in chronological order.",
+    )
     diff_options.add_argument(
         "-o",
         "--output-dir",
@@ -642,8 +649,8 @@ def check(
 
 def diff(
     package: str | Path,
-    old_version: str,
-    new_version: str,
+    old_version: str | Sequence[str],
+    new_version: str | Sequence[str] | None = None,
     *,
     output_directory: str | Path = ".apidiff",
     extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
@@ -654,12 +661,12 @@ def diff(
     allow_inspection: bool = True,
     force_inspection: bool = False,
 ) -> int:
-    """Record all API changes between two Git versions of a package.
+    """Record all API changes between successive Git versions of a package.
 
     Parameters:
         package: The package to load and compare.
-        old_version: Older Git reference, also used as its version label.
-        new_version: Newer Git reference, also used as its version label.
+        old_version: First Git reference, or the complete chronological sequence of references.
+        new_version: Next Git reference, or the remaining chronological sequence of references.
         output_directory: Directory in which to write API-diff data.
         extensions: The extensions to use while loading both versions.
         search_paths: The paths to search into.
@@ -672,12 +679,21 @@ def diff(
     Returns:
         `0` for success, `1` for extension-loading failure, or `2` for an invalid history or Git failure.
     """
-    from griffe._internal.api_history import write_api_diff  # noqa: PLC0415
+    from griffe._internal.api_history import write_api_diffs  # noqa: PLC0415
     from griffe._internal.exceptions import ExtensionError, GitError  # noqa: PLC0415
     from griffe._internal.extensions.base import load_extensions  # noqa: PLC0415
     from griffe._internal.git import _get_repo_root  # noqa: PLC0415
     from griffe._internal.loader import load_git  # noqa: PLC0415
     from griffe._internal.logger import logger  # noqa: PLC0415
+
+    versions = [old_version] if isinstance(old_version, str) else list(old_version)
+    if isinstance(new_version, str):
+        versions.append(new_version)
+    elif new_version is not None:
+        versions.extend(new_version)
+    if len(versions) < 2:  # noqa: PLR2004
+        print("griffe: error: at least two versions are required", file=sys.stderr)
+        return 2
 
     search_paths = list(search_paths) if search_paths else []
     if append_sys_path:
@@ -691,44 +707,54 @@ def diff(
 
     try:
         repository = _get_repo_root(package)
-        old_package = load_git(
-            package,
-            ref=old_version,
-            repo=repository,
-            extensions=loaded_extensions,
-            search_paths=search_paths,
-            allow_inspection=allow_inspection,
-            force_inspection=force_inspection,
-            find_stubs_package=find_stubs_package,
-            prefer_stubs_docs=prefer_stubs_docs,
-            resolve_aliases=True,
-            resolve_external=None,
-        )
-        new_package = load_git(
-            package,
-            ref=new_version,
-            repo=repository,
-            extensions=loaded_extensions,
-            search_paths=search_paths,
-            allow_inspection=allow_inspection,
-            force_inspection=force_inspection,
-            find_stubs_package=find_stubs_package,
-            prefer_stubs_docs=prefer_stubs_docs,
-            resolve_aliases=True,
-            resolve_external=None,
-        )
-        atomic_path, history_path = write_api_diff(
-            old_package,
-            new_package,
-            old_version=old_version,
-            new_version=new_version,
-            directory=output_directory,
-        )
+
+        def load_snapshots() -> Iterator[tuple[str, Object | Alias]]:
+            old_snapshot_version = versions[0]
+            yield (
+                old_snapshot_version,
+                load_git(
+                    package,
+                    ref=old_snapshot_version,
+                    repo=repository,
+                    extensions=loaded_extensions,
+                    search_paths=search_paths,
+                    allow_inspection=allow_inspection,
+                    force_inspection=force_inspection,
+                    store_git_info=False,
+                    find_stubs_package=find_stubs_package,
+                    prefer_stubs_docs=prefer_stubs_docs,
+                    resolve_aliases=True,
+                    resolve_external=None,
+                ),
+            )
+            for new_snapshot_version in versions[1:]:
+                print(f"Snapshotting {old_snapshot_version} -> {new_snapshot_version}", flush=True)
+                yield (
+                    new_snapshot_version,
+                    load_git(
+                        package,
+                        ref=new_snapshot_version,
+                        repo=repository,
+                        extensions=loaded_extensions,
+                        search_paths=search_paths,
+                        allow_inspection=allow_inspection,
+                        force_inspection=force_inspection,
+                        store_git_info=False,
+                        find_stubs_package=find_stubs_package,
+                        prefer_stubs_docs=prefer_stubs_docs,
+                        resolve_aliases=True,
+                        resolve_external=None,
+                    ),
+                )
+                old_snapshot_version = new_snapshot_version
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", SyntaxWarning)
+            _, history_path = write_api_diffs(load_snapshots(), directory=output_directory)
     except (GitError, RuntimeError, ValueError) as error:
         print(f"griffe: error: {error}", file=sys.stderr)
         return 2
 
-    print(f"Wrote {atomic_path}")
     print(f"Updated {history_path}")
     return 0
 

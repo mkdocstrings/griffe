@@ -26,7 +26,7 @@ This package provides command-line tools for interacting with griffe.
 
 - [`griffecli.main`][]: Run the main program.
 - [`griffecli.check`][]: Check for API breaking changes in two versions of the same package.
-- [`griffecli.diff`][]: Record all API changes between two versions of the same package.
+- [`griffecli.diff`][]: Record all API changes between successive versions of the same package.
 - [`griffecli.dump`][]: Load packages data and dump it as JSON.
 - [`griffecli.get_parser`][]: Get the argument parser for the CLI.
 """

@@ -23,18 +23,20 @@ from typing import TYPE_CHECKING, Any, cast
 from griffe._internal.api_history import _API_DIFF_SCHEMA_VERSION
 from griffe._internal.docstrings.models import DocstringSectionAdmonition
 from griffe._internal.enumerations import ChangeFlag, ChangeKind
+from griffe._internal.exceptions import AliasResolutionError, CyclicAliasError
 from griffe._internal.extensions.base import Extension
 from griffe._internal.logger import logger
 from griffe._internal.models import Docstring
 
 if TYPE_CHECKING:
-    from griffe._internal.models import Module, Object
+    from griffe._internal.models import Alias, Module, Object
 
 
 _OBJECT_ADDED = ChangeKind.OBJECT_ADDED.name.lower()
 _OBJECT_REMOVED = ChangeKind.OBJECT_REMOVED.name.lower()
 _OBJECT_DEPRECATED = ChangeKind.OBJECT_DEPRECATED.name.lower()
 _OBJECT_UNDEPRECATED = ChangeKind.OBJECT_UNDEPRECATED.name.lower()
+_PAIR_SIZE = 2
 
 
 def _append_admonition(obj: Object, *, kind: str, title: str, text: str) -> None:
@@ -56,7 +58,48 @@ def _changed_admonition(version: str, changes: list[dict[str, Any]]) -> tuple[st
     return kind, f"Changed in version {version}", text
 
 
-def _object_admonitions(events: list[dict[str, Any]]) -> list[tuple[str, str, str]]:
+def _join_phrases(phrases: list[str]) -> str:
+    if len(phrases) < _PAIR_SIZE:
+        return "".join(phrases)
+    if len(phrases) == _PAIR_SIZE:
+        return " and ".join(phrases)
+    return f"{', '.join(phrases[:-1])}, and {phrases[-1]}"
+
+
+def _has_location_details(history: dict[str, Any]) -> bool:
+    locations = history.get("public_locations", [])
+    public_paths = {location["path"] for location in locations}
+    return len(public_paths) > 1 or any(location.get("is_alias", False) for location in locations)
+
+
+def _added_body(history: dict[str, Any]) -> str:
+    if not _has_location_details(history):
+        return ""
+    phrases = []
+    for location in history.get("public_locations", []):
+        version = location.get("added_in")
+        if version is None:
+            phrases.append(f"`{location['path']}` before the recorded history")
+        else:
+            phrases.append(f"`{location['path']}` in version {version}")
+    return f"`{history['name']}` was publicly exposed as {_join_phrases(phrases)}."
+
+
+def _removed_body(history: dict[str, Any]) -> str:
+    if not _has_location_details(history):
+        return ""
+    phrases = [
+        f"`{location['path']}` in version {location['removed_in']}"
+        for location in history.get("public_locations", [])
+        if location.get("removed_in") is not None
+    ]
+    if not phrases:
+        return ""
+    return f"`{history['name']}` was removed from {_join_phrases(phrases)}."
+
+
+def _object_admonitions(history: dict[str, Any]) -> list[tuple[str, str, str]]:
+    events = history.get("events", [])
     admonitions = []
     index = 0
     while index < len(events):
@@ -69,18 +112,14 @@ def _object_admonitions(events: list[dict[str, Any]]) -> list[tuple[str, str, st
         changed = []
         for event in version_events:
             if event["kind"] == _OBJECT_ADDED:
-                admonitions.append(("tip", f"Added in version {version}", "This object was added."))
+                admonitions.append(("tip", f"Added in version {version}", _added_body(history)))
             elif event["kind"] == _OBJECT_REMOVED:
-                admonitions.append(("danger", f"Removed in version {version}", "This object was removed."))
+                admonitions.append(("danger", f"Removed in version {version}", _removed_body(history)))
             elif event["kind"] == _OBJECT_DEPRECATED:
                 message = event["new_value"] if isinstance(event["new_value"], str) else None
-                admonitions.append(
-                    ("warning", f"Deprecated in version {version}", message or "This object was deprecated."),
-                )
+                admonitions.append(("warning", f"Deprecated in version {version}", message or ""))
             elif event["kind"] == _OBJECT_UNDEPRECATED:
-                admonitions.append(
-                    ("info", f"No longer deprecated in version {version}", "This object is no longer deprecated."),
-                )
+                admonitions.append(("info", f"No longer deprecated in version {version}", ""))
             else:
                 changed.append(event)
         if changed:
@@ -88,21 +127,53 @@ def _object_admonitions(events: list[dict[str, Any]]) -> list[tuple[str, str, st
     return admonitions
 
 
-def _object_map(package: Module) -> dict[str, Object]:
+def _target(member: Object | Alias) -> Object | None:
+    try:
+        return cast("Alias", member).final_target if member.is_alias else cast("Object", member)
+    except (AliasResolutionError, CyclicAliasError):
+        return None
+
+
+def _object_maps(package: Module) -> tuple[dict[str, Object], set[int]]:
+    """Map public and canonical paths to final targets, including private targets."""
     objects: dict[str, Object] = {package.path: package}
+    public_targets: set[int] = {id(package)}
+    visited: set[int] = set()
 
-    def collect(obj: Object) -> None:
+    def collect_all(obj: Object) -> None:
+        if id(obj) in visited:
+            return
+        visited.add(id(obj))
+        objects[obj.canonical_path] = obj
         for member in obj.members.values():
-            # Aliases share their target's docstring. Mutating one would incorrectly
-            # add its history to every other path exposing that target.
-            if member.is_alias:
+            target = _target(member)
+            if target is None:
                 continue
-            member = cast("Object", member)
-            objects[member.path] = member
-            collect(member)
+            objects[member.path] = target
+            objects[target.canonical_path] = target
+            if not member.is_alias and (target.is_module or target.is_class):
+                collect_all(target)
 
-    collect(package)
-    return objects
+    def collect_public(parent: Object | Alias, ancestors: frozenset[str]) -> None:
+        try:
+            members = parent.members
+        except (AliasResolutionError, CyclicAliasError):
+            return
+        for member in members.values():
+            if member.name == "__all__" or not member.is_public:
+                continue
+            target = _target(member)
+            if target is None:
+                continue
+            objects[member.path] = target
+            objects[target.canonical_path] = target
+            public_targets.add(id(target))
+            if (target.is_module or target.is_class) and target.canonical_path not in ancestors:
+                collect_public(member, ancestors | {target.canonical_path})
+
+    collect_all(package)
+    collect_public(package, frozenset({package.canonical_path}))
+    return objects, public_targets
 
 
 def _nearest_parent(path: str, objects: dict[str, Object]) -> Object | None:
@@ -138,7 +209,13 @@ class ApiDiffExtension(Extension):
             raise ValueError(f"Could not read API-diff history {self.path}: {error}") from error
         if not isinstance(data, dict) or data.get("schema_version") != _API_DIFF_SCHEMA_VERSION:
             raise ValueError(f"Unsupported API-diff history schema in {self.path}")
-        if not isinstance(data.get("packages"), dict):
+        packages = data.get("packages")
+        if not isinstance(packages, dict) or any(
+            not isinstance(history, dict)
+            or not isinstance(history.get("symbols"), dict)
+            or not isinstance(history.get("paths"), dict)
+            for history in packages.values()
+        ):
             raise TypeError(f"Invalid API-diff history in {self.path}")
         self._data = data
         return data
@@ -155,24 +232,37 @@ class ApiDiffExtension(Extension):
         if history is None:
             return
 
-        objects = _object_map(mod)
-        object_histories = history.get("objects", {})
+        objects, public_targets = _object_maps(mod)
+        symbols = history.get("symbols", {})
+        paths = history.get("paths", {})
+        symbol_objects: dict[str, Object] = {}
+        public_symbols: set[str] = set()
+        for path, obj in objects.items():
+            for symbol_id in paths.get(path, []):
+                symbol_objects.setdefault(symbol_id, obj)
+                if id(obj) in public_targets:
+                    public_symbols.add(symbol_id)
 
-        for path, object_history in object_histories.items():
-            if not object_history.get("exists", True):
-                continue
-            obj = objects.get(path)
-            if obj is None:
-                continue
-            for kind, title, text in _object_admonitions(object_history.get("events", [])):
-                _append_admonition(obj, kind=kind, title=title, text=text)
+        for symbol_id, symbol_history in symbols.items():
+            if obj := symbol_objects.get(symbol_id):
+                for kind, title, text in _object_admonitions(symbol_history):
+                    _append_admonition(obj, kind=kind, title=title, text=text)
 
         removed: dict[tuple[str, str], list[str]] = {}
-        for path, object_history in object_histories.items():
-            if object_history.get("exists", True) or not (version := object_history.get("removed")):
+        for symbol_id, symbol_history in symbols.items():
+            if symbol_history.get("exists", True) or symbol_id in public_symbols:
                 continue
-            if parent := _nearest_parent(path, objects):
-                removed.setdefault((parent.path, version), []).append(path)
+            version = symbol_history.get("removed")
+            if not version:
+                continue
+            removed_paths = [
+                location["path"]
+                for location in symbol_history.get("public_locations", [])
+                if location.get("removed_in") == version
+            ]
+            for path in removed_paths:
+                if parent := _nearest_parent(path, objects):
+                    removed.setdefault((parent.path, version), []).append(path)
 
         version_order = {version: index for index, version in enumerate(history.get("versions", []))}
         for parent_path, version in sorted(

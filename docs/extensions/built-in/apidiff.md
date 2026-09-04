@@ -36,8 +36,8 @@ extensions:
     path: build/api-history.json
 ```
 
-The extension adds callouts for additions, deprecations, undeprecations, removals, and every other recorded change. Multiple changes to one object in the same version are grouped. A removed object has no current docstring, so its removal is attached to the nearest parent that still exists.
+The extension adds callouts for additions, deprecations, undeprecations, removals, and every other recorded change. Multiple changes to one object in the same version are grouped. A removed object has no current public docstring, so its removal is also attached to the nearest public parent that still exists.
 
-NOTE: Alias-specific callouts are not injected yet. Griffe aliases currently share their target's docstring, so changing an alias docstring would incorrectly affect the target and its other aliases.
+Public aliases are resolved to their final targets. The extension uses all historical canonical paths, so a target keeps the same history when its private implementation path changes. If its public path differs from its canonical path or changes over time, the **Added** and **Removed** callouts describe the public locations and their versions. This model assumes the recommended API layout in which a logical object has only one public location in each release.
 
 The history file is optional. Enabling the extension before running `griffe diff` is a no-op.

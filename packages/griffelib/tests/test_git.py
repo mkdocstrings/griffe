@@ -112,7 +112,7 @@ def test_record_git_diff(git_repo: Path, tmp_path: Path, monkeypatch: pytest.Mon
     history = json.loads(output_directory.joinpath("diff.json").read_text(encoding="utf8"))
     package = history["packages"][MODULE_NAME]
     assert package["versions"] == ["v0.1.0", "v0.2.0"]
-    assert package["objects"][f"{MODULE_NAME}.__version__"]["events"][0]["kind"] == "attribute_changed_value"
+    assert package["symbols"][f"{MODULE_NAME}.__version__"]["events"][0]["kind"] == "attribute_changed_value"
 
 
 def test_load_git_errors(git_repo: Path) -> None:
@@ -121,7 +121,7 @@ def test_load_git_errors(git_repo: Path) -> None:
     Parameters:
         git_repo: temporary git repo
     """
-    with pytest.raises(OSError, match="Not a git repository"):
+    with pytest.raises(RuntimeError, match="Could not create git worktree"):
         load_git(MODULE_NAME, ref="v0.2.0", repo="not-a-repo")
 
     with pytest.raises(RuntimeError, match="Could not create git worktree"):

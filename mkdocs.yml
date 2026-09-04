@@ -231,6 +231,7 @@ plugins:
           extensions:
           - griffe_inherited_docstrings
           - unpack_typeddict
+          - apidiff
           heading_level: 2
           inherited_members: true
           merge_init_into_class: true

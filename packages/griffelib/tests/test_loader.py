@@ -34,6 +34,21 @@ from griffe import (
     temporary_pypackage,
     temporary_visited_package,
 )
+from griffe._internal import loader as loader_module
+
+
+def test_skip_git_info_collection(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Do not query Git metadata when its source-link information is unwanted."""
+
+    def fail_if_called(_module: object) -> None:
+        raise AssertionError("Git information was collected")
+
+    monkeypatch.setattr(loader_module.GitInfo, "from_package", staticmethod(fail_if_called))
+    with temporary_pypackage("package", {"__init__.py": "value = 1"}) as package:
+        loader = GriffeLoader(store_git_info=False, search_paths=[package.tmpdir])
+        module = loader.load("package")
+
+    assert module.git_info is None
 
 
 def test_skip_load_event_traversal_without_hooks(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -88,6 +88,7 @@ class GriffeLoader:
         allow_inspection: bool = True,
         force_inspection: bool = False,
         store_source: bool = True,
+        store_git_info: bool = True,
         prefer_stubs_docs: bool = False,
     ) -> None:
         """Initialize the loader.
@@ -101,6 +102,7 @@ class GriffeLoader:
             modules_collection: A collection of modules.
             allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
             store_source: Whether to store code source in the lines collection.
+            store_git_info: Whether to store Git information used to build source links.
             prefer_stubs_docs: Whether to give precedence to stubs docstrings
                 rather than source docstrings. When both are present, the stubs one
                 will override the source one.
@@ -122,6 +124,8 @@ class GriffeLoader:
         """Whether to force inspecting (importing) modules, even when sources were found."""
         self.store_source: bool = store_source
         """Whether to store source code in the lines collection."""
+        self.store_git_info: bool = store_git_info
+        """Whether to store Git information used to build source links."""
         self.prefer_stubs_docs: bool = prefer_stubs_docs
         """Whether to give precedence to stubs docstrings rather than source ones."""
         self._search_paths: Sequence[str | Path] | None = search_paths
@@ -258,7 +262,8 @@ class GriffeLoader:
         self.expand_exports(module)
         self.expand_wildcards(module, external=False)
         # Populate Git information if possible.
-        module.git_info = GitInfo.from_package(module)
+        if self.store_git_info:
+            module.git_info = GitInfo.from_package(module)
         # Package is loaded, we now retrieve the initially requested object,
         # fire load events, and return it.
         obj = self.modules_collection.get_member(obj_path)
@@ -793,6 +798,7 @@ def load(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     store_source: bool = True,
+    store_git_info: bool = True,
     find_stubs_package: bool = False,
     prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
@@ -850,6 +856,7 @@ def load(
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         force_inspection: Whether to force using dynamic analysis when loading data.
         store_source: Whether to store code source in the lines collection.
+        store_git_info: Whether to store Git information used to build source links.
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
@@ -875,6 +882,7 @@ def load(
         allow_inspection=allow_inspection,
         force_inspection=force_inspection,
         store_source=store_source,
+        store_git_info=store_git_info,
         prefer_stubs_docs=prefer_stubs_docs,
     )
     result = loader.load(
@@ -903,6 +911,7 @@ def load_git(
     modules_collection: ModulesCollection | None = None,
     allow_inspection: bool = True,
     force_inspection: bool = False,
+    store_git_info: bool = True,
     find_stubs_package: bool = False,
     prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
@@ -938,6 +947,7 @@ def load_git(
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         force_inspection: Whether to force using dynamic analysis when loading data.
+        store_git_info: Whether to store Git information used to build source links.
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
@@ -970,6 +980,7 @@ def load_git(
             modules_collection=modules_collection,
             allow_inspection=allow_inspection,
             force_inspection=force_inspection,
+            store_git_info=store_git_info,
             find_stubs_package=find_stubs_package,
             resolve_aliases=resolve_aliases,
             resolve_external=resolve_external,

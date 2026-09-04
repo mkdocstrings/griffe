@@ -10,6 +10,8 @@
 
 ::: griffe.write_api_diff
 
+::: griffe.write_api_diffs
+
 ::: griffe.consolidate_api_diffs
 
 ::: griffe.find_breaking_changes

@@ -573,6 +573,11 @@ def _class_changes(
     *,
     seen_paths: set[str],
 ) -> Iterator[Change]:
+    yield from _class_base_changes(old_class, new_class)
+    yield from _member_changes(old_class, new_class, seen_paths=seen_paths)
+
+
+def _class_base_changes(old_class: Class, new_class: Class) -> Iterator[Change]:
     removed_base = any(not _contains_value(new_class.bases, base) for base in old_class.bases)
     if removed_base:
         yield Change(
@@ -592,8 +597,6 @@ def _class_changes(
             new_value=new_class.bases,
             flags=_WARNING,
         )
-
-    yield from _member_changes(old_class, new_class, seen_paths=seen_paths)
 
 
 def _parameter_kind_is_incompatible(
@@ -793,6 +796,47 @@ def _deprecation_changes(old_member: Object | Alias, new_member: Object | Alias)
         new_value=new_deprecation,
         flags=flags,
     )
+
+
+def _object_changes(old_obj: Object | Alias, new_obj: Object | Alias) -> Iterator[Change]:
+    """Compare one public object without recursively comparing its members.
+
+    API-history recording inventories every public path itself, so recursing here
+    would report the same member more than once. Aliases are compared through
+    their final targets while deprecation metadata remains attached to the public
+    binding when it is explicitly set there.
+    """
+    old_deprecation_obj = old_obj
+    new_deprecation_obj = new_obj
+    try:
+        if old_obj.is_alias and old_obj.deprecated is None:
+            old_deprecation_obj = old_obj.final_target  # ty:ignore[unresolved-attribute]
+        if new_obj.is_alias and new_obj.deprecated is None:
+            new_deprecation_obj = new_obj.final_target  # ty:ignore[unresolved-attribute]
+        old_member = old_obj.final_target if old_obj.is_alias else old_obj  # ty:ignore[unresolved-attribute]
+        new_member = new_obj.final_target if new_obj.is_alias else new_obj  # ty:ignore[unresolved-attribute]
+    except AliasResolutionError:
+        logger.debug("API check: %s | %s: skip alias with unknown target", old_obj.path, new_obj.path)
+        return
+
+    yield from _deprecation_changes(old_deprecation_obj, new_deprecation_obj)
+    if new_member.kind != old_member.kind:
+        yield Change(
+            kind=ChangeKind.OBJECT_CHANGED_KIND,
+            obj=new_member,
+            old_value=old_member.kind,
+            new_value=new_member.kind,
+            flags=_BREAKING,
+        )
+    elif old_member.is_class:
+        yield from _class_base_changes(
+            old_member,  # ty:ignore[invalid-argument-type]
+            new_member,  # ty:ignore[invalid-argument-type]
+        )
+    elif old_member.is_function:
+        yield from _function_changes(old_member, new_member)  # ty:ignore[invalid-argument-type]
+    elif old_member.is_attribute:
+        yield from _attribute_changes(old_member, new_member)  # ty:ignore[invalid-argument-type]
 
 
 def _member_changes(

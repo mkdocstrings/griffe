@@ -86,6 +86,7 @@ Griffe can compare two versions of the same package to find API changes.
 - [`griffe.Change`][]: Structured change records include semantic flags.
 - [`griffe.Breakage`][]: Breakage classes can explain what broke from a version to another.
 - [`griffe.write_api_diff`][]: Record one version-to-version diff and update consolidated API history.
+- [`griffe.write_api_diffs`][]: Record several successive diffs and consolidate API history once.
 - [`griffe.consolidate_api_diffs`][]: Rebuild consolidated API history from atomic diffs.
 
 ## Extensions
@@ -196,7 +197,7 @@ from griffe._internal.agents.nodes.parameters import ParametersType, get_paramet
 from griffe._internal.agents.nodes.runtime import ObjectNode
 from griffe._internal.agents.nodes.values import get_value, safe_get_value
 from griffe._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
-from griffe._internal.api_history import consolidate_api_diffs, write_api_diff
+from griffe._internal.api_history import consolidate_api_diffs, write_api_diff, write_api_diffs
 from griffe._internal.c3linear import c3linear_merge
 from griffe._internal.collections import LinesCollection, ModulesCollection
 from griffe._internal.diff import (
@@ -629,6 +630,7 @@ __all__ = [
     "visit",
     "vtree",
     "write_api_diff",
+    "write_api_diffs",
 ]
 
 # Re-export griffecli for backward compatibility.

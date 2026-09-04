@@ -91,7 +91,7 @@ def test_inject_api_history_admonitions(tmp_path: Path) -> None:
 
     assert changed["Deprecated in version 2.0"] == "Use `replacement` instead."
     assert changed["Changed in version 2.0"] == "Parameter `value` default changed from `1` to `2`."
-    assert added == {"Added in version 2.0": "This object was added."}
+    assert added == {"Added in version 2.0": ""}
     assert container["Removed in version 2.0"] == "- `pkg.Container.removed_method`"
     assert package_admonitions["Removed in version 2.0"] == "- `pkg.removed`"
 
@@ -122,12 +122,104 @@ def test_admonitions_remain_chronological(tmp_path: Path) -> None:
         extensions=extensions,
     ) as package:
         sections = [
-            section
-            for section in package["func"].docstring.parsed
-            if section.kind is DocstringSectionKind.admonition
+            section for section in package["func"].docstring.parsed if section.kind is DocstringSectionKind.admonition
         ]
 
     assert [(section.title, section.value.annotation) for section in sections] == [
         ("Changed in version 2.0", "warning"),
         ("Deprecated in version 3.0", "warning"),
     ]
+
+
+def test_lifecycle_admonitions_without_details_have_no_body(tmp_path: Path) -> None:
+    """Leave lifecycle admonition bodies empty when their titles say everything."""
+    code_with_both = "def deprecated(): ...\n\ndef readded(): ..."
+    code_without_readded = "def deprecated(): ..."
+    directory = tmp_path / ".apidiff"
+    with (
+        temporary_visited_module(code_with_both, module_name="pkg") as pkg_v1,
+        temporary_visited_module(code_without_readded, module_name="pkg") as pkg_v2,
+        temporary_visited_module(code_with_both, module_name="pkg") as pkg_v3,
+    ):
+        pkg_v2["deprecated"].deprecated = True
+        write_api_diff(pkg_v1, pkg_v2, old_version="1.0", new_version="2.0", directory=directory)
+        write_api_diff(pkg_v2, pkg_v3, old_version="2.0", new_version="3.0", directory=directory)
+
+    extensions = load_extensions({"apidiff": {"path": directory / "diff.json"}})
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code_with_both},
+        extensions=extensions,
+    ) as package:
+        deprecated = _admonitions(package["deprecated"])
+        readded = _admonitions(package["readded"])
+
+    assert deprecated == {
+        "Deprecated in version 2.0": "",
+        "No longer deprecated in version 3.0": "",
+    }
+    assert readded == {
+        "Removed in version 2.0": "",
+        "Added in version 3.0": "",
+    }
+
+
+def test_alias_history_follows_targets_across_locations(tmp_path: Path) -> None:
+    """Inject one public history through old and new aliases and canonical targets."""
+    v1 = {
+        "__init__.py": "__all__ = []",
+        "_old.py": "def Thing(value=1): ...",
+    }
+    v2 = {
+        "__init__.py": "from ._old import Thing\n__all__ = ['Thing']",
+        "_old.py": "def Thing(value=1): ...",
+    }
+    v3 = {
+        "__init__.py": "from ._new import Thing\n__all__ = ['Thing']",
+        "_new.py": "def Thing(value=2): ...",
+    }
+    v4 = {
+        "__init__.py": "from . import api\n__all__ = ['api']",
+        "api.py": "from ._new import Thing\n__all__ = ['Thing']",
+        "_new.py": "def Thing(value=2): ...",
+    }
+    v5 = {
+        "__init__.py": "from . import api\n__all__ = ['api']",
+        "api.py": "__all__ = []",
+        "_new.py": "def Thing(value=2): ...",
+    }
+    directory = tmp_path / ".apidiff"
+
+    with (
+        temporary_visited_package("pkg", v1) as pkg_v1,
+        temporary_visited_package("pkg", v2) as pkg_v2,
+        temporary_visited_package("pkg", v3) as pkg_v3,
+        temporary_visited_package("pkg", v4) as pkg_v4,
+        temporary_visited_package("pkg", v5) as pkg_v5,
+    ):
+        write_api_diff(pkg_v1, pkg_v2, old_version="1.0", new_version="2.0", directory=directory)
+        write_api_diff(pkg_v2, pkg_v3, old_version="2.0", new_version="3.0", directory=directory)
+        write_api_diff(pkg_v3, pkg_v4, old_version="3.0", new_version="4.0", directory=directory)
+        write_api_diff(pkg_v4, pkg_v5, old_version="4.0", new_version="5.0", directory=directory)
+
+    extensions = load_extensions({"apidiff": {"path": directory / "diff.json"}})
+    with temporary_visited_package("pkg", v4, extensions=extensions) as package:
+        thing = _admonitions(package["api.Thing"])
+
+    assert thing == {
+        "Added in version 2.0": (
+            "`Thing` was publicly exposed as `pkg.Thing` in version 2.0 and `pkg.api.Thing` in version 4.0."
+        ),
+        "Changed in version 3.0": "Parameter `value` default changed from `1` to `2`.",
+        "Removed in version 5.0": (
+            "`Thing` was removed from `pkg.Thing` in version 4.0 and `pkg.api.Thing` in version 5.0."
+        ),
+    }
+
+    extensions = load_extensions({"apidiff": {"path": directory / "diff.json"}})
+    with temporary_visited_package("pkg", v5, extensions=extensions) as package:
+        private_thing = _admonitions(package["_new.Thing"])
+        api = _admonitions(package["api"])
+
+    assert private_thing == thing
+    assert api["Removed in version 5.0"] == "- `pkg.api.Thing`"

@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import os
 import re
-import shutil
 import subprocess
 import unicodedata
 from contextlib import contextmanager
@@ -50,34 +49,20 @@ def _normalize(value: str) -> str:
 
 
 def _git(*args: str, check: bool = True) -> str:
-    process = subprocess.run(
-        ["git", *args],
-        check=False,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        encoding="utf8",
-    )
+    try:
+        process = subprocess.run(
+            ["git", *args],
+            check=False,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            encoding="utf8",
+        )
+    except FileNotFoundError as error:
+        raise RuntimeError("Could not find git executable. Please install git.") from error
     if check and process.returncode != 0:
         raise GitError(process.stdout.strip())
     return process.stdout.strip()
-
-
-def _assert_git_repo(path: str | Path) -> None:
-    """Deprecated. Assert that a directory is a Git repository.
-
-    Parameters:
-        path: Path to a directory.
-
-    Raises:
-        OSError: When the directory is not a Git repository.
-    """
-    if not shutil.which("git"):
-        raise RuntimeError("Could not find git executable. Please install git.")
-    try:
-        _git("-C", str(path), "rev-parse", "--is-inside-work-tree")
-    except GitError as error:
-        raise OSError(f"Not a git repository: {path}") from error
 
 
 def _get_latest_tag(repo: str | Path) -> str:
@@ -128,26 +113,29 @@ def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
         The path to the temporary worktree.
 
     Raises:
-        OSError: If `repo` is not a valid `.git` repository
-        RuntimeError: If the `git` executable is unavailable, or if it cannot create a worktree
+        RuntimeError: If the `git` executable is unavailable, or if it cannot create a worktree.
     """
-    _assert_git_repo(repo)
     repo_name = Path(repo).resolve().name
     normref = _normalize(ref)  # Branch names can contain slashes.
-    with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{normref}-") as tmp_dir:
-        location = os.path.join(tmp_dir, normref)  # noqa: PTH118
-        tmp_branch = f"griffe-{normref}"  # Temporary branch name must not already exist.
-        try:
-            _git("-C", str(repo), "worktree", "add", "-b", tmp_branch, location, ref)
-        except GitError as error:
-            raise RuntimeError(f"Could not create git worktree: {error}") from error
+    cleanup_failed = False
+    try:
+        with TemporaryDirectory(prefix=f"{_WORKTREE_PREFIX}{repo_name}-{normref}-") as tmp_dir:
+            location = os.path.join(tmp_dir, normref)  # noqa: PTH118
+            try:
+                _git("-C", str(repo), "worktree", "add", "--detach", location, ref)
+            except GitError as error:
+                raise RuntimeError(f"Could not create git worktree: {error}") from error
 
-        try:
-            yield Path(location)
-        finally:
-            _git("-C", str(repo), "worktree", "remove", location, check=False)
+            try:
+                yield Path(location)
+            finally:
+                try:
+                    _git("-C", str(repo), "worktree", "remove", "--force", location)
+                except GitError:
+                    cleanup_failed = True
+    finally:
+        if cleanup_failed:
             _git("-C", str(repo), "worktree", "prune", check=False)
-            _git("-C", str(repo), "branch", "-D", tmp_branch, check=False)
 
 
 def _get_git_remote_url(repo: str | Path = ".") -> str:
