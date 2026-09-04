@@ -4,5 +4,6 @@ Built-in extensions are maintained in Griffe's code base. They generally bring s
 
 Extension | Description
 --------- | -----------
+[`apidiff`](built-in/apidiff.md) | Inject API-history callouts into docstrings.
 [`dataclasses`](built-in/dataclasses.md) | Support for [`dataclasses`][].
 [`unpack_typeddict`](built-in/unpack-typeddict.md) | Support for [`typing.Unpack`][] and [`typing.TypedDict`][].

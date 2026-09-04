@@ -137,6 +137,58 @@ class ExplanationStyle(str, Enum):
     """Explanations as Azure DevOps / Azure Pipelines logging commands."""
 
 
+class ChangeFlag(str, Enum):
+    """Enumeration of flags attached to API changes."""
+
+    HINT = "hint"
+    """The change suggests a possible API improvement."""
+    WARNING = "warning"
+    """The change might require attention."""
+    DEPRECATION = "deprecation"
+    """The change deprecates part of the API."""
+    BREAKING = "breaking"
+    """The change is backward-incompatible."""
+
+
+class ChangeKind(str, Enum):
+    """Enumeration of detectable API changes."""
+
+    OBJECT_ADDED = "Public object was added"
+    """A public object was added."""
+    OBJECT_REMOVED = "Public object was removed"
+    """A public object was removed."""
+    OBJECT_CHANGED_KIND = "Public object points to a different kind of object"
+    """A public object changed kind."""
+    OBJECT_DEPRECATED = "Public object was deprecated"
+    """A public object was deprecated."""
+    OBJECT_UNDEPRECATED = "Public object is no longer deprecated"
+    """A public object is no longer deprecated."""
+    OBJECT_CHANGED_DEPRECATION = "Public object deprecation was changed"
+    """A public object's deprecation message was changed."""
+    CLASS_BASE_ADDED = "Base class was added"
+    """A base class was added."""
+    CLASS_BASE_REMOVED = "Base class was removed"
+    """A base class was removed."""
+    PARAMETER_ADDED = "Parameter was added"
+    """A parameter was added."""
+    PARAMETER_REMOVED = "Parameter was removed"
+    """A parameter was removed."""
+    PARAMETER_MOVED = "Positional parameter was moved"
+    """A positional parameter was moved."""
+    PARAMETER_CHANGED_KIND = "Parameter kind was changed"
+    """A parameter changed kind."""
+    PARAMETER_CHANGED_DEFAULT = "Parameter default was changed"
+    """A parameter default was changed."""
+    PARAMETER_CHANGED_TYPE = "Parameter type was changed"
+    """A parameter type was changed."""
+    RETURN_CHANGED_TYPE = "Return type was changed"
+    """A return type was changed."""
+    ATTRIBUTE_CHANGED_TYPE = "Attribute type was changed"
+    """An attribute type was changed."""
+    ATTRIBUTE_CHANGED_VALUE = "Attribute value was changed"
+    """An attribute value was changed."""
+
+
 class BreakageKind(str, Enum):
     """Enumeration of the possible API breakages."""
 

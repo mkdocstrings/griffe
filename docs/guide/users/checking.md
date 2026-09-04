@@ -80,7 +80,9 @@ Griffe will actually install packages in a cache directory. It means a few thing
 
 ## Python API
 
-To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffe.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffe.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffe.Breakage]. It's up to you how you want to use these breakage instances.
+To programmatically inspect API changes, load two snapshots of your code base, for example using our [`load_git()`][griffe.load_git] utility, and pass them to [`find_changes()`][griffe.find_changes]. The function yields [`Change`][griffe.Change] instances whose flags distinguish warnings, deprecations and breaking changes.
+
+[`find_breaking_changes()`][griffe.find_breaking_changes] remains available when you only need backward-incompatible changes. It filters the same detected changes and yields [`Breakage`][griffe.Breakage] instances that can explain what broke.
 
 ```python
 import griffe
@@ -88,9 +90,40 @@ import griffe
 my_pkg_v1 = griffe.load_git("my_pkg", ref="v1")
 my_pkg_v2 = griffe.load_git("my_pkg", ref="v2")
 
-for breaking_change in find_breaking_changes(my_pkg_v1, my_pkg_v2):
+for change in griffe.find_changes(my_pkg_v1, my_pkg_v2):
+    print(change.kind, change.flags)
+
+for breaking_change in griffe.find_breaking_changes(my_pkg_v1, my_pkg_v2):
     print(breaking_change.explain())
 ```
+
+## Recording API history
+
+Use `griffe diff` to record every supported change between two Git versions, rather than only reporting current breakages:
+
+```console
+$ griffe diff mypackage 1.0.0 1.1.0
+Wrote .apidiff/atomic/mypackage--1.0.0--1.1.0.json
+Updated .apidiff/diff.json
+```
+
+The two versions are both Git references and the version labels stored in the output. Search paths and loading options work as they do for `griffe check`; for example, a `src` layout can use `griffe diff -s src mypackage 1.0.0 1.1.0`.
+
+Each command writes one independent, version-to-version record under `.apidiff/atomic/`, then rebuilds `.apidiff/diff.json` from every atomic record. The consolidated file contains a chronological event list for each changed object and current lifecycle fields:
+
+```json
+{
+  "added": "1.1.0",
+  "deprecated": null,
+  "removed": null,
+  "exists": true,
+  "events": []
+}
+```
+
+Atomic records for each package must form one linear chain: `1.0.0 → 1.1.0`, then `1.1.0 → 1.2.0`, and so on. Griffe rejects forks, merges, cycles, and disconnected version histories because they do not define one unambiguous latest API.
+
+The built-in [`apidiff`](../../extensions/built-in/apidiff.md) extension consumes the consolidated file and adds the history to generated API documentation.
 
 ## In CI
 

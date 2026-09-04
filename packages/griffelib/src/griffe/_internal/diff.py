@@ -24,12 +24,12 @@
 from __future__ import annotations
 
 import contextlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from logging import DEBUG
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Literal
+from typing import TYPE_CHECKING, Any
 
-from griffe._internal.enumerations import BreakageKind, ExplanationStyle, ParameterKind
+from griffe._internal.enumerations import BreakageKind, ChangeFlag, ChangeKind, ExplanationStyle, ParameterKind
 from griffe._internal.exceptions import AliasResolutionError
 from griffe._internal.git import _WORKTREE_PREFIX
 from griffe._internal.logger import logger
@@ -37,7 +37,7 @@ from griffe._internal.logger import logger
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
-    from griffe._internal.models import Alias, Attribute, Class, Function, Object
+    from griffe._internal.models import Alias, Attribute, Class, Function, Object, Parameter
 
 _POSITIONAL = frozenset((ParameterKind.positional_only, ParameterKind.positional_or_keyword))
 _KEYWORD = frozenset((ParameterKind.keyword_only, ParameterKind.positional_or_keyword))
@@ -85,6 +85,53 @@ class _ANSI:
     DIM = "\033[2m"
     NORMAL = "\033[22m"
     RESET_ALL = "\033[0m"
+
+
+@dataclass(kw_only=True, slots=True)
+class Change:
+    """A change between two versions of an API."""
+
+    kind: ChangeKind
+    """The kind of change."""
+    obj: Object | Alias
+    """The object related to the change."""
+    old_value: Any = None
+    """The value in the old API."""
+    new_value: Any = None
+    """The value in the new API."""
+    flags: frozenset[ChangeFlag] = field(default_factory=frozenset)
+    """Semantic flags attached to the change."""
+    details: str = ""
+    """Additional details about the change."""
+
+    def __str__(self) -> str:
+        return self.kind.value
+
+    @property
+    def is_breaking(self) -> bool:
+        """Whether this change is backward-incompatible."""
+        return ChangeFlag.BREAKING in self.flags
+
+    def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG002
+        """Return this change's data as a dictionary.
+
+        Parameters:
+            full: Whether to return full info, or just base info.
+            **kwargs: Additional serialization options.
+
+        Returns:
+            A dictionary.
+        """
+        data: dict[str, Any] = {
+            "kind": self.kind,
+            "object_path": self.obj.path,
+            "old_value": self.old_value,
+            "new_value": self.new_value,
+            "flags": sorted(self.flags, key=lambda flag: flag.value),
+        }
+        if self.details:
+            data["details"] = self.details
+        return data
 
 
 class Breakage:
@@ -500,21 +547,88 @@ class ClassRemovedBaseBreakage(Breakage):
         return "[" + ", ".join(base.canonical_path for base in self.new_value) + "]"
 
 
+# Reused immutable flag sets avoid allocating a new set for every detected change.
+_BREAKING = frozenset((ChangeFlag.BREAKING,))
+_DEPRECATION = frozenset((ChangeFlag.DEPRECATION,))
+_WARNING = frozenset((ChangeFlag.WARNING,))
+
+
+def _values_are_equal(old_value: Any, new_value: Any) -> bool:
+    if old_value is new_value:
+        return True
+    try:
+        return bool(old_value == new_value)
+    except Exception:  # noqa: BLE001 (equality checks sometimes fail, e.g. numpy arrays)
+        return False
+
+
+def _contains_value(values: Iterable[Any], value: Any) -> bool:
+    return any(_values_are_equal(candidate, value) for candidate in values)
+
+
 # TODO: Check decorators? Maybe resolved by extensions and/or dynamic analysis.
-def _class_incompatibilities(
+def _class_changes(
     old_class: Class,
     new_class: Class,
     *,
     seen_paths: set[str],
-) -> Iterable[Breakage]:
-    yield from ()
-    if new_class.bases != old_class.bases and len(new_class.bases) < len(old_class.bases):
-        yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)
-    yield from _member_incompatibilities(old_class, new_class, seen_paths=seen_paths)
+) -> Iterator[Change]:
+    removed_base = any(not _contains_value(new_class.bases, base) for base in old_class.bases)
+    if removed_base:
+        yield Change(
+            kind=ChangeKind.CLASS_BASE_REMOVED,
+            obj=new_class,
+            old_value=old_class.bases,
+            new_value=new_class.bases,
+            flags=_BREAKING,
+        )
+
+    added_base = any(not _contains_value(old_class.bases, base) for base in new_class.bases)
+    if added_base:
+        yield Change(
+            kind=ChangeKind.CLASS_BASE_ADDED,
+            obj=new_class,
+            old_value=old_class.bases,
+            new_value=new_class.bases,
+            flags=_WARNING,
+        )
+
+    yield from _member_changes(old_class, new_class, seen_paths=seen_paths)
+
+
+def _parameter_kind_is_incompatible(
+    old_kind: ParameterKind | None,
+    new_kind: ParameterKind | None,
+    *,
+    has_variadic_args: bool,
+    has_variadic_kwargs: bool,
+) -> bool:
+    return any(
+        (
+            # Positional-only to keyword-only.
+            old_kind is ParameterKind.positional_only and new_kind is ParameterKind.keyword_only,
+            # Keyword-only to positional-only.
+            old_kind is ParameterKind.keyword_only and new_kind is ParameterKind.positional_only,
+            # Positional or keyword to positional-only/keyword-only.
+            old_kind is ParameterKind.positional_or_keyword and new_kind in _POSITIONAL_KEYWORD_ONLY,
+            # Not keyword-only to variadic keyword, without variadic positional.
+            new_kind is ParameterKind.var_keyword
+            and old_kind is not ParameterKind.keyword_only
+            and not has_variadic_args,
+            # Not positional-only to variadic positional, without variadic keyword.
+            new_kind is ParameterKind.var_positional
+            and old_kind is not ParameterKind.positional_only
+            and not has_variadic_kwargs,
+        ),
+    )
+
+
+def _parameter_is_required(parameter: Parameter) -> bool:
+    return parameter.required and parameter.kind not in _VARIADIC
 
 
 # TODO: Check decorators? Maybe resolved by extensions and/or dynamic analysis.
-def _function_incompatibilities(old_function: Function, new_function: Function) -> Iterator[Breakage]:
+def _function_changes(old_function: Function, new_function: Function) -> Iterator[Change]:
     new_params = {}
     for index, param in enumerate(new_function.parameters):
         # Keep the first parameter with a given name, matching the behavior of `Parameters.__getitem__`.
@@ -525,7 +639,6 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
     has_variadic_kwargs = ParameterKind.var_keyword in param_kinds
 
     for old_index, old_param in enumerate(old_function.parameters):
-        # Check if the parameter was removed.
         try:
             new_index, new_param = new_params[old_param.name]
         except KeyError:
@@ -534,79 +647,117 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
                 or (old_param.kind is ParameterKind.positional_only and has_variadic_args)
                 or (old_param.kind is ParameterKind.positional_or_keyword and has_variadic_args and has_variadic_kwargs)
             )
-            if not swallowed:
-                yield ParameterRemovedBreakage(new_function, old_param, None)
+            yield Change(
+                kind=ChangeKind.PARAMETER_REMOVED,
+                obj=new_function,
+                old_value=old_param,
+                flags=_WARNING if swallowed else _BREAKING,
+            )
             continue
 
-        # Check if the parameter became required.
-        if new_param.required and not old_param.required:
-            yield ParameterChangedRequiredBreakage(new_function, old_param, new_param)
+        default_changed = not _values_are_equal(old_param.default, new_param.default)
+        old_required = _parameter_is_required(old_param)
+        new_required = _parameter_is_required(new_param)
+        became_required = new_required and not old_required
+        if became_required:
+            yield Change(
+                kind=ChangeKind.PARAMETER_CHANGED_DEFAULT,
+                obj=new_function,
+                old_value=old_param,
+                new_value=new_param,
+                flags=_BREAKING,
+            )
 
-        # Check if the parameter was moved.
         if old_param.kind in _POSITIONAL and new_param.kind in _POSITIONAL and new_index != old_index:
             details = f"position: from {old_index} to {new_index} ({new_index - old_index:+})"
-            yield ParameterMovedBreakage(new_function, old_param, new_param, details=details)
-
-        # Check if the parameter changed kind.
-        if old_param.kind is not new_param.kind:
-            incompatible_kind = any(
-                (
-                    # Positional-only to keyword-only.
-                    old_param.kind is ParameterKind.positional_only and new_param.kind is ParameterKind.keyword_only,
-                    # Keyword-only to positional-only.
-                    old_param.kind is ParameterKind.keyword_only and new_param.kind is ParameterKind.positional_only,
-                    # Positional or keyword to positional-only/keyword-only.
-                    old_param.kind is ParameterKind.positional_or_keyword
-                    and new_param.kind in _POSITIONAL_KEYWORD_ONLY,
-                    # Not keyword-only to variadic keyword, without variadic positional.
-                    new_param.kind is ParameterKind.var_keyword
-                    and old_param.kind is not ParameterKind.keyword_only
-                    and not has_variadic_args,
-                    # Not positional-only to variadic positional, without variadic keyword.
-                    new_param.kind is ParameterKind.var_positional
-                    and old_param.kind is not ParameterKind.positional_only
-                    and not has_variadic_kwargs,
-                ),
+            yield Change(
+                kind=ChangeKind.PARAMETER_MOVED,
+                obj=new_function,
+                old_value=old_param,
+                new_value=new_param,
+                flags=_BREAKING,
+                details=details,
             )
-            if incompatible_kind:
-                yield ParameterChangedKindBreakage(new_function, old_param, new_param)
 
-        # Check if the parameter changed default.
-        breakage = ParameterChangedDefaultBreakage(new_function, old_param, new_param)
-        non_required = not old_param.required and not new_param.required
+        if old_param.kind is not new_param.kind:
+            incompatible_kind = _parameter_kind_is_incompatible(
+                old_param.kind,
+                new_param.kind,
+                has_variadic_args=has_variadic_args,
+                has_variadic_kwargs=has_variadic_kwargs,
+            )
+            yield Change(
+                kind=ChangeKind.PARAMETER_CHANGED_KIND,
+                obj=new_function,
+                old_value=old_param,
+                new_value=new_param,
+                flags=_BREAKING if incompatible_kind else _WARNING,
+            )
+
+        if not _values_are_equal(old_param.annotation, new_param.annotation):
+            yield Change(
+                kind=ChangeKind.PARAMETER_CHANGED_TYPE,
+                obj=new_function,
+                old_value=old_param,
+                new_value=new_param,
+                flags=_WARNING,
+            )
+
         non_variadic = old_param.kind not in _VARIADIC and new_param.kind not in _VARIADIC
-        if non_required and non_variadic:
-            try:
-                if old_param.default != new_param.default:
-                    yield breakage
-            except Exception:  # noqa: BLE001 (equality checks sometimes fail, e.g. numpy arrays)
-                # NOTE: Emitting breakage on a failed comparison could be a preference.
-                yield breakage
+        if default_changed and not became_required and non_variadic:
+            non_required = not old_required and not new_required
+            yield Change(
+                kind=ChangeKind.PARAMETER_CHANGED_DEFAULT,
+                obj=new_function,
+                old_value=old_param,
+                new_value=new_param,
+                flags=_BREAKING if non_required else frozenset(),
+            )
 
-    # Check if required parameters were added.
     for new_param in new_function.parameters:
-        if new_param.name not in old_param_names and new_param.required:
-            yield ParameterAddedRequiredBreakage(new_function, None, new_param)
+        if new_param.name not in old_param_names:
+            yield Change(
+                kind=ChangeKind.PARAMETER_ADDED,
+                obj=new_function,
+                new_value=new_param,
+                flags=_BREAKING if _parameter_is_required(new_param) else frozenset(),
+            )
 
-    if not _returns_are_compatible(old_function, new_function):
-        yield ReturnChangedTypeBreakage(new_function, old_function.returns, new_function.returns)
+    if not _values_are_equal(old_function.returns, new_function.returns):
+        yield Change(
+            kind=ChangeKind.RETURN_CHANGED_TYPE,
+            obj=new_function,
+            old_value=old_function.returns,
+            new_value=new_function.returns,
+            flags=_BREAKING if not _returns_are_compatible(old_function, new_function) else _WARNING,
+        )
 
 
-def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attribute) -> Iterable[Breakage]:
-    # TODO: Support annotation breaking changes.
-    if old_attribute.value != new_attribute.value:
-        if new_attribute.value is None:
-            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, "unset")
-        else:
-            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
+def _attribute_changes(old_attribute: Attribute, new_attribute: Attribute) -> Iterator[Change]:
+    if not _values_are_equal(old_attribute.annotation, new_attribute.annotation):
+        yield Change(
+            kind=ChangeKind.ATTRIBUTE_CHANGED_TYPE,
+            obj=new_attribute,
+            old_value=old_attribute.annotation,
+            new_value=new_attribute.annotation,
+            flags=_WARNING,
+        )
+    if not _values_are_equal(old_attribute.value, new_attribute.value):
+        yield Change(
+            kind=ChangeKind.ATTRIBUTE_CHANGED_VALUE,
+            obj=new_attribute,
+            old_value=old_attribute.value,
+            new_value=new_attribute.value,
+            flags=_BREAKING,
+        )
 
 
-def _alias_incompatibilities(
+def _alias_changes(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
     seen_paths: set[str],
-) -> Iterable[Breakage]:
+) -> Iterator[Change]:
     try:
         old_member = old_obj.target if old_obj.is_alias else old_obj  # ty:ignore[unresolved-attribute]
         new_member = new_obj.target if new_obj.is_alias else new_obj  # ty:ignore[unresolved-attribute]
@@ -614,69 +765,119 @@ def _alias_incompatibilities(
         logger.debug("API check: %s | %s: skip alias with unknown target", old_obj.path, new_obj.path)
         return
 
-    yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
+    yield from _type_based_changes(old_member, new_member, seen_paths=seen_paths)
 
 
-def _member_incompatibilities(
+def _deprecation_changes(old_member: Object | Alias, new_member: Object | Alias) -> Iterator[Change]:
+    old_deprecation = old_member.deprecated
+    new_deprecation = new_member.deprecated
+    if _values_are_equal(old_deprecation, new_deprecation):
+        return
+    old_is_deprecated = old_member.is_deprecated
+    new_is_deprecated = new_member.is_deprecated
+    if not old_is_deprecated and not new_is_deprecated:
+        return
+    if not old_is_deprecated and new_is_deprecated:
+        kind = ChangeKind.OBJECT_DEPRECATED
+        flags = _DEPRECATION
+    elif old_is_deprecated and not new_is_deprecated:
+        kind = ChangeKind.OBJECT_UNDEPRECATED
+        flags = frozenset()
+    else:
+        kind = ChangeKind.OBJECT_CHANGED_DEPRECATION
+        flags = _DEPRECATION
+    yield Change(
+        kind=kind,
+        obj=new_member,
+        old_value=old_deprecation,
+        new_value=new_deprecation,
+        flags=flags,
+    )
+
+
+def _member_changes(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
     seen_paths: set[str] | None = None,
-) -> Iterator[Breakage]:
+) -> Iterator[Change]:
     seen_paths = set() if seen_paths is None else seen_paths
+    old_members = old_obj.all_members
     new_members = new_obj.all_members
     debug = logger.isEnabledFor(DEBUG)
-    for name, old_member in old_obj.all_members.items():
+
+    for name, old_member in old_members.items():
         if not old_member.is_public:
             if debug:
                 logger.debug("API check: %s.%s: skip non-public object", old_obj.path, name)
             continue
         if debug:
             logger.debug("API check: %s.%s", old_obj.path, name)
-        try:
-            new_member = new_members[name]
-        except KeyError:
-            if (not old_member.is_alias and old_member.is_module) or old_member.is_public:
-                yield ObjectRemovedBreakage(old_member, old_member, None)  # ty:ignore[invalid-argument-type]
+        new_member = new_members.get(name)
+        if new_member is None or not new_member.is_public:
+            yield Change(
+                kind=ChangeKind.OBJECT_REMOVED,
+                obj=old_member,
+                old_value=old_member,
+                flags=_BREAKING,
+            )
         else:
-            yield from _type_based_yield(old_member, new_member, seen_paths=seen_paths)
+            yield from _deprecation_changes(old_member, new_member)
+            yield from _type_based_changes(old_member, new_member, seen_paths=seen_paths)
+
+    for name, new_member in new_members.items():
+        if not new_member.is_public:
+            continue
+        old_member = old_members.get(name)
+        if old_member is None or not old_member.is_public:
+            yield Change(
+                kind=ChangeKind.OBJECT_ADDED,
+                obj=new_member,
+                new_value=new_member,
+            )
 
 
-def _type_based_yield(
+def _type_based_changes(
     old_member: Object | Alias,
     new_member: Object | Alias,
     *,
     seen_paths: set[str],
-) -> Iterator[Breakage]:
+) -> Iterator[Change]:
     if old_member.path in seen_paths:
         return
     seen_paths.add(old_member.path)
     if old_member.is_alias or new_member.is_alias:
         # Should be first, since there can be the case where there is an alias and another kind of object,
         # which may not be a breaking change.
-        yield from _alias_incompatibilities(
+        yield from _alias_changes(
             old_member,
             new_member,
             seen_paths=seen_paths,
         )
     elif new_member.kind != old_member.kind:
-        yield ObjectChangedKindBreakage(new_member, old_member.kind, new_member.kind)  # ty:ignore[invalid-argument-type]
+        yield Change(
+            kind=ChangeKind.OBJECT_CHANGED_KIND,
+            obj=new_member,
+            old_value=old_member.kind,
+            new_value=new_member.kind,
+            flags=_BREAKING,
+        )
     elif old_member.is_module:
-        yield from _member_incompatibilities(
+        yield from _member_changes(
             old_member,
             new_member,
             seen_paths=seen_paths,
         )
     elif old_member.is_class:
-        yield from _class_incompatibilities(
+        yield from _class_changes(
             old_member,  # ty:ignore[invalid-argument-type]
             new_member,  # ty:ignore[invalid-argument-type]
             seen_paths=seen_paths,
         )
     elif old_member.is_function:
-        yield from _function_incompatibilities(old_member, new_member)  # ty:ignore[invalid-argument-type]
+        yield from _function_changes(old_member, new_member)  # ty:ignore[invalid-argument-type]
     elif old_member.is_attribute:
-        yield from _attribute_incompatibilities(old_member, new_member)  # ty:ignore[invalid-argument-type]
+        yield from _attribute_changes(old_member, new_member)  # ty:ignore[invalid-argument-type]
 
 
 def _returns_are_compatible(old_function: Function, new_function: Function) -> bool:
@@ -700,6 +901,55 @@ def _returns_are_compatible(old_function: Function, new_function: Function) -> b
     return True
 
 
+def find_changes(
+    old_obj: Object | Alias,
+    new_obj: Object | Alias,
+) -> Iterator[Change]:
+    """Find changes between two versions of the same API.
+
+    The function recursively compares public objects and yields every supported
+    change. Semantic flags on each change indicate whether it is a warning,
+    deprecation, or backward-incompatible change.
+
+    Parameters:
+        old_obj: The old version of an object.
+        new_obj: The new version of an object.
+
+    Yields:
+        API changes.
+    """
+    yield from _member_changes(old_obj, new_obj)
+
+
+_BREAKAGE_TYPES: dict[ChangeKind, type[Breakage]] = {
+    ChangeKind.ATTRIBUTE_CHANGED_TYPE: AttributeChangedTypeBreakage,
+    ChangeKind.ATTRIBUTE_CHANGED_VALUE: AttributeChangedValueBreakage,
+    ChangeKind.CLASS_BASE_REMOVED: ClassRemovedBaseBreakage,
+    ChangeKind.OBJECT_CHANGED_KIND: ObjectChangedKindBreakage,
+    ChangeKind.OBJECT_REMOVED: ObjectRemovedBreakage,
+    ChangeKind.PARAMETER_ADDED: ParameterAddedRequiredBreakage,
+    ChangeKind.PARAMETER_CHANGED_DEFAULT: ParameterChangedDefaultBreakage,
+    ChangeKind.PARAMETER_CHANGED_KIND: ParameterChangedKindBreakage,
+    ChangeKind.PARAMETER_MOVED: ParameterMovedBreakage,
+    ChangeKind.PARAMETER_REMOVED: ParameterRemovedBreakage,
+    ChangeKind.RETURN_CHANGED_TYPE: ReturnChangedTypeBreakage,
+}
+
+
+def _change_as_breakage(change: Change) -> Breakage:
+    breakage_type = _BREAKAGE_TYPES[change.kind]
+    new_value = change.new_value
+    if change.kind is ChangeKind.ATTRIBUTE_CHANGED_VALUE and new_value is None:
+        new_value = "unset"
+    elif (
+        change.kind is ChangeKind.PARAMETER_CHANGED_DEFAULT
+        and _parameter_is_required(change.new_value)
+        and not _parameter_is_required(change.old_value)
+    ):
+        breakage_type = ParameterChangedRequiredBreakage
+    return breakage_type(change.obj, change.old_value, new_value, details=change.details)  # ty:ignore[invalid-argument-type]
+
+
 def find_breaking_changes(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
@@ -721,88 +971,8 @@ def find_breaking_changes(
         >>> new = griffe.load("pkg")
         >>> old = griffe.load_git("pkg", "1.2.3")
         >>> for breakage in griffe.find_breaking_changes(old, new)
-        ...     print(breakage.explain(style=style), file=sys.stderr)
+        ...     print(breakage.explain(), file=sys.stderr)
     """
-    yield from _member_incompatibilities(old_obj, new_obj)
-
-
-unset = object()
-
-
-ChangeKind = Literal[
-    "added object",
-    "added parameter",
-    "added base class",
-    "removed object",
-    "removed parameter",
-    "removed base class",
-    "moved parameter",
-    "changed object kind",
-    "changed attribute type",
-    "changed attribute value",
-    "changed return type",
-    "changed parameter type",
-    "changed parameter default",
-    "changed parameter kind",
-    "deprecated object",
-    "deprecated parameter",
-    "deprecated parameter type",
-    "deprecated parameter default",
-    "deprecated parameter kind",
-    "deprecated parameter value",
-]
-
-
-@dataclass(kw_only=True)
-class AddedObject:
-    kind: ClassVar[ChangeKind] = "added object"
-    obj: Object | Alias
-
-
-@dataclass(kw_only=True)
-class AddedParameter:
-    kind: ClassVar[ChangeKind] = "added parameter"
-
-
-@dataclass(kw_only=True)
-class RemovedObject: ...
-
-
-@dataclass(kw_only=True)
-class RemovedParameter: ...
-
-
-@dataclass(kw_only=True)
-class MovedObject: ...
-
-
-@dataclass(kw_only=True)
-class MovedParameter: ...
-
-
-@dataclass(kw_only=True)
-class ChangedObjectKind: ...
-
-
-@dataclass(kw_only=True)
-class ChangedAttributeValue: ...  # added, removed, moved, changed in ordered/unordered sequences/mappings?
-
-
-@dataclass(kw_only=True)
-class ChangedAttributeType: ...
-
-
-@dataclass(kw_only=True)
-class ChangedReturnType: ...
-
-
-@dataclass(kw_only=True)
-class ChangedParameterType: ...
-
-
-@dataclass(kw_only=True)
-class ChangedParameterDefault: ...
-
-
-@dataclass(kw_only=True)
-class ChangedParameterKind: ...
+    for change in find_changes(old_obj, new_obj):
+        if change.is_breaking:
+            yield _change_as_breakage(change)

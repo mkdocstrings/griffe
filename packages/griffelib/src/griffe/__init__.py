@@ -79,10 +79,14 @@ Griffe can serizalize data to dictionary and JSON.
 
 ## API checks
 
-Griffe can compare two versions of the same package to find breaking changes.
+Griffe can compare two versions of the same package to find API changes.
 
+- [`griffe.find_changes`][]: Find all supported changes between two versions of the same API.
 - [`griffe.find_breaking_changes`][]: Find breaking changes between two versions of the same API.
+- [`griffe.Change`][]: Structured change records include semantic flags.
 - [`griffe.Breakage`][]: Breakage classes can explain what broke from a version to another.
+- [`griffe.write_api_diff`][]: Record one version-to-version diff and update consolidated API history.
+- [`griffe.consolidate_api_diffs`][]: Rebuild consolidated API history from atomic diffs.
 
 ## Extensions
 
@@ -192,12 +196,14 @@ from griffe._internal.agents.nodes.parameters import ParametersType, get_paramet
 from griffe._internal.agents.nodes.runtime import ObjectNode
 from griffe._internal.agents.nodes.values import get_value, safe_get_value
 from griffe._internal.agents.visitor import Visitor, builtin_decorators, stdlib_decorators, typing_overload, visit
+from griffe._internal.api_history import consolidate_api_diffs, write_api_diff
 from griffe._internal.c3linear import c3linear_merge
 from griffe._internal.collections import LinesCollection, ModulesCollection
 from griffe._internal.diff import (
     AttributeChangedTypeBreakage,
     AttributeChangedValueBreakage,
     Breakage,
+    Change,
     ClassRemovedBaseBreakage,
     ObjectChangedKindBreakage,
     ObjectRemovedBreakage,
@@ -209,6 +215,7 @@ from griffe._internal.diff import (
     ParameterRemovedBreakage,
     ReturnChangedTypeBreakage,
     find_breaking_changes,
+    find_changes,
 )
 from griffe._internal.docstrings.auto import (
     AutoOptions,
@@ -266,6 +273,8 @@ from griffe._internal.docstrings.utils import docstring_warning, parse_docstring
 from griffe._internal.encoders import JSONEncoder, json_decoder
 from griffe._internal.enumerations import (
     BreakageKind,
+    ChangeFlag,
+    ChangeKind,
     DocstringSectionKind,
     ExplanationStyle,
     Kind,
@@ -337,6 +346,7 @@ from griffe._internal.expressions import (
     safe_get_condition,
     safe_get_expression,
 )
+from griffe._internal.extensions.apidiff import ApiDiffExtension
 from griffe._internal.extensions.base import (
     Extension,
     Extensions,
@@ -395,6 +405,7 @@ from griffe._internal.stats import Stats
 __all__ = [
     "Alias",
     "AliasResolutionError",
+    "ApiDiffExtension",
     "Attribute",
     "AttributeChangedTypeBreakage",
     "AttributeChangedValueBreakage",
@@ -402,6 +413,9 @@ __all__ = [
     "Breakage",
     "BreakageKind",
     "BuiltinModuleError",
+    "Change",
+    "ChangeFlag",
+    "ChangeKind",
     "Class",
     "ClassRemovedBaseBreakage",
     "CyclicAliasError",
@@ -558,9 +572,11 @@ __all__ = [
     "builtin_decorators",
     "builtin_extensions",
     "c3linear_merge",
+    "consolidate_api_diffs",
     "docstring_warning",
     "dynamic_import",
     "find_breaking_changes",
+    "find_changes",
     "get__all__",
     "get_annotation",
     "get_base_class",
@@ -612,6 +628,7 @@ __all__ = [
     "typing_overload",
     "visit",
     "vtree",
+    "write_api_diff",
 ]
 
 # Re-export griffecli for backward compatibility.
@@ -623,6 +640,7 @@ except ImportError:
     _MISSING_FROM_GRIFFECLI = {
         "DEFAULT_LOG_LEVEL",
         "check",
+        "diff",
         "dump",
         "get_parser",
         "main",

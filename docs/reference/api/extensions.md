@@ -18,6 +18,10 @@
 
 ::: griffe.builtin_extensions
 
+::: griffe.ApiDiffExtension
+    options:
+        inherited_members: false
+
 ::: griffe.DataclassesExtension
     options:
         inherited_members: false

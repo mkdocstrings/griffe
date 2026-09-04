@@ -510,6 +510,7 @@ class Extensions:
 
 
 builtin_extensions: set[str] = {
+    "apidiff",
     "dataclasses",
     "unpack_typeddict",
 }

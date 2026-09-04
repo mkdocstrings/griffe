@@ -352,6 +352,22 @@ def get_parser() -> argparse.ArgumentParser:
     check_options.add_argument("-f", "--format", dest="style", choices=formats, default=None, help="Output format.")
     add_common_options(check_parser)
 
+    # ========= DIFF PARSER ========= #
+    diff_parser = add_subparser("diff", "Record all API changes between two versions.")
+    diff_options = diff_parser.add_argument_group(title="Diff options")
+    diff_options.add_argument("package", metavar="PACKAGE", help="Package to find, load and compare, as path.")
+    diff_options.add_argument("old_version", metavar="OLD_VERSION", help="Older Git reference and version label.")
+    diff_options.add_argument("new_version", metavar="NEW_VERSION", help="Newer Git reference and version label.")
+    diff_options.add_argument(
+        "-o",
+        "--output-dir",
+        dest="output_directory",
+        type=Path,
+        default=Path(".apidiff"),
+        help="Directory in which to write API-diff data. Default: .apidiff.",
+    )
+    add_common_options(diff_parser)
+
     return parser
 
 
@@ -624,6 +640,99 @@ def check(
     return 0
 
 
+def diff(
+    package: str | Path,
+    old_version: str,
+    new_version: str,
+    *,
+    output_directory: str | Path = ".apidiff",
+    extensions: Sequence[str | dict[str, Any] | Extension | type[Extension]] | None = None,
+    search_paths: Sequence[str | Path] | None = None,
+    append_sys_path: bool = False,
+    find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
+    allow_inspection: bool = True,
+    force_inspection: bool = False,
+) -> int:
+    """Record all API changes between two Git versions of a package.
+
+    Parameters:
+        package: The package to load and compare.
+        old_version: Older Git reference, also used as its version label.
+        new_version: Newer Git reference, also used as its version label.
+        output_directory: Directory in which to write API-diff data.
+        extensions: The extensions to use while loading both versions.
+        search_paths: The paths to search into.
+        append_sys_path: Whether to append the contents of `sys.path` to the search paths.
+        find_stubs_package: Whether to search for stubs-only packages.
+        prefer_stubs_docs: Whether to give precedence to docstrings from stubs over those from sources.
+        allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
+        force_inspection: Whether to force using dynamic analysis when loading data.
+
+    Returns:
+        `0` for success, `1` for extension-loading failure, or `2` for an invalid history or Git failure.
+    """
+    from griffe._internal.api_history import write_api_diff  # noqa: PLC0415
+    from griffe._internal.exceptions import ExtensionError, GitError  # noqa: PLC0415
+    from griffe._internal.extensions.base import load_extensions  # noqa: PLC0415
+    from griffe._internal.git import _get_repo_root  # noqa: PLC0415
+    from griffe._internal.loader import load_git  # noqa: PLC0415
+    from griffe._internal.logger import logger  # noqa: PLC0415
+
+    search_paths = list(search_paths) if search_paths else []
+    if append_sys_path:
+        search_paths.extend(sys.path)
+
+    try:
+        loaded_extensions = load_extensions(*(extensions or ()))
+    except ExtensionError:
+        logger.exception("Could not load extensions")
+        return 1
+
+    try:
+        repository = _get_repo_root(package)
+        old_package = load_git(
+            package,
+            ref=old_version,
+            repo=repository,
+            extensions=loaded_extensions,
+            search_paths=search_paths,
+            allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
+            find_stubs_package=find_stubs_package,
+            prefer_stubs_docs=prefer_stubs_docs,
+            resolve_aliases=True,
+            resolve_external=None,
+        )
+        new_package = load_git(
+            package,
+            ref=new_version,
+            repo=repository,
+            extensions=loaded_extensions,
+            search_paths=search_paths,
+            allow_inspection=allow_inspection,
+            force_inspection=force_inspection,
+            find_stubs_package=find_stubs_package,
+            prefer_stubs_docs=prefer_stubs_docs,
+            resolve_aliases=True,
+            resolve_external=None,
+        )
+        atomic_path, history_path = write_api_diff(
+            old_package,
+            new_package,
+            old_version=old_version,
+            new_version=new_version,
+            directory=output_directory,
+        )
+    except (GitError, RuntimeError, ValueError) as error:
+        print(f"griffe: error: {error}", file=sys.stderr)
+        return 2
+
+    print(f"Wrote {atomic_path}")
+    print(f"Updated {history_path}")
+    return 0
+
+
 def main(args: list[str] | None = None) -> int:
     """Run the main program.
 
@@ -660,5 +769,5 @@ def main(args: list[str] | None = None) -> int:
     sys.setrecursionlimit(max(2000, sys.getrecursionlimit()))
 
     # Run subcommand.
-    commands: dict[str, Callable[..., int]] = {"check": check, "dump": dump}
+    commands: dict[str, Callable[..., int]] = {"check": check, "diff": diff, "dump": dump}
     return commands[subcommand](**opts_dict)

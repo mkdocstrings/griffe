@@ -24,7 +24,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from griffe import Module
+from griffe._internal import api_history as api_history_module
 from griffe._internal import debug
+from griffe._internal import git as git_module
+from griffe._internal import loader as loader_module
 from griffecli._internal import cli
 
 if TYPE_CHECKING:
@@ -96,3 +100,42 @@ def test_show_debug_info(capsys: pytest.CaptureFixture) -> None:
     assert "system" in captured
     assert "environment" in captured
     assert "packages" in captured
+
+
+def test_diff_command(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture,
+) -> None:
+    """Dispatch the diff command with its version and output arguments."""
+    loaded_refs: list[str] = []
+    package_module = Module("package")
+    atomic_path = tmp_path / "atomic.json"
+    history_path = tmp_path / "diff.json"
+
+    monkeypatch.setattr(git_module, "_get_repo_root", lambda _package: tmp_path)
+
+    def load_git(_package: str | Path, *, ref: str, **_kwargs: object) -> Module:
+        loaded_refs.append(ref)
+        return package_module
+
+    monkeypatch.setattr(loader_module, "load_git", load_git)
+
+    def write_api_diff(
+        _old_obj: object,
+        _new_obj: object,
+        *,
+        old_version: str,
+        new_version: str,
+        directory: str | Path,
+    ) -> tuple[Path, Path]:
+        assert old_version == "1.0"
+        assert new_version == "2.0"
+        assert directory == tmp_path
+        return atomic_path, history_path
+
+    monkeypatch.setattr(api_history_module, "write_api_diff", write_api_diff)
+
+    assert cli.main(["diff", "package", "1.0", "2.0", "-o", str(tmp_path)]) == 0
+    assert loaded_refs == ["1.0", "2.0"]
+    assert capsys.readouterr().out == f"Wrote {atomic_path}\nUpdated {history_path}\n"

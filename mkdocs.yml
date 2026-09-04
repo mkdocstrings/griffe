@@ -62,6 +62,7 @@ nav:
   - extensions.md
   - Built-in:
     - extensions/built-in.md
+    - apidiff: extensions/built-in/apidiff.md
     - dataclasses: extensions/built-in/dataclasses.md
     - unpack-typeddict: extensions/built-in/unpack-typeddict.md
   - Official:

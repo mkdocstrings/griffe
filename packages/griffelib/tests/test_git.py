@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 from subprocess import run
 from typing import TYPE_CHECKING
@@ -97,6 +98,21 @@ def test_load_git(git_repo: Path) -> None:
     assert isinstance(v2, Module)
     assert v1.attributes["__version__"].value == "'0.1.0'"
     assert v2.attributes["__version__"].value == "'0.2.0'"
+
+
+def test_record_git_diff(git_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Record and consolidate changes between two Git versions."""
+    pytest.importorskip("griffecli")
+    from griffe import diff  # noqa: PLC0415
+
+    monkeypatch.chdir(git_repo)
+    output_directory = tmp_path / ".apidiff"
+    assert diff(MODULE_NAME, "v0.1.0", "v0.2.0", output_directory=output_directory) == 0
+
+    history = json.loads(output_directory.joinpath("diff.json").read_text(encoding="utf8"))
+    package = history["packages"][MODULE_NAME]
+    assert package["versions"] == ["v0.1.0", "v0.2.0"]
+    assert package["objects"][f"{MODULE_NAME}.__version__"]["events"][0]["kind"] == "attribute_changed_value"
 
 
 def test_load_git_errors(git_repo: Path) -> None:
