@@ -198,13 +198,11 @@ def json_decoder(
     # Load objects and parameters.
     if "kind" in obj_dict:
         kind = obj_dict["kind"]
-        if kind in _loader_map:
-            return _loader_map[kind](obj_dict)
-        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
-        if kind in ParameterKind.__members__.values():
+        if loader := _loader_map.get(kind):
+            return loader(obj_dict)
+        if kind in _parameter_kinds:
             return _load_parameter(obj_dict)
-        # YORE: EOL 3.11: Replace `.__members__.values()` with `` within line.
-        if kind in TypeParameterKind.__members__.values():
+        if kind in _type_parameter_kinds:
             return _load_type_parameter(obj_dict)
 
     # Return dict as is.

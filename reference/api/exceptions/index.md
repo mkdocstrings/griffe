@@ -136,14 +136,8 @@ def __init__(self, alias: Alias) -> None:
     self.alias: Alias = alias
     """The alias that triggered the error."""
 
-    message = f"Could not resolve alias {alias.path} pointing at {alias.target_path}"
-    try:
-        filepath = alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
-    except BuiltinModuleError:
-        pass
-    else:
-        message += f" (in {filepath}:{alias.alias_lineno})"
-    super().__init__(message)
+    self._detailed_message: str | None = None
+    super().__init__(f"Could not resolve alias {alias.path} pointing at {self.alias.target_path}")
 ```
 
 ### alias

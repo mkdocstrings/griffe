@@ -420,6 +420,8 @@ def __init__(  # noqa: PLR0917
 
     self.type_guarded: bool = False
     """Whether the current code branch is type-guarded."""
+
+    self._visited_nodes: list[ast.AST] = []
 ```
 
 ### code
@@ -661,11 +663,19 @@ def get_module(self) -> Module:
     Returns:
         A module instance.
     """
+    self._visited_nodes.clear()
     # Optimization: equivalent to `ast.parse`, but with `optimize=1` to remove assert statements.
     # TODO: With options, could use `optimize=2` to remove docstrings.
     top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
-    self.visit(top_node)
-    return self.current.module
+    try:
+        self.visit(top_node)
+        return self.current.module
+    finally:
+        # Parent links are only needed during analysis. Detach them once the
+        # visit is over so parsed trees can be freed without cyclic GC.
+        for node in self._visited_nodes:
+            vars(node).pop("parent", None)
+        self._visited_nodes.clear()
 ```
 
 ### handle_attribute
@@ -787,7 +797,7 @@ def handle_attribute(
             runtime=not self.type_guarded,
             analysis="static",
         )
-        attribute.labels |= labels
+        attribute.labels.update(labels)
         parent.set_member(name, attribute)
 
         if name == "__all__":
@@ -834,8 +844,6 @@ def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: 
     self.extensions.call("on_node", node=node, agent=self)
     self.extensions.call("on_function_node", node=node, agent=self)
 
-    labels = labels or set()
-
     # Handle decorators.
     decorators = []
     overload = False
@@ -855,9 +863,13 @@ def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: 
     else:
         lineno = node.lineno
 
-    labels |= self.decorators_to_labels(decorators)
+    if decorators and (decorator_labels := self.decorators_to_labels(decorators)):
+        if labels:
+            labels.update(decorator_labels)
+        else:
+            labels = decorator_labels
 
-    if "property" in labels:
+    if labels and "property" in labels:
         attribute = Attribute(
             name=node.name,
             value=None,
@@ -868,7 +880,7 @@ def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: 
             runtime=not self.type_guarded,
             analysis="static",
         )
-        attribute.labels |= labels
+        attribute.labels.update(labels)
         self.current.set_member(node.name, attribute)
         self.extensions.call("on_instance", node=node, obj=attribute, agent=self)
         self.extensions.call("on_attribute_instance", node=node, attr=attribute, agent=self)
@@ -921,7 +933,8 @@ def handle_function(self, node: ast.AsyncFunctionDef | ast.FunctionDef, labels: 
             function.overloads = self.current.overloads[function.name]
             del self.current.overloads[function.name]
 
-    function.labels |= labels
+    if labels:
+        function.labels.update(labels)
 
     self.extensions.call("on_instance", node=node, obj=function, agent=self)
     self.extensions.call("on_function_instance", node=node, func=function, agent=self)
@@ -954,7 +967,8 @@ def visit(self, node: ast.AST) -> None:
     Parameters:
         node: The node to visit.
     """
-    getattr(self, f"visit_{ast_kind(node)}", self.generic_visit)(node)
+    self._visited_nodes.append(node)
+    self._visitor.get(type(node), type(self).generic_visit)(self, node)
 ```
 
 ### visit_annassign
@@ -1133,7 +1147,8 @@ def visit_classdef(self, node: ast.ClassDef) -> None:
         runtime=not self.type_guarded,
         analysis="static",
     )
-    class_.labels |= self.decorators_to_labels(decorators)
+    if decorators and (labels := self.decorators_to_labels(decorators)):
+        class_.labels.update(labels)
 
     self.current.set_member(node.name, class_)
     self.current = class_
@@ -1806,7 +1821,7 @@ def handle_attribute(self, node: ObjectNode, annotation: str | Expr | None = Non
         docstring=docstring,
         analysis="dynamic",
     )
-    attribute.labels |= labels
+    attribute.labels.update(labels)
     parent.set_member(node.name, attribute)  # ty:ignore[unresolved-attribute]
 
     if node.name == "__all__":
@@ -1872,8 +1887,7 @@ def handle_function(self, node: ObjectNode, labels: set | None = None) -> None:
     lineno, endlineno = self._get_linenos(node)
 
     obj: Attribute | Function
-    labels = labels or set()
-    if "property" in labels:
+    if labels and "property" in labels:
         obj = Attribute(
             name=node.name,
             value=None,
@@ -1896,7 +1910,8 @@ def handle_function(self, node: ObjectNode, labels: set | None = None) -> None:
             endlineno=endlineno,
             analysis="dynamic",
         )
-    obj.labels |= labels
+    if labels:
+        obj.labels.update(labels)
     self.current.set_member(node.name, obj)
     self.extensions.call("on_instance", node=node, obj=obj, agent=self)
     if obj.is_attribute:
@@ -3142,12 +3157,18 @@ def ast_children(node: AST) -> Iterator[AST]:
         except AttributeError:
             continue
         if isinstance(field, AST):
-            field.parent = node
+            if isinstance(field, _SHARED_AST_NODE_TYPES):
+                vars(field).pop("parent", None)
+            else:
+                field.parent = node
             yield field
         elif isinstance(field, list):
             for child in field:
                 if isinstance(child, AST):
-                    child.parent = node
+                    if isinstance(child, _SHARED_AST_NODE_TYPES):
+                        vars(child).pop("parent", None)
+                    else:
+                        child.parent = node
                     yield child
 ```
 
@@ -3759,31 +3780,28 @@ Source code in `packages/griffelib/src/griffe/_internal/agents/nodes/parameters.
 def get_parameters(node: ast.arguments) -> ParametersType:
     parameters: ParametersType = []
 
-    # TODO: Probably some optimizations to do here.
-    args_kinds_defaults: Iterable = reversed(
-        (
-            *zip_longest(
-                reversed(
-                    (
-                        *zip_longest(
-                            node.posonlyargs,
-                            [],
-                            fillvalue=ParameterKind.positional_only,
-                        ),
-                        *zip_longest(node.args, [], fillvalue=ParameterKind.positional_or_keyword),
-                    ),
-                ),
-                reversed(node.defaults),
-                fillvalue=None,
-            ),
-        ),
-    )
-    arg: ast.arg
-    kind: ParameterKind
-    arg_default: ast.AST | None
-    for (arg, kind), arg_default in args_kinds_defaults:  # ty:ignore[invalid-assignment,not-iterable]
-        parameters.append((arg.arg, arg.annotation, kind, arg_default))
+    # Python stores positional-only and positional-or-keyword arguments in separate lists,
+    # but stores their defaults together. The defaults are right-aligned with the combined
+    # positional parameters, so `default_offset` is the index of the first parameter with
+    # a default value.
+    positional_count = len(node.posonlyargs) + len(node.args)
+    default_offset = positional_count - len(node.defaults)
 
+    # Keep one index across both positional argument lists to preserve that alignment.
+    index = 0
+
+    for arg in node.posonlyargs:
+        default = node.defaults[index - default_offset] if index >= default_offset else None
+        parameters.append((arg.arg, arg.annotation, ParameterKind.positional_only, default))
+        index += 1
+
+    for arg in node.args:
+        default = node.defaults[index - default_offset] if index >= default_offset else None
+        parameters.append((arg.arg, arg.annotation, ParameterKind.positional_or_keyword, default))
+        index += 1
+
+    # Variadic positional parameters have no AST default. Use an empty tuple as their
+    # implicit default so they are not treated as required parameters later on.
     if node.vararg:
         parameters.append(
             (
@@ -3794,23 +3812,14 @@ def get_parameters(node: ast.arguments) -> ParametersType:
             ),
         )
 
-    # TODO: Probably some optimizations to do here.
-    kwargs_defaults: Iterable = reversed(
-        (
-            *zip_longest(
-                reversed(node.kwonlyargs),
-                reversed(node.kw_defaults),
-                fillvalue=None,
-            ),
-        ),
-    )
-    kwarg: ast.arg
-    kwarg_default: ast.AST | None
-    for kwarg, kwarg_default in kwargs_defaults:  # ty:ignore[invalid-assignment]
+    # Unlike positional defaults, keyword-only defaults are stored one-to-one with their
+    # arguments. A `None` entry means that the keyword-only parameter is required.
+    for kwarg, kwarg_default in zip(node.kwonlyargs, node.kw_defaults, strict=False):
         parameters.append(
             (kwarg.arg, kwarg.annotation, ParameterKind.keyword_only, kwarg_default),
         )
 
+    # Likewise, use an empty mapping as the implicit default for variadic keyword arguments.
     if node.kwarg:
         parameters.append(
             (

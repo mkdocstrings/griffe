@@ -8,14 +8,14 @@
 </code></pre></div> <p>Example in a monorepo, within a deeper file tree:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span>-s<span class=w> </span>back/services/identity-provider/src<span class=w> </span>identity_provider
 </code></pre></div> <h3 id=using-pypi>Using PyPI<a class=headerlink href=#using-pypi title="Permanent link">¤</a></h3> <p>It's also possible to directly <strong>check packages from PyPI.org</strong> (or other indexes configured through <code>PIP_INDEX_URL</code>). This feature requires that you install Griffe with the <code>pypi</code> extra:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>pip<span class=w> </span>install<span class=w> </span>griffe<span class=o>[</span>pypi<span class=o>]</span>
 </code></pre></div> <p>The command syntax is:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span>package_name<span class=w> </span>-b<span class=w> </span>project-name<span class=o>==</span><span class=m>2</span>.0<span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
-</code></pre></div> <p>You can let Griffe guess the package name by passing an empty string:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>&quot;&quot;</span><span class=w> </span>-b<span class=w> </span>project-name<span class=o>==</span><span class=m>2</span>.0<span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
-</code></pre></div> <p><a href=https://peps.python.org/pep-0508/ >PEP 508 version specifiers</a> are supported (<code>&lt;</code>, <code>&lt;=</code>, <code>!=</code>, <code>==</code>, <code>&gt;=</code>, <code>&gt;</code>, <code>~=</code>). For example, to compare v2 against the version just before it:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>&quot;&quot;</span><span class=w> </span>-b<span class=w> </span>project-name<span class=o>==</span><span class=m>2</span>.0<span class=w> </span>-a<span class=w> </span>project-name&lt;<span class=m>2</span>.0
-</code></pre></div> <p>Without a version specifier on the base reference, or without a base reference at all, Griffe will use the latest available version. The two following commands compare the latest version against v1:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>&quot;&quot;</span><span class=w> </span>-b<span class=w> </span>project-name<span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
-<span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>&quot;&quot;</span><span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
+</code></pre></div> <p>You can let Griffe guess the package name by passing an empty string:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>""</span><span class=w> </span>-b<span class=w> </span>project-name<span class=o>==</span><span class=m>2</span>.0<span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
+</code></pre></div> <p><a href=https://peps.python.org/pep-0508/ >PEP 508 version specifiers</a> are supported (<code>&lt;</code>, <code>&lt;=</code>, <code>!=</code>, <code>==</code>, <code>&gt;=</code>, <code>&gt;</code>, <code>~=</code>). For example, to compare v2 against the version just before it:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>""</span><span class=w> </span>-b<span class=w> </span>project-name<span class=o>==</span><span class=m>2</span>.0<span class=w> </span>-a<span class=w> </span>project-name&lt;<span class=m>2</span>.0
+</code></pre></div> <p>Without a version specifier on the base reference, or without a base reference at all, Griffe will use the latest available version. The two following commands compare the latest version against v1:</p> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>""</span><span class=w> </span>-b<span class=w> </span>project-name<span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
+<span class=gp>$ </span>griffe<span class=w> </span>check<span class=w> </span><span class=s2>""</span><span class=w> </span>-a<span class=w> </span>project-name<span class=o>==</span><span class=m>1</span>.0
 </code></pre></div> <p>Griffe will actually install packages in a cache directory. It means a few things: source distributions are supported, and only packages that are compatible with your current environment can be checked.</p> <h2 id=python-api>Python API<a class=headerlink href=#python-api title="Permanent link">¤</a></h2> <p>To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our <a class="autorefs autorefs-internal" href=../../../reference/api/loaders/#griffe.load_git><code>load_git()</code></a> utility, and then passing them both to the <a class="autorefs autorefs-internal" href=../../../reference/api/checks/#griffe.find_breaking_changes><code>find_breaking_changes()</code></a> function. This function will yield instances of <a class="autorefs autorefs-internal" href=../../../reference/api/checks/#griffe.Breakage><code>Breakage</code></a>. It's up to you how you want to use these breakage instances.</p> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
-<span class=n>my_pkg_v1</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>load_git</span><span class=p>(</span><span class=s2>&quot;my_pkg&quot;</span><span class=p>,</span> <span class=n>ref</span><span class=o>=</span><span class=s2>&quot;v1&quot;</span><span class=p>)</span>
-<span class=n>my_pkg_v2</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>load_git</span><span class=p>(</span><span class=s2>&quot;my_pkg&quot;</span><span class=p>,</span> <span class=n>ref</span><span class=o>=</span><span class=s2>&quot;v2&quot;</span><span class=p>)</span>
+<span class=n>my_pkg_v1</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>load_git</span><span class=p>(</span><span class=s2>"my_pkg"</span><span class=p>,</span> <span class=n>ref</span><span class=o>=</span><span class=s2>"v1"</span><span class=p>)</span>
+<span class=n>my_pkg_v2</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>load_git</span><span class=p>(</span><span class=s2>"my_pkg"</span><span class=p>,</span> <span class=n>ref</span><span class=o>=</span><span class=s2>"v2"</span><span class=p>)</span>
 
 <span class=k>for</span> <span class=n>breaking_change</span> <span class=ow>in</span> <span class=n>find_breaking_changes</span><span class=p>(</span><span class=n>my_pkg_v1</span><span class=p>,</span> <span class=n>my_pkg_v2</span><span class=p>):</span>
     <span class=nb>print</span><span class=p>(</span><span class=n>breaking_change</span><span class=o>.</span><span class=n>explain</span><span class=p>())</span>
@@ -32,7 +32,7 @@
 </code></pre></div> <p>The last step will fail the workflow if any breaking change is found.</p> <h3 id=ci-azdo>Azure Pipelines<a class=headerlink href=#ci-azdo title="Permanent link">¤</a></h3> <p>Here is a quick example on how to use Griffe in an Azure Pipeline. Griffe can format its output using Azure DevOps <a href="https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands">task logging commands</a>, similar to GitHub Actions messages:</p> <div class=highlight><pre><span></span><code><span class=nt>jobs</span><span class=p>:</span>
 <span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">check-api</span>
 <span class=w>  </span><span class=nt>pool</span><span class=p>:</span>
-<span class=w>    </span><span class=nt>vmImage</span><span class=p>:</span><span class=w> </span><span class=s>&#39;ubuntu-latest&#39;</span>
+<span class=w>    </span><span class=nt>vmImage</span><span class=p>:</span><span class=w> </span><span class=s>'ubuntu-latest'</span>
 <span class=w>  </span><span class=nt>steps</span><span class=p>:</span>
 <span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>checkout</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">self</span>
 <span class=w>    </span><span class=nt>fetchDepth</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class=w>  </span><span class=c1># We the need the full Git history.</span>
@@ -46,45 +46,45 @@
 <span class=w>        </span><span class=no>griffe check --search src --format azdo your_package_name</span>
 </code></pre></div> <p>The last step will fail the workflow if any breaking change is found.</p> <h2 id=detected-breakages>Detected breakages<a class=headerlink href=#detected-breakages title="Permanent link">¤</a></h2> <p>In this section, we will describe the breakages that Griffe detects, giving some code examples and hints on how to properly communicate breakages with deprecation messages before actually releasing them.</p> <p>Obviously, these explanations and the value of the hints we provide depend on your definition of what is a public Python API. There is no clear and generally agreed upon definition of "public Python API". A public Python API might vary from one project to another. In essence, your public API is what you say it is.</p> <p>However, we do have conventions like prefixing objects with an underscore to tell users these objects are part of the private API, or internals, and therefore should not be used. For the rest, Griffe can detect changes that <em>will</em> trigger immediate errors in your users code', and changes that <em>might</em> cause issues in your users' code. Although the latter sound less impactful, they do have a serious impact, because they can <em>silently</em> change the behavior of your users' code, leading to issues that are hard to detect, understand and fix.</p> <p><a href=https://xkcd.com/1172/ >Knowing that every change is a breaking change</a>, the more we detect and document (potentially) breaking changes in our changelogs, the better.</p> <h3 id=parameter-moved>Parameter moved<a class=headerlink href=#parameter-moved title="Permanent link">¤</a></h3> <blockquote> <p>Positional parameter was moved.</p> </blockquote> <p>Moving the order of positional parameters can <em>silently</em> break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>prefix</span><span class=p>,</span> <span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=c1># user's code</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: no immediate error, broken behavior</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=c1># user's code: no immediate error, broken behavior</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like <code>TypeError</code>. The function expects a number of arguments, and the developer passes it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will <em>silently lead</em> (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.</p> </div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> If you often add, move or remove parameters, consider making them keyword-only, so that their order doesn't matter.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>prefix</span><span class=p>,</span> <span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
 <span class=c1># still working as expected</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> </div> <h3 id=parameter-removed>Parameter removed<a class=headerlink href=#parameter-removed title="Permanent link">¤</a></h3> <blockquote> <p>Parameter was removed.</p> </blockquote> <p>Removing a parameter can immediately break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>prefix</span><span class=p>,</span> <span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=c1># user's code</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: immediate error</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=c1># user's code: immediate error</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
 
 <span class=c1># even with keyword parameters: immediate error</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> Allow a deprecation period for the removed parameter by swallowing it in a variadic positional parameter, a variadic keyword parameter, or both.</p> <div class="tabbed-set tabbed-alternate" data-tabs=1:3><input checked=checked id=positional-only name=__tabbed_1 type=radio><input id=keyword-only name=__tabbed_1 type=radio><input id=positional-or-keyword name=__tabbed_1 type=radio><div class=tabbed-labels><label for=positional-only>positional-only</label><label for=keyword-only>keyword-only</label><label for=positional-or-keyword>positional or keyword</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your parameters are positional-only parameters (difficult deprecation)</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>prefix</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=o>/</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># swallow prefix using a variadic positional parameter</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>):</span>
     <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>args</span><span class=p>)</span> <span class=o>==</span> <span class=mi>2</span><span class=p>:</span>
@@ -93,32 +93,32 @@
         <span class=n>prefix</span> <span class=o>=</span> <span class=kc>None</span>
         <span class=n>name</span> <span class=o>=</span> <span class=n>args</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
     <span class=k>else</span><span class=p>:</span>
-        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s2>&quot;missing parameter &#39;name&#39;&quot;</span><span class=p>)</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s2>"missing parameter 'name'"</span><span class=p>)</span>
     <span class=k>if</span> <span class=n>prefix</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>&quot;prefix is deprecated&quot;</span><span class=p>)</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>"prefix is deprecated"</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
 <span class=c1># still working as expected</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> </div> <div class=tabbed-block> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your parameters are keyword-only parameters (easy deprecation)</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>prefix</span><span class=p>,</span> <span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># swallow prefix using a variadic keyword parameter</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
-    <span class=n>prefix</span> <span class=o>=</span> <span class=n>kwargs</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&quot;prefix&quot;</span><span class=p>,</span> <span class=kc>None</span><span class=p>)</span>
+    <span class=n>prefix</span> <span class=o>=</span> <span class=n>kwargs</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>"prefix"</span><span class=p>,</span> <span class=kc>None</span><span class=p>)</span>
     <span class=k>if</span> <span class=n>prefix</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>&quot;prefix is deprecated&quot;</span><span class=p>)</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>"prefix is deprecated"</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
 <span class=c1># still working as expected</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> </div> <div class=tabbed-block> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your parameters are positional or keyword parameters (very difficult deprecation)</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>prefix</span><span class=p>,</span> <span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># no other choice than swallowing both forms...</span>
 <span class=c1># ignoring the deprecated parameter becomes quite complex</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
@@ -127,54 +127,54 @@
     <span class=k>elif</span> <span class=nb>len</span><span class=p>(</span><span class=n>args</span><span class=p>)</span> <span class=o>==</span> <span class=mi>1</span><span class=p>:</span>
         <span class=n>prefix</span> <span class=o>=</span> <span class=kc>None</span>
         <span class=n>name</span> <span class=o>=</span> <span class=n>args</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
-    <span class=k>if</span> <span class=s2>&quot;name&quot;</span> <span class=ow>in</span> <span class=n>kwargs</span><span class=p>:</span>
-        <span class=n>name</span> <span class=o>=</span> <span class=n>kwargs</span><span class=p>[</span><span class=s2>&quot;name&quot;</span><span class=p>]</span>
-    <span class=k>if</span> <span class=s2>&quot;prefix&quot;</span> <span class=ow>in</span> <span class=n>kwargs</span><span class=p>:</span>
-        <span class=n>prefix</span> <span class=o>=</span> <span class=n>kwargs</span><span class=p>[</span><span class=s2>&quot;prefix&quot;</span><span class=p>]</span>
+    <span class=k>if</span> <span class=s2>"name"</span> <span class=ow>in</span> <span class=n>kwargs</span><span class=p>:</span>
+        <span class=n>name</span> <span class=o>=</span> <span class=n>kwargs</span><span class=p>[</span><span class=s2>"name"</span><span class=p>]</span>
+    <span class=k>if</span> <span class=s2>"prefix"</span> <span class=ow>in</span> <span class=n>kwargs</span><span class=p>:</span>
+        <span class=n>prefix</span> <span class=o>=</span> <span class=n>kwargs</span><span class=p>[</span><span class=s2>"prefix"</span><span class=p>]</span>
     <span class=k>if</span> <span class=n>prefix</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>&quot;prefix is deprecated&quot;</span><span class=p>)</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>"prefix is deprecated"</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
 <span class=c1># still working as expected</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=s2>&quot;world&quot;</span><span class=p>)</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>&quot;world&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=s2>"world"</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s2>"world"</span><span class=p>)</span>
 </code></pre></div> </div> </div> </div> </div> <h3 id=parameter-changed-kind>Parameter changed kind<a class=headerlink href=#parameter-changed-kind title="Permanent link">¤</a></h3> <blockquote> <p>Parameter kind was changed</p> </blockquote> <p>Changing the kind of a parameter to another (positional-only, keyword-only, positional or keyword, variadic positional, variadic keyword) can immediately break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
 <span class=k>def</span><span class=w> </span><span class=nf>greet2</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: all working fine</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
-<span class=n>greet2</span><span class=p>(</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
-<span class=n>greet2</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
+<span class=c1># user's code: all working fine</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tim"</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>"tim"</span><span class=p>)</span>
+<span class=n>greet2</span><span class=p>(</span><span class=s2>"tim"</span><span class=p>)</span>
+<span class=n>greet2</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>"tim"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=o>/</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
 <span class=k>def</span><span class=w> </span><span class=nf>greet2</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: working as expected</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
-<span class=n>greet2</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
+<span class=c1># user's code: working as expected</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tim"</span><span class=p>)</span>
+<span class=n>greet2</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>"tim"</span><span class=p>)</span>
 
 <span class=c1># immediate error</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
-<span class=n>greet2</span><span class=p>(</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>"tim"</span><span class=p>)</span>
+<span class=n>greet2</span><span class=p>(</span><span class=s2>"tim"</span><span class=p>)</span>
 </code></pre></div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> Although it actually is a breaking change, changing your positional or keyword parameters' kind to keyword-only makes your public function more robust to future changes (forward-compatibility).</p> <p>For functions with lots of optional parameters, and a few (one or two) required parameters, it can be a good idea to accept the required parameters as positional or keyword, while accepting the optional parameters as keyword-only parameters:</p> <div class=highlight><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>punctuation</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span> <span class=n>bold</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span> <span class=n>italic</span><span class=o>=</span><span class=kc>False</span><span class=p>):</span>
     <span class=o>...</span>
 
 <span class=c1># simple cases are easy to write</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tim&quot;</span><span class=p>)</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tiff&quot;</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tim"</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tiff"</span><span class=p>)</span>
 
 <span class=c1># complex cases are never ambiguous</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tim&quot;</span><span class=p>,</span> <span class=n>italic</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>bold</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
-<span class=n>greet</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&quot;tiff&quot;</span><span class=p>,</span> <span class=n>bold</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>punctuation</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tim"</span><span class=p>,</span> <span class=n>italic</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>bold</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+<span class=n>greet</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>"tiff"</span><span class=p>,</span> <span class=n>bold</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>punctuation</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
 </code></pre></div> <p>Positional-only parameters are useful in some specific cases, such as when a function takes two or more numeric values, and their order does not matter, and naming the parameters would not make sense:</p> <div class=highlight><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>multiply3</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>,</span> <span class=n>c</span><span class=p>,</span> <span class=o>/</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>a</span> <span class=o>*</span> <span class=n>b</span> <span class=o>*</span> <span class=n>c</span>
 
@@ -190,7 +190,7 @@
         <span class=k>return</span> <span class=nb>float</span><span class=p>(</span><span class=n>value</span><span class=p>)</span>
     <span class=k>return</span> <span class=n>value</span>
 
-<span class=c1># user&#39;s code: condition is entered</span>
+<span class=c1># user's code: condition is entered</span>
 <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>compute_something</span><span class=p>(</span><span class=mi>7</span><span class=p>),</span> <span class=nb>float</span><span class=p>):</span>
     <span class=o>...</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
@@ -200,7 +200,7 @@
         <span class=k>return</span> <span class=nb>float</span><span class=p>(</span><span class=n>value</span><span class=p>)</span>
     <span class=k>return</span> <span class=n>value</span>
 
-<span class=c1># user&#39;s code: condition is not entered anymore</span>
+<span class=c1># user's code: condition is not entered anymore</span>
 <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>compute_something</span><span class=p>(</span><span class=mi>7</span><span class=p>),</span> <span class=nb>float</span><span class=p>):</span>
     <span class=o>...</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Changing default value of parameters is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like <code>TypeError</code>. Not using the parameter still provides the argument with a default value: the contract is fulfilled. But default values very often have specific meaning, and changing them will <em>silently lead</em> (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.</p> </div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> Allow a deprecation period for the old default value by using a sentinel value to detect when the parameter wasn't used by the user:</p> <div class=highlight><span class=filename>in the coming release</span><pre><span></span><code><span class=n>_sentinel</span> <span class=o>=</span> <span class=nb>object</span><span class=p>()</span>
@@ -211,8 +211,8 @@
         <span class=n>to_float</span> <span class=o>=</span> <span class=kc>True</span>
         <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span>
             <span class=ne>DeprecationWarning</span><span class=p>,</span>
-            <span class=s2>&quot;default value of &#39;to_float&#39; will change from True to False, &quot;</span>
-            <span class=s2>&quot;please provide &#39;to_float=True&#39; if you want to retain the current behavior&quot;</span>
+            <span class=s2>"default value of 'to_float' will change from True to False, "</span>
+            <span class=s2>"please provide 'to_float=True' if you want to retain the current behavior"</span>
         <span class=p>)</span>
     <span class=k>if</span> <span class=n>to_float</span><span class=p>:</span>
         <span class=k>return</span> <span class=nb>float</span><span class=p>(</span><span class=n>value</span><span class=p>)</span>
@@ -223,42 +223,42 @@
         <span class=k>return</span> <span class=nb>float</span><span class=p>(</span><span class=n>value</span><span class=p>)</span>
     <span class=k>return</span> <span class=n>value</span>
 </code></pre></div> </div> <h3 id=parameter-changed-required>Parameter changed required<a class=headerlink href=#parameter-changed-required title="Permanent link">¤</a></h3> <blockquote> <p>Parameter is now required</p> </blockquote> <p>Changing an optional parameter to a required one (by removing its default value) can immediately break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
-<span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+<span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>):</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tiff&quot;</span><span class=p>)</span>
+<span class=c1># user's code</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tiff"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: immediate error</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tiff&quot;</span><span class=p>)</span>
+<span class=c1># user's code: immediate error</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tiff"</span><span class=p>)</span>
 </code></pre></div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> Allow a deprecation period for the default value by using a sentinel value to detect when the parameter wasn't used by the user:</p> <div class=highlight><span class=filename>in the coming release</span><pre><span></span><code><span class=n>_sentinel</span> <span class=o>=</span> <span class=nb>object</span><span class=p>()</span>
 
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=o>=</span><span class=n>_sentinel</span><span class=p>):</span>
     <span class=k>if</span> <span class=n>prefix</span> <span class=ow>is</span> <span class=n>_sentinel</span><span class=p>:</span>
-        <span class=n>prefix</span> <span class=o>=</span> <span class=s2>&quot;hello&quot;</span>
-        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>&quot;&#39;prefix&#39; will become required in the next release&quot;</span><span class=p>)</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+        <span class=n>prefix</span> <span class=o>=</span> <span class=s2>"hello"</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>"'prefix' will become required in the next release"</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 </code></pre></div> <p>In a later release you can remove the sentinel, the deprecation warning, and the default value of <code>prefix</code>.</p> <div class=highlight><span class=filename>in a later release</span><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 </code></pre></div> </div> <h3 id=parameter-added-required>Parameter added required<a class=headerlink href=#parameter-added-required title="Permanent link">¤</a></h3> <blockquote> <p>Parameter was added as required</p> </blockquote> <p>Adding a new, required parameter can immediately break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s2>&quot;hello &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=s2>"hello "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tiff&quot;</span><span class=p>)</span>
+<span class=c1># user's code</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tiff"</span><span class=p>)</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: immediate error</span>
-<span class=n>greet</span><span class=p>(</span><span class=s2>&quot;tiff&quot;</span><span class=p>)</span>
-</code></pre></div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> You can delay (or avoid) and inform your users about the upcoming breakage by temporarily (or permanently) providing a default value for the new parameter:</p> <div class=highlight><span class=filename>in the coming release</span><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=o>=</span><span class=s2>&quot;hello&quot;</span><span class=p>):</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>&quot; &quot;</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
+<span class=c1># user's code: immediate error</span>
+<span class=n>greet</span><span class=p>(</span><span class=s2>"tiff"</span><span class=p>)</span>
+</code></pre></div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> You can delay (or avoid) and inform your users about the upcoming breakage by temporarily (or permanently) providing a default value for the new parameter:</p> <div class=highlight><span class=filename>in the coming release</span><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>prefix</span><span class=o>=</span><span class=s2>"hello"</span><span class=p>):</span>
+    <span class=nb>print</span><span class=p>(</span><span class=n>prefix</span> <span class=o>+</span> <span class=s2>" "</span> <span class=o>+</span> <span class=n>name</span><span class=p>)</span>
 </code></pre></div> </div> <h3 id=return-changed-type>Return changed type<a class=headerlink href=#return-changed-type title="Permanent link">¤</a></h3> <blockquote> <p>Return types are incompatible</p> </blockquote> <div class="admonition warning"> <p class=admonition-title>Not yet supported!</p> <p> Telling if a type construct is compatible with another one is not trivial, especially statically. Support for this will be implemented later.</p> </div> <h3 id=object-removed>Object removed<a class=headerlink href=#object-removed title="Permanent link">¤</a></h3> <blockquote> <p>Public object was removed</p> </blockquote> <p>Removing a public object from a module can immediately break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your/module.py</span>
-<span class=n>special_thing</span> <span class=o>=</span> <span class=s2>&quot;hey&quot;</span>
+<span class=n>special_thing</span> <span class=o>=</span> <span class=s2>"hey"</span>
 
 <span class=c1># user/module.py</span>
 <span class=kn>from</span><span class=w> </span><span class=nn>your.module</span><span class=w> </span><span class=kn>import</span> <span class=n>special_thing</span>
@@ -273,9 +273,9 @@
 <span class=kn>from</span><span class=w> </span><span class=nn>your</span><span class=w> </span><span class=kn>import</span> <span class=n>module</span>
 <span class=nb>print</span><span class=p>(</span><span class=n>module</span><span class=o>.</span><span class=n>special_thing</span><span class=p>)</span>
 </code></pre></div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> Allow a deprecation period by declaring a module-level <code>__getattr__</code> function that returns the given object while warning about its deprecation:</p> <div class=highlight><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__getattr__</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
-    <span class=k>if</span> <span class=n>name</span> <span class=o>==</span> <span class=s2>&quot;special_thing&quot;</span><span class=p>:</span>
-        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>&quot;&#39;special_thing&#39; is deprecated and will be removed&quot;</span><span class=p>)</span>
-        <span class=k>return</span> <span class=s2>&quot;hey&quot;</span>
+    <span class=k>if</span> <span class=n>name</span> <span class=o>==</span> <span class=s2>"special_thing"</span><span class=p>:</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=s2>"'special_thing' is deprecated and will be removed"</span><span class=p>)</span>
+        <span class=k>return</span> <span class=s2>"hey"</span>
 </code></pre></div> </div> <h3 id=object-changed-kind>Object changed kind<a class=headerlink href=#object-changed-kind title="Permanent link">¤</a></h3> <blockquote> <p>Public object points to a different kind of object</p> </blockquote> <p>Changing the kind (type alias, attribute, function, class, module) of a public object can <em>silently</em> break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
 <span class=k>class</span><span class=w> </span><span class=nc>Factory</span><span class=p>:</span>
     <span class=k>def</span><span class=w> </span><span class=fm>__call__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>...</span><span class=p>):</span>
@@ -283,7 +283,7 @@
 
 <span class=n>factory</span> <span class=o>=</span> <span class=n>Factory</span><span class=p>(</span><span class=o>...</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: condition is entered</span>
+<span class=c1># user's code: condition is entered</span>
 <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>factory</span><span class=p>,</span> <span class=n>Factory</span><span class=p>):</span>
     <span class=o>...</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
@@ -293,19 +293,19 @@
 <span class=k>def</span><span class=w> </span><span class=nf>factory</span><span class=p>(</span><span class=o>...</span><span class=p>):</span>
     <span class=o>...</span>
 
-<span class=c1># user&#39;s code: condition is not entered anymore</span>
+<span class=c1># user's code: condition is not entered anymore</span>
 <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>factory</span><span class=p>,</span> <span class=n>Factory</span><span class=p>):</span>
     <span class=o>...</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Changing the kind of an object is not really an API breakage, depending on our definition of API, since this won't always raise immediate errors like <code>TypeError</code>. The object is still here and accessed: the contract is fulfilled. But developers sometimes rely on the kind of an object, so changing it will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.</p> </div> <h3 id=attribute-changed-type>Attribute changed type<a class=headerlink href=#attribute-changed-type title="Permanent link">¤</a></h3> <blockquote> <p>Attribute types are incompatible</p> </blockquote> <div class="admonition warning"> <p class=admonition-title>Not yet supported!</p> <p> Telling if a type construct is compatible with another one is not trivial, especially statically. Support for this will be implemented later.</p> </div> <h3 id=attribute-changed-value>Attribute changed value<a class=headerlink href=#attribute-changed-value title="Permanent link">¤</a></h3> <blockquote> <p>Attribute value was changed</p> </blockquote> <p>Changing the value of an attribute can <em>silently</em> break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
-<span class=n>PY_VERSION</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>getenv</span><span class=p>(</span><span class=s2>&quot;PY_VERSION&quot;</span><span class=p>)</span>
+<span class=n>PY_VERSION</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>getenv</span><span class=p>(</span><span class=s2>"PY_VERSION"</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: condition is entered</span>
+<span class=c1># user's code: condition is entered</span>
 <span class=k>if</span> <span class=n>PY_VERSION</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
     <span class=o>...</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
-<span class=n>PY_VERSION</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>getenv</span><span class=p>(</span><span class=s2>&quot;PY_VERSION&quot;</span><span class=p>,</span> <span class=s2>&quot;3.8&quot;</span><span class=p>)</span>
+<span class=n>PY_VERSION</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>getenv</span><span class=p>(</span><span class=s2>"PY_VERSION"</span><span class=p>,</span> <span class=s2>"3.8"</span><span class=p>)</span>
 
-<span class=c1># user&#39;s code: condition is not entered anymore</span>
+<span class=c1># user's code: condition is not entered anymore</span>
 <span class=k>if</span> <span class=n>PY_VERSION</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
     <span class=o>...</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Changing the value of an attribute is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like <code>TypeError</code>. The attribute is still here and accessed: the contract is fulfilled. But developers heavily rely on the value of public attributes, so changing it will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.</p> </div> <div class="admonition tip"> <p class=admonition-title>Hint</p> <p> Make sure to document the change of value of the attribute in your changelog, particularly the previous and new range of values it can take.</p> </div> <h3 id=class-removed-base>Class removed base<a class=headerlink href=#class-removed-base title="Permanent link">¤</a></h3> <blockquote> <p>Base class was removed</p> </blockquote> <p>Removing a class from another class' bases can <em>silently</em> break your users' code.</p> <div class=highlight><span class=filename>before</span><pre><span></span><code><span class=c1># your code</span>
@@ -313,7 +313,7 @@
 <span class=k>class</span><span class=w> </span><span class=nc>B</span><span class=p>:</span> <span class=o>...</span>
 <span class=k>class</span><span class=w> </span><span class=nc>C</span><span class=p>(</span><span class=n>A</span><span class=p>,</span> <span class=n>B</span><span class=p>):</span> <span class=o>...</span>
 
-<span class=c1># user&#39;s code: condition is entered</span>
+<span class=c1># user's code: condition is entered</span>
 <span class=k>if</span> <span class=n>B</span> <span class=ow>in</span> <span class=n>klass</span><span class=o>.</span><span class=vm>__bases__</span><span class=p>:</span>
     <span class=o>...</span>
 </code></pre></div> <div class=highlight><span class=filename>after</span><pre><span></span><code><span class=c1># your code</span>
@@ -321,7 +321,7 @@
 <span class=k>class</span><span class=w> </span><span class=nc>B</span><span class=p>:</span> <span class=o>...</span>
 <span class=k>class</span><span class=w> </span><span class=nc>C</span><span class=p>(</span><span class=n>A</span><span class=p>):</span> <span class=o>...</span>
 
-<span class=c1># user&#39;s code: condition is not entered anymore</span>
+<span class=c1># user's code: condition is not entered anymore</span>
 <span class=k>if</span> <span class=n>B</span> <span class=ow>in</span> <span class=n>klass</span><span class=o>.</span><span class=vm>__bases__</span><span class=p>:</span>
     <span class=o>...</span>
 </code></pre></div> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Unless inherited members are lost in the process, removing a class base is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like <code>TypeError</code>. The class is here, its members as well: the contract is fulfilled. But developers sometimes rely on the actual bases of a class, so changing them will lead to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.</p> </div> <h2 id=output-style>Output style<a class=headerlink href=#output-style title="Permanent link">¤</a></h2> <p>Griffe supports writing detected breakages in multiple formats, or styles.</p> <p><a href id=format-oneline></a></p> <h3 id=one-line>One-line<a class=headerlink href=#one-line title="Permanent link">¤</a></h3> <ul> <li><strong>CLI</strong>: <code>-f oneline</code> / no flags</li> <li><strong>API</strong>: <code>check(...)</code> / <code>check(..., style="oneline")</code> / <code>check(..., style=ExplanationStyle.ONE_LINE)</code></li> </ul> <p>This is the default format. Griffe will print each detected breakage on a single line:</p> <div class=highlight><pre><span></span><code>$ griffe check griffe -ssrc -b0.46.0 -a0.45.0

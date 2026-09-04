@@ -400,6 +400,7 @@ This document describes how the project is architectured, both regarding boilerp
              __init__.py
              conftest.py
              helpers.py
+             test_auto.py
              test_google.py
              test_numpy.py
              test_sphinx.py
@@ -634,6 +635,8 @@ xml version="1.0" encoding="UTF-8" standalone="no"?
 
 SPDX-License-Identifier: ISC
 
+xml version="1.0" encoding="UTF-8" standalone="no"?
+
 #### `encoders.py`
 
 SPDX-License-Identifier: ISC
@@ -647,6 +650,8 @@ SPDX-License-Identifier: ISC
 #### `exceptions.py`
 
 SPDX-License-Identifier: ISC
+
+xml version="1.0" encoding="UTF-8" standalone="no"?
 
 #### `expressions.py`
 

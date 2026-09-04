@@ -1871,8 +1871,9 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     # Accessing file paths can trigger a builtin module error.
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
+                            psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[unresolved-attribute]
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
+                                value = merge_stubs(member, value, prefer_stubs_docs=psd)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value

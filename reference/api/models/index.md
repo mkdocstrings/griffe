@@ -338,8 +338,9 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     # Accessing file paths can trigger a builtin module error.
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
+                            psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[unresolved-attribute]
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
+                                value = merge_stubs(member, value, prefer_stubs_docs=psd)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value
@@ -1221,8 +1222,9 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     # Accessing file paths can trigger a builtin module error.
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
+                            psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[unresolved-attribute]
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
+                                value = merge_stubs(member, value, prefer_stubs_docs=psd)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value
@@ -2475,6 +2477,13 @@ def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
     Returns:
         A dictionary.
     """
+    current_context = _module_serialization_context.get()
+    context = current_context
+    if full and (context is None or self.kind is Kind.MODULE):
+        module = cast("Module", self) if self.kind is Kind.MODULE else self.module
+        if context is None or context.module is not module:
+            context = _ModuleSerializationContext(module)
+
     base: dict[str, Any] = {
         "kind": self.kind,
         "name": self.name,
@@ -2500,7 +2509,12 @@ def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
     if self.labels:
         base["labels"] = self.labels
     if self.members:
-        base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
+        context_token = _module_serialization_context.set(context) if context is not current_context else None
+        try:
+            base["members"] = {name: member.as_dict(full=full, **kwargs) for name, member in self.members.items()}
+        finally:
+            if context_token is not None:
+                _module_serialization_context.reset(context_token)
     if self.analysis:
         base["analysis"] = self.analysis
     if self._git_info is not None:
@@ -2509,12 +2523,12 @@ def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
         base["source_link"] = self._source_link
     # TODO: Include `self.extra`?
 
-    if full:
+    if full and context is not None:
         base.update(
             {
                 "path": self.path,
-                "filepath": self.filepath,
-                "relative_package_filepath": self.relative_package_filepath,
+                "filepath": context.filepath,
+                "relative_package_filepath": context.relative_package_filepath,
                 "is_public": self.is_public,
                 "is_deprecated": self.is_deprecated,
                 "is_private": self.is_private,
@@ -2541,10 +2555,10 @@ def as_dict(self, *, full: bool = False, **kwargs: Any) -> dict[str, Any]:
             },
         )
 
-        with suppress(ValueError):
-            base["relative_filepath"] = self.relative_filepath
+        if context.relative_filepath is not None:
+            base["relative_filepath"] = context.relative_filepath
 
-        if "source_link" not in base and (source_link := self.source_link) is not None:
+        if "source_link" not in base and (source_link := self._get_source_link(context)) is not None:
             base["source_link"] = source_link
 
     return base
@@ -3017,8 +3031,9 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     # Accessing file paths can trigger a builtin module error.
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
+                            psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[unresolved-attribute]
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
+                                value = merge_stubs(member, value, prefer_stubs_docs=psd)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value
@@ -3554,6 +3569,12 @@ from_package(package: Module) -> GitInfo | None
 
 Create a GitInfo instance from a Griffe package.
 
+Parameters:
+
+- #### **`package`**
+
+  (`Module`) – The package to create Git information for.
+
 Returns:
 
 - `GitInfo | None` – The GitInfo instance, or None if unknown.
@@ -3564,6 +3585,9 @@ Source code in `packages/griffelib/src/griffe/_internal/git.py`
 @classmethod
 def from_package(cls, package: Module) -> GitInfo | None:
     """Create a GitInfo instance from a Griffe package.
+
+    Parameters:
+        package: The package to create Git information for.
 
     Returns:
         The GitInfo instance, or None if unknown.

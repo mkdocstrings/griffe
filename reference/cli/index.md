@@ -24,6 +24,7 @@ Search Options:
 Loading Options:
 
 - `-B`, `--find-stubs-packages`: Whether to look for stubs-only packages and merge them with concrete ones.
+- `-P`, `--prefer-stubs-docstrings`: Whether to prefer docstrings from stubs over those from sources.
 - `-e`, `--extensions`: A list of extensions to use.
 - `-X`, `--no-inspection`: Disallow inspection of builtin/compiled/not found modules. Default: `True`.
 - `-x`, `--force-inspection`: Force inspection of everything, even when sources are found.
@@ -61,6 +62,7 @@ Search Options:
 Loading Options:
 
 - `-B`, `--find-stubs-packages`: Whether to look for stubs-only packages and merge them with concrete ones.
+- `-P`, `--prefer-stubs-docstrings`: Whether to prefer docstrings from stubs over those from sources.
 - `-e`, `--extensions`: A list of extensions to use.
 - `-X`, `--no-inspection`: Disallow inspection of builtin/compiled/not found modules. Default: `True`.
 - `-x`, `--force-inspection`: Force inspection of everything, even when sources are found.

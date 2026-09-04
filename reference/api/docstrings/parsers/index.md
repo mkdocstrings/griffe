@@ -295,18 +295,19 @@ def parse_google(
     offset = 2 if ignore_summary else 0
 
     while offset < len(lines):
-        line_lower = lines[offset].lower()
+        line = lines[offset]
+        is_code_fence = line.lstrip(" ").startswith("```")
 
         if in_code_block:
-            if line_lower.lstrip(" ").startswith("```"):
+            if is_code_fence:
                 in_code_block = False
-            current_section.append(lines[offset])
+            current_section.append(line)
 
-        elif line_lower.lstrip(" ").startswith("```"):
+        elif is_code_fence:
             in_code_block = True
-            current_section.append(lines[offset])
+            current_section.append(line)
 
-        elif match := _RE_ADMONITION.match(lines[offset]):
+        elif ":" in line and (match := _RE_ADMONITION.match(line)):
             groups = match.groupdict()
             title = groups["title"]
             admonition_type = groups["type"]
@@ -351,13 +352,13 @@ def parse_google(
                         sections.append(DocstringSectionText("\n".join(current_section).rstrip("\n")))
                     current_section = []
                 reader = _section_reader[_section_kind[admonition_type.lower()]]
-                section, offset = reader(docstring, offset=offset + 1, **options)
+                section, offset = reader(lines, docstring, offset=offset + 1, **options)
                 if section:
                     section.title = title
                     sections.append(section)
 
             else:
-                contents, offset = _read_block(docstring, offset=offset + 1)
+                contents, offset = _read_block(lines, offset=offset + 1)
                 if contents:
                     if current_section:
                         if any(current_section):
@@ -371,7 +372,7 @@ def parse_google(
                     with suppress(IndexError):
                         current_section.append(lines[offset])
         else:
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         offset += 1
 
@@ -502,28 +503,29 @@ def parse_numpy(
     offset = 2 if ignore_summary else 0
 
     while offset < len(lines):
-        line_lower = lines[offset].lower()
+        line = lines[offset]
+        is_code_fence = line.lstrip(" ").startswith("```")
 
         # Code blocks can contain dash lines that we must not interpret.
         if in_code_block:
             # End of code block.
-            if line_lower.lstrip(" ").startswith("```"):
+            if is_code_fence:
                 in_code_block = False
             # Lines in code block must not be interpreted in any way.
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         # Start of code block.
-        elif line_lower.lstrip(" ").startswith("```"):
+        elif is_code_fence:
             in_code_block = True
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         # Dash lines after empty lines lose their meaning.
-        elif _is_empty_line(lines[offset]):
+        elif _is_empty_line(line):
             current_section.append("")
 
         # End of the docstring, wrap up.
         elif offset == len(lines) - 1:
-            current_section.append(lines[offset])
+            current_section.append(line)
             _append_section(sections, current_section, admonition_title)
             admonition_title = ""
             current_section = []
@@ -533,23 +535,24 @@ def parse_numpy(
             # Finish reading current section.
             _append_section(sections, current_section, admonition_title)
             current_section = []
+            line_lower = line.lower()
 
             # Start parsing new (known) section.
             if line_lower in _section_kind:
                 admonition_title = ""
                 reader = _section_reader[_section_kind[line_lower]]
-                section, offset = reader(docstring, offset=offset + 2, **options)
+                section, offset = reader(lines, docstring, offset=offset + 2, **options)
                 if section:
                     sections.append(section)
 
             # Start parsing admonition.
             else:
-                admonition_title = lines[offset]
+                admonition_title = line
                 offset += 1  # Skip next dash line.
 
         # Regular line.
         else:
-            current_section.append(lines[offset])
+            current_section.append(line)
 
         offset += 1
 
@@ -629,10 +632,15 @@ def parse_sphinx(
 
     while curr_line_index < len(lines):
         line = lines[curr_line_index]
+        if not line.startswith(":"):
+            parsed_values.description.append(line)
+            curr_line_index += 1
+            continue
+
         for field_type in _field_types:
             if field_type.matches(line):
                 # https://github.com/python/mypy/issues/5485
-                curr_line_index = field_type.reader(docstring, curr_line_index, parsed_values, **options)
+                curr_line_index = field_type.reader(lines, docstring, curr_line_index, parsed_values, **options)
                 break
         else:
             parsed_values.description.append(line)
@@ -1027,14 +1035,10 @@ def parse_docstring_annotation(
     Returns:
         The string unchanged, or a new name or expression.
     """
-    with suppress(
-        AttributeError,  # Docstring has no parent that can be used to resolve names.
-        SyntaxError,  # Annotation contains syntax errors.
-    ):
-        code = compile(annotation, mode="eval", filename="", flags=PyCF_ONLY_AST, optimize=2)
-        if code.body:  # ty:ignore[unresolved-attribute]
+    with suppress(AttributeError):  # Docstring has no parent that can be used to resolve names.
+        if (code := _compile_docstring_annotation(annotation)) and code.body:
             name_or_expr = safe_get_annotation(
-                code.body,  # ty:ignore[unresolved-attribute]
+                code.body,
                 parent=docstring.parent,  # ty:ignore[invalid-argument-type]
                 log_level=log_level,
             )
@@ -1206,15 +1210,14 @@ def infer_docstring_style(
 
     per_style_options = per_style_options or {}
 
-    style_order = [Parser(style) if isinstance(style, str) else style for style in style_order or _default_style_order]
+    if not style_order:
+        style_order = _default_style_order
+    else:
+        style_order = [Parser(style) if isinstance(style, str) else style for style in style_order]
 
     if method == "heuristics":
         for style in style_order:
-            pattern, replacements = _patterns[style]
-            patterns = [
-                re.compile(pattern.format(replacement), re.IGNORECASE | re.MULTILINE) for replacement in replacements
-            ]
-            if any(pattern.search(docstring.value) for pattern in patterns):
+            if _patterns[style].search(docstring.value):
                 return style, None
         return default if default is None or isinstance(default, Parser) else Parser(default), None
 

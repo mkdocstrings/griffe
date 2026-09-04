@@ -21,6 +21,7 @@ load(
     force_inspection: bool = False,
     store_source: bool = True,
     find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -111,6 +112,10 @@ Parameters:
 
   (`bool`, default: `False` ) – Whether to search for stubs-only package. If both the package and its stubs are found, they'll be merged together. If only the stubs are found, they'll be used as the package itself.
 
+- ### **`prefer_stubs_docs`**
+
+  (`bool`, default: `False` ) – Whether to give precedence to stubs docstrings rather than source docstrings. When both are present, the stubs one will override the source one.
+
 - ### **`resolve_aliases`**
 
   (`bool`, default: `False` ) – Whether to resolve aliases.
@@ -146,6 +151,7 @@ def load(
     force_inspection: bool = False,
     store_source: bool = True,
     find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -204,6 +210,9 @@ def load(
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
         resolve_aliases: Whether to resolve aliases.
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
@@ -223,6 +232,7 @@ def load(
         allow_inspection=allow_inspection,
         force_inspection=force_inspection,
         store_source=store_source,
+        prefer_stubs_docs=prefer_stubs_docs,
     )
     result = loader.load(
         objspec,
@@ -254,6 +264,7 @@ load_git(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -328,6 +339,10 @@ Parameters:
 
   (`bool`, default: `False` ) – Whether to search for stubs-only package. If both the package and its stubs are found, they'll be merged together. If only the stubs are found, they'll be used as the package itself.
 
+- ### **`prefer_stubs_docs`**
+
+  (`bool`, default: `False` ) – Whether to give precedence to stubs docstrings rather than source docstrings. When both are present, the stubs one will override the source one.
+
 - ### **`resolve_aliases`**
 
   (`bool`, default: `False` ) – Whether to resolve aliases.
@@ -363,6 +378,7 @@ def load_git(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -399,6 +415,9 @@ def load_git(
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
         resolve_aliases: Whether to resolve aliases.
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
@@ -429,6 +448,7 @@ def load_git(
             resolve_aliases=resolve_aliases,
             resolve_external=resolve_external,
             resolve_implicit=resolve_implicit,
+            prefer_stubs_docs=prefer_stubs_docs,
         )
 ````
 
@@ -450,6 +470,7 @@ load_pypi(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -512,6 +533,10 @@ Parameters:
 
   (`bool`, default: `False` ) – Whether to search for stubs-only package. If both the package and its stubs are found, they'll be merged together. If only the stubs are found, they'll be used as the package itself.
 
+- ### **`prefer_stubs_docs`**
+
+  (`bool`, default: `False` ) – Whether to give precedence to stubs docstrings rather than source docstrings. When both are present, the stubs one will override the source one.
+
 - ### **`resolve_aliases`**
 
   (`bool`, default: `False` ) – Whether to resolve aliases.
@@ -542,6 +567,7 @@ def load_pypi(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     find_stubs_package: bool = False,
+    prefer_stubs_docs: bool = False,
     resolve_aliases: bool = False,
     resolve_external: bool | None = None,
     resolve_implicit: bool = False,
@@ -565,6 +591,9 @@ def load_pypi(
         find_stubs_package: Whether to search for stubs-only package.
             If both the package and its stubs are found, they'll be merged together.
             If only the stubs are found, they'll be used as the package itself.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
         resolve_aliases: Whether to resolve aliases.
         resolve_external: Whether to try to load unspecified modules to resolve aliases.
             Default value (`None`) means to load external modules only if they are the private sibling
@@ -649,6 +678,7 @@ def load_pypi(
         resolve_aliases=resolve_aliases,
         resolve_external=resolve_external,
         resolve_implicit=resolve_implicit,
+        prefer_stubs_docs=prefer_stubs_docs,
     )
 ```
 
@@ -668,6 +698,7 @@ GriffeLoader(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     store_source: bool = True,
+    prefer_stubs_docs: bool = False,
 )
 ```
 
@@ -707,6 +738,10 @@ Parameters:
 
   (`bool`, default: `True` ) – Whether to store code source in the lines collection.
 
+- ### **`prefer_stubs_docs`**
+
+  (`bool`, default: `False` ) – Whether to give precedence to stubs docstrings rather than source docstrings. When both are present, the stubs one will override the source one.
+
 Methods:
 
 - **`expand_exports`** – Expand exports: try to recursively expand all module exports (__all__ values).
@@ -726,7 +761,7 @@ Attributes:
 - **`force_inspection`** (`bool`) – Whether to force inspecting (importing) modules, even when sources were found.
 - **`ignored_modules`** (`set[str]`) – Special modules to ignore when loading.
 - **`lines_collection`** (`LinesCollection`) – Collection of source code lines.
-- **`modules_collection`** (`ModulesCollection`) – Collection of modules.
+- **`prefer_stubs_docs`** (`bool`) – Whether to give precedence to stubs docstrings rather than source ones.
 - **`store_source`** (`bool`) – Whether to store source code in the lines collection.
 
 Source code in `packages/griffelib/src/griffe/_internal/loader.py`
@@ -744,6 +779,7 @@ def __init__(
     allow_inspection: bool = True,
     force_inspection: bool = False,
     store_source: bool = True,
+    prefer_stubs_docs: bool = False,
 ) -> None:
     """Initialize the loader.
 
@@ -756,6 +792,9 @@ def __init__(
         modules_collection: A collection of modules.
         allow_inspection: Whether to allow inspecting modules when visiting them is not possible.
         store_source: Whether to store code source in the lines collection.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
     """
     self.extensions: Extensions = extensions or load_extensions()
     """Loaded Griffe extensions."""
@@ -766,6 +805,7 @@ def __init__(
     self.lines_collection: LinesCollection = lines_collection or LinesCollection()
     """Collection of source code lines."""
     self.modules_collection: ModulesCollection = modules_collection or ModulesCollection()
+    self.modules_collection._psd = prefer_stubs_docs
     """Collection of modules."""
     self.allow_inspection: bool = allow_inspection
     """Whether to allow inspecting (importing) modules for which we can't find sources."""
@@ -773,6 +813,8 @@ def __init__(
     """Whether to force inspecting (importing) modules, even when sources were found."""
     self.store_source: bool = store_source
     """Whether to store source code in the lines collection."""
+    self.prefer_stubs_docs: bool = prefer_stubs_docs
+    """Whether to give precedence to stubs docstrings rather than source ones."""
     self._search_paths: Sequence[str | Path] | None = search_paths
     self._time_stats: dict = {
         "time_spent_visiting": 0,
@@ -852,15 +894,13 @@ lines_collection: LinesCollection = (
 
 Collection of source code lines.
 
-### modules_collection
+### prefer_stubs_docs
 
 ```
-modules_collection: ModulesCollection = (
-    modules_collection or ModulesCollection()
-)
+prefer_stubs_docs: bool = prefer_stubs_docs
 ```
 
-Collection of modules.
+Whether to give precedence to stubs docstrings rather than source ones.
 
 ### store_source
 
@@ -1929,8 +1969,9 @@ def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
                     # Accessing file paths can trigger a builtin module error.
                     with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                         if value.is_module and value.filepath != member.filepath:
+                            psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[unresolved-attribute]
                             with suppress(ValueError):
-                                value = merge_stubs(member, value)  # ty:ignore[invalid-argument-type]
+                                value = merge_stubs(member, value, prefer_stubs_docs=psd)  # ty:ignore[invalid-argument-type]
                 for alias in member.aliases.values():
                     with suppress(CyclicAliasError):
                         alias.target = value
@@ -2363,7 +2404,12 @@ def as_text(self) -> str:
 ## merge_stubs
 
 ```
-merge_stubs(mod1: Module, mod2: Module) -> Module
+merge_stubs(
+    mod1: Module,
+    mod2: Module,
+    *,
+    prefer_stubs_docs: bool = False,
+) -> Module
 ```
 
 Merge stubs into a module.
@@ -2378,6 +2424,10 @@ Parameters:
 
   (`Module`) – A regular module or stubs module.
 
+- ### **`prefer_stubs_docs`**
+
+  (`bool`, default: `False` ) – Whether to give precedence to stubs docstrings rather than source docstrings. When both are present, the stubs one will override the source one.
+
 Raises:
 
 - `ValueError` – When both modules are regular modules (no stubs is passed).
@@ -2389,12 +2439,15 @@ Returns:
 Source code in `packages/griffelib/src/griffe/_internal/merger.py`
 
 ```
-def merge_stubs(mod1: Module, mod2: Module) -> Module:
+def merge_stubs(mod1: Module, mod2: Module, *, prefer_stubs_docs: bool = False) -> Module:
     """Merge stubs into a module.
 
     Parameters:
         mod1: A regular module or stubs module.
         mod2: A regular module or stubs module.
+        prefer_stubs_docs: Whether to give precedence to stubs docstrings
+            rather than source docstrings. When both are present, the stubs one
+            will override the source one.
 
     Raises:
         ValueError: When both modules are regular modules (no stubs is passed).
@@ -2411,6 +2464,6 @@ def merge_stubs(mod1: Module, mod2: Module) -> Module:
         module = mod1
     else:
         raise ValueError("cannot merge regular (non-stubs) modules together")
-    _merge_module_stubs(module, stubs)
+    _merge_module_stubs(module, stubs, psd=prefer_stubs_docs)
     return module
 ```

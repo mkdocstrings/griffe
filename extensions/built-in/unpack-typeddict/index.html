@@ -3,38 +3,38 @@
 
 <span class=k>class</span><span class=w> </span><span class=nc>GreetKwargs</span><span class=p>(</span><span class=n>TypedDict</span><span class=p>):</span>
     <span class=n>name</span><span class=p>:</span> <span class=nb>str</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;The name of a person to greet.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""The name of a person to greet."""</span>
     <span class=n>shout</span><span class=p>:</span> <span class=nb>bool</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Whether to shout.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""Whether to shout."""</span>
 
 
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>**</span><span class=n>kwargs</span><span class=p>:</span> <span class=n>Unpack</span><span class=p>[</span><span class=n>GreetKwargs</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Greet someone.</span>
+<span class=w>    </span><span class=sd>"""Greet someone.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        **kwargs: Greet parameters.</span>
 
 <span class=sd>    Returns:</span>
 <span class=sd>        A message.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
-    <span class=n>message</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&quot;Hello </span><span class=si>{</span><span class=n>kwargs</span><span class=p>[</span><span class=s1>&#39;name&#39;</span><span class=p>]</span><span class=si>}</span><span class=s2>!&quot;</span>
-    <span class=k>if</span> <span class=n>kwargs</span><span class=p>[</span><span class=s2>&quot;shout&quot;</span><span class=p>]:</span>
-        <span class=k>return</span> <span class=n>message</span><span class=o>.</span><span class=n>upper</span><span class=p>()</span> <span class=o>+</span> <span class=s2>&quot;!!&quot;</span>
+<span class=sd>    """</span>
+    <span class=n>message</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>"Hello </span><span class=si>{</span><span class=n>kwargs</span><span class=p>[</span><span class=s1>'name'</span><span class=p>]</span><span class=si>}</span><span class=s2>!"</span>
+    <span class=k>if</span> <span class=n>kwargs</span><span class=p>[</span><span class=s2>"shout"</span><span class=p>]:</span>
+        <span class=k>return</span> <span class=n>message</span><span class=o>.</span><span class=n>upper</span><span class=p>()</span> <span class=o>+</span> <span class=s2>"!!"</span>
     <span class=k>return</span> <span class=n>message</span>
 </code></pre></div> <p>With the <code>unpack_typeddict</code> extension enabled, the data loaded by Griffe will be updated as follows:</p> <div class=highlight><pre><span></span><code><span class=k>class</span><span class=w> </span><span class=nc>GreetKwargs</span><span class=p>(</span><span class=n>TypedDict</span><span class=p>):</span>
     <span class=c1># Attributes removed from Griffe data.</span>
 
     <span class=c1># Added by the extension to Griffe data (not to the runtime class):</span>
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>shout</span><span class=p>:</span> <span class=nb>bool</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-<span class=w>        </span><span class=sd>&quot;&quot;&quot;</span>
+<span class=w>        </span><span class=sd>"""</span>
 <span class=sd>        Parameters:</span>
 <span class=sd>            name: The name of a person to greet.</span>
 <span class=sd>            shout: Whether to shout.</span>
-<span class=sd>        &quot;&quot;&quot;</span>
+<span class=sd>        """</span>
 
 
 <span class=k>def</span><span class=w> </span><span class=nf>greet</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>name</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>shout</span><span class=p>:</span> <span class=nb>bool</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Greet someone.</span>
+<span class=w>    </span><span class=sd>"""Greet someone.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        name: The name of a person to greet.</span>
@@ -42,11 +42,11 @@
 
 <span class=sd>    Returns:</span>
 <span class=sd>        A message.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
 </code></pre></div> <p>Thanks to this <code>__init__</code> method now appearing in the typed dictionary, tools like mkdocstrings can now render a proper signature for <code>GreetKwargs</code>.</p> <div class="admonition note"> <p class=admonition-title>Note</p> <p>Our example shows a Google-style docstring, but we actually insert a structured docstring section into the parsed data, which is style-agnostic, so it works with any docstring style.</p> </div> <p>To enable the extension:</p> <div class="tabbed-set tabbed-alternate" data-tabs=1:3><input checked=checked id=cli name=__tabbed_1 type=radio><input id=python name=__tabbed_1 type=radio><input id=mkdocstrings name=__tabbed_1 type=radio><div class=tabbed-labels><label for=cli>CLI</label><label for=python>Python</label><label for=mkdocstrings>mkdocstrings</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><pre><span></span><code><span class=gp>$ </span>griffe<span class=w> </span>dump<span class=w> </span>-e<span class=w> </span>unpack_typeddict<span class=w> </span>my_package
 </code></pre></div> </div> <div class=tabbed-block> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
-<span class=n>my_package</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>load</span><span class=p>(</span><span class=s2>&quot;my_package&quot;</span><span class=p>,</span> <span class=n>extensions</span><span class=o>=</span><span class=n>griffe</span><span class=o>.</span><span class=n>load_extensions</span><span class=p>(</span><span class=s2>&quot;unpack_typeddict&quot;</span><span class=p>))</span>
+<span class=n>my_package</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>load</span><span class=p>(</span><span class=s2>"my_package"</span><span class=p>,</span> <span class=n>extensions</span><span class=o>=</span><span class=n>griffe</span><span class=o>.</span><span class=n>load_extensions</span><span class=p>(</span><span class=s2>"unpack_typeddict"</span><span class=p>))</span>
 </code></pre></div> </div> <div class=tabbed-block> <div class=highlight><span class=filename>mkdocs.yml</span><pre><span></span><code><span class=nt>plugins</span><span class=p>:</span>
 <span class="p p-Indicator">-</span><span class=w> </span><span class=nt>mkdocstrings</span><span class=p>:</span>
 <span class=w>    </span><span class=nt>handlers</span><span class=p>:</span>

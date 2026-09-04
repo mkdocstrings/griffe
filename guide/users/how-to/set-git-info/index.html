@@ -2,7 +2,7 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>GitInfo</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to set the right Git information.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to set the right Git information."""</span>
 </code></pre></div> <p>Next we hook onto the <code>on_package</code> event to override the <code>git_info</code> attribute of the packages we are interested into.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>pathlib</span><span class=w> </span><span class=kn>import</span> <span class=n>Path</span>
 <span class=kn>from</span><span class=w> </span><span class=nn>typing</span><span class=w> </span><span class=kn>import</span> <span class=n>Any</span>
 
@@ -10,35 +10,35 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>GitInfo</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to set the right Git information.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to set the right Git information."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=nf>on_package</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>pkg</span><span class=p>:</span> <span class=n>griffe</span><span class=o>.</span><span class=n>Module</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=k>if</span> <span class=n>pkg</span><span class=o>.</span><span class=n>name</span> <span class=o>==</span> <span class=s2>&quot;my_package_name&quot;</span><span class=p>:</span>
+        <span class=k>if</span> <span class=n>pkg</span><span class=o>.</span><span class=n>name</span> <span class=o>==</span> <span class=s2>"my_package_name"</span><span class=p>:</span>
             <span class=n>pkg</span><span class=o>.</span><span class=n>git_info</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>GitInfo</span><span class=p>(</span>
-                <span class=n>repository</span><span class=o>=</span><span class=n>Path</span><span class=p>(</span><span class=s2>&quot;/path/to/this/package/local/repository&quot;</span><span class=p>),</span>
-                <span class=n>service</span><span class=o>=</span><span class=s2>&quot;forgejo&quot;</span><span class=p>,</span>
-                <span class=n>remote_url</span><span class=o>=</span><span class=s2>&quot;https://myhostedforge.mydomain.com/myaccount/myproject&quot;</span><span class=p>,</span>
-                <span class=n>commit_hash</span><span class=o>=</span><span class=s2>&quot;77f928aeab857cb45564462a4f849c2df2cca99a&quot;</span><span class=p>,</span>
+                <span class=n>repository</span><span class=o>=</span><span class=n>Path</span><span class=p>(</span><span class=s2>"/path/to/this/package/local/repository"</span><span class=p>),</span>
+                <span class=n>service</span><span class=o>=</span><span class=s2>"forgejo"</span><span class=p>,</span>
+                <span class=n>remote_url</span><span class=o>=</span><span class=s2>"https://myhostedforge.mydomain.com/myaccount/myproject"</span><span class=p>,</span>
+                <span class=n>commit_hash</span><span class=o>=</span><span class=s2>"77f928aeab857cb45564462a4f849c2df2cca99a"</span><span class=p>,</span>
             <span class=p>)</span>
 </code></pre></div> <p>Here we hardcode the commit hash, but ideally we would obtain it by running a Git command in a subprocess, or any other way that gives a relevant commit hash.</p> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>subprocess</span>
 
-<span class=n>process</span> <span class=o>=</span> <span class=n>subprocess</span><span class=o>.</span><span class=n>run</span><span class=p>([</span><span class=s2>&quot;git&quot;</span><span class=p>,</span> <span class=s2>&quot;-C&quot;</span><span class=p>,</span> <span class=n>repo</span><span class=p>,</span> <span class=s2>&quot;rev-parse&quot;</span><span class=p>,</span> <span class=s2>&quot;HEAD&quot;</span><span class=p>],</span> <span class=n>text</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>capture_output</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
+<span class=n>process</span> <span class=o>=</span> <span class=n>subprocess</span><span class=o>.</span><span class=n>run</span><span class=p>([</span><span class=s2>"git"</span><span class=p>,</span> <span class=s2>"-C"</span><span class=p>,</span> <span class=n>repo</span><span class=p>,</span> <span class=s2>"rev-parse"</span><span class=p>,</span> <span class=s2>"HEAD"</span><span class=p>],</span> <span class=n>text</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>capture_output</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
 <span class=n>commit_hash</span> <span class=o>=</span> <span class=n>process</span><span class=o>.</span><span class=n>stdout</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
 </code></pre></div> <p>We could also reuse properties that Griffe found:</p> <div class=highlight><pre><span></span><code><span class=c1># Here we reuse `repository` and `commit_hash` while overriding only `service` and `remote_url`.</span>
 <span class=n>pkg</span><span class=o>.</span><span class=n>git_info</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>GitInfo</span><span class=p>(</span>
     <span class=n>repository</span><span class=o>=</span><span class=n>pkg</span><span class=o>.</span><span class=n>git_info</span><span class=o>.</span><span class=n>repository</span><span class=p>,</span>
-    <span class=n>service</span><span class=o>=</span><span class=s2>&quot;forgejo&quot;</span><span class=p>,</span>
-    <span class=n>remote_url</span><span class=o>=</span><span class=s2>&quot;https://myhostedforge.mydomain.com/myaccount/myproject&quot;</span><span class=p>,</span>
+    <span class=n>service</span><span class=o>=</span><span class=s2>"forgejo"</span><span class=p>,</span>
+    <span class=n>remote_url</span><span class=o>=</span><span class=s2>"https://myhostedforge.mydomain.com/myaccount/myproject"</span><span class=p>,</span>
     <span class=n>commit_hash</span><span class=o>=</span><span class=n>pkg</span><span class=o>.</span><span class=n>git_info</span><span class=o>.</span><span class=n>commit_hash</span><span class=p>,</span>
 <span class=p>)</span>
 
 <span class=c1># We could also mutate the original `GitInfo` object:</span>
-<span class=n>pkg</span><span class=o>.</span><span class=n>git_info</span><span class=o>.</span><span class=n>service</span> <span class=o>=</span> <span class=s2>&quot;forgejo&quot;</span>
+<span class=n>pkg</span><span class=o>.</span><span class=n>git_info</span><span class=o>.</span><span class=n>service</span> <span class=o>=</span> <span class=s2>"forgejo"</span>
 </code></pre></div> <p>Now, with this extension enabled (see <a class="autorefs autorefs-internal" href=../../extending/#using-extensions>Using extensions</a>), every object source link in our <code>my_package_name</code> package will be based on this Git information. For example, the source link for <code>my_package_name.my_function</code> would be something like <code>https://myhostedforge.mydomain.com/myaccount/myproject/src/commit/77f928aeab857cb45564462a4f849c2df2cca99a/src/my_package_name/__init__.py#L35-L48</code>.</p> <h2 id=source-links-on-specific-objects>Source links on specific objects<a class=headerlink href=#source-links-on-specific-objects title="Permanent link">¤</a></h2> <p>Let say you expose Python objects in your API that are compiled from other sources (C extension, Pyo3 code, etc.). Let say you also know the filepath and line numbers for each of these compiled objects. With this information, you could fix the source link for these compiled objects so that they point to the actual sources, and not to the final modules, where the line numbers would be incorrect (or to nowhere since we wouldn't have line numbers in the first place).</p> <p>Start by creating an extensions module (a simple Python file) somewhere in your repository, if you don't already have one. Within it, create an extension class:</p> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>SourceLinks</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to set the right source links.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to set the right source links."""</span>
 </code></pre></div> <p>Next we hook onto the <code>on_object</code> event to override the <code>source_link</code> attribute of the objects we are interested into.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>pathlib</span><span class=w> </span><span class=kn>import</span> <span class=n>Path</span>
 <span class=kn>from</span><span class=w> </span><span class=nn>typing</span><span class=w> </span><span class=kn>import</span> <span class=n>Any</span>
 
@@ -46,11 +46,11 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>SourceLinks</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to set the right source links.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to set the right source links."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=nf>on_object</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>obj</span><span class=p>:</span> <span class=n>griffe</span><span class=o>.</span><span class=n>Object</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=k>if</span> <span class=n>obj</span><span class=o>.</span><span class=n>path</span> <span class=o>==</span> <span class=s2>&quot;my_package_name.my_function&quot;</span><span class=p>:</span>
-            <span class=n>obj</span><span class=o>.</span><span class=n>source_link</span> <span class=o>=</span> <span class=s2>&quot;https://myhostedforge.mydomain.com/myaccount/myproject/src/commit/77f928aeab857cb45564462a4f849c2df2cca99a/src/lib.rs#L35-L48&quot;</span>
+        <span class=k>if</span> <span class=n>obj</span><span class=o>.</span><span class=n>path</span> <span class=o>==</span> <span class=s2>"my_package_name.my_function"</span><span class=p>:</span>
+            <span class=n>obj</span><span class=o>.</span><span class=n>source_link</span> <span class=o>=</span> <span class=s2>"https://myhostedforge.mydomain.com/myaccount/myproject/src/commit/77f928aeab857cb45564462a4f849c2df2cca99a/src/lib.rs#L35-L48"</span>
         <span class=c1># Handle any other object you want.</span>
         <span class=k>elif</span> <span class=o>...</span><span class=p>:</span>
             <span class=o>...</span>
@@ -61,12 +61,12 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>SourceLinks</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to set the right source links.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to set the right source links."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=nf>on_object</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>obj</span><span class=p>:</span> <span class=n>griffe</span><span class=o>.</span><span class=n>Object</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=k>if</span> <span class=n>obj</span><span class=o>.</span><span class=n>path</span> <span class=o>==</span> <span class=s2>&quot;my_package_name.my_function&quot;</span><span class=p>:</span>
+        <span class=k>if</span> <span class=n>obj</span><span class=o>.</span><span class=n>path</span> <span class=o>==</span> <span class=s2>"my_package_name.my_function"</span><span class=p>:</span>
             <span class=n>obj</span><span class=o>.</span><span class=n>source_link</span> <span class=o>=</span> <span class=n>obj</span><span class=o>.</span><span class=n>git_info</span><span class=o>.</span><span class=n>get_source_link</span><span class=p>(</span>
-                <span class=n>filepath</span><span class=o>=</span><span class=s2>&quot;src/lib.rs&quot;</span><span class=p>,</span>
+                <span class=n>filepath</span><span class=o>=</span><span class=s2>"src/lib.rs"</span><span class=p>,</span>
                 <span class=n>lineno</span><span class=o>=</span><span class=mi>35</span><span class=p>,</span>
                 <span class=n>endlineno</span><span class=o>=</span><span class=mi>48</span><span class=p>,</span>
             <span class=p>)</span>

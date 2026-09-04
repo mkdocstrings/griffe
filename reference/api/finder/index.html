@@ -17,14 +17,14 @@
 <span class=normal>131</span>
 <span class=normal>132</span>
 <span class=normal>133</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>search_paths</span><span class=p>:</span> <span class=n>Sequence</span><span class=p>[</span><span class=nb>str</span> <span class=o>|</span> <span class=n>Path</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Initialize the finder.</span>
+<span class=w>    </span><span class=sd>"""Initialize the finder.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        search_paths: Optional paths to search into.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>_paths_contents</span><span class=p>:</span> <span class=nb>dict</span><span class=p>[</span><span class=n>Path</span><span class=p>,</span> <span class=nb>list</span><span class=p>[</span><span class=n>Path</span><span class=p>]]</span> <span class=o>=</span> <span class=p>{}</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>search_paths</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=n>Path</span><span class=p>]</span> <span class=o>=</span> <span class=p>[]</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;The finder search paths.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""The finder search paths."""</span>
 
     <span class=c1># Optimization: pre-compute Paths to relieve CPU when joining paths.</span>
     <span class=k>for</span> <span class=n>path</span> <span class=ow>in</span> <span class=n>search_paths</span> <span class=ow>or</span> <span class=n>sys</span><span class=o>.</span><span class=n>path</span><span class=p>:</span>
@@ -33,12 +33,12 @@
     <span class=bp>self</span><span class=o>.</span><span class=n>_always_scan_for</span><span class=p>:</span> <span class=nb>dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=nb>list</span><span class=p>[</span><span class=n>Path</span><span class=p>]]</span> <span class=o>=</span> <span class=n>defaultdict</span><span class=p>(</span><span class=nb>list</span><span class=p>)</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>_extend_from_pth_files</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> <div class="doc doc-children"> <div class="doc doc-object doc-attribute"> <h3 id=griffe.ModuleFinder.accepted_py_module_extensions class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">accepted_py_module_extensions</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small> </span> <a href=#griffe.ModuleFinder.accepted_py_module_extensions class=headerlink title="Permanent link">¤</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>accepted_py_module_extensions</span><span class=p>:</span> <span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/glossary.html#term-list>list</a></span><span class=p>[</span><span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/library/stdtypes.html#str>str</a></span><span class=p>]</span> <span class=o>=</span> <span class=p>[</span>
-    <span class=s2>&quot;.py&quot;</span><span class=p>,</span>
-    <span class=s2>&quot;.pyc&quot;</span><span class=p>,</span>
-    <span class=s2>&quot;.pyo&quot;</span><span class=p>,</span>
-    <span class=s2>&quot;.pyd&quot;</span><span class=p>,</span>
-    <span class=s2>&quot;.pyi&quot;</span><span class=p>,</span>
-    <span class=s2>&quot;.so&quot;</span><span class=p>,</span>
+    <span class=s2>".py"</span><span class=p>,</span>
+    <span class=s2>".pyc"</span><span class=p>,</span>
+    <span class=s2>".pyo"</span><span class=p>,</span>
+    <span class=s2>".pyd"</span><span class=p>,</span>
+    <span class=s2>".pyi"</span><span class=p>,</span>
+    <span class=s2>".so"</span><span class=p>,</span>
 <span class=p>]</span>
 </code></pre></div> <div class="doc doc-contents "> <p>List of extensions supported by the finder.</p> <div class="doc doc-backlinks"> <b class="doc doc-backlink-type">Used by:</b> <ul class="doc doc-backlink-list"> <li class="doc doc-backlink"> <span class="doc doc-backlink-crumb"> <a href=../../#>Reference</a> </span> <span class="doc doc-backlink-crumb"> <a href=../#>Python API</a> </span> <span class="doc doc-backlink-crumb"> <a href=#finder>Finder</a> </span> <span class="doc doc-backlink-crumb"> <a href=#griffe.ModuleFinder><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ModuleFinder</a> </span> <span class="doc doc-backlink-crumb last"> <a href=#griffe.ModuleFinder.extensions_set><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;extensions_set</a> </span> </li> </ul> </div> </div> </div> <div class="doc doc-object doc-attribute"> <h3 id=griffe.ModuleFinder.extensions_set class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">extensions_set</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small> </span> <a href=#griffe.ModuleFinder.extensions_set class=headerlink title="Permanent link">¤</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>extensions_set</span><span class=p>:</span> <span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/reference/expressions.html#set>set</a></span><span class=p>[</span><span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/library/stdtypes.html#str>str</a></span><span class=p>]</span> <span class=o>=</span> <span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/reference/expressions.html#set>set</a></span><span class=p>(</span>
     <span class=n><a class="autorefs autorefs-internal" href=#griffe.ModuleFinder.accepted_py_module_extensions>accepted_py_module_extensions</a></span>
@@ -55,14 +55,14 @@
 <span class=normal>142</span>
 <span class=normal>143</span>
 <span class=normal>144</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>append_search_path</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>path</span><span class=p>:</span> <span class=n>Path</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Append a search path.</span>
+<span class=w>    </span><span class=sd>"""Append a search path.</span>
 
 <span class=sd>    The path will be resolved (absolute, normalized).</span>
-<span class=sd>    The path won&#39;t be appended if it is already in the search paths list.</span>
+<span class=sd>    The path won't be appended if it is already in the search paths list.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        path: The path to append.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>_append_search_path</span><span class=p>(</span><span class=n>path</span><span class=o>.</span><span class=n>resolve</span><span class=p>())</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=griffe.ModuleFinder.find_package class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">find_package</span> <a href=#griffe.ModuleFinder.find_package class=headerlink title="Permanent link">¤</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>find_package</span><span class=p>(</span>
     <span class=n><a class="autorefs autorefs-internal" href=#griffe.ModuleFinder.find_package(module_name)>module_name</a></span><span class=p>:</span> <span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/library/stdtypes.html#str>str</a></span><span class=p>,</span>
@@ -113,7 +113,7 @@
 <span class=normal>290</span>
 <span class=normal>291</span>
 <span class=normal>292</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>find_package</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>module_name</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Package</span> <span class=o>|</span> <span class=n>NamespacePackage</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Find a package or namespace package.</span>
+<span class=w>    </span><span class=sd>"""Find a package or namespace package.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        module_name: The module name.</span>
@@ -123,17 +123,17 @@
 
 <span class=sd>    Returns:</span>
 <span class=sd>        A package or namespace package wrapper.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=n>filepaths</span> <span class=o>=</span> <span class=p>[</span>
         <span class=n>Path</span><span class=p>(</span><span class=n>module_name</span><span class=p>),</span>
         <span class=c1># TODO: Handle .py[cod] and .so files?</span>
         <span class=c1># This would be needed for package that are composed</span>
         <span class=c1># solely of a file with such an extension.</span>
-        <span class=n>Path</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>module_name</span><span class=si>}</span><span class=s2>.py&quot;</span><span class=p>),</span>
+        <span class=n>Path</span><span class=p>(</span><span class=sa>f</span><span class=s2>"</span><span class=si>{</span><span class=n>module_name</span><span class=si>}</span><span class=s2>.py"</span><span class=p>),</span>
     <span class=p>]</span>
 
     <span class=n>real_module_name</span> <span class=o>=</span> <span class=n>module_name</span>
-    <span class=n>real_module_name</span> <span class=o>=</span> <span class=n>real_module_name</span><span class=o>.</span><span class=n>removesuffix</span><span class=p>(</span><span class=s2>&quot;-stubs&quot;</span><span class=p>)</span>
+    <span class=n>real_module_name</span> <span class=o>=</span> <span class=n>real_module_name</span><span class=o>.</span><span class=n>removesuffix</span><span class=p>(</span><span class=s2>"-stubs"</span><span class=p>)</span>
     <span class=n>namespace_dirs</span> <span class=o>=</span> <span class=p>[]</span>
     <span class=k>for</span> <span class=n>path</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>search_paths</span><span class=p>:</span>
         <span class=n>path_contents</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_contents</span><span class=p>(</span><span class=n>path</span><span class=p>)</span>
@@ -142,13 +142,13 @@
                 <span class=n>abs_path</span> <span class=o>=</span> <span class=n>path</span> <span class=o>/</span> <span class=n>choice</span>
                 <span class=k>if</span> <span class=n>abs_path</span> <span class=ow>in</span> <span class=n>path_contents</span><span class=p>:</span>
                     <span class=k>if</span> <span class=n>abs_path</span><span class=o>.</span><span class=n>suffix</span><span class=p>:</span>
-                        <span class=n>stubs</span> <span class=o>=</span> <span class=n>abs_path</span><span class=o>.</span><span class=n>with_suffix</span><span class=p>(</span><span class=s2>&quot;.pyi&quot;</span><span class=p>)</span>
+                        <span class=n>stubs</span> <span class=o>=</span> <span class=n>abs_path</span><span class=o>.</span><span class=n>with_suffix</span><span class=p>(</span><span class=s2>".pyi"</span><span class=p>)</span>
                         <span class=k>return</span> <span class=n>Package</span><span class=p>(</span><span class=n>real_module_name</span><span class=p>,</span> <span class=n>abs_path</span><span class=p>,</span> <span class=n>stubs</span> <span class=k>if</span> <span class=n>stubs</span><span class=o>.</span><span class=n>exists</span><span class=p>()</span> <span class=k>else</span> <span class=kc>None</span><span class=p>)</span>
-                    <span class=n>init_module</span> <span class=o>=</span> <span class=n>abs_path</span> <span class=o>/</span> <span class=s2>&quot;__init__.py&quot;</span>
+                    <span class=n>init_module</span> <span class=o>=</span> <span class=n>abs_path</span> <span class=o>/</span> <span class=s2>"__init__.py"</span>
                     <span class=k>if</span> <span class=n>init_module</span><span class=o>.</span><span class=n>exists</span><span class=p>()</span> <span class=ow>and</span> <span class=ow>not</span> <span class=n>_is_pkg_style_namespace</span><span class=p>(</span><span class=n>init_module</span><span class=p>):</span>
-                        <span class=n>stubs</span> <span class=o>=</span> <span class=n>init_module</span><span class=o>.</span><span class=n>with_suffix</span><span class=p>(</span><span class=s2>&quot;.pyi&quot;</span><span class=p>)</span>
+                        <span class=n>stubs</span> <span class=o>=</span> <span class=n>init_module</span><span class=o>.</span><span class=n>with_suffix</span><span class=p>(</span><span class=s2>".pyi"</span><span class=p>)</span>
                         <span class=k>return</span> <span class=n>Package</span><span class=p>(</span><span class=n>real_module_name</span><span class=p>,</span> <span class=n>init_module</span><span class=p>,</span> <span class=n>stubs</span> <span class=k>if</span> <span class=n>stubs</span><span class=o>.</span><span class=n>exists</span><span class=p>()</span> <span class=k>else</span> <span class=kc>None</span><span class=p>)</span>
-                    <span class=n>init_module</span> <span class=o>=</span> <span class=n>abs_path</span> <span class=o>/</span> <span class=s2>&quot;__init__.pyi&quot;</span>
+                    <span class=n>init_module</span> <span class=o>=</span> <span class=n>abs_path</span> <span class=o>/</span> <span class=s2>"__init__.pyi"</span>
                     <span class=k>if</span> <span class=n>init_module</span><span class=o>.</span><span class=n>exists</span><span class=p>():</span>
                         <span class=c1># Stubs package.</span>
                         <span class=k>return</span> <span class=n>Package</span><span class=p>(</span><span class=n>real_module_name</span><span class=p>,</span> <span class=n>init_module</span><span class=p>,</span> <span class=kc>None</span><span class=p>)</span>
@@ -252,7 +252,7 @@
     <span class=n>try_relative_path</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>True</span><span class=p>,</span>
     <span class=n>find_stubs_package</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>Package</span> <span class=o>|</span> <span class=n>NamespacePackage</span><span class=p>]:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Find the top-level parent module of a module.</span>
+<span class=w>    </span><span class=sd>"""Find the top-level parent module of a module.</span>
 
 <span class=sd>    If a Path is passed, only try to find the module as a file path.</span>
 <span class=sd>    If a string is passed, first try to find the module as a file path,</span>
@@ -263,8 +263,8 @@
 <span class=sd>        try_relative_path: Whether to try finding the module as a relative path,</span>
 <span class=sd>            when the given module is not already a path.</span>
 <span class=sd>        find_stubs_package: Whether to search for stubs-only package.</span>
-<span class=sd>            If both the package and its stubs are found, they&#39;ll be merged together.</span>
-<span class=sd>            If only the stubs are found, they&#39;ll be used as the package itself.</span>
+<span class=sd>            If both the package and its stubs are found, they'll be merged together.</span>
+<span class=sd>            If only the stubs are found, they'll be used as the package itself.</span>
 
 <span class=sd>    Raises:</span>
 <span class=sd>        FileNotFoundError: When a Path was passed and the module could not be found:</span>
@@ -282,7 +282,7 @@
 
 <span class=sd>    Returns:</span>
 <span class=sd>        The name of the module, and an instance representing its (namespace) package.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=n>module_path</span><span class=p>:</span> <span class=n>Path</span> <span class=o>|</span> <span class=nb>list</span><span class=p>[</span><span class=n>Path</span><span class=p>]</span>
     <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>module</span><span class=p>,</span> <span class=n>Path</span><span class=p>):</span>
         <span class=n>module_name</span><span class=p>,</span> <span class=n>module_path</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_module_name_path</span><span class=p>(</span><span class=n>module</span><span class=p>)</span>
@@ -292,12 +292,12 @@
             <span class=n>module_name</span><span class=p>,</span> <span class=n>module_path</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_module_name_path</span><span class=p>(</span><span class=n>Path</span><span class=p>(</span><span class=n>module</span><span class=p>))</span>
         <span class=k>except</span> <span class=ne>FileNotFoundError</span><span class=p>:</span>
             <span class=n>module_name</span> <span class=o>=</span> <span class=n>module</span>
-            <span class=n>top_module_name</span> <span class=o>=</span> <span class=n>module</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&quot;.&quot;</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
+            <span class=n>top_module_name</span> <span class=o>=</span> <span class=n>module</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>"."</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
         <span class=k>else</span><span class=p>:</span>
             <span class=n>top_module_name</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_top_module_name</span><span class=p>(</span><span class=n>module_path</span><span class=p>)</span>
     <span class=k>else</span><span class=p>:</span>
         <span class=n>module_name</span> <span class=o>=</span> <span class=n>module</span>
-        <span class=n>top_module_name</span> <span class=o>=</span> <span class=n>module</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&quot;.&quot;</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
+        <span class=n>top_module_name</span> <span class=o>=</span> <span class=n>module</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>"."</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
 
     <span class=c1># Only search for actual package, let exceptions bubble up.</span>
     <span class=k>if</span> <span class=ow>not</span> <span class=n>find_stubs_package</span><span class=p>:</span>
@@ -309,7 +309,7 @@
     <span class=k>except</span> <span class=ne>ModuleNotFoundError</span><span class=p>:</span>
         <span class=n>package</span> <span class=o>=</span> <span class=kc>None</span>
     <span class=k>try</span><span class=p>:</span>
-        <span class=n>stubs</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>find_package</span><span class=p>(</span><span class=n>top_module_name</span> <span class=o>+</span> <span class=s2>&quot;-stubs&quot;</span><span class=p>)</span>
+        <span class=n>stubs</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>find_package</span><span class=p>(</span><span class=n>top_module_name</span> <span class=o>+</span> <span class=s2>"-stubs"</span><span class=p>)</span>
     <span class=k>except</span> <span class=ne>ModuleNotFoundError</span><span class=p>:</span>
         <span class=n>stubs</span> <span class=o>=</span> <span class=kc>None</span>
 
@@ -341,15 +341,15 @@
 <span class=normal>160</span>
 <span class=normal>161</span>
 <span class=normal>162</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>insert_search_path</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>position</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>path</span><span class=p>:</span> <span class=n>Path</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Insert a search path at the given position.</span>
+<span class=w>    </span><span class=sd>"""Insert a search path at the given position.</span>
 
 <span class=sd>    The path will be resolved (absolute, normalized).</span>
-<span class=sd>    The path won&#39;t be inserted if it is already in the search paths list.</span>
+<span class=sd>    The path won't be inserted if it is already in the search paths list.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        position: The insert position in the list.</span>
 <span class=sd>        path: The path to insert.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=n>path</span> <span class=o>=</span> <span class=n>path</span><span class=o>.</span><span class=n>resolve</span><span class=p>()</span>
     <span class=k>if</span> <span class=n>path</span> <span class=ow>not</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>search_paths</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>search_paths</span><span class=o>.</span><span class=n>insert</span><span class=p>(</span><span class=n>position</span><span class=p>,</span> <span class=n>path</span><span class=p>)</span>
@@ -425,7 +425,7 @@
     <span class=n>path</span><span class=p>:</span> <span class=n>Path</span> <span class=o>|</span> <span class=nb>list</span><span class=p>[</span><span class=n>Path</span><span class=p>],</span>
     <span class=n>seen</span><span class=p>:</span> <span class=nb>set</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Iterator</span><span class=p>[</span><span class=n>NamePartsAndPathType</span><span class=p>]:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Iterate on a module&#39;s submodules, if any.</span>
+<span class=w>    </span><span class=sd>"""Iterate on a module's submodules, if any.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        path: The module path.</span>
@@ -440,7 +440,7 @@
 <span class=sd>    Yields:</span>
 <span class=sd>        name_parts (tuple[str, ...]): The parts of a submodule name.</span>
 <span class=sd>        filepath (Path): A submodule filepath.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=nb>list</span><span class=p>):</span>
         <span class=c1># We never enter this condition again in recursive calls,</span>
         <span class=c1># so we just have to set `seen` once regardless of its value.</span>
@@ -449,10 +449,10 @@
             <span class=k>yield from</span> <span class=bp>self</span><span class=o>.</span><span class=n>iter_submodules</span><span class=p>(</span><span class=n>path_elem</span><span class=p>,</span> <span class=n>seen</span><span class=p>)</span>
         <span class=k>return</span>
 
-    <span class=k>if</span> <span class=n>path</span><span class=o>.</span><span class=n>stem</span> <span class=o>==</span> <span class=s2>&quot;__init__&quot;</span><span class=p>:</span>
+    <span class=k>if</span> <span class=n>path</span><span class=o>.</span><span class=n>stem</span> <span class=o>==</span> <span class=s2>"__init__"</span><span class=p>:</span>
         <span class=n>path</span> <span class=o>=</span> <span class=n>path</span><span class=o>.</span><span class=n>parent</span>
     <span class=c1># Optimization: just check if the file name ends with .py[icod]/.so</span>
-    <span class=c1># (to distinguish it from a directory), not if it&#39;s an actual file.</span>
+    <span class=c1># (to distinguish it from a directory), not if it's an actual file.</span>
     <span class=k>elif</span> <span class=n>path</span><span class=o>.</span><span class=n>suffix</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>extensions_set</span><span class=p>:</span>
         <span class=k>return</span>
 
@@ -465,16 +465,16 @@
     <span class=k>for</span> <span class=n>subpath</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>_filter_py_modules</span><span class=p>(</span><span class=n>path</span><span class=p>):</span>
         <span class=n>rel_subpath</span> <span class=o>=</span> <span class=n>subpath</span><span class=o>.</span><span class=n>relative_to</span><span class=p>(</span><span class=n>path</span><span class=p>)</span>
         <span class=k>if</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>parent</span> <span class=ow>in</span> <span class=n>skip</span><span class=p>:</span>
-            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;Skip </span><span class=si>%s</span><span class=s2>, another module took precedence&quot;</span><span class=p>,</span> <span class=n>subpath</span><span class=p>)</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>"Skip </span><span class=si>%s</span><span class=s2>, another module took precedence"</span><span class=p>,</span> <span class=n>subpath</span><span class=p>)</span>
             <span class=k>continue</span>
-        <span class=n>py_file</span> <span class=o>=</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>suffix</span> <span class=o>==</span> <span class=s2>&quot;.py&quot;</span>
+        <span class=n>py_file</span> <span class=o>=</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>suffix</span> <span class=o>==</span> <span class=s2>".py"</span>
         <span class=n>stem</span> <span class=o>=</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>stem</span>
         <span class=k>if</span> <span class=ow>not</span> <span class=n>py_file</span><span class=p>:</span>
             <span class=c1># `.py[cod]` and `.so` files look like `name.cpython-38-x86_64-linux-gnu.ext`.</span>
-            <span class=n>stem</span> <span class=o>=</span> <span class=n>stem</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&quot;.&quot;</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
-        <span class=k>if</span> <span class=n>stem</span> <span class=o>==</span> <span class=s2>&quot;__init__&quot;</span><span class=p>:</span>
-            <span class=c1># Optimization: since it&#39;s a relative path, if it has only one part</span>
-            <span class=c1># and is named __init__, it means it&#39;s the starting path</span>
+            <span class=n>stem</span> <span class=o>=</span> <span class=n>stem</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>"."</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>0</span><span class=p>]</span>
+        <span class=k>if</span> <span class=n>stem</span> <span class=o>==</span> <span class=s2>"__init__"</span><span class=p>:</span>
+            <span class=c1># Optimization: since it's a relative path, if it has only one part</span>
+            <span class=c1># and is named __init__, it means it's the starting path</span>
             <span class=c1># (no need to compare it against starting path).</span>
             <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>rel_subpath</span><span class=o>.</span><span class=n>parts</span><span class=p>)</span> <span class=o>==</span> <span class=mi>1</span><span class=p>:</span>
                 <span class=k>continue</span>
@@ -482,7 +482,7 @@
             <span class=k>if</span> <span class=n>seen</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
                 <span class=n>seen</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>rel_subpath</span><span class=o>.</span><span class=n>parent</span><span class=p>)</span>
         <span class=k>elif</span> <span class=n>py_file</span><span class=p>:</span>
-            <span class=k>yield</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>with_suffix</span><span class=p>(</span><span class=s2>&quot;&quot;</span><span class=p>)</span><span class=o>.</span><span class=n>parts</span><span class=p>,</span> <span class=n>subpath</span>
+            <span class=k>yield</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>with_suffix</span><span class=p>(</span><span class=s2>""</span><span class=p>)</span><span class=o>.</span><span class=n>parts</span><span class=p>,</span> <span class=n>subpath</span>
         <span class=k>else</span><span class=p>:</span>
             <span class=k>yield</span> <span class=n>rel_subpath</span><span class=o>.</span><span class=n>with_name</span><span class=p>(</span><span class=n>stem</span><span class=p>)</span><span class=o>.</span><span class=n>parts</span><span class=p>,</span> <span class=n>subpath</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=griffe.ModuleFinder.submodules class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">submodules</span> <a href=#griffe.ModuleFinder.submodules class=headerlink title="Permanent link">¤</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>submodules</span><span class=p>(</span><span class=n><a class="autorefs autorefs-internal" href=#griffe.ModuleFinder.submodules(module)>module</a></span><span class=p>:</span> <span class=n><a class="autorefs autorefs-internal" href=../models/module/#griffe.Module>Module</a></span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n><a class="autorefs autorefs-external" href=https://docs.python.org/3/glossary.html#term-list>list</a></span><span class=p>[</span><span class=n><a class="autorefs autorefs-internal" href=#griffe.NamePartsAndPathType>NamePartsAndPathType</a></span><span class=p>]</span>
@@ -502,14 +502,14 @@
 <span class=normal>373</span>
 <span class=normal>374</span>
 <span class=normal>375</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>submodules</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>module</span><span class=p>:</span> <span class=n>Module</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>NamePartsAndPathType</span><span class=p>]:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the list of a module&#39;s submodules.</span>
+<span class=w>    </span><span class=sd>"""Return the list of a module's submodules.</span>
 
 <span class=sd>    Parameters:</span>
 <span class=sd>        module: The parent module.</span>
 
 <span class=sd>    Returns:</span>
 <span class=sd>        A list of tuples containing the parts of the submodule name and its path.</span>
-<span class=sd>    &quot;&quot;&quot;</span>
+<span class=sd>    """</span>
     <span class=k>return</span> <span class=nb>sorted</span><span class=p>(</span>
         <span class=n>chain</span><span class=p>(</span>
             <span class=bp>self</span><span class=o>.</span><span class=n>iter_submodules</span><span class=p>(</span><span class=n>module</span><span class=o>.</span><span class=n>filepath</span><span class=p>),</span>

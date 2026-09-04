@@ -8,12 +8,12 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 </code></pre></div> <p>Make it accept configuration options by declaring an <code>__init__</code> method:</p> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
 <span class=hll>    <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 </span><span class=hll>        <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>
@@ -21,7 +21,7 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>
@@ -32,7 +32,7 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>
@@ -42,11 +42,11 @@
 </span><span class=hll>            <span class=k>return</span>
 </span></code></pre></div> <p>Now we know that only the objects we're interested in will be handled, so lets handle them.</p> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
-<span class=hll><span class=n>logger</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>get_logger</span><span class=p>(</span><span class=s2>&quot;griffe_inspect_specific_objects&quot;</span><span class=p>)</span>  <span class=c1># (1)!</span>
+<span class=hll><span class=n>logger</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>get_logger</span><span class=p>(</span><span class=s2>"griffe_inspect_specific_objects"</span><span class=p>)</span>  <span class=c1># (1)!</span>
 </span>
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>
@@ -58,15 +58,15 @@
 <span class=hll>        <span class=k>try</span><span class=p>:</span>
 </span><span class=hll>            <span class=n>runtime_obj</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>dynamic_import</span><span class=p>(</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=p>)</span>
 </span><span class=hll>        <span class=k>except</span> <span class=ne>ImportError</span> <span class=k>as</span> <span class=n>error</span><span class=p>:</span>
-</span><span class=hll>            <span class=n>logger</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Could not import </span><span class=si>{</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=n>error</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span>  <span class=c1># (2)!</span>
+</span><span class=hll>            <span class=n>logger</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>"Could not import </span><span class=si>{</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=n>error</span><span class=si>}</span><span class=s2>"</span><span class=p>)</span>  <span class=c1># (2)!</span>
 </span><span class=hll>            <span class=k>return</span>
 </span></code></pre></div> <ol> <li>We integrate with Griffe's logging (which also ensures integration with MkDocs' logging) by creating a logger. The name should look like a package name, with underscores.</li> <li>We decide to log the exception as a warning (causing MkDocs builds to fail in <code>--strict</code> mode), but you could also log an error, or a debug message.</li> </ol> <p>Now that we have a reference to our runtime object, we can use it to alter the Griffe object.</p> <p>For example, we could use the runtime object's <code>__doc__</code> attribute, which could have been declared dynamically, to fix the Griffe object docstring:</p> <div class=highlight><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
-<span class=n>logger</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>get_logger</span><span class=p>(</span><span class=s2>&quot;griffe_inspect_specific_objects&quot;</span><span class=p>)</span>
+<span class=n>logger</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>get_logger</span><span class=p>(</span><span class=s2>"griffe_inspect_specific_objects"</span><span class=p>)</span>
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>
@@ -78,7 +78,7 @@
         <span class=k>try</span><span class=p>:</span>
             <span class=n>runtime_obj</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>dynamic_import</span><span class=p>(</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=p>)</span>
         <span class=k>except</span> <span class=ne>ImportError</span> <span class=k>as</span> <span class=n>error</span><span class=p>:</span>
-            <span class=n>logger</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Could not import </span><span class=si>{</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=n>error</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>"Could not import </span><span class=si>{</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=n>error</span><span class=si>}</span><span class=s2>"</span><span class=p>)</span>
             <span class=k>return</span>
 
 <span class=hll>        <span class=k>if</span> <span class=n>obj</span><span class=o>.</span><span class=n>docstring</span><span class=p>:</span>
@@ -88,11 +88,11 @@
 </span></code></pre></div> <p>Or we could alter the Griffe object parameters in case of functions, which could have been modified by a signature-changing decorator:</p> <div class=highlight><pre><span></span><code><span class=hll><span class=kn>import</span><span class=w> </span><span class=nn>inspect</span>
 </span><span class=kn>import</span><span class=w> </span><span class=nn>griffe</span>
 
-<span class=n>logger</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>get_logger</span><span class=p>(</span><span class=s2>&quot;griffe_inspect_specific_objects&quot;</span><span class=p>)</span>
+<span class=n>logger</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>get_logger</span><span class=p>(</span><span class=s2>"griffe_inspect_specific_objects"</span><span class=p>)</span>
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>
@@ -104,7 +104,7 @@
         <span class=k>try</span><span class=p>:</span>
             <span class=n>runtime_obj</span> <span class=o>=</span> <span class=n>griffe</span><span class=o>.</span><span class=n>dynamic_import</span><span class=p>(</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=p>)</span>
         <span class=k>except</span> <span class=ne>ImportError</span> <span class=k>as</span> <span class=n>error</span><span class=p>:</span>
-            <span class=n>logger</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Could not import </span><span class=si>{</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=n>error</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>warning</span><span class=p>(</span><span class=sa>f</span><span class=s2>"Could not import </span><span class=si>{</span><span class=n>obj</span><span class=o>.</span><span class=n>path</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=n>error</span><span class=si>}</span><span class=s2>"</span><span class=p>)</span>
             <span class=k>return</span>
 
 <span class=hll>        <span class=c1># Update default values modified by decorator.</span>
@@ -116,7 +116,7 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>InspectSpecificObjects</span><span class=p>(</span><span class=n>griffe</span><span class=o>.</span><span class=n>Extension</span><span class=p>):</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;An extension to inspect just a few specific objects.&quot;&quot;&quot;</span>
+<span class=w>    </span><span class=sd>"""An extension to inspect just a few specific objects."""</span>
 
     <span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>objects</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>objects</span> <span class=o>=</span> <span class=n>objects</span>

@@ -1424,6 +1424,7 @@ Methods:
 
 - **`add`** – Add extensions to this container.
 - **`call`** – Call the extension hook for the given event.
+- **`has_hooks`** – Whether any extension implements one of the given events.
 
 Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
 
@@ -1495,6 +1496,45 @@ def call(self, event: str, **kwargs: Any) -> None:
     """
     for extension in self._extensions:
         getattr(extension, event, self._noop)(**kwargs)
+```
+
+### has_hooks
+
+```
+has_hooks(*events: str) -> bool
+```
+
+Whether any extension implements one of the given events.
+
+Parameters:
+
+- #### **`*events`**
+
+  (`str`, default: `()` ) – The extension events to check.
+
+Returns:
+
+- `bool` – Whether at least one hook is implemented.
+
+Source code in `packages/griffelib/src/griffe/_internal/extensions/base.py`
+
+```
+def has_hooks(self, *events: str) -> bool:
+    """Whether any extension implements one of the given events.
+
+    Parameters:
+        *events: The extension events to check.
+
+    Returns:
+        Whether at least one hook is implemented.
+    """
+    for event in events:
+        base_callback = getattr(Extension, event, _missing)
+        for extension in self._extensions:
+            callback = getattr(extension, event, _missing)
+            if callback is not _missing and getattr(callback, "__func__", callback) is not base_callback:
+                return True
+    return False
 ```
 
 ## **Types**
