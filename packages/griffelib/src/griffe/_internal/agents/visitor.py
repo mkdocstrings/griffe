@@ -30,6 +30,7 @@ from griffe._internal.agents.nodes.docstrings import get_docstring
 from griffe._internal.agents.nodes.exports import safe_get__all__
 from griffe._internal.agents.nodes.imports import relative_to_absolute
 from griffe._internal.agents.nodes.parameters import get_parameters
+from griffe._internal.agents.parser import _compile_module
 from griffe._internal.collections import LinesCollection, ModulesCollection
 from griffe._internal.enumerations import Kind, TypeParameterKind
 from griffe._internal.exceptions import AliasResolutionError, CyclicAliasError, LastNodeError
@@ -267,9 +268,13 @@ class Visitor:
             A module instance.
         """
         self._visited_nodes.clear()
-        # Optimization: equivalent to `ast.parse`, but with `optimize=1` to remove assert statements.
-        # TODO: With options, could use `optimize=2` to remove docstrings.
-        top_node = compile(self.code, mode="exec", filename=str(self.filepath), flags=ast.PyCF_ONLY_AST, optimize=1)
+        top_node = _compile_module(
+            self.code,
+            filename=str(self.filepath),
+            extensions=self.extensions,
+            compiler=compile,
+            allow_native=type(self) is Visitor,
+        )
         try:
             self.visit(top_node)
             return self.current.module

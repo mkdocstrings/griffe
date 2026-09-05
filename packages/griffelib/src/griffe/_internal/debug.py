@@ -100,7 +100,7 @@ def _get_debug_info() -> _Environment:
         Environment information.
     """
     py_name, py_version = _interpreter_name_version()
-    packages = ["griffelib", "griffecli", "griffe"]
+    packages = ["griffelib", "prune-source", "griffecli", "griffe"]
     variables = ["PYTHONPATH", *[var for var in os.environ if var.startswith("GRIFFE")]]
     return _Environment(
         interpreter_name=py_name,

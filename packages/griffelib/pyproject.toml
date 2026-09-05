@@ -47,6 +47,9 @@ Gitter = "https://gitter.im/mkdocstrings/griffe"
 Funding = "https://github.com/sponsors/pawamoy"
 
 [project.optional-dependencies]
+# The 'faster' extra installs the Rust/Ruff parser accelerator. Griffe automatically falls back to
+# CPython's parser when the accelerator is unavailable or an extension needs concrete AST nodes.
+faster = ["prune-source>=0.1.6"]
 # The 'pypi' extra provides dependencies needed for the load_pypi functionality
 # to download and inspect packages from PyPI.
 pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]

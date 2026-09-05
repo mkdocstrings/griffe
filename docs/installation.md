@@ -166,6 +166,24 @@ This installs the `griffe` package as usual, but without the CLI program and its
 
     </div>
 
+## Install the parser accelerator
+
+Static analysis can use the optional `prune-source` Rust parser accelerator:
+
+=== ":simple-python: pip"
+    ```bash
+    pip install "griffe[faster]"
+    # or pip install "griffelib[faster]"
+    ```
+
+=== ":simple-astral: uv"
+    ```bash
+    uv add "griffe[faster]"
+    # or uv add "griffelib[faster]"
+    ```
+
+The separately distributed `prune-source` package uses Ruff to remove function bodies that Griffe does not visit before constructing the CPython AST. Griffe automatically uses the regular parser if the accelerator is not installed, the Python grammar is newer than its pinned Ruff version, the source is a `.pyi` stub, or an extension implements a visit-time hook that receives AST nodes.
+
 ## Running Griffe
 
 Once installed, you can run Griffe using the `griffe` command:
