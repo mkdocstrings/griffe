@@ -64,6 +64,8 @@ expression = "get_version()"
 dependencies = ["griffelib=={{version}}", "griffecli=={{version}}"]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+# The 'native' extra re-exports griffelib[native] for backward compatibility.
+native = ["griffelib[native]=={{version}}"]
 # The 'pypi' extra re-exports griffelib[pypi] for backward compatibility.
 pypi = ["griffelib[pypi]=={{version}}"]
 

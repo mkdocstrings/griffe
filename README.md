@@ -29,6 +29,15 @@ With [`uv`](https://docs.astral.sh/uv/):
 uv tool install griffe
 ```
 
+For faster static analysis, install the optional `prune-source` Rust/Ruff accelerator:
+
+```bash
+pip install "griffe[native]"
+```
+
+Griffe automatically imports the accelerator when available and falls back to its full CPython AST
+path when a visit-time extension needs concrete source nodes.
+
 ## Usage
 
 ### Dump JSON-serialized API

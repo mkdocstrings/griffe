@@ -68,10 +68,15 @@ jobs:
       uses: astral-sh/setup-uv@v10.0.1
       with:
         enable-cache: true
-        cache-dependency-glob: pyproject.toml
+        cache-dependency-glob: |
+          pyproject.toml
+          packages/*/pyproject.toml
 
     - name: Install dependencies
       run: make setup
+
+    - name: Install prune-source accelerator
+      run: uv sync --extra native
 
     - name: Check if the documentation builds correctly
       run: make check-docs
@@ -138,13 +143,20 @@ jobs:
       uses: astral-sh/setup-uv@v10.0.1
       with:
         enable-cache: true
-        cache-dependency-glob: pyproject.toml
+        cache-dependency-glob: |
+          pyproject.toml
+          packages/*/pyproject.toml
         cache-suffix: ${{ matrix.resolution }}
 
     - name: Install dependencies
       env:
         UV_RESOLUTION: ${{ matrix.resolution }}
       run: make setup
+
+    - name: Install prune-source accelerator
+      env:
+        UV_RESOLUTION: ${{ matrix.resolution }}
+      run: uv sync --extra native
 
     - name: Download objects inventory
       uses: actions/download-artifact@v8
