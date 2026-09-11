@@ -370,7 +370,8 @@ def test_dont_crash_on_text_annotations(parse_numpy: ParserType, caplog: pytest.
             Description.
     """
     caplog.set_level(logging.DEBUG)
-    assert parse_numpy(docstring, parent=Function("f"))
+    sections, _ = parse_numpy(docstring, parent=Function("f"))
+    assert sections
     assert all(record.levelname == "DEBUG" for record in caplog.records if "Failed to parse" in record.message)
 
 
