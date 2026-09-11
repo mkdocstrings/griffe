@@ -2,28 +2,6 @@
 
 Griffe is a Python package, so you can install it with your favorite Python package installer or dependency manager.
 
-## Install the parser accelerator
-
-Static analysis can use the optional `prune-source` Rust parser accelerator:
-
-=== ":simple-python: pip"
-    ```bash
-    pip install "griffe[faster]"
-    ```
-
-=== ":simple-astral: uv"
-    ```bash
-    uv add "griffe[faster]"
-    ```
-
-To install only the library, replace `griffe` with `griffelib` in either command. The separately
-distributed `prune-source` package uses Ruff to remove function implementation suites that Griffe
-does not inspect before constructing the smaller CPython AST. Griffe automatically uses the regular
-parser if the accelerator is not installed, the Python grammar is newer than its pinned Ruff
-version, the source is a `.pyi` stub, or an extension implements a visit-time hook that receives AST
-nodes. Custom `Visitor` subclasses also keep the complete parser path. Building the accelerator from
-source requires Rust 1.96 or newer.
-
 ## Install as a tool & library
 
 === ":simple-python: pip"
@@ -187,6 +165,24 @@ This installs the `griffe` package as usual, but without the CLI program and its
     [uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
     </div>
+
+## Install the parser accelerator
+
+Static analysis can use the optional `prune-source` Rust parser accelerator:
+
+=== ":simple-python: pip"
+    ```bash
+    pip install "griffe[faster]"
+    # or pip install "griffelib[faster]"
+    ```
+
+=== ":simple-astral: uv"
+    ```bash
+    uv add "griffe[faster]"
+    # or uv add "griffelib[faster]"
+    ```
+
+The separately distributed `prune-source` package uses Ruff to remove function bodies that Griffe does not visit before constructing the CPython AST. Griffe automatically uses the regular parser if the accelerator is not installed, the Python grammar is newer than its pinned Ruff version, the source is a `.pyi` stub, or an extension implements a visit-time hook that receives AST nodes.
 
 ## Running Griffe
 
