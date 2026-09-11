@@ -59,7 +59,7 @@ def test_native_parser_is_used_without_node_aware_hooks(monkeypatch: pytest.Monk
         calls += 1
         return code
 
-    monkeypatch.setattr(parser_module, "_native_prune_source", prune)
+    monkeypatch.setattr(parser_module, "prune_source", prune)
     parser_module._compile_module("def f(): pass", filename="module.py", extensions=Extensions(_PostLoadExtension()))
 
     assert calls == 1
@@ -74,7 +74,7 @@ def test_native_parser_is_skipped_without_functions(monkeypatch: pytest.MonkeyPa
         calls += 1
         return code
 
-    monkeypatch.setattr(parser_module, "_native_prune_source", prune)
+    monkeypatch.setattr(parser_module, "prune_source", prune)
     parser_module._compile_module("value = 1", filename="module.py", extensions=Extensions())
 
     assert calls == 0
@@ -89,7 +89,7 @@ def test_native_parser_is_skipped_for_stub_files(monkeypatch: pytest.MonkeyPatch
         calls += 1
         return code
 
-    monkeypatch.setattr(parser_module, "_native_prune_source", prune)
+    monkeypatch.setattr(parser_module, "prune_source", prune)
     parser_module._compile_module("def f(): ...", filename="module.pyi", extensions=Extensions())
 
     assert calls == 0
@@ -104,7 +104,7 @@ def test_node_aware_hooks_force_cpython_fallback(monkeypatch: pytest.MonkeyPatch
         calls += 1
         return code
 
-    monkeypatch.setattr(parser_module, "_native_prune_source", prune)
+    monkeypatch.setattr(parser_module, "prune_source", prune)
     parser_module._compile_module("def f(): pass", filename="module.py", extensions=Extensions(_NodeExtension()))
 
     assert calls == 0
@@ -119,7 +119,7 @@ def test_custom_visitors_can_disable_native_pruning(monkeypatch: pytest.MonkeyPa
         calls += 1
         return code
 
-    monkeypatch.setattr(parser_module, "_native_prune_source", prune)
+    monkeypatch.setattr(parser_module, "prune_source", prune)
 
     class CustomVisitor(Visitor):
         pass
@@ -131,7 +131,7 @@ def test_custom_visitors_can_disable_native_pruning(monkeypatch: pytest.MonkeyPa
 
 def test_cpython_retries_an_invalid_native_result(monkeypatch: pytest.MonkeyPatch) -> None:
     """Never expose a diagnostic caused by native source pruning."""
-    monkeypatch.setattr(parser_module, "_native_prune_source", lambda code, python_minor: "def invalid(: pass")
+    monkeypatch.setattr(parser_module, "prune_source", lambda code, python_minor: "def invalid(: pass")
 
     node = parser_module._compile_module("def valid(): pass", filename="module.py", extensions=Extensions())
 
@@ -140,14 +140,14 @@ def test_cpython_retries_an_invalid_native_result(monkeypatch: pytest.MonkeyPatc
 
 def test_cpython_compiles_untouched_source_when_native_declines(monkeypatch: pytest.MonkeyPatch) -> None:
     """Use the normal source when Ruff cannot prune it."""
-    monkeypatch.setattr(parser_module, "_native_prune_source", lambda code, python_minor: None)
+    monkeypatch.setattr(parser_module, "prune_source", lambda code, python_minor: None)
 
     node = parser_module._compile_module("def valid(): pass", filename="module.py", extensions=Extensions())
 
     assert isinstance(node.body[0], ast.FunctionDef)
 
 
-@pytest.mark.skipif(parser_module._native_prune_source is None, reason="prune-source is not installed")
+@pytest.mark.skipif(parser_module.prune_source is None, reason="prune-source is not installed")
 def test_native_and_cpython_visitors_are_equivalent(monkeypatch: pytest.MonkeyPatch) -> None:
     """Produce the same public model from the native and compatibility parser paths."""
     source = dedent(
@@ -184,11 +184,11 @@ def test_native_and_cpython_visitors_are_equivalent(monkeypatch: pytest.MonkeyPa
                 return intermediate
         ''',
     )
-    native_prune_source = parser_module._native_prune_source
+    native_prune_source = parser_module.prune_source
     native = visit("module", Path("module.py"), source, extensions=Extensions())
 
-    monkeypatch.setattr(parser_module, "_native_prune_source", None)
+    monkeypatch.setattr(parser_module, "prune_source", None)
     cpython = visit("module", Path("module.py"), source, extensions=Extensions())
-    monkeypatch.setattr(parser_module, "_native_prune_source", native_prune_source)
+    monkeypatch.setattr(parser_module, "prune_source", native_prune_source)
 
     assert native.as_json(full=True, sort_keys=True) == cpython.as_json(full=True, sort_keys=True)
