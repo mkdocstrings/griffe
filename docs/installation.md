@@ -2,18 +2,18 @@
 
 Griffe is a Python package, so you can install it with your favorite Python package installer or dependency manager.
 
-## Install the native parser accelerator
+## Install the parser accelerator
 
 Static analysis can use the optional `prune-source` Rust parser accelerator:
 
 === ":simple-python: pip"
     ```bash
-    pip install "griffe[native]"
+    pip install "griffe[faster]"
     ```
 
 === ":simple-astral: uv"
     ```bash
-    uv add "griffe[native]"
+    uv add "griffe[faster]"
     ```
 
 To install only the library, replace `griffe` with `griffelib` in either command. The separately

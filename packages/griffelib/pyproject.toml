@@ -37,9 +37,9 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-# The 'native' extra installs the Rust/Ruff parser accelerator. Griffe automatically falls back to
+# The 'faster' extra installs the Rust/Ruff parser accelerator. Griffe automatically falls back to
 # CPython's parser when the accelerator is unavailable or an extension needs concrete AST nodes.
-native = ["prune-source>=0.1.0,<0.2"]
+faster = ["prune-source>=0.1.0,<0.2"]
 # The 'pypi' extra provides dependencies needed for the load_pypi functionality
 # to download and inspect packages from PyPI.
 pypi = ["pip>=24.0", "platformdirs>=4.2", "wheel>=0.42"]

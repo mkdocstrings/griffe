@@ -17,8 +17,6 @@
 from __future__ import annotations
 
 import ast
-import sys
-from importlib import import_module
 from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:

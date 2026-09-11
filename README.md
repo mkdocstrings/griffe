@@ -32,7 +32,7 @@ uv tool install griffe
 For faster static analysis, install the optional `prune-source` Rust/Ruff accelerator:
 
 ```bash
-pip install "griffe[native]"
+pip install "griffe[faster]"
 ```
 
 Griffe automatically imports the accelerator when available and falls back to its full CPython AST

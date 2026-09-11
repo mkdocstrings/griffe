@@ -54,7 +54,7 @@ def test_native_parser_is_used_without_node_aware_hooks(monkeypatch: pytest.Monk
     """Use Ruff when installed extensions do not require the concrete source AST."""
     calls = 0
 
-    def prune(code: str, python_minor: int) -> str:  # noqa: ARG001
+    def prune(code: str) -> str:
         nonlocal calls
         calls += 1
         return code
@@ -69,7 +69,7 @@ def test_native_parser_is_skipped_without_functions(monkeypatch: pytest.MonkeyPa
     """Avoid paying for a second parse when no implementation suite can be removed."""
     calls = 0
 
-    def prune(code: str, python_minor: int) -> str:  # noqa: ARG001
+    def prune(code: str) -> str:
         nonlocal calls
         calls += 1
         return code
@@ -84,7 +84,7 @@ def test_native_parser_is_skipped_for_stub_files(monkeypatch: pytest.MonkeyPatch
     """Avoid pruning stub files, whose function bodies contain no implementations."""
     calls = 0
 
-    def prune(code: str, python_minor: int) -> str:  # noqa: ARG001
+    def prune(code: str) -> str:
         nonlocal calls
         calls += 1
         return code
@@ -99,7 +99,7 @@ def test_node_aware_hooks_force_cpython_fallback(monkeypatch: pytest.MonkeyPatch
     """Keep complete CPython nodes available to visit-time extension callbacks."""
     calls = 0
 
-    def prune(code: str, python_minor: int) -> str:  # noqa: ARG001
+    def prune(code: str) -> str:
         nonlocal calls
         calls += 1
         return code
@@ -114,7 +114,7 @@ def test_custom_visitors_can_disable_native_pruning(monkeypatch: pytest.MonkeyPa
     """Keep the complete tree available to Visitor subclasses with custom traversal."""
     calls = 0
 
-    def prune(code: str, python_minor: int) -> str:  # noqa: ARG001
+    def prune(code: str) -> str:
         nonlocal calls
         calls += 1
         return code
@@ -131,7 +131,7 @@ def test_custom_visitors_can_disable_native_pruning(monkeypatch: pytest.MonkeyPa
 
 def test_cpython_retries_an_invalid_native_result(monkeypatch: pytest.MonkeyPatch) -> None:
     """Never expose a diagnostic caused by native source pruning."""
-    monkeypatch.setattr(parser_module, "prune_source", lambda code, python_minor: "def invalid(: pass")
+    monkeypatch.setattr(parser_module, "prune_source", lambda code: "def invalid(: pass")
 
     node = parser_module._compile_module("def valid(): pass", filename="module.py", extensions=Extensions())
 
@@ -140,7 +140,7 @@ def test_cpython_retries_an_invalid_native_result(monkeypatch: pytest.MonkeyPatc
 
 def test_cpython_compiles_untouched_source_when_native_declines(monkeypatch: pytest.MonkeyPatch) -> None:
     """Use the normal source when Ruff cannot prune it."""
-    monkeypatch.setattr(parser_module, "prune_source", lambda code, python_minor: None)
+    monkeypatch.setattr(parser_module, "prune_source", lambda code: None)
 
     node = parser_module._compile_module("def valid(): pass", filename="module.py", extensions=Extensions())
 

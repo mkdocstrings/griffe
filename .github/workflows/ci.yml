@@ -75,9 +75,6 @@ jobs:
     - name: Install dependencies
       run: make setup
 
-    - name: Install prune-source accelerator
-      run: uv sync --extra native
-
     - name: Check if the documentation builds correctly
       run: make check-docs
 
@@ -152,11 +149,6 @@ jobs:
       env:
         UV_RESOLUTION: ${{ matrix.resolution }}
       run: make setup
-
-    - name: Install prune-source accelerator
-      env:
-        UV_RESOLUTION: ${{ matrix.resolution }}
-      run: uv sync --extra native
 
     - name: Download objects inventory
       uses: actions/download-artifact@v8
