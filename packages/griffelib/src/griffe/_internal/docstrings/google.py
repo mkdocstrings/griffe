@@ -169,8 +169,7 @@ def _read_block_items(
 
         new_offset += 1
 
-    if current_item:
-        items.append(current_item)
+    items.append(current_item)
 
     return items, new_offset - 1
 
