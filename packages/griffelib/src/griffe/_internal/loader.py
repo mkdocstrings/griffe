@@ -172,8 +172,6 @@ class GriffeLoader:
             A Griffe object.
         """
         obj_path: str
-        package = None
-        top_module = None
 
         # We always start by searching paths on the disk,
         # even if inspection is forced.
