@@ -561,6 +561,10 @@ def check(
             print(f"griffe: error: {error}", file=sys.stderr)
             return 2
 
+        if not against:
+            print("griffe: info: 'against' ref not specified and no tags found", file=sys.stderr)
+            return 0
+
         # Load old and new version of the package.
         old_package = load_git(
             against_path,
