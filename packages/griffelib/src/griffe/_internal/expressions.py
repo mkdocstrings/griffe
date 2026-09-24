@@ -952,6 +952,9 @@ class ExprNamedExpr(Expr):
     value: str | Expr
     """Value."""
 
+    def __str__(self) -> str:
+        return f"({Expr.__str__(self)})"
+
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.target, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
         yield " := "
