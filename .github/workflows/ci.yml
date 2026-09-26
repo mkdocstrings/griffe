@@ -68,7 +68,9 @@ jobs:
       uses: astral-sh/setup-uv@v10.0.1
       with:
         enable-cache: true
-        cache-dependency-glob: pyproject.toml
+        cache-dependency-glob: |
+          pyproject.toml
+          packages/*/pyproject.toml
 
     - name: Install dependencies
       run: make setup
@@ -138,7 +140,9 @@ jobs:
       uses: astral-sh/setup-uv@v10.0.1
       with:
         enable-cache: true
-        cache-dependency-glob: pyproject.toml
+        cache-dependency-glob: |
+          pyproject.toml
+          packages/*/pyproject.toml
         cache-suffix: ${{ matrix.resolution }}
 
     - name: Install dependencies
