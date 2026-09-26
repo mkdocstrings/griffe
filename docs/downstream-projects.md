@@ -57,3 +57,7 @@ The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is a lig
 ## quartodoc
 
 [quartodoc](https://machow.github.io/quartodoc/) lets you quickly generate Python package API reference documentation using Markdown and [Quarto](https://quarto.org/). quartodoc is designed as an alternative to [Sphinx](https://www.sphinx-doc.org/en/master/). It uses Griffe to load API data and parse docstrings in order to render HTML documentation, just like [mkdocstrings-python](https://mkdocstrings.github.io/python/), but for Quarto instead of Mkdocs.
+
+## since-cutoff
+
+[since-cutoff](https://github.com/MohammadHijjawi97/since-cutoff) checks which of a project's pinned dependencies changed their public API after a coding model's training cutoff, which is where the model tends to write outdated code. It uses Griffe to statically load each dependency twice, at the release that was current at the cutoff and at the pinned release, then runs `find_breaking_changes` on the two versions to find removed objects, removed or newly required parameters, and other breakages.
