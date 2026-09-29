@@ -1,3 +1,1 @@
-# Type Alias
-
-::: griffe.TypeAlias
+# ::: griffe.TypeAlias
