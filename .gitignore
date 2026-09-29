@@ -17,6 +17,7 @@ dist/
 # tools
 .coverage*
 /.pdm-build/
+/docs/griffe.json
 /htmlcov/
 /site/
 uv.lock

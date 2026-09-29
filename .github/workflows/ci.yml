@@ -60,15 +60,10 @@ jobs:
         persist-credentials: false
 
     - name: Setup Graphviz
-      uses: ts-graphviz/setup-graphviz@v2
-
-    - name: Setup Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: ${{ matrix.python-version }}
+      uses: ts-graphviz/setup-graphviz@b1de5da23ed0a6d14e0aeee8ed52fdd87af2363c # v2.0.2
 
     - name: Setup uv
-      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
       with:
         enable-cache: true
         cache-dependency-glob: pyproject.toml
@@ -134,7 +129,7 @@ jobs:
         persist-credentials: false
 
     - name: Setup uv
-      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
       with:
         enable-cache: true
         cache-dependency-glob: pyproject.toml

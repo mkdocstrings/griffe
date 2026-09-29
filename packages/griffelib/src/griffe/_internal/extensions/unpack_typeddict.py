@@ -145,7 +145,7 @@ def _update_docstring(
             params_section.value.pop(kwarg_pos)
 
     # If we have required parameters, add them to the "Parameters" section.
-    if required:
+    if required := list(required):
         # Create a "Parameters" section if none exists.
         if params_section is None:
             params_section = DocstringSectionParameters([])
@@ -163,7 +163,7 @@ def _update_docstring(
 
     # If we have optional parameters, add them to the "Parameters" section too,
     # with a default value of `...`.
-    if optional:
+    if optional := list(optional):
         # Create a "Parameters" section if none exists.
         if params_section is None:
             params_section = DocstringSectionParameters([])

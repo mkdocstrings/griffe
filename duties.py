@@ -62,6 +62,15 @@ def _get_changelog_version() -> str:
         return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty:ignore[unresolved-attribute]
 
 
+def _generate_griffe_json(ctx: Context) -> None:
+    """Generate the JSON API data for the documentation."""
+    ctx.run(
+        [sys.executable, "scripts/gen_griffe_json.py"],
+        title="Generating Griffe JSON",
+        silent=True,
+    )
+
+
 @duty
 def changelog(ctx: Context, bump: str = "") -> None:
     """Update the changelog in-place with latest commits.
@@ -198,9 +207,9 @@ def check_docs(ctx: Context) -> None:
     make check-docs
     ```
 
-    Build the docs with [MkDocs](https://www.mkdocs.org/) in strict mode.
+    Build the docs with [Zensical](https://zensical.org/) in strict mode.
 
-    The configuration for MkDocs is located at `mkdocs.yml`.
+    The configuration for Zensical is located at `zensical.toml`.
 
     This task builds the documentation with strict behavior:
     any warning will be considered an error and the command will fail.
@@ -211,6 +220,7 @@ def check_docs(ctx: Context) -> None:
     Path("htmlcov/index.html").touch(exist_ok=True)
     if CI:
         os.environ["DEPLOY"] = "true"
+    _generate_griffe_json(ctx)
     ctx.run(
         tools.zensical.build(strict=True),
         title=_pyprefix("Building documentation"),
@@ -348,6 +358,7 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
         host: The host to serve the docs from.
         port: The port to serve the docs on.
     """
+    _generate_griffe_json(ctx)
     ctx.run(
         tools.zensical.serve(dev_addr=f"{host}:{port}").add_args(*cli_args),
         title="Serving documentation",
@@ -369,6 +380,7 @@ def docs_deploy(ctx: Context) -> None:
     from ghp_import import ghp_import  # noqa: PLC0415
 
     os.environ["DEPLOY"] = "true"
+    _generate_griffe_json(ctx)
     ctx.run(tools.zensical.build(), title="Building documentation site")
     ctx.run(
         ghp_import,

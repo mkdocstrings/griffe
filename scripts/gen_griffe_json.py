@@ -16,10 +16,31 @@
 
 # Generate the JSON API data file.
 
-import mkdocs_gen_files
+import sys
+from pathlib import Path
 
-python_handler = mkdocs_gen_files.config.plugins["mkdocstrings"].get_handler("python")
-data = python_handler.collect("griffe", options=python_handler.get_options({}))
+from griffe import load, load_extensions
 
-with mkdocs_gen_files.open("griffe.json", "w") as fd:
+# YORE: EOL 3.10: Replace block with line 2.
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
+
+project_dir = Path(__file__).resolve().parent.parent
+with project_dir.joinpath("zensical.toml").open("rb") as config_file:
+    project = tomllib.load(config_file)["project"]
+python_config = project["plugins"]["mkdocstrings"]["handlers"]["python"]
+options = python_config["options"]
+
+data = load(
+    "griffe",
+    search_paths=[project_dir / path for path in python_config["paths"]],
+    extensions=load_extensions(*options["extensions"]),
+    docstring_parser=options["docstring_style"],
+    docstring_options=options["docstring_options"],
+    resolve_aliases=True,
+)
+
+with project_dir.joinpath(project.get("docs_dir", "docs"), "griffe.json").open("w", encoding="utf-8") as fd:
     print(data.as_json(full=True), file=fd)
