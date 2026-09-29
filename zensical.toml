@@ -190,7 +190,7 @@ toggle.name = "Switch to dark mode"
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
-primary = "black"
+primary = "lime"
 accent = "lime"
 toggle.icon = "material/weather-night"
 toggle.name = "Switch to system preference"
