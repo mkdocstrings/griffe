@@ -80,7 +80,7 @@ include = [
     "/share",
     "/tests",
     "/duties.py",
-    "/mkdocs.yml",
+    "/zensical.toml",
     "/*.md",
     "/LICENSE",
 ]
@@ -113,6 +113,7 @@ ci = [
     "ty>=0.0.14",
     "types-markdown>=3.6",
     "types-pyyaml>=6.0",
+    "zizmor>=1.0",
 ]
  docs = [
     "code2flow>=2.5",

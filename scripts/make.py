@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: ISC
-
+#
+# ISC License
+#
 # Copyright (c) 2021, Timothée Mazzucotelli and contributors
-
+#
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
 # copyright notice and this permission notice appear in all copies.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -23,6 +25,7 @@ import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
+from textwrap import dedent
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -30,7 +33,7 @@ if TYPE_CHECKING:
 
 
 PYTHON_VERSIONS = os.getenv("PYTHON_VERSIONS", "3.10 3.11 3.12 3.13 3.14 3.15").split()
-PYTHON_DEV = "3.15"
+PYTHON_DEV = "3.16"
 
 _commands = []
 
@@ -267,7 +270,7 @@ def clean() -> None:
     """
     paths_to_clean = ["build", "dist", "htmlcov", "site", ".coverage*", ".pdm-build"]
     for path in paths_to_clean:
-        _shell(f"rm -rf {path}")
+        shutil.rmtree(path, ignore_errors=True)
 
     cache_dirs = {".cache", ".pytest_cache", ".ruff_cache", "__pycache__"}
     for dirpath in Path().rglob("*/"):
@@ -295,6 +298,28 @@ def vscode() -> None:
     """
     Path(".vscode").mkdir(parents=True, exist_ok=True)
     _shell("cp -v config/vscode/* .vscode")
+
+
+@_command("zed")
+def zed() -> None:
+    """Configure Zed to work on this project.
+
+    ```bash
+    make zed
+    ```
+
+    This command configures the [Zed editor](https://zed.dev/)
+    by copying the following files into the `.zed` directory:
+
+    - `debug.json`, for run configurations (to run debug sessions)
+    - `settings.json`, for various editor settings like linting tools and their configuration
+    - `tasks.json`, for running tasks directly from Zed's interface
+
+    Warning:
+        These files will be overwritten every time the command is run.
+    """
+    Path(".zed").mkdir(parents=True, exist_ok=True)
+    _shell("cp -v config/zed/* .zed")
 
 
 # -----------------------------------------------------------------------------
@@ -347,9 +372,11 @@ def main(args: list[str]) -> int:
             setup()
         elif cmd == "vscode":
             vscode()
+        elif cmd == "zed":
+            zed()
         elif cmd == "check":
             multirun("duty", "check-quality", "check-types", "check-docs")
-            run("duty", "check-api")
+            run("duty", "check-security", "check-api")
         elif cmd in {"check-quality", "check-docs", "check-types", "test"}:
             multirun("duty", cmd, *opts)
         else:

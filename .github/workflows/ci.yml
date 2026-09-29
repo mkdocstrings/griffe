@@ -9,6 +9,8 @@ on:
     branches:
     - main
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -35,7 +37,7 @@ jobs:
         - windows-latest
         python-version:
         - "3.10"
-        - "3.14"
+        - "3.15"
         include:
         - os: ubuntu-latest
           python-version: "3.11"
@@ -44,17 +46,18 @@ jobs:
         - os: ubuntu-latest
           python-version: "3.13"
         - os: ubuntu-latest
-          python-version: "3.15-dev"
+          python-version: "3.14"
 
     runs-on: ${{ matrix.os }}
     continue-on-error: true
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
         fetch-tags: true
+        persist-credentials: false
 
     - name: Setup Graphviz
       uses: ts-graphviz/setup-graphviz@v2
@@ -65,10 +68,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Setup uv
-      uses: astral-sh/setup-uv@v10.0.1
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
       with:
         enable-cache: true
         cache-dependency-glob: pyproject.toml
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: make setup
@@ -86,7 +90,7 @@ jobs:
       run: make check-api
 
     - name: Store objects inventory for tests
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13' }}
       with:
         name: objects.inv
@@ -108,7 +112,7 @@ jobs:
         - "3.12"
         - "3.13"
         - "3.14"
-        - "3.15-dev"
+        - "3.15"
         resolution:
         - highest
         - lowest-direct
@@ -123,23 +127,19 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
         fetch-tags: true
-
-    - name: Setup Python
-      uses: actions/setup-python@v7
-      with:
-        python-version: ${{ matrix.python-version }}
-        allow-prereleases: true
+        persist-credentials: false
 
     - name: Setup uv
-      uses: astral-sh/setup-uv@v10.0.1
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
       with:
         enable-cache: true
         cache-dependency-glob: pyproject.toml
         cache-suffix: ${{ matrix.resolution }}
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       env:
@@ -147,7 +147,7 @@ jobs:
       run: make setup
 
     - name: Download objects inventory
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: objects.inv
         path: site/

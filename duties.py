@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: ISC
-
+#
+# ISC License
+#
 # Copyright (c) 2021, Timothée Mazzucotelli and contributors
-
+#
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
 # copyright notice and this permission notice appear in all copies.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -44,7 +46,7 @@ WINDOWS = os.name == "nt"
 PTY = not WINDOWS and not CI
 MULTIRUN = os.environ.get("MULTIRUN", "0") == "1"
 PY_VERSION = f"{sys.version_info.major}{sys.version_info.minor}"
-PY_DEV = "315"
+PY_DEV = "316"
 
 
 def _pyprefix(title: str) -> str:
@@ -317,6 +319,21 @@ def check_api(ctx: Context, *cli_args: str) -> None:
 
 
 @duty
+def check_security(ctx: Context) -> None:
+    """Check for security vulnerabilities."""
+    ctx.run(
+        ["uv", "audit"],
+        title="Auditing dependencies",
+        pty=PTY,
+    )
+    ctx.run(
+        ["zizmor", "."],
+        title="Auditing GitHub Actions workflows",
+        pty=PTY,
+    )
+
+
+@duty
 def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000) -> None:
     """Serve the documentation (localhost:8000).
 
@@ -324,10 +341,10 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
     make docs
     ```
 
-    This task uses [MkDocs](https://www.mkdocs.org/) to serve the documentation locally.
+    This task uses [Zensical](https://zensical.org/) to serve the documentation locally.
 
     Parameters:
-        *cli_args: Additional MkDocs CLI arguments.
+        *cli_args: Additional Zensical CLI arguments.
         host: The host to serve the docs from.
         port: The port to serve the docs on.
     """
@@ -417,8 +434,19 @@ def publish(ctx: Context) -> None:
     if not Path("dist").exists():
         ctx.run("false", title="No distribution files found")
     dists = [str(dist) for dist in Path("dist").iterdir() if dist.suffix in (".gz", ".whl")]
+    password = None
+    if password_cmd := os.getenv("PUBLISH_PASS_CMD"):
+        password = ctx.run(
+            password_cmd.format(project="griffe"),
+            capture="stdout",
+            pty=False,
+            silent=True,
+            allow_overrides=False,
+        ).strip()
     ctx.run(
-        tools.twine.upload(*dists, skip_existing=True),
+        tools.twine.upload(*dists, skip_existing=True, password=password),
+        # Keep the password out of the displayed command, including on failure.
+        command=tools.twine.upload(*dists, skip_existing=True).cli_command,
         title="Publishing distributions to PyPI",
         pty=PTY,
     )
@@ -443,10 +471,10 @@ def release(ctx: Context, version: str = "") -> None:
     - Deploy the documentation to GitHub pages
 
     Parameters:
-        version: The new version number to use. If not provided, you will be prompted for it.
+        version: The new version number to use.
     """
-    if not (version := (version or input("> Version to release: ")).strip()):
-        ctx.run("false", title="A version must be provided")
+    if not version:
+        version = ctx.run(tools.git_changelog(latest_version=True), silent=True).strip()
     ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
     ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
     ctx.run(f"git tag -m '' -a {version}", title="Tagging commit", pty=PTY)
