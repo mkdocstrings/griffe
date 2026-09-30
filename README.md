@@ -166,7 +166,4 @@ See the [Loading chapter](https://mkdocstrings.github.io/griffe/guide/users/load
 
 *And 4 more private sponsor(s).*
 
-## Sponsors
-
-<!-- sponsors-start -->
 <!-- sponsors-end -->
