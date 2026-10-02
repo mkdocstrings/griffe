@@ -1473,7 +1473,7 @@ class Alias(ObjectAliasMixin):
         self.wildcard_imported: bool = wildcard_imported
         """Whether this alias was created using a wildcard import."""
 
-        self.public: bool | None = None
+        self.public: bool | None
         """Whether this alias is public."""
 
         self.deprecated: str | bool | None = None
@@ -1492,9 +1492,11 @@ class Alias(ObjectAliasMixin):
         """The path of this alias' target."""
 
         if isinstance(target, str):
+            self.public = None
             self._target: Object | Alias | None = None
             self.target_path = target
         else:
+            self.public = target.public
             self._target = target
             self.target_path = target.path
             self._update_target_aliases()
