@@ -37,3 +37,39 @@ def test_detecting_dunder_attributes_as_public() -> None:
     ) as module:
         assert module["__getattr__"].is_public
         assert module["A.__init__"].is_public
+
+
+def test_alias_inheriting_public_attr() -> None:
+    """Temporary aliases must inherit manually overridden public attribute."""
+    with temporary_visited_module(
+        """
+        class A:
+            def foo(self): ...
+        class B(A): ...
+        def func(): ...
+        func_alias = func
+        """,
+    ) as module:
+        # Baseline: `foo` should be public in both classes
+        a = module["A"]
+        b = module["B"]
+        # This returns the original function object
+        assert a["foo"].is_public
+        # This constructs an alias
+        assert b["foo"].is_public
+
+        # Overriding `foo.public` should be reflected in both classes
+        a["foo"].public = False
+        assert not a["foo"].is_public
+        assert not b["foo"].is_public
+
+        # Baseline: both function and alias should be public
+        func = module["func"]
+        func_alias = module["func_alias"]
+        assert func.is_public
+        assert func_alias.is_public
+
+        # Alias has already been created so setting `func.public` should only affect the original function
+        func.public = False
+        assert not func.is_public
+        assert func_alias.is_public
