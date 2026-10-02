@@ -34,7 +34,7 @@ import logging
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any
 
@@ -439,7 +439,7 @@ def dump(
     data_packages = loader.modules_collection.members
 
     # Serialize and dump packages.
-    started = datetime.now(tz=timezone.utc)
+    started = datetime.now(tz=UTC)
     if per_package_output:
         for package_name, data in data_packages.items():
             serialized = data.as_json(indent=2, full=full, sort_keys=True)
@@ -447,7 +447,7 @@ def dump(
     else:
         serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full, sort_keys=True)
         _print_data(serialized, output)
-    elapsed = datetime.now(tz=timezone.utc) - started
+    elapsed = datetime.now(tz=UTC) - started
 
     if stats:
         loader_stats = loader.stats()

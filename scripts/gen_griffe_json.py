@@ -16,16 +16,10 @@
 
 # Generate the JSON API data file.
 
-import sys
+import tomllib
 from pathlib import Path
 
 from griffe import load, load_extensions
-
-# YORE: EOL 3.10: Replace block with line 2.
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    import tomli as tomllib
 
 project_dir = Path(__file__).resolve().parent.parent
 with project_dir.joinpath("zensical.toml").open("rb") as config_file:

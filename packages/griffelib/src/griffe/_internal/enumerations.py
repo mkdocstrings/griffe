@@ -18,10 +18,10 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class LogLevel(str, Enum):
+class LogLevel(StrEnum):
     """Enumeration of available log levels."""
 
     trace = "trace"
@@ -40,7 +40,7 @@ class LogLevel(str, Enum):
     """The CRITICAL log level."""
 
 
-class DocstringSectionKind(str, Enum):
+class DocstringSectionKind(StrEnum):
     """Enumeration of the possible docstring section kinds."""
 
     text = "text"
@@ -79,7 +79,7 @@ class DocstringSectionKind(str, Enum):
     """Admonition block."""
 
 
-class ParameterKind(str, Enum):
+class ParameterKind(StrEnum):
     """Enumeration of the different parameter kinds."""
 
     positional_only = "positional-only"
@@ -94,7 +94,7 @@ class ParameterKind(str, Enum):
     """Variadic keyword parameter."""
 
 
-class TypeParameterKind(str, Enum):
+class TypeParameterKind(StrEnum):
     """Enumeration of the different type parameter kinds."""
 
     type_var = "type-var"
@@ -105,7 +105,7 @@ class TypeParameterKind(str, Enum):
     """Parameter specification variable."""
 
 
-class Kind(str, Enum):
+class Kind(StrEnum):
     """Enumeration of the different object kinds."""
 
     MODULE = "module"
@@ -122,7 +122,7 @@ class Kind(str, Enum):
     """Type aliases."""
 
 
-class ExplanationStyle(str, Enum):
+class ExplanationStyle(StrEnum):
     """Enumeration of the possible styles for explanations."""
 
     ONE_LINE = "oneline"
@@ -137,7 +137,7 @@ class ExplanationStyle(str, Enum):
     """Explanations as Azure DevOps / Azure Pipelines logging commands."""
 
 
-class BreakageKind(str, Enum):
+class BreakageKind(StrEnum):
     """Enumeration of the possible API breakages."""
 
     PARAMETER_MOVED = "Positional parameter was moved"
@@ -166,7 +166,7 @@ class BreakageKind(str, Enum):
     """Base class was removed"""
 
 
-class Parser(str, Enum):
+class Parser(StrEnum):
     """Enumeration of the different docstring parsers."""
 
     auto = "auto"
@@ -179,7 +179,7 @@ class Parser(str, Enum):
     """Numpydoc-style docstrings parser."""
 
 
-class ObjectKind(str, Enum):
+class ObjectKind(StrEnum):
     """Enumeration of the different runtime object kinds."""
 
     MODULE = "module"
