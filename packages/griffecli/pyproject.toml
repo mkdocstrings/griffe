@@ -10,7 +10,7 @@ description = "Signatures for entire Python programs. Extract the structure, the
 authors = [{name = "Timothée Mazzucotelli", email = "dev@pawamoy.fr"}]
 license = "ISC"
 license-files = ["LICENSE"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["api", "signature", "breaking-changes", "static-analysis", "dynamic-analysis"]
 dynamic = ["version", "dependencies"]
 classifiers = [
@@ -27,6 +27,8 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     # YORE: EOL 3.14: Remove line.
     "Programming Language :: Python :: 3.14",
+    # YORE: EOL 3.15: Remove line.
+    "Programming Language :: Python :: 3.15",
     "Topic :: Documentation",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
