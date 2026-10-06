@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.3.2](https://github.com/mkdocstrings/griffe/releases/tag/2.3.2) - 2026-10-06
+
+<small>[Compare with 2.3.1](https://github.com/mkdocstrings/griffe/compare/2.3.1...2.3.2)</small>
+
+### Build
+
+- Drop support for Python 3.10 in griffelib and griffecli packages ([7c45a8f](https://github.com/mkdocstrings/griffe/commit/7c45a8f9785d085b38a2809d98d11faabfd5a5b5) by Timothée Mazzucotelli).
+
 ## [2.3.1](https://github.com/mkdocstrings/griffe/releases/tag/2.3.1) - 2026-10-06
 
 <small>[Compare with 2.3.0](https://github.com/mkdocstrings/griffe/compare/2.3.0...2.3.1)</small>
