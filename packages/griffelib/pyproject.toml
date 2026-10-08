@@ -36,6 +36,16 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.urls]
+Homepage = "https://mkdocstrings.github.io/griffe"
+Documentation = "https://mkdocstrings.github.io/griffe"
+Changelog = "https://mkdocstrings.github.io/griffe/changelog"
+Repository = "https://github.com/mkdocstrings/griffe"
+Issues = "https://github.com/mkdocstrings/griffe/issues"
+Discussions = "https://github.com/mkdocstrings/griffe/discussions"
+Gitter = "https://gitter.im/mkdocstrings/griffe"
+Funding = "https://github.com/sponsors/pawamoy"
+
 [project.optional-dependencies]
 # The 'pypi' extra provides dependencies needed for the load_pypi functionality
 # to download and inspect packages from PyPI.
