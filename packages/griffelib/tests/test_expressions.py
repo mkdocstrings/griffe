@@ -218,12 +218,18 @@ def test_nested_container_format_spec_is_roundtrip_safe() -> None:
     assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
 
 
-def test_standalone_named_expression_is_roundtrip_safe() -> None:
+@pytest.mark.parametrize("flat", [True, False])
+def test_standalone_named_expression_is_roundtrip_safe(flat: bool) -> None:
     """Standalone named expressions must retain their required parentheses."""
     code = "(value := 1)"
     original = ast.parse(code, mode="eval")
     expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+
     rendered = str(expression)
+
+    # Both iteration modes must preserve the parentheses required by standalone walrus expressions.
+    assert "".join(str(element) for element in expression.iterate(flat=flat)) == rendered
+
     reparsed = ast.parse(rendered, mode="eval")
     assert ast.dump(reparsed) == ast.dump(original), f"{code!r} rendered as {rendered!r}"
 
@@ -263,7 +269,7 @@ def test_nested_tuples_keep_parentheses_in_implicit_contexts(code: str) -> None:
         ("o[(x, y) == z]", "o[(x, y) == z]"),
         ("o[(x, y) if condition else z]", "o[(x, y) if condition else z]"),
         ("o[lambda: (x, y)]", "o[lambda: (x, y)]"),
-        ("o[(item := (x, y))]", "o[item := (x, y)]"),
+        ("o[(item := (x, y))]", "o[(item := (x, y))]"),
         ("o[f'{(x, y)}']", "o[f'{(x, y)}']"),
         ("o[((x, y) for value in values)]", "o[((x, y) for value in values)]"),
         ("o[await (x, y)]", "o[await (x, y)]"),
