@@ -59,9 +59,6 @@ jobs:
         fetch-tags: true
         persist-credentials: false
 
-    - name: Setup Graphviz
-      uses: ts-graphviz/setup-graphviz@b1de5da23ed0a6d14e0aeee8ed52fdd87af2363c # v2.0.2
-
     - name: Setup uv
       uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
       with:

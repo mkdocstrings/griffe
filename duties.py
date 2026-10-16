@@ -218,8 +218,6 @@ def check_docs(ctx: Context) -> None:
     """
     Path("htmlcov").mkdir(parents=True, exist_ok=True)
     Path("htmlcov/index.html").touch(exist_ok=True)
-    if CI:
-        os.environ["DEPLOY"] = "true"
     _generate_griffe_json(ctx)
     ctx.run(
         tools.zensical.build(strict=True),
