@@ -1473,9 +1473,6 @@ class Alias(ObjectAliasMixin):
         self.wildcard_imported: bool = wildcard_imported
         """Whether this alias was created using a wildcard import."""
 
-        self.public: bool | None = None
-        """Whether this alias is public."""
-
         self.deprecated: str | bool | None = None
         """Whether this alias is deprecated (boolean or deprecation message)."""
 
@@ -1485,6 +1482,7 @@ class Alias(ObjectAliasMixin):
         None means the alias was created manually.
         """
 
+        self._public: bool | None = None
         self._parent: Module | Class | Alias | None = parent
         self._passed_through: bool = False
 
@@ -1568,6 +1566,26 @@ class Alias(ObjectAliasMixin):
         See also: [`canonical_path`][griffe.Alias.canonical_path].
         """
         return f"{self.parent.path}.{self.name}"  # ty:ignore[unresolved-attribute]
+
+    @property
+    def public(self) -> bool | None:
+        """Whether this alias is public."""
+        # Visibility was explicitly set, return it.
+        if self._public is not None:
+            return self._public
+        # For inherited members, return original member's visibility.
+        if self.inherited:
+            return self.final_target.public
+        # Last case, none.
+        return None
+
+    @public.setter
+    def public(self, value: bool | None) -> None:
+        # We do not allow having a base member be *public* and (any of) its inherited versions be *not public*
+        # (or the opposite), as it breaks the Liskov Substitution Principle (LSP).
+        if self.inherited:
+            raise TypeError("setting `public` on inherited members is forbidden")
+        self._public = value
 
     @property
     def modules_collection(self) -> ModulesCollection:
