@@ -33,6 +33,8 @@ Actual logging messages are not part of the public API (they might change withou
 
 Raised exceptions throughout the package are part of the public API (you can rely on them).
 Their actual messages are not part of the public API (they might change without notice).
+The string representation of enumeration values is not part of the public API and might change without notice.
+Their `name` and `value` attributes are public and stable.
 
 The following paragraphs will help you discover the package's content.
 
