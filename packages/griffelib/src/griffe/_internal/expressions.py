@@ -58,7 +58,6 @@ class _OperatorPrecedence(IntEnum):
     NONE = auto()
 
     YIELD = auto()  # `yield`, `yield from`
-    ASSIGN = auto()  # `target := expr`
     STARRED = auto()  # `*expr` (omitted by Python docs, see ruff impl)
     LAMBDA = auto()
     IF_ELSE = auto()  # `expr if cond else expr`
@@ -953,10 +952,12 @@ class ExprNamedExpr(Expr):
     """Value."""
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
+        yield "("
         yield from _yield(self.target, flat=flat, outer_precedence=_OperatorPrecedence.NONE)
         yield " := "
-        # Nested walrus assignments and yields need parentheses, e.g. `a := (b := c)`.
+        # Yield expressions need parentheses on the right.
         yield from _yield(self.value, flat=flat, outer_precedence=_OperatorPrecedence.STARRED)
+        yield ")"
 
 
 @dataclass(eq=True, slots=True)
@@ -1252,7 +1253,8 @@ _precedence_map = {
     ExprBoolOp: lambda e: {"and": _OperatorPrecedence.AND, "or": _OperatorPrecedence.OR}[e.operator],
     ExprCompare: lambda _: _OperatorPrecedence.COMP_MEMB_ID,
     ExprIfExp: lambda _: _OperatorPrecedence.IF_ELSE,
-    ExprNamedExpr: lambda _: _OperatorPrecedence.ASSIGN,
+    # Named expressions emit their own parentheses.
+    ExprNamedExpr: lambda _: _OperatorPrecedence.ATOMIC,
     ExprLambda: lambda _: _OperatorPrecedence.LAMBDA,
     ExprGeneratorExp: lambda _: _OperatorPrecedence.ATOMIC,
     ExprVarPositional: lambda _: _OperatorPrecedence.STARRED,
