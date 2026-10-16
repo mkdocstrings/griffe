@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <small>[Compare with 2.3.0](https://github.com/mkdocstrings/griffe/compare/2.3.0...2.3.1)</small>
 
+Enum values now inherit from `StrEnum`, so `str(member)` returns its value.
+
 ### Build
 
 - Drop support for Python 3.10 ([686993d](https://github.com/mkdocstrings/griffe/commit/686993d4970d9fabbbd33334f88f48e1daed0565) by Timothée Mazzucotelli).
