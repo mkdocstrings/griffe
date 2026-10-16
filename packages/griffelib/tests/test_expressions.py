@@ -224,6 +224,7 @@ def test_standalone_named_expression_is_roundtrip_safe(flat: bool) -> None:
     code = "(value := 1)"
     original = ast.parse(code, mode="eval")
     expression = get_expression(original.body, parent=Module("module"), parse_strings=False)
+    assert expression is not None
 
     rendered = str(expression)
 
