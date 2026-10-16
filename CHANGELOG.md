@@ -23,10 +23,6 @@ Enum values now inherit from `StrEnum`, so `str(member)` returns its value.
 
 - Drop support for Python 3.10 ([686993d](https://github.com/mkdocstrings/griffe/commit/686993d4970d9fabbbd33334f88f48e1daed0565) by Timothée Mazzucotelli).
 
-### Breaking Changes
-
-- Enum classes now inherit from `StrEnum`, so `str(member)` returns the enum value instead of `"Class.member"`. Use `.name` to access the member name.
-
 ### Bug Fixes
 
 - Exit gracefully when checking API and no tags are found ([7c898a9](https://github.com/mkdocstrings/griffe/commit/7c898a9685c8ac29e1a4fd7767e85bf830b75a58) by Timothée Mazzucotelli).
