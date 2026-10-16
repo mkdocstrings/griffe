@@ -41,7 +41,7 @@ from griffe._internal.models import Attribute, Class, Function, Module, Object, 
 
 if TYPE_CHECKING:
     import ast
-    from collections.abc import Iterator
+    from collections.abc import Generator
 
     from griffe import Attribute, Class, Function, Object, ObjectNode, TypeAlias
 
@@ -50,7 +50,7 @@ PACKAGE_ROOT = Path(__file__).parent.parent.parent
 
 
 @contextmanager
-def cd(path: str | Path) -> Iterator[None]:
+def cd(path: str | Path) -> Generator[None]:
     """Change directory to `path` and restore the previous directory on exit."""
     old_path = Path.cwd()
     os.chdir(path)

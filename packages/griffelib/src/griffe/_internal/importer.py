@@ -26,7 +26,7 @@ from importlib import import_module
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Generator, Sequence
     from pathlib import Path
 
 
@@ -35,7 +35,7 @@ def _error_details(error: BaseException, objpath: str) -> str:
 
 
 @contextmanager
-def sys_path(*paths: str | Path) -> Iterator[None]:
+def sys_path(*paths: str | Path) -> Generator[None]:
     """Redefine `sys.path` temporarily.
 
     Parameters:

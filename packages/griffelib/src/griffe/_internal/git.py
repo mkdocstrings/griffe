@@ -35,7 +35,7 @@ from urllib.parse import urlsplit, urlunsplit
 from griffe._internal.exceptions import BuiltinModuleError, GitError
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Generator
 
     from griffe._internal.models import Module
 
@@ -117,7 +117,7 @@ def _get_repo_root(repo: str | Path) -> Path:
 
 
 @contextmanager
-def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Iterator[Path]:
+def _tmp_worktree(repo: str | Path = ".", ref: str = "HEAD") -> Generator[Path]:
     """Deprecated. Context manager that checks out the given reference in the given repository to a temporary worktree.
 
     Parameters:
