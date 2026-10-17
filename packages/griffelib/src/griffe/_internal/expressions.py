@@ -42,6 +42,170 @@ if TYPE_CHECKING:
     from griffe._internal.models import Class, Function, Module
 
 
+# Keep this list independent of the running Python version, platform, and additions to builtins.
+# Only known builtins can be cross-referenced without resolving them in a scope.
+_builtin_names = frozenset(
+    (
+        "False",
+        "None",
+        "True",
+        "__debug__",
+        "Ellipsis",
+        "NotImplemented",
+        "abs",
+        "aiter",
+        "all",
+        "anext",
+        "any",
+        "ascii",
+        "bin",
+        "bool",
+        "breakpoint",
+        "bytearray",
+        "bytes",
+        "callable",
+        "chr",
+        "classmethod",
+        "compile",
+        "complex",
+        "delattr",
+        "dict",
+        "dir",
+        "divmod",
+        "enumerate",
+        "eval",
+        "exec",
+        "filter",
+        "float",
+        "format",
+        "frozendict",
+        "frozenset",
+        "getattr",
+        "globals",
+        "hasattr",
+        "hash",
+        "hex",
+        "id",
+        "input",
+        "int",
+        "isinstance",
+        "issubclass",
+        "iter",
+        "len",
+        "list",
+        "locals",
+        "map",
+        "max",
+        "memoryview",
+        "min",
+        "next",
+        "object",
+        "oct",
+        "open",
+        "ord",
+        "pow",
+        "print",
+        "property",
+        "range",
+        "repr",
+        "reversed",
+        "round",
+        "sentinel",
+        "set",
+        "setattr",
+        "slice",
+        "sorted",
+        "staticmethod",
+        "str",
+        "sum",
+        "super",
+        "tuple",
+        "type",
+        "vars",
+        "zip",
+        "__import__",
+        "ArithmeticError",
+        "AssertionError",
+        "AttributeError",
+        "BaseException",
+        "BaseExceptionGroup",
+        "BlockingIOError",
+        "BrokenPipeError",
+        "BufferError",
+        "BytesWarning",
+        "ChildProcessError",
+        "ConnectionAbortedError",
+        "ConnectionError",
+        "ConnectionRefusedError",
+        "ConnectionResetError",
+        "DeprecationWarning",
+        "EOFError",
+        "EncodingWarning",
+        "EnvironmentError",
+        "Exception",
+        "ExceptionGroup",
+        "FileExistsError",
+        "FileNotFoundError",
+        "FloatingPointError",
+        "FutureWarning",
+        "GeneratorExit",
+        "IOError",
+        "ImportCycleError",
+        "ImportError",
+        "ImportWarning",
+        "IndentationError",
+        "IndexError",
+        "InterruptedError",
+        "IsADirectoryError",
+        "KeyError",
+        "KeyboardInterrupt",
+        "LookupError",
+        "MemoryError",
+        "ModuleNotFoundError",
+        "NameError",
+        "NotADirectoryError",
+        "NotImplementedError",
+        "OSError",
+        "OverflowError",
+        "PendingDeprecationWarning",
+        "PermissionError",
+        "ProcessLookupError",
+        "PythonFinalizationError",
+        "RecursionError",
+        "ReferenceError",
+        "ResourceWarning",
+        "RuntimeError",
+        "RuntimeWarning",
+        "StopAsyncIteration",
+        "StopIteration",
+        "SyntaxError",
+        "SyntaxWarning",
+        "SystemError",
+        "SystemExit",
+        "TabError",
+        "TimeoutError",
+        "TypeError",
+        "UnboundLocalError",
+        "UnicodeDecodeError",
+        "UnicodeEncodeError",
+        "UnicodeError",
+        "UnicodeTranslateError",
+        "UnicodeWarning",
+        "UserWarning",
+        "ValueError",
+        "Warning",
+        "WindowsError",
+        "ZeroDivisionError",
+        "copyright",
+        "credits",
+        "exit",
+        "help",
+        "license",
+        "quit",
+    ),
+)
+
+
 class _OperatorPrecedence(IntEnum):
     # Adapted from:
     #
@@ -251,6 +415,16 @@ class Expr:
         return str(self)
 
     @property
+    def reference_path(self) -> str | None:
+        """Cross-reference target, or `None` if no target can be determined.
+
+        Consumers should render plain text when this property returns `None`.
+        Unlike `canonical_path`, this property does not fall back to unresolved names.
+        Expressions that do not identify an object have no reference target.
+        """
+        return None
+
+    @property
     def canonical_name(self) -> str:
         """Name of the expressed name/attribute/parameter."""
         # We must handle things like `griffe.Visitor` and `griffe.Visitor(code)`.
@@ -349,6 +523,11 @@ class ExprAttribute(Expr):
         """The canonical path of this attribute."""
         return self.last.canonical_path
 
+    @property
+    def reference_path(self) -> str | None:
+        """Cross-reference target of this attribute, or `None` if its root is unresolved."""
+        return self.last.reference_path
+
 
 @dataclass(eq=True, slots=True)
 class ExprBinOp(Expr):
@@ -401,8 +580,13 @@ class ExprCall(Expr):
 
     @property
     def canonical_path(self) -> str:
-        """The canonical path of this subscript's left part."""
+        """The canonical path of the called function."""
         return self.function.canonical_path
+
+    @property
+    def reference_path(self) -> str | None:
+        """Cross-reference target of the called function, or `None` if unresolved."""
+        return self.function.reference_path
 
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield from _yield(self.function, flat=flat, outer_precedence=_get_precedence(self))
@@ -743,6 +927,14 @@ class ExprKeyword(Expr):
             return f"{self.function.canonical_path}({self.name})"
         return super(ExprKeyword, self).canonical_path
 
+    @property
+    def reference_path(self) -> str | None:
+        """Cross-reference target of the keyword's parameter, or `None` if its function is unresolved."""
+        if self.function:
+            path = self.function.reference_path
+            return f"{path}({self.name})" if path is not None else None
+        return None
+
     def iterate(self, *, flat: bool = True) -> Iterator[str | Expr]:
         yield self.name
         yield "="
@@ -900,6 +1092,26 @@ class ExprName(Expr):  # noqa: PLW1641
             return parent.resolve(self.name)
         except NameResolutionError:
             return self.name
+
+    @property
+    def reference_path(self) -> str | None:
+        """Resolved name or known builtin to cross-reference, or `None` if unknown.
+
+        Explicit parent paths are accepted as reference targets. Names without a
+        scope are accepted only when they are known builtins.
+        """
+        if self.parent is None:
+            return self.name if self.name in _builtin_names else None
+        if isinstance(self.parent, ExprName):
+            path = self.parent.reference_path
+            return f"{path}.{self.name}" if path is not None else None
+        if isinstance(self.parent, str):
+            return f"{self.parent}.{self.name}"
+        parent = self.parent.members.get(self.member, self.parent)
+        try:
+            return parent.resolve(self.name)
+        except NameResolutionError:
+            return self.name if self.name in _builtin_names else None
 
     @property
     def resolved(self) -> Module | Class | None:
@@ -1066,6 +1278,13 @@ class ExprSubscript(Expr):
         if isinstance(self.left, str):
             return self.left
         return self.left.canonical_path
+
+    @property
+    def reference_path(self) -> str | None:
+        """Cross-reference target of this subscript's left part, or `None` if unresolved."""
+        if isinstance(self.left, str):
+            return None
+        return self.left.reference_path
 
 
 @dataclass(eq=True, slots=True)
