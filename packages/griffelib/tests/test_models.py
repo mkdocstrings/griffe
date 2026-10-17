@@ -587,6 +587,7 @@ def test_not_resolving_attribute_value_to_itself() -> None:
         """,
     ) as module:
         assert module["A.x"].value.canonical_path == "x"  # Not `module.A.x`.
+        assert module["A.x"].value.reference_path is None
 
 
 def test_resolving_never_raises_alias_errors() -> None:
