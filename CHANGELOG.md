@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.4.0](https://github.com/mkdocstrings/griffe/releases/tag/2.4.0) - 2026-10-19
+
+<small>[Compare with 2.3.2](https://github.com/mkdocstrings/griffe/compare/2.3.2...2.4.0)</small>
+
+### Features
+
+- Expose `reference_path` in addition to `canonical_path` ([2f6b419](https://github.com/mkdocstrings/griffe/commit/2f6b4191b1987ec652404d6b44fabf93d81d84a4) by Timothée Mazzucotelli). [Issue-448](https://github.com/mkdocstrings/griffe/issues/448)
+
+### Bug Fixes
+
+- Preserve standalone named expression parentheses ([dc6300d](https://github.com/mkdocstrings/griffe/commit/dc6300d9450f0d35846486da4eca6d1527a754ac) by Alperen). [PR-488](https://github.com/mkdocstrings/griffe/pull/488), Co-authored-by: Timothée Mazzucotelli <dev@pawamoy.fr>
+- Propagate `public` value to inherited members (aliases) ([8b94205](https://github.com/mkdocstrings/griffe/commit/8b94205f2db13f02553aa8c1a28e47897e14edc9) by Timothée Mazzucotelli). [Issue-495](https://github.com/mkdocstrings/griffe/issues/495), [PR-503](https://github.com/mkdocstrings/griffe/pull/503), Co-authored-by: Sydney Duckworth <sydduckworth@users.noreply.github.com>
+
+### Performance Improvements
+
+- Prune function bodies from source before building AST ([657ce96](https://github.com/mkdocstrings/griffe/commit/657ce96a609a691aa85096506de22a0ec1b413b6) by Timothée Mazzucotelli). [PR-489](https://github.com/mkdocstrings/griffe/pull/489)
+
+    This requires the `griffe[faster]` extra. Griffe is fast by default so this performance improvement will only be noticeable in projects with *a lot of Python code*.
+
 ## [2.3.2](https://github.com/mkdocstrings/griffe/releases/tag/2.3.2) - 2026-10-06
 
 <small>[Compare with 2.3.1](https://github.com/mkdocstrings/griffe/compare/2.3.1...2.3.2)</small>
