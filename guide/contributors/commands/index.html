@@ -15,6 +15,7 @@
         <link rel="canonical" href="https://mkdocstrings.github.io/griffe/guide/contributors/commands/">
       
       
+      
         <link rel="prev" href="../setup/">
       
       
@@ -25,7 +26,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.67">
+      <meta name="generator" content="zensical-0.0.71">
     
     
       
@@ -36,12 +37,12 @@
       
         
       
-      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.4ae390e2.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.e442bf79.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.96d1a7e4.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.b60ce83d.min.css">
       
       
 
@@ -91,14 +92,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer" aria-hidden="true"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#management-commands" class="md-skip">
-          Skip to content
-        </a>
-      
+      <a href="#__skip" class="md-skip">
+        Skip to content
+      </a>
     </div>
     <div data-md-component="announce">
       
@@ -4442,6 +4440,7 @@
 
               
               <article class="md-content__inner md-typeset">
+                <a id="__skip" tabindex="-1"></a>
                 
                   
 
@@ -5123,7 +5122,9 @@ Distribution files will be created in the <code>dist</code> directory.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">417</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
 <span class="normal">418</span>
 <span class="normal">419</span>
 <span class="normal">420</span>
@@ -5136,9 +5137,7 @@ Distribution files will be created in the <code>dist</code> directory.</p>
 <span class="normal">427</span>
 <span class="normal">428</span>
 <span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="normal">430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build source and wheel distributions.</span>
 
@@ -5397,7 +5396,9 @@ than preventing CI to pass.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">286</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
 <span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
@@ -5437,9 +5438,7 @@ than preventing CI to pass.</p>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
+<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_api</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="o">*</span><span class="n">cli_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check for API breaking changes.</span>
 
@@ -5534,9 +5533,7 @@ or invalid cross-references.</p>
 <span class="normal">222</span>
 <span class="normal">223</span>
 <span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_docs</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check if the documentation builds correctly.</span>
 
@@ -5555,8 +5552,6 @@ or invalid cross-references.</p>
 <span class="sd">    """</span>
     <span class="n">Path</span><span class="p">(</span><span class="s2">"htmlcov"</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">Path</span><span class="p">(</span><span class="s2">"htmlcov/index.html"</span><span class="p">)</span><span class="o">.</span><span class="n">touch</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">CI</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"DEPLOY"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"true"</span>
     <span class="n">_generate_griffe_json</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">tools</span><span class="o">.</span><span class="n">zensical</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
@@ -5800,7 +5795,9 @@ as a last resort you can ignore this specific error with a comment:</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">230</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
 <span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span>
@@ -5851,9 +5848,7 @@ as a last resort you can ignore this specific error with a comment:</p>
 <span class="normal">278</span>
 <span class="normal">279</span>
 <span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
+<span class="normal">281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_types</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check that the code is correctly typed.</span>
 
@@ -5933,7 +5928,9 @@ and print a text report in the console.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">497</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
 <span class="normal">498</span>
 <span class="normal">499</span>
 <span class="normal">500</span>
@@ -5945,9 +5942,7 @@ and print a text report in the console.</p>
 <span class="normal">506</span>
 <span class="normal">507</span>
 <span class="normal">508</span>
-<span class="normal">509</span>
-<span class="normal">510</span>
-<span class="normal">511</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">"cov"</span><span class="p">])</span>
+<span class="normal">509</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s2">"cov"</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">coverage</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Report coverage as text and HTML.</span>
 
@@ -6021,7 +6016,9 @@ and print a text report in the console.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">346</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span>
@@ -6039,9 +6036,7 @@ and print a text report in the console.</p>
 <span class="normal">361</span>
 <span class="normal">362</span>
 <span class="normal">363</span>
-<span class="normal">364</span>
-<span class="normal">365</span>
-<span class="normal">366</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="normal">364</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">docs</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="o">*</span><span class="n">cli_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Serve the documentation (localhost:8000).</span>
 
@@ -6087,7 +6082,9 @@ then <a href="https://pypi.org/project/ghp-import/">ghp-import</a> to deploy to 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">369</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span>
 <span class="normal">372</span>
@@ -6112,9 +6109,7 @@ then <a href="https://pypi.org/project/ghp-import/">ghp-import</a> to deploy to 
 <span class="normal">391</span>
 <span class="normal">392</span>
 <span class="normal">393</span>
-<span class="normal">394</span>
-<span class="normal">395</span>
-<span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="normal">394</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">docs_deploy</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Deploy the documentation to GitHub pages.</span>
 
@@ -6167,7 +6162,9 @@ This command will also automatically fix some coding issues when possible.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">399</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
 <span class="normal">400</span>
 <span class="normal">401</span>
 <span class="normal">402</span>
@@ -6180,9 +6177,7 @@ This command will also automatically fix some coding issues when possible.</p>
 <span class="normal">409</span>
 <span class="normal">410</span>
 <span class="normal">411</span>
-<span class="normal">412</span>
-<span class="normal">413</span>
-<span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="normal">412</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run formatting tools on the code.</span>
 
@@ -6272,7 +6267,9 @@ This command will also automatically fix some coding issues when possible.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">547</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
 <span class="normal">548</span>
 <span class="normal">549</span>
 <span class="normal">550</span>
@@ -6320,9 +6317,7 @@ This command will also automatically fix some coding issues when possible.</p>
 <span class="normal">592</span>
 <span class="normal">593</span>
 <span class="normal">594</span>
-<span class="normal">595</span>
-<span class="normal">596</span>
-<span class="normal">597</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="normal">595</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">fuzz</span><span class="p">(</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -6398,7 +6393,9 @@ using <a href="https://twine.readthedocs.io/">Twine</a>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">435</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
 <span class="normal">436</span>
 <span class="normal">437</span>
 <span class="normal">438</span>
@@ -6425,9 +6422,7 @@ using <a href="https://twine.readthedocs.io/">Twine</a>.</p>
 <span class="normal">459</span>
 <span class="normal">460</span>
 <span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="normal">462</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Publish source and wheel distributions to PyPI.</span>
 
@@ -6505,7 +6500,9 @@ using <a href="https://twine.readthedocs.io/">Twine</a>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">467</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
 <span class="normal">468</span>
 <span class="normal">469</span>
 <span class="normal">470</span>
@@ -6530,9 +6527,7 @@ using <a href="https://twine.readthedocs.io/">Twine</a>.</p>
 <span class="normal">489</span>
 <span class="normal">490</span>
 <span class="normal">491</span>
-<span class="normal">492</span>
-<span class="normal">493</span>
-<span class="normal">494</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">post</span><span class="o">=</span><span class="p">[</span><span class="s2">"build"</span><span class="p">,</span> <span class="s2">"publish"</span><span class="p">,</span> <span class="s2">"docs-deploy"</span><span class="p">])</span>
+<span class="normal">492</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">post</span><span class="o">=</span><span class="p">[</span><span class="s2">"build"</span><span class="p">,</span> <span class="s2">"publish"</span><span class="p">,</span> <span class="s2">"docs-deploy"</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Release a new version of the project.</span>
 
@@ -6601,7 +6596,9 @@ Code source coverage is computed thanks to
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>duties.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">514</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
 <span class="normal">515</span>
 <span class="normal">516</span>
 <span class="normal">517</span>
@@ -6623,9 +6620,7 @@ Code source coverage is computed thanks to
 <span class="normal">533</span>
 <span class="normal">534</span>
 <span class="normal">535</span>
-<span class="normal">536</span>
-<span class="normal">537</span>
-<span class="normal">538</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
+<span class="normal">536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span><span class="p">(</span><span class="n">nofail</span><span class="o">=</span><span class="n">PY_VERSION</span> <span class="o">==</span> <span class="n">PY_DEV</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="o">*</span><span class="n">cli_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run the test suite.</span>
 
@@ -6932,10 +6927,10 @@ Code source coverage is computed thanks to
       
         
         
-      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["announce.dismiss","content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.tabs","navigation.tabs.sticky","navigation.top","search.highlight","toc.follow"],"redirect":null,"search":"../../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["announce.dismiss","content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.tabs","navigation.tabs.sticky","navigation.top","search.highlight","toc.follow"],"redirect":null,"search":"../../../assets/javascripts/workers/search.c47bb847.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.67a597eb.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a2388154.min.js"></script>
       
         <script src="../../../js/feedback.js"></script>
       

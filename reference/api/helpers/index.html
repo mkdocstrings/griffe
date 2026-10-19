@@ -15,6 +15,7 @@
         <link rel="canonical" href="https://mkdocstrings.github.io/griffe/reference/api/helpers/">
       
       
+      
         <link rel="prev" href="../loggers/">
       
       
@@ -25,7 +26,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.67">
+      <meta name="generator" content="zensical-0.0.71">
     
     
       
@@ -36,12 +37,12 @@
       
         
       
-      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.4ae390e2.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.e442bf79.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.96d1a7e4.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.b60ce83d.min.css">
       
       
 
@@ -91,14 +92,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer" aria-hidden="true"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#helpers" class="md-skip">
-          Skip to content
-        </a>
-      
+      <a href="#__skip" class="md-skip">
+        Skip to content
+      </a>
     </div>
     <div data-md-component="announce">
       
@@ -5631,6 +5629,7 @@
 
               
               <article class="md-content__inner md-typeset">
+                <a id="__skip" tabindex="-1"></a>
                 
                   
 
@@ -5891,7 +5890,7 @@ They will be resolved to absolute paths after initialization.</p>
 <a href="#griffe.temporary_pyfile" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">temporary_pyfile</span><span class="p">(</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;code&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_pyfile(code)&lt;/code&gt;)" href="./#griffe.temporary_pyfile(code)">code</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;module_name&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_pyfile(module_name)&lt;/code&gt;)" href="./#griffe.temporary_pyfile(module_name)">module_name</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"module"</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Iterator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pathlib.Path&lt;/code&gt;" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pathlib.Path&lt;/code&gt;" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></span><span class="p">]]</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -5925,14 +5924,14 @@ They will be resolved to absolute paths after initialization.</p>
 <p><span class="doc-section-title">Yields:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-<b><code>module_name</code></b> (              <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
+<b><code>module_name</code></b> (              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pathlib.Path&lt;/code&gt;" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>]]</code>
 )          –
           <div class="doc-md-description">
             <p>The module name, as to dynamically import it.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
-<b><code>module_path</code></b> (              <code><a class="autorefs autorefs-external" title="&lt;code&gt;pathlib.Path&lt;/code&gt;" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>
+<b><code>module_path</code></b> (              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pathlib.Path&lt;/code&gt;" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>]]</code>
 )          –
           <div class="doc-md-description">
             <p>The module path.</p>
@@ -5983,7 +5982,7 @@ They will be resolved to absolute paths after initialization.</p>
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@contextmanager</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">temporary_pyfile</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"module"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">temporary_pyfile</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"module"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Create a Python file containing the given code in a temporary directory.</span>
 
 <span class="sd">    Parameters:</span>
@@ -6020,7 +6019,7 @@ They will be resolved to absolute paths after initialization.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;init&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_pypackage(init)&lt;/code&gt;)" href="./#griffe.temporary_pypackage(init)">init</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;inits&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_pypackage(inits)&lt;/code&gt;)" href="./#griffe.temporary_pypackage(inits)">inits</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Iterator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TmpPackage&lt;/span&gt;
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TmpPackage&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
@@ -6085,12 +6084,12 @@ If a dict, keys are the file names and values their contents:
 <p><span class="doc-section-title">Yields:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TmpPackage&lt;/span&gt;
+              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TmpPackage&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
       &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt; (&lt;code&gt;griffe._internal.helpers.TmpPackage&lt;/code&gt;)" href="./#griffe.TmpPackage">TmpPackage</a></code>
+  &lt;/span&gt; (&lt;code&gt;griffe._internal.helpers.TmpPackage&lt;/code&gt;)" href="./#griffe.TmpPackage">TmpPackage</a>]</code>
           –
           <div class="doc-md-description">
             <p>A temporary package.</p>
@@ -6178,7 +6177,7 @@ If a dict, keys are the file names and values their contents:
     <span class="o">*</span><span class="p">,</span>
     <span class="n">init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">inits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">TmpPackage</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">TmpPackage</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Create a package containing the given modules in a temporary directory.</span>
 
 <span class="sd">    Parameters:</span>
@@ -6252,7 +6251,7 @@ If a dict, keys are the file names and values their contents:
   &lt;/span&gt; (&lt;code&gt;griffe._internal.docstrings.parsers.DocstringOptions&lt;/code&gt;)" href="../docstrings/parsers/#griffe.DocstringOptions">DocstringOptions</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;lines_collection&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_visited_module(lines_collection)&lt;/code&gt;)" href="./#griffe.temporary_visited_module(lines_collection)">lines_collection</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LinesCollection&lt;/span&gt; (&lt;code&gt;griffe._internal.collections.LinesCollection&lt;/code&gt;)" href="../loaders/#griffe.LinesCollection">LinesCollection</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;modules_collection&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_visited_module(modules_collection)&lt;/code&gt;)" href="./#griffe.temporary_visited_module(modules_collection)">modules_collection</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ModulesCollection&lt;/span&gt; (&lt;code&gt;griffe._internal.collections.ModulesCollection&lt;/code&gt;)" href="../loaders/#griffe.ModulesCollection">ModulesCollection</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Iterator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -6356,7 +6355,7 @@ If a dict, keys are the file names and values their contents:
 <p><span class="doc-section-title">Yields:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></code>
+              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a>]</code>
           –
           <div class="doc-md-description">
             <p>The visited module.</p>
@@ -6445,7 +6444,7 @@ If a dict, keys are the file names and values their contents:
     <span class="n">docstring_options</span><span class="p">:</span> <span class="n">DocstringOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">lines_collection</span><span class="p">:</span> <span class="n">LinesCollection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">modules_collection</span><span class="p">:</span> <span class="n">ModulesCollection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Create and visit a temporary module with the given code.</span>
 
 <span class="sd">    Parameters:</span>
@@ -6522,7 +6521,7 @@ If a dict, keys are the file names and values their contents:
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;resolve_implicit&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_visited_package(resolve_implicit)&lt;/code&gt;)" href="./#griffe.temporary_visited_package(resolve_implicit)">resolve_implicit</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;search_sys_path&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_visited_package(search_sys_path)&lt;/code&gt;)" href="./#griffe.temporary_visited_package(search_sys_path)">search_sys_path</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;prefer_stubs_docs&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_visited_package(prefer_stubs_docs)&lt;/code&gt;)" href="./#griffe.temporary_visited_package(prefer_stubs_docs)">prefer_stubs_docs</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Iterator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -6716,7 +6715,7 @@ will override the source one.</p>
 <p><span class="doc-section-title">Yields:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></code>
+              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a>]</code>
           –
           <div class="doc-md-description">
             <p>A module.</p>
@@ -6840,7 +6839,7 @@ will override the source one.</p>
     <span class="n">resolve_implicit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">search_sys_path</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prefer_stubs_docs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Create and visit a temporary package.</span>
 
 <span class="sd">    Parameters:</span>
@@ -6927,7 +6926,7 @@ will override the source one.</p>
   &lt;/span&gt; (&lt;code&gt;griffe._internal.docstrings.parsers.DocstringOptions&lt;/code&gt;)" href="../docstrings/parsers/#griffe.DocstringOptions">DocstringOptions</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;lines_collection&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_inspected_module(lines_collection)&lt;/code&gt;)" href="./#griffe.temporary_inspected_module(lines_collection)">lines_collection</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LinesCollection&lt;/span&gt; (&lt;code&gt;griffe._internal.collections.LinesCollection&lt;/code&gt;)" href="../loaders/#griffe.LinesCollection">LinesCollection</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;modules_collection&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_inspected_module(modules_collection)&lt;/code&gt;)" href="./#griffe.temporary_inspected_module(modules_collection)">modules_collection</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ModulesCollection&lt;/span&gt; (&lt;code&gt;griffe._internal.collections.ModulesCollection&lt;/code&gt;)" href="../loaders/#griffe.ModulesCollection">ModulesCollection</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Iterator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -7041,7 +7040,7 @@ will override the source one.</p>
 <p><span class="doc-section-title">Yields:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></code>
+              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a>]</code>
           –
           <div class="doc-md-description">
             <p>The inspected module.</p>
@@ -7137,7 +7136,7 @@ will override the source one.</p>
     <span class="n">docstring_options</span><span class="p">:</span> <span class="n">DocstringOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">lines_collection</span><span class="p">:</span> <span class="n">LinesCollection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">modules_collection</span><span class="p">:</span> <span class="n">ModulesCollection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Create and inspect a temporary module with the given code.</span>
 
 <span class="sd">    Parameters:</span>
@@ -7219,7 +7218,7 @@ will override the source one.</p>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;resolve_implicit&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_inspected_package(resolve_implicit)&lt;/code&gt;)" href="./#griffe.temporary_inspected_package(resolve_implicit)">resolve_implicit</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;search_sys_path&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_inspected_package(search_sys_path)&lt;/code&gt;)" href="./#griffe.temporary_inspected_package(search_sys_path)">search_sys_path</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" title="&lt;b&gt;&lt;code&gt;prefer_stubs_docs&lt;/code&gt;&lt;/b&gt; (&lt;code&gt;griffe.temporary_inspected_package(prefer_stubs_docs)&lt;/code&gt;)" href="./#griffe.temporary_inspected_package(prefer_stubs_docs)">prefer_stubs_docs</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Iterator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
@@ -7413,7 +7412,7 @@ will override the source one.</p>
 <p><span class="doc-section-title">Yields:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a></code>
+              <code><a class="autorefs autorefs-external" title="&lt;code&gt;collections.abc.Generator&lt;/code&gt;" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator">Generator</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Module&lt;/span&gt; (&lt;code&gt;griffe._internal.models.Module&lt;/code&gt;)" href="../models/module/#griffe.Module">Module</a>]</code>
           –
           <div class="doc-md-description">
             <p>A module.</p>
@@ -7543,7 +7542,7 @@ will override the source one.</p>
     <span class="n">resolve_implicit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">search_sys_path</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prefer_stubs_docs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Create and inspect a temporary package.</span>
 
 <span class="sd">    Parameters:</span>
@@ -8225,10 +8224,10 @@ will override the source one.</p>
       
         
         
-      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["announce.dismiss","content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.tabs","navigation.tabs.sticky","navigation.top","search.highlight","toc.follow"],"redirect":null,"search":"../../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["announce.dismiss","content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.tabs","navigation.tabs.sticky","navigation.top","search.highlight","toc.follow"],"redirect":null,"search":"../../../assets/javascripts/workers/search.c47bb847.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.67a597eb.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a2388154.min.js"></script>
       
         <script src="../../../js/feedback.js"></script>
       
