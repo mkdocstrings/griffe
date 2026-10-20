@@ -304,7 +304,8 @@ class ObjectNode:
             and member is not type
             and member is not object
             and id(member) not in self._ids
-            and name in vars(self.obj)
+            # Module hooks can expose uncached members; other objects must exclude inherited members.
+            and (self.is_module or name in vars(self.obj))
         )
 
     @cached_property

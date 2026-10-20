@@ -145,6 +145,36 @@ Forcing inspection can be useful when your code is highly dynamic, and static an
 
 The [Extending](extending.md) topic will explain how to write and use extensions for Griffe.
 
+## Lazy module members
+
+Griffe's inspector uses [`inspect.getmembers`][inspect.getmembers], which calls `dir` to discover member names and `getattr` to retrieve their values. To expose lazy module members during inspection, define `__dir__` to include their names. Define `__getattr__` to return the corresponding objects. Defining `__getattr__` alone does not make these names discoverable.
+
+For example, this package imports `hello` only when the attribute is requested:
+
+```python title="my_package/__init__.py"
+__all__ = ["hello"]
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(__all__))
+
+
+def __getattr__(name: str) -> object:
+    if name == "hello":
+        from my_package._impl import hello
+
+        return hello
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+```
+
+```python title="my_package/_impl.py"
+def hello() -> str:
+    """Return a greeting."""
+    return "Hello!"
+```
+
+The `__all__` list marks `hello` as public. It does not expose lazy names to `dir` by itself. Here, `__dir__` includes both the module's existing names and its lazy public members.
+
 ## Disallowing dynamic analysis
 
 If you want to be careful about what gets executed in the current Python process, you can choose to disallow dynamic analysis by passing the `allow_inspection=False` argument. If Griffe cannot find sources for a package, it will not try to import it and will instead fail with a `ModuleNotFoundError` directly.

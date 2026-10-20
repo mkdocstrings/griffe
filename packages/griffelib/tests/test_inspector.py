@@ -157,6 +157,71 @@ def test_inspecting_module_importing_other_module() -> None:
         assert module["it"].target_path == "itertools"
 
 
+def test_inspecting_lazy_module_members() -> None:
+    """Inspect members exposed by module hooks without caching them in globals."""
+    # Neither lazy member is stored in the module's namespace.
+    with temporary_inspected_module(
+        '''
+        def __dir__():
+            return sorted(set(globals()) | {"hello", "answer", "missing"})
+
+        def __getattr__(name):
+            if name == "hello":
+                def hello() -> str:
+                    """Return a greeting."""
+                    return "Hello!"
+                return hello
+            if name == "answer":
+                return 42
+            raise AttributeError(name)
+        ''',
+    ) as module:
+        hello = module["hello"]
+
+        assert hello.is_function
+        assert str(hello.returns) == "str"
+        assert hello.docstring.value == "Return a greeting."
+        assert module["answer"].value == "42"
+        assert "missing" not in module.members
+
+        # Inspection must not populate the runtime module's globals.
+        assert "hello" not in vars(sys.modules[module.name])
+        assert "answer" not in vars(sys.modules[module.name])
+
+
+def test_inspecting_lazy_reexports() -> None:
+    """Resolve lazy reexports without caching them in the package globals."""
+    with temporary_inspected_package(
+        "pkg",
+        {
+            "__init__.py": """
+                __all__ = ["hello"]
+
+                def __dir__():
+                    return sorted(set(globals()) | set(__all__))
+
+                def __getattr__(name):
+                    if name == "hello":
+                        from ._impl import hello
+                        return hello
+                    raise AttributeError(name)
+            """,
+            "_impl.py": '''
+                def hello() -> str:
+                    """Return a greeting."""
+                    return "Hello!"
+            ''',
+        },
+        resolve_aliases=True,
+    ) as package:
+        hello = package["hello"]
+
+        assert hello.is_alias
+        assert hello.target_path == "pkg._impl.hello"
+        assert hello.docstring.value == "Return a greeting."
+        assert "hello" not in vars(sys.modules[package.name])
+
+
 def test_inspecting_parameters_with_functions_as_default_values() -> None:
     """Assert functions as default parameter values are serialized with their name."""
     with temporary_inspected_module("def func(): ...\ndef other_func(f=func): ...") as module:
