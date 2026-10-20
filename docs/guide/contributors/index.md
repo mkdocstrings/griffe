@@ -1,5 +1,8 @@
 # Contributor guide
 
+!!! info "For contributors and maintainers"
+    This guide explains how to change Griffe itself. To use Griffe in another project, start with the [user guide](../users/index.md).
+
 Welcome to the Griffe contributor guide! If you are familiar with Python tooling, development, and contributions to open-source projects, see the [TL;DR](#tldr) at the end, otherwise we recommend you walk through the following pages:
 
 - [Environment setup](setup.md)

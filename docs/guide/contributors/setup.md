@@ -1,6 +1,9 @@
 # Environment setup
 
-To work on the project, whether to update the code or the documentation, you will have to setup a development environment.
+!!! info "For contributors"
+    Follow this page to prepare a local checkout for code or documentation changes. To install Griffe for use in another project, see [Installation](../../installation.md).
+
+This page covers the required tools, cloning the repository, installing dependencies, and configuring an editor.
 
 ## Requirements
 
@@ -104,4 +107,6 @@ The setup command will install all the Python dependencies required to work on t
 
 ## IDE setup
 
-If you work in VSCode, we provide [a command to configure VSCode](commands.md#vscode) for the project.
+If you work in VSCode, use [`make vscode`](commands.md#command-vscode) to configure it for the project.
+
+For Zed, use [`make zed`](commands.md#command-zed).

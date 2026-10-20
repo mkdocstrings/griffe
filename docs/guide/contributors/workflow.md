@@ -1,5 +1,8 @@
 # Development workflow
 
+!!! info "For contributors"
+    Use this workflow after [setting up your environment](setup.md). The [release process](#release-process) is intended for maintainers.
+
 This document describes our workflow when developing features, fixing bugs and updating the documentation. It also includes guidelines for pull requests on GitHub.
 
 ## Features and bug fixes
@@ -149,7 +152,8 @@ If this seems all too complicated, you can push or force-push each new commit, a
 
 ## Release process
 
-Occasional or even regular contributors don't *have* to read this, but can anyway if they are interested in our release process.
+!!! info "For maintainers"
+    This procedure publishes a new version. Contributors can submit their changes without updating the changelog or running release tasks.
 
 Once we are ready for a new release (a few bugfixes and/or features merged in the main branch), maintainers should update the changelog. If our [commit message convention](workflow.md#commit-message-convention) was properly followed, the changelog can be automatically updated from the messages in the Git history with [`make changelog`][task-changelog]. This task updates the changelog in place to add a new version entry.
 

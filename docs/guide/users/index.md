@@ -1,6 +1,9 @@
 # User guide
 
-Welcome to the Griffe user guide!
+!!! info "For users and integrators"
+    This guide explains how to use Griffe in your projects. To change Griffe itself, see the [contributor guide](../contributors/index.md).
+
+Learn how to load, navigate, serialize, and check APIs, then configure Griffe for your project's needs.
 
 ## Manipulating APIs
 
