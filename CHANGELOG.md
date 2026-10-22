@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.4.1](https://github.com/mkdocstrings/griffe/releases/tag/2.4.1) - 2026-10-22
+
+<small>[Compare with 2.4.0](https://github.com/mkdocstrings/griffe/compare/2.4.0...2.4.1)</small>
+
+### Bug Fixes
+
+- Load symbols gated behing `__getattr__` during dynamic analysis ([3faeeb1](https://github.com/mkdocstrings/griffe/commit/3faeeb1b5fd8ec4b972d979b267c2322c1b644db) by Timothée Mazzucotelli).
+
+### Code Refactoring
+
+- Stop checking attribute values ([0670d03](https://github.com/mkdocstrings/griffe/commit/0670d038d5f58ab8267e041a7d349435b52f4c3b) by Timothée Mazzucotelli). [Issue-506](https://github.com/mkdocstrings/griffe/issues/506)
+
 ## [2.4.0](https://github.com/mkdocstrings/griffe/releases/tag/2.4.0) - 2026-10-19
 
 <small>[Compare with 2.3.2](https://github.com/mkdocstrings/griffe/compare/2.3.2...2.4.0)</small>
