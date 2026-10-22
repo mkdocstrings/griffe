@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: ISC
-
+#
 # Copyright (c) 2021, Timothée Mazzucotelli and contributors
-
+#
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
 # copyright notice and this permission notice appear in all copies.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 # WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 # MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -51,11 +51,16 @@ def _render_call_graph(module: Path) -> None:
 def _comment_block(module: Path) -> str:
     lines = []
     with module.open() as file:
-        for line in file:
-            if line.startswith("#"):
-                lines.append(line[1:])
-            else:
-                break
+        line = next(file, "")
+        # License headers precede the comments intended for the architecture docs.
+        if line.startswith("# SPDX-License-Identifier:"):
+            while line.startswith("#"):
+                line = next(file, "")
+        while line and not line.strip():
+            line = next(file, "")
+        while line.startswith("#"):
+            lines.append(line[1:])
+            line = next(file, "")
     return dedent("".join(lines))
 
 
@@ -77,7 +82,7 @@ def _render_api(path: Path, root: Path, heading_level: int = 4) -> None:
 def render_internal_api(heading_level: int = 4) -> None:
     """Render Griffe's internal API's structure docs.
 
-    This function prints Markdown headings, and the contents of the first comment block of a module,
+    This function prints Markdown headings, and the contents of the comment block after a module's license header,
     for all modules in our internal API.
 
     Parameters:
