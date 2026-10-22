@@ -701,6 +701,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Next steps
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3792,6 +3803,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Next steps
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3896,8 +3918,19 @@
 
 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">¤</a></h1>
 <p>Griffe is able to read Python source code and inspect objects at runtime to extract information about the API of a Python package. This information is then stored into data models (Python classes), and these model instances together form a tree that statically represent the package's API: starting with the top-level module, then descending into submodules, classes, functions, attributes and type aliases. From there, it's possible to explore and exploit this API representation in various ways.</p>
+<p>This tour shows how to export API data with the CLI and explore it with Python. <a href="../installation/">Install Griffe</a> before running the examples.</p>
+<p>Create an <code>example.py</code> file in your working directory:</p>
+<div class="highlight"><span class="filename">example.py</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return a greeting for the given name."""</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!"</span>
+</code></pre></div>
 <h2 id="command-line-tool">Command line tool<a class="headerlink" href="#command-line-tool" title="Permanent link">¤</a></h2>
 <p>Griffe is both a command line tool and a Python library. The command line tool offers a few commands to, for example, serialize API data to JSON and check for API breaking changes between two versions of your project.</p>
+<p>From the directory containing <code>example.py</code>, export its API:</p>
+<div class="highlight"><pre><span></span><code>griffe<span class="w"> </span>dump<span class="w"> </span>example<span class="w"> </span>--output<span class="w"> </span>api.json
+</code></pre></div>
+<p>This writes <code>api.json</code> with an <code>example</code> entry containing the module's members, signatures, and docstrings. It does not call <code>greet</code>.</p>
+<p>For your own package, replace <code>my_package</code> in the following commands with its import name:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Load API of `my_package`, serialize it to JSON,</span>
 <span class="c1"># print it to standard output.</span>
 griffe<span class="w"> </span>dump<span class="w"> </span>my_package
@@ -3909,6 +3942,25 @@ griffe<span class="w"> </span>check<span class="w"> </span>my_package<span class
 <p>Both commands accept a <code>-h</code>, <code>--help</code> argument to show all the available options. For a complete reference of the command line interface, see <a href="../reference/cli/">Reference / Command line interface</a>.</p>
 <h2 id="python-library">Python library<a class="headerlink" href="#python-library" title="Permanent link">¤</a></h2>
 <p>As a library, Griffe exposes all its public API directly in the top-level module. It means you can simply import <code>griffe</code> to access all its API.</p>
+<p>From the same directory, run this Python example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">griffe</span>
+
+<span class="n">module</span> <span class="o">=</span> <span class="n">griffe</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"example"</span><span class="p">)</span>
+<span class="n">function</span> <span class="o">=</span> <span class="n">module</span><span class="p">[</span><span class="s2">"greet"</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">function</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">function</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">function</span><span class="o">.</span><span class="n">returns</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">function</span><span class="o">.</span><span class="n">docstring</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<p>Expected output:</p>
+<div class="highlight"><pre><span></span><code>example.greet
+str
+str
+Return a greeting for the given name.
+</code></pre></div>
+<p>The function is represented by a Griffe data model. You can inspect its signature and docstring without executing its body.</p>
+<p>Other public entrypoints include:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">griffe</span>
 
 <span class="n">griffe</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -3933,6 +3985,12 @@ griffe<span class="w"> </span>check<span class="w"> </span>my_package<span class
 </code></pre></div>
 <p>For more advanced usage, see our guide on <a href="../guide/users/loading/">loading and navigating data</a>.</p>
 <p>For a complete reference of the application programming interface, see <a href="../reference/api/">Reference / Python API</a>.</p>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">¤</a></h2>
+<ul>
+<li><a href="../guide/users/loading/">Loading APIs</a>: configure how Griffe finds and analyzes your package.</li>
+<li><a href="../guide/users/navigating/">Navigating APIs</a>: explore members, aliases, and inheritance.</li>
+<li><a href="../guide/users/checking/">Checking APIs</a>: compare versions and handle breaking changes.</li>
+</ul>
 
 
 

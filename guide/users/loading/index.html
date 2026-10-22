@@ -1285,6 +1285,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#lazy-module-members" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Lazy module members
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#disallowing-dynamic-analysis" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -3938,6 +3949,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#lazy-module-members" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Lazy module members
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#disallowing-dynamic-analysis" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -4281,6 +4303,28 @@ Forcing inspection can be useful when your code is highly dynamic, and static an
 <li>if really needed, it's possible to <a href="../how-to/selectively-inspect/">handle only a subset of objects with dynamic analysis</a>, while the rest is loaded with static analysis, again thanks to Griffe extensions</li>
 </ul>
 <p>The <a href="../extending/">Extending</a> topic will explain how to write and use extensions for Griffe.</p>
+<h2 id="lazy-module-members">Lazy module members<a class="headerlink" href="#lazy-module-members" title="Permanent link">¤</a></h2>
+<p>Griffe's inspector uses <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/inspect.html#inspect.getmembers"><code>inspect.getmembers</code></a>, which calls <code>dir</code> to discover member names and <code>getattr</code> to retrieve their values. To expose lazy module members during inspection, define <code>__dir__</code> to include their names. Define <code>__getattr__</code> to return the corresponding objects. Defining <code>__getattr__</code> alone does not make these names discoverable.</p>
+<p>For example, this package imports <code>hello</code> only when the attribute is requested:</p>
+<div class="highlight"><span class="filename">my_package/__init__.py</span><pre><span></span><code><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">__all__</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"hello"</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">my_package._impl</span><span class="w"> </span><span class="kn">import</span> <span class="n">hello</span>
+
+        <span class="k">return</span> <span class="n">hello</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">my_package/_impl.py</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">hello</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return a greeting."""</span>
+    <span class="k">return</span> <span class="s2">"Hello!"</span>
+</code></pre></div>
+<p>The <code>__all__</code> list marks <code>hello</code> as public. It does not expose lazy names to <code>dir</code> by itself. Here, <code>__dir__</code> includes both the module's existing names and its lazy public members.</p>
 <h2 id="disallowing-dynamic-analysis">Disallowing dynamic analysis<a class="headerlink" href="#disallowing-dynamic-analysis" title="Permanent link">¤</a></h2>
 <p>If you want to be careful about what gets executed in the current Python process, you can choose to disallow dynamic analysis by passing the <code>allow_inspection=False</code> argument. If Griffe cannot find sources for a package, it will not try to import it and will instead fail with a <code>ModuleNotFoundError</code> directly.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">griffe</span>

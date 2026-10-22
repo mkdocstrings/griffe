@@ -9307,7 +9307,10 @@ and yield breaking changes with detailed information.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/griffelib/src/griffe/_internal/diff.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">706</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
 <span class="normal">707</span>
 <span class="normal">708</span>
 <span class="normal">709</span>
@@ -9327,10 +9330,7 @@ and yield breaking changes with detailed information.</p>
 <span class="normal">723</span>
 <span class="normal">724</span>
 <span class="normal">725</span>
-<span class="normal">726</span>
-<span class="normal">727</span>
-<span class="normal">728</span>
-<span class="normal">729</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_breaking_changes</span><span class="p">(</span>
+<span class="normal">726</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_breaking_changes</span><span class="p">(</span>
     <span class="n">old_obj</span><span class="p">:</span> <span class="n">Object</span> <span class="o">|</span> <span class="n">Alias</span><span class="p">,</span>
     <span class="n">new_obj</span><span class="p">:</span> <span class="n">Object</span> <span class="o">|</span> <span class="n">Alias</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Breakage</span><span class="p">]:</span>
@@ -11032,7 +11032,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.ATTRIBUTE_CHANGED_TYPE&lt;/code&gt;)" href="./#griffe.BreakageKind.ATTRIBUTE_CHANGED_TYPE">ATTRIBUTE_CHANGED_TYPE</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Attribute types are incompatible</p>
+            <p>Attribute types are incompatible.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11045,7 +11045,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.ATTRIBUTE_CHANGED_VALUE&lt;/code&gt;)" href="./#griffe.BreakageKind.ATTRIBUTE_CHANGED_VALUE">ATTRIBUTE_CHANGED_VALUE</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Attribute value was changed</p>
+            <p>Attribute value was changed.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11058,7 +11058,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.CLASS_REMOVED_BASE&lt;/code&gt;)" href="./#griffe.BreakageKind.CLASS_REMOVED_BASE">CLASS_REMOVED_BASE</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Base class was removed</p>
+            <p>Base class was removed.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11071,7 +11071,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.OBJECT_CHANGED_KIND&lt;/code&gt;)" href="./#griffe.BreakageKind.OBJECT_CHANGED_KIND">OBJECT_CHANGED_KIND</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Public object points to a different kind of object</p>
+            <p>Public object points to a different kind of object.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11084,7 +11084,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.OBJECT_REMOVED&lt;/code&gt;)" href="./#griffe.BreakageKind.OBJECT_REMOVED">OBJECT_REMOVED</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Public object was removed</p>
+            <p>Public object was removed.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11097,7 +11097,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.PARAMETER_ADDED_REQUIRED&lt;/code&gt;)" href="./#griffe.BreakageKind.PARAMETER_ADDED_REQUIRED">PARAMETER_ADDED_REQUIRED</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Parameter was added as required</p>
+            <p>Parameter was added as required.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11110,7 +11110,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.PARAMETER_CHANGED_DEFAULT&lt;/code&gt;)" href="./#griffe.BreakageKind.PARAMETER_CHANGED_DEFAULT">PARAMETER_CHANGED_DEFAULT</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Parameter default was changed</p>
+            <p>Parameter default was changed.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11123,7 +11123,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.PARAMETER_CHANGED_KIND&lt;/code&gt;)" href="./#griffe.BreakageKind.PARAMETER_CHANGED_KIND">PARAMETER_CHANGED_KIND</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Parameter kind was changed</p>
+            <p>Parameter kind was changed.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11136,7 +11136,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.PARAMETER_CHANGED_REQUIRED&lt;/code&gt;)" href="./#griffe.BreakageKind.PARAMETER_CHANGED_REQUIRED">PARAMETER_CHANGED_REQUIRED</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Parameter is now required</p>
+            <p>Parameter is now required.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11149,7 +11149,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.PARAMETER_MOVED&lt;/code&gt;)" href="./#griffe.BreakageKind.PARAMETER_MOVED">PARAMETER_MOVED</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Positional parameter was moved</p>
+            <p>Positional parameter was moved.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11162,7 +11162,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.PARAMETER_REMOVED&lt;/code&gt;)" href="./#griffe.BreakageKind.PARAMETER_REMOVED">PARAMETER_REMOVED</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Parameter was removed</p>
+            <p>Parameter was removed.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -11175,7 +11175,7 @@ and yield breaking changes with detailed information.</p>
   &lt;/span&gt; (&lt;code&gt;griffe.BreakageKind.RETURN_CHANGED_TYPE&lt;/code&gt;)" href="./#griffe.BreakageKind.RETURN_CHANGED_TYPE">RETURN_CHANGED_TYPE</a></code></b>
           –
           <div class="doc-md-description">
-            <p>Return types are incompatible</p>
+            <p>Return types are incompatible.</p>
           </div>
         </li>
     </ul>
@@ -11210,7 +11210,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Attribute types are incompatible</p>
+        <p>Attribute types are incompatible.</p>
 
           
 
@@ -11267,8 +11267,13 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Attribute value was changed</p>
+        <p>Attribute value was changed.</p>
 
+
+<details class="danger" open>
+  <summary>Deprecated since v2.4.1.</summary>
+  <p>Deprecated, and removed in next major version.</p>
+</details>
           
 
 
@@ -11324,7 +11329,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Base class was removed</p>
+        <p>Base class was removed.</p>
 
           
 
@@ -11383,7 +11388,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Public object points to a different kind of object</p>
+        <p>Public object points to a different kind of object.</p>
 
           
 
@@ -11440,7 +11445,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Public object was removed</p>
+        <p>Public object was removed.</p>
 
           
 
@@ -11497,7 +11502,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Parameter was added as required</p>
+        <p>Parameter was added as required.</p>
 
           
 
@@ -11554,7 +11559,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Parameter default was changed</p>
+        <p>Parameter default was changed.</p>
 
           
 
@@ -11611,7 +11616,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Parameter kind was changed</p>
+        <p>Parameter kind was changed.</p>
 
           
 
@@ -11668,7 +11673,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Parameter is now required</p>
+        <p>Parameter is now required.</p>
 
           
 
@@ -11725,7 +11730,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Positional parameter was moved</p>
+        <p>Positional parameter was moved.</p>
 
           
 
@@ -11782,7 +11787,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Parameter was removed</p>
+        <p>Parameter was removed.</p>
 
           
 
@@ -11839,7 +11844,7 @@ and yield breaking changes with detailed information.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return types are incompatible</p>
+        <p>Return types are incompatible.</p>
 
           
 
@@ -12500,6 +12505,11 @@ and yield breaking changes with detailed information.</p>
 
         <p>Specific breakage class for attributes whose value changed.</p>
 
+
+<details class="danger" open>
+  <summary>Deprecated since v2.4.1.</summary>
+  <p>Deprecated, and removed in next major version.</p>
+</details>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>

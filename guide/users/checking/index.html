@@ -5061,6 +5061,11 @@ Allow a deprecation period by declaring a module-level <code>__getattr__</code> 
 <blockquote>
 <p>Attribute value was changed</p>
 </blockquote>
+<div class="admonition danger">
+<p class="admonition-title">This check was removed in v2.4.1</p>
+<p>
+This check was removed because it almost always emits false-positives. An attribute value should be able to change, even for constants. Besides, this check didn't compare actual values but the expressions that computed them, which means two different expressions computing the same value would still emit a breakage, which was wrong.</p>
+</div>
 <p>Changing the value of an attribute can <em>silently</em> break your users' code.</p>
 <div class="highlight"><span class="filename">before</span><pre><span></span><code><span class="c1"># your code</span>
 <span class="n">PY_VERSION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"PY_VERSION"</span><span class="p">)</span>
@@ -5232,12 +5237,13 @@ Make sure to document the change of value of the attribute in your changelog, pa
 <li><strong>API</strong>: <code>check(..., style="github")</code> / <code>check(..., style=ExplanationStyle.GITHUB)</code></li>
 </ul>
 <p>When running <code>griffe check</code> in CI, you can enable GitHub's annotations thanks to the GitHub output style. Annotations are displayed on specific lines of code. They are visible in the Checks tab. When you create an annotation for a file that is part of the pull request, the annotations are also shown in the Files changed tab.</p>
-<p>/// tab | Files changed tab
-<img alt="gha_annotations_2" src="../../../img/gha_annotations_2.png" />
-///</p>
-<p>/// tab | Checks tab
-<img alt="gha_annotations_1" src="../../../img/gha_annotations_1.png" />
-///</p>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Files changed tab</label><div class="tabbed-content">
+<p><img alt="gha_annotations_2" src="../../../img/gha_annotations_2.png" /></p>
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Checks tab</label><div class="tabbed-content">
+<p><img alt="gha_annotations_1" src="../../../img/gha_annotations_1.png" /></p>
+</div>
+</div>
 <div class="highlight"><pre><span></span><code><span class="gp">% </span>python<span class="w"> </span>-m<span class="w"> </span>griffe<span class="w"> </span>check<span class="w"> </span>-fgithub<span class="w"> </span>-ssrc<span class="w"> </span>griffe
 <span class="go">::warning file=src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -&gt; unset</span>
 <span class="go">::warning file=src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -&gt; unset</span>

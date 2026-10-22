@@ -3998,6 +3998,10 @@
 
 
 <h1 id="development-workflow">Development workflow<a class="headerlink" href="#development-workflow" title="Permanent link">¤</a></h1>
+<div class="admonition info">
+<p class="admonition-title">For contributors</p>
+<p>Use this workflow after <a href="../setup/">setting up your environment</a>. The <a href="#release-process">release process</a> is intended for maintainers.</p>
+</div>
 <p>This document describes our workflow when developing features, fixing bugs and updating the documentation. It also includes guidelines for pull requests on GitHub.</p>
 <h2 id="features-and-bug-fixes">Features and bug fixes<a class="headerlink" href="#features-and-bug-fixes" title="Permanent link">¤</a></h2>
 <p>The development worklow is rather usual.</p>
@@ -4118,7 +4122,10 @@ git<span class="w"> </span>commit<span class="w"> </span>--fixup<span class="o">
 If this seems all too complicated, you can push or force-push each new commit, and we will squash them ourselves if needed, before merging.</p>
 </div>
 <h2 id="release-process">Release process<a class="headerlink" href="#release-process" title="Permanent link">¤</a></h2>
-<p>Occasional or even regular contributors don't <em>have</em> to read this, but can anyway if they are interested in our release process.</p>
+<div class="admonition info">
+<p class="admonition-title">For maintainers</p>
+<p>This procedure publishes a new version. Contributors can submit their changes without updating the changelog or running release tasks.</p>
+</div>
 <p>Once we are ready for a new release (a few bugfixes and/or features merged in the main branch), maintainers should update the changelog. If our <a href="../workflow/#commit-message-convention">commit message convention</a> was properly followed, the changelog can be automatically updated from the messages in the Git history with <a class="autorefs autorefs-internal" href="../commands/#changelog"><code>make changelog</code></a>. This task updates the changelog in place to add a new version entry.</p>
 <p>Once the changelog is updated, maintainers should review the new version entry, to:</p>
 <ul>

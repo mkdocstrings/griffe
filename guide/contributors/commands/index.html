@@ -1942,6 +1942,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#zed" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>zed</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2019,6 +2030,17 @@
     <span class="md-ellipsis">
       <span class="md-typeset">
         <code>check-quality</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>check-security</code>
       </span>
     </span>
   </a>
@@ -4140,6 +4162,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#zed" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>zed</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4217,6 +4250,17 @@
     <span class="md-ellipsis">
       <span class="md-typeset">
         <code>check-quality</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>check-security</code>
       </span>
     </span>
   </a>
@@ -4462,7 +4506,12 @@
 
 
 <h1 id="management-commands">Management commands<a class="headerlink" href="#management-commands" title="Permanent link">¤</a></h1>
+<div class="admonition info">
+<p class="admonition-title">For contributors and maintainers</p>
+<p>Use this page to choose a development task and find its options. Start with <a href="../setup/">environment setup</a> if dependencies are not installed.</p>
+</div>
 <p>The entry-point to run commands to manage the project is our Python <code>make</code> script, located in the <code>scripts</code> folder. You can either call it directly with <code>./scripts/make</code>, or you can use <a href="https://direnv.net/">direnv</a> to add the script to your command line path. Once direnv is installed and hooked into your shell, allow it once for this directory with <code>direnv allow</code>. Now you can directly call the Python script with <code>make</code>. The <code>Makefile</code> is just here to provide auto-completion.</p>
+<p>On this page, a <strong>command</strong> is a built-in operation of the <code>make</code> script. A <strong>task</strong> is an operation defined in <code>duties.py</code>, using the <a href="https://pawamoy.github.io/duty/">duty</a> task runner. Both are invoked with <code>make NAME</code>.</p>
 <p>Try typing <code>make</code> or <code>make help</code> to show the available commands.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">$ </span>make
 <span class="go">Available commands</span>
@@ -4478,6 +4527,52 @@
 </code></pre></div>
 <h2 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">¤</a></h2>
 <p>Commands are always available: they don't require any Python dependency to be installed.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Use it to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#command-setup"><code>setup</code></a></td>
+<td>Install development dependencies in the virtual environments.</td>
+</tr>
+<tr>
+<td><a href="#command-help"><code>help</code></a></td>
+<td>List operations or show a task's options.</td>
+</tr>
+<tr>
+<td><a href="#command-run"><code>run</code></a></td>
+<td>Run a tool in the default environment.</td>
+</tr>
+<tr>
+<td><a href="#command-multirun"><code>multirun</code></a></td>
+<td>Run a tool for all configured Python versions.</td>
+</tr>
+<tr>
+<td><a href="#command-allrun"><code>allrun</code></a></td>
+<td>Run a tool in both the default and version-specific environments.</td>
+</tr>
+<tr>
+<td><a href="#command-3.x"><code>3.x</code></a></td>
+<td>Run a tool with a particular Python version.</td>
+</tr>
+<tr>
+<td><a href="#command-clean"><code>clean</code></a></td>
+<td>Remove build artifacts and caches.</td>
+</tr>
+<tr>
+<td><a href="#command-vscode"><code>vscode</code></a></td>
+<td>Configure VSCode for development.</td>
+</tr>
+<tr>
+<td><a href="#command-zed"><code>zed</code></a></td>
+<td>Configure Zed for development.</td>
+</tr>
+</tbody>
+</table>
 <p><a href="" id="command-setup"></a></p>
 <h3 id="setup"><code>setup</code><a class="headerlink" href="#setup" title="Permanent link">¤</a></h3>
 
@@ -5092,6 +5187,80 @@ by copying the following files into the <code>.vscode</code> directory:</p>
             </details>
     </div>
 
+</div><p><a href="" id="command-zed"></a></p>
+<h3 id="zed"><code>zed</code><a class="headerlink" href="#zed" title="Permanent link">¤</a></h3>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Configure Zed to work on this project.</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>zed
+</code></pre></div>
+<p>This command configures the <a href="https://zed.dev/">Zed editor</a>
+by copying the following files into the <code>.zed</code> directory:</p>
+<ul>
+<li><code>debug.json</code>, for run configurations (to run debug sessions)</li>
+<li><code>settings.json</code>, for various editor settings like linting tools and their configuration</li>
+<li><code>tasks.json</code>, for running tasks directly from Zed's interface</li>
+</ul>
+
+
+<details class="warning" open>
+  <summary>Warning</summary>
+  <p>These files will be overwritten every time the command is run.</p>
+</details>
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>scripts/make.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@_command</span><span class="p">(</span><span class="s2">"zed"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">zed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configure Zed to work on this project.</span>
+
+<span class="sd">    ```bash</span>
+<span class="sd">    make zed</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    This command configures the [Zed editor](https://zed.dev/)</span>
+<span class="sd">    by copying the following files into the `.zed` directory:</span>
+
+<span class="sd">    - `debug.json`, for run configurations (to run debug sessions)</span>
+<span class="sd">    - `settings.json`, for various editor settings like linting tools and their configuration</span>
+<span class="sd">    - `tasks.json`, for running tasks directly from Zed's interface</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        These files will be overwritten every time the command is run.</span>
+<span class="sd">    """</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">".zed"</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_shell</span><span class="p">(</span><span class="s2">"cp -v config/zed/* .zed"</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
 </div><h2 id="tasks">Tasks<a class="headerlink" href="#tasks" title="Permanent link">¤</a></h2>
 <p>Tasks require the Python dependencies to be installed. They use various tools and libraries to assert code quality, run tests, serve the documentation locally, or build and publish distributions of your project. There are multiple ways to run tasks:</p>
 <ul>
@@ -5101,8 +5270,83 @@ by copying the following files into the <code>.vscode</code> directory:</p>
 <li><code>make allrun duty TASK</code>, to run a task in <em>all</em> environments</li>
 <li><code>make 3.x duty TASK</code>, to run a task on a specific Python version</li>
 </ul>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Use it to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#task-build"><code>build</code></a></td>
+<td>Build distributions locally to check packaging.</td>
+</tr>
+<tr>
+<td><a href="#task-changelog"><code>changelog</code></a></td>
+<td>Prepare a changelog entry before a release (maintainers).</td>
+</tr>
+<tr>
+<td><a href="#task-check"><code>check</code></a></td>
+<td>Run all checks before submitting changes.</td>
+</tr>
+<tr>
+<td><a href="#task-check-api"><code>check-api</code></a></td>
+<td>Look for breaking changes after editing the public API.</td>
+</tr>
+<tr>
+<td><a href="#task-check-docs"><code>check-docs</code></a></td>
+<td>Build documentation and report warnings as errors.</td>
+</tr>
+<tr>
+<td><a href="#task-check-quality"><code>check-quality</code></a></td>
+<td>Check code style and lint rules.</td>
+</tr>
+<tr>
+<td><a href="#task-check-security"><code>check-security</code></a></td>
+<td>Audit dependencies and GitHub Actions workflows.</td>
+</tr>
+<tr>
+<td><a href="#task-check-types"><code>check-types</code></a></td>
+<td>Check types after changing annotations or implementation.</td>
+</tr>
+<tr>
+<td><a href="#task-coverage"><code>coverage</code></a></td>
+<td>Find code that tests do not cover.</td>
+</tr>
+<tr>
+<td><a href="#task-docs"><code>docs</code></a></td>
+<td>Preview documentation while editing.</td>
+</tr>
+<tr>
+<td><a href="#task-docs-deploy"><code>docs-deploy</code></a></td>
+<td>Publish the documentation to GitHub Pages (maintainers).</td>
+</tr>
+<tr>
+<td><a href="#task-format"><code>format</code></a></td>
+<td>Format Python code and apply automatic lint fixes.</td>
+</tr>
+<tr>
+<td><a href="#task-fuzz"><code>fuzz</code></a></td>
+<td>Search for static analysis failures with generated code.</td>
+</tr>
+<tr>
+<td><a href="#task-publish"><code>publish</code></a></td>
+<td>Upload built distributions to PyPI (maintainers).</td>
+</tr>
+<tr>
+<td><a href="#task-release"><code>release</code></a></td>
+<td>Tag and publish a new version (maintainers).</td>
+</tr>
+<tr>
+<td><a href="#task-test"><code>test</code></a></td>
+<td>Check behavior after changing code.</td>
+</tr>
+</tbody>
+</table>
 <p><a href="" id="task-build"></a></p>
 <h3 id="build"><code>build</code><a class="headerlink" href="#build" title="Permanent link">¤</a></h3>
+<p>Before a release, run <code>make build</code> to check that source and wheel distributions can be built. The resulting files are written to <code>dist/</code>.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5159,6 +5403,7 @@ Distribution files will be created in the <code>dist</code> directory.</p>
 
 </div><p><a href="" id="task-changelog"></a></p>
 <h3 id="changelog"><code>changelog</code><a class="headerlink" href="#changelog" title="Permanent link">¤</a></h3>
+<p>When preparing a release, run <code>make changelog</code> to generate an entry from commit messages. Review the changes in <code>CHANGELOG.md</code> before releasing.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5300,6 +5545,7 @@ when they consider the package is ready for it.</p>
 
 </div><p><a href="" id="task-check"></a></p>
 <h3 id="check"><code>check</code><a class="headerlink" href="#check" title="Permanent link">¤</a></h3>
+<p>Before opening a pull request, run <code>make check</code> to find quality, typing, documentation, security, and API compatibility issues.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5359,6 +5605,7 @@ when they consider the package is ready for it.</p>
 
 </div><p><a href="" id="task-check-api"></a></p>
 <h3 id="check-api"><code>check-api</code><a class="headerlink" href="#check-api" title="Permanent link">¤</a></h3>
+<p>After changing a public signature, run <code>make check-api</code> to compare both packages against their latest Git tag. Review any reported breakages.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5487,6 +5734,7 @@ than preventing CI to pass.</p>
 
 </div><p><a href="" id="task-check-docs"></a></p>
 <h3 id="check-docs"><code>check-docs</code><a class="headerlink" href="#check-docs" title="Permanent link">¤</a></h3>
+<p>After editing documentation or docstrings, run <code>make check-docs</code> to catch build warnings. A successful build writes the site to <code>site/</code>.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5563,6 +5811,7 @@ or invalid cross-references.</p>
 
 </div><p><a href="" id="task-check-quality"></a></p>
 <h3 id="check-quality"><code>check-quality</code><a class="headerlink" href="#check-quality" title="Permanent link">¤</a></h3>
+<p>After editing Python code, run <code>make check-quality</code> to find lint violations. Fix the reported issues before submitting your changes.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5752,8 +6001,58 @@ into the list in <code>config/ruff.toml</code>.</p>
             </details>
     </div>
 
+</div><p><a href="" id="task-check-security"></a></p>
+<h3 id="check-security"><code>check-security</code><a class="headerlink" href="#check-security" title="Permanent link">¤</a></h3>
+<p>After changing dependencies or GitHub Actions workflows, run these audits to find known vulnerabilities and workflow security issues:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>check-security
+</code></pre></div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Check for security vulnerabilities.</p>
+
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>duties.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@duty</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_security</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check for security vulnerabilities."""</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">"uv"</span><span class="p">,</span> <span class="s2">"audit"</span><span class="p">],</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"Auditing dependencies"</span><span class="p">,</span>
+        <span class="n">pty</span><span class="o">=</span><span class="n">PTY</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">"zizmor"</span><span class="p">,</span> <span class="s2">"."</span><span class="p">],</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"Auditing GitHub Actions workflows"</span><span class="p">,</span>
+        <span class="n">pty</span><span class="o">=</span><span class="n">PTY</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
 </div><p><a href="" id="task-check-types"></a></p>
 <h3 id="check-types"><code>check-types</code><a class="headerlink" href="#check-types" title="Permanent link">¤</a></h3>
+<p>After changing annotations or return values, run <code>make check-types</code> to find type errors across the configured Python versions.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5908,6 +6207,7 @@ as a last resort you can ignore this specific error with a comment:</p>
 
 </div><p><a href="" id="task-coverage"></a></p>
 <h3 id="coverage"><code>coverage</code><a class="headerlink" href="#coverage" title="Permanent link">¤</a></h3>
+<p>After running tests, run <code>make coverage</code> to identify missing test cases. Open <code>htmlcov/index.html</code> to see which lines were not executed.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -5963,6 +6263,7 @@ and print a text report in the console.</p>
 
 </div><p><a href="" id="task-docs"></a></p>
 <h3 id="docs"><code>docs</code><a class="headerlink" href="#docs" title="Permanent link">¤</a></h3>
+<p>While editing documentation, run <code>make docs</code> and open <a href="http://localhost:8000">http://localhost:8000</a>. The local preview updates when you save changes.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -6063,6 +6364,7 @@ and print a text report in the console.</p>
 
 </div><p><a href="" id="task-docs-deploy"></a></p>
 <h3 id="docs-deploy"><code>docs-deploy</code><a class="headerlink" href="#docs-deploy" title="Permanent link">¤</a></h3>
+<p>When publishing documentation independently of a release, maintainers can run <code>make docs-deploy</code>. This builds the site and pushes it to GitHub Pages.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -6143,6 +6445,7 @@ then <a href="https://pypi.org/project/ghp-import/">ghp-import</a> to deploy to 
 
 </div><p><a href="" id="task-format"></a></p>
 <h3 id="format"><code>format</code><a class="headerlink" href="#format" title="Permanent link">¤</a></h3>
+<p>Before checking Python changes, run <code>make format</code> to apply formatting and automatic lint fixes. Review the resulting diff before committing.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -6199,6 +6502,10 @@ This command will also automatically fix some coding issues when possible.</p>
 
 </div><p><a href="" id="task-fuzz"></a></p>
 <h3 id="fuzz"><code>fuzz</code><a class="headerlink" href="#fuzz" title="Permanent link">¤</a></h3>
+<p>When investigating static analysis failures, generate a small set of Python modules and check whether Griffe can visit them:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>fuzz<span class="w"> </span><span class="nv">size</span><span class="o">=</span><span class="m">5</span>
+</code></pre></div>
+<p>To reproduce a failure, pass its seed, for example <code>make fuzz seeds=12345</code>. Failing examples are minimized and saved in the system temporary directory.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -6374,6 +6681,7 @@ This command will also automatically fix some coding issues when possible.</p>
 
 </div><p><a href="" id="task-publish"></a></p>
 <h3 id="publish"><code>publish</code><a class="headerlink" href="#publish" title="Permanent link">¤</a></h3>
+<p>After building release distributions, maintainers can run <code>make publish</code> to upload files from <code>dist/</code> to PyPI.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -6458,6 +6766,10 @@ using <a href="https://twine.readthedocs.io/">Twine</a>.</p>
 
 </div><p><a href="" id="task-release"></a></p>
 <h3 id="release"><code>release</code><a class="headerlink" href="#release" title="Permanent link">¤</a></h3>
+<p>After reviewing the changelog, maintainers can publish the corresponding version with:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>release<span class="w"> </span><span class="nv">version</span><span class="o">=</span><span class="m">7</span>.8.9
+</code></pre></div>
+<p>Replace <code>7.8.9</code> with the version in the changelog. This task commits, tags, pushes, publishes distributions, and deploys documentation. See the <a href="../workflow/#release-process">release process</a> for the full procedure.</p>
 
 
 <div class="doc doc-object doc-function">
@@ -6561,6 +6873,10 @@ using <a href="https://twine.readthedocs.io/">Twine</a>.</p>
 
 </div><p><a href="" id="task-test"></a></p>
 <h3 id="test"><code>test</code><a class="headerlink" href="#test" title="Permanent link">¤</a></h3>
+<p>After fixing a bug, run <code>make test</code> to check for regressions across the configured Python versions.</p>
+<p>To focus on a particular area in the default environment, pass Pytest arguments through <code>make run</code>:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>run<span class="w"> </span>duty<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--<span class="w"> </span>-k<span class="w"> </span>test_finder
+</code></pre></div>
 
 
 <div class="doc doc-object doc-function">
