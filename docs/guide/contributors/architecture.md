@@ -41,12 +41,13 @@ descriptions = {
     "pyproject.toml": "Project metadata, dependencies, development dependency groups, and workspace configuration.",
 }
 
+def visible_entries(path):
+    return [node for node in Path(path).iterdir() if not any(fnmatch(node.name, pattern) for pattern in exclude)]
+
 def exptree(path):
     files = []
     dirs = []
-    for node in Path(path).iterdir():
-        if any(fnmatch(node.name, pattern) for pattern in exclude):
-            continue
+    for node in visible_entries(path):
         if node.is_dir():
             dirs.append(node)
         else:
@@ -54,9 +55,10 @@ def exptree(path):
 
     annotated = []
     recurse = set()
-    print("```tree")
+    # Shell highlighting makes annotation markers recognizable as comments.
+    print("```sh")
     for directory in sorted(dirs):
-        if not any(fnmatch(directory.name, pattern) for pattern in no_recurse):
+        if not any(fnmatch(directory.name, pattern) for pattern in no_recurse) and visible_entries(directory):
             recurse.add(directory)
             annotated.append(directory)
             print(f"{directory.name}/ # ({len(annotated)})!")
