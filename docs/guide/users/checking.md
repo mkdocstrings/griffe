@@ -599,6 +599,9 @@ WARNING: **Not yet supported!** Telling if a type construct is compatible with a
 
 > Attribute value was changed
 
+DANGER: **This check was removed in v2.4.1.**
+This check was removed because it almost always emits false-positives. An attribute value should be able to change, even for constants. Besides, this check didn't compare actual values but the expressions that computed them, which means two different expressions computing the same value would still emit a breakage, which was wrong.
+
 Changing the value of an attribute can *silently* break your users' code.
 
 ```python title="before"

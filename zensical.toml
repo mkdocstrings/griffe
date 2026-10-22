@@ -317,6 +317,8 @@ docstring_section_style = "list"
 extensions = [
   "griffe_inherited_docstrings",
   "unpack_typeddict",
+  # YORE: Bump 3: Remove line.
+  "scripts/griffe_exts.py",
 ]
 filters = "public"
 heading_level = 2

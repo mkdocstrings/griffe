@@ -482,6 +482,7 @@ class AttributeChangedTypeBreakage(Breakage):
     kind: BreakageKind = BreakageKind.ATTRIBUTE_CHANGED_TYPE
 
 
+# YORE: Bump 3: Remove block.
 class AttributeChangedValueBreakage(Breakage):
     """Specific breakage class for attributes whose value changed."""
 
@@ -592,13 +593,9 @@ def _function_incompatibilities(old_function: Function, new_function: Function) 
         yield ReturnChangedTypeBreakage(new_function, old_function.returns, new_function.returns)
 
 
-def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attribute) -> Iterable[Breakage]:
+def _attribute_incompatibilities(old_attribute: Attribute, new_attribute: Attribute) -> Iterable[Breakage]:  # noqa: ARG001
     # TODO: Support annotation breaking changes.
-    if old_attribute.value != new_attribute.value:
-        if new_attribute.value is None:
-            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, "unset")
-        else:
-            yield AttributeChangedValueBreakage(new_attribute, old_attribute.value, new_attribute.value)
+    yield from ()
 
 
 def _alias_incompatibilities(

@@ -160,10 +160,12 @@ class BreakageKind(StrEnum):
     """Public object points to a different kind of object."""
     ATTRIBUTE_CHANGED_TYPE = "Attribute types are incompatible"
     """Attribute types are incompatible."""
-    ATTRIBUTE_CHANGED_VALUE = "Attribute value was changed"
-    """Attribute value was changed."""
     CLASS_REMOVED_BASE = "Base class was removed"
     """Base class was removed."""
+
+    # YORE: Bump 3: Remove block.
+    ATTRIBUTE_CHANGED_VALUE = "Attribute value was changed"
+    """Attribute value was changed."""
 
 
 class Parser(StrEnum):
