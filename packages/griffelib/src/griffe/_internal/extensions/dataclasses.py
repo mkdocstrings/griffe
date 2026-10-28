@@ -79,19 +79,19 @@ def _field_arguments(attribute: Attribute) -> dict[str, Any]:
 
 
 @cache
-def _dataclass_parameters(class_: Class) -> list[Parameter]:
+def _dataclass_parameters(class_: Class) -> dict[str, Parameter]:
     # Fetch `@dataclass` arguments if any.
     dec_args = _dataclass_arguments(class_.decorators)
 
-    # Parameters not added to `__init__`, return empty list.
+    # Parameters not added to `__init__`, return empty dict.
     if dec_args.get("init") == "False":
-        return []
+        return {}
 
     # All parameters marked as keyword-only.
     kw_only = dec_args.get("kw_only") == "True"
 
     # Iterate on current attributes to find parameters.
-    parameters = []
+    parameters: dict[str, Parameter] = {}
     for member in class_.members.values():
         if member.is_attribute:
             member = cast("Attribute", member)
@@ -140,29 +140,57 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
             else:
                 default = field_args.get("default", None if field_args else member.value)
 
-            # Add parameter to the list.
-            parameters.append(
-                Parameter(
-                    member.name,
-                    annotation=member.annotation,
-                    kind=kind,
-                    default=default,
-                    docstring=member.docstring,
-                ),
+            # Add parameter to the dict.
+            parameters[member.name] = Parameter(
+                member.name,
+                annotation=member.annotation,
+                kind=kind,
+                default=default,
+                docstring=member.docstring,
             )
 
     return parameters
 
 
-def _reorder_parameters(parameters: list[Parameter]) -> list[Parameter]:
-    # De-duplicate, overwriting previous parameters.
-    params_dict = {param.name: param for param in parameters}
+def _mro(class_: Class) -> list[Class]:
+    try:
+        return class_.mro()
+    except ValueError:
+        return []
 
+
+def _dataclass_fields(
+    class_: Class,
+    collected: dict[Class, dict[str, Parameter]],
+) -> dict[str, Parameter]:
+    # The fields that `class_.__dataclass_fields__` holds at runtime, collected like Python does.
+    # A dataclass gets the fields of each base, own and inherited, from the end of the MRO
+    # to its start, then its own fields. A redeclared field replaces the previous one
+    # but keeps its position. Any other class inherits the fields of the first dataclass
+    # in its MRO, if any. `collected` holds the fields of classes already visited
+    # while handling the current package; it is not a global cache because bases
+    # can only be resolved once their packages are loaded.
+    if class_ not in collected:
+        fields: dict[str, Parameter] = {}
+        if _dataclass_decorator(class_.decorators):
+            for base in reversed(_mro(class_)):
+                fields.update(_dataclass_fields(base, collected))
+            fields.update(_dataclass_parameters(class_))
+        else:
+            for parent in _mro(class_):
+                if _dataclass_decorator(parent.decorators):
+                    fields.update(_dataclass_fields(parent, collected))
+                    break
+        collected[class_] = fields
+    return collected[class_]
+
+
+def _reorder_parameters(parameters: list[Parameter]) -> list[Parameter]:
     # Re-order, putting positional-only in front and keyword-only at the end.
     pos_only = []
     pos_kw = []
     kw_only = []
-    for param in params_dict.values():
+    for param in parameters:
         if param.kind is ParameterKind.positional_only:
             pos_only.append(param)
         elif param.kind is ParameterKind.keyword_only:
@@ -172,19 +200,11 @@ def _reorder_parameters(parameters: list[Parameter]) -> list[Parameter]:
     return pos_only + pos_kw + kw_only
 
 
-def _set_dataclass_init(class_: Class) -> None:
-    # Retrieve parameters from all parent dataclasses.
-    parameters = []
-    try:
-        mro = class_.mro()
-    except ValueError:
-        mro = ()
-    for parent in reversed(mro):
-        if _dataclass_decorator(parent.decorators):
-            parameters.extend(_dataclass_parameters(parent))
-            # At least one parent dataclass makes the current class a dataclass:
-            # that's how `dataclasses.is_dataclass` works.
-            class_.labels.add("dataclass")
+def _set_dataclass_init(class_: Class, collected: dict[Class, dict[str, Parameter]]) -> None:
+    # At least one parent dataclass makes the current class a dataclass:
+    # that's how `dataclasses.is_dataclass` works.
+    if any(_dataclass_decorator(parent.decorators) for parent in _mro(class_)):
+        class_.labels.add("dataclass")
 
     # If the class is not decorated with `@dataclass`, skip it.
     if not _dataclass_decorator(class_.decorators):
@@ -192,8 +212,8 @@ def _set_dataclass_init(class_: Class) -> None:
 
     logger.debug("Handling dataclass: %s", class_.path)
 
-    # Add current class parameters.
-    parameters.extend(_dataclass_parameters(class_))
+    # Collect all fields.
+    init_parameters = list(_dataclass_fields(class_, collected).values())
 
     # Create `__init__` method with re-ordered parameters.
     init = Function(
@@ -203,7 +223,7 @@ def _set_dataclass_init(class_: Class) -> None:
         parent=class_,
         parameters=Parameters(
             Parameter(name="self", annotation=None, kind=ParameterKind.positional_or_keyword, default=None),
-            *_reorder_parameters(parameters),
+            *_reorder_parameters(init_parameters),
         ),
         returns="None",
     )
@@ -218,21 +238,25 @@ def _del_members_annotated_as_initvar(class_: Class) -> None:
             class_.del_member(attribute.name)
 
 
-def _apply_recursively(mod_cls: Module | Class, processed: set[str]) -> None:
+def _apply_recursively(
+    mod_cls: Module | Class,
+    processed: set[str],
+    collected: dict[Class, dict[str, Parameter]],
+) -> None:
     if mod_cls.canonical_path in processed:
         return
     processed.add(mod_cls.canonical_path)
     if isinstance(mod_cls, Class):
         if "__init__" not in mod_cls.members:
-            _set_dataclass_init(mod_cls)
+            _set_dataclass_init(mod_cls, collected)
             _del_members_annotated_as_initvar(mod_cls)
         for member in mod_cls.members.values():
             if not member.is_alias and member.is_class:
-                _apply_recursively(member, processed)  # ty:ignore[invalid-argument-type]
+                _apply_recursively(member, processed, collected)  # ty:ignore[invalid-argument-type]
     elif isinstance(mod_cls, Module):
         for member in mod_cls.members.values():
             if not member.is_alias and (member.is_module or member.is_class):
-                _apply_recursively(member, processed)  # ty:ignore[invalid-argument-type]
+                _apply_recursively(member, processed, collected)  # ty:ignore[invalid-argument-type]
 
 
 class DataclassesExtension(Extension):
@@ -248,4 +272,4 @@ class DataclassesExtension(Extension):
         Parameters:
             pkg: The loaded package.
         """
-        _apply_recursively(pkg, set())
+        _apply_recursively(pkg, set(), {})

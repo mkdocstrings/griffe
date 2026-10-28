@@ -16,6 +16,8 @@
 
 # Test the dataclasses extension.
 
+import pytest
+
 from griffe import ParameterKind, load_extensions, temporary_visited_package
 
 
@@ -230,3 +232,37 @@ def test_field_kw_only_overrides_kw_only_sentinel() -> None:
     assert [param.name for param in init.parameters] == ["self", "x", "z", "y"]
     assert init.parameters["y"].kind is ParameterKind.keyword_only
     assert init.parameters["z"].kind is ParameterKind.positional_or_keyword
+
+
+@pytest.mark.parametrize("plain_decorator", ["@dataclass", ""], ids=["dataclass", "not-dataclass"])
+def test_fields_merged_from_each_base_in_diamond_inheritance(plain_decorator: str) -> None:
+    """Test that each base brings all its fields, inherited ones included, in reversed MRO order like in Python."""
+    code = f"""
+        from dataclasses import dataclass
+
+        @dataclass
+        class Base:
+            x: int = 0
+
+        @dataclass
+        class Override(Base):
+            x: int = 1
+
+        {plain_decorator}
+        class Plain(Base):
+            pass
+
+        @dataclass
+        class Point(Plain, Override):
+            pass
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    # `Plain` comes after `Override` in reversed MRO order, and brings back `Base.x`.
+    assert [param.name for param in init.parameters] == ["self", "x"]
+    assert init.parameters["x"].default == "0"
