@@ -79,7 +79,7 @@ def _field_arguments(attribute: Attribute) -> dict[str, Any]:
 
 
 @cache
-def _dataclass_parameters(class_: Class) -> dict[str, Parameter]:
+def _dataclass_parameters(class_: Class) -> dict[str, Parameter | None]:
     # Fetch `@dataclass` arguments if any.
     dec_args = _dataclass_arguments(class_.decorators)
 
@@ -91,7 +91,9 @@ def _dataclass_parameters(class_: Class) -> dict[str, Parameter]:
     kw_only = dec_args.get("kw_only") == "True"
 
     # Iterate on current attributes to find parameters.
-    parameters: dict[str, Parameter] = {}
+    # Fields not added to `__init__` map to `None`: they still replace
+    # fields of the same name declared in parent classes.
+    parameters: dict[str, Parameter | None] = {}
     for member in class_.members.values():
         if member.is_attribute:
             member = cast("Attribute", member)
@@ -123,6 +125,7 @@ def _dataclass_parameters(class_: Class) -> dict[str, Parameter]:
 
             # Parameter not added to `__init__`, skip it.
             if field_args.get("init") == "False":
+                parameters[member.name] = None
                 continue
 
             # Determine parameter kind. An explicit `field(kw_only=...)` takes
@@ -161,8 +164,8 @@ def _mro(class_: Class) -> list[Class]:
 
 def _dataclass_fields(
     class_: Class,
-    collected: dict[Class, dict[str, Parameter]],
-) -> dict[str, Parameter]:
+    collected: dict[Class, dict[str, Parameter | None]],
+) -> dict[str, Parameter | None]:
     # The fields that `class_.__dataclass_fields__` holds at runtime, collected like Python does.
     # A dataclass gets the fields of each base, own and inherited, from the end of the MRO
     # to its start, then its own fields. A redeclared field replaces the previous one
@@ -171,7 +174,7 @@ def _dataclass_fields(
     # while handling the current package; it is not a global cache because bases
     # can only be resolved once their packages are loaded.
     if class_ not in collected:
-        fields: dict[str, Parameter] = {}
+        fields: dict[str, Parameter | None] = {}
         if _dataclass_decorator(class_.decorators):
             for base in reversed(_mro(class_)):
                 fields.update(_dataclass_fields(base, collected))
@@ -200,7 +203,7 @@ def _reorder_parameters(parameters: list[Parameter]) -> list[Parameter]:
     return pos_only + pos_kw + kw_only
 
 
-def _set_dataclass_init(class_: Class, collected: dict[Class, dict[str, Parameter]]) -> None:
+def _set_dataclass_init(class_: Class, collected: dict[Class, dict[str, Parameter | None]]) -> None:
     # At least one parent dataclass makes the current class a dataclass:
     # that's how `dataclasses.is_dataclass` works.
     if any(_dataclass_decorator(parent.decorators) for parent in _mro(class_)):
@@ -212,8 +215,8 @@ def _set_dataclass_init(class_: Class, collected: dict[Class, dict[str, Paramete
 
     logger.debug("Handling dataclass: %s", class_.path)
 
-    # Collect all fields.
-    init_parameters = list(_dataclass_fields(class_, collected).values())
+    # Collect all fields, then drop those not added to `__init__`.
+    init_parameters = [param for param in _dataclass_fields(class_, collected).values() if param is not None]
 
     # Create `__init__` method with re-ordered parameters.
     init = Function(
@@ -241,7 +244,7 @@ def _del_members_annotated_as_initvar(class_: Class) -> None:
 def _apply_recursively(
     mod_cls: Module | Class,
     processed: set[str],
-    collected: dict[Class, dict[str, Parameter]],
+    collected: dict[Class, dict[str, Parameter | None]],
 ) -> None:
     if mod_cls.canonical_path in processed:
         return

@@ -266,3 +266,150 @@ def test_fields_merged_from_each_base_in_diamond_inheritance(plain_decorator: st
     # `Plain` comes after `Override` in reversed MRO order, and brings back `Base.x`.
     assert [param.name for param in init.parameters] == ["self", "x"]
     assert init.parameters["x"].default == "0"
+
+
+def test_inherited_field_redeclared_as_non_init() -> None:
+    """Test that a field redeclared with `init=False` in a subclass is removed from the `__init__` method."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class Base:
+            x: int
+            y: int = 0
+
+        @dataclass
+        class Point(Base):
+            y: int = field(default=1, init=False)
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "x"]
+
+
+def test_non_init_field_stays_hidden_in_subclasses() -> None:
+    """Test that a field redeclared with `init=False` stays out of the `__init__` method of further subclasses."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class Base:
+            x: int
+            y: int = 0
+
+        @dataclass
+        class Middle(Base):
+            y: int = field(default=1, init=False)
+
+        @dataclass
+        class Point(Middle):
+            z: int = 0
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "x", "z"]
+
+
+def test_redeclared_field_keeps_its_position() -> None:
+    """Test that a field redeclared in a subclass keeps the position of its first declaration."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class Base:
+            x: int = 0
+            y: int = 0
+            z: int = 0
+
+        @dataclass
+        class Middle(Base):
+            y: int = field(default=1, init=False)
+
+        @dataclass
+        class Point(Middle):
+            y: int = 2
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "x", "y", "z"]
+    assert init.parameters["y"].default == "2"
+
+
+def test_fields_inherited_through_multiple_bases() -> None:
+    """Test that each base contributes all its fields, inherited ones included, like in Python."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class Base:
+            x: int = 0
+
+        @dataclass
+        class Hidden(Base):
+            x: int = field(default=1, init=False)
+
+        @dataclass
+        class Plain(Base):
+            pass
+
+        @dataclass
+        class Point(Plain, Hidden):
+            pass
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    # `Plain` comes after `Hidden` in reversed MRO order, and brings back `Base.x`.
+    assert [param.name for param in init.parameters] == ["self", "x"]
+    assert init.parameters["x"].default == "0"
+
+
+def test_fields_inherited_through_a_plain_base() -> None:
+    """Test that a base that is not a dataclass contributes the fields of the first dataclass in its MRO."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass
+        class Base:
+            x: int = 0
+
+        @dataclass
+        class Hidden(Base):
+            x: int = field(default=1, init=False)
+
+        class Plain(Base):
+            pass
+
+        @dataclass
+        class Point(Plain, Hidden):
+            pass
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    # Like in Python, `Plain` brings back the fields of `Base` after `Hidden` in reversed MRO order.
+    assert [param.name for param in init.parameters] == ["self", "x"]
+    assert init.parameters["x"].default == "0"
