@@ -184,3 +184,49 @@ def test_all_kw_only_fields() -> None:
     assert "y" in init.parameters
     assert init.parameters["x"].kind is ParameterKind.keyword_only
     assert init.parameters["y"].kind is ParameterKind.keyword_only
+
+
+def test_field_kw_only_overrides_class_kw_only() -> None:
+    """Test that `field(kw_only=False)` takes precedence over `@dataclass(kw_only=True)`."""
+    code = """
+        from dataclasses import dataclass, field
+
+        @dataclass(kw_only=True)
+        class Point:
+            x: int = 0
+            y: int = field(default=0, kw_only=False)
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "y", "x"]
+    assert init.parameters["x"].kind is ParameterKind.keyword_only
+    assert init.parameters["y"].kind is ParameterKind.positional_or_keyword
+
+
+def test_field_kw_only_overrides_kw_only_sentinel() -> None:
+    """Test that `field(kw_only=False)` takes precedence over the `KW_ONLY` sentinel."""
+    code = """
+        from dataclasses import dataclass, field, KW_ONLY
+
+        @dataclass
+        class Point:
+            x: int
+            _: KW_ONLY
+            y: int = 0
+            z: int = field(default=0, kw_only=False)
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "x", "z", "y"]
+    assert init.parameters["y"].kind is ParameterKind.keyword_only
+    assert init.parameters["z"].kind is ParameterKind.positional_or_keyword

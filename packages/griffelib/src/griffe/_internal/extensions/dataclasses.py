@@ -125,10 +125,12 @@ def _dataclass_parameters(class_: Class) -> list[Parameter]:
             if field_args.get("init") == "False":
                 continue
 
-            # Determine parameter kind.
+            # Determine parameter kind. An explicit `field(kw_only=...)` takes
+            # precedence over `@dataclass(kw_only=...)` and the `KW_ONLY` sentinel.
+            field_kw_only = field_args.get("kw_only")
             kind = (
                 ParameterKind.keyword_only
-                if kw_only or field_args.get("kw_only") == "True"
+                if field_kw_only == "True" or (kw_only and field_kw_only != "False")
                 else ParameterKind.positional_or_keyword
             )
 
