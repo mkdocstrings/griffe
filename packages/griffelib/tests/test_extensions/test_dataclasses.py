@@ -413,3 +413,28 @@ def test_fields_inherited_through_a_plain_base() -> None:
     # Like in Python, `Plain` brings back the fields of `Base` after `Hidden` in reversed MRO order.
     assert [param.name for param in init.parameters] == ["self", "x"]
     assert init.parameters["x"].default == "0"
+
+
+def test_inherited_field_redeclared_as_class_variable() -> None:
+    """Test that a field redeclared as a `ClassVar` in a subclass is removed from the `__init__` method."""
+    code = """
+        from dataclasses import dataclass
+        from typing import ClassVar
+
+        @dataclass
+        class Base:
+            x: int = 0
+            y: int = 0
+
+        @dataclass
+        class Point(Base):
+            y: ClassVar[int] = 1
+    """
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "x"]

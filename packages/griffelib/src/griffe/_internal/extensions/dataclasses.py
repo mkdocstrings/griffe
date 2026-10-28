@@ -102,17 +102,17 @@ def _dataclass_parameters(class_: Class) -> dict[str, Parameter | None]:
             if member.annotation is None:
                 continue
 
-            # Attributes that have labels for these characteristics are
-            # not class parameters:
-            # - @property
-            # - @cached_property
-            # - ClassVar annotation
-            if "property" in member.labels or (
-                # TODO: It is better to explicitly check for `ClassVar`, but
-                # `Visitor.handle_attribute` unwraps it from the annotation.
-                # Maybe create `internal_labels` and store "classvar" in there.
-                "class-attribute" in member.labels and "instance-attribute" not in member.labels
-            ):
+            # Attributes labeled with @property or @cached_property are not class parameters.
+            if "property" in member.labels:
+                continue
+
+            # Attributes annotated with ClassVar are not class parameters,
+            # but still replace fields of the same name declared in parent classes.
+            # TODO: It is better to explicitly check for `ClassVar`, but
+            # `Visitor.handle_attribute` unwraps it from the annotation.
+            # Maybe create `internal_labels` and store "classvar" in there.
+            if "class-attribute" in member.labels and "instance-attribute" not in member.labels:
+                parameters[member.name] = None
                 continue
 
             # Start of keyword-only parameters.
