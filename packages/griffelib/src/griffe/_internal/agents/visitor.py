@@ -795,7 +795,7 @@ class Visitor:
         """
         if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # ty:ignore[unresolved-attribute]
             condition = safe_get_condition(node.test, parent=self.current, log_level=None)
-            if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
+            if condition and condition.canonical_path == "typing.TYPE_CHECKING":
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False
