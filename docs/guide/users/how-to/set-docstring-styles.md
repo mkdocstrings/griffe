@@ -1,6 +1,6 @@
 # Setting the right docstring style for every docstring
 
-Griffe attaches the specified docstring style and parsing options to each object in the tree of the package(s) you load. If your package(s) use several docstring styles, some of these objects will have the wrong style attached to them. This is problematic because other Griffe extensions rely on this attached style to parse docstrings and modify them. To ensure extensions work correctly, make sure each object has the *right style* attached before its docstring is parsed.
+Griffe attaches the specified docstring style and parsing options to each object in the tree of the package(s) you load. If your package(s) use several docstring styles, some of these objects will have the wrong style attached to them. This is problematic because other Griffe extensions rely on this attached style to parse docstrings and modify them. To ensure extensions work correctly, make sure each object has the _right style_ attached before its docstring is parsed.
 
 There are currently two ways to make sure objects have the right docstring style attached as early as possible:
 
@@ -15,7 +15,7 @@ Depending on the markup you use in docstrings, you can add a comment that tells 
 
 === "Markdown"
 
-    ```python
+    ``` python
     def function():
         """Summary.
 
@@ -27,7 +27,7 @@ Depending on the markup you use in docstrings, you can add a comment that tells 
 
 === "reStructuredText"
 
-    ```python
+    ``` python
     def function():
         """Summary.
 
@@ -39,7 +39,7 @@ Depending on the markup you use in docstrings, you can add a comment that tells 
 
 Your Griffe extension can then use regular expressions to search for such comments. For example with Markdown (HTML) comments:
 
-```python
+``` python
 import re
 import griffe
 
@@ -58,7 +58,7 @@ class ApplyDocstringStyle(griffe.Extension):
 
 You could also decide to add a trailing comment to your docstrings to indicate which style to use.
 
-```python
+``` python
 def function():
     """Summary.
 
@@ -68,7 +68,7 @@ def function():
 
 Your extension can then pick up this comment to assign the right style:
 
-```python
+``` python
 import re
 import griffe
 
@@ -87,7 +87,7 @@ class ApplyDocstringStyle(griffe.Extension):
 
 Finally, you could decide to map a list of objects to the docstring style they should use. Your extension can either accept options, or it could hard-code that list:
 
-```python
+``` python
 import griffe
 from fnmatch import fnmatch
 
@@ -114,7 +114,7 @@ class ApplyDocstringStyle(griffe.Extension):
 
 Example configuration in MkDocs:
 
-```yaml
+``` yaml
 plugins:
 - mkdocstrings:
     handlers:

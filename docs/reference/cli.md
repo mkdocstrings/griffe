@@ -2,7 +2,7 @@
 
 Use this page to look up options for the `griffe` command. For a complete example, start with the [introduction](../introduction.md#command-line-tool).
 
-```python exec="true" idprefix="cli-" id="cli-reference"
+``` python exec="true" idprefix="cli-" id="cli-reference"
 import argparse
 import sys
 

@@ -1,6 +1,7 @@
 # Management commands
 
 !!! info "For contributors and maintainers"
+
     Use this page to choose a development task and find its options. Start with [environment setup](setup.md) if dependencies are not installed.
 
 The entry-point to run commands to manage the project is our Python `make` script, located in the `scripts` folder. You can either call it directly with `./scripts/make`, or you can use [direnv](https://direnv.net/) to add the script to your command line path. Once direnv is installed and hooked into your shell, allow it once for this directory with `direnv allow`. Now you can directly call the Python script with `make`. The `Makefile` is just here to provide auto-completion.
@@ -9,7 +10,7 @@ On this page, a **command** is a built-in operation of the `make` script. A **ta
 
 Try typing `make` or `make help` to show the available commands.
 
-```console exec="1" source="console" id="make-help1"
+``` console exec="1" source="console" id="make-help1"
 $ alias make="$PWD/scripts/make"; cd  # markdown-exec: hide
 $ make
 ```
@@ -18,17 +19,17 @@ $ make
 
 Commands are always available: they don't require any Python dependency to be installed.
 
-| Command | Use it to |
-| --- | --- |
-| [`setup`](#command-setup) | Install development dependencies in the virtual environments. |
-| [`help`](#command-help) | List operations or show a task's options. |
-| [`run`](#command-run) | Run a tool in the default environment. |
-| [`multirun`](#command-multirun) | Run a tool for all configured Python versions. |
-| [`allrun`](#command-allrun) | Run a tool in both the default and version-specific environments. |
-| [`3.x`](#command-3.x) | Run a tool with a particular Python version. |
-| [`clean`](#command-clean) | Remove build artifacts and caches. |
-| [`vscode`](#command-vscode) | Configure VSCode for development. |
-| [`zed`](#command-zed) | Configure Zed for development. |
+| Command                         | Use it to                                                         |
+| ------------------------------- | ----------------------------------------------------------------- |
+| [`setup`](#command-setup)       | Install development dependencies in the virtual environments.     |
+| [`help`](#command-help)         | List operations or show a task's options.                         |
+| [`run`](#command-run)           | Run a tool in the default environment.                            |
+| [`multirun`](#command-multirun) | Run a tool for all configured Python versions.                    |
+| [`allrun`](#command-allrun)     | Run a tool in both the default and version-specific environments. |
+| [`3.x`](#command-3.x)           | Run a tool with a particular Python version.                      |
+| [`clean`](#command-clean)       | Remove build artifacts and caches.                                |
+| [`vscode`](#command-vscode)     | Configure VSCode for development.                                 |
+| [`zed`](#command-zed)           | Configure Zed for development.                                    |
 
 [](){#command-setup}
 
@@ -145,27 +146,27 @@ Tasks require the Python dependencies to be installed. They use various tools an
 - `make TASK`, the main, configured way to run a task
 - `make run duty TASK`, to run a task in the default environment
 - `make multirun duty TASK`, to run a task on all supported Python versions
-- `make allrun duty TASK`, to run a task in *all* environments
+- `make allrun duty TASK`, to run a task in _all_ environments
 - `make 3.x duty TASK`, to run a task on a specific Python version
 
-| Task | Use it to |
-| --- | --- |
-| [`build`](#task-build) | Build distributions locally to check packaging. |
-| [`changelog`](#task-changelog) | Prepare a changelog entry before a release (maintainers). |
-| [`check`](#task-check) | Run all checks before submitting changes. |
-| [`check-api`](#task-check-api) | Look for breaking changes after editing the public API. |
-| [`check-docs`](#task-check-docs) | Build documentation and report warnings as errors. |
-| [`check-quality`](#task-check-quality) | Check code style and lint rules. |
-| [`check-security`](#task-check-security) | Audit dependencies and GitHub Actions workflows. |
-| [`check-types`](#task-check-types) | Check types after changing annotations or implementation. |
-| [`coverage`](#task-coverage) | Find code that tests do not cover. |
-| [`docs`](#task-docs) | Preview documentation while editing. |
-| [`docs-deploy`](#task-docs-deploy) | Publish the documentation to GitHub Pages (maintainers). |
-| [`format`](#task-format) | Format Python code and apply automatic lint fixes. |
-| [`fuzz`](#task-fuzz) | Search for static analysis failures with generated code. |
-| [`publish`](#task-publish) | Upload built distributions to PyPI (maintainers). |
-| [`release`](#task-release) | Tag and publish a new version (maintainers). |
-| [`test`](#task-test) | Check behavior after changing code. |
+| Task                                     | Use it to                                                 |
+| ---------------------------------------- | --------------------------------------------------------- |
+| [`build`](#task-build)                   | Build distributions locally to check packaging.           |
+| [`changelog`](#task-changelog)           | Prepare a changelog entry before a release (maintainers). |
+| [`check`](#task-check)                   | Run all checks before submitting changes.                 |
+| [`check-api`](#task-check-api)           | Look for breaking changes after editing the public API.   |
+| [`check-docs`](#task-check-docs)         | Build documentation and report warnings as errors.        |
+| [`check-quality`](#task-check-quality)   | Check code style and lint rules.                          |
+| [`check-security`](#task-check-security) | Audit dependencies and GitHub Actions workflows.          |
+| [`check-types`](#task-check-types)       | Check types after changing annotations or implementation. |
+| [`coverage`](#task-coverage)             | Find code that tests do not cover.                        |
+| [`docs`](#task-docs)                     | Preview documentation while editing.                      |
+| [`docs-deploy`](#task-docs-deploy)       | Publish the documentation to GitHub Pages (maintainers).  |
+| [`format`](#task-format)                 | Format Python code and apply automatic lint fixes.        |
+| [`fuzz`](#task-fuzz)                     | Search for static analysis failures with generated code.  |
+| [`publish`](#task-publish)               | Upload built distributions to PyPI (maintainers).         |
+| [`release`](#task-release)               | Tag and publish a new version (maintainers).              |
+| [`test`](#task-test)                     | Check behavior after changing code.                       |
 
 [](){#task-build}
 
@@ -257,7 +258,7 @@ After editing Python code, run `make check-quality` to find lint violations. Fix
 
 After changing dependencies or GitHub Actions workflows, run these audits to find known vulnerabilities and workflow security issues:
 
-```bash
+``` bash
 make check-security
 ```
 
@@ -345,7 +346,7 @@ Before checking Python changes, run `make format` to apply formatting and automa
 
 When investigating static analysis failures, generate a small set of Python modules and check whether Griffe can visit them:
 
-```bash
+``` bash
 make fuzz size=5
 ```
 
@@ -379,7 +380,7 @@ After building release distributions, maintainers can run `make publish` to uplo
 
 After reviewing the changelog, maintainers can publish the corresponding version with:
 
-```bash
+``` bash
 make release version=7.8.9
 ```
 
@@ -401,7 +402,7 @@ After fixing a bug, run `make test` to check for regressions across the configur
 
 To focus on a particular area in the default environment, pass Pytest arguments through `make run`:
 
-```bash
+``` bash
 make run duty test -- -k test_finder
 ```
 

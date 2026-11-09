@@ -9,7 +9,7 @@
 
 This extension reads Sphinx comments placed above attribute assignments and uses them as docstrings.
 
-```python
+``` python
 #: Summary of `module_attr`.
 module_attr = "hello"
 
@@ -31,6 +31,6 @@ Comments are treated exactly like regular docstrings: they are "cleaned" (dedent
 
 Trailing comments are not supported:
 
-```python
+``` python
 module_attr  #: This is not supported.
 ```

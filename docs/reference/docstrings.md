@@ -17,11 +17,11 @@ No assumption is made on the markup used in docstrings: it's retrieved as regula
 
 Google-style docstrings, see [Napoleon's documentation][napoleon].
 
-### Syntax {#google-syntax}
+### Syntax { #google-syntax }
 
 Sections are written like this:
 
-```text
+``` text
 section identifier: optional section title
     section contents
 ```
@@ -30,7 +30,7 @@ All sections identifiers are case-insensitive. All sections support multiple lin
 
 ❌ This is **invalid** and will be parsed as regular markup:
 
-```python
+``` python
 Some text.
 Note: # (1)!
     Some information.
@@ -42,7 +42,7 @@ Note: # (1)!
 
 ❌ This is **invalid** and will be parsed as regular markup:
 
-```python
+``` python
 Some text.
 
 Note: # (1)!
@@ -56,7 +56,7 @@ Note: # (1)!
 
 ✅ This is **valid** and will parsed as a text section followed by a note admonition:
 
-```python
+``` python
 Some text.
 
 Note:
@@ -67,13 +67,13 @@ Note:
 
 Find out possibly invalid section syntax by grepping for "reasons" in Griffe debug logs:
 
-```bash
+``` bash
 griffe dump -Ldebug -o/dev/null -fdgoogle your_package 2>&1 | grep reasons
 ```
 
 Some sections support documenting multiple items (attributes, parameters, etc.). When multiple items are supported, each item description can use multiple lines, and continuation lines must be indented once more so that the parser is able to differentiate items.
 
-```python
+``` python
 def foo(a, b):
     """Foo.
 
@@ -88,7 +88,7 @@ def foo(a, b):
 
 It's possible to start a description with a newline if you find it less confusing:
 
-```python
+``` python
 def foo(a, b):
     """Foo.
 
@@ -102,7 +102,7 @@ def foo(a, b):
     """
 ```
 
-### Admonitions {#google-admonitions}
+### Admonitions { #google-admonitions }
 
 When a section identifier does not match one of the [supported sections](#google-sections), the section is parsed as an "admonition" (or "callout").
 
@@ -116,7 +116,7 @@ Custom section titles are preserved in admonitions: `Tip: Check this out:` is pa
 
 It is up to any downstream documentation renderer to make use of these kinds and titles.
 
-### Parser options {#google-options}
+### Parser options { #google-options }
 
 The parser accepts a few options:
 
@@ -131,17 +131,17 @@ The parser accepts a few options:
 - `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
 - `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
-### Sections {#google-sections}
+### Sections { #google-sections }
 
 The following sections are supported.
 
-#### Attributes {#google-section-attributes}
+#### Attributes { #google-section-attributes }
 
 - Multiple items allowed
 
 Attributes sections allow to document attributes of a module, class, or class instance. They should be used in modules and classes docstrings only.
 
-```python
+``` python
 """My module.
 
 Attributes:
@@ -169,7 +169,7 @@ class MyClass:
 
 Type annotations are fetched from the related attributes definitions. You can override those by adding types between parentheses before the colon:
 
-```python
+``` python
 """My module.
 
 Attributes:
@@ -181,13 +181,13 @@ Attributes:
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting an attribute with `attr_name (attr_type): Attribute description`, `attr_type` will be resolved using the scope of the docstrings' parent object (class or module). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Functions/Methods {#google-section-functions}
+#### Functions/Methods { #google-section-functions }
 
 - Multiple items allowed
 
 Functions or Methods sections allow to document functions of a module, or methods of a class. They should be used in modules and classes docstrings only.
 
-```python
+``` python
 """My module.
 
 Functions:
@@ -222,7 +222,7 @@ class MyClass:
 
 It's possible to write the function/method signature as well as its name:
 
-```python
+``` python
 """
 Functions:
     foo(): Description for `foo`.
@@ -232,13 +232,13 @@ Functions:
 
 The signatures do not have to match the real ones: you can shorten them to only show the important parameters.
 
-#### Classes {#google-section-classes}
+#### Classes { #google-section-classes }
 
 - Multiple items allowed
 
 Classes sections allow to document classes of a module or class. They should be used in modules and classes docstrings only.
 
-```python
+``` python
 """My module.
 
 Classes:
@@ -273,7 +273,7 @@ class MyClass:
 
 It's possible to write the class signature as well as its name:
 
-```python
+``` python
 """
 Functions:
     Foo(): Description for `Foo`.
@@ -283,20 +283,20 @@ Functions:
 
 The signatures do not have to match the real ones: you can shorten them to only show the important initialization parameters.
 
-#### Modules {#google-section-modules}
+#### Modules { #google-section-modules }
 
 - Multiple items allowed
 
 Modules sections allow to document submodules of a module. They should be used in modules docstrings only.
 
-```tree
+``` tree
 my_pkg/
     __init__.py
     foo.py
     bar.py
 ```
 
-```python title="my_pkg/__init__.py"
+``` python title="my_pkg/__init__.py"
 """My package.
 
 Modules:
@@ -305,11 +305,11 @@ Modules:
 """
 ```
 
-#### Examples {#google-section-examples}
+#### Examples { #google-section-examples }
 
 Examples sections allow to add examples of Python code without the use of markup code blocks. They are a mix of prose and interactive console snippets. They can be used in every docstring.
 
-```python
+``` python
 """My module.
 
 Examples:
@@ -327,17 +327,17 @@ Examples:
 """
 ```
 
-WARNING: **Not the same as *Example* sections.**
-*Example* (singular) sections are parsed as admonitions. Console code blocks will only be understood in *Examples* (plural) sections.
+WARNING: **Not the same as _Example_ sections.**
+_Example_ (singular) sections are parsed as admonitions. Console code blocks will only be understood in _Examples_ (plural) sections.
 
-#### Parameters {#google-section-parameters}
+#### Parameters { #google-section-parameters }
 
 - Aliases: Args, Arguments, Params
 - Multiple items allowed
 
 Parameters sections allow to document parameters of a function. They are typically used in functions docstrings, but can also be used in dataclasses docstrings.
 
-```python
+``` python
 def foo(a: int, b: str):
     """Foo.
 
@@ -347,7 +347,7 @@ def foo(a: int, b: str):
     """
 ```
 
-```python
+``` python
 from dataclasses import dataclass
 
 
@@ -366,7 +366,7 @@ class Foo:
 
 Type annotations are fetched from the related parameters definitions. You can override those by adding types between parentheses before the colon:
 
-```python
+``` python
 """My function.
 
 Parameters:
@@ -378,14 +378,14 @@ Parameters:
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting a parameter with `param_name (param_type): Parameter description`, `param_type` will be resolved using the scope of the function (or class). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Other Parameters {#google-section-other-parameters}
+#### Other Parameters { #google-section-other-parameters }
 
 - Aliases: Keyword Args, Keyword Arguments, Other Args, Other Arguments, Other Params
 - Multiple items allowed
 
 Other parameters sections allow to document secondary parameters such as variadic keyword arguments, or parameters that should be of lesser interest to the user. They are used the same way Parameters sections are, but can also be useful in decorators / to document returned callables.
 
-```python
+``` python
 def foo(a, b, **kwargs):
     """Foo.
 
@@ -399,7 +399,7 @@ def foo(a, b, **kwargs):
     """
 ```
 
-```python
+``` python
 def foo(a, b):
     """Returns a callable.
 
@@ -421,14 +421,14 @@ def foo(a, b):
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See the same tip for parameters.
 
-#### Raises {#google-section-raises}
+#### Raises { #google-section-raises }
 
 - Aliases: Exceptions
 - Multiple items allowed
 
 Raises sections allow to document exceptions that are raised by a function. They are usually only used in functions docstrings.
 
-```python
+``` python
 def foo(a: int):
     """Foo.
 
@@ -445,14 +445,14 @@ def foo(a: int):
 TIP: **Exceptions names are resolved using the function's scope.**
 `ValueError` and other built-in exceptions are resolved as such. You can document custom exception, using the names available in the current scope, for example `my_exceptions.MyCustomException` or `MyCustomException` directly, depending on what you imported/defined in the current module.
 
-#### Warns {#google-section-warns}
+#### Warns { #google-section-warns }
 
 - Aliases: Warnings
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code. They are usually only used in functions docstrings.
 
-```python
+``` python
 import warnings
 
 
@@ -476,13 +476,13 @@ TIP: **Warnings names are resolved using the function's scope.**
 >     This is a warning.
 > ```
 
-#### Yields {#google-section-yields}
+#### Yields { #google-section-yields }
 
 - Multiple items allowed
 
 Yields sections allow to document values that generator yield. They should be used only in generators docstrings. Documented items can be given a name when it makes sense.
 
-```python
+``` python
 from typing import Iterator
 
 
@@ -498,7 +498,7 @@ def foo() -> Iterator[int]:
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator` or `typing.Iterator`. If your generator yields tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
 
-```python
+``` python
 from datetime import datetime
 
 
@@ -517,7 +517,7 @@ def foo() -> Iterator[tuple[float, float, datetime]]:
 
 You have to indent each continuation line when documenting yielded values, even if there's only one value yielded:
 
-```python
+``` python
 """Foo.
 
 Yields:
@@ -531,7 +531,7 @@ If you don't want to indent continuation lines for the only yielded value, use t
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
 
-```python
+``` python
 """Foo.
 
 Yields:
@@ -543,7 +543,7 @@ Yields:
 
 If you want to specify the type without a name, you still have to wrap the type in parentheses:
 
-```python
+``` python
 """Foo.
 
 Yields:
@@ -558,13 +558,13 @@ If you don't want to wrap the type in parentheses, use the [`returns_named_value
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
-#### Receives {#google-section-receives}
+#### Receives { #google-section-receives }
 
 - Multiple items allowed
 
 Receives sections allow to document values that can be sent to generators using their `send` method. They should be used only in generators docstrings. Documented items can be given a name when it makes sense.
 
-```python
+``` python
 from typing import Generator
 
 
@@ -606,7 +606,7 @@ def foo() -> Generator[int, str, None]:
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator`. If your generator is able to receive tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
 
-```python
+``` python
 def foo() -> Generator[int, tuple[str, bool], None]:
     """Foo.
 
@@ -621,7 +621,7 @@ def foo() -> Generator[int, tuple[str, bool], None]:
 
 You have to indent each continuation line when documenting received values, even if there's only one value received:
 
-```python
+``` python
 """Foo.
 
 Receives:
@@ -635,7 +635,7 @@ If you don't want to indent continuation lines for the only received value, use 
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
 
-```python
+``` python
 """Foo.
 
 Receives:
@@ -646,7 +646,7 @@ Receives:
 
 If you want to specify the type without a name, you still have to wrap the type in parentheses:
 
-```python
+``` python
 """Foo.
 
 Receives:
@@ -660,13 +660,13 @@ If you don't want to wrap the type in parentheses, use the [`receives_named_valu
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
-#### Returns {#google-section-returns}
+#### Returns { #google-section-returns }
 
 - Multiple items allowed
 
 Returns sections allow to document values returned by functions. They should be used only in functions docstrings. Documented items can be given a name when it makes sense.
 
-```python
+``` python
 import random
 
 
@@ -681,7 +681,7 @@ def foo() -> int:
 
 Type annotations are fetched from the function return annotation. If your function returns tuples of values, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
 
-```python
+``` python
 def foo() -> tuple[bool, float]:
     """Foo.
 
@@ -696,7 +696,7 @@ def foo() -> tuple[bool, float]:
 
 You have to indent each continuation line when documenting returned values, even if there's only one value returned:
 
-```python
+``` python
 """Foo.
 
 Returns:
@@ -710,7 +710,7 @@ If you don't want to indent continuation lines for the only returned value, use 
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
 
-```python
+``` python
 """Foo.
 
 Returns:
@@ -721,7 +721,7 @@ Returns:
 
 If you want to specify the type without a name, you still have to wrap the type in parentheses:
 
-```python
+``` python
 """Foo.
 
 Returns:
@@ -739,11 +739,11 @@ See previous tips for types in docstrings.
 
 Numpydoc docstrings, see [Numpydoc's documentation][numpydoc].
 
-### Syntax {#numpydoc-syntax}
+### Syntax { #numpydoc-syntax }
 
 Sections are written like this:
 
-```text
+``` text
 section identifier
 ------------------
 section contents
@@ -753,7 +753,7 @@ All sections identifiers are case-insensitive. All sections support multiple lin
 
 Some sections support documenting items items. Item descriptions start on a new, indented line. When multiple items are supported, each item description can use multiple lines.
 
-```python
+``` python
 def foo(a, b):
     """Foo.
 
@@ -771,18 +771,18 @@ def foo(a, b):
 
 For items that have an optional name and type, several syntaxes are supported:
 
-- specifying both the name and type:
+-   specifying both the name and type:
 
-    ```python
+    ``` python
     """
     name : type
         description
     """
     ```
 
-- specifying just the name:
+-   specifying just the name:
 
-    ```python
+    ``` python
     """
     name
         description
@@ -791,32 +791,32 @@ For items that have an optional name and type, several syntaxes are supported:
 
     or
 
-    ```python
+    ``` python
     """
     name :
         description
     """
     ```
 
-- specifying just the type:
+-   specifying just the type:
 
-    ```python
+    ``` python
     """
     : type
         description
     """
     ```
 
-- specifying neither the name nor type:
+-   specifying neither the name nor type:
 
-    ```python
+    ``` python
     """
     :
         description
     """
     ```
 
-### Admonitions {#numpydoc-admonitions}
+### Admonitions { #numpydoc-admonitions }
 
 When a section identifier does not match one of the [supported sections](#numpydoc-sections), the section is parsed as an "admonition" (or "callout").
 
@@ -826,7 +826,7 @@ The kind is obtained by lower-casing the identifier and replacing spaces with da
 
 It is up to any downstream documentation renderer to make use of these kinds.
 
-### Parser options {#numpydoc-options}
+### Parser options { #numpydoc-options }
 
 The parser accepts a few options:
 
@@ -836,17 +836,17 @@ The parser accepts a few options:
 - `warn_missing_types`: Warn about missing type or annotation for parameters, return values, etc. Default: true.
 - `warnings`: Generally enable/disable warnings when parsing docstrings. Default: true.
 
-### Sections {#numpydoc-sections}
+### Sections { #numpydoc-sections }
 
 The following sections are supported.
 
-#### Attributes {#numpydoc-section-attributes}
+#### Attributes { #numpydoc-section-attributes }
 
 - Multiple items allowed
 
 Attributes sections allow to document attributes of a module, class, or class instance. They should be used in modules and classes docstrings only.
 
-```python
+``` python
 """My module.
 
 Attributes
@@ -880,7 +880,7 @@ class MyClass:
 
 Type annotations are fetched from the related attributes definitions. You can override those by adding types between parentheses before the colon:
 
-```python
+``` python
 """My module.
 
 Attributes
@@ -895,13 +895,13 @@ bar : Boolean
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting an attribute with `attr_name : attr_type`, `attr_type` will be resolved using the scope of the docstrings' parent object (class or module). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Functions/Methods {#numpydoc-section-functions}
+#### Functions/Methods { #numpydoc-section-functions }
 
 - Multiple items allowed
 
 Functions or Methods sections allow to document functions of a module, or methods of a class. They should be used in modules and classes docstrings only.
 
-```python
+``` python
 """My module.
 
 Functions
@@ -942,7 +942,7 @@ class MyClass:
 
 It's possible to write the function/method signature as well as its name:
 
-```python
+``` python
 """
 Functions
 ---------
@@ -955,13 +955,13 @@ bar(baz=1)
 
 The signatures do not have to match the real ones: you can shorten them to only show the important parameters.
 
-#### Classes {#numpydoc-section-classes}
+#### Classes { #numpydoc-section-classes }
 
 - Multiple items allowed
 
 Classes sections allow to document classes of a module or class. They should be used in modules and classes docstrings only.
 
-```python
+``` python
 """My module.
 
 Classes
@@ -1002,7 +1002,7 @@ class MyClass:
 
 It's possible to write the class signature as well as its name:
 
-```python
+``` python
 """
 Functions
 ---------
@@ -1015,20 +1015,20 @@ Bar(baz=1)
 
 The signatures do not have to match the real ones: you can shorten them to only show the important initialization parameters.
 
-#### Modules {#numpydoc-section-modules}
+#### Modules { #numpydoc-section-modules }
 
 - Multiple items allowed
 
 Modules sections allow to document submodules of a module. They should be used in modules docstrings only.
 
-```tree
+``` tree
 my_pkg/
     __init__.py
     foo.py
     bar.py
 ```
 
-```python title="my_pkg/__init__.py"
+``` python title="my_pkg/__init__.py"
 """My package.
 
 Modules
@@ -1040,11 +1040,11 @@ bar
 """
 ```
 
-#### Examples {#numpydoc-section-examples}
+#### Examples { #numpydoc-section-examples }
 
 Examples sections allow to add examples of Python code without the use of markup code blocks. They are a mix of prose and interactive console snippets. They can be used in every docstring.
 
-```python
+``` python
 """My module.
 
 Examples
@@ -1063,14 +1063,14 @@ Blank lines delimit prose vs. console blocks.
 """
 ```
 
-#### Parameters {#numpydoc-section-parameters}
+#### Parameters { #numpydoc-section-parameters }
 
 - Aliases: Args, Arguments, Params
 - Multiple items allowed
 
 Parameters sections allow to document parameters of a function. They are typically used in functions docstrings, but can also be used in dataclasses docstrings.
 
-```python
+``` python
 def foo(a: int, b: str):
     """Foo.
 
@@ -1083,7 +1083,7 @@ def foo(a: int, b: str):
     """
 ```
 
-```python
+``` python
 from dataclasses import dataclass
 
 
@@ -1105,7 +1105,7 @@ class Foo:
 
 Type annotations are fetched from the related parameters definitions. You can override those by adding types between parentheses before the colon:
 
-```python
+``` python
 """My function.
 
 Parameters
@@ -1120,14 +1120,14 @@ bar : String
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 When documenting a parameter with `param_name : param_type`, `param_type` will be resolved using the scope of the function (or class). For example, a type of `list[str]` will be parsed just as if it was an actual Python annotation. You can therefore use complex types (available in the current scope) in docstrings, for example `Optional[Union[int, Tuple[float, float]]]`.
 
-#### Other Parameters {#numpydoc-section-other-parameters}
+#### Other Parameters { #numpydoc-section-other-parameters }
 
 - Aliases: Keyword Args, Keyword Arguments, Other Args, Other Arguments, Other Params
 - Multiple items allowed
 
 Other parameters sections allow to document secondary parameters such as variadic keyword arguments, or parameters that should be of lesser interest to the user. They are used the same way Parameters sections are.
 
-```python
+``` python
 def foo(a, b, **kwargs):
     """Foo.
 
@@ -1150,14 +1150,14 @@ def foo(a, b, **kwargs):
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See the same tip for parameters.
 
-#### Raises {#numpydoc-section-raises}
+#### Raises { #numpydoc-section-raises }
 
 - Aliases: Exceptions
 - Multiple items allowed
 
 Raises sections allow to document exceptions that are raised by a function. They are usually only used in functions docstrings.
 
-```python
+``` python
 def foo(a: int):
     """Foo.
 
@@ -1178,13 +1178,13 @@ def foo(a: int):
 TIP: **Exceptions names are resolved using the function's scope.**
 `ValueError` and other built-in exceptions are resolved as such. You can document custom exception, using the names available in the current scope, for example `my_exceptions.MyCustomException` or `MyCustomException` directly, depending on what you imported/defined in the current module.
 
-#### Warns {#numpydoc-section-warns}
+#### Warns { #numpydoc-section-warns }
 
 - Multiple items allowed
 
 Warns sections allow to document warnings emitted by the following code. They are usually only used in functions docstrings.
 
-```python
+``` python
 import warnings
 
 
@@ -1202,13 +1202,13 @@ def foo():
 TIP: **Warnings names are resolved using the function's scope.**
 `UserWarning` and other built-in warnings are resolved as such. You can document custom warnings, using the names available in the current scope, for example `my_warnings.MyCustomWarning` or `MyCustomWarning` directly, depending on what you imported/defined in the current module.
 
-#### Yields {#numpydoc-section-yields}
+#### Yields { #numpydoc-section-yields }
 
 - Multiple items allowed
 
 Yields sections allow to document values that generator yield. They should be used only in generators docstrings. Documented items can be given a name when it makes sense.
 
-```python
+``` python
 from typing import Iterator
 
 
@@ -1226,7 +1226,7 @@ def foo() -> Iterator[int]:
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator` or `typing.Iterator`. If your generator yields tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
 
-```python
+``` python
 from datetime import datetime
 
 
@@ -1247,7 +1247,7 @@ def foo() -> Iterator[tuple[float, float, datetime]]:
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
 
-```python
+``` python
 """Foo.
 
 Yields
@@ -1264,13 +1264,13 @@ t : int
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
-#### Receives {#numpydoc-section-receives}
+#### Receives { #numpydoc-section-receives }
 
 - Multiple items allowed
 
 Receives sections allow to document values that can be sent to generators using their `send` method. They should be used only in generators docstrings. Documented items can be given a name when it makes sense.
 
-```python
+``` python
 from typing import Generator
 
 
@@ -1317,7 +1317,7 @@ def foo() -> Generator[int, str, None]:
 
 Type annotations are fetched from the function return annotation when the annotation is `typing.Generator`. If your generator is able to receive tuples, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
 
-```python
+``` python
 def foo() -> Generator[int, tuple[str, bool], None]:
     """Foo.
 
@@ -1333,7 +1333,7 @@ def foo() -> Generator[int, tuple[str, bool], None]:
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
 
-```python
+``` python
 """Foo.
 
 Receives
@@ -1348,13 +1348,13 @@ flag : int
 TIP: **Types in docstrings are resolved using the docstrings' parent scope.**
 See previous tips for types in docstrings.
 
-#### Returns {#numpydoc-section-returns}
+#### Returns { #numpydoc-section-returns }
 
 - Multiple items allowed
 
 Returns sections allow to document values returned by functions. They should be used only in functions docstrings. Documented items can be given a name when it makes sense.
 
-```python
+``` python
 import random
 
 
@@ -1371,7 +1371,7 @@ def foo() -> int:
 
 Type annotations are fetched from the function return annotation. If your function returns tuples of values, you can document each item of the tuple separately, and the type annotation will be fetched accordingly:
 
-```python
+``` python
 def foo() -> tuple[bool, float]:
     """Foo.
 
@@ -1387,7 +1387,7 @@ def foo() -> tuple[bool, float]:
 
 Type annotations can as usual be overridden using types in parentheses in the docstring itself:
 
-```python
+``` python
 """Foo.
 
 Returns
@@ -1406,7 +1406,7 @@ See previous tips for types in docstrings.
 
 Automatic style detection. This parser will first try to detect the style used in the docstring, and call the corresponding parser on it.
 
-### Parser options {#auto-options}
+### Parser options { #auto-options }
 
 The parser accepts a few options:
 
@@ -1418,6 +1418,7 @@ The parser accepts a few options:
 ## Parsers features
 
 !!! tip "Want to contribute?"
+
     Each red cross is a link to an issue on the bugtracker. You will find some guidance on how to add support for the corresponding item.
 
     The sections are easier to deal in that order:
@@ -1434,7 +1435,7 @@ The parser accepts a few options:
 ### Sections
 
 Section          | Google | Numpy | Sphinx
----------------- | ------ | ----- | ------
+---------------- | ------ | ----- | -------------------------------------------
 Attributes       | ✅     | ✅    | ✅
 Functions        | ✅     | ✅    | ❌
 Methods          | ✅     | ✅    | ❌
@@ -1452,7 +1453,7 @@ Returns          | ✅     | ✅    | ✅
 ### Getting annotations/defaults from parent
 
 Section          | Google | Numpy | Sphinx
----------------- | ------ | ----- | ------
+---------------- | ------ | ----- | ------------------------------------------
 Attributes       | ✅     | ✅    | [❌][issue-parent-sphinx-attributes]
 Functions        | /      | /     | /
 Methods          | /      | /     | /
@@ -1469,21 +1470,21 @@ Returns          | ✅     | ✅    | ✅
 
 ### Cross-references for annotations in docstrings
 
-Section          | Google | Numpy | Sphinx
----------------- | ------ | ----- | ------
-Attributes       | ✅     | ✅    | [❌][issue-xref-sphinx-attributes]
+Section          | Google                           | Numpy                           | Sphinx
+---------------- | -------------------------------- | ------------------------------- | ----------------------------------------
+Attributes       | ✅                               | ✅                              | [❌][issue-xref-sphinx-attributes]
 Functions        | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
 Methods          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
 Classes          | [❌][issue-xref-google-func-cls] | [❌][issue-xref-numpy-func-cls] | /
-Modules          | /      | /     | /
-Examples         | /      | /     | /
-Parameters       | ✅     | ✅    | [❌][issue-xref-sphinx-parameters]
-Other Parameters | ✅     | ✅    | [❌][issue-xref-sphinx-other-parameters]
-Raises           | ✅     | ✅    | [❌][issue-xref-sphinx-raises]
-Warns            | ✅     | ✅    | [❌][issue-xref-sphinx-warns]
-Yields           | ✅     | ✅    | [❌][issue-xref-sphinx-yields]
-Receives         | ✅     | ✅    | [❌][issue-xref-sphinx-receives]
-Returns          | ✅     | ✅    | [❌][issue-xref-sphinx-returns]
+Modules          | /                                | /                               | /
+Examples         | /                                | /                               | /
+Parameters       | ✅                               | ✅                              | [❌][issue-xref-sphinx-parameters]
+Other Parameters | ✅                               | ✅                              | [❌][issue-xref-sphinx-other-parameters]
+Raises           | ✅                               | ✅                              | [❌][issue-xref-sphinx-raises]
+Warns            | ✅                               | ✅                              | [❌][issue-xref-sphinx-warns]
+Yields           | ✅                               | ✅                              | [❌][issue-xref-sphinx-yields]
+Receives         | ✅                               | ✅                              | [❌][issue-xref-sphinx-receives]
+Returns          | ✅                               | ✅                              | [❌][issue-xref-sphinx-returns]
 
 [doctest]: https://docs.python.org/3/library/doctest.html#module-doctest
 [doctest flags]: https://docs.python.org/3/library/doctest.html#option-flags

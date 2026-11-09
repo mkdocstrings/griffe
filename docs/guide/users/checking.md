@@ -8,21 +8,21 @@ Griffe is able to compare two snapshots of your project to detect API breakages 
 
 By default, Griffe will compare the current code to the latest tag:
 
-```console
+``` console
 $ griffe check mypackage
 ```
 
 To specify another Git reference to check against, use the `--against` or `-a` option:
 
-```console
+``` console
 $ griffe check mypackage -a 0.2.0
 ```
 
 You can specify a Git tag, commit (hash), or even a branch: Griffe will create a worktree at this reference in a temporary directory, and clean it up after finishing.
 
-If you want to also specify the *base* reference to use (instead of the current code), use the `--base` or `-b` option. Some examples:
+If you want to also specify the _base_ reference to use (instead of the current code), use the `--base` or `-b` option. Some examples:
 
-```console
+``` console
 $ griffe check mypackage -b HEAD -a 2.0.0
 $ griffe check mypackage -b 2.0.0 -a 1.0.0
 $ griffe check mypackage -b fix-issue-90 -a 1.2.3
@@ -33,13 +33,13 @@ TIP: **Important:** Remember that the base is the most recent reference, and the
 
 The package name you pass to `griffe check` must be found relative to the repository root. For Griffe to find packages in subfolders, pass the parent subfolder to the `--search` or `-s` option. Example for `src`-layouts:
 
-```console
+``` console
 $ griffe check -s src griffe
 ```
 
 Example in a monorepo, within a deeper file tree:
 
-```console
+``` console
 $ griffe check -s back/services/identity-provider/src identity_provider
 ```
 
@@ -47,31 +47,31 @@ $ griffe check -s back/services/identity-provider/src identity_provider
 
 It's also possible to directly **check packages from PyPI.org** (or other indexes configured through `PIP_INDEX_URL`). This feature requires that you install Griffe with the `pypi` extra:
 
-```console
+``` console
 $ pip install griffe[pypi]
 ```
 
 The command syntax is:
 
-```console
+``` console
 $ griffe check package_name -b project-name==2.0 -a project-name==1.0
 ```
 
 You can let Griffe guess the package name by passing an empty string:
 
-```console
+``` console
 $ griffe check "" -b project-name==2.0 -a project-name==1.0
 ```
 
 [PEP 508 version specifiers](https://peps.python.org/pep-0508/) are supported (`<`, `<=`, `!=`, `==`, `>=`, `>`, `~=`). For example, to compare v2 against the version just before it:
 
-```console
+``` console
 $ griffe check "" -b project-name==2.0 -a project-name<2.0
 ```
 
 Without a version specifier on the base reference, or without a base reference at all, Griffe will use the latest available version. The two following commands compare the latest version against v1:
 
-```console
+``` console
 $ griffe check "" -b project-name -a project-name==1.0
 $ griffe check "" -a project-name==1.0
 ```
@@ -82,7 +82,7 @@ Griffe will actually install packages in a cache directory. It means a few thing
 
 To programmatically check for API breaking changes, you have to load two snapshots of your code base, for example using our [`load_git()`][griffe.load_git] utility, and then passing them both to the [`find_breaking_changes()`][griffe.find_breaking_changes] function. This function will yield instances of [`Breakage`][griffe.Breakage]. It's up to you how you want to use these breakage instances.
 
-```python
+``` python
 import griffe
 
 my_pkg_v1 = griffe.load_git("my_pkg", ref="v1")
@@ -96,11 +96,11 @@ for breaking_change in find_breaking_changes(my_pkg_v1, my_pkg_v2):
 
 It is of course possible to Griffe in CI (Continuous Integration) to make sure no breaking changes are introduced in pull/merge requests.
 
-### GitHub {#ci-github}
+### GitHub { #ci-github }
 
 Here is a quick example on how to use Griffe in a GitHub workflow:
 
-```yaml
+``` yaml
 jobs:
   check-api:
     runs-on: ubuntu-latest
@@ -115,11 +115,11 @@ jobs:
 
 The last step will fail the workflow if any breaking change is found.
 
-### Azure Pipelines {#ci-azdo}
+### Azure Pipelines { #ci-azdo }
 
 Here is a quick example on how to use Griffe in an Azure Pipeline. Griffe can format its output using Azure DevOps [task logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#task-commands), similar to GitHub Actions messages:
 
-```yaml
+``` yaml
 jobs:
 - name: check-api
   pool:
@@ -145,7 +145,7 @@ In this section, we will describe the breakages that Griffe detects, giving some
 
 Obviously, these explanations and the value of the hints we provide depend on your definition of what is a public Python API. There is no clear and generally agreed upon definition of "public Python API". A public Python API might vary from one project to another. In essence, your public API is what you say it is.
 
-However, we do have conventions like prefixing objects with an underscore to tell users these objects are part of the private API, or internals, and therefore should not be used. For the rest, Griffe can detect changes that *will* trigger immediate errors in your users code', and changes that *might* cause issues in your users' code. Although the latter sound less impactful, they do have a serious impact, because they can *silently* change the behavior of your users' code, leading to issues that are hard to detect, understand and fix.
+However, we do have conventions like prefixing objects with an underscore to tell users these objects are part of the private API, or internals, and therefore should not be used. For the rest, Griffe can detect changes that _will_ trigger immediate errors in your users code', and changes that _might_ cause issues in your users' code. Although the latter sound less impactful, they do have a serious impact, because they can _silently_ change the behavior of your users' code, leading to issues that are hard to detect, understand and fix.
 
 [Knowing that every change is a breaking change](https://xkcd.com/1172/), the more we detect and document (potentially) breaking changes in our changelogs, the better.
 
@@ -153,9 +153,9 @@ However, we do have conventions like prefixing objects with an underscore to tel
 
 > Positional parameter was moved.
 
-Moving the order of positional parameters can *silently* break your users' code.
+Moving the order of positional parameters can _silently_ break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 def greet(prefix, name):
     print(prefix + " " + name)
@@ -164,7 +164,7 @@ def greet(prefix, name):
 greet("hello", "world")
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 def greet(name, prefix):
     print(prefix + " " + name)
@@ -173,19 +173,19 @@ def greet(name, prefix):
 greet("hello", "world")
 ```
 
-NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer passes it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
+NOTE: Moving required parameters around is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. The function expects a number of arguments, and the developer passes it this same number of arguments: the contract is fulfilled. But parameters very often have specific meaning, and changing their order will _silently lead_ (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
 > TIP: **Hint**
 > If you often add, move or remove parameters, consider making them keyword-only, so that their order doesn't matter.
 >
-> ```python title="before"
+> ``` python title="before"
 > def greet(*, prefix, name):
 >     print(prefix + " " + name)
 >
 > greet(prefix="hello", name="world")
 > ```
 >
-> ```python title="after"
+> ``` python title="after"
 > def greet(*, name, prefix):
 >     print(prefix + " " + name)
 >
@@ -199,7 +199,7 @@ NOTE: Moving required parameters around is not really an API breakage, depending
 
 Removing a parameter can immediately break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 def greet(prefix, name):
     print(prefix + " " + name)
@@ -208,7 +208,7 @@ def greet(prefix, name):
 greet("hello", "world")
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 def greet(name):
     print("hello " + name)
@@ -224,7 +224,7 @@ greet(prefix="hello", name="world")
 > Allow a deprecation period for the removed parameter by swallowing it in a variadic positional parameter, a variadic keyword parameter, or both.
 >
 > === "positional-only"
->     ```python title="before"
+>     ``` python title="before"
 >     # your parameters are positional-only parameters (difficult deprecation)
 >     def greet(prefix, name, /):
 >         print(prefix + " " + name)
@@ -232,7 +232,7 @@ greet(prefix="hello", name="world")
 >     greet("hello", "world")
 >     ```
 >
->     ```python title="after"
+>     ``` python title="after"
 >     # swallow prefix using a variadic positional parameter
 >     def greet(*args):
 >         if len(args) == 2:
@@ -251,7 +251,7 @@ greet(prefix="hello", name="world")
 >     ```
 >
 > === "keyword-only"
->     ```python title="before"
+>     ``` python title="before"
 >     # your parameters are keyword-only parameters (easy deprecation)
 >     def greet(*, prefix, name):
 >         print(prefix + " " + name)
@@ -259,7 +259,7 @@ greet(prefix="hello", name="world")
 >     greet(prefix="hello", name="world")
 >     ```
 >
->     ```python title="after"
+>     ``` python title="after"
 >     # swallow prefix using a variadic keyword parameter
 >     def greet(name, **kwargs):
 >         prefix = kwargs.get("prefix", None)
@@ -272,7 +272,7 @@ greet(prefix="hello", name="world")
 >     ```
 >
 > === "positional or keyword"
->     ```python title="before"
+>     ``` python title="before"
 >     # your parameters are positional or keyword parameters (very difficult deprecation)
 >     def greet(prefix, name):
 >         print(prefix + " " + name)
@@ -280,7 +280,7 @@ greet(prefix="hello", name="world")
 >     greet("hello", name="world")
 >     ```
 >
->     ```python title="after"
+>     ``` python title="after"
 >     # no other choice than swallowing both forms...
 >     # ignoring the deprecated parameter becomes quite complex
 >     def greet(*args, **kwargs):
@@ -309,7 +309,7 @@ greet(prefix="hello", name="world")
 
 Changing the kind of a parameter to another (positional-only, keyword-only, positional or keyword, variadic positional, variadic keyword) can immediately break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 def greet(name):
     print("hello " + name)
@@ -324,7 +324,7 @@ greet2("tim")
 greet2(name="tim")
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 def greet(name, /):
     print("hello " + name)
@@ -346,7 +346,7 @@ greet2("tim")
 >
 > For functions with lots of optional parameters, and a few (one or two) required parameters, it can be a good idea to accept the required parameters as positional or keyword, while accepting the optional parameters as keyword-only parameters:
 >
-> ```python
+> ``` python
 > def greet(name, *, punctuation=False, bold=False, italic=False):
 >     ...
 >
@@ -361,7 +361,7 @@ greet2("tim")
 >
 > Positional-only parameters are useful in some specific cases, such as when a function takes two or more numeric values, and their order does not matter, and naming the parameters would not make sense:
 >
-> ```python
+> ``` python
 > def multiply3(a, b, c, /):
 >     return a * b * c
 >
@@ -376,9 +376,9 @@ greet2("tim")
 
 > Parameter default was changed
 
-Changing the default value of a parameter can *silently* break your users' code.
+Changing the default value of a parameter can _silently_ break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 def compute_something(value: int, to_float=True):
     value = ...
@@ -391,7 +391,7 @@ if isinstance(compute_something(7), float):
     ...
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 def compute_something(value: int, to_float=False):
     value = ...
@@ -404,12 +404,12 @@ if isinstance(compute_something(7), float):
     ...
 ```
 
-NOTE: Changing default value of parameters is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. Not using the parameter still provides the argument with a default value: the contract is fulfilled. But default values very often have specific meaning, and changing them will *silently lead* (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
+NOTE: Changing default value of parameters is not really an API breakage, depending on our definition of API, since this won't raise immediate errors like `TypeError`. Not using the parameter still provides the argument with a default value: the contract is fulfilled. But default values very often have specific meaning, and changing them will _silently lead_ (no immediate error) to incorrect behavior, potentially making it difficult to detect, understand and fix the issue. That is why it is important to warn developers about such changes.
 
 > TIP: **Hint**
 > Allow a deprecation period for the old default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
-> ```python title="in the coming release"
+> ``` python title="in the coming release"
 > _sentinel = object()
 >
 > def compute_something(value: int, to_float=_sentinel):
@@ -428,7 +428,7 @@ NOTE: Changing default value of parameters is not really an API breakage, depend
 >
 > In a later release you can remove the sentinel, the deprecation warning, and set `False` as default to `to_float`.
 >
-> ```python title="in a later release"
+> ``` python title="in a later release"
 > def compute_something(value: int, to_float=False):
 >     value = ...
 >     if to_float:
@@ -442,7 +442,7 @@ NOTE: Changing default value of parameters is not really an API breakage, depend
 
 Changing an optional parameter to a required one (by removing its default value) can immediately break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 def greet(name, prefix="hello"):
     print(prefix + " " + name)
@@ -451,7 +451,7 @@ def greet(name, prefix="hello"):
 greet("tiff")
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 def greet(name, prefix):
     print(prefix + " " + name)
@@ -463,7 +463,7 @@ greet("tiff")
 > TIP: **Hint**
 > Allow a deprecation period for the default value by using a sentinel value to detect when the parameter wasn't used by the user:
 >
-> ```python title="in the coming release"
+> ``` python title="in the coming release"
 > _sentinel = object()
 >
 > def greet(name, prefix=_sentinel):
@@ -475,7 +475,7 @@ greet("tiff")
 >
 > In a later release you can remove the sentinel, the deprecation warning, and the default value of `prefix`.
 >
-> ```python title="in a later release"
+> ``` python title="in a later release"
 > def greet(name, prefix):
 >     print(prefix + " " + name)
 > ```
@@ -486,7 +486,7 @@ greet("tiff")
 
 Adding a new, required parameter can immediately break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 def greet(name):
     print("hello " + name)
@@ -495,7 +495,7 @@ def greet(name):
 greet("tiff")
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 def greet(name, prefix):
     print(prefix + " " + name)
@@ -507,7 +507,7 @@ greet("tiff")
 > TIP: **Hint**
 > You can delay (or avoid) and inform your users about the upcoming breakage by temporarily (or permanently) providing a default value for the new parameter:
 >
-> ```python title="in the coming release"
+> ``` python title="in the coming release"
 > def greet(name, prefix="hello"):
 >     print(prefix + " " + name)
 > ```
@@ -524,7 +524,7 @@ WARNING: **Not yet supported!** Telling if a type construct is compatible with a
 
 Removing a public object from a module can immediately break your users' code.
 
-```python title="before"
+``` python title="before"
 # your/module.py
 special_thing = "hey"
 
@@ -536,7 +536,7 @@ from your import module
 print(module.special_thing)
 ```
 
-```python title="after"
+``` python title="after"
 # user/module.py: import error
 from your.module import special_thing
 
@@ -548,7 +548,7 @@ print(module.special_thing)
 > TIP: **Hint**
 > Allow a deprecation period by declaring a module-level `__getattr__` function that returns the given object while warning about its deprecation:
 >
-> ```python
+> ``` python
 > def __getattr__(name):
 >     if name == "special_thing":
 >         warnings.warn(DeprecationWarning, "'special_thing' is deprecated and will be removed")
@@ -559,9 +559,9 @@ print(module.special_thing)
 
 > Public object points to a different kind of object
 
-Changing the kind (type alias, attribute, function, class, module) of a public object can *silently* break your users' code.
+Changing the kind (type alias, attribute, function, class, module) of a public object can _silently_ break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 class Factory:
     def __call__(self, ...):
@@ -574,7 +574,7 @@ if isinstance(factory, Factory):
     ...
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 class Factory:
     ...
@@ -602,9 +602,9 @@ WARNING: **Not yet supported!** Telling if a type construct is compatible with a
 DANGER: **This check was removed in v2.4.1.**
 This check was removed because it almost always emits false-positives. An attribute value should be able to change, even for constants. Besides, this check didn't compare actual values but the expressions that computed them, which means two different expressions computing the same value would still emit a breakage, which was wrong.
 
-Changing the value of an attribute can *silently* break your users' code.
+Changing the value of an attribute can _silently_ break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 PY_VERSION = os.getenv("PY_VERSION")
 
@@ -613,7 +613,7 @@ if PY_VERSION is None:
     ...
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 PY_VERSION = os.getenv("PY_VERSION", "3.8")
 
@@ -631,9 +631,9 @@ Make sure to document the change of value of the attribute in your changelog, pa
 
 > Base class was removed
 
-Removing a class from another class' bases can *silently* break your users' code.
+Removing a class from another class' bases can _silently_ break your users' code.
 
-```python title="before"
+``` python title="before"
 # your code
 class A: ...
 class B: ...
@@ -644,7 +644,7 @@ if B in klass.__bases__:
     ...
 ```
 
-```python title="after"
+``` python title="after"
 # your code
 class A: ...
 class B: ...
@@ -670,7 +670,7 @@ Griffe supports writing detected breakages in multiple formats, or styles.
 
 This is the default format. Griffe will print each detected breakage on a single line:
 
-```console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-oneline"
+``` console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-oneline"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 ```
@@ -684,7 +684,7 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0
 
 Depending on the detected breakages, the lines might be hard to read (being too compact), so `griffe check` also accepts a `--verbose` or `-v` option to add some space to the output:
 
-```console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-verbose"
+``` console exec="1" source="console" result="ansi" returncode="1" id="griffe-check-verbose"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
@@ -698,7 +698,7 @@ $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 
 The Markdown format is adapted for changelogs. It doesn't show the file and line number, and instead prints out the complete path of your API objects. With a bit of automation, you will be able to automatically insert a summary of breaking changes in your changelog entries.
 
-```md exec="1" source="tabbed-left" tabs="Output|Result"
+``` md exec="1" source="tabbed-left" tabs="Output|Result"
 - `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter kind was changed*: positional or keyword -> keyword-only
 - `griffe.loader.GriffeLoader.resolve_aliases(only_exported)`: *Parameter default was changed*: `True` -> `None`
 - `griffe.loader.GriffeLoader.resolve_aliases(only_known_modules)`: *Parameter kind was changed*: positional or keyword -> keyword-only
@@ -738,7 +738,7 @@ When running `griffe check` in CI, you can enable GitHub's annotations thanks to
 ![gha_annotations_1](../../img/gha_annotations_1.png)
 ///
 
-```console
+``` console
 % python -m griffe check -fgithub -ssrc griffe
 ::warning file=src/griffe/finder.py,line=58,title=Package.name::Attribute value was changed: `name` -> unset
 ::warning file=src/griffe/finder.py,line=60,title=Package.path::Attribute value was changed: `path` -> unset

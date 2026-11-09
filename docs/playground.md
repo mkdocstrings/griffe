@@ -9,7 +9,7 @@ Play with Griffe's API directly in your browser thanks to [Pyodide](https://pyod
 
 You can click the **:material-play: Run** button in the top-right corner of the editor, or hit ++ctrl+enter++ to run the code.
 
-```pyodide install="griffe" theme="tomorrow,dracula"
+``` pyodide install="griffe" theme="tomorrow,dracula"
 import griffe, micropip
 
 # Install your favorite Python package...
