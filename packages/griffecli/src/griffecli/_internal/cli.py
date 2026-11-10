@@ -153,9 +153,11 @@ def get_parser() -> argparse.ArgumentParser:
     from griffe._internal.enumerations import ExplanationStyle, Parser  # noqa: PLC0415
 
     usage = "%(prog)s [GLOBAL_OPTS...] COMMAND [COMMAND_OPTS...]"
-    description = "Signatures for entire Python programs. "
-    "Extract the structure, the frame, the skeleton of your project, "
-    "to generate API documentation or find breaking changes in your API."
+    description = (
+        "Signatures for entire Python programs. "
+        "Extract the structure, the frame, the skeleton of your project, "
+        "to generate API documentation or find breaking changes in your API."
+    )
     parser = argparse.ArgumentParser(add_help=False, usage=usage, description=description, prog="griffe")
 
     main_help = "Show this help message and exit. Commands also accept the -h/--help option."
