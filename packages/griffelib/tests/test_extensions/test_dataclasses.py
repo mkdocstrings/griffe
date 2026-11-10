@@ -268,6 +268,45 @@ def test_fields_merged_from_each_base_in_diamond_inheritance(plain_decorator: st
     assert init.parameters["x"].default == "0"
 
 
+@pytest.mark.parametrize("annotation", ["int", "InitVar[int]"])
+def test_fields_inherited_from_dataclass_with_init_disabled(annotation: str) -> None:
+    """Test that a dataclass with `init=False` still contributes field overrides to subclasses."""
+    # Both parents override Base.x, but Left does not generate its own initializer.
+    code = f"""
+        from dataclasses import dataclass, InitVar
+
+        @dataclass
+        class Base:
+            x: int = 0
+
+        @dataclass(init=False)
+        class Left(Base):
+            x: {annotation} = 1
+
+        @dataclass
+        class Right(Base):
+            x: int = 1
+
+        @dataclass
+        class Point(Left, Right):
+            pass
+    """
+
+    with temporary_visited_package(
+        "pkg",
+        {"__init__.py": code},
+        extensions=load_extensions("dataclasses"),
+    ) as pkg:
+        point = pkg["Point"]
+        left = pkg["Left"]
+
+    # Left's override wins over Right's fields, including the inherited Base.x.
+    init = point["__init__"]
+    assert [param.name for param in init.parameters] == ["self", "x"]
+    assert init.parameters["x"].default == "1"
+    assert "__init__" not in left.members
+
+
 def test_inherited_field_redeclared_as_non_init() -> None:
     """Test that a field redeclared with `init=False` in a subclass is removed from the `__init__` method."""
     code = """

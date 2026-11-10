@@ -83,10 +83,6 @@ def _dataclass_parameters(class_: Class) -> dict[str, Parameter | None]:
     # Fetch `@dataclass` arguments if any.
     dec_args = _dataclass_arguments(class_.decorators)
 
-    # Parameters not added to `__init__`, return empty dict.
-    if dec_args.get("init") == "False":
-        return {}
-
     # All parameters marked as keyword-only.
     kw_only = dec_args.get("kw_only") == "True"
 
@@ -215,8 +211,14 @@ def _set_dataclass_init(class_: Class, collected: dict[Class, dict[str, Paramete
 
     logger.debug("Handling dataclass: %s", class_.path)
 
-    # Collect all fields, then drop those not added to `__init__`.
-    init_parameters = [param for param in _dataclass_fields(class_, collected).values() if param is not None]
+    # Collect fields even with `init=False`: subclasses still inherit them.
+    # Collection must happen before InitVar members are removed.
+    fields = _dataclass_fields(class_, collected)
+    if _dataclass_arguments(class_.decorators).get("init") == "False":
+        return
+
+    # Drop fields not added to `__init__`.
+    init_parameters = [param for param in fields.values() if param is not None]
 
     # Create `__init__` method with re-ordered parameters.
     init = Function(
