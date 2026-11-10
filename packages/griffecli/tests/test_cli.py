@@ -71,6 +71,18 @@ def test_show_help(capsys: pytest.CaptureFixture) -> None:
     assert "griffe" in captured.out
 
 
+def test_help_shows_full_description(capsys: pytest.CaptureFixture) -> None:
+    """Show the full description in help.
+
+    Parameters:
+        capsys: Pytest fixture to capture output.
+    """
+    with pytest.raises(SystemExit):
+        cli.main(["-h"])
+    captured = capsys.readouterr()
+    assert "skeleton of your project" in captured.out
+
+
 def test_show_version(capsys: pytest.CaptureFixture) -> None:
     """Show version.
 
