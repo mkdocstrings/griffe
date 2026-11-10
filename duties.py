@@ -59,7 +59,7 @@ def _pyprefix(title: str) -> str:
 def _get_changelog_version() -> str:
     changelog_version_re = re.compile(r"^## \[(\d+\.\d+\.\d+)\].*$")
     with Path(__file__).parent.joinpath("CHANGELOG.md").open("r", encoding="utf8") as file:
-        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty:ignore[unresolved-attribute]
+        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty:ignore[missing-union-attribute]
 
 
 def _generate_griffe_json(ctx: Context) -> None:
@@ -255,7 +255,7 @@ def check_types(ctx: Context) -> None:
         $ make check-types
         ✗ Checking types (1)
         > ty check --config=config/ty.toml src/ tests/ scripts/
-        t.py:6:10: warning[possibly-missing-attribute] Attribute `value` may be missing on object of type `Data | None`
+        t.py:6:10: warning[possibly-missing-union-attribute] Attribute `value` may be missing on object of type `Data | None`
         ```
 
         Now add a comment to ignore this warning.

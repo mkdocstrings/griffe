@@ -50,12 +50,12 @@ def _expr_args(expr: Expr) -> dict[str, str | Expr]:
     if isinstance(expr, ExprCall):
         for argument in expr.arguments:
             try:
-                args[argument.name] = argument.value  # ty:ignore[unresolved-attribute]
+                args[argument.name] = argument.value  # ty:ignore[missing-attribute]
             except AttributeError:
                 # Argument is a unpacked variable.
                 with suppress(Exception):
-                    collection = expr.function.parent.modules_collection  # ty:ignore[unresolved-attribute]
-                    var = collection[argument.value.canonical_path]  # ty:ignore[unresolved-attribute]
+                    collection = expr.function.parent.modules_collection  # ty:ignore[missing-attribute]
+                    var = collection[argument.value.canonical_path]  # ty:ignore[missing-attribute]
                     args.update(_expr_args(var.value))
     elif isinstance(expr, ExprDict):
         args.update({ast.literal_eval(str(key)): value for key, value in zip(expr.keys, expr.values, strict=False)})

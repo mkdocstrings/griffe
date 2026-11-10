@@ -193,10 +193,10 @@ def merge_stubs(mod1: Module, mod2: Module, *, prefer_stubs_docs: bool = False) 
         The regular module.
     """
     logger.debug("Trying to merge %s and %s", mod1.filepath, mod2.filepath)
-    if mod1.filepath.suffix == ".pyi":  # ty:ignore[unresolved-attribute]
+    if mod1.filepath.suffix == ".pyi":  # ty:ignore[missing-union-attribute]
         stubs = mod1
         module = mod2
-    elif mod2.filepath.suffix == ".pyi":  # ty:ignore[unresolved-attribute]
+    elif mod2.filepath.suffix == ".pyi":  # ty:ignore[missing-union-attribute]
         stubs = mod2
         module = mod1
     else:

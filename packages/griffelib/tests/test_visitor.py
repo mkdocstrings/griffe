@@ -277,7 +277,7 @@ def test_get_correct_docstring_starting_line_number() -> None:
                 '''
         """,
     ) as module:
-        assert module.docstring.lineno == 2  # ty:ignore[unresolved-attribute]
+        assert module.docstring.lineno == 2  # ty:ignore[missing-union-attribute]
         assert module["C"].docstring.lineno == 6
         assert module["C.method"].docstring.lineno == 10
 

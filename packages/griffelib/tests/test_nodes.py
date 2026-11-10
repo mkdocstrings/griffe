@@ -166,10 +166,10 @@ syntax_examples = [
 
 def test_shared_ast_nodes_do_not_retain_parent_trees() -> None:
     """Shared AST operator/context instances must not keep parsed trees alive."""
-    expression = compile("left + right", filename="<test>", mode="eval", flags=PyCF_ONLY_AST).body  # ty:ignore[unresolved-attribute]
+    expression = compile("left + right", filename="<test>", mode="eval", flags=PyCF_ONLY_AST).body  # ty:ignore[missing-attribute]
     children = list(ast_children(expression))
 
-    assert any(isinstance(child, Name) and child.parent is expression for child in children)  # ty:ignore[unresolved-attribute]
+    assert any(isinstance(child, Name) and child.parent is expression for child in children)  # ty:ignore[missing-attribute]
     assert any(isinstance(child, Add) and not hasattr(child, "parent") for child in children)
     assert all(isinstance(child, AST) for child in children)
 
@@ -227,7 +227,7 @@ def test_relative_to_absolute_imports(code: str, path: str, is_package: bool, ex
         is_package: Whether the module is a package (or subpackage) (parametrized).
         expected: The parametrized expected absolute path.
     """
-    node = compile(code, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0]  # ty:ignore[unresolved-attribute]
+    node = compile(code, mode="exec", filename="<>", flags=PyCF_ONLY_AST).body[0]  # ty:ignore[missing-attribute]
     module = module_vtree(path, leaf_package=is_package, return_leaf=True)
     for name in node.names:
         assert relative_to_absolute(node, name, module) == expected
@@ -339,7 +339,7 @@ def test_default_value_from_nodes(default: str) -> None:
     module_defs = f"def f(x={default}):\n    return x"
     with temporary_visited_module(module_defs) as module:
         assert "f" in module.members
-        params = module.members["f"].parameters  # ty:ignore[unresolved-attribute]
+        params = module.members["f"].parameters  # ty:ignore[missing-union-attribute]
         assert len(params) == 1
         assert str(params[0].default) == default
 

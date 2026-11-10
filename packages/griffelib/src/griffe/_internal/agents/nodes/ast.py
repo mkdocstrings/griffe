@@ -84,7 +84,7 @@ def ast_previous_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The previous siblings.
     """
-    for sibling in ast_children(node.parent):  # ty:ignore[unresolved-attribute]
+    for sibling in ast_children(node.parent):  # ty:ignore[missing-attribute]
         if sibling is not node:
             yield sibling
         else:
@@ -100,7 +100,7 @@ def ast_next_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The next siblings.
     """
-    siblings = ast_children(node.parent)  # ty:ignore[unresolved-attribute]
+    siblings = ast_children(node.parent)  # ty:ignore[missing-attribute]
     for sibling in siblings:
         if sibling is node:
             break
@@ -116,7 +116,7 @@ def ast_siblings(node: AST) -> Iterator[AST]:
     Yields:
         The siblings.
     """
-    siblings = ast_children(node.parent)  # ty:ignore[unresolved-attribute]
+    siblings = ast_children(node.parent)  # ty:ignore[missing-attribute]
     for sibling in siblings:
         if sibling is not node:
             yield sibling
