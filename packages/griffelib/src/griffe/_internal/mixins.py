@@ -69,8 +69,8 @@ class GetMembersMixin:
         """
         parts = _get_parts(key)
         if len(parts) == 1:
-            return self.all_members[parts[0]]  # ty:ignore[unresolved-attribute]
-        return self.all_members[parts[0]][parts[1:]]  # ty:ignore[unresolved-attribute]
+            return self.all_members[parts[0]]  # ty:ignore[missing-attribute]
+        return self.all_members[parts[0]][parts[1:]]  # ty:ignore[missing-attribute]
 
     def get_member(self, key: str | Sequence[str]) -> Any:
         """Get a member with its name or path.
@@ -91,8 +91,8 @@ class GetMembersMixin:
         """
         parts = _get_parts(key)
         if len(parts) == 1:
-            return self.members[parts[0]]  # ty:ignore[unresolved-attribute]
-        return self.members[parts[0]].get_member(parts[1:])  # ty:ignore[unresolved-attribute]
+            return self.members[parts[0]]  # ty:ignore[missing-attribute]
+        return self.members[parts[0]].get_member(parts[1:])  # ty:ignore[missing-attribute]
 
 
 # FIXME: Are `aliases` in other objects correctly updated when we delete a member?
@@ -121,11 +121,11 @@ class DelMembersMixin:
         if len(parts) == 1:
             name = parts[0]
             try:
-                del self.members[name]  # ty:ignore[unresolved-attribute]
+                del self.members[name]  # ty:ignore[missing-attribute]
             except KeyError:
-                del self.inherited_members[name]  # ty:ignore[unresolved-attribute]
+                del self.inherited_members[name]  # ty:ignore[missing-attribute]
         else:
-            del self.all_members[parts[0]][parts[1:]]  # ty:ignore[unresolved-attribute]
+            del self.all_members[parts[0]][parts[1:]]  # ty:ignore[missing-attribute]
 
     def del_member(self, key: str | Sequence[str]) -> None:
         """Delete a member with its name or path.
@@ -147,9 +147,9 @@ class DelMembersMixin:
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
-            del self.members[name]  # ty:ignore[unresolved-attribute]
+            del self.members[name]  # ty:ignore[missing-attribute]
         else:
-            self.members[parts[0]].del_member(parts[1:])  # ty:ignore[unresolved-attribute]
+            self.members[parts[0]].del_member(parts[1:])  # ty:ignore[missing-attribute]
 
 
 class SetMembersMixin:
@@ -173,13 +173,13 @@ class SetMembersMixin:
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
-            self.members[name] = value  # ty:ignore[unresolved-attribute]
-            if self.is_collection:  # ty:ignore[unresolved-attribute]
+            self.members[name] = value  # ty:ignore[missing-attribute]
+            if self.is_collection:  # ty:ignore[missing-attribute]
                 value._modules_collection = self  # ty:ignore[invalid-assignment]
             else:
                 value.parent = self  # ty:ignore[invalid-assignment]
         else:
-            self.members[parts[0]][parts[1:]] = value  # ty:ignore[unresolved-attribute]
+            self.members[parts[0]][parts[1:]] = value  # ty:ignore[missing-attribute]
 
     def set_member(self, key: str | Sequence[str], value: Object | Alias) -> None:
         """Set a member with its name or path.
@@ -200,8 +200,8 @@ class SetMembersMixin:
         parts = _get_parts(key)
         if len(parts) == 1:
             name = parts[0]
-            if name in self.members:  # ty:ignore[unresolved-attribute]
-                member = self.members[name]  # ty:ignore[unresolved-attribute]
+            if name in self.members:  # ty:ignore[missing-attribute]
+                member = self.members[name]  # ty:ignore[missing-attribute]
                 if not member.is_alias:
                     # When reassigning a module to an existing one,
                     # try to merge them as one regular and one stubs module
@@ -211,19 +211,19 @@ class SetMembersMixin:
                         # Accessing file paths can trigger a builtin module error.
                         with suppress(AliasResolutionError, CyclicAliasError, BuiltinModuleError):
                             if value.is_module and value.filepath != member.filepath:
-                                psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[unresolved-attribute]
+                                psd = self._psd if self.is_collection else self.modules_collection._psd  # ty:ignore[missing-attribute]
                                 with suppress(ValueError):
                                     value = merge_stubs(member, value, prefer_stubs_docs=psd)  # ty:ignore[invalid-argument-type]
                     for alias in member.aliases.values():
                         with suppress(CyclicAliasError):
                             alias.target = value
-            self.members[name] = value  # ty:ignore[unresolved-attribute]
-            if self.is_collection:  # ty:ignore[unresolved-attribute]
+            self.members[name] = value  # ty:ignore[missing-attribute]
+            if self.is_collection:  # ty:ignore[missing-attribute]
                 value._modules_collection = self  # ty:ignore[invalid-assignment]
             else:
                 value.parent = self  # ty:ignore[invalid-assignment]
         else:
-            self.members[parts[0]].set_member(parts[1:], value)  # ty:ignore[unresolved-attribute]
+            self.members[parts[0]].set_member(parts[1:], value)  # ty:ignore[missing-attribute]
 
 
 class SerializationMixin:
@@ -277,9 +277,9 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        if self.is_class:  # ty:ignore[unresolved-attribute]
-            return {**self.inherited_members, **self.members}  # ty:ignore[unresolved-attribute]
-        return self.members  # ty:ignore[unresolved-attribute]
+        if self.is_class:  # ty:ignore[missing-attribute]
+            return {**self.inherited_members, **self.members}  # ty:ignore[missing-attribute]
+        return self.members  # ty:ignore[missing-attribute]
 
     @property
     def modules(self) -> dict[str, Module]:
@@ -329,34 +329,34 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
     @property
     def is_private(self) -> bool:
         """Whether this object/alias is private (starts with `_`) but not special."""
-        return self.name.startswith("_") and not self.is_special  # ty:ignore[unresolved-attribute]
+        return self.name.startswith("_") and not self.is_special  # ty:ignore[missing-attribute]
 
     @property
     def is_special(self) -> bool:
         """Whether this object/alias is special ("dunder" attribute/method, starts and end with `__`)."""
-        return self.name.startswith("__") and self.name.endswith("__")  # ty:ignore[unresolved-attribute]
+        return self.name.startswith("__") and self.name.endswith("__")  # ty:ignore[missing-attribute]
 
     @property
     def is_class_private(self) -> bool:
         """Whether this object/alias is class-private (starts with `__` and is a class member)."""
         return (
-            bool(self.parent) and self.parent.is_class and self.name.startswith("__") and not self.name.endswith("__")  # ty:ignore[unresolved-attribute]
+            bool(self.parent) and self.parent.is_class and self.name.startswith("__") and not self.name.endswith("__")  # ty:ignore[missing-attribute]
         )
 
     @property
     def is_imported(self) -> bool:
         """Whether this object/alias was imported from another module."""
-        if not (parent := self.parent):  # ty:ignore[unresolved-attribute]
+        if not (parent := self.parent):  # ty:ignore[missing-attribute]
             return False
-        return self.name in parent.imports  # ty:ignore[unresolved-attribute]
+        return self.name in parent.imports  # ty:ignore[missing-attribute]
 
     @property
     def is_exported(self) -> bool:
         """Whether this object/alias is exported (listed in `__all__`)."""
         return (
-            bool(self.parent)  # ty:ignore[unresolved-attribute]
-            and self.parent.is_module  # ty:ignore[unresolved-attribute]
-            and bool(self.parent.exports and self.name in self.parent.exports)  # ty:ignore[unresolved-attribute]
+            bool(self.parent)  # ty:ignore[missing-attribute]
+            and self.parent.is_module  # ty:ignore[missing-attribute]
+            and bool(self.parent.exports and self.name in self.parent.exports)  # ty:ignore[missing-attribute]
         )
 
     @property
@@ -376,20 +376,20 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
             True or False.
         """
         # If the object is not available at runtime or is not defined at the module level, it is not exposed.
-        if not self.runtime or not (bool(self.parent) and self.parent.is_module):  # ty:ignore[unresolved-attribute]
+        if not self.runtime or not (bool(self.parent) and self.parent.is_module):  # ty:ignore[missing-attribute]
             return False
 
         # If the parent module defines `__all__`, the object is exposed if it is listed in it.
-        if self.parent.exports is not None:  # ty:ignore[unresolved-attribute]
-            return self.name in self.parent.exports  # ty:ignore[unresolved-attribute]
+        if self.parent.exports is not None:  # ty:ignore[missing-attribute]
+            return self.name in self.parent.exports  # ty:ignore[missing-attribute]
 
         # If the object's name starts with an underscore, it is not exposed.
         # We don't use `is_private` or `is_special` here to avoid redundant string checks.
-        if self.name.startswith("_"):  # ty:ignore[unresolved-attribute]
+        if self.name.startswith("_"):  # ty:ignore[missing-attribute]
             return False
 
         # Special case for Griffe trees: a submodule is only exposed if its parent imports it.
-        return self.is_alias or not self.is_module or self.is_imported  # ty:ignore[unresolved-attribute]
+        return self.is_alias or not self.is_module or self.is_imported  # ty:ignore[missing-attribute]
 
     @property
     def is_public(self) -> bool:
@@ -408,18 +408,18 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         - Otherwise, the object is public.
         """
         # Give priority to the `public` attribute if it is set.
-        if self.public is not None:  # ty:ignore[unresolved-attribute]
-            return self.public  # ty:ignore[unresolved-attribute]
+        if self.public is not None:  # ty:ignore[missing-attribute]
+            return self.public  # ty:ignore[missing-attribute]
 
         # If the object is a module and its name does not start with an underscore, it is public.
         # Modules are not subject to the `__all__` convention, only the underscore prefix one.
-        if not self.is_alias and self.is_module and not self.name.startswith("_"):  # ty:ignore[unresolved-attribute]
+        if not self.is_alias and self.is_module and not self.name.startswith("_"):  # ty:ignore[missing-attribute]
             return True
 
         # If the object is defined at the module-level and is listed in `__all__`, it is public.
         # If the parent module defines `__all__` but does not list the object, it is private.
-        if self.parent and self.parent.is_module and bool(self.parent.exports):  # ty:ignore[unresolved-attribute]
-            return self.name in self.parent.exports  # ty:ignore[unresolved-attribute]
+        if self.parent and self.parent.is_module and bool(self.parent.exports):  # ty:ignore[missing-attribute]
+            return self.name in self.parent.exports  # ty:ignore[missing-attribute]
 
         # Special objects are always considered public.
         # Even if we don't access them directly, they are used through different *public* means
@@ -441,9 +441,9 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
     def is_deprecated(self) -> bool:
         """Whether this object is deprecated."""
         # NOTE: We might want to add more ways to detect deprecations in the future.
-        return bool(self.deprecated)  # ty:ignore[unresolved-attribute]
+        return bool(self.deprecated)  # ty:ignore[missing-attribute]
 
     @property
     def is_generic(self) -> bool:
         """Whether this object is generic."""
-        return bool(self.type_parameters)  # ty:ignore[unresolved-attribute]
+        return bool(self.type_parameters)  # ty:ignore[missing-attribute]

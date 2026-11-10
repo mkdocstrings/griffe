@@ -69,5 +69,3 @@ Griffe is able to analyze code both statically and dynamically.
 ::: griffe.get_value
 
 ::: griffe.safe_get_value
-
-

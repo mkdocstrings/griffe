@@ -597,7 +597,7 @@ class Inspector:
             analysis="dynamic",
         )
         attribute.labels.update(labels)
-        parent.set_member(node.name, attribute)  # ty:ignore[unresolved-attribute]
+        parent.set_member(node.name, attribute)  # ty:ignore[missing-union-attribute]
 
         if node.name == "__all__":
             parent.exports = list(node.obj)  # ty:ignore[invalid-assignment]
@@ -658,7 +658,7 @@ def _convert_object_to_annotation(obj: Any, *, parent: Module | Class, member: s
         annotation_node = compile(annotation, mode="eval", filename="<>", flags=ast.PyCF_ONLY_AST, optimize=2)
     except SyntaxError:
         return obj
-    return safe_get_annotation(annotation_node.body, parent, member=member)  # ty:ignore[unresolved-attribute]
+    return safe_get_annotation(annotation_node.body, parent, member=member)  # ty:ignore[missing-attribute]
 
 
 _type_parameter_kind_map = {

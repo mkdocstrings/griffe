@@ -1,6 +1,7 @@
 # Environment setup
 
 !!! info "For contributors"
+
     Follow this page to prepare a local checkout for code or documentation changes. To install Griffe for use in another project, see [Installation](../../installation.md).
 
 This page covers the required tools, cloning the repository, installing dependencies, and configuring an editor.
@@ -10,7 +11,8 @@ This page covers the required tools, cloning the repository, installing dependen
 The only requirement is that you have [Python](https://www.python.org/) and [uv](https://docs.astral.sh/uv/) installed and available on your command line path.
 
 === ":simple-astral: official installer"
-    ```bash
+
+    ``` bash
     curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
 
@@ -21,7 +23,8 @@ The only requirement is that you have [Python](https://www.python.org/) and [uv]
     </div>
 
 === ":simple-python: pip"
-    ```bash
+
+    ``` bash
     pip install --user uv
     ```
 
@@ -32,7 +35,8 @@ The only requirement is that you have [Python](https://www.python.org/) and [uv]
     </div>
 
 === ":simple-pipx: pipx"
-    ```bash
+
+    ``` bash
     pipx install uv
     ```
 
@@ -43,7 +47,8 @@ The only requirement is that you have [Python](https://www.python.org/) and [uv]
     </div>
 
 === ":simple-rye: rye"
-    ```bash
+
+    ``` bash
     rye install uv
     ```
 
@@ -60,36 +65,33 @@ Optionally, we recommend using [direnv](https://direnv.net/), which will add our
 [Fork the repository on GitHub](https://github.com/mkdocstrings/griffe/fork), then clone it locally:
 
 === "GitHub CLI"
-    ```bash
+
+    ``` bash
     gh repo clone griffe
     ```
 
     <div class="result">
-
-    The [`gh` GitHub CLI](https://cli.github.com/) allows you to interact with GitHub on the command line.
-
+      The [`gh` GitHub CLI](https://cli.github.com/) allows you to interact with GitHub on the command line.
     </div>
 
 === "Git + SSH"
-    ```bash
+
+    ``` bash
     git clone git@github.com:your-username/griffe
     ```
 
     <div class="result">
-
-    See the documentation on GitHub for [Connecting with SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) and for [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
-
+      See the documentation on GitHub for [Connecting with SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) and for [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
     </div>
 
 === "Git + HTTPS"
-    ```bash
+
+    ``` bash
     git clone https://github.com/your-username/griffe
     ```
 
     <div class="result">
-
-    See the documentation on GitHub for [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
-
+      See the documentation on GitHub for [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
     </div>
 
 ## Install dependencies

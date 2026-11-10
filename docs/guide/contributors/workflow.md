@@ -1,6 +1,7 @@
 # Development workflow
 
 !!! info "For contributors"
+
     Use this workflow after [setting up your environment](setup.md). The [release process](#release-process) is intended for maintainers.
 
 This document describes our workflow when developing features, fixing bugs and updating the documentation. It also includes guidelines for pull requests on GitHub.
@@ -37,10 +38,10 @@ The development worklow is rather usual.
 
 **Before committing:**
 
-1. run [`make format`][task-format] to auto-format the code
-2. run [`make check`][task-check] to check everything (fix any warning)
-3. run [`make test`][task-test] to run the tests (fix any issue)
-4. if you updated the documentation or the project dependencies:
+1.  run [`make format`][task-format] to auto-format the code
+2.  run [`make check`][task-check] to check everything (fix any warning)
+3.  run [`make test`][task-test] to run the tests (fix any issue)
+4.  if you updated the documentation or the project dependencies:
     1. run [`make docs`][task-docs]
     2. go to http://localhost:8000 and check that everything looks good
 
@@ -59,13 +60,13 @@ Deprecated code should also be marked as legacy code. We use [Yore](https://pawa
 
 Examples:
 
-```python title="Remove function when we bump to 5.0"
+``` python title="Remove function when we bump to 5.0"
 # YORE: Bump 5: Remove block.
 def deprecated_function():
     ...
 ```
 
-```python title="Simplify imports when Python 3.15 is EOL"
+``` python title="Simplify imports when Python 3.15 is EOL"
 # YORE: EOL 3.15: Replace block with line 4.
 try:
     import ...
@@ -82,7 +83,7 @@ If you are unsure about how to deprecate something or mark legacy code, let us d
 
 Commit messages must follow our convention based on the [Angular style](https://gist.github.com/stephenparish/9941e89d80e2bc58a153#format-of-the-commit-message) or the [Karma convention](https://karma-runner.github.io/4.0/dev/git-commit-msg.html):
 
-```text
+``` text
 type(scope): Subject
 
 Body.
@@ -90,7 +91,7 @@ Body.
 
 **Subject and body must be valid Markdown.** Subject must have proper casing (uppercase for first letter if it makes sense), but no dot at the end, and no punctuation in general. Example:
 
-```text
+``` text
 feat: Add CLI option to run in verbose mode
 ```
 
@@ -110,7 +111,7 @@ Scope and body are optional. Type can be:
 
 If you write a body, please add trailers at the end (for example issues and PR references, or co-authors), without relying on GitHub's flavored Markdown:
 
-```text
+``` text
 This is the body of the commit message.
 
 Issue-10: https://github.com/namespace/project/issues/10
@@ -130,20 +131,20 @@ Link to any related issue in the Pull Request message.
 
 During the review, we recommend using fixups:
 
-```bash
+``` bash
 # SHA is the SHA of the commit you want to fix
 git commit --fixup=SHA
 ```
 
 Once all the changes are approved, you can squash your commits:
 
-```bash
+``` bash
 git rebase -i --autosquash main
 ```
 
 And force-push:
 
-```bash
+``` bash
 git push -f
 ```
 
@@ -153,6 +154,7 @@ If this seems all too complicated, you can push or force-push each new commit, a
 ## Release process
 
 !!! info "For maintainers"
+
     This procedure publishes a new version. Contributors can submit their changes without updating the changelog or running release tasks.
 
 Once we are ready for a new release (a few bugfixes and/or features merged in the main branch), maintainers should update the changelog. If our [commit message convention](workflow.md#commit-message-convention) was properly followed, the changelog can be automatically updated from the messages in the Git history with [`make changelog`][task-changelog]. This task updates the changelog in place to add a new version entry.

@@ -251,12 +251,12 @@ def _read_parameters(
             name = name_with_type
             # Try to use the annotation from the signature.
             try:
-                annotation = docstring.parent.parameters[name].annotation  # ty:ignore[unresolved-attribute]
+                annotation = docstring.parent.parameters[name].annotation  # ty:ignore[missing-attribute]
             except (AttributeError, KeyError):
                 annotation = None
 
         try:
-            default = docstring.parent.parameters[name].default  # ty:ignore[unresolved-attribute]
+            default = docstring.parent.parameters[name].default  # ty:ignore[missing-attribute]
         except (AttributeError, KeyError):
             default = None
 
@@ -265,7 +265,7 @@ def _read_parameters(
 
         if warnings and warn_unknown_params:
             with suppress(AttributeError):  # For Parameters sections in objects without parameters.
-                params = docstring.parent.parameters  # ty:ignore[unresolved-attribute]
+                params = docstring.parent.parameters  # ty:ignore[missing-attribute]
                 if name not in params:
                     message = f"Parameter '{name}' does not appear in the function signature"
                     for starred_name in (f"*{name}", f"**{name}"):
@@ -342,20 +342,20 @@ def _read_type_parameters_section(
             name = name_with_bound
             # try to use the annotation from the signature
             try:
-                bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[unresolved-attribute]
+                bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[missing-union-attribute]
             except (AttributeError, KeyError):
                 bound = None
 
         try:
-            default = docstring.parent.type_parameters[name].default  # ty:ignore[unresolved-attribute]
+            default = docstring.parent.type_parameters[name].default  # ty:ignore[missing-union-attribute]
         except (AttributeError, KeyError):
             default = None
 
         if warnings and warn_unknown_params:
             with suppress(AttributeError):  # for type parameters sections in objects without type parameters
-                type_params = docstring.parent.type_parameters  # ty:ignore[unresolved-attribute]
+                type_params = docstring.parent.type_parameters  # ty:ignore[missing-union-attribute]
                 if name not in type_params:
-                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # ty:ignore[unresolved-attribute]
+                    message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind.value} signature"  # ty:ignore[missing-union-attribute]
                     for starred_name in (f"*{name}", f"**{name}"):
                         if starred_name in type_params:
                             message += f". Did you mean '{starred_name}'?"
@@ -666,7 +666,7 @@ def _annotation_from_parent(
 ) -> str | Expr | None:
     annotation = None
     with suppress(Exception):
-        annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
+        annotation = docstring.parent.annotation  # ty:ignore[missing-attribute]
         if annotation.is_generator:
             annotation = annotation.slice.elements[gen_index]
         elif annotation.is_iterator and gen_index == 0:

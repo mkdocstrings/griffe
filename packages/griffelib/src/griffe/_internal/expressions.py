@@ -351,7 +351,7 @@ class Expr:
     """Base class for expressions."""
 
     def __str__(self) -> str:
-        return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # ty:ignore[unresolved-attribute]
+        return "".join(elem if isinstance(elem, str) else elem.name for elem in self.iterate(flat=True))  # ty:ignore[missing-attribute]
 
     def __iter__(self) -> Iterator[str | Expr]:
         """Iterate on the expression syntax and elements."""
@@ -1116,15 +1116,15 @@ class ExprName(Expr):  # noqa: PLW1641
     def resolved(self) -> Module | Class | None:
         """The resolved object this name refers to."""
         try:
-            return self.parent.modules_collection[self.parent.resolve(self.name)]  # ty:ignore[unresolved-attribute]
+            return self.parent.modules_collection[self.parent.resolve(self.name)]  # ty:ignore[missing-union-attribute]
         except Exception:  # noqa: BLE001
-            return self.parent.resolved[self.name]  # ty:ignore[not-subscriptable, unresolved-attribute]
+            return self.parent.resolved[self.name]  # ty:ignore[not-subscriptable, missing-union-attribute]
 
     @property
     def is_enum_class(self) -> bool:
         """Whether this name resolves to an enumeration class."""
         try:
-            bases = self.resolved.bases  # ty:ignore[unresolved-attribute]
+            bases = self.resolved.bases  # ty:ignore[missing-union-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -1136,7 +1136,7 @@ class ExprName(Expr):  # noqa: PLW1641
     def is_enum_instance(self) -> bool:
         """Whether this name resolves to an enumeration instance."""
         try:
-            return self.parent.is_enum_class  # ty:ignore[unresolved-attribute]
+            return self.parent.is_enum_class  # ty:ignore[missing-union-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -1144,7 +1144,7 @@ class ExprName(Expr):  # noqa: PLW1641
     def is_enum_value(self) -> bool:
         """Whether this name resolves to an enumeration value."""
         try:
-            return self.name == "value" and self.parent.is_enum_instance  # ty:ignore[unresolved-attribute]
+            return self.name == "value" and self.parent.is_enum_instance  # ty:ignore[missing-union-attribute]
         except Exception:  # noqa: BLE001
             return False
 
@@ -1257,7 +1257,7 @@ class ExprSubscript(Expr):
 
     def modernize(self) -> ExprBinOp | ExprSubscript:
         if self.canonical_path == "typing.Union":
-            return self._to_binop(self.slice.elements, op="|")  # ty:ignore[unresolved-attribute]
+            return self._to_binop(self.slice.elements, op="|")  # ty:ignore[missing-attribute]
         if self.canonical_path == "typing.Optional":
             left = self.slice if isinstance(self.slice, str) else self.slice.modernize()
             return ExprBinOp(left=left, operator="|", right="None")
@@ -1596,7 +1596,7 @@ def _build_constant(
                     node.value,
                 )
             else:
-                return _build(parsed.body, parent, **kwargs)  # ty:ignore[unresolved-attribute]
+                return _build(parsed.body, parent, **kwargs)  # ty:ignore[missing-attribute]
     return {type(...): lambda _: "..."}.get(type(node.value), repr)(node.value)
 
 
@@ -1623,7 +1623,7 @@ def _build_format_spec(node: ast.expr | None, parent: Module | Class, **kwargs: 
         return None
     # Format specifiers are joined-string parts without the `f` prefix and quotes:
     # literal parts stay raw, interpolated parts are built recursively.
-    return [_build(value, parent, in_joined_str=True, **kwargs) for value in node.values]  # ty:ignore[unresolved-attribute]
+    return [_build(value, parent, in_joined_str=True, **kwargs) for value in node.values]  # ty:ignore[missing-attribute]
 
 
 def _build_formatted(
@@ -1909,7 +1909,7 @@ def safe_get_expression(
             path: Path | str = parent.relative_filepath
         except ValueError:
             path = "<in-memory>"
-        lineno = node.lineno  # ty:ignore[unresolved-attribute]
+        lineno = node.lineno  # ty:ignore[missing-attribute]
         error_str = f"{error.__class__.__name__}: {error}"
         message = msg_format.format(path=path, lineno=lineno, node_class=node_class, error=error_str)
         getattr(logger, log_level.value)(message)

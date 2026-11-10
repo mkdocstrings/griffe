@@ -14,7 +14,7 @@ hide:
 
 <div class="grid cards" markdown>
 
-- :material-run-fast:{ .lg .middle } **Getting started**
+-   :material-run-fast:{ .lg .middle } **Getting started**
 
     ---
 
@@ -22,7 +22,7 @@ hide:
 
     [:octicons-download-16: Installation](installation.md){ .md-button .md-button--primary } [:material-book-open-variant: Introduction](introduction.md){ .md-button .md-button--primary }
 
-- :material-diving-scuba:{ .lg .middle } **Deep dive**
+-   :material-diving-scuba:{ .lg .middle } **Deep dive**
 
     ---
 
@@ -39,22 +39,25 @@ Griffe is a Python tool and library that gives you signatures for entire Python 
 Griffe can be used as a Python library. For example, the [Python handler](https://mkdocstrings.github.io/python) of [mkdocstrings](https://mkdocstrings.github.io/) uses Griffe to collect API data and render API documentation in HTML. Griffe can also be used on the command-line, to load and serialize your API data to JSON, or find breaking changes in your API since the previous version of your library.
 
 <div class="grid cards" markdown>
+
 <div markdown>
 
-```console exec="1" source="console" result="json" title="Serializing as JSON" id="griffe-dump"
+``` console exec="1" source="console" result="json" title="Serializing as JSON" id="griffe-dump"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe dump griffe -s packages/griffelib/src -r 2>/dev/null | head -29
 ```
 
 </div>
+
 <div markdown>
 
-```console exec="1" source="console" result="ansi" returncode="1" title="Checking for API breaking changes" id="griffe-check"
+``` console exec="1" source="console" result="ansi" returncode="1" title="Checking for API breaking changes" id="griffe-check"
 $ export FORCE_COLOR=1  # markdown-exec: hide
 $ griffe check griffe -ssrc -b0.46.0 -a0.45.0 --verbose
 ```
 
 </div>
+
 </div>
 
 [:material-play: Playground](playground.md){ .md-button .md-button--primary }

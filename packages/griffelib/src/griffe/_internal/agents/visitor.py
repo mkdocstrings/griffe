@@ -238,7 +238,7 @@ class Visitor:
         ) -> list[TypeParameter]:
             return [
                 TypeParameter(
-                    type_param.name,  # ty:ignore[unresolved-attribute,unused-ignore-comment,unused-ignore-comment]
+                    type_param.name,  # ty:ignore[missing-attribute,unused-ignore-comment,unused-ignore-comment]
                     kind=self._type_parameter_kind_map[type(type_param)],
                     bound=safe_get_annotation(getattr(type_param, "bound", None), parent=self.current, member=scope),
                     default=safe_get_annotation(
@@ -247,7 +247,7 @@ class Visitor:
                         member=scope,
                     ),
                 )
-                for type_param in node.type_params  # ty:ignore[unresolved-attribute,unused-ignore-comment,unused-ignore-comment]
+                for type_param in node.type_params  # ty:ignore[missing-attribute,unused-ignore-comment,unused-ignore-comment]
             ]
     else:
 
@@ -674,7 +674,7 @@ class Visitor:
 
             if isinstance(annotation, Expr) and annotation.is_classvar:
                 # Explicit `ClassVar`: class attribute only.
-                annotation = annotation.slice  # ty:ignore[unresolved-attribute]
+                annotation = annotation.slice  # ty:ignore[missing-attribute]
                 labels.add("class-attribute")
             elif node.value:
                 # Attribute assigned at class-level: available in instances as well.
@@ -715,7 +715,7 @@ class Visitor:
             if name in parent.members:
                 # Assigning multiple times.
                 # TODO: Might be better to inspect.
-                if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # ty:ignore[unresolved-attribute]
+                if isinstance(node.parent, (ast.If, ast.ExceptHandler)):  # ty:ignore[missing-attribute]
                     continue  # Prefer "no-exception" case.
 
                 existing_member = parent.members[name]
@@ -725,8 +725,8 @@ class Visitor:
                     if existing_member.docstring and not docstring:
                         docstring = existing_member.docstring
                     with suppress(AttributeError):
-                        if existing_member.annotation and not annotation:  # ty:ignore[unresolved-attribute]
-                            annotation = existing_member.annotation  # ty:ignore[unresolved-attribute]
+                        if existing_member.annotation and not annotation:  # ty:ignore[missing-union-attribute]
+                            annotation = existing_member.annotation  # ty:ignore[missing-union-attribute]
 
             attribute = Attribute(
                 name=name,
@@ -774,13 +774,13 @@ class Visitor:
         """
         with suppress(AttributeError):
             all_augment = (
-                node.target.id == "__all__"  # ty:ignore[unresolved-attribute]
+                node.target.id == "__all__"  # ty:ignore[missing-union-attribute]
                 and self.current.is_module
                 and isinstance(node.op, ast.Add)
             )
             if all_augment:
                 # We assume `exports` is not `None` at this point.
-                self.current.exports.extend(  # ty:ignore[unresolved-attribute]
+                self.current.exports.extend(  # ty:ignore[missing-union-attribute]
                     [
                         name if isinstance(name, str) else ExprName(name.name, parent=name.parent)
                         for name in safe_get__all__(node, self.current)  # ty:ignore[invalid-argument-type]
@@ -793,9 +793,9 @@ class Visitor:
         Parameters:
             node: The node to visit.
         """
-        if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # ty:ignore[unresolved-attribute]
+        if isinstance(node.parent, (ast.Module, ast.ClassDef)):  # ty:ignore[missing-attribute]
             condition = safe_get_condition(node.test, parent=self.current, log_level=None)
-            if str(condition) in {"typing.TYPE_CHECKING", "TYPE_CHECKING"}:
+            if condition and condition.canonical_path == "typing.TYPE_CHECKING":
                 self.type_guarded = True
         self.generic_visit(node)
         self.type_guarded = False

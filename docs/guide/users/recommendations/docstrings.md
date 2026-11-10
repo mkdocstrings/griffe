@@ -6,7 +6,7 @@ Here are explanations on what docstrings are, and a few recommendations on how t
 
 A docstring is a line or block of text describing objects such as modules, classes, functions, attributes and type aliases. They are written below the object signature or assignment, or appear as first expression in a module:
 
-```python title="module.py"
+``` python title="module.py"
 """This is the module docstring."""
 
 type X = dict[str, int]
@@ -31,7 +31,7 @@ class C:
 
 Each docstring can span multiple lines if it is wrapped in triple double-quotes (which is generally the case and the official recommendation even for single-line docstrings):
 
-```python
+``` python
 def function():
     """This is a longer docstring.
 
@@ -61,9 +61,10 @@ To compensate for the lack of structure in natural languages, docstring "styles"
 Structuring the information in sections and items allows documentation-related tools to extract and provide this information in a structured way, by parsing the docstrings according to the style they follow. Griffe has parsers for [Google-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings), [Numpydoc-style](https://numpydoc.readthedocs.io/en/latest/format.html), and [Sphinx-style](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html) docstrings. See the complete reference for these parsers and styles in the [Docstrings reference](../../../reference/docstrings.md). We recommend that you read the style guides mentioned here as they are full of examples and good advice too.
 
 <div class="grid cards" markdown>
+
 <div markdown>
 
-```python title="Google-style"
+``` python title="Google-style"
 def greet(name: str, end: str = "!") -> None:
     """Greet someone.
 
@@ -84,9 +85,10 @@ def greet(name: str, end: str = "!") -> None:
 <!-- The invisible character above is here on purpose, to make both divs the same height. -->
 
 </div>
+
 <div markdown>
 
-```python title="Numpydoc-style"
+``` python title="Numpydoc-style"
 def greet(name: str, end: str = "!") -> None:
     """Greet someone.
 
@@ -105,13 +107,14 @@ def greet(name: str, end: str = "!") -> None:
 ```
 
 </div>
+
 </div>
 
 Our preferred style for docstrings is the **Google-style**, because it is in our opinion the most markup-agnostic style: it is based on any kind of markup or documentation generator. Our second choice would be the Numpydoc-style, for its readability.
 
-For the adventurers, have a look at [PEP 727](https://peps.python.org/pep-0727/) (draft) and [griffe-typingdoc](https://mkdocstrings.github.io/griffe-typingdoc/), a Griffe extension to support PEP 727. PEP 727 proposes an alternative way to provide information in a structured way, that does not rely on a docstring micro-format. It takes advantage of `typing.Annotated` to attach documentation to any type-annotated object, like attributes, parameters and returned values. With PEP 727, docstrings styles and their sections aren't required anymore, and docstrings can be written in plain markup, without following any particular style. This makes it easier for tools like Griffe who then don't have to parse docstrings *at all*. The PEP is a bit controversial (lots of different opinions), so we invite you to make your own opinion by looking at real-world projects using it, such as [FastAPI](https://github.com/tiangolo/fastapi/blob/master/fastapi/applications.py), or by reading the (very-long) [discussion on discuss.python.org](https://discuss.python.org/t/pep-727-documentation-metadata-in-typing/32566/17). The PEP was actually written by FastAPI's author, Sebastián Ramírez.
+For the adventurers, have a look at [PEP 727](https://peps.python.org/pep-0727/) (draft) and [griffe-typingdoc](https://mkdocstrings.github.io/griffe-typingdoc/), a Griffe extension to support PEP 727. PEP 727 proposes an alternative way to provide information in a structured way, that does not rely on a docstring micro-format. It takes advantage of `typing.Annotated` to attach documentation to any type-annotated object, like attributes, parameters and returned values. With PEP 727, docstrings styles and their sections aren't required anymore, and docstrings can be written in plain markup, without following any particular style. This makes it easier for tools like Griffe who then don't have to parse docstrings _at all_. The PEP is a bit controversial (lots of different opinions), so we invite you to make your own opinion by looking at real-world projects using it, such as [FastAPI](https://github.com/tiangolo/fastapi/blob/master/fastapi/applications.py), or by reading the (very-long) [discussion on discuss.python.org](https://discuss.python.org/t/pep-727-documentation-metadata-in-typing/32566/17). The PEP was actually written by FastAPI's author, Sebastián Ramírez.
 
-```python title="PEP 727"
+``` python title="PEP 727"
 from typing_extensions import Annotated, Doc
 
 
@@ -131,7 +134,7 @@ def greet(
 
 ## General tips
 
-Your docstrings will typically be used to document your API, either on a deployed (static) website, or locally, on the command line or in a Python interpreter. Therefore, when writing your docstrings, you should address the right audience: the users of your code. Try to stay succinct and give clear examples. Docstrings are not really the place to explain architectural or technical decisions made while developing the project: this information, while extremely valuable, is better written in *code comments*, where the audience is other developers working on the code base.
+Your docstrings will typically be used to document your API, either on a deployed (static) website, or locally, on the command line or in a Python interpreter. Therefore, when writing your docstrings, you should address the right audience: the users of your code. Try to stay succinct and give clear examples. Docstrings are not really the place to explain architectural or technical decisions made while developing the project: this information, while extremely valuable, is better written in _code comments_, where the audience is other developers working on the code base.
 
 Your docstrings will typically again be read online (HTML) or other types of documents such as manual pages or PDFs. Make sure to write complete sentences, with correct punctuation. That means for example, to start each parameter description with a capital letter, and to end it with a period.
 
@@ -141,7 +144,7 @@ When documenting objects acting as namespaces (modules, classes, enumerations), 
 
 Module docstrings should briefly explain what the module contains, and for what purposes these objects can be used. If the documentation generator you chose does not support generating member summaries automatically, you might want to add docstrings sections for attributes, functions, classes, type aliases and submodules.
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 """A generic package to demonstrate docstrings.
 
 This package does not really exist, and is only used as a demonstration purpose for docstrings.
@@ -167,7 +170,7 @@ Do the same thing for every other module of the package, except if you are [hidi
 
 Class docstrings follow the same logic as module docstrings. Explain what the class is used for, and maybe show a few of its attributes and methods thanks to sections of the same name. A class is already more concrete than a module, so we can maybe start adding usage examples too. Such examples should only show how to create instances of the class. Examples of use for methods can be written in each respective method.
 
-```python
+``` python
 class Ghost:
     """Ghosts that wander the earth.
 
@@ -204,7 +207,7 @@ class Ghost:
 
 Note that blocks of lines starting with `>>>` or `...` are automatically parsed as code blocks by Griffe, until a blank line is found. This only works in Examples (plural!) sections. If you rely on [Python-Markdown](https://python-markdown.github.io/) to convert Markdown to HTML (which is the case for MkDocs), you can use the [markdown-pycon](https://pawamoy.github.io/markdown-pycon/) extension to recognize such `pycon` code blocks anywhere, without having to wrap them in fences. You can also choose to use explicit fences everywhere:
 
-````python
+```` python
     """
     Examples:
         Create a new ghost with a cool nickname:
@@ -219,7 +222,7 @@ Note that blocks of lines starting with `>>>` or `...` are automatically parsed 
 
 Function and method docstrings will typically describe their parameters and return values. For generators, it's also possible to describe what the generator yields and what it can receive, though the latter is not often used.
 
-```python
+``` python
 import datetime
 from typing import Generator, Iterator
 
@@ -279,7 +282,7 @@ def gog_tickets_factory() -> Generator[GOGTicket, int, None]:
 
 Attribute docstrings are written below their assignment. As usual, they should have a short summary, and an optional, longer body.
 
-```python
+``` python
 GHOST_MASS_CONSTANT: float = 1e-100
 """The ghost mass constant.
 
@@ -295,7 +298,7 @@ Note:
 
 Class and instance attributes can be documented the same way:
 
-```python
+``` python
 class GhostTown:
     instances: str
     """All the existing towns."""
@@ -312,7 +315,7 @@ class GhostTown:
 
 Type alias docstrings are written below their assignment. As usual, they should have a short summary, and an optional, longer body.
 
-```python
+``` python
 type Callback = typing.Callable[[int, str], typing.Any]
 """Callback type for Frobnicators.
 
@@ -325,7 +328,7 @@ is the name of the widget being frobnicated.
 
 Callables that raise exceptions or emit warnings can document each of these exceptions and warnings. Documenting them informs your users that they could or should catch the raised exceptions, or that they could filter or configure warnings differently. The description next to each exception or warning should explain how or when they are raised or emitted.
 
-```python
+``` python
 def verify_spirit_chest():
     """Do a verification routine on the spirit chest.
 

@@ -88,7 +88,7 @@ def _run(version: str, cmd: str, *args: str, **kwargs: Any) -> None:
 
 def _command(name: str) -> Callable[[Callable[..., None]], Callable[..., None]]:
     def wrapper(func: Callable[..., None]) -> Callable[..., None]:
-        func.__cmdname__ = name  # ty:ignore[unresolved-attribute]
+        func.__cmdname__ = name  # ty:ignore[missing-attribute]
         _commands.append(func)
         return func
 

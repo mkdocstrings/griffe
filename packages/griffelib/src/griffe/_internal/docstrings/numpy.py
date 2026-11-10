@@ -282,7 +282,7 @@ def _read_parameters(
             # try to use the annotation from the signature
             for name in names:
                 with suppress(AttributeError, KeyError):
-                    annotation = docstring.parent.parameters[name].annotation  # ty:ignore[unresolved-attribute]
+                    annotation = docstring.parent.parameters[name].annotation  # ty:ignore[missing-attribute]
                     break
             else:
                 if warnings and warn_missing_types:
@@ -293,12 +293,12 @@ def _read_parameters(
         if default is None:
             for name in names:
                 with suppress(AttributeError, KeyError):
-                    default = docstring.parent.parameters[name].default  # ty:ignore[unresolved-attribute]
+                    default = docstring.parent.parameters[name].default  # ty:ignore[missing-attribute]
                     break
 
         if warnings and warn_unknown_params:
             with suppress(AttributeError):  # For Parameters sections in objects without parameters.
-                params = docstring.parent.parameters  # ty:ignore[unresolved-attribute]
+                params = docstring.parent.parameters  # ty:ignore[missing-attribute]
                 for name in names:
                     if name not in params:
                         message = f"Parameter '{name}' does not appear in the function signature"
@@ -394,7 +394,7 @@ def _read_type_parameters_section(
             # try to use the bound from the signature
             for name in names:
                 with suppress(AttributeError, KeyError):
-                    bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[unresolved-attribute]
+                    bound = docstring.parent.type_parameters[name].annotation  # ty:ignore[missing-union-attribute]
                     break
         else:
             bound = parse_docstring_annotation(bound, docstring, log_level=LogLevel.debug)
@@ -402,15 +402,15 @@ def _read_type_parameters_section(
         if default is None:
             for name in names:
                 with suppress(AttributeError, KeyError):
-                    default = docstring.parent.type_parameters[name].default  # ty:ignore[unresolved-attribute]
+                    default = docstring.parent.type_parameters[name].default  # ty:ignore[missing-union-attribute]
                     break
 
         if warnings and warn_unknown_params:
             with suppress(AttributeError):  # for parameters sections in objects without parameters
-                type_params = docstring.parent.type_parameters  # ty:ignore[unresolved-attribute]
+                type_params = docstring.parent.type_parameters  # ty:ignore[missing-union-attribute]
                 for name in names:
                     if name not in type_params:
-                        message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind} signature"  # ty:ignore[unresolved-attribute]
+                        message = f"Type parameter '{name}' does not appear in the {docstring.parent.kind} signature"  # ty:ignore[missing-union-attribute]
                         for starred_name in (f"*{name}", f"**{name}"):
                             if starred_name in type_params:
                                 message += f". Did you mean '{starred_name}'?"
@@ -488,10 +488,10 @@ def _read_returns_section(
         if annotation is None:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError, ValueError):
-                if docstring.parent.is_function:  # ty:ignore[unresolved-attribute]
-                    annotation = docstring.parent.returns  # ty:ignore[unresolved-attribute]
-                elif docstring.parent.is_attribute:  # ty:ignore[unresolved-attribute]
-                    annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
+                if docstring.parent.is_function:  # ty:ignore[missing-union-attribute]
+                    annotation = docstring.parent.returns  # ty:ignore[missing-attribute]
+                elif docstring.parent.is_attribute:  # ty:ignore[missing-union-attribute]
+                    annotation = docstring.parent.annotation  # ty:ignore[missing-attribute]
                 else:
                     raise ValueError
                 if len(items) > 1:
@@ -549,7 +549,7 @@ def _read_yields_section(
         if annotation is None:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, IndexError, KeyError, ValueError):
-                annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
+                annotation = docstring.parent.annotation  # ty:ignore[missing-attribute]
                 if annotation.is_iterator:
                     yield_item = annotation.slice
                 elif annotation.is_generator:
@@ -601,7 +601,7 @@ def _read_receives_section(
         if annotation is None:
             # try to retrieve the annotation from the docstring parent
             with suppress(AttributeError, KeyError):
-                annotation = docstring.parent.returns  # ty:ignore[unresolved-attribute]
+                annotation = docstring.parent.returns  # ty:ignore[missing-attribute]
                 if annotation.is_generator:
                     receives_item = annotation.slice.elements[1]
                     if isinstance(receives_item, ExprName):

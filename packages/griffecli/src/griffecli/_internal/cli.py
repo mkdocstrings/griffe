@@ -443,7 +443,7 @@ def dump(
     if per_package_output:
         for package_name, data in data_packages.items():
             serialized = data.as_json(indent=2, full=full, sort_keys=True)
-            _print_data(serialized, output.format(package=package_name))  # ty:ignore[unresolved-attribute]
+            _print_data(serialized, output.format(package=package_name))  # ty:ignore[missing-union-attribute]
     else:
         serialized = json.dumps(data_packages, cls=JSONEncoder, indent=2, full=full, sort_keys=True)
         _print_data(serialized, output)

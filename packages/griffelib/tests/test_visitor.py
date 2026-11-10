@@ -277,7 +277,7 @@ def test_get_correct_docstring_starting_line_number() -> None:
                 '''
         """,
     ) as module:
-        assert module.docstring.lineno == 2  # ty:ignore[unresolved-attribute]
+        assert module.docstring.lineno == 2  # ty:ignore[missing-union-attribute]
         assert module["C"].docstring.lineno == 6
         assert module["C.method"].docstring.lineno == 10
 
@@ -513,3 +513,16 @@ def test_parse_pep695_generics() -> None:
         assert type_alias.type_parameters[0].default.name == "str"
         assert isinstance(type_alias.value, Expr)
         assert str(type_alias.value) == "dict[str, T]"
+
+
+def test_type_guarded_by_typing_alias() -> None:
+    """Symbols must be marked as type-guarded even when `typing` is aliased."""
+    with temporary_visited_module(
+        """
+        import typing as t
+
+        if t.TYPE_CHECKING:
+            a = 0
+        """
+    ) as module:
+        assert not module["a"].runtime
