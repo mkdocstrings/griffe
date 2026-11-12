@@ -506,7 +506,7 @@ def _class_incompatibilities(
     old_class: Class,
     new_class: Class,
     *,
-    seen_paths: set[str],
+    seen_paths: set[tuple[str, str]],
 ) -> Iterable[Breakage]:
     yield from ()
     if new_class.bases != old_class.bases and len(new_class.bases) < len(old_class.bases):
@@ -602,7 +602,7 @@ def _alias_incompatibilities(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
-    seen_paths: set[str],
+    seen_paths: set[tuple[str, str]],
 ) -> Iterable[Breakage]:
     try:
         old_member = old_obj.target if old_obj.is_alias else old_obj  # ty:ignore[missing-union-attribute]
@@ -618,7 +618,7 @@ def _member_incompatibilities(
     old_obj: Object | Alias,
     new_obj: Object | Alias,
     *,
-    seen_paths: set[str] | None = None,
+    seen_paths: set[tuple[str, str]] | None = None,
 ) -> Iterator[Breakage]:
     seen_paths = set() if seen_paths is None else seen_paths
     new_members = new_obj.all_members
@@ -643,11 +643,12 @@ def _type_based_yield(
     old_member: Object | Alias,
     new_member: Object | Alias,
     *,
-    seen_paths: set[str],
+    seen_paths: set[tuple[str, str]],
 ) -> Iterator[Breakage]:
-    if old_member.path in seen_paths:
+    paths = (old_member.path, new_member.path)
+    if paths in seen_paths:
         return
-    seen_paths.add(old_member.path)
+    seen_paths.add(paths)
     if old_member.is_alias or new_member.is_alias:
         # Should be first, since there can be the case where there is an alias and another kind of object,
         # which may not be a breaking change.
