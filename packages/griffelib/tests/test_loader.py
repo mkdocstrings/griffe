@@ -582,3 +582,126 @@ def test_deferred_finder(tmp_path: Path) -> None:
     l1_result = l1.load("ns")
     l2_result = l2.load("ns")
     assert l1_result.as_dict() == l2_result.as_dict()
+
+
+@pytest.mark.parametrize(
+    ("pypackage", "module", "expected_path"),
+    [
+        (("pkg", ["sub.py"]), "pkg/sub.py", "pkg.sub"),
+        (("pkg", ["sub.py"]), "pkg/__init__.py", "pkg"),
+        (("a/b", ["c.py"]), "a/b", "a.b"),
+        (("a/b", ["c.py"]), "a/b/c.py", "a.b.c"),
+        (("a/b", ["c.py"]), "a/b/__init__.py", "a.b"),
+    ],
+)
+@pytest.mark.parametrize("relative_path", [False, True])
+def test_load_module_from_path(
+    pypackage: tuple[str, list[str]],
+    module: str,
+    expected_path: str,
+    relative_path: bool,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Check that modules loaded from file paths get their full dotted name.
+
+    Parameters:
+        pypackage: A temporary package (metadata) on the file system (parametrized).
+        module: The module path to load (parametrized).
+        expected_path: Expected module path (parametrized).
+        relative_path: Whether the module path is relative to the working directory.
+        monkeypatch: Pytest fixture.
+    """
+    with temporary_pypackage(*pypackage) as tmp_package, monkeypatch.context() as patch:
+        # Exercise relative paths from the package's search root.
+        patch.chdir(tmp_package.tmpdir)
+        module_path = tmp_package.tmpdir / module
+        if relative_path:
+            module_path = module_path.relative_to(tmp_package.tmpdir)
+
+        # Both argument types must work with a fresh loader.
+        path_loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        string_loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        path_module = path_loader.load(module_path)
+        string_module = string_loader.load(str(module_path))
+
+        assert path_module.path == expected_path
+        assert string_module.path == expected_path
+
+
+@pytest.mark.parametrize(
+    ("module", "expected_path"),
+    [
+        ("pkg/sub", "pkg.sub"),
+        ("pkg/sub/__init__.py", "pkg.sub"),
+        ("pkg/sub/mod.py", "pkg.sub.mod"),
+    ],
+)
+@pytest.mark.parametrize("relative_path", [False, True])
+def test_load_module_from_path_with_inferred_search_root(
+    module: str,
+    expected_path: str,
+    relative_path: bool,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Infer the full module name when the package is outside the search paths.
+
+    Parameters:
+        module: The module path to load (parametrized).
+        expected_path: Expected module path (parametrized).
+        relative_path: Whether the module path is relative to the working directory.
+        tmp_path: Pytest fixture.
+        monkeypatch: Pytest fixture.
+    """
+    package = tmp_path / "pkg"
+    subpackage = package / "sub"
+    subpackage.mkdir(parents=True)
+    (package / "__init__.py").touch()
+    (subpackage / "__init__.py").touch()
+    (subpackage / "mod.py").touch()
+
+    monkeypatch.chdir(tmp_path)
+    module_path = tmp_path / module
+    if relative_path:
+        module_path = module_path.relative_to(tmp_path)
+
+    # An unrelated search path forces the finder to infer the root from package initializers.
+    search_paths = [tmp_path / "unrelated"]
+    path_module = GriffeLoader(search_paths=search_paths).load(module_path)
+    string_module = GriffeLoader(search_paths=search_paths).load(str(module_path))
+
+    assert path_module.path == expected_path
+    assert string_module.path == expected_path
+
+
+def test_load_script_from_path(tmp_path: Path) -> None:
+    """Check that a standalone script can be loaded from its file path."""
+    script = tmp_path / "some_script.py"
+    script.write_text("value = 1", encoding="utf8")
+    module = GriffeLoader().load(str(script))
+    assert module.is_module
+    assert module.name == "some_script"
+    assert module.filepath == script
+
+
+def test_load_stubs_only_package_from_path() -> None:
+    """Check that a stubs-only package loaded from its directory gets a clean dotted name."""
+    with temporary_pypackage("pkg", ["__init__.pyi"], init=False) as tmp_package:
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        assert loader.load(tmp_package.tmpdir / "pkg").path == "pkg"
+
+
+def test_load_symlinked_init_module_from_path(tmp_path: Path) -> None:
+    """Check that a symlinked `__init__.py` keeps the package name."""
+    package = tmp_path / "package"
+    package.mkdir()
+    entry = package / "entry.py"
+    entry.write_text("value = 1", encoding="utf8")
+    init = package / "__init__.py"
+    init.symlink_to(entry.name)
+
+    loader = GriffeLoader(search_paths=[tmp_path])
+    module = loader.load(init)
+
+    assert module.path == "package"
+    assert module.filepath == init

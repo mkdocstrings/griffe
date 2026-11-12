@@ -199,21 +199,24 @@ class ModuleFinder:
         Returns:
             The name of the module, and an instance representing its (namespace) package.
         """
-        module_path: Path | list[Path]
+        module_path: Path | None = None
         if isinstance(module, Path):
-            module_name, module_path = self._module_name_path(module)
-            top_module_name = self._top_module_name(module_path)
+            module_path = self._module_path(module)
         elif try_relative_path:
             try:
-                module_name, module_path = self._module_name_path(Path(module))
+                module_path = self._module_path(Path(module))
             except FileNotFoundError:
                 module_name = module
                 top_module_name = module.split(".", 1)[0]
-            else:
-                top_module_name = self._top_module_name(module_path)
         else:
             module_name = module
             top_module_name = module.split(".", 1)[0]
+
+        # Rebuild the full dotted name from the path, relative to the root
+        # that was used to find the top-level package.
+        if module_path is not None:
+            top_module_name, root_path = self._top_module_name(module_path)
+            module_name = self._relative_module_name(module_path, root_path)
 
         # Only search for actual package, let exceptions bubble up.
         if not find_stubs_package:
@@ -338,24 +341,14 @@ class ModuleFinder:
             if rel_subpath.parent in skip:
                 logger.debug("Skip %s, another module took precedence", subpath)
                 continue
-            py_file = rel_subpath.suffix == ".py"
-            stem = rel_subpath.stem
-            if not py_file:
-                # `.py[cod]` and `.so` files look like `name.cpython-38-x86_64-linux-gnu.ext`.
-                stem = stem.split(".", 1)[0]
-            if stem == "__init__":
-                # Optimization: since it's a relative path, if it has only one part
-                # and is named __init__, it means it's the starting path
-                # (no need to compare it against starting path).
-                if len(rel_subpath.parts) == 1:
-                    continue
-                yield rel_subpath.parts[:-1], subpath
-                if seen is not None:
-                    seen.add(rel_subpath.parent)
-            elif py_file:
-                yield rel_subpath.with_suffix("").parts, subpath
-            else:
-                yield rel_subpath.with_name(stem).parts, subpath
+            name_parts = _module_name_parts(rel_subpath)
+            # The starting package's initializer has no relative name.
+            if not name_parts:
+                continue
+            yield name_parts, subpath
+            # An initializer names its parent directory, marking it as a regular package.
+            if seen is not None and name_parts == rel_subpath.parent.parts:
+                seen.add(rel_subpath.parent)
 
     def submodules(self, module: Module) -> list[NamePartsAndPathType]:
         """Return the list of a module's submodules.
@@ -374,19 +367,17 @@ class ModuleFinder:
             key=_module_depth,
         )
 
-    def _module_name_path(self, path: Path) -> tuple[str, Path]:
+    def _module_path(self, path: Path) -> Path:
         # Always return absolute paths to avoid working-directory-dependent issues.
         path = path.absolute()
         if path.is_dir():
             for ext in self.accepted_py_module_extensions:
                 module_path = path / f"__init__{ext}"
                 if module_path.exists():
-                    return path.name, module_path
-            return path.name, path
+                    return module_path
+            return path
         if path.exists():
-            if path.stem == "__init__":
-                return path.parent.name, path
-            return path.stem, path
+            return path
         raise FileNotFoundError
 
     def _contents(self, path: Path) -> list[Path]:
@@ -414,21 +405,44 @@ class ModuleFinder:
                 if os.path.splitext(relfile)[1] in self.extensions_set:  # noqa: PTH122
                     yield Path(root, relfile)
 
-    def _top_module_name(self, path: Path) -> str:
+    def _top_module_name(self, path: Path) -> tuple[str, Path]:
         # First find if a parent is in search paths.
         parent_path = path if path.is_dir() else path.parent
         # Always resolve parent path to compare for relativeness against resolved search paths.
         parent_path = parent_path.resolve()
         for search_path in self.search_paths:
+            resolved_search_path = search_path.resolve()
             with suppress(ValueError, IndexError):
-                rel_path = parent_path.relative_to(search_path.resolve())
-                return rel_path.parts[0]
+                rel_path = parent_path.relative_to(resolved_search_path)
+                return rel_path.parts[0], resolved_search_path
         # If not, get the highest directory with an `__init__` module,
         # add its parent to search paths and return it.
         while parent_path.parent != parent_path and (parent_path.parent / "__init__.py").exists():
             parent_path = parent_path.parent
         self.insert_search_path(0, parent_path.parent)
-        return parent_path.name
+        return parent_path.name, parent_path.parent.resolve()
+
+    def _relative_module_name(self, module_path: Path, root_path: Path) -> str:
+        # Compute the full dotted name from the path, relative to the root
+        # used to find the top-level package.
+        if module_path.is_dir():
+            relative_path = module_path.resolve().relative_to(root_path)
+            return ".".join(relative_path.parts)
+        # Resolve the parent directories, but preserve the installed filename
+        # when the module is a symbolic link to a file elsewhere.
+        relative_path = (module_path.parent.resolve() / module_path.name).relative_to(root_path)
+        return ".".join(_module_name_parts(relative_path))
+
+
+def _module_name_parts(path: Path) -> NamePartsType:
+    """Convert a module file path to name parts, without resolving symbolic links."""
+    stem = path.stem
+    if path.suffix != ".py":
+        # Compiled modules can include an interpreter or platform tag before the extension.
+        stem = stem.split(".", 1)[0]
+    if stem == "__init__":
+        return path.parent.parts
+    return path.with_name(stem).parts
 
 
 _re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")

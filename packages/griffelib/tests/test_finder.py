@@ -29,18 +29,26 @@ from griffe._internal.finder import _handle_editable_module, _handle_pth_file
 
 
 @pytest.mark.parametrize(
-    ("pypackage", "module", "add_to_search_path", "expected_top_name", "expected_top_path"),
+    (
+        "pypackage",
+        "module",
+        "add_to_search_path",
+        "expected_module_name",
+        "expected_top_name",
+        "expected_top_path",
+    ),
     [
-        (("a", ["b.py"]), "a/b.py", True, "a", "a/__init__.py"),
-        (("a", ["b.py"]), "a/b.py", False, "a", "a/__init__.py"),
-        (("a/b", ["c.py"]), "a/b/c.py", True, "a", "a"),
-        (("a/b", ["c.py"]), "a/b/c.py", False, "b", "a/b/__init__.py"),
+        (("a", ["b.py"]), "a/b.py", True, "a.b", "a", "a/__init__.py"),
+        (("a", ["b.py"]), "a/b.py", False, "a.b", "a", "a/__init__.py"),
+        (("a/b", ["c.py"]), "a/b/c.py", True, "a.b.c", "a", "a"),
+        (("a/b", ["c.py"]), "a/b/c.py", False, "b.c", "b", "a/b/__init__.py"),
     ],
 )
-def test_find_module_with_path(
+def test_find_module_with_path(  # noqa: PLR0917
     pypackage: tuple[str, list[str]],
     module: str,
     add_to_search_path: bool,
+    expected_module_name: str,
     expected_top_name: str,
     expected_top_path: str,
 ) -> None:
@@ -50,12 +58,14 @@ def test_find_module_with_path(
         pypackage: A temporary package (metadata) on the file system (parametrized).
         module: The module path to load (parametrized).
         add_to_search_path: Whether to add the temporary package parent path to the finder search paths (parametrized).
+        expected_module_name: Expected full dotted module name (parametrized).
         expected_top_name: Expected top module name (parametrized).
         expected_top_path: Expected top module path (parametrized).
     """
     with temporary_pypackage(*pypackage) as tmp_package:
         finder = ModuleFinder(search_paths=[tmp_package.tmpdir] if add_to_search_path else None)
-        _, package = finder.find_spec(tmp_package.tmpdir / module)
+        module_name, package = finder.find_spec(tmp_package.tmpdir / module)
+        assert module_name == expected_module_name
         assert package.name == expected_top_name
         if isinstance(package, NamespacePackage):
             assert package.path == [tmp_package.tmpdir / expected_top_path]
