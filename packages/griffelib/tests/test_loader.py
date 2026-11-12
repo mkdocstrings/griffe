@@ -582,3 +582,64 @@ def test_deferred_finder(tmp_path: Path) -> None:
     l1_result = l1.load("ns")
     l2_result = l2.load("ns")
     assert l1_result.as_dict() == l2_result.as_dict()
+
+
+@pytest.mark.parametrize(
+    ("pypackage", "module", "expected_path"),
+    [
+        (("pkg", ["sub.py"]), "pkg/sub.py", "pkg.sub"),
+        (("pkg", ["sub.py"]), "pkg/__init__.py", "pkg"),
+        (("a/b", ["c.py"]), "a/b", "a.b"),
+        (("a/b", ["c.py"]), "a/b/c.py", "a.b.c"),
+        (("a/b", ["c.py"]), "a/b/__init__.py", "a.b"),
+    ],
+)
+def test_load_module_from_path(
+    pypackage: tuple[str, list[str]],
+    module: str,
+    expected_path: str,
+) -> None:
+    """Check that modules loaded from file paths get their full dotted name.
+
+    Parameters:
+        pypackage: A temporary package (metadata) on the file system (parametrized).
+        module: The module path to load (parametrized).
+        expected_path: Expected module path (parametrized).
+    """
+    with temporary_pypackage(*pypackage) as tmp_package:
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        assert loader.load(tmp_package.tmpdir / module).path == expected_path
+        assert loader.load(str(tmp_package.tmpdir / module)).path == expected_path
+
+
+def test_load_script_from_path(tmp_path: Path) -> None:
+    """Check that a standalone script can be loaded from its file path."""
+    script = tmp_path / "some_script.py"
+    script.write_text("value = 1", encoding="utf8")
+    module = GriffeLoader().load(str(script))
+    assert module.is_module
+    assert module.name == "some_script"
+    assert module.filepath == script
+
+
+def test_load_stubs_only_package_from_path() -> None:
+    """Check that a stubs-only package loaded from its directory gets a clean dotted name."""
+    with temporary_pypackage("pkg", ["__init__.pyi"], init=False) as tmp_package:
+        loader = GriffeLoader(search_paths=[tmp_package.tmpdir])
+        assert loader.load(tmp_package.tmpdir / "pkg").path == "pkg"
+
+
+def test_load_symlinked_init_module_from_path(tmp_path: Path) -> None:
+    """Check that a symlinked `__init__.py` keeps the package name."""
+    package = tmp_path / "package"
+    package.mkdir()
+    entry = package / "entry.py"
+    entry.write_text("value = 1", encoding="utf8")
+    init = package / "__init__.py"
+    init.symlink_to(entry.name)
+
+    loader = GriffeLoader(search_paths=[tmp_path])
+    module = loader.load(init)
+
+    assert module.path == "package"
+    assert module.filepath == init

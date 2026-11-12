@@ -199,10 +199,11 @@ class ModuleFinder:
         Returns:
             The name of the module, and an instance representing its (namespace) package.
         """
-        module_path: Path | list[Path]
+        module_path: Path | None = None
+        root_path: Path | None = None
         if isinstance(module, Path):
             module_name, module_path = self._module_name_path(module)
-            top_module_name = self._top_module_name(module_path)
+            top_module_name, root_path = self._top_module_name(module_path)
         elif try_relative_path:
             try:
                 module_name, module_path = self._module_name_path(Path(module))
@@ -210,10 +211,15 @@ class ModuleFinder:
                 module_name = module
                 top_module_name = module.split(".", 1)[0]
             else:
-                top_module_name = self._top_module_name(module_path)
+                top_module_name, root_path = self._top_module_name(module_path)
         else:
             module_name = module
             top_module_name = module.split(".", 1)[0]
+
+        # Rebuild the full dotted name from the path, relative to the root
+        # that was used to find the top-level package.
+        if module_path is not None and root_path is not None:
+            module_name = self._relative_module_name(module_path, root_path)
 
         # Only search for actual package, let exceptions bubble up.
         if not find_stubs_package:
@@ -414,21 +420,38 @@ class ModuleFinder:
                 if os.path.splitext(relfile)[1] in self.extensions_set:  # noqa: PTH122
                     yield Path(root, relfile)
 
-    def _top_module_name(self, path: Path) -> str:
+    def _top_module_name(self, path: Path) -> tuple[str, Path]:
         # First find if a parent is in search paths.
         parent_path = path if path.is_dir() else path.parent
         # Always resolve parent path to compare for relativeness against resolved search paths.
         parent_path = parent_path.resolve()
         for search_path in self.search_paths:
+            resolved_search_path = search_path.resolve()
             with suppress(ValueError, IndexError):
-                rel_path = parent_path.relative_to(search_path.resolve())
-                return rel_path.parts[0]
+                rel_path = parent_path.relative_to(resolved_search_path)
+                return rel_path.parts[0], resolved_search_path
         # If not, get the highest directory with an `__init__` module,
         # add its parent to search paths and return it.
         while parent_path.parent != parent_path and (parent_path.parent / "__init__.py").exists():
             parent_path = parent_path.parent
         self.insert_search_path(0, parent_path.parent)
-        return parent_path.name
+        return parent_path.name, parent_path.parent.resolve()
+
+    def _relative_module_name(self, module_path: Path, root_path: Path) -> str:
+        # Compute the full dotted name from the path, relative to the root
+        # used to find the top-level package.
+        if module_path.is_dir():
+            relative_path = module_path.resolve().relative_to(root_path)
+            return ".".join(relative_path.parts)
+        # Resolve the parent directories, but preserve the filename in case the
+        # module itself is a symbolic link (for example, `__init__.py -> entry.py`).
+        relative_path = (module_path.parent.resolve() / module_path.name).relative_to(root_path)
+        stem = relative_path.stem
+        if relative_path.suffix != ".py":
+            # `.py[cod]` and `.so` files look like `name.cpython-38-x86_64-linux-gnu.ext`.
+            stem = stem.split(".", 1)[0]
+        relative_path = relative_path.parent if stem == "__init__" else relative_path.with_name(stem)
+        return ".".join(relative_path.parts)
 
 
 _re_pkgresources = re.compile(r"(?:__import__\([\"']pkg_resources[\"']\).declare_namespace\(__name__\))")
