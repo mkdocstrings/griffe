@@ -1575,7 +1575,7 @@ class Alias(ObjectAliasMixin):
             return self._public
         # For inherited members, return original member's visibility.
         if self.inherited:
-            return self.final_target.public
+            return self.target.public
         # Last case, none.
         return None
 
