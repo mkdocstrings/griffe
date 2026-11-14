@@ -288,7 +288,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # ty:ignore[invalid-return-type]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.MODULE}  # ty:ignore[invalid-explicit-return]
 
     @property
     def classes(self) -> dict[str, Class]:
@@ -297,7 +297,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # ty:ignore[invalid-return-type]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.CLASS}  # ty:ignore[invalid-explicit-return]
 
     @property
     def functions(self) -> dict[str, Function]:
@@ -306,7 +306,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # ty:ignore[invalid-return-type]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.FUNCTION}  # ty:ignore[invalid-explicit-return]
 
     @property
     def attributes(self) -> dict[str, Attribute]:
@@ -315,7 +315,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # ty:ignore[invalid-return-type]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.ATTRIBUTE}  # ty:ignore[invalid-explicit-return]
 
     @property
     def type_aliases(self) -> dict[str, TypeAlias]:
@@ -324,7 +324,7 @@ class ObjectAliasMixin(GetMembersMixin, SetMembersMixin, DelMembersMixin, Serial
         This method is part of the consumer API:
         do not use when producing Griffe trees!
         """
-        return {name: member for name, member in self.all_members.items() if member.kind is Kind.TYPE_ALIAS}  # ty:ignore[invalid-return-type]
+        return {name: member for name, member in self.all_members.items() if member.kind is Kind.TYPE_ALIAS}  # ty:ignore[invalid-explicit-return]
 
     @property
     def is_private(self) -> bool:

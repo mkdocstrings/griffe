@@ -445,4 +445,4 @@ def module_vtree(path: str, *, leaf_package: bool = True, return_leaf: bool = Fa
     if not leaf_package:
         filepath = modules[-1].filepath.with_stem(parts[-1])  # ty:ignore[missing-union-attribute]
         modules[-1]._filepath = filepath
-    return vtree(*modules, return_leaf=return_leaf)  # ty:ignore[invalid-return-type]
+    return vtree(*modules, return_leaf=return_leaf)  # ty:ignore[invalid-explicit-return]

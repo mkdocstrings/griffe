@@ -148,8 +148,8 @@ class Breakage:
     @property
     def _filepath(self) -> Path:
         if self.obj.is_alias:
-            return self.obj.parent.filepath  # ty:ignore[invalid-return-type, missing-union-attribute]
-        return self.obj.filepath  # ty:ignore[invalid-return-type]
+            return self.obj.parent.filepath  # ty:ignore[invalid-explicit-return, missing-union-attribute]
+        return self.obj.filepath  # ty:ignore[invalid-explicit-return]
 
     @property
     def _relative_filepath(self) -> Path:

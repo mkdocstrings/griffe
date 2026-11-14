@@ -1089,7 +1089,7 @@ class Object(ObjectAliasMixin):
         module = self.module
         while module.parent:
             module = module.parent
-        return module  # ty:ignore[invalid-return-type]
+        return module  # ty:ignore[invalid-explicit-return]
 
     @property
     def filepath(self) -> Path | list[Path]:
@@ -2176,7 +2176,7 @@ class Alias(ObjectAliasMixin):
         """
         if not self.resolved:
             self.resolve_target()
-        return self._target  # ty:ignore[invalid-return-type]
+        return self._target  # ty:ignore[invalid-explicit-return]
 
     @target.setter
     def target(self, value: Object | Alias) -> None:
@@ -2211,7 +2211,7 @@ class Alias(ObjectAliasMixin):
                 raise CyclicAliasError([*paths_seen, target.path])
             paths_seen[target.path] = None
             target = target.target  # ty:ignore[missing-union-attribute]
-        return target  # ty:ignore[invalid-return-type]
+        return target  # ty:ignore[invalid-explicit-return]
 
     def resolve_target(self) -> None:
         """Resolve the target.

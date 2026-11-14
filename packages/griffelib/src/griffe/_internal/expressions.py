@@ -505,7 +505,7 @@ class ExprAttribute(Expr):
         """The last part of this attribute (on the right)."""
         # All values except the first one can *only* be names:
         # we can't do `a.(b or c)` or `a."string"`.
-        return self.values[-1]  # ty:ignore[invalid-return-type]
+        return self.values[-1]  # ty:ignore[invalid-explicit-return]
 
     @property
     def first(self) -> str | Expr:

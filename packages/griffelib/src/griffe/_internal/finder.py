@@ -242,7 +242,7 @@ class ModuleFinder:
             return module_name, package
 
         # Return either one.
-        return module_name, package or stubs  # ty:ignore[invalid-return-type]
+        return module_name, package or stubs  # ty:ignore[invalid-explicit-return]
 
     def find_package(self, module_name: str) -> Package | NamespacePackage:
         """Find a package or namespace package.
