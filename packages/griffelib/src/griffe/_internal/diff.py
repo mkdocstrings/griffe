@@ -509,8 +509,11 @@ def _class_incompatibilities(
     seen_paths: set[str],
 ) -> Iterable[Breakage]:
     yield from ()
-    if new_class.bases != old_class.bases and len(new_class.bases) < len(old_class.bases):
-        yield ClassRemovedBaseBreakage(new_class, old_class.bases, new_class.bases)
+    new_bases = {base if isinstance(base, str) else base.canonical_path for base in new_class.bases}
+    for base in old_class.bases:
+        base_path = base if isinstance(base, str) else base.canonical_path
+        if base_path not in new_bases:
+            yield ClassRemovedBaseBreakage(new_class, [base], [])
     yield from _member_incompatibilities(old_class, new_class, seen_paths=seen_paths)
 
 
