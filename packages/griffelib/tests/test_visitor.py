@@ -19,7 +19,7 @@
 from __future__ import annotations
 
 import sys
-from textwrap import dedent
+from textwrap import dedent, indent
 
 import pytest
 
@@ -363,17 +363,40 @@ def test_classvar_annotations() -> None:
         assert module["C.b"].labels == {"instance-attribute"}
 
 
-def test_visiting_if_statement_in_class_for_type_guards() -> None:
-    """Don't fail on various if statements when checking for type-guards."""
-    with temporary_visited_module(
-        """
-        class A:
-            if something("string1 string2"):
-                class B:
-                    pass
+@pytest.mark.parametrize("scope", ["module", "class"])
+@pytest.mark.parametrize(
+    "condition",
+    [
+        "True",
+        "False",
+        "None",
+        "0",
+        "1",
+        "1.5",
+        "''",
+        "'typing.TYPE_CHECKING'",
+        "b'bytes'",
+        "...",
+        'something("string1 string2")',
+    ],
+)
+def test_visiting_if_statement_for_type_guards(condition: str, scope: str) -> None:
+    """Visit ordinary conditions without treating their members as type-guarded."""
+    # Type guards are checked at both module and class scope.
+    code = dedent(
+        f"""
+        if {condition}:
+            class B:
+                pass
         """,
-    ) as module:
-        assert module["A.B"].runtime
+    )
+    if scope == "class":
+        code = "class A:\n" + indent(code, "    ")
+
+    with temporary_visited_module(code) as module:
+        # Ordinary conditions do not mark members as available only to type checkers.
+        member_path = "A.B" if scope == "class" else "B"
+        assert module[member_path].runtime
 
 
 def test_visiting_relative_imports_triggering_cyclic_aliases() -> None:
