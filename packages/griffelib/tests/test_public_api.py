@@ -89,3 +89,23 @@ def test_propagating_public_attribute_to_inherited_members() -> None:
         # We can set the `public` attribute of non-inherited aliases.
         func_alias.public = True
         assert func_alias.is_public
+
+
+def test_inherited_alias_to_unresolvable_import_has_visibility() -> None:  # noqa: D103
+    with temporary_visited_package(
+        "pkg",
+        {
+            "base.py": """
+            class Base:
+                from extdist import thing
+            """,
+            "sub.py": """
+            from pkg.base import Base
+
+            class Sub(Base): ...
+            """,
+        },
+    ) as pkg:
+        inherited = pkg["sub.Sub"].all_members["thing"]
+        assert inherited.public is None
+        assert inherited.is_public

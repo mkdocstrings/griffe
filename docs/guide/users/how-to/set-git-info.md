@@ -8,7 +8,7 @@ In this example we see how to set the Git information for whole packages. This w
 
 Start by creating an extensions module (a simple Python file) somewhere in your repository, if you don't already have one. Within it, create an extension class:
 
-```python
+``` python
 import griffe
 
 
@@ -18,7 +18,7 @@ class GitInfo(griffe.Extension):
 
 Next we hook onto the `on_package` event to override the `git_info` attribute of the packages we are interested into.
 
-```python
+``` python
 from pathlib import Path
 from typing import Any
 
@@ -40,7 +40,7 @@ class GitInfo(griffe.Extension):
 
 Here we hardcode the commit hash, but ideally we would obtain it by running a Git command in a subprocess, or any other way that gives a relevant commit hash.
 
-```python
+``` python
 import subprocess
 
 process = subprocess.run(["git", "-C", repo, "rev-parse", "HEAD"], text=True, capture_output=True)
@@ -49,7 +49,7 @@ commit_hash = process.stdout.strip()
 
 We could also reuse properties that Griffe found:
 
-```python
+``` python
 # Here we reuse `repository` and `commit_hash` while overriding only `service` and `remote_url`.
 pkg.git_info = griffe.GitInfo(
     repository=pkg.git_info.repository,
@@ -70,7 +70,7 @@ Let say you expose Python objects in your API that are compiled from other sourc
 
 Start by creating an extensions module (a simple Python file) somewhere in your repository, if you don't already have one. Within it, create an extension class:
 
-```python
+``` python
 import griffe
 
 
@@ -80,7 +80,7 @@ class SourceLinks(griffe.Extension):
 
 Next we hook onto the `on_object` event to override the `source_link` attribute of the objects we are interested into.
 
-```python
+``` python
 from pathlib import Path
 from typing import Any
 
@@ -100,7 +100,7 @@ class SourceLinks(griffe.Extension):
 
 Here we hardcode the link, but we can also reuse the Git information of the package to just correct the filepath and line numbers:
 
-```python
+``` python
 from pathlib import Path
 from typing import Any
 

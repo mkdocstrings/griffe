@@ -8,7 +8,7 @@ Sometimes we find that an `__init__` module defines or imports an object which h
 
 **Case 1**
 
-```tree
+``` tree
 package/
     __init__.py
     subpackage/
@@ -16,11 +16,11 @@ package/
         thing.py
 ```
 
-```python title="package/subpackage/__init__.py"
+``` python title="package/subpackage/__init__.py"
 thing = "thing from init module"
 ```
 
-```python title="package/subpackage/thing.py"
+``` python title="package/subpackage/thing.py"
 other_thing = "other thing from thing submodule"
 ```
 
@@ -28,7 +28,7 @@ We recommend not doing that.
 
 Why? Because the `package.subpackage.thing` submodule can eventually **shadow** the `package.subpackage.thing` attribute. Try this:
 
-```bash
+``` bash
 # Replicate the file tree from above.
 mkdir -p package/subpackage
 echo 'thing = "thing from init module"' > package/subpackage/__init__.py
@@ -37,7 +37,7 @@ echo 'other_thing = "other thing from thing submodule"' > package/subpackage/thi
 python
 ```
 
-```pycon
+``` pycon
 >>> from package import subpackage
 >>> subpackage.thing
 'thing from init module'
@@ -51,17 +51,17 @@ By simply importing from the `thing` submodule, the `thing` attribute of `subpac
 
 **Case 2**
 
-In a particular case though, the situation improves: if we *import* `thing` in the init module instead of declaring it, then further imports will not overwrite anything:
+In a particular case though, the situation improves: if we _import_ `thing` in the init module instead of declaring it, then further imports will not overwrite anything:
 
-```python title="package/subpackage/__init__.py"
+``` python title="package/subpackage/__init__.py"
 from package.subpackage.thing import thing
 ```
 
-```python title="package/subpackage/thing.py"
+``` python title="package/subpackage/thing.py"
 thing = "thing from thing submodule"
 ```
 
-```bash
+``` bash
 # Update the modules.
 echo 'from package.subpackage.thing import thing' > package/subpackage/__init__.py
 echo 'thing = "thing from thing submodule"' > package/subpackage/thing.py
@@ -69,7 +69,7 @@ echo 'thing = "thing from thing submodule"' > package/subpackage/thing.py
 python
 ```
 
-```pycon
+``` pycon
 >>> from package import subpackage
 >>> subpackage.thing
 'thing from thing'
@@ -84,7 +84,7 @@ From an API perspective, and given that both cases are very similar but differ i
 
 If the goal is to isolate a single object into its own module, to then expose it in the parent module, then it would make sense that this object is the only object of the submodule to be exposed in the public API, and therefore the submodule could be marked as private by prefixing its name with an underscore:
 
-```tree
+``` tree
 package/
     __init__.py
     subpackage/
@@ -100,7 +100,7 @@ For the reasons mentioned above, **Griffe does not support this kind of name sha
 
 Wildcard imports allow importing from a module all objects that do not start with an underscore `_`, or all objects that are listed in the module's `__all__` attribute, if it is defined.
 
-```tree
+``` tree
 package/
     __init__.py
     module.py
@@ -108,7 +108,7 @@ package/
 
 **Explicitly exposed to wildcard imports**
 
-```python title="package/module.py"
+``` python title="package/module.py"
 __all__ = [
     "SomeClass",
     "some_function",
@@ -127,7 +127,7 @@ some_other_attribute = 1
 
 **Implicitly exposed to wildcard imports**
 
-```python title="package/module.py"
+``` python title="package/module.py"
 class SomeClass: ...
 class _SomeOtherClass: ...
 
@@ -140,7 +140,7 @@ _some_other_attribute = 1
 
 In both cases, using a wildcard import will only import `SomeClass`, `some_function` and `some_attribute`, and not their "other" counterparts:
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 from package.module import *
 ```
 
@@ -148,7 +148,7 @@ While we recommend declaring your public API with `__all__` lists, we do not rec
 
 In the implicit case, any other object imported in `module.py` will also be exported by the wildcard:
 
-```python title="package/module.py"
+``` python title="package/module.py"
 from somewhere_else import this, that
 
 class SomeClass: ...
@@ -163,7 +163,7 @@ _some_other_attribute = 1
 
 Here, `this` and `that` will also be imported when we do `from package.module import *`. To prevent that, we would have to alias these names as such:
 
-```python title="package/module.py"
+``` python title="package/module.py"
 from somewhere_else import this as _this, that as _that
 ```
 
@@ -171,7 +171,7 @@ from somewhere_else import this as _this, that as _that
 
 It gets even worse if `module.py` itself uses wildcard imports:
 
-```python title="package/module.py"
+``` python title="package/module.py"
 from somewhere_else import *
 ```
 
@@ -181,11 +181,11 @@ Not only that, but it also increases the risk of creating cycles in imports. Pyt
 
 In the explicit case, the situation improves, as only the objects listed in `__all__` will be exported to the modules that wildcard imports them. It effectively stops namespace pollution, but it does not remove the risk of cyclic imports, only decreases it.
 
-We have seen code bases where parent modules wildcard imports from submodules, while these submodules also wildcard imports from the parent modules... Python somehow handles this, but it is *hell* to handle statically, and it is just too error prone (cyclic imports, name shadowing, namespaces become dependent on the order of imports, etc.).
+We have seen code bases where parent modules wildcard imports from submodules, while these submodules also wildcard imports from the parent modules... Python somehow handles this, but it is _hell_ to handle statically, and it is just too error prone (cyclic imports, name shadowing, namespaces become dependent on the order of imports, etc.).
 
 For these reasons, we recommend not using wildcard imports. Instead, we recommend declaring your public API explicitly with `__all__`, and combining `__all__` lists together if needed:
 
-```tree
+``` tree
 package/
     __init__.py
     module.py
@@ -194,7 +194,7 @@ package/
 
 Completely explicit:
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 from package.module import only, needed, objects
 from package.other_module import some, more
 
@@ -210,7 +210,7 @@ def function(): ...
 
 Combining `__all__` lists:
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 from package.module import only, needed, objects, __all__ as module_all
 from package.other_module import some, more, __all__ as other_module_all
 
@@ -231,30 +231,30 @@ Within your own code base, we recommend using canonical imports. By canonical, w
 
 Given the following tree:
 
-```tree
+``` tree
 package/
     __init__.py
     module_a.py
     module_b.py
 ```
 
-```python title="package/module_a.py"
+``` python title="package/module_a.py"
 from package.module_b import thing
 ```
 
-```python title="package/module_b.py"
+``` python title="package/module_b.py"
 thing = True
 ```
 
 Don't do that:
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 from package.module_a import thing  # Indirect import, bad.
 ```
 
 Instead, do this:
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 from package.module_b import thing  # Canonical import, good.
 ```
 
@@ -262,15 +262,15 @@ from package.module_b import thing  # Canonical import, good.
 
 We especially recommend canonical imports over indirect imports from sibling modules passing through the parent:
 
-```python title="package/__init__.py"
+``` python title="package/__init__.py"
 from package.module_a import thing  # Canonical import, good.
 ```
 
-```python title="package/module_a.py"
+``` python title="package/module_a.py"
 thing = True
 ```
 
-```python title="package/module_b.py"
+``` python title="package/module_b.py"
 from package import thing  # Indirect import passing through parent, bad.
 
 # Do this instead:
@@ -281,7 +281,7 @@ from package.module_a import thing  # Canonical import, good.
 
 Similarly, avoid exposing the API of external packages from your own package and recommending to use this indirect API.
 
-```python title="package.py"
+``` python title="package.py"
 import numpy as np
 
 __all__ = ["np"]  # Bad.
@@ -294,7 +294,7 @@ Instead, let users import Numpy themselves, with `import numpy as np`. This will
 
 > Imported names should always be considered an implementation detail. Other modules must not rely on indirect access to such imported names unless they are an explicitly documented part of the containing module’s API, such as os.path or a package’s `__init__` module that exposes functionality from submodules.
 
-Emphasis on *exposes functionality from submodules*: PEP 8 does not state *exposing functionality from external packages*.
+Emphasis on _exposes functionality from submodules_: PEP 8 does not state _exposing functionality from external packages_.
 
 ---
 
@@ -320,20 +320,20 @@ Python modules can be written in other languages (C, C++, Rust) and compiled. To
 
 A practice that seems common in projects including compiled modules in their distributions is to make the compiled modules private (prefix their names with an underscore), and to expose their objects from a public module higher-up in the module layout, for example by wildcard importing everything from it.
 
-```tree
+``` tree
 package/
     __init__.py
     module.py
     _module.cpython-312-x86_64-linux-gnu.so
 ```
 
-```python title="package/module.py"
+``` python title="package/module.py"
 from package._module import *
 ```
 
 Since the objects are exposed in `package.module` instead of `package._module`, developers sometimes decide to make their compiled objects lie about their location, and make them say that they are defined in `package.module` instead of `package._module`. Example:
 
-```pycon
+``` pycon
 >>> from package._module import MyObject
 >>> MyObject.__module__
 'package.module'
@@ -347,11 +347,11 @@ So, when Griffe inspects a member of the compiled `_module`, and this member lie
 
 Fortunately, we were able to put some guard-rails in place, which means that the case above where the compiled and public modules have the same name, except for the leading underscore, is supported, and will not trigger errors. But other cases where modules have different names will trigger issues, and we have to special case them in Griffe itself, after issues are reported.
 
-Please, use your framework features to correctly set the `__module__` attribute of your objects (functions, classes and their methods too) as their *canonical location*, not their public location or any other location in the final package.
+Please, use your framework features to correctly set the `__module__` attribute of your objects (functions, classes and their methods too) as their _canonical location_, not their public location or any other location in the final package.
 
 For example with [PyO3](https://github.com/PyO3/pyo3):
 
-```rust
+``` rust
 // Your module is compiled and added as `_module` into `package`,
 // but its objects are exposed in `package` or `package.module`.
 // Set `module = "package._module"`, not `module = "package"` or `module = "package.module"`!
@@ -363,7 +363,7 @@ struct MyClass {
 
 Some modules of the standard library are guilty of this too, and do so inconsistently (`ast` and `_ast`, `io` and `_io`, depending on the Python version...). For this reason, when checking if an object was declared in the currently inspected module, Griffe ultimately considers that any qualified name is equal to itself with each component stripped from leading underscores:
 
-```python
+``` python
 a.b.c == _a.b.c
 a.b.c == _a._b._c
 a.__b._c == __a.b.c
@@ -378,7 +378,7 @@ Python's type system will let you use forward references in generic types when t
 
 === "Before Python 3.12"
 
-    ```python
+    ``` python
     from typing import TypeVar, Generic
 
     T = TypeVar('T')
@@ -398,7 +398,7 @@ Python's type system will let you use forward references in generic types when t
 
 === "Python 3.12+"
 
-    ```python
+    ``` python
     class Foo[T]:
         ...
 
@@ -415,10 +415,10 @@ While Griffe will load this code without error, the `'Bar'` forward reference wo
 
 Instead, you can try one of the following approach:
 
-- declare or import the `Bar` class earlier
-- declare a proper type:
+-   declare or import the `Bar` class earlier
+-   declare a proper type:
 
-    ```python
+    ``` python
     class Foo[T]:
         ...
 
@@ -434,9 +434,9 @@ Instead, you can try one of the following approach:
         ...
     ```
 
-- make `FooBar` generic again but with a default type:
+-   make `FooBar` generic again but with a default type:
 
-    ```python
+    ``` python
     class Foo[T]:
         ...
 

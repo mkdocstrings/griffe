@@ -4,11 +4,11 @@
 
 An API (Application Programming Interface) in the interface with which developers interact with your software. In the Python world, the API of your Python library is the set of modules, classes, functions and other attributes made available to your users. For example, users can do `from your_library import this_function`: `this_function` is part of the API of `your_library`.
 
-Oftentimes, when you develop a library, you create functions, classes, etc. that are only useful internally: they are not supposed to be used by your users. Python does not provide easy or standard ways to actually *prevent* users from using internal objects, so, to distinguish public objects from internal objects, we usually rely on conventions, such as prefixing internal objects' names with an underscore, for example `def _internal_function(): ...`, to mark them as "internal".
+Oftentimes, when you develop a library, you create functions, classes, etc. that are only useful internally: they are not supposed to be used by your users. Python does not provide easy or standard ways to actually _prevent_ users from using internal objects, so, to distinguish public objects from internal objects, we usually rely on conventions, such as prefixing internal objects' names with an underscore, for example `def _internal_function(): ...`, to mark them as "internal".
 
-Prefixing an object's name with an underscore still does not prevent users from importing and using this object, but it *informs* them that they are not supposed to import and use it, and that this object might change or even disappear in the future, *without notice*.
+Prefixing an object's name with an underscore still does not prevent users from importing and using this object, but it _informs_ them that they are not supposed to import and use it, and that this object might change or even disappear in the future, _without notice_.
 
-On the other hand, public objects are supposed to stay compatible with previous versions of your library for at least a definite amount of time, to prevent downstream code from breaking. Any change that could break downstream code is supposed to be communicated *before* it is actually released. Maintainers of the library usually allow a period of time where the public object can still be used as before, but will emit deprecation warnings when doing so, hinting users that they should upgrade their use of the object (or use another object that will replace it). This period of time is usually called a deprecation period.
+On the other hand, public objects are supposed to stay compatible with previous versions of your library for at least a definite amount of time, to prevent downstream code from breaking. Any change that could break downstream code is supposed to be communicated _before_ it is actually released. Maintainers of the library usually allow a period of time where the public object can still be used as before, but will emit deprecation warnings when doing so, hinting users that they should upgrade their use of the object (or use another object that will replace it). This period of time is usually called a deprecation period.
 
 So, how do we mark an object as public? How do we inform our users which objects can safely be used, and which ones are subject to unnotified changes? Usually, we rely again on the underscore prefix convention: if an object isn't prefixed with an underscore, it means that it is public. But essentially, your public API is what you say it is. If you clearly document that a single function of your package is public, and that all others are subject to unnotified changes and whose usage by users is not supported, then your public API is composed of this single function, and nothing else. **Public APIs are a matter of communication.** Concretely, it's about deciding what parts of your code base are public, and communicating that clearly.
 
@@ -19,13 +19,13 @@ Some components are obviously considered for the public API of a Python package:
 - classes (their inheritance), their methods and signatures
 - the rest of the module or class attributes, their types and values
 
-Other components *should* be considered for the public API but are often forgotten:
+Other components _should_ be considered for the public API but are often forgotten:
 
 - CLI options: see [The CLI is API too](#the-cli-is-api-too) section
 - logger names: users might rely on them to filter logs (see [Logger names](#logger-names))
 - exceptions raised: users definitely rely on them to catch errors
 
-Other components *could* be considered for the public API, but usually require too much maintenance:
+Other components _could_ be considered for the public API, but usually require too much maintenance:
 
 - logging messages: users might rely on them to grep the logs
 - exception messages: users might rely on them for various things
@@ -39,13 +39,13 @@ Besides, logging and exception messages simply cannot allow deprecation periods 
 
 ## Conventions
 
-Python does not provide any way to *enforce* public APIs: users can always import and use internal objects if they really want to. However, Python *does* specify a standard way to *declare* public APIs: the `__all__` attribute (see below), which is complemented by official recommendations and a few conventions.
+Python does not provide any way to _enforce_ public APIs: users can always import and use internal objects if they really want to. However, Python _does_ specify a standard way to _declare_ public APIs: the `__all__` attribute (see below), which is complemented by official recommendations and a few conventions.
 
 ### Underscore prefix
 
 In the Python ecosystem we very often prefix objects with an underscore to mark them as internal, or private. Objects that are not prefixed are then implicitly considered public. For example:
 
-```python
+``` python
 def public_function():
     ...
 
@@ -55,23 +55,23 @@ def _internal_function():
 
 The exception to this rule is that imported objects are not considered public. For example:
 
-```python
+``` python
 from elsewhere import something
 ```
 
 Even though `something` doesn't start with an underscore, it was imported so it is not considered public.
 
-Note that this exception comes from [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) ("imported names should always be considered an implementation detail") and from the conventions used by type checkers, not from the language reference: the latter states that when `__all__` is not defined, the set of public names includes *all* names found in the module's namespace which do not begin with an underscore, imported ones included.
+Note that this exception comes from [PEP 8](https://peps.python.org/pep-0008/#public-and-internal-interfaces) ("imported names should always be considered an implementation detail") and from the conventions used by type checkers, not from the language reference: the latter states that when `__all__` is not defined, the set of public names includes _all_ names found in the module's namespace which do not begin with an underscore, imported ones included.
 
 ### `__all__` list
 
 Python also provides a mechanism that lets you do the opposite: explicitly mark objects as public. This mechanism uses the `__all__` module-level attribute, which is a list of strings containing the names of the public objects.
 
-Contrary to popular belief, `__all__` is not merely a convention, nor just a way to control wildcard imports: it is actually specified in [the Python language reference](https://docs.python.org/3/reference/simple_stmts.html#the-import-statement) as *the* mechanism that determines the public names of a module:
+Contrary to popular belief, `__all__` is not merely a convention, nor just a way to control wildcard imports: it is actually specified in [the Python language reference](https://docs.python.org/3/reference/simple_stmts.html#the-import-statement) as _the_ mechanism that determines the public names of a module:
 
 > The public names defined by a module are determined by checking the module's namespace for a variable named `__all__`; if defined, it must be a sequence of strings which are names defined or imported by that module. [...] The names given in `__all__` are all considered public and are required to exist. If `__all__` is not defined, the set of public names includes all names found in the module's namespace which do not begin with an underscore character (`'_'`). `__all__` should contain the entire public API. It is intended to avoid accidentally exporting items that are not part of the API (such as library modules which were imported and used within the module).
 
-```python title="package/module.py"
+``` python title="package/module.py"
 __all__ = [
     "this_function",
     "ThisClass",
@@ -90,13 +90,13 @@ class ThisOtherClass:
     ...
 ```
 
-Here, even though `this_other_function` and `ThisOtherClass` are *not* prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
+Here, even though `this_other_function` and `ThisOtherClass` are _not_ prefixed with underscores, they are not considered public, because we explicitly and only marked `this_function` and `ThisClass` as public.
 
-Declaring `__all__` has a beneficial side-effect, which is often mistaken for its primary purpose: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, *including objects already imported from elsewhere*. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](python-code.md#avoid-wildcard-imports).
+Declaring `__all__` has a beneficial side-effect, which is often mistaken for its primary purpose: it affects wildcard imports. When your users use wildcard imports to import things from one of your modules, Python will only import the objects that are listed in `__all__`. Without `__all__`, it would import all objects that are not prefixed with an underscore, _including objects already imported from elsewhere_. This can cause serious namespace pollution, and even slow down Python code when wildcard imports are chained. [We actually recommend avoiding wildcard imports](python-code.md#avoid-wildcard-imports).
 
 By declaring `__all__`, your public API becomes explicit, and explicit is better than implicit. But `__all__` only works for module-level objects. Within classes, you will still have to rely on the underscore prefix convention to mark methods or attributes as internal/private.
 
-```python
+``` python
 class Thing:
     def public_method(self):
         ...
@@ -109,7 +109,7 @@ class Thing:
 
 When you expose your public API in `__init__` modules by importing most objects from the underlying modules, it can be a bit tedious to import everything, and then list everything again in the `__all__` list attribute. For this reason, another convention emerged where objects imported and aliased with the same name are considered public.
 
-```python title="my_package/__init__.py"
+``` python title="my_package/__init__.py"
 from elsewhere import something as something
 from my_package._internal_module import Thing as Thing
 ```
@@ -120,7 +120,7 @@ Here `Thing` and `something` are considered public even though they were importe
 
 Same as for redundant aliases, this convention says that all objects imported thanks to wildcard imports are public. This can again be useful in `__init__` modules where you expose lots of objects declared in submodules.
 
-```python title="my_package/__init__.py"
+``` python title="my_package/__init__.py"
 from my_package._internal_module1 import *
 from my_package._internal_module2 import *
 ```
@@ -141,7 +141,7 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 > TIP: **Concatenating `__all__` for easier maintenance of `__init__` modules.**
 > If you worry about maintenance of your `__init__` modules, know that you can very well concatenate `__all__` lists from submodules into the current one:
 >
-> ```tree
+> ``` tree
 > my_package/
 >     __init__.py
 >     module.py
@@ -153,19 +153,19 @@ Note that the wildcard imports logic stays the same, and imports either all obje
 >         _module2a.py
 > ```
 >
-> ```python title="my_package/subpackage1/__init__.py"
+> ``` python title="my_package/subpackage1/__init__.py"
 > from my_package.subpackage1.module1a import this1a, that1a
 >
 > __all__ = ["this1a", "that1a"]
 > ```
 >
-> ```python title="my_package/subpackage2/__init__.py"
+> ``` python title="my_package/subpackage2/__init__.py"
 > from my_package.subpackage2.module2a import this2a, that2a
 >
 > __all__ = ["this2a", "that2a"]
 > ```
 >
-> ```python title="my_package/__init__.py"
+> ``` python title="my_package/__init__.py"
 > from my_package.module import this
 > from my_package.subpackage1 import this1a, that1a, __all__ as subpackage1_all
 > from my_package.subpackage2 import this2a, that2a, __all__ as subpackage2_all
@@ -185,7 +185,7 @@ We usually split the code of our packages into different modules. The code can b
 
 Most of the time, packages implicitly expose their module layout in their public API. Indeed, when you start a new project, you create new modules but don't immediately think about making them private. Then the project grows organically, you add more modules, and users start actually relying on their layout, importing specific objects from specific modules. Now when you want to move objects around, to reorganize your layout, you introduce breaking changes. So you have to create a deprecation period where objects that moved around are still importable in the old locations, but emit deprecation warnings. A module-level `__getattr__` function is commonly used for that.
 
-```python title="package/old_module.py"
+``` python title="package/old_module.py"
 import warnings
 from typing import Any
 
@@ -214,7 +214,7 @@ So, how do we hide the module layout from the public API?
 
 The most common way to hide the module layout is to make all your modules private, by prefixing their name with an underscore:
 
-```tree
+``` tree
 my_package/
     __init__.py
     _combat.py
@@ -224,7 +224,7 @@ my_package/
 
 Then, you expose public objects in the top-level `__init__` module thanks to its `__all__` attribute:
 
-```python title="my_package/__init__.py"
+``` python title="my_package/__init__.py"
 from my_package._combat import Combat
 from my_package._exploration import navigate
 from my_package._sorcery import cast_spell
@@ -240,7 +240,7 @@ Now, if you want to move `cast_spell` into the `_combat` module, you can do so w
 
 If you have more than one layer of submodules, you don't have to make the next layer private: only the first one is enough, as it informs users that they shouldn't import from this layer anyway:
 
-```tree
+``` tree
 my_package/
     __init__.py
     _combat.py
@@ -253,9 +253,9 @@ my_package/
 
 If you don't want to bother prefixing every module with an underscore, you could go one step further and do one of these two things:
 
-- move everything into an `_internal` directory:
+-   move everything into an `_internal` directory:
 
-    ```tree
+    ``` tree
     my_package/
         __init__.py
         _internal/
@@ -268,9 +268,9 @@ If you don't want to bother prefixing every module with an underscore, you could
                 light.py
     ```
 
-- or move everything into a private package:
+-   or move everything into a private package:
 
-    ```tree
+    ``` tree
     my_package/
         __init__.py
     _my_package/
@@ -283,10 +283,10 @@ If you don't want to bother prefixing every module with an underscore, you could
             light.py
     ```
 
-Whatever *hidden* layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python. We later moved the private package under an internal folder.
+Whatever _hidden_ layout you choose (private modules, internals, private package), it is not very important, as you will be able to switch from one to another easily. In Griffe we chose to experiment and go with the private package approach. This highlighted a few shortcomings that we were able to address in both Griffe and mkdocstrings-python. We later moved the private package under an internal folder.
 
 WARNING: **Top-level-only exposition doesn't play well with large packages.**
-The *fully* hidden layout plays well with small to medium projects. If you maintain a large project, it can become very impractical for both you and your users to expose every single object in the top-level `__init__` module. For large projects, it therefore makes sense to keep at least one or two additional public layers in your module layout. Sometimes packages also implement many variations of the same abstract class, using the same name in many different modules: in these cases, the modules are effective namespaces that could be kept in the public API.
+The _fully_ hidden layout plays well with small to medium projects. If you maintain a large project, it can become very impractical for both you and your users to expose every single object in the top-level `__init__` module. For large projects, it therefore makes sense to keep at least one or two additional public layers in your module layout. Sometimes packages also implement many variations of the same abstract class, using the same name in many different modules: in these cases, the modules are effective namespaces that could be kept in the public API.
 
 GRIFFE: **Our recommendation — Hide your module layout early.**
 Start hiding your module layout early! It is much easier to (partially) expose the layout later than to hide it after your users started relying on it. It will also make code reorganizations much easier.
@@ -297,57 +297,60 @@ Whether or not you are planning to hide your module layout, as recommended in th
 
 Ensuring unique names across a code base is sometimes not feasible, or not desirable; in this case, try to use namespacing while still hiding the module layout the best you can.
 
-In accordance with our recommendation on module layouts, it is also useful to ensure that a single public object is exposed in a single location. Ensuring a unique public location for each object removes any ambiguity on the user side as to where to import the object from. It also helps documentation generators that try to cross-reference objects: with several locations, they cannot know for sure which one is the best to reference (which path is best to use and display in the generated documentation). With a fully hidden layout, all objects are *only* exposed in the top-level module, so there is no ambiguity. With partially hidden layouts, or completely public layouts, make sure to declare your public API so that each object is only exposed in a single location. Example:
+In accordance with our recommendation on module layouts, it is also useful to ensure that a single public object is exposed in a single location. Ensuring a unique public location for each object removes any ambiguity on the user side as to where to import the object from. It also helps documentation generators that try to cross-reference objects: with several locations, they cannot know for sure which one is the best to reference (which path is best to use and display in the generated documentation). With a fully hidden layout, all objects are _only_ exposed in the top-level module, so there is no ambiguity. With partially hidden layouts, or completely public layouts, make sure to declare your public API so that each object is only exposed in a single location. Example:
 
-```tree
+``` tree
 my_package/
     __init__.py
     module.py
 ```
 
 === "Multiple locations, bad"
+
     Here the `Hello` class is exposed in both `my_package.module` and `my_package`.
 
-    ```python title="my_package/module.py"
+    ``` python title="my_package/module.py"
     __all__ = ["Hello"]
 
     class Hello:
         ...
     ```
 
-    ```python title="my_package/__init__"
+    ``` python title="my_package/__init__"
     from my_package.module import Hello
 
     __all__ = ["Hello"]
     ```
 
 === "Single location, good"
+
     Here the `Hello` class is only exposed in `my_package.module`.
 
-    ```python title="my_package/module.py"
+    ``` python title="my_package/module.py"
     __all__ = ["Hello"]
 
     class Hello:
         ...
     ```
 
-    ```python title="my_package/__init__"
+    ``` python title="my_package/__init__"
     # Nothing to see here.
     ```
 
     If you wanted to expose it in the top-level `__init__` module instead, then you should hide your module layout by making `module.py` private, renaming it `_module.py`, or using other hiding techniques such as described in the [Module layout](#module-layout) section.
 
 === "Single location (top-level), good"
+
     Here the `Hello` class is only exposed in `package`.
 
-    ```python title="my_package/module.py"
+    ``` python title="my_package/module.py"
     __all__ = []
 
     class Hello:
         ...
     ```
 
-    ```python title="my_package/__init__"
+    ``` python title="my_package/__init__"
     from my_package.module import Hello
 
     __all__ = ["Hello"]
@@ -360,15 +363,15 @@ We recommend making sure that each public object is exposed in a single location
 
 ## Logger names
 
-The documentation of the standard `logging` library recommends to use `__name__` as logger name when obtaining a logger with `logging.getLogger()`, *unless we have a specific reason for not doing that*. Unfortunately, no examples of such specific reasons are given. So let us give one.
+The documentation of the standard `logging` library recommends to use `__name__` as logger name when obtaining a logger with `logging.getLogger()`, _unless we have a specific reason for not doing that_. Unfortunately, no examples of such specific reasons are given. So let us give one.
 
 Using `__name__` as logger names means that your loggers have the same name as your module paths. For example, the module `package/module.py`, whose path and `__name__` value are `package.module`, will have a logger with the same name, i.e. `package.module`. If your module layout is public, that's fine: renaming the module or moving it around is already a breaking change that you must document.
 
-However if your module layout is hidden, or if this particular module is private, then even though renaming it or moving it around is *not* breaking change, the change of name of its logger *is*. Indeed, by renaming your module (or moving it), you changed its `__name__` value, and therefore you changed its logger name.
+However if your module layout is hidden, or if this particular module is private, then even though renaming it or moving it around is _not_ breaking change, the change of name of its logger _is_. Indeed, by renaming your module (or moving it), you changed its `__name__` value, and therefore you changed its logger name.
 
 Now, users that were relying on this name (for example to silence WARNING-level logs and below coming from this particular module) will see their logic break without any error and without any deprecation warning.
 
-```python
+``` python
 # For example, the following would have zero effect if `_module` was renamed `_other_module`.
 package_module_logger = logging.getLogger("package._module")
 package_module_logger.setLevel(logging.ERROR)
@@ -412,7 +415,7 @@ Depending on their configuration, many popular Python linters will warn you that
 > GRIFFE: **Our recommendation — Ignore "protected access" warnings for your own package, or make the warnings smarter.**
 > To users of linters, we recommend adding `# noqa` comments on the relevant code lines, or globally disabling warnings related to "private object access" if per-line exclusion requires too much maintenance.
 >
-> To authors of linters, we recommend (if possible) making these warnings smarter: they shouldn't be triggered when private objects are accessed from within the *same package*. Marking objects as private is meant to prevent downstream code from using them, not to prevent the developers of the current package themselves from using them: they know what they are doing and should be allowed to use their own private objects without warnings. At the same time, they don't want to disable these warnings *globally*, so the warnings should be derived in multiple versions, or made smarter.
+> To authors of linters, we recommend (if possible) making these warnings smarter: they shouldn't be triggered when private objects are accessed from within the _same package_. Marking objects as private is meant to prevent downstream code from using them, not to prevent the developers of the current package themselves from using them: they know what they are doing and should be allowed to use their own private objects without warnings. At the same time, they don't want to disable these warnings _globally_, so the warnings should be derived in multiple versions, or made smarter.
 
 ## The CLI is API too
 
@@ -420,20 +423,20 @@ This section deserves an entire article, but we will try to stay succinct here.
 
 Generally, we distinguish the API (Application Programming Interface) from the CLI (Command Line Interface), TUI (Textual User Interface) or GUI (Graphical User Interface). Contrary to TUIs or GUIs which are not likely to be controlled programmatically (they typically work with keyboard and mouse inputs), the CLI can easily be called by various scripts or programs, including from Python programs.
 
-Even if a project was not designed to be used programmatically (doesn't expose a public API), it is *a certainty* that with enough popularity, it *will* be used programmatically. And the CLI will even more so be used programmatically if there is no API. Even if there is an API, sometimes it makes more sense to hook into the CLI rather than the API (cross-language integrations, wrappers, etc.).
+Even if a project was not designed to be used programmatically (doesn't expose a public API), it is _a certainty_ that with enough popularity, it _will_ be used programmatically. And the CLI will even more so be used programmatically if there is no API. Even if there is an API, sometimes it makes more sense to hook into the CLI rather than the API (cross-language integrations, wrappers, etc.).
 
 Therefore, we urge everyone to consider their CLI as an API too. We urge everyone to always design their project as library-first APIs rather than CLI-first tools.
 
 The first user of your CLI as API is... you. When you declare your project's CLI entrypoint in pyproject.toml:
 
-```toml
+``` toml
 [project.scripts]
 griffe = "griffe:main"
 ```
 
 ...this entrypoint ends up as a Python script in the `bin` directory of your virtual environment:
 
-```python
+``` python
 #!/media/data/dev/griffe/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
@@ -450,7 +453,7 @@ In this script, we find our entrypoint, `griffe.main`, used programmatically.
 
 The second user of your CLI as API is... you again. When you write tests for your CLI, you import your entrypoints and call them by passing CLI options and arguments, maybe asserting the exit code raised with a `SystemExit` or the standard output/error thanks to [pytest's capture fixtures](https://docs.pytest.org/en/6.2.x/capture.html). Some simplified examples from our own test suite:
 
-```python
+``` python
 import pytest
 import griffe
 
@@ -473,11 +476,11 @@ def test_show_version(capsys: pytest.CaptureFixture) -> None:
     assert griffe.get_version() in captured.out
 ```
 
-Now, when you start testing the logic of your CLI subcommands, such as our `dump` subcommand above, you might feel like passing again and again through the command-line arguments parser (here `argparse`) is wasteful and redundant. It is important to test that your arguments are parsed correctly (as you expect them to be parsed), but they shouldn't *have* to be parsed when you are testing the underlying logic.
+Now, when you start testing the logic of your CLI subcommands, such as our `dump` subcommand above, you might feel like passing again and again through the command-line arguments parser (here `argparse`) is wasteful and redundant. It is important to test that your arguments are parsed correctly (as you expect them to be parsed), but they shouldn't _have_ to be parsed when you are testing the underlying logic.
 
-It's a hint that your command-line arguments parsing (and command-line handling generally) should be *decoupled* from the logic below it: write functions with proper parameters! Then call these functions from your main CLI entrypoint, with the arguments obtained from parsing the command-line arguments and options. It will make testing and debugging much, much easier:
+It's a hint that your command-line arguments parsing (and command-line handling generally) should be _decoupled_ from the logic below it: write functions with proper parameters! Then call these functions from your main CLI entrypoint, with the arguments obtained from parsing the command-line arguments and options. It will make testing and debugging much, much easier:
 
-```python
+``` python
 import argparse
 import sys
 
@@ -525,6 +528,6 @@ A few third-party libraries directly or indirectly related to public APIs deserv
 
 [public](https://pypi.org/project/public/) lets you decorate objects with `@public.add` to dynamically add them to `__all__`, so that you don't have to build a list of strings yourself. The "public visibility" marker is closer to each object, and might help avoid mistakes like forgetting to update `__all__` when an object is removed or renamed.
 
-[modul](https://pypi.org/project/modul/), from Frost Ming, the author of [PDM](https://pdm-project.org/en/latest/), goes one step further and actually hides attributes that are not marked "exported" from users: they won't be able to access un-exported attributes, leaving *only* the public API visible.
+[modul](https://pypi.org/project/modul/), from Frost Ming, the author of [PDM](https://pdm-project.org/en/latest/), goes one step further and actually hides attributes that are not marked "exported" from users: they won't be able to access un-exported attributes, leaving _only_ the public API visible.
 
 [Deprecated](https://pypi.org/project/Deprecated/), which was probably a source of inspiration for [PEP 702](https://peps.python.org/pep-0702/), allows decorating objects with `@deprecated` to mark them as deprecated. Such decorated callables will emit deprecation warnings when called. PEP 702's `warnings.deprecated` could be seen as its successor, bringing the feature directly into the standard library so that type checkers and other static analysis tools can converge on this way to mark objects as deprecated.

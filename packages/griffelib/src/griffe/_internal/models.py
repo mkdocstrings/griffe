@@ -1089,7 +1089,7 @@ class Object(ObjectAliasMixin):
         module = self.module
         while module.parent:
             module = module.parent
-        return module  # ty:ignore[invalid-return-type]
+        return module  # ty:ignore[invalid-explicit-return]
 
     @property
     def filepath(self) -> Path | list[Path]:
@@ -1291,7 +1291,7 @@ class Object(ObjectAliasMixin):
         # Name is a member of this object.
         if name in self.members:
             if self.members[name].is_alias:
-                return self.members[name].target_path  # ty:ignore[unresolved-attribute]
+                return self.members[name].target_path  # ty:ignore[missing-union-attribute]
             return self.members[name].path
 
         # Name unknown and no more parent scope, could be a built-in.
@@ -1565,7 +1565,7 @@ class Alias(ObjectAliasMixin):
 
         See also: [`canonical_path`][griffe.Alias.canonical_path].
         """
-        return f"{self.parent.path}.{self.name}"  # ty:ignore[unresolved-attribute]
+        return f"{self.parent.path}.{self.name}"  # ty:ignore[missing-union-attribute]
 
     @property
     def public(self) -> bool | None:
@@ -1575,7 +1575,7 @@ class Alias(ObjectAliasMixin):
             return self._public
         # For inherited members, return original member's visibility.
         if self.inherited:
-            return self.final_target.public
+            return self.target.public
         # Last case, none.
         return None
 
@@ -1591,7 +1591,7 @@ class Alias(ObjectAliasMixin):
     def modules_collection(self) -> ModulesCollection:
         """The modules collection attached to the alias parents."""
         # No need to forward to the target.
-        return self.parent.modules_collection  # ty:ignore[unresolved-attribute]
+        return self.parent.modules_collection  # ty:ignore[missing-union-attribute]
 
     @property
     def members(self) -> dict[str, Object | Alias]:
@@ -2176,7 +2176,7 @@ class Alias(ObjectAliasMixin):
         """
         if not self.resolved:
             self.resolve_target()
-        return self._target  # ty:ignore[invalid-return-type]
+        return self._target  # ty:ignore[invalid-explicit-return]
 
     @target.setter
     def target(self, value: Object | Alias) -> None:
@@ -2210,8 +2210,8 @@ class Alias(ObjectAliasMixin):
             if target.path in paths_seen:
                 raise CyclicAliasError([*paths_seen, target.path])
             paths_seen[target.path] = None
-            target = target.target  # ty:ignore[unresolved-attribute]
-        return target  # ty:ignore[invalid-return-type]
+            target = target.target  # ty:ignore[missing-union-attribute]
+        return target  # ty:ignore[invalid-explicit-return]
 
     def resolve_target(self) -> None:
         """Resolve the target.
@@ -2264,7 +2264,7 @@ class Alias(ObjectAliasMixin):
 
     def _update_target_aliases(self) -> None:
         with suppress(AttributeError, AliasResolutionError, CyclicAliasError):
-            self._target.aliases[self.path] = self  # ty:ignore[unresolved-attribute]
+            self._target.aliases[self.path] = self  # ty:ignore[missing-union-attribute]
 
     @property
     def resolved(self) -> bool:
@@ -2371,7 +2371,7 @@ class Module(Object):
         return (
             "annotations" in self.members
             and self.members["annotations"].is_alias
-            and self.members["annotations"].target_path == "__future__.annotations"  # ty:ignore[unresolved-attribute]
+            and self.members["annotations"].target_path == "__future__.annotations"  # ty:ignore[missing-union-attribute]
         )
 
     @property
@@ -2502,7 +2502,7 @@ class Class(Object):
         do not use when producing Griffe trees!
         """
         try:
-            return self.all_members["__init__"].parameters  # ty:ignore[unresolved-attribute]
+            return self.all_members["__init__"].parameters  # ty:ignore[missing-union-attribute]
         except KeyError:
             return Parameters()
 

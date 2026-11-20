@@ -1,6 +1,7 @@
 # User guide
 
 !!! info "For users and integrators"
+
     This guide explains how to use Griffe in your projects. To change Griffe itself, see the [contributor guide](../contributors/index.md).
 
 Learn how to load, navigate, serialize, and check APIs, then configure Griffe for your project's needs.
@@ -11,7 +12,7 @@ The following topics will guide you through the various methods Griffe offers fo
 
 <div class="grid cards" markdown>
 
-- :material-cube-scan:{ .lg .middle } **Loading**
+-   :material-cube-scan:{ .lg .middle } **Loading**
 
     ---
 
@@ -19,7 +20,7 @@ The following topics will guide you through the various methods Griffe offers fo
 
     [:octicons-arrow-right-24: Learn how to load data](loading.md)
 
-- :material-navigation-variant-outline:{ .lg .middle } **Navigating**
+-   :material-navigation-variant-outline:{ .lg .middle } **Navigating**
 
     ---
 
@@ -27,7 +28,7 @@ The following topics will guide you through the various methods Griffe offers fo
 
     [:octicons-arrow-right-24: Learn how to navigate data](navigating.md)
 
-- :material-code-json:{ .lg .middle } **Serializing**
+-   :material-code-json:{ .lg .middle } **Serializing**
 
     ---
 
@@ -35,7 +36,7 @@ The following topics will guide you through the various methods Griffe offers fo
 
     [:octicons-arrow-right-24: Learn how to serialize data](serializing.md)
 
-- :material-target:{ .lg .middle } **Checking**
+-   :material-target:{ .lg .middle } **Checking**
 
     ---
 
@@ -43,7 +44,7 @@ The following topics will guide you through the various methods Griffe offers fo
 
     [:octicons-arrow-right-24: Learn how to detect and handle breaking changes](checking.md)
 
-- :material-puzzle-plus:{ .lg .middle } **Extending**
+-   :material-puzzle-plus:{ .lg .middle } **Extending**
 
     ---
 
@@ -59,7 +60,7 @@ These topics explore the user side: how to write code to better integrate with G
 
 <div class="grid cards" markdown>
 
-- :material-gift-open:{ .lg .middle } **Public API**
+-   :material-gift-open:{ .lg .middle } **Public API**
 
     ---
 
@@ -67,7 +68,7 @@ These topics explore the user side: how to write code to better integrate with G
 
     [:octicons-arrow-right-24: See our public API recommendations](recommendations/public-apis.md)
 
-- :material-star-face:{ .lg .middle } **Python code best practices**
+-   :material-star-face:{ .lg .middle } **Python code best practices**
 
     ---
 
@@ -75,7 +76,7 @@ These topics explore the user side: how to write code to better integrate with G
 
     [:octicons-arrow-right-24: See our best practices](recommendations/python-code.md)
 
-- :material-text:{ .lg .middle } **Docstrings**
+-   :material-text:{ .lg .middle } **Docstrings**
 
     ---
 

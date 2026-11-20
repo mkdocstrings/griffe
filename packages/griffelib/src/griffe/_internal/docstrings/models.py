@@ -129,7 +129,7 @@ class DocstringDeprecated(DocstringElement):
     @property
     def version(self) -> str:
         """The version of this deprecation."""
-        return self.annotation  # ty:ignore[invalid-return-type]
+        return self.annotation  # ty:ignore[invalid-explicit-return]
 
     @version.setter
     def version(self, value: str) -> None:

@@ -6,7 +6,7 @@ This tour shows how to export API data with the CLI and explore it with Python. 
 
 Create an `example.py` file in your working directory:
 
-```python title="example.py"
+``` python title="example.py"
 def greet(name: str) -> str:
     """Return a greeting for the given name."""
     return f"Hello, {name}!"
@@ -18,7 +18,7 @@ Griffe is both a command line tool and a Python library. The command line tool o
 
 From the directory containing `example.py`, export its API:
 
-```bash
+``` bash
 griffe dump example --output api.json
 ```
 
@@ -26,13 +26,13 @@ This writes `api.json` with an `example` entry containing the module's members, 
 
 For your own package, replace `my_package` in the following commands with its import name:
 
-```bash
+``` bash
 # Load API of `my_package`, serialize it to JSON,
 # print it to standard output.
 griffe dump my_package
 ```
 
-```bash
+``` bash
 # Check for API breaking changes
 # between current version and version 1.0 (Git reference).
 griffe check my_package --against 1.0
@@ -46,7 +46,7 @@ As a library, Griffe exposes all its public API directly in the top-level module
 
 From the same directory, run this Python example:
 
-```python
+``` python
 import griffe
 
 module = griffe.load("example")
@@ -60,7 +60,7 @@ print(function.docstring.value)
 
 Expected output:
 
-```text
+``` text
 example.greet
 str
 str
@@ -71,7 +71,7 @@ The function is represented by a Griffe data model. You can inspect its signatur
 
 Other public entrypoints include:
 
-```python
+``` python
 import griffe
 
 griffe.load(...)
@@ -83,7 +83,7 @@ griffe.inspect(...)
 
 To start exploring your API within Griffe data models, use the [`load`][griffe.load] function to load your package and access its various objects:
 
-```python
+``` python
 import griffe
 
 my_package = griffe.load("my_package")
@@ -95,7 +95,7 @@ print(f"Is `some_method` public? {'yes' if some_method.is_public else 'no'}")
 
 Use the [`load_git`][griffe.load_git] function to load your API at a particular moment in time, specified with a Git reference (commit hash, branch name, tag name):
 
-```python
+``` python
 import griffe
 
 my_package_v2_1 = griffe.load_git("my_package", ref="2.1")

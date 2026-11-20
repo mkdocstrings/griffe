@@ -6,6 +6,6 @@ hide:
 
 # License
 
-```text
+``` text
 --8<-- "LICENSE"
 ```

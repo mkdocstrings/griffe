@@ -180,9 +180,9 @@ def _get_git_known_service(git_remote_url: str) -> KnownGitService | None:
     if service := os.getenv("GRIFFE_GIT_SERVICE"):
         if service not in KnownGitService.__args__:
             return None
-        return service  # ty:ignore[invalid-return-type]
+        return service  # ty:ignore[invalid-explicit-return]
     if match := _service_re.search(urlsplit(git_remote_url).netloc):
-        return match.group(1)  # ty:ignore[invalid-return-type]
+        return match.group(1)  # ty:ignore[invalid-explicit-return]
     return None
 
 

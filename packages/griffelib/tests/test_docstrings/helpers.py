@@ -76,7 +76,7 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
             docstring_object.parent = parent
             parent.docstring = docstring_object
         warnings = []
-        parser_module.docstring_warning = (  # ty:ignore[unresolved-attribute]
+        parser_module.docstring_warning = (  # ty:ignore[missing-attribute]
             lambda _docstring, _offset, message, log_level=LogLevel.warning: warnings.append(message)
         )
         func_name = f"parse_{parser_module.__name__.split('.')[-1]}"
@@ -86,4 +86,4 @@ def parser(parser_module: ModuleType) -> Iterator[ParserType]:
 
     yield parse
 
-    parser_module.docstring_warning = original_warn  # ty:ignore[unresolved-attribute]
+    parser_module.docstring_warning = original_warn  # ty:ignore[missing-attribute]

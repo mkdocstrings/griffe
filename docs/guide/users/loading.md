@@ -6,7 +6,7 @@ Griffe can load API data from both source code (static analysis) and objects at 
 
 The main interface to load API data is Griffe's [`load`][griffe.load] function:
 
-```python
+``` python
 import griffe
 
 my_package = griffe.load("my_package")
@@ -14,7 +14,7 @@ my_package = griffe.load("my_package")
 
 You can ask to load a specific object rather than a package:
 
-```python
+``` python
 import griffe
 
 my_method = griffe.load("my_package.MyClass.my_method")
@@ -22,7 +22,7 @@ my_method = griffe.load("my_package.MyClass.my_method")
 
 Griffe will load the whole package anyway, but return the specified object directly, so that you don't have to access it manually. To manually access the object representing the method called `my_method`, you would have used the `my_package` variable instantiated before, like this:
 
-```python
+``` python
 my_method = my_package["MyClass.my_method"]
 ```
 
@@ -30,7 +30,7 @@ The [Navigating](navigating.md) topic will show you all the ways Griffe objects 
 
 Finally, you can even load packages or modules by passing absolute or relative file paths. This is useful when the module or package is not installed within the current Python environment and therefore cannot be found in the default search paths (see [Search paths](#search-paths) below).
 
-```python
+``` python
 import griffe
 
 griffe.load("src/my_package")
@@ -39,7 +39,7 @@ griffe.load("some_script.py")
 
 In case of ambiguity, you can instruct Griffe to ignore existing relative file paths with `try_relative_paths=False`. For example, when using [the flat layout (in contrast to the src-layout)](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/), your Python package is in the root of the repository.
 
-```tree
+``` tree
 ./
     my_package/
         __init__.py
@@ -48,7 +48,7 @@ In case of ambiguity, you can instruct Griffe to ignore existing relative file p
 
 Here if you ask Griffe to load `my_package`, it will find it as a relative path, in `./my_package`. If you want Griffe to use the version installed in your environment's site packages instead, set `try_relative_path` to false:
 
-```python
+``` python
 import griffe
 
 my_installed_package = griffe.load("my_package", try_relative_path=False)
@@ -58,7 +58,7 @@ my_installed_package = griffe.load("my_package", try_relative_path=False)
 
 The [`load`][griffe.load] function is a shortcut for instantiating the [`GriffeLoader`][griffe.GriffeLoader] class and calling its [`load`][griffe.GriffeLoader.load] method. Calling the [`load`][griffe.load] function multiple times will instantiate a new Griffe loader each time. If you care about efficiency, it is better to instantiate the loader yourself and use its `load` method:
 
-```python
+``` python
 import griffe
 
 loader = GriffeLoader()
@@ -75,14 +75,16 @@ Reusing the same loader will also help resolving aliases across different packag
 To specify in which directories Griffe should search for packages and modules, you can use the `search_paths` parameter on both the [`load` function][griffe.load] and the [`GriffeLoader` class][griffe.GriffeLoader].
 
 === "`load`"
-    ```python
+
+    ``` python
     import griffe
 
     my_package = griffe.load("my_package", search_paths=["src"])
     ```
 
 === "`GriffeLoader`"
-    ```python
+
+    ``` python
     import griffe
 
     loader = GriffeLoader(search_paths=["src"])
@@ -100,14 +102,16 @@ When Griffe finds both a Python source file (`.py`) and its corresponding stub f
 If your stubs are the authoritative source of documentation, set `prefer_stubs_docs=True`. A docstring from a stub will then replace the corresponding source docstring. If the stub has no docstring, the source docstring is kept.
 
 === "`load`"
-    ```python
+
+    ``` python
     import griffe
 
     my_package = griffe.load("my_package", prefer_stubs_docs=True)
     ```
 
 === "`GriffeLoader`"
-    ```python
+
+    ``` python
     import griffe
 
     loader = griffe.GriffeLoader(prefer_stubs_docs=True)
@@ -115,7 +119,8 @@ If your stubs are the authoritative source of documentation, set `prefer_stubs_d
     ```
 
 === "CLI"
-    ```bash
+
+    ``` bash
     griffe dump my_package --prefer-stubs-docstrings
     ```
 
@@ -125,7 +130,7 @@ The same Python option is available on [`load_git`][griffe.load_git] and [`load_
 
 Griffe always tries first to find sources for the specified object. Then, unless told otherwise, it uses static analysis to load API data, i.e. it parses the sources and visits the AST (Abstract Syntax Tree) to extract information. If for some reason you want Griffe to use dynamic analysis instead (importing and inspecting runtime objects), you can pass the `force_inspection=True` argument:
 
-```python
+``` python
 import griffe
 
 my_package = griffe.load("my_package", force_inspection=True)
@@ -137,10 +142,10 @@ Forcing inspection can be useful when your code is highly dynamic, and static an
 **However we don't recommend forcing inspection**, for a few reasons:
 
 - dynamic analysis requires that you either mock your dependencies, or install them
-- dynamic analysis will **execute code**, possibly ***arbitrary code*** if you import third-party dependencies, putting you at risk
+- dynamic analysis will **execute code**, possibly **_arbitrary code_** if you import third-party dependencies, putting you at risk
 - dynamic analysis will potentially consume more resources (CPU, RAM) since it executes code
 - dynamic analysis will sometimes give you less precise or incomplete information
-- it's possible to write Griffe extensions that will *statically handle* the highly dynamic parts of your code (like custom decorators) that Griffe doesn't understand by default
+- it's possible to write Griffe extensions that will _statically handle_ the highly dynamic parts of your code (like custom decorators) that Griffe doesn't understand by default
 - if really needed, it's possible to [handle only a subset of objects with dynamic analysis](how-to/selectively-inspect.md), while the rest is loaded with static analysis, again thanks to Griffe extensions
 
 The [Extending](extending.md) topic will explain how to write and use extensions for Griffe.
@@ -151,7 +156,7 @@ Griffe's inspector uses [`inspect.getmembers`][inspect.getmembers], which calls 
 
 For example, this package imports `hello` only when the attribute is requested:
 
-```python title="my_package/__init__.py"
+``` python title="my_package/__init__.py"
 __all__ = ["hello"]
 
 
@@ -167,7 +172,7 @@ def __getattr__(name: str) -> object:
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 ```
 
-```python title="my_package/_impl.py"
+``` python title="my_package/_impl.py"
 def hello() -> str:
     """Return a greeting."""
     return "Hello!"
@@ -179,7 +184,7 @@ The `__all__` list marks `hello` as public. It does not expose lazy names to `di
 
 If you want to be careful about what gets executed in the current Python process, you can choose to disallow dynamic analysis by passing the `allow_inspection=False` argument. If Griffe cannot find sources for a package, it will not try to import it and will instead fail with a `ModuleNotFoundError` directly.
 
-```python
+``` python
 import griffe
 
 # Here Griffe will fall back on dynamic analysis and import `itertools`.
@@ -191,8 +196,8 @@ griffe.load("itertools", allow_inspection=False)
 
 ## Alias resolution
 
->? QUESTION: **What's that?**
-> In Griffe, indirections to objects are called *aliases*. These indirections, or aliases, represent two kinds of objects: imported objects and inherited objects. Indeed, an imported object is "aliased" in the module that imports it, while its true location is in the module it was imported from. Similarly, a method inherited from a parent class is "aliased" in the subclass, while its true location is in the parent class.
+> ? QUESTION: **What's that?**
+> In Griffe, indirections to objects are called _aliases_. These indirections, or aliases, represent two kinds of objects: imported objects and inherited objects. Indeed, an imported object is "aliased" in the module that imports it, while its true location is in the module it was imported from. Similarly, a method inherited from a parent class is "aliased" in the subclass, while its true location is in the parent class.
 >
 > The name "alias" comes from the fact that imported objects can be aliased under a different name: `from X import A as B`. In the case of inherited members, this doesn't really apply, but we reuse the concept for conciseness.
 >
@@ -202,38 +207,38 @@ griffe.load("itertools", allow_inspection=False)
 
 To resolve an alias, i.e. obtain a reference to the object it targets, we have to wait for this object to be loaded. Indeed, during analysis, objects are loaded in breadth-first order (in the object hierarchy, highest objects are loaded first, deepest ones are loaded last), so when we encounter an imported object, we often haven't loaded this object yet.
 
-Once a whole package is loaded, we are ready to try and resolve all aliases. But we don't *have* to resolve them. First, because the user might not need aliases to be resolved, and second, because each alias can be resolved individually and transparently when accessing its target object properties.
+Once a whole package is loaded, we are ready to try and resolve all aliases. But we don't _have_ to resolve them. First, because the user might not need aliases to be resolved, and second, because each alias can be resolved individually and transparently when accessing its target object properties.
 
 Therefore, alias resolution is optional and enabled with the `resolve_aliases` parameter.
 
 Lets take an example.
 
-```tree title="File layout"
+``` tree title="File layout"
 ./
     my_package/
         __init__.py
         my_module.py
 ```
 
-```python title="my_package/__init__.py"
+``` python title="my_package/__init__.py"
 from my_package.my_module import my_function
 ```
 
-```python title="my_package/my_module.py"
+``` python title="my_package/my_module.py"
 def my_function():
     print("hello")
 ```
 
 When loading this package, `my_package.my_function` will be an alias pointing at `my_package.my_module.my_function`:
 
-```python
+``` python
 import griffe
 
 my_package = griffe.load("my_package")
 my_package["my_function"].resolved  # False
 ```
 
-```python
+``` python
 import griffe
 
 my_package = griffe.load("my_package", resolve_aliases=True)
@@ -245,9 +250,9 @@ The [Navigating](navigating.md) topic will tell you more about aliases and how t
 
 ### Modules collection
 
-In the first section of this page, we briefly mentioned that Griffe always loads the entire package containing the object you requested. One of the reasons it always loads entire packages and not just single, isolated objects, is that alias resolution requires all objects of a package to be loaded. Which means that if an alias points to an object that is part of *another* package, it can only be resolved if the *other* package is *also loaded*. For example:
+In the first section of this page, we briefly mentioned that Griffe always loads the entire package containing the object you requested. One of the reasons it always loads entire packages and not just single, isolated objects, is that alias resolution requires all objects of a package to be loaded. Which means that if an alias points to an object that is part of _another_ package, it can only be resolved if the _other_ package is _also loaded_. For example:
 
-```tree title="File layout"
+``` tree title="File layout"
 ./
     package1/
         __init__.py
@@ -255,15 +260,15 @@ In the first section of this page, we briefly mentioned that Griffe always loads
         __init__.py
 ```
 
-```python title="package1/__init__.py"
+``` python title="package1/__init__.py"
 X = 0
 ```
 
-```python title="package2/__init__.py"
+``` python title="package2/__init__.py"
 from package1 import X
 ```
 
-```pycon
+``` pycon
 >>> import griffe
 >>> package2 = griffe.load("package2", resolve_aliases=True)
 >>> package2["X"].target_path
@@ -297,7 +302,7 @@ As you can see in the interpreter session above, Griffe did not resolve the `X` 
 
 Lets try again, but this time by loading both packages.
 
-```pycon
+``` pycon
 >>> import griffe
 >>> package1 = griffe.load("package1")  # nothing to resolve
 >>> package2 = griffe.load("package2", resolve_aliases=True)
@@ -319,14 +324,15 @@ Each instance of [`GriffeLoader`][griffe.GriffeLoader] holds a reference to an i
 
 Since the [`load` function][griffe.load] is just a shortcut for creating a loader and calling its [`load` method][griffe.GriffeLoader.load], when we called `griffe.load(...)` twice, it actually created two distinct collections of modules. When Griffe tried to resolve aliases of `package2`, it looked for `package1` in `package2`'s collection, and couldn't find it. Indeed, `package1` was in another modules collection.
 
-Therefore, to resolve aliases *across different packages*, these packages must be loaded within the same modules collection. In order to do that, you have a few options:
+Therefore, to resolve aliases _across different packages_, these packages must be loaded within the same modules collection. In order to do that, you have a few options:
 
 - instantiate a single loader, and use it to load both packages
 - create your own modules collection, and pass it to the [`load` function][griffe.load] each time you call it
 - create your own modules collection, and pass it to the different instances of [`GriffeLoader`][griffe.GriffeLoader] you create
 
 === "Same loader"
-    ```pycon
+
+    ``` pycon
     >>> import griffe
     >>> loader = griffe.GriffeLoader()
     >>> package1 = loader.load("package1")
@@ -339,7 +345,8 @@ Therefore, to resolve aliases *across different packages*, these packages must b
     ```
 
 === "Same collection with `load`"
-    ```pycon
+
+    ``` pycon
     >>> import griffe
     >>> collection = griffe.ModulesCollection()
     >>> package1 = griffe.load("package1", modules_collection=collection)
@@ -351,7 +358,8 @@ Therefore, to resolve aliases *across different packages*, these packages must b
     ```
 
 === "Same collection, different loaders"
-    ```pycon
+
+    ``` pycon
     >>> import griffe
     >>> collection = griffe.ModulesCollection()
     >>> loader1 = griffe.GriffeLoader(modules_collection=collection, ...)
@@ -370,7 +378,7 @@ There is no preferred way, it depends on whether you need to instantiate differe
 
 By default, when resolving aliases, Griffe loaders will not be able to resolve aliases pointing at objects from "external" packages. By external, we mean that these packages are external to the current modules collection: they are not loaded. But sometimes users don't know in advance which packages need to be loaded in order to resolve aliases (and compute class inheritance). For these cases, Griffe loaders can be instructed to automatically load external packages. If we take the previous example again:
 
-```python
+``` python
 import griffe
 
 package2 = griffe.load("package2", resolve_aliases=True, resolve_external=True)
@@ -379,9 +387,9 @@ print(package2["X"].target.name)  # X
 
 Here Griffe automatically loaded `package1` while resolving aliases, even though we didn't explicitly load it ourselves.
 
-While automatically resolving aliases pointing at external packages can be convenient, we advise cautiousness: this can trigger the loading of *a lot* of external packages, *recursively*.
+While automatically resolving aliases pointing at external packages can be convenient, we advise cautiousness: this can trigger the loading of _a lot_ of external packages, _recursively_.
 
-One special case that we must mention is that Griffe will by default automatically load *private sibling packages*. For example, when resolving aliases for the `ast` module, Griffe will automatically try and load `_ast` too (if dynamic analysis is allowed, since this is a builtin module), even without `resolve_external=True`. If you want to prevent this behavior, you can pass `resolve_external=False` (it is `None` by default).
+One special case that we must mention is that Griffe will by default automatically load _private sibling packages_. For example, when resolving aliases for the `ast` module, Griffe will automatically try and load `_ast` too (if dynamic analysis is allowed, since this is a builtin module), even without `resolve_external=True`. If you want to prevent this behavior, you can pass `resolve_external=False` (it is `None` by default).
 
 ## Source information
 

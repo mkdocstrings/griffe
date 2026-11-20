@@ -10,7 +10,7 @@ Therefore, to support your own decorators (at least statically), you have to wri
 
 Lets assume we have a decorator whose path is `my_package.utils.enhance`. It is used throughout our code base like so:
 
-```python
+``` python
 from my_package.utils import enhance
 
 @enhance
@@ -20,7 +20,7 @@ def my_function() -> ...:
 
 Start by creating an extensions module (a simple Python file) somewhere in your repository, if you don't already have one. Within it, create an extension class:
 
-```python
+``` python
 import griffe
 
 
@@ -32,7 +32,7 @@ Now we can declare the [`on_instance`][griffe.Extension.on_instance] hook, which
 
 For the example, lets use the `on_function_instance` hook, which receives `Function` instances.
 
-```python hl_lines="7-8"
+``` python hl_lines="7-8"
 import griffe
 
 
@@ -45,7 +45,7 @@ class MyDecorator(griffe.Extension):
 
 In this hook, we check if our function is decorated with our custom decorator:
 
-```python hl_lines="8-10"
+``` python hl_lines="8-10"
 import griffe
 
 

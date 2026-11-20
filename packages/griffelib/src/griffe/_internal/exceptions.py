@@ -62,7 +62,7 @@ class AliasResolutionError(GriffeError):
     def _format_message(self) -> str:
         message = super().__str__()
         try:
-            filepath = self.alias.parent.relative_filepath  # ty:ignore[unresolved-attribute]
+            filepath = self.alias.parent.relative_filepath  # ty:ignore[missing-union-attribute]
         except BuiltinModuleError:
             return message
         return message + f" (in {filepath}:{self.alias.alias_lineno})"

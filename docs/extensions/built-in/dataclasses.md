@@ -4,7 +4,7 @@ The `dataclasses` extension adds support for [dataclasses][] from the standard l
 
 Example:
 
-```python
+``` python
 from dataclasses import dataclass
 
 
@@ -18,7 +18,7 @@ class Room:
 
 With the `dataclasses` extension enabled, the Griffe object for the `Room` class will get an `__init__` method with the following signature:
 
-```python
+``` python
 def __init__(self, uid: int, name: str, capacity: int = 10, available: bool = True) -> None:
     ...
 ```
@@ -28,19 +28,22 @@ Additional metadata like `ClassVar`, the `init` and `kw_only` parameters, or the
 **This extension is enabled by default.** It is always added last. If you need to give it a higher priority, you can explicitly enable it to change its position in the list of extensions (it will run only once):
 
 === "CLI"
-    ```console
+
+    ``` console
     $ griffe dump -e dataclasses,other my_package
     ```
 
 === "Python"
-    ```python
+
+    ``` python
     import griffe
 
     my_package = griffe.load("my_package", extensions=griffe.load_extensions("dataclasses", "other"))
     ```
 
 === "mkdocstrings"
-    ```yaml title="mkdocs.yml"
+
+    ``` yaml title="mkdocs.yml"
     plugins:
     - mkdocstrings:
         handlers:
@@ -50,4 +53,3 @@ Additional metadata like `ClassVar`, the `init` and `kw_only` parameters, or the
               - dataclasses
               - other
     ```
-

@@ -98,7 +98,7 @@ class JSONEncoder(json.JSONEncoder):
         self.full: bool = full
         """Whether to dump full data or base data."""
 
-    def default(self, obj: Any) -> Any:  # ty:ignore[invalid-method-override]
+    def default(self, o: Any) -> Any:
         """Return a serializable representation of the given object.
 
         Parameters:
@@ -108,9 +108,9 @@ class JSONEncoder(json.JSONEncoder):
             A serializable representation.
         """
         try:
-            return obj.as_dict(full=self.full)
+            return o.as_dict(full=self.full)
         except AttributeError:
-            return _json_encoder_map.get(type(obj), super().default)(obj)
+            return _json_encoder_map.get(type(o), super().default)(o)
 
 
 def _load_docstring(obj_dict: dict) -> Docstring | None:

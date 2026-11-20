@@ -208,7 +208,7 @@ def _read_parameter(
 
     if warnings and warn_unknown_params:
         with suppress(AttributeError):  # For Parameters sections in objects without parameters.
-            params = docstring.parent.parameters  # ty:ignore[unresolved-attribute]
+            params = docstring.parent.parameters  # ty:ignore[missing-attribute]
             if name not in params:
                 message = f"Parameter '{name}' does not appear in the function signature"
                 for starred_name in (f"*{name}", f"**{name}"):
@@ -232,7 +232,7 @@ def _read_parameter(
 
 def _determine_param_default(docstring: Docstring, name: str) -> str | None:
     try:
-        return docstring.parent.parameters[name.lstrip()].default  # ty:ignore[unresolved-attribute]
+        return docstring.parent.parameters[name.lstrip()].default  # ty:ignore[missing-attribute]
     except (AttributeError, KeyError):
         return None
 
@@ -264,7 +264,7 @@ def _determine_param_annotation(
 
     if annotation is None:
         try:
-            annotation = docstring.parent.parameters[name.lstrip()].annotation  # ty:ignore[unresolved-attribute]
+            annotation = docstring.parent.parameters[name.lstrip()].annotation  # ty:ignore[missing-attribute]
         except (AttributeError, KeyError):
             if warnings:
                 docstring_warning(docstring, 0, f"No matching parameter for '{name}'")
@@ -428,7 +428,7 @@ def _read_return(
         annotation = parsed_values.return_type
     else:
         try:
-            annotation = docstring.parent.annotation  # ty:ignore[unresolved-attribute]
+            annotation = docstring.parent.annotation  # ty:ignore[missing-attribute]
         except AttributeError:
             if warnings and warn_missing_types:
                 docstring_warning(docstring, 0, f"No return type or annotation at '{parsed_directive.line}'")

@@ -11,7 +11,7 @@ Griffe loads API data into data models. These models provide various attributes 
 
 When [loading an object](loading.md), Griffe will give you back an instance of one of these models. A few examples:
 
-```python
+``` python
 >>> import griffe
 >>> type(griffe.load("markdown"))
 <class 'griffe._internal.models.Module'>
@@ -37,9 +37,9 @@ Each object holds a reference to its [`parent`][griffe.Object.parent] (except fo
 
 To access an object's members, there are a few options:
 
-- Access to regular members through the [`members`][griffe.Object.members] attribute, which is a dictionary. The keys are member names, the values are Griffe models.
+-   Access to regular members through the [`members`][griffe.Object.members] attribute, which is a dictionary. The keys are member names, the values are Griffe models.
 
-    ```pycon
+    ``` pycon
     >>> import griffe
     >>> markdown = griffe.load("markdown")
     >>> markdown.members["Markdown"]
@@ -48,11 +48,11 @@ To access an object's members, there are a few options:
     Class('Markdown', 46, 451)
     ```
 
-- Access to both regular and inherited members through the [`all_members`][griffe.Object.all_members] attribute, which is a dictionary again. See [Inherited members](#inherited-members).
+-   Access to both regular and inherited members through the [`all_members`][griffe.Object.all_members] attribute, which is a dictionary again. See [Inherited members](#inherited-members).
 
-- Convenient dictionary-like item access, thanks to the subscript syntax `[]`. With this syntax, you will not only be able to chain accesses, but also merge them into a single access by using dot-separated paths to objects:
+-   Convenient dictionary-like item access, thanks to the subscript syntax `[]`. With this syntax, you will not only be able to chain accesses, but also merge them into a single access by using dot-separated paths to objects:
 
-    ```pycon
+    ``` pycon
     >>> import griffe
     >>> markdown = griffe.load("markdown")
     >>> markdown["core"]["Markdown"]  # chained access
@@ -63,7 +63,7 @@ To access an object's members, there are a few options:
 
     The dictionary-like item access also accepts tuples of strings. So if for some reason you don't have a string equal to `"core.Markdown"` but a tuple equal to `("core", "Markdown")` (for example obtained from splitting another string), you can use it too:
 
-    ```pycon
+    ``` pycon
     >>> import griffe
     >>> markdown = griffe.load("markdown")
     >>> markdown[("core", "Markdown")]  # tuple access
@@ -74,9 +74,9 @@ To access an object's members, there are a few options:
     Class('Markdown', 46, 451)
     ```
 
-- Less convenient, but safer access to members while the object tree is being built (while a package is still being loaded), using the [`get_member()`][griffe.GetMembersMixin.get_member] method.
+-   Less convenient, but safer access to members while the object tree is being built (while a package is still being loaded), using the [`get_member()`][griffe.GetMembersMixin.get_member] method.
 
-    ```pycon
+    ``` pycon
     >>> import griffe
     >>> markdown = griffe.load("markdown")
     >>> markdown.get_member("core.Markdown")
@@ -85,7 +85,7 @@ To access an object's members, there are a few options:
 
     In particular, Griffe extensions should always use `get_member` instead of the subscript syntax `[]`. The `get_member` method only looks into regular members, while the subscript syntax looks into inherited members too (for classes), which cannot be correctly computed until a package is fully loaded (which is generally not the case when an extension is running).
 
-- In addition to this, models provide the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes, which return only members of the corresponding kind. These attributes are computed dynamically each time (they are Python properties).
+-   In addition to this, models provide the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Object.functions], [`classes`][griffe.Object.classes], [`type_aliases`][griffe.Object.type_aliases] or [`modules`][griffe.Object.modules] attributes, which return only members of the corresponding kind. These attributes are computed dynamically each time (they are Python properties).
 
 The same way members are accessed, they can also be set:
 
@@ -109,7 +109,7 @@ Inherited members are aliases that point at the corresponding members in parent 
 
 **Important:** only classes from already loaded packages will be used when computing inherited members. This gives users control over how deep into inheritance to go, by pre-loading packages from which you want to inherit members. For example, if `package_c.ClassC` inherits from `package_b.ClassB`, itself inheriting from `package_a.ClassA`, and you want to load `ClassB` members only:
 
-```python
+``` python
 import griffe
 
 loader = griffe.GriffeLoader()
@@ -128,9 +128,9 @@ Accessing the [`attributes`][griffe.Object.attributes], [`functions`][griffe.Obj
 
 Currently, there are three limitations to our class inheritance support:
 
-1. when visiting (static analysis), some objects are not yet properly recognized as classes, for example named tuples. If you inherit from a named tuple, its members won't be added to the inherited members of the inheriting class.
+1.  when visiting (static analysis), some objects are not yet properly recognized as classes, for example named tuples. If you inherit from a named tuple, its members won't be added to the inherited members of the inheriting class.
 
-    ```python
+    ``` python
     MyTuple = namedtuple("MyTuple", "attr1 attr2")
 
 
@@ -138,9 +138,9 @@ Currently, there are three limitations to our class inheritance support:
         ...
     ```
 
-2. when visiting (static analysis), subclasses using the same name as one of their parent classes will prevent Griffe from computing the MRO and therefore the inherited members. To circumvent that, give a different name to your subclass:
+2.  when visiting (static analysis), subclasses using the same name as one of their parent classes will prevent Griffe from computing the MRO and therefore the inherited members. To circumvent that, give a different name to your subclass:
 
-    ```python
+    ``` python
     from package import SomeClass
 
 
@@ -154,9 +154,9 @@ Currently, there are three limitations to our class inheritance support:
         ...
     ```
 
-3. when inspecting (dynamic analysis), ephemeral base classes won't be resolved, and therefore their members won't appear in child classes. To circumvent that, assign these dynamic classes to variables:
+3.  when inspecting (dynamic analysis), ephemeral base classes won't be resolved, and therefore their members won't appear in child classes. To circumvent that, assign these dynamic classes to variables:
 
-    ```python
+    ``` python
     # instead of
     class MyClass(namedtuple("MyTuple", "attr1 attr2")):
         ...
@@ -187,7 +187,7 @@ Since merely accessing an alias field can raise an exception, it is often useful
 - using the `is_alias` boolean ([`Object.is_alias`][griffe.Object.is_alias], [`Alias.is_alias`][griffe.Alias.is_alias]), which won't trigger resolution
 - using `isinstance` to check if the object is an instance of [`Alias`][griffe.Alias]
 
-```pycon
+``` pycon
 >>> import griffe
 >>> load = griffe.load("griffe.load")
 >>> load.is_alias
@@ -200,7 +200,7 @@ The [`kind`][griffe.Alias.kind] of an alias will only return [`ALIAS`][griffe.Ki
 
 You can of course also catch any raised exception with a regular try/except block:
 
-```python
+``` python
 try:
     print(obj.source)
 except griffe.AliasResolutionError:
@@ -213,7 +213,7 @@ To check if an alias is already resolved, you can use its [`resolved`][griffe.Al
 
 Aliases can be chained. For example, if module `a` imports `X` from module `b`, which itself imports `X` from module `c`, then `a.X` is an alias to `b.X` which is an alias to `c.X`: `a.X` -> `b.X` -> `c.X`. To access the final target directly, you can use the [`final_target`][griffe.Alias.final_target] attribute. Most alias properties that act like proxies actually fetch the final target rather than the next one to return the final field.
 
-Sometimes, when a package makes use of complicated imports (wildcard imports from parents and submodules), or when runtime objects are hard to inspect, it is possible to end up with a cyclic chain of aliases. You could for example end up with a chain like `a.X` -> `b.X` -> `c.X` -> `a.X`. In this case, the alias *cannot* be resolved, since the chain goes in a loop. Griffe will raise a [`CyclicAliasError`][griffe.CyclicAliasError] when trying to resolve such cyclic chains.
+Sometimes, when a package makes use of complicated imports (wildcard imports from parents and submodules), or when runtime objects are hard to inspect, it is possible to end up with a cyclic chain of aliases. You could for example end up with a chain like `a.X` -> `b.X` -> `c.X` -> `a.X`. In this case, the alias _cannot_ be resolved, since the chain goes in a loop. Griffe will raise a [`CyclicAliasError`][griffe.CyclicAliasError] when trying to resolve such cyclic chains.
 
 Aliases chains are never partially resolved: either they are resolved down to their final target, or none of their links are resolved.
 
@@ -221,9 +221,9 @@ Aliases chains are never partially resolved: either they are resolved down to th
 
 The kind of an object (module, class, function, attribute, type alias or alias) can be obtained in several ways.
 
-- With the [`kind`][griffe.Object.kind] attribute and the [`Kind`][griffe.Kind] enumeration: `obj.kind is Kind.MODULE`.
+-   With the [`kind`][griffe.Object.kind] attribute and the [`Kind`][griffe.Kind] enumeration: `obj.kind is Kind.MODULE`.
 
-- With the [`is_kind()`][griffe.Object.is_kind] method:
+-   With the [`is_kind()`][griffe.Object.is_kind] method:
 
     - `obj.is_kind(Kind.MODULE)`
     - `obj.is_kind("class")`
@@ -231,7 +231,7 @@ The kind of an object (module, class, function, attribute, type alias or alias) 
 
     When given a set of kinds, the method returns true if the object is of one of the given kinds.
 
-- With the [`is_module`][griffe.Object.is_module], [`is_class`][griffe.Object.is_class], [`is_function`][griffe.Object.is_function], [`is_attribute`][griffe.Object.is_attribute], [`is_type_alias`][griffe.Object.is_type_alias], and [`is_alias`][griffe.Object.is_alias] attributes.
+-   With the [`is_module`][griffe.Object.is_module], [`is_class`][griffe.Object.is_class], [`is_function`][griffe.Object.is_function], [`is_attribute`][griffe.Object.is_attribute], [`is_type_alias`][griffe.Object.is_type_alias], and [`is_alias`][griffe.Object.is_alias] attributes.
 
 Additionally, it is possible to check if an object is a sub-kind of module, with the following attributes:
 
@@ -245,14 +245,14 @@ Finally, additional [`labels`][griffe.Object.labels] are attached to objects to 
 
 ## Object location
 
-An object is identified by its [`path`][griffe.Object.path], which is its location in the object tree. The path is composed of all the parent names and the object name, separated by dots, for example `mod.Class.meth`. This `path` is the [`canonical_path`][griffe.Object.canonical_path] on regular objects. For aliases however, the `path` is *where they are imported* while the canonical path is *where they come from*. Example:
+An object is identified by its [`path`][griffe.Object.path], which is its location in the object tree. The path is composed of all the parent names and the object name, separated by dots, for example `mod.Class.meth`. This `path` is the [`canonical_path`][griffe.Object.canonical_path] on regular objects. For aliases however, the `path` is _where they are imported_ while the canonical path is _where they come from_. Example:
 
-```python
+``` python
 # pkg1.py
 from pkg2 import A as B
 ```
 
-```pycon
+``` pycon
 >>> import griffe
 >>> B = griffe.load("pkg1.B")
 >>> B.path
@@ -278,12 +278,12 @@ Each object holds a reference to a [`lines_collection`][griffe.Object.lines_coll
 
 Each object has fields that are related to their visibility within the API.
 
-- [`is_public`][griffe.Object.is_public]: whether this object is public (destined to be consumed by your users). For module-level objects, Griffe considers that the object is public if:
+-   [`is_public`][griffe.Object.is_public]: whether this object is public (destined to be consumed by your users). For module-level objects, Griffe considers that the object is public if:
 
     - it is listed in its parent module's `__all__` attribute
     - or if its parent module does not declare `__all__`, and the object doesn't have a private name, and the object is not imported from elsewhere
 
-    ```python
+    ``` python
     # package1/__init__.py
     from package2 import A  # not public
     from package1 import submodule  # not public
@@ -298,7 +298,7 @@ Each object has fields that are related to their visibility within the API.
 
     For class-level objects, Griffe considers that the object is public if the object doesn't have a private name, and the object is not imported from elsewhere.
 
-    ```python
+    ``` python
     # package1/__init__.py
     class A:
         from package1.module import X  # not public
@@ -312,13 +312,13 @@ Each object has fields that are related to their visibility within the API.
             ...
     ```
 
-- [`is_deprecated`][griffe.Object.is_deprecated]: whether this object is deprecated and shouldn't be used.
+-   [`is_deprecated`][griffe.Object.is_deprecated]: whether this object is deprecated and shouldn't be used.
 
-- [`is_special`][griffe.Object.is_special]: whether this object has a special name like `__special__`
+-   [`is_special`][griffe.Object.is_special]: whether this object has a special name like `__special__`
 
-- [`is_private`][griffe.Object.is_private]: whether this object has a private name like `_private` or `__private`, but not `__special__`
+-   [`is_private`][griffe.Object.is_private]: whether this object has a private name like `_private` or `__private`, but not `__special__`
 
-- [`is_class_private`][griffe.Object.is_class_private]: whether this object has a class-private name like `__private` and is a member of a class
+-   [`is_class_private`][griffe.Object.is_class_private]: whether this object has a class-private name like `__private` and is a member of a class
 
 Since `is_private` only checks the name of the object, it is not mutually exclusive with `is_public`. It means an object can return true for both `is_public` and `is_private`. We invite Griffe users to mostly rely on `is_public` and `not is_public`.
 
@@ -343,7 +343,7 @@ When loading a package, it is possible to specify the docstring style to attach 
 
 After a package is loaded, it is still possible to change the style used for specific docstrings by either overriding their [`parser`][griffe.Docstring.parser] and [`parser_options`][griffe.Docstring.parser_options] attributes, or by calling their [`parse()`][griffe.Docstring.parse] method with a different style:
 
-```pycon
+``` pycon
 >>> import griffe
 >>> markdown = griffe.load("markdown", docstring_parser="google")
 >>> markdown["Markdown"].docstring.parse("numpy")
@@ -389,6 +389,7 @@ Models have most fields in common, but also have specific fields.
 - [`setter`][griffe.Attribute.setter]: The property setter.
 
 ### Type aliases
+
 - [`value`][griffe.TypeAlias.value]: The value of the type alias, in the form of an [expression][griffe.Expr].
 - [`type_parameters`][griffe.TypeAlias.type_parameters]: The [type parameters][griffe.TypeParameters] of the type alias.
 
@@ -409,7 +410,7 @@ These "expressions" are very similar to what Python's [ast][] module gives you b
 
 You can write some code below and print annotations or attribute values with [Rich]'s pretty printer to see how expressions look like.
 
-```pyodide install="griffe,rich" theme="tomorrow,dracula"
+``` pyodide install="griffe,rich" theme="tomorrow,dracula"
 from griffe import temporary_visited_module
 from rich.pretty import pprint
 

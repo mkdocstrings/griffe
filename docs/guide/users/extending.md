@@ -27,11 +27,11 @@ To specify options in the JSON form, use a dictionary instead of a string: the d
 
 Some examples:
 
-```bash
+``` bash
 griffe dump griffe -e pydantic,scripts/exts.py:DynamicDocstrings,griffe_attrs
 ```
 
-```bash
+``` bash
 griffe check --search src griffe -e '[
   {"pydantic": {"schema": true}},
   {
@@ -55,7 +55,7 @@ Strings and dictionaries are used the same way as [on the command-line](#on-the-
 
 Example:
 
-```python
+``` python
 import griffe
 
 from mypackage.extensions import ThisExtension, ThisOtherExtension
@@ -75,7 +75,7 @@ data = griffe.load("mypackage", extensions=extensions)
 
 MkDocs and its mkdocstrings plugin can be configured to use Griffe extensions:
 
-```yaml title="mkdocs.yml"
+``` yaml title="mkdocs.yml"
 plugins:
 - mkdocstrings:
     handlers:
@@ -104,11 +104,11 @@ Griffe then follows the [Visitor pattern](https://www.wikiwand.com/en/Visitor_pa
 
 Sometimes during the walk through the source or runtime objects, both the visitor and inspector agents will trigger events, called **analysis events**. These events can be hooked on by extensions to alter or enhance Griffe's behavior. Some hooks will be passed just the current node being visited, others will be passed both the node and an instance of an [Object][griffe.Object] subclass, such as a [Module][griffe.Module], a [Class][griffe.Class], a [Function][griffe.Function], an [Attribute][griffe.Attribute], or a [Type Alias][griffe.TypeAlias]. Extensions will therefore be able to modify these instances.
 
-Once the Griffe tree for a given package has been fully constructed, Griffe will trigger a second set of events, called **load events**, by walking the tree again. **It is safer to use load events as they are triggered only once data is complete for a given package**, contrary to the analysis events which are triggered *while the Griffe tree is still being built*.
+Once the Griffe tree for a given package has been fully constructed, Griffe will trigger a second set of events, called **load events**, by walking the tree again. **It is safer to use load events as they are triggered only once data is complete for a given package**, contrary to the analysis events which are triggered _while the Griffe tree is still being built_.
 
 The following flow chart shows an example of an AST visit. The tree is simplified: actual trees have a lot more nodes like `if/elif/else` nodes, `try/except/else/finally` nodes, [and many more][ast.AST].
 
-```mermaid
+``` mermaid
 flowchart TB
 M(Module definition) --- C(Class definition) & F(Function definition)
 C --- m(Function definition) & A(Variable assignment)
@@ -116,7 +116,7 @@ C --- m(Function definition) & A(Variable assignment)
 
 The following flow chart shows an example of an object tree inspection. The tree is simplified as well: [many more types of objects are handled][griffe.ObjectKind].
 
-```mermaid
+``` mermaid
 flowchart TB
 M(Module) --- C(Class) & F(Function)
 C --- m(Method) & A(Attribute)
@@ -134,7 +134,7 @@ Every time the agent enters a node, creates an object instance, or finishes hand
 
 The flow of events is drawn in the following flowchart:
 
-```mermaid
+``` mermaid
 flowchart TB
 visit_mod{{enter module node}}
 event_mod_node{{"<a href='/griffe/reference/griffe/extensions/#griffe.Extension.on_node'><b><code style='color: var(--md-accent-fg-color)'>on_node</code></b></a> event<br><a href='/griffe/reference/griffe/extensions/#griffe.Extension.on_module_node'><b><code style='color: var(--md-accent-fg-color)'>on_module_node</code></b></a> event"}}
@@ -240,7 +240,7 @@ There are also specific **analysis events** for each object kind:
 
 **Extensions** are classes that inherit from [Griffe's Extension base class][griffe.Extension] and define some hooks as methods:
 
-```python
+``` python
 import griffe
 
 
@@ -259,7 +259,7 @@ Hooks are always defined as methods of a class inheriting from [Extension][griff
 
 Since hooks are declared in a class, feel free to also declare state variables (or any other variable) in the `__init__` method:
 
-```python
+``` python
 import ast
 from griffe import Extension, Object, ObjectNode
 
@@ -288,7 +288,7 @@ Objects have an `analysis` attribute whose value will be `"static"` if they were
 
 To support static analysis, dynamic analysis, or both in your load events, you can therefore check the value of the `analysis` attribute:
 
-```python
+``` python
 import griffe
 
 
@@ -314,9 +314,9 @@ Extensions provide basic functionality to help you visit trees during analysis o
 
 Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you actually implement methods that handle specific types of nodes:
 
-- for ASTs, methods must be named `visit_<node_type>` where `<node_type>` is replaced with the lowercase name of the node's class. For example, to allow visiting [`ClassDef`][ast.ClassDef] nodes, you must implement the `visit_classdef` method:
+-   for ASTs, methods must be named `visit_<node_type>` where `<node_type>` is replaced with the lowercase name of the node's class. For example, to allow visiting [`ClassDef`][ast.ClassDef] nodes, you must implement the `visit_classdef` method:
 
-    ```python
+    ``` python
     import ast
     from griffe import Extension
 
@@ -333,9 +333,9 @@ Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you ac
 
     See the [list of existing AST classes](#ast-nodes) to learn what method you can implement.
 
-- for object trees, methods must be named `inspect_<node_type>`, where `<node_type>` is replaced with the string value of the node's kind. The different kinds are listed in the [`ObjectKind`][griffe.ObjectKind] enumeration. For example, to allow inspecting coroutine nodes, you must implement the `inspect_coroutine` method:
+-   for object trees, methods must be named `inspect_<node_type>`, where `<node_type>` is replaced with the string value of the node's kind. The different kinds are listed in the [`ObjectKind`][griffe.ObjectKind] enumeration. For example, to allow inspecting coroutine nodes, you must implement the `inspect_coroutine` method:
 
-    ```python
+    ``` python
     from griffe import Extension, ObjectNode
 
 
@@ -351,7 +351,7 @@ Calling `self.visit(node)` or `self.inspect(node)` will do nothing unless you ac
 
 If your extension creates new objects, you might want to trigger the other enabled extensions on these object instances. To do this you can use [`agent.extensions.call`][griffe.Extensions.call]:
 
-```python
+``` python
 import ast
 import griffe
 
@@ -378,7 +378,7 @@ class MyExtension(griffe.Extension):
 
 All Griffe objects (modules, classes, functions, attributes, type aliases) can store additional (meta)data in their `extra` attribute. This attribute is a dictionary of dictionaries. The first layer is used as namespacing: each extension writes into its own namespace, or integrates with other projects by reading/writing in their namespaces, according to what they support and document.
 
-```python
+``` python
 import griffe
 
 self_namespace = "my_extension"
@@ -391,7 +391,7 @@ class MyExtension(griffe.Extension):
 
 For example, [mkdocstrings-python](https://mkdocstrings.github.io/python) looks into the `mkdocstrings` namespace for a `template` key. Extensions can therefore provide a custom template value by writing into `extra["mkdocstrings"]["template"]`:
 
-```python
+``` python
 import griffe
 
 self_namespace = "my_extension"
@@ -409,7 +409,7 @@ class MyExtension(griffe.Extension):
 
 Extensions can be made to support options. These options can then be passed from the [command-line](#on-the-command-line) using JSON, from Python directly, or from other tools like MkDocs, in `mkdocs.yml`.
 
-```python
+``` python
 import griffe
 
 
@@ -428,7 +428,7 @@ class MyExtension(griffe.Extension):
 
 To better integrate with Griffe and other tools in the ecosystem (notably MkDocs), use Griffe loggers to log messages:
 
-```python
+``` python
 import griffe
 
 logger = griffe.get_logger(__name__)
@@ -445,7 +445,7 @@ The following example shows how one could write a "dynamic docstrings" extension
 
 Package structure (or just write your extension in a local script):
 
-```tree
+``` tree
 ./
     pyproject.toml
     src/
@@ -454,7 +454,7 @@ Package structure (or just write your extension in a local script):
             extension.py
 ```
 
-```python title="./src/dynamic_docstrings/extension.py"
+``` python title="./src/dynamic_docstrings/extension.py"
 import ast
 import inspect
 import griffe
@@ -504,7 +504,7 @@ class DynamicDocstrings(griffe.Extension):
 
 You can then expose this extension in the top-level module of your package:
 
-```python title="./src/dynamic_docstrings/__init__.py"
+``` python title="./src/dynamic_docstrings/__init__.py"
 from dynamic_docstrings.extension import DynamicDocstrings
 
 __all__ = ["DynamicDocstrings"]
@@ -649,13 +649,13 @@ See [how to use extensions](#using-extensions) to learn more about how to load a
 >
 > </td></tr></tbody></table>
 
+## Next steps
+
+Extensions are a powerful mechanism to customize or enhance the data loaded by Griffe. But sometimes, all you need to do to improve the data is to make Griffe happy by following a few conventions. We therefore invite you to read our recommendations on [public APIs](recommendations/public-apis.md), [Python code best practices](recommendations/python-code.md) and [docstrings](recommendations/docstrings.md).
+
 [^1]: Deprecated since Python 3.8.
 [^2]: Deprecated since Python 3.9.
 [^3]: Not documented.
 [^4]: `print` became a builtin (instead of a keyword) in Python 3.
 [^5]: Now `ExceptHandler`, in the `handlers` attribute of `Try` nodes.
 [^6]: Now a list of expressions in the `finalbody` attribute of `Try` nodes.
-
-## Next steps
-
-Extensions are a powerful mechanism to customize or enhance the data loaded by Griffe. But sometimes, all you need to do to improve the data is to make Griffe happy by following a few conventions. We therefore invite you to read our recommendations on [public APIs](recommendations/public-apis.md), [Python code best practices](recommendations/python-code.md) and [docstrings](recommendations/docstrings.md).

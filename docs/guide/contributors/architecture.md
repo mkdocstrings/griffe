@@ -1,13 +1,14 @@
 # Project architecture
 
 !!! info "For contributors and maintainers"
+
     This page explains the repository layout and Griffe's implementation. To use the public API, see the [user guide](../users/index.md) and [API reference](../../reference/api/index.md).
 
 This page covers repository tooling, source code, tests, and the relationship between the public and internal APIs.
 
 ## Repository layout
 
-```python exec="1" session="filetree"
+```` python exec="1" session="filetree"
 from fnmatch import fnmatch
 from pathlib import Path
 
@@ -81,9 +82,9 @@ def exptree(path):
             print('    ```python exec="1" session="filetree" idprefix=""')
             print(f'    exptree("{node.as_posix()}")')
             print("    ```\n")
-```
+````
 
-```python exec="1" session="filetree" idprefix="" id="filetree"
+``` python exec="1" session="filetree" idprefix="" id="filetree"
 exptree(".")
 ```
 
@@ -93,7 +94,7 @@ This project's skeleton (the file-tree shown above) is actually generated from a
 
 To update the project (in order to apply latest changes from the template), we use the following command:
 
-```bash
+``` bash
 copier update --trust --skip-answered
 ```
 
@@ -135,7 +136,7 @@ such as [`griffecli.check`][].
 
 We'll be honest: our code organization is not the most elegant, but it works :shrug: Have a look at the following module dependency graph, which will basically tell you nothing except that we have a lot of inter-module dependencies. Arrows read as "imports from". The code base is generally pleasant to work with though.
 
-```python exec="true" html="true" id="pydeps-module-graph"
+``` python exec="true" html="true" id="pydeps-module-graph"
 import os
 if os.getenv("DEPLOY") == "true":
     from pydeps import cli, colors, dot, py2depgraph
@@ -159,28 +160,29 @@ if os.getenv("DEPLOY") == "true":
 
 The following sections are generated automatically by iterating on the modules of our public and internal APIs respectively, and extracting the comment blocks at the top of each module. The comment blocks are addressed to readers of the code (maintainers, contributors), while module docstrings are addressed to users of the API. Module docstrings in our internal API are never written, because our [module layout][module-layout] is hidden, and therefore modules aren't part of the public API, so it doesn't make much sense to write "user documentation" in them.
 
-```python exec="1" session="comment_blocks"
+``` python exec="1" session="comment_blocks"
 --8<-- "scripts/gen_structure_docs.py"
 ```
 
 ### CLI entrypoint
 
-```python exec="1" idprefix="entrypoint-" session="comment_blocks" id="entrypoint"
+``` python exec="1" idprefix="entrypoint-" session="comment_blocks" id="entrypoint"
 render_entrypoint(heading_level=4)
 ```
 
 ### Public API
 
-```python exec="1" idprefix="public-" session="comment_blocks" id="public-api"
+``` python exec="1" idprefix="public-" session="comment_blocks" id="public-api"
 render_public_api(heading_level=4)
 ```
 
 ### Internal API
 
 !!! info "For contributors and maintainers"
+
     These implementation details explain how Griffe works. Use objects exported by `griffe` when integrating with the library.
 
-```python exec="1" idprefix="internal-" session="comment_blocks" id="internal-api"
+``` python exec="1" idprefix="internal-" session="comment_blocks" id="internal-api"
 import os
 if os.getenv("DEPLOY") == "true":
     render_internal_api(heading_level=4)

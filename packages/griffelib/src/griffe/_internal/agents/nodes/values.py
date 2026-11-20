@@ -57,7 +57,7 @@ def safe_get_value(node: ast.AST | None, filepath: str | Path | None = None) -> 
     except Exception as error:  # noqa: BLE001
         message = f"Failed to represent node {node}"
         if filepath:
-            message += f" at {filepath}:{node.lineno}"  # ty:ignore[unresolved-attribute]
+            message += f" at {filepath}:{node.lineno}"  # ty:ignore[missing-attribute]
         message += f": {error}"
         logger.exception(message)
         return None

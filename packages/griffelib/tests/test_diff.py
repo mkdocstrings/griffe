@@ -32,6 +32,52 @@ from griffe import Breakage, BreakageKind, find_breaking_changes, temporary_visi
             [BreakageKind.CLASS_REMOVED_BASE],
         ),
         (
+            # Replacing a base keeps the count unchanged but removes an inherited type.
+            "class a(ValueError): ...",
+            "class a(RuntimeError): ...",
+            [BreakageKind.CLASS_REMOVED_BASE],
+        ),
+        (
+            # Adding more bases must not hide the removal of an existing base.
+            "class a(ValueError): ...",
+            "class a(RuntimeError, TypeError): ...",
+            [BreakageKind.CLASS_REMOVED_BASE],
+        ),
+        (
+            # Each removed base produces its own breakage.
+            "class a(ValueError, TypeError): ...",
+            "class a: ...",
+            [BreakageKind.CLASS_REMOVED_BASE, BreakageKind.CLASS_REMOVED_BASE],
+        ),
+        (
+            "class a(ValueError): ...",
+            "class a(ValueError): ...",
+            [],
+        ),
+        (
+            "class a(ValueError): ...",
+            "class a(ValueError, TypeError): ...",
+            [],
+        ),
+        (
+            # Reordering bases does not remove an inherited type.
+            "class a(ValueError, TypeError): ...",
+            "class a(TypeError, ValueError): ...",
+            [],
+        ),
+        (
+            # An unchanged alias name can refer to a different base class.
+            "from builtins import ValueError as Error\nclass a(Error): ...",
+            "from builtins import RuntimeError as Error\nclass a(Error): ...",
+            [BreakageKind.CLASS_REMOVED_BASE],
+        ),
+        (
+            # Renaming an alias preserves the inherited type.
+            "from builtins import ValueError as OldError\nclass a(OldError): ...",
+            "from builtins import ValueError as NewError\nclass a(NewError): ...",
+            [],
+        ),
+        (
             "a = 0",
             "class a: ...",
             [BreakageKind.OBJECT_CHANGED_KIND],
@@ -195,6 +241,24 @@ def test_diff_griffe(old_code: str, new_code: str, expected_breakages: list[Brea
     assert len(breaking) == len(expected_breakages)
     for breakage, expected_kind in zip(breaking, expected_breakages, strict=False):
         assert breakage.kind is expected_kind
+
+
+def test_removed_bases_reported_individually() -> None:
+    """Report each removed base in declaration order, without the retained bases."""
+    # Retain one base and replace two others with a new base.
+    old_code = "class a(ValueError, TypeError, RuntimeError): ..."
+    new_code = "class a(TypeError, LookupError): ..."
+
+    with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
+        breaking = list(find_breaking_changes(old_package, new_package))
+
+    # Each diagnostic identifies only its removed base.
+    assert len(breaking) == 2
+    for breakage, removed_base in zip(breaking, ("ValueError", "RuntimeError"), strict=True):
+        assert breakage.kind is BreakageKind.CLASS_REMOVED_BASE
+        assert [base.canonical_path for base in breakage.old_value] == [removed_base]
+        assert breakage.new_value == []
+        assert breakage.explain().endswith(f"[{removed_base}] -> []")
 
 
 def test_moving_members_in_parent_classes() -> None:

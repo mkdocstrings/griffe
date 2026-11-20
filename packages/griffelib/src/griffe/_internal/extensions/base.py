@@ -523,7 +523,7 @@ def _load_extension_path(path: str) -> ModuleType:
         raise ExtensionNotLoadedError(f"Could not import module from path '{path}'")
     module = module_from_spec(spec)
     sys.modules[module_name] = module
-    spec.loader.exec_module(module)  # ty:ignore[unresolved-attribute]
+    spec.loader.exec_module(module)  # ty:ignore[missing-union-attribute]
     return module
 
 

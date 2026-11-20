@@ -6,7 +6,7 @@ Griffe can be used to load API data and output it as JSON on standard output or 
 
 The easiest way to load and serialize API data is to use the command-line tool:
 
-```console
+``` console
 $ griffe dump httpx fastapi
 {
   "httpx": {
@@ -24,7 +24,7 @@ It will output a JSON-serialized version of the package's API data.
 
 Try it out on Griffe itself:
 
-```console
+``` console
 $ griffe dump griffe
 {
   "griffe": {
@@ -36,17 +36,17 @@ $ griffe dump griffe
 
 To output in a file instead of standard output, use the `-o`, `--output` option:
 
-```console
+``` console
 $ griffe dump griffe -o griffe.json
 ```
 
 If you load multiple packages' signatures, you can dump each in its own file with a templated filepath:
 
-```console
+``` console
 $ griffe dump griffe -o './dumps/{package}.json'
 ```
 
-By default, Griffe will search in `sys.path`, so if you installed it through *pipx*, there are few chances it will find your packages. To explicitly specify search paths, use the `-s, --search <PATH>` option. You can use it multiple times. You can also add the search paths to the `PYTHONPATH` environment variable. If Griffe can't find the packages, it will fail with a `ModuleNotFoundError`.
+By default, Griffe will search in `sys.path`, so if you installed it through _pipx_, there are few chances it will find your packages. To explicitly specify search paths, use the `-s, --search <PATH>` option. You can use it multiple times. You can also add the search paths to the `PYTHONPATH` environment variable. If Griffe can't find the packages, it will fail with a `ModuleNotFoundError`.
 
 See all the options for the `dump` command in the [CLI reference](../../reference/cli.md).
 
@@ -71,7 +71,7 @@ When serializing multiple packages with the `dump` command, you get a map with p
 
 For example:
 
-```json
+``` json
 {
   "kind": "class",
   "name": "Expr",

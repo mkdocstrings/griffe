@@ -5,7 +5,8 @@ Griffe is a Python package, so you can install it with your favorite Python pack
 ## Install as a tool & library
 
 === ":simple-python: pip"
-    ```bash
+
+    ``` bash
     pip install griffe
     ```
 
@@ -16,7 +17,8 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     </div>
 
 === ":simple-pdm: pdm"
-    ```bash
+
+    ``` bash
     pdm add griffe
     ```
 
@@ -27,7 +29,8 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     </div>
 
 === ":simple-poetry: poetry"
-    ```bash
+
+    ``` bash
     poetry add griffe
     ```
 
@@ -38,7 +41,8 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     </div>
 
 === ":simple-rye: rye"
-    ```bash
+
+    ``` bash
     rye add griffe
     ```
 
@@ -49,7 +53,8 @@ Griffe is a Python package, so you can install it with your favorite Python pack
     </div>
 
 === ":simple-astral: uv"
-    ```bash
+
+    ``` bash
     uv add griffe
     ```
 
@@ -64,9 +69,10 @@ Griffe is a Python package, so you can install it with your favorite Python pack
 If you only need the library for API introspection and analysis without the CLI tool, you can install `griffelib`:
 
 === ":simple-python: pip"
-     ```bash
-     pip install griffelib
-     ```
+
+    ``` bash
+    pip install griffelib
+    ```
 
      <div class="result" markdown>
 
@@ -75,9 +81,10 @@ If you only need the library for API introspection and analysis without the CLI 
      </div>
 
 === ":simple-pdm: pdm"
-     ```bash
-     pdm add griffelib
-     ```
+
+    ``` bash
+    pdm add griffelib
+    ```
 
      <div class="result" markdown>
 
@@ -86,9 +93,10 @@ If you only need the library for API introspection and analysis without the CLI 
      </div>
 
 === ":simple-poetry: poetry"
-     ```bash
-     poetry add griffelib
-     ```
+
+    ``` bash
+    poetry add griffelib
+    ```
 
      <div class="result" markdown>
 
@@ -97,9 +105,10 @@ If you only need the library for API introspection and analysis without the CLI 
      </div>
 
 === ":simple-rye: rye"
-     ```bash
-     rye add griffelib
-     ```
+
+    ``` bash
+    rye add griffelib
+    ```
 
      <div class="result" markdown>
 
@@ -108,9 +117,10 @@ If you only need the library for API introspection and analysis without the CLI 
      </div>
 
 === ":simple-astral: uv"
-     ```bash
-     uv add griffelib
-     ```
+
+    ``` bash
+    uv add griffelib
+    ```
 
      <div class="result" markdown>
 
@@ -123,7 +133,8 @@ This installs the `griffe` package as usual, but without the CLI program and its
 ## Install as a tool only
 
 === ":simple-python: pip"
-    ```bash
+
+    ``` bash
     pip install --user griffe
     ```
 
@@ -134,7 +145,8 @@ This installs the `griffe` package as usual, but without the CLI program and its
     </div>
 
 === ":simple-pipx: pipx"
-    ```bash
+
+    ``` bash
     pipx install griffe
     ```
 
@@ -145,7 +157,8 @@ This installs the `griffe` package as usual, but without the CLI program and its
     </div>
 
 === ":simple-rye: rye"
-    ```bash
+
+    ``` bash
     rye install griffe
     ```
 
@@ -156,7 +169,8 @@ This installs the `griffe` package as usual, but without the CLI program and its
     </div>
 
 === ":simple-astral: uv"
-    ```bash
+
+    ``` bash
     uv tool install griffe
     ```
 
@@ -171,13 +185,15 @@ This installs the `griffe` package as usual, but without the CLI program and its
 Static analysis can use the optional `prune-source` Rust parser accelerator:
 
 === ":simple-python: pip"
-    ```bash
+
+    ``` bash
     pip install "griffe[faster]"
     # or pip install "griffelib[faster]"
     ```
 
 === ":simple-astral: uv"
-    ```bash
+
+    ``` bash
     uv add "griffe[faster]"
     # or uv add "griffelib[faster]"
     ```
@@ -188,12 +204,12 @@ The separately distributed `prune-source` package uses Ruff to remove function b
 
 Once installed, you can run Griffe using the `griffe` command:
 
-```console
+``` console
 $ griffe check mypackage
 ```
 
 Or as a Python module:
 
-```console
+``` console
 $ python -m griffe check mypackage
 ```

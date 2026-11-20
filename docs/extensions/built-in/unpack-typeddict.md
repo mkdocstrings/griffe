@@ -4,7 +4,7 @@ The `unpack_typeddict` extension adds support for [`Unpack`][typing.Unpack] and 
 
 Example:
 
-```python
+``` python
 from typing import TypedDict, Unpack
 
 
@@ -32,7 +32,7 @@ def greet(**kwargs: Unpack[GreetKwargs]) -> str:
 
 With the `unpack_typeddict` extension enabled, the data loaded by Griffe will be updated as follows:
 
-```python
+``` python
 class GreetKwargs(TypedDict):
     # Attributes removed from Griffe data.
 
@@ -64,19 +64,22 @@ NOTE: Our example shows a Google-style docstring, but we actually insert a struc
 To enable the extension:
 
 === "CLI"
-    ```console
+
+    ``` console
     $ griffe dump -e unpack_typeddict my_package
     ```
 
 === "Python"
-    ```python
+
+    ``` python
     import griffe
 
     my_package = griffe.load("my_package", extensions=griffe.load_extensions("unpack_typeddict"))
     ```
 
 === "mkdocstrings"
-    ```yaml title="mkdocs.yml"
+
+    ``` yaml title="mkdocs.yml"
     plugins:
     - mkdocstrings:
         handlers:

@@ -54,11 +54,11 @@ def docstring_warning(
 
     def warn(docstring: Docstring, offset: int, message: str, log_level: LogLevel = LogLevel.warning) -> None:
         try:
-            prefix = docstring.parent.relative_filepath  # ty:ignore[unresolved-attribute]
+            prefix = docstring.parent.relative_filepath  # ty:ignore[missing-union-attribute]
         except (AttributeError, ValueError):
             prefix = "<module>"
         except BuiltinModuleError:
-            prefix = f"<module: {docstring.parent.module.name}>"  # ty:ignore[unresolved-attribute]
+            prefix = f"<module: {docstring.parent.module.name}>"  # ty:ignore[missing-union-attribute]
         log = getattr(logger, log_level.value)
         log(f"{prefix}:{(docstring.lineno or 0) + offset}: {message}")
 

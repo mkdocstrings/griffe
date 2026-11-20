@@ -9,7 +9,7 @@
 
 This extension stores runtime objects corresponding to each loaded Griffe object into its `extra` attribute, under the `runtime-objects` namespace.
 
-```pycon
+``` pycon
 >>> import griffe
 >>> griffe_data = griffe.load("griffe", extensions=griffe.load_extensions("griffe_runtime_objects"), resolve_aliases=True)
 >>> griffe_data["parse"].extra

@@ -22,7 +22,7 @@ Enabling dynamic analysis for whole packages is [not recommended][forcing-dynami
 
 Start by creating an extensions module (a simple Python file) somewhere in your repository, if you don't already have one. Within it, create an extension class:
 
-```python
+``` python
 import griffe
 
 
@@ -32,7 +32,7 @@ class InspectSpecificObjects(griffe.Extension):
 
 Make it accept configuration options by declaring an `__init__` method:
 
-```python hl_lines="7-8"
+``` python hl_lines="7-8"
 import griffe
 
 
@@ -49,7 +49,7 @@ With this `__init__` method, users (or simply yourself) will be able to configur
 
 Now that our extension accepts options, we implement its core functionality. We assume that the static analysis agent is able to see the objects we are interested in, and will actually create instances that represent them (Griffe objects). Therefore we hook onto the `on_instance` event, which runs each time a Griffe object is created.
 
-```python hl_lines="10-11"
+``` python hl_lines="10-11"
 import griffe
 
 
@@ -67,7 +67,7 @@ Check out the [available hooks][griffe.Extension] to see if there more appropria
 
 Lets now use our configuration option to decide whether to do something or skip:
 
-```python hl_lines="11-12"
+``` python hl_lines="11-12"
 import griffe
 
 
@@ -84,7 +84,7 @@ class InspectSpecificObjects(griffe.Extension):
 
 Now we know that only the objects we're interested in will be handled, so lets handle them.
 
-```python hl_lines="3 16-20"
+``` python hl_lines="3 16-20"
 import griffe
 
 logger = griffe.get_logger("griffe_inspect_specific_objects")  # (1)!
@@ -114,7 +114,7 @@ Now that we have a reference to our runtime object, we can use it to alter the G
 
 For example, we could use the runtime object's `__doc__` attribute, which could have been declared dynamically, to fix the Griffe object docstring:
 
-```python hl_lines="22-25"
+``` python hl_lines="22-25"
 import griffe
 
 logger = griffe.get_logger("griffe_inspect_specific_objects")
@@ -144,7 +144,7 @@ class InspectSpecificObjects(griffe.Extension):
 
 Or we could alter the Griffe object parameters in case of functions, which could have been modified by a signature-changing decorator:
 
-```python hl_lines="1 23-27"
+``` python hl_lines="1 23-27"
 import inspect
 import griffe
 
@@ -176,8 +176,7 @@ class InspectSpecificObjects(griffe.Extension):
 
 We could also entirely replace the Griffe object obtained from static analysis by the same one obtained from dynamic analysis:
 
-
-```python hl_lines="14-25"
+``` python hl_lines="14-25"
 import griffe
 
 

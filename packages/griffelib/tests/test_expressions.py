@@ -246,7 +246,7 @@ def test_expressions(code: str) -> None:
         code: An expression (parametrized).
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[missing-attribute]
     assert str(expression) == code
 
 
@@ -521,8 +521,8 @@ def test_modernizing_idempotence(code: str) -> None:
         code: An expression (parametrized).
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
-    modernized = expression.modernize()  # ty:ignore[unresolved-attribute]
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[missing-attribute]
+    modernized = expression.modernize()  # ty:ignore[missing-union-attribute]
     assert expression == modernized
     assert str(expression) == str(modernized)
 
@@ -632,7 +632,7 @@ def test_fstring_quote_selection(code: str, expected: str) -> None:
     Regression test for https://github.com/mkdocstrings/griffe/issues/444.
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[missing-attribute]
     assert str(expression) == expected
 
 
@@ -692,7 +692,7 @@ def test_tstring_quote_selection(code: str, expected: str) -> None:
     Regression test for https://github.com/mkdocstrings/griffe/issues/444.
     """
     top_node = compile(code, filename="<>", mode="exec", flags=ast.PyCF_ONLY_AST, optimize=2)
-    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[unresolved-attribute]
+    expression = get_expression(top_node.body[0].value, parent=Module("module"))  # ty:ignore[missing-attribute]
     assert str(expression) == expected
 
 
