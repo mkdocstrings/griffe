@@ -53,6 +53,9 @@ if TYPE_CHECKING:
     from griffe._internal.models import Module
 
 
+_ACCEPTED_PY_MODULE_EXTENSIONS = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
+_EXTENSIONS_SET = set(_ACCEPTED_PY_MODULE_EXTENSIONS)
+
 _editable_editables_patterns = [re.compile(pat) for pat in (r"^__editables_\w+\.py$", r"^_editable_impl_\w+\.py$")]
 _editable_setuptools_patterns = [re.compile(pat) for pat in (r"^__editable__\w+\.py$",)]
 _editable_scikit_build_core_patterns = [re.compile(pat) for pat in (r"^_\w+_editable.py$",)]
@@ -110,9 +113,9 @@ class ModuleFinder:
     thanks to the [loader][griffe.GriffeLoader]'s `search_paths` parameter.
     """
 
-    accepted_py_module_extensions: ClassVar[list[str]] = [".py", ".pyc", ".pyo", ".pyd", ".pyi", ".so"]
+    accepted_py_module_extensions: ClassVar[list[str]] = _ACCEPTED_PY_MODULE_EXTENSIONS
     """List of extensions supported by the finder."""
-    extensions_set: ClassVar[set[str]] = set(accepted_py_module_extensions)
+    extensions_set: ClassVar[set[str]] = _EXTENSIONS_SET
     """Set of extensions supported by the finder."""
 
     def __init__(self, search_paths: Sequence[str | Path] | None = None) -> None:
@@ -201,10 +204,10 @@ class ModuleFinder:
         """
         module_path: Path | None = None
         if isinstance(module, Path):
-            module_path = self._module_path(module)
+            module_path = _module_path(module)
         elif try_relative_path:
             try:
-                module_path = self._module_path(Path(module))
+                module_path = _module_path(Path(module))
             except FileNotFoundError:
                 module_name = module
                 top_module_name = module.split(".", 1)[0]
@@ -216,7 +219,7 @@ class ModuleFinder:
         # that was used to find the top-level package.
         if module_path is not None:
             top_module_name, root_path = self._top_module_name(module_path)
-            module_name = self._relative_module_name(module_path, root_path)
+            module_name = _relative_module_name(module_path, root_path)
 
         # Only search for actual package, let exceptions bubble up.
         if not find_stubs_package:
@@ -327,7 +330,7 @@ class ModuleFinder:
             path = path.parent
         # Optimization: just check if the file name ends with .py[icod]/.so
         # (to distinguish it from a directory), not if it's an actual file.
-        elif path.suffix in self.extensions_set:
+        elif path.suffix in _EXTENSIONS_SET:
             return
 
         # `seen` is only set when we scan a list of paths (namespace package).
@@ -336,7 +339,7 @@ class ModuleFinder:
         # from another part of the namespace.
         skip = set(seen or ())
 
-        for subpath in self._filter_py_modules(path):
+        for subpath in _filter_py_modules(path):
             rel_subpath = subpath.relative_to(path)
             if rel_subpath.parent in skip:
                 logger.debug("Skip %s, another module took precedence", subpath)
@@ -367,19 +370,6 @@ class ModuleFinder:
             key=_module_depth,
         )
 
-    def _module_path(self, path: Path) -> Path:
-        # Always return absolute paths to avoid working-directory-dependent issues.
-        path = path.absolute()
-        if path.is_dir():
-            for ext in self.accepted_py_module_extensions:
-                module_path = path / f"__init__{ext}"
-                if module_path.exists():
-                    return module_path
-            return path
-        if path.exists():
-            return path
-        raise FileNotFoundError
-
     def _contents(self, path: Path) -> list[Path]:
         if path not in self._paths_contents:
             try:
@@ -396,14 +386,6 @@ class ModuleFinder:
                         if scan := directory.always_scan_for:
                             self._always_scan_for[scan].append(directory.path.joinpath(scan))
                         self.append_search_path(directory.path)
-
-    def _filter_py_modules(self, path: Path) -> Iterator[Path]:
-        for root, dirs, files in os.walk(path, topdown=True, followlinks=True):
-            # Optimization: modify dirs in-place to exclude `__pycache__` directories.
-            dirs[:] = [dir for dir in dirs if dir != "__pycache__"]
-            for relfile in files:
-                if os.path.splitext(relfile)[1] in self.extensions_set:  # noqa: PTH122
-                    yield Path(root, relfile)
 
     def _top_module_name(self, path: Path) -> tuple[str, Path]:
         # First find if a parent is in search paths.
@@ -422,16 +404,40 @@ class ModuleFinder:
         self.insert_search_path(0, parent_path.parent)
         return parent_path.name, parent_path.parent.resolve()
 
-    def _relative_module_name(self, module_path: Path, root_path: Path) -> str:
-        # Compute the full dotted name from the path, relative to the root
-        # used to find the top-level package.
-        if module_path.is_dir():
-            relative_path = module_path.resolve().relative_to(root_path)
-            return ".".join(relative_path.parts)
-        # Resolve the parent directories, but preserve the installed filename
-        # when the module is a symbolic link to a file elsewhere.
-        relative_path = (module_path.parent.resolve() / module_path.name).relative_to(root_path)
-        return ".".join(_module_name_parts(relative_path))
+
+def _module_path(path: Path) -> Path:
+    # Always return absolute paths to avoid working-directory-dependent issues.
+    path = path.absolute()
+    if path.is_dir():
+        for ext in _ACCEPTED_PY_MODULE_EXTENSIONS:
+            module_path = path / f"__init__{ext}"
+            if module_path.exists():
+                return module_path
+        return path
+    if path.exists():
+        return path
+    raise FileNotFoundError
+
+
+def _filter_py_modules(path: Path) -> Iterator[Path]:
+    for root, dirs, files in os.walk(path, topdown=True, followlinks=True):
+        # Optimization: modify dirs in-place to exclude `__pycache__` directories.
+        dirs[:] = [dir for dir in dirs if dir != "__pycache__"]
+        for relfile in files:
+            if os.path.splitext(relfile)[1] in _EXTENSIONS_SET:  # noqa: PTH122
+                yield Path(root, relfile)
+
+
+def _relative_module_name(module_path: Path, root_path: Path) -> str:
+    # Compute the full dotted name from the path, relative to the root
+    # used to find the top-level package.
+    if module_path.is_dir():
+        relative_path = module_path.resolve().relative_to(root_path)
+        return ".".join(relative_path.parts)
+    # Resolve the parent directories, but preserve the installed filename
+    # when the module is a symbolic link to a file elsewhere.
+    relative_path = (module_path.parent.resolve() / module_path.name).relative_to(root_path)
+    return ".".join(_module_name_parts(relative_path))
 
 
 def _module_name_parts(path: Path) -> NamePartsType:
