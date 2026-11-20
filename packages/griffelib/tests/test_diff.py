@@ -281,3 +281,93 @@ def test_moving_members_in_parent_classes() -> None:
     """
     with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
         assert not list(find_breaking_changes(old_package, new_package))
+
+
+@pytest.mark.parametrize(
+    ("old_code", "new_code", "expected_members"),
+    [
+        pytest.param(
+            """
+            class Base:
+                def method(self, value): ...
+
+            class Sub(Base):
+                pass
+            """,
+            """
+            class Base:
+                def method(self, value): ...
+
+            class Sub(Base):
+                def method(self): ...
+            """,
+            {"Sub.method"},
+            id="base-first-override-changes",
+        ),
+        pytest.param(
+            """
+            class Sub(Base):
+                pass
+
+            class Base:
+                def method(self, value): ...
+            """,
+            """
+            class Sub(Base):
+                def method(self): ...
+
+            class Base:
+                def method(self, value): ...
+            """,
+            {"Sub.method"},
+            id="subclass-first-override-changes",
+        ),
+        pytest.param(
+            """
+            class Base:
+                def method(self, value): ...
+
+            class Sub(Base):
+                pass
+            """,
+            """
+            class Base:
+                def method(self): ...
+
+            class Sub(Base):
+                def method(self): ...
+            """,
+            {"Base.method", "Sub.method"},
+            id="base-first-base-and-override-change",
+        ),
+        pytest.param(
+            """
+            class Sub(Base):
+                pass
+
+            class Base:
+                def method(self, value): ...
+            """,
+            """
+            class Sub(Base):
+                def method(self): ...
+
+            class Base:
+                def method(self): ...
+            """,
+            {"Base.method", "Sub.method"},
+            id="subclass-first-base-and-override-change",
+        ),
+    ],
+)
+def test_new_override_compared_with_inherited_method(old_code: str, new_code: str, expected_members: set[str]) -> None:
+    """Compare every old/new member pair regardless of class declaration order."""
+    # Visit the source without executing it so either class can be declared first.
+    with temporary_visited_module(old_code) as old_package, temporary_visited_module(new_code) as new_package:
+        breakages = list(find_breaking_changes(old_package, new_package))
+
+    # Report each affected method exactly once, including both methods when the base also changes.
+    expected_paths = {f"{new_package.path}.{member}" for member in expected_members}
+    assert {breakage.obj.path for breakage in breakages} == expected_paths
+    assert len(breakages) == len(expected_paths)
+    assert all(breakage.kind is BreakageKind.PARAMETER_REMOVED for breakage in breakages)
