@@ -385,8 +385,8 @@ def _read_attributes_section(
     attributes = []
     block, new_offset = _read_block_items(lines, docstring, offset=offset, warnings=warnings, **options)
 
-    annotation: str | Expr | None = None
     for line_number, attr_lines in block:
+        annotation: str | Expr | None = None
         try:
             name_with_type, description = attr_lines[0].split(":", 1)
         except ValueError:

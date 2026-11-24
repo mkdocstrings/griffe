@@ -1974,3 +1974,24 @@ def test_disabled_warnings(parse_google: ParserType, docstring: str) -> None:
     assert warnings
     _, warnings = parse_google(docstring, warnings=False)
     assert not warnings
+
+
+def test_attributes_annotation_does_not_leak_across_items(parse_google: ParserType) -> None:
+    """Assert an attribute's annotation does not leak onto a following untyped attribute.
+
+    Parameters:
+        parse_google: Fixture parser.
+    """
+    docstring = """
+    Attributes:
+        a (int): First attribute.
+        b: Second attribute without an inline type.
+    """
+    sections, warnings = parse_google(docstring)
+    assert not warnings
+    attrs = sections[0].value
+    assert len(attrs) == 2
+    assert attrs[0].name == "a"
+    assert str(attrs[0].annotation) == "int"
+    assert attrs[1].name == "b"
+    assert attrs[1].annotation is None
